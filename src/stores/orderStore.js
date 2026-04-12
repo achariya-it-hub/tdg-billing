@@ -117,53 +117,72 @@ export const useOrderStore = create(
   },
   
   placeOrder: async (paymentMethod) => {
-    const order = get().currentOrder
-    const items = order.items || []
-    
-    if (items.length === 0) {
-      throw new Error('No items in order')
+    try {
+      const order = get().currentOrder
+      const items = order.items || []
+      
+      console.log('Placing order:', { order, items, paymentMethod })
+      
+      if (items.length === 0) {
+        throw new Error('No items in order')
+      }
+      
+      const subtotal = get().getSubtotal()
+      const tax = get().getTax()
+      const total = get().getTotal()
+      
+      const newOrder = {
+        id: `ORD-${Date.now()}`,
+        orderNumber: Date.now() % 10000 + 1000,
+        type: order.type || 'dine-in',
+        tableNumber: order.tableNumber || '',
+        customerName: order.customerName || '',
+        notes: order.notes || '',
+        items: items.map(item => ({
+          id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          menuItemId: item.menuItemId,
+          menuItemName: item.menuItemName,
+          variantId: item.variantId || null,
+          variantName: item.variantName || null,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          totalPrice: item.totalPrice,
+          notes: item.notes || '',
+          status: 'pending'
+        })),
+        subtotal,
+        tax,
+        discount: 0,
+        total,
+        paymentMethod,
+        status: 'pending',
+        paymentStatus: 'pending',
+        source: 'pos',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+      
+      set(state => {
+        console.log('Setting orders:', [...newOrder, ...state.orders])
+        return { orders: [newOrder, ...state.orders] }
+      })
+      
+      set({
+        currentOrder: {
+          items: [],
+          type: 'dine-in',
+          tableNumber: '',
+          customerName: '',
+          notes: ''
+        }
+      })
+      
+      console.log('Order placed successfully:', newOrder)
+      return newOrder
+    } catch (err) {
+      console.error('Error placing order:', err)
+      throw err
     }
-    
-    const subtotal = get().getSubtotal()
-    const tax = get().getTax()
-    const total = get().getTotal()
-    
-    // Use demo mode (local storage) since Vercel API is not working properly
-    // This allows orders to work offline and without backend
-    const newOrder = {
-      id: `ORD-${Date.now()}`,
-      orderNumber: Date.now() % 10000 + 1000,
-      type: order.type || 'dine-in',
-      tableNumber: order.tableNumber || '',
-      customerName: order.customerName || '',
-      notes: order.notes || '',
-      items: items.map(item => ({
-        id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        menuItemId: item.menuItemId,
-        menuItemName: item.menuItemName,
-        variantId: item.variantId || null,
-        variantName: item.variantName || null,
-        quantity: item.quantity,
-        unitPrice: item.unitPrice,
-        totalPrice: item.totalPrice,
-        notes: item.notes || '',
-        status: 'pending'
-      })),
-      subtotal,
-      tax,
-      discount: 0,
-      total,
-      paymentMethod,
-      status: 'pending',
-      paymentStatus: 'pending',
-      source: 'pos',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
-    
-    set(state => ({ orders: [newOrder, ...state.orders] }))
-    get().clearOrder()
-    return newOrder
   },
   
   fetchOrders: async () => {
