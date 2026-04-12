@@ -32,7 +32,11 @@ export const useMenuStore = create((set, get) => ({
   
   fetchCategories: async () => {
     try {
-      const res = await fetch('/api/menu/categories')
+      const apiUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3001' 
+        : 'https://tdg-billing-production.up.railway.app'
+      
+      const res = await fetch(`${apiUrl}/api/menu/categories`)
       const data = await res.json()
       if (data && data.length > 0) {
         set({ categories: data })
@@ -47,7 +51,11 @@ export const useMenuStore = create((set, get) => ({
   fetchMenuItems: async (categoryId) => {
     set({ loading: true })
     try {
-      const url = categoryId ? `/api/menu/items?categoryId=${categoryId}` : '/api/menu/items'
+      const apiUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3001' 
+        : 'https://tdg-billing-production.up.railway.app'
+      
+      const url = categoryId ? `${apiUrl}/api/menu/items?categoryId=${categoryId}` : `${apiUrl}/api/menu/items`
       const res = await fetch(url)
       const data = await res.json()
       if (data && data.length > 0) {
@@ -70,7 +78,5 @@ export const useMenuStore = create((set, get) => ({
         item.id === itemId ? { ...item, isAvailable } : item
       )
     }))
-  }
-}))
   }
 }))

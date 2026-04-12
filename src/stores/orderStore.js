@@ -132,7 +132,11 @@ export const useOrderStore = create(
       // Try to send to backend
       let newOrder = null
       try {
-        const res = await fetch('/api/orders', {
+        const apiUrl = window.location.hostname === 'localhost' 
+          ? 'http://localhost:3001' 
+          : 'https://tdg-billing-production.up.railway.app'
+        
+        const res = await fetch(`${apiUrl}/api/orders`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
