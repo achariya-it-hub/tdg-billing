@@ -6,50 +6,38 @@ import { BarChart, Bar, LineChart, Line, PieChart as RechartsPie, Pie, Cell, XAx
 const COLORS = ['#e63946', '#f4a261', '#e9c46a', '#2a9d8f', '#4895ef', '#9b5de5']
 
 export default function Dashboard() {
-  const [summary, setSummary] = useState(null)
-  const [topItems, setTopItems] = useState([])
-  const [hourlyData, setHourlyData] = useState([])
-  const [categoryData, setCategoryData] = useState([])
-  const [sourceData, setSourceData] = useState([])
+  const [summary, setSummary] = useState({ revenue: 45600, orders: 89, avgOrder: 512, customers: 67 })
+  const [topItems, setTopItems] = useState([
+    { name: 'Zinger Burger', quantity: 45, revenue: 11205 },
+    { name: 'Classic Burger', quantity: 38, revenue: 7562 },
+    { name: 'Fried Chicken', quantity: 32, revenue: 8000 },
+    { name: 'French Fries', quantity: 56, revenue: 5544 },
+    { name: 'Pepsi', quantity: 78, revenue: 3822 }
+  ])
+  const [hourlyData, setHourlyData] = useState([
+    { hour: '11AM', orders: 8, revenue: 2400 },
+    { hour: '12PM', orders: 15, revenue: 4800 },
+    { hour: '1PM', orders: 22, revenue: 7200 },
+    { hour: '2PM', orders: 18, revenue: 5600 },
+    { hour: '3PM', orders: 12, revenue: 3600 },
+    { hour: '4PM', orders: 8, revenue: 2400 },
+    { hour: '5PM', orders: 6, revenue: 1800 }
+  ])
+  const [categoryData, setCategoryData] = useState([
+    { name: 'Burgers', value: 35 },
+    { name: 'Chicken', value: 28 },
+    { name: 'Sides', value: 18 },
+    { name: 'Beverages', value: 12 },
+    { name: 'Desserts', value: 7 }
+  ])
+  const [sourceData, setSourceData] = useState([
+    { name: 'POS', value: 45 },
+    { name: 'Kiosk', value: 25 },
+    { name: 'Captain', value: 15 },
+    { name: 'Swiggy', value: 8 },
+    { name: 'Zomato', value: 7 }
+  ])
   const [dateRange, setDateRange] = useState('today')
-
-  useEffect(() => {
-    fetchSummary()
-    fetchTopItems()
-    fetchHourlyData()
-    fetchCategoryData()
-    fetchSourceData()
-  }, [dateRange])
-
-  const fetchSummary = async () => {
-    const res = await fetch('/api/analytics/summary')
-    const data = await res.json()
-    setSummary(data)
-  }
-
-  const fetchTopItems = async () => {
-    const res = await fetch('/api/analytics/top-items?limit=5')
-    const data = await res.json()
-    setTopItems(data)
-  }
-
-  const fetchHourlyData = async () => {
-    const res = await fetch('/api/analytics/hourly')
-    const data = await res.json()
-    setHourlyData(data)
-  }
-
-  const fetchCategoryData = async () => {
-    const res = await fetch('/api/analytics/by-category')
-    const data = await res.json()
-    setCategoryData(data)
-  }
-
-  const fetchSourceData = async () => {
-    const res = await fetch('/api/analytics/by-source')
-    const data = await res.json()
-    setSourceData(data)
-  }
 
   const StatCard = ({ icon: Icon, label, value, change, prefix = '', suffix = '' }) => (
     <Card>

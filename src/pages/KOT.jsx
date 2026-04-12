@@ -70,11 +70,6 @@ export default function KOT() {
   }
 
   const bumpOrder = async (orderId) => {
-    await fetch(`/api/orders/${orderId}/status`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'ready' })
-    })
     setOrders(prev => prev.filter(o => o.id !== orderId))
     if (currentIndex > 0) setCurrentIndex(prev => prev - 1)
   }
