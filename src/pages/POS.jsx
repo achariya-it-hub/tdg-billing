@@ -58,18 +58,20 @@ export default function POS() {
   }, [selectedCategory])
 
   const handlePlaceOrder = async (paymentMethod) => {
-    if (currentOrder.items.length === 0) {
+    if (!currentOrder.items || currentOrder.items.length === 0) {
       toast.error('Add items to place order')
       return
     }
     setProcessing(true)
     try {
-      await placeOrder(paymentMethod)
+      const result = await placeOrder(paymentMethod)
+      console.log('Order result:', result)
       toast.success('Order placed successfully!')
       setShowPaymentModal(false)
       setShowCart(false)
     } catch (err) {
-      toast.error('Failed to place order')
+      console.error('Order error:', err)
+      toast.error('Failed to place order: ' + err.message)
     }
     setProcessing(false)
   }

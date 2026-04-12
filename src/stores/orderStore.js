@@ -118,17 +118,25 @@ export const useOrderStore = create(
   
   placeOrder: async (paymentMethod) => {
     const order = get().currentOrder
+    const items = order.items || []
+    
+    if (items.length === 0) {
+      throw new Error('No items in order')
+    }
+    
     const subtotal = get().getSubtotal()
     const tax = get().getTax()
     const total = get().getTotal()
     
     // Try API first, fall back to demo mode
+    let newOrder = null
     try {
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...order,
+          items,
           subtotal,
           tax,
           total,
@@ -136,26 +144,51 @@ export const useOrderStore = create(
         })
       })
       
-      if (!res.ok) throw new Error('API failed')
-      const newOrder = await res.json()
-      set(state => ({ orders: [newOrder, ...state.orders] }))
+      if (res.ok) {
+        newOrder = await res.json()
+        set(state => ({ orders: [newOrder, ...state.orders] }))
+      } else {
+        throw new Error('API returned error')
+      }
     } catch (err) {
+      console.log('Using demo mode for order:', err.message)
       // Demo mode - create local order
-      const demoOrder = {
+      newOrder = {
         id: `ORD-${Date.now()}`,
-        ...order,
+        orderNumber: Date.now() % 10000 + 1000,
+        type: order.type || 'dine-in',
+        tableNumber: order.tableNumber || '',
+        customerName: order.customerName || '',
+        notes: order.notes || '',
+        items: items.map(item => ({
+          id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          menuItemId: item.menuItemId,
+          menuItemName: item.menuItemName,
+          variantId: item.variantId || null,
+          variantName: item.variantName || null,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          totalPrice: item.totalPrice,
+          notes: item.notes || '',
+          status: 'pending'
+        })),
         subtotal,
         tax,
+        discount: 0,
         total,
         paymentMethod,
-        status: 'ready',
-        createdAt: new Date().toISOString()
+        status: 'pending',
+        paymentStatus: 'pending',
+        source: 'pos',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       }
-      set(state => ({ orders: [demoOrder, ...state.orders] }))
+      set(state => ({ orders: [newOrder, ...state.orders] }))
     }
     
+    // Try to deduct inventory (non-critical)
     try {
-      const orderItems = order.items.map(item => ({
+      const orderItems = items.map(item => ({
         menuItemId: item.menuItemId,
         menuItemName: item.menuItemName,
         quantity: item.quantity
@@ -166,25 +199,12 @@ export const useOrderStore = create(
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderItems })
       })
-      
-      // Send KOT to kitchen via WebSocket
-      const io = await import('../lib/socket')
-      if (io.default) {
-        io.default.emit('kot:create', {
-          ...order,
-          items: order.items.map(item => ({
-            name: item.menuItemName,
-            quantity: item.quantity,
-            notes: item.notes || ''
-          }))
-        })
-      }
     } catch (err) {
-      console.warn('Failed to process order:', err)
+      console.warn('Failed to deduct inventory:', err)
     }
     
     get().clearOrder()
-    return get().orders[0]
+    return newOrder
   },
   
   fetchOrders: async (params = {}) => {
