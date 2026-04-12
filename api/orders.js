@@ -1,20 +1,26 @@
-import { v4 as uuid } from 'uuid'
+// Simple ID generator
+const genId = () => Math.random().toString(36).substr(2, 9) + Date.now().toString(36)
 
 // In-memory store for Vercel serverless (demo mode)
 let orders = []
 let orderNumber = 1000
 
 export default async function handler(req, res) {
-  const { method } = req
+  const { method, headers } = req
   
-  // CORS headers
+  // CORS headers - must be set before any response
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  res.setHeader('Access-Control-Max-Age', '86400')
   
+  // Handle preflight
   if (method === 'OPTIONS') {
-    return res.status(200).end()
+    res.status(204).end()
+    return
   }
+  
+  console.log('API called:', method, req.url)
   
   if (method === 'GET') {
     const { status, source, date } = req.query
@@ -30,7 +36,7 @@ export default async function handler(req, res) {
   if (method === 'POST') {
     const { type, source, items, subtotal, tax, discount, total, tableNumber, customerName, notes, paymentMethod } = req.body
     
-    const id = uuid()
+    const id = genId()
     const orderNum = ++orderNumber
     const now = new Date().toISOString()
     
@@ -52,7 +58,7 @@ export default async function handler(req, res) {
       createdAt: now,
       updatedAt: now,
       items: items?.map(item => ({
-        id: uuid(),
+        id: genId(),
         orderId: id,
         menuItemId: item.menuItemId,
         menuItemName: item.menuItemName,

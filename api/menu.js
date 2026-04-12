@@ -1,4 +1,5 @@
-import { v4 as uuid } from 'uuid'
+// Simple ID generator
+const genId = () => Math.random().toString(36).substr(2, 9) + Date.now().toString(36)
 
 // Demo data for Vercel serverless
 let categories = [
@@ -48,7 +49,7 @@ export default async function handler(req, res) {
   
   if (path === '/categories' && method === 'POST') {
     const { name, displayOrder, color, icon } = req.body
-    const newCat = { id: uuid(), name, displayOrder: displayOrder || categories.length + 1, color: color || '#ffffff', icon: icon || 'utensils', isActive: 1 }
+    const newCat = { id: genId(), name, displayOrder: displayOrder || categories.length + 1, color: color || '#ffffff', icon: icon || 'utensils', isActive: 1 }
     categories.push(newCat)
     return res.status(201).json(newCat)
   }
@@ -65,7 +66,7 @@ export default async function handler(req, res) {
   
   if (path === '/items' && method === 'POST') {
     const { categoryId, name, description, price, image, prepTime } = req.body
-    const newItem = { id: uuid(), categoryId, name, description: description || '', price, image: image || '', prepTime: prepTime || 15, isAvailable: true, variants: [], addOns: [] }
+    const newItem = { id: genId(), categoryId, name, description: description || '', price, image: image || '', prepTime: prepTime || 15, isAvailable: true, variants: [], addOns: [] }
     menuItems.push(newItem)
     return res.status(201).json(newItem)
   }
