@@ -32,24 +32,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
+  // Skip API calls - let them go directly to server (or fail gracefully)
   if (url.pathname.startsWith('/api/')) {
-    if (navigator.onLine) {
-      event.respondWith(
-        fetch(event.request).catch(() => {
-          return new Response(
-            JSON.stringify({ offline: true, message: 'Offline - request queued' }),
-            { headers: { 'Content-Type': 'application/json' } }
-          );
-        })
-      );
-    } else {
-      event.respondWith(
-        new Response(
-          JSON.stringify({ offline: true, cached: true }),
-          { headers: { 'Content-Type': 'application/json' } }
-        )
-      );
-    }
     return;
   }
 
