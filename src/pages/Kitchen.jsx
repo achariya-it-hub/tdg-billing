@@ -42,13 +42,26 @@ export default function Kitchen() {
   }, [])
 
   const fetchOrders = async () => {
-    const res = await fetch('/api/orders?status=preparing')
-    const data = await res.json()
-    setOrders(data.map(o => ({
-      ...o,
-      orderNumber: `K${o.orderNumber}`,
-      items: o.items || []
-    })))
+    try {
+      const stored = localStorage.getItem('tdg-orders-storage')
+      if (stored) {
+        const data = JSON.parse(stored)
+        const ordersList = data.state?.orders || []
+        setOrders(ordersList.map(o => ({
+          ...o,
+          orderNumber: `K${o.orderNumber}`,
+          items: o.items || []
+        })).filter(o => o.status === 'pending'))
+      }
+    } catch (err) {
+      console.error('Failed to fetch orders')
+    }
+  }
+
+  const updateOrderStatus = async (orderId, status) => {
+    if (status === 'ready' || status === 'completed') {
+      setOrders(prev => prev.filter(o => o.id !== orderId))
+    }
   }
 
   const updateOrderStatus = async (orderId, status) => {

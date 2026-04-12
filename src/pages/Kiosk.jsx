@@ -74,28 +74,9 @@ export default function Kiosk() {
   const placeOrder = async (paymentMethod) => {
     setProcessing(true)
     try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'takeaway',
-          source: 'kiosk',
-          items: cart.map(item => ({
-            menuItemId: item.menuItemId,
-            menuItemName: item.menuItemName,
-            unitPrice: item.unitPrice,
-            totalPrice: item.unitPrice * item.quantity,
-            quantity: item.quantity
-          })),
-          subtotal: getSubtotal(),
-          tax: getTax(),
-          total: getTotal(),
-          customerName: customerName || 'Kiosk Customer',
-          paymentMethod
-        })
-      })
-      const data = await res.json()
-      setOrderNumber(data.orderNumber)
+      // Demo mode - create local order
+      const orderNumber = Math.floor(Math.random() * 9000) + 1000
+      setOrderNumber(orderNumber)
       setStep(5)
       setShowPayment(false)
     } catch (err) {

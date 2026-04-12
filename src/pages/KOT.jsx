@@ -40,13 +40,17 @@ export default function KOT() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch('/api/orders?status=preparing')
-      const data = await res.json()
-      setOrders(data.map(o => ({
-        ...o,
-        orderNumber: `K${o.orderNumber}`,
-        items: (o.items || []).map(i => ({ ...i, isCompleted: false }))
-      })))
+      // Demo mode - use local storage orders
+      const stored = localStorage.getItem('tdg-orders-storage')
+      if (stored) {
+        const data = JSON.parse(stored)
+        const ordersList = data.state?.orders || []
+        setOrders(ordersList.map(o => ({
+          ...o,
+          orderNumber: `K${o.orderNumber}`,
+          items: (o.items || []).map(i => ({ ...i, isCompleted: false }))
+        })).filter(o => o.status === 'pending'))
+      }
     } catch (err) {
       console.error('Failed to fetch orders')
     }
