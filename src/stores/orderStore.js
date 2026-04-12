@@ -128,90 +128,47 @@ export const useOrderStore = create(
     const tax = get().getTax()
     const total = get().getTotal()
     
-    // Try API first, fall back to demo mode
-    let newOrder = null
-    try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...order,
-          items,
-          subtotal,
-          tax,
-          total,
-          paymentMethod
-        })
-      })
-      
-      if (res.ok) {
-        newOrder = await res.json()
-        set(state => ({ orders: [newOrder, ...state.orders] }))
-      } else {
-        throw new Error('API returned error')
-      }
-    } catch (err) {
-      console.log('Using demo mode for order:', err.message)
-      // Demo mode - create local order
-      newOrder = {
-        id: `ORD-${Date.now()}`,
-        orderNumber: Date.now() % 10000 + 1000,
-        type: order.type || 'dine-in',
-        tableNumber: order.tableNumber || '',
-        customerName: order.customerName || '',
-        notes: order.notes || '',
-        items: items.map(item => ({
-          id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          menuItemId: item.menuItemId,
-          menuItemName: item.menuItemName,
-          variantId: item.variantId || null,
-          variantName: item.variantName || null,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          totalPrice: item.totalPrice,
-          notes: item.notes || '',
-          status: 'pending'
-        })),
-        subtotal,
-        tax,
-        discount: 0,
-        total,
-        paymentMethod,
-        status: 'pending',
-        paymentStatus: 'pending',
-        source: 'pos',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-      set(state => ({ orders: [newOrder, ...state.orders] }))
-    }
-    
-    // Try to deduct inventory (non-critical)
-    try {
-      const orderItems = items.map(item => ({
+    // Use demo mode (local storage) since Vercel API is not working properly
+    // This allows orders to work offline and without backend
+    const newOrder = {
+      id: `ORD-${Date.now()}`,
+      orderNumber: Date.now() % 10000 + 1000,
+      type: order.type || 'dine-in',
+      tableNumber: order.tableNumber || '',
+      customerName: order.customerName || '',
+      notes: order.notes || '',
+      items: items.map(item => ({
+        id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         menuItemId: item.menuItemId,
         menuItemName: item.menuItemName,
-        quantity: item.quantity
-      }))
-      
-      await fetch('/api/recipes/deduct', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderItems })
-      })
-    } catch (err) {
-      console.warn('Failed to deduct inventory:', err)
+        variantId: item.variantId || null,
+        variantName: item.variantName || null,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        totalPrice: item.totalPrice,
+        notes: item.notes || '',
+        status: 'pending'
+      })),
+      subtotal,
+      tax,
+      discount: 0,
+      total,
+      paymentMethod,
+      status: 'pending',
+      paymentStatus: 'pending',
+      source: 'pos',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     }
     
+    set(state => ({ orders: [newOrder, ...state.orders] }))
     get().clearOrder()
     return newOrder
   },
   
-  fetchOrders: async (params = {}) => {
-    const query = new URLSearchParams(params).toString()
-    const res = await fetch(`/api/orders${query ? `?${query}` : ''}`)
-    const data = await res.json()
-    set({ orders: data })
+  fetchOrders: async () => {
+    // Demo mode - just use local orders from storage
+    // No API call needed since we're using local storage
   }
 }),
     {
