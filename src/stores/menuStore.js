@@ -31,43 +31,33 @@ export const useMenuStore = create((set, get) => ({
   loading: false,
   
   fetchCategories: async () => {
-    try {
-      const res = await fetch('/api/menu/categories')
-      const data = await res.json()
-      if (data && data.length > 0) {
-        set({ categories: data })
-      }
-    } catch (e) {
-      console.log('Offline - using cached categories')
+    // Use local sample data - no API call
+    set({ categories: sampleCategories })
+  },
+  
+  fetchMenuItems: async (categoryId) => {
+    set({ loading: true })
+    if (categoryId) {
+      const filtered = sampleMenuItems.filter(item => item.categoryId === categoryId)
+      set({ menuItems: filtered, loading: false })
+    } else {
+      set({ menuItems: sampleMenuItems, loading: false })
     }
   },
   
   fetchMenuItems: async (categoryId) => {
     set({ loading: true })
-    try {
-      const url = categoryId ? `/api/menu/items?categoryId=${categoryId}` : '/api/menu/items'
-      const res = await fetch(url)
-      const data = await res.json()
-      if (data && data.length > 0) {
-        set({ menuItems: data, loading: false })
-        return
-      }
-    } catch (e) {
-      console.log('Offline - using sample menu items')
+    // Use local sample data - no API call
+    if (categoryId) {
+      const filtered = sampleMenuItems.filter(item => item.categoryId === categoryId)
+      set({ menuItems: filtered, loading: false })
+    } else {
+      set({ menuItems: sampleMenuItems, loading: false })
     }
-    set({ menuItems: sampleMenuItems, loading: false })
   },
   
   toggleAvailability: async (itemId, isAvailable) => {
-    try {
-      await fetch(`/api/menu/items/${itemId}/availability`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isAvailable })
-      })
-    } catch (e) {
-      console.log('Offline - availability not synced')
-    }
+    // Local only - no API call
     set(state => ({
       menuItems: state.menuItems.map(item =>
         item.id === itemId ? { ...item, isAvailable } : item
