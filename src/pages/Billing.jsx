@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Receipt, Search, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet } from 'lucide-react'
+import { Receipt, Search, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet, RefreshCw } from 'lucide-react'
 
 const pendingKOTs = [
   { id: 'K001', table: 'T1', items: [{ name: 'Zinger Burger', qty: 2, price: 249 }, { name: 'Pepsi', qty: 2, price: 79 }], time: '12:30 PM', status: 'ready' },
@@ -48,6 +48,7 @@ export default function Billing() {
         billNo: `B${String(bills.length + 1).padStart(3, '0')}`,
         kotId: selectedKOT.id,
         table: selectedKOT.table,
+        items: selectedKOT.items,
         amount: calculateTotal(selectedKOT) + calculateTax(calculateTotal(selectedKOT)),
         payment: selectedPayment,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -61,6 +62,65 @@ export default function Billing() {
   }
 
   const pendingReady = pendingKOTs.filter(k => k.status === 'ready')
+
+  const printInvoice = (bill) => {
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) {
+      alert('Please allow pop-ups for printing')
+      return
+    }
+    
+    const items = bill.items || []
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Invoice ${bill.billNo}</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; max-width: 300px; margin: 0 auto; }
+          .header { text-align: center; margin-bottom: 20px; }
+          .logo { font-size: 24px; font-weight: bold; color: #e63946; }
+          .divider { border-bottom: 1px dashed #333; margin: 15px 0; }
+          .item { display: flex; justify-content: space-between; margin: 5px 0; }
+          .total { font-weight: bold; font-size: 18px; margin-top: 10px; }
+          .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="logo">TDG BILLING</div>
+          <div>Restaurant Management System</div>
+        </div>
+        <div class="divider"></div>
+        <div><strong>Invoice No:</strong> ${bill.billNo}</div>
+        <div><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
+        <div><strong>Time:</strong> ${bill.time}</div>
+        <div><strong>Table:</strong> ${bill.table || 'N/A'}</div>
+        <div class="divider"></div>
+        ${items.map(item => `
+          <div class="item">
+            <span>${item.name} x${item.qty || item.quantity}</span>
+            <span>₹${(item.price * (item.qty || item.quantity)).toFixed(0)}</span>
+          </div>
+        `).join('')}
+        <div class="divider"></div>
+        <div class="item"><span>Subtotal</span><span>₹${(bill.amount / 1.18).toFixed(0)}</span></div>
+        <div class="item"><span>Tax (18%)</span><span>₹${(bill.amount - bill.amount / 1.18).toFixed(0)}</span></div>
+        <div class="total">Total: ₹${bill.amount}</div>
+        <div class="item"><span>Payment:</span><span>${bill.payment}</span></div>
+        <div class="divider"></div>
+        <div class="footer">
+          Thank you for dining with us!<br/>
+          Please visit again
+        </div>
+      </body>
+      </html>
+    `
+    
+    printWindow.document.write(html)
+    printWindow.document.close()
+    printWindow.onload = () => printWindow.print()
+  }
 
   return (
     <div>
@@ -161,9 +221,24 @@ export default function Billing() {
                   <div style={{ fontWeight: 600 }}>{bill.billNo}</div>
                   <div style={{ fontSize: '13px', color: '#6b7280' }}>Table {bill.table} • {bill.payment}</div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontWeight: 700, fontSize: '18px' }}>₹{bill.amount}</div>
-                  <div style={{ fontSize: '12px', color: '#10b981' }}>{bill.time}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontWeight: 700, fontSize: '18px' }}>₹{bill.amount}</div>
+                    <div style={{ fontSize: '12px', color: '#10b981' }}>{bill.time}</div>
+                  </div>
+                  <button 
+                    onClick={() => printInvoice(bill)}
+                    style={{
+                      background: '#f3f4f6',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '8px',
+                      cursor: 'pointer'
+                    }}
+                    title="Print Invoice"
+                  >
+                    <Printer size={18} color="#6b7280" />
+                  </button>
                 </div>
               </div>
             ))}

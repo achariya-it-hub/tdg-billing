@@ -121,8 +121,6 @@ export const useOrderStore = create(
       const order = get().currentOrder
       const items = order.items || []
       
-      console.log('Placing order:', { order, items, paymentMethod })
-      
       if (items.length === 0) {
         throw new Error('No items in order')
       }
@@ -131,53 +129,66 @@ export const useOrderStore = create(
       const tax = get().getTax()
       const total = get().getTotal()
       
-      const newOrder = {
-        id: `ORD-${Date.now()}`,
-        orderNumber: Date.now() % 10000 + 1000,
-        type: order.type || 'dine-in',
-        tableNumber: order.tableNumber || '',
-        customerName: order.customerName || '',
-        notes: order.notes || '',
-        items: items.map(item => ({
-          id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          menuItemId: item.menuItemId,
-          menuItemName: item.menuItemName,
-          variantId: item.variantId || null,
-          variantName: item.variantName || null,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          totalPrice: item.totalPrice,
-          notes: item.notes || '',
-          status: 'pending'
-        })),
-        subtotal,
-        tax,
-        discount: 0,
-        total,
-        paymentMethod,
-        status: 'pending',
-        paymentStatus: 'pending',
-        source: 'pos',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+      // Try to send to backend
+      let newOrder = null
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...order,
+            items,
+            subtotal,
+            tax,
+            total,
+            paymentMethod
+          })
+        })
+        
+        if (res.ok) {
+          newOrder = await res.json()
+          console.log('Order saved to server:', newOrder)
+        } else {
+          throw new Error('Server error')
+        }
+      } catch (apiErr) {
+        // Fallback to local storage if API fails
+        console.log('API not available, using local storage')
+        newOrder = {
+          id: `ORD-${Date.now()}`,
+          orderNumber: Date.now() % 10000 + 1000,
+          type: order.type || 'dine-in',
+          tableNumber: order.tableNumber || '',
+          customerName: order.customerName || '',
+          notes: order.notes || '',
+          items: items.map(item => ({
+            id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            menuItemId: item.menuItemId,
+            menuItemName: item.menuItemName,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            totalPrice: item.totalPrice,
+            status: 'pending'
+          })),
+          subtotal,
+          tax,
+          total,
+          paymentMethod,
+          status: 'pending',
+          paymentStatus: 'pending',
+          source: 'pos',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
       }
       
-      set(state => {
-        console.log('Setting orders:', [...newOrder, ...state.orders])
-        return { orders: [newOrder, ...state.orders] }
-      })
+      set(state => ({ orders: [newOrder, ...state.orders] }))
       
       set({
-        currentOrder: {
-          items: [],
-          type: 'dine-in',
-          tableNumber: '',
-          customerName: '',
-          notes: ''
-        }
+        currentOrder: { items: [], type: 'dine-in', tableNumber: '', customerName: '', notes: '' }
       })
       
-      console.log('Order placed successfully:', newOrder)
+      console.log('Order placed:', newOrder)
       return newOrder
     } catch (err) {
       console.error('Error placing order:', err)

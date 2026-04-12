@@ -31,37 +31,46 @@ export const useMenuStore = create((set, get) => ({
   loading: false,
   
   fetchCategories: async () => {
-    // Use local sample data - no API call
+    try {
+      const res = await fetch('/api/menu/categories')
+      const data = await res.json()
+      if (data && data.length > 0) {
+        set({ categories: data })
+        return
+      }
+    } catch (e) {
+      console.log('Using local categories')
+    }
     set({ categories: sampleCategories })
   },
   
   fetchMenuItems: async (categoryId) => {
     set({ loading: true })
-    if (categoryId) {
-      const filtered = sampleMenuItems.filter(item => item.categoryId === categoryId)
-      set({ menuItems: filtered, loading: false })
-    } else {
-      set({ menuItems: sampleMenuItems, loading: false })
+    try {
+      const url = categoryId ? `/api/menu/items?categoryId=${categoryId}` : '/api/menu/items'
+      const res = await fetch(url)
+      const data = await res.json()
+      if (data && data.length > 0) {
+        set({ menuItems: data, loading: false })
+        return
+      }
+    } catch (e) {
+      console.log('Using local menu items')
     }
-  },
-  
-  fetchMenuItems: async (categoryId) => {
-    set({ loading: true })
-    // Use local sample data - no API call
     if (categoryId) {
-      const filtered = sampleMenuItems.filter(item => item.categoryId === categoryId)
-      set({ menuItems: filtered, loading: false })
+      set({ menuItems: sampleMenuItems.filter(i => i.categoryId === categoryId), loading: false })
     } else {
       set({ menuItems: sampleMenuItems, loading: false })
     }
   },
   
   toggleAvailability: async (itemId, isAvailable) => {
-    // Local only - no API call
     set(state => ({
       menuItems: state.menuItems.map(item =>
         item.id === itemId ? { ...item, isAvailable } : item
       )
     }))
+  }
+}))
   }
 }))
