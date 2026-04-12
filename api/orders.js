@@ -5,25 +5,27 @@ const genId = () => Math.random().toString(36).substr(2, 9) + Date.now().toStrin
 let orders = []
 let orderNumber = 1000
 
-export default async function handler(req, res) {
-  const { method, headers } = req
+export default function handler(req, res) {
+  const { method, url, query } = req
   
-  // CORS headers - must be set before any response
+  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
   res.setHeader('Access-Control-Max-Age', '86400')
   
-  // Handle preflight
+  // Log request
+  console.log('Orders API:', method, url, query)
+  
+  // Handle OPTIONS preflight
   if (method === 'OPTIONS') {
     res.status(204).end()
     return
   }
   
-  console.log('API called:', method, req.url)
-  
-  if (method === 'GET') {
-    const { status, source, date } = req.query
+  // GET /api/orders - List orders
+  if (method === 'GET' && (url === '/api/orders' || url === '/orders')) {
+    const { status, source, date } = query
     let filtered = [...orders]
     
     if (status) filtered = filtered.filter(o => o.status === status)
@@ -33,8 +35,10 @@ export default async function handler(req, res) {
     return res.json(filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
   }
   
-  if (method === 'POST') {
-    const { type, source, items, subtotal, tax, discount, total, tableNumber, customerName, notes, paymentMethod } = req.body
+  // POST /api/orders - Create order
+  if (method === 'POST' && (url === '/api/orders' || url === '/orders')) {
+    const body = req.body || {}
+    const { type, source, items, subtotal, tax, discount, total, tableNumber, customerName, notes, paymentMethod } = body
     
     const id = genId()
     const orderNum = ++orderNumber
@@ -73,8 +77,10 @@ export default async function handler(req, res) {
     }
     
     orders.unshift(order)
+    console.log('Order created:', order.id)
     return res.status(201).json(order)
   }
   
-  res.status(405).json({ error: 'Method not allowed' })
+  // Default - method not allowed
+  res.status(405).json({ error: 'Method not allowed', method, path: url })
 }
