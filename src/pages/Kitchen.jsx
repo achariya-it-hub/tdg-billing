@@ -61,17 +61,6 @@ export default function Kitchen() {
   const updateOrderStatus = async (orderId, status) => {
     if (status === 'ready' || status === 'completed') {
       setOrders(prev => prev.filter(o => o.id !== orderId))
-    }
-  }
-
-  const updateOrderStatus = async (orderId, status) => {
-    await fetch(`/api/orders/${orderId}/status`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status })
-    })
-    if (status === 'ready' || status === 'completed') {
-      setOrders(prev => prev.filter(o => o.id !== orderId))
     } else {
       setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o))
     }
