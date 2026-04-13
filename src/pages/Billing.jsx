@@ -79,7 +79,8 @@ export default function Billing() {
         <style>
           body { font-family: Arial, sans-serif; padding: 20px; max-width: 300px; margin: 0 auto; }
           .header { text-align: center; margin-bottom: 20px; }
-          .logo { font-size: 24px; font-weight: bold; color: #e63946; }
+          .logo { width: 80px; height: auto; margin-bottom: 10px; }
+          .logo-text { font-size: 20px; font-weight: bold; color: #e63946; }
           .divider { border-bottom: 1px dashed #333; margin: 15px 0; }
           .item { display: flex; justify-content: space-between; margin: 5px 0; }
           .total { font-weight: bold; font-size: 18px; margin-top: 10px; }
@@ -88,7 +89,8 @@ export default function Billing() {
       </head>
       <body>
         <div class="header">
-          <div class="logo">TDG BILLING</div>
+          <img src="https://tdg-billing.vercel.app/TDG%20LOGO.png" class="logo" alt="TDG" />
+          <div class="logo-text">TDG BILLING</div>
           <div>Restaurant Management System</div>
         </div>
         <div class="divider"></div>

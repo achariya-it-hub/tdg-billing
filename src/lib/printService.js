@@ -40,6 +40,11 @@ const PrintService = {
               border-bottom: 2px solid #000;
               padding-bottom: 10px;
             }
+            .logo { 
+              width: 60px;
+              height: auto;
+              margin-bottom: 10px;
+            }
             .title { 
               font-size: 20px; 
               font-weight: bold; 
@@ -90,6 +95,7 @@ const PrintService = {
         </head>
         <body>
           <div class="header">
+            <img src="https://tdg-billing.vercel.app/TDG%20LOGO.png" class="logo" alt="TDG" />
             <div class="title">KITCHEN ORDER TICKET</div>
             <div class="order-info">
               <span><strong>#${orderNum}</strong></span> | 
