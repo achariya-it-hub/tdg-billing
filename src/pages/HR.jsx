@@ -31,6 +31,8 @@ const sampleMilestones = [
   { id: '2', title: 'New Branch Setup', description: 'Open new outlet in Andheri', targetValue: 100, currentValue: 35, deadline: '2024-06-30', status: 'in-progress' },
   { id: '3', title: 'Staff Expansion', description: 'Hire 10 new employees', targetValue: 10, currentValue: 6, deadline: '2024-02-28', status: 'in-progress' },
 ]
+
+const sampleAttendance = [
   { id: '1', name: 'Rajesh Kumar', date: '2024-01-15', checkIn: '09:00', checkOut: '18:00', status: 'present' },
   { id: '2', name: 'Priya Sharma', date: '2024-01-15', checkIn: '10:00', checkOut: '19:00', status: 'present' },
   { id: '3', name: 'Amit Singh', date: '2024-01-15', checkIn: '09:30', checkOut: '-', status: 'present' },
