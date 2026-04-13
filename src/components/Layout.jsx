@@ -20,20 +20,12 @@ const navItems = [
   { path: '/dashboard', icon: BarChart3, label: 'Dashboard' },
 ]
 
-const bottomNavItems = [
-  { path: '/pos', icon: Monitor, label: 'POS' },
-  { path: '/captain', icon: ClipboardList, label: 'Captain' },
-  { path: '/billing', icon: Receipt, label: 'Billing' },
-  { path: '/kitchen', icon: ChefHat, label: 'Kitchen' },
-  { path: '/reports', icon: FileText, label: 'Reports' },
-  { path: '/dashboard', icon: BarChart3, label: 'Dashboard' },
-]
-
 export default function Layout({ user, onLogout }) {
   const location = useLocation()
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
   const [onlineCount, setOnlineCount] = useState(2)
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024)
@@ -53,6 +45,7 @@ export default function Layout({ user, onLogout }) {
     return navItems.find(n => location.pathname.startsWith(n.path))?.label || 'TDG'
   }
 
+  // Mobile Layout with Sidebar
   if (isMobile) {
     return (
       <div style={{ 
@@ -61,7 +54,7 @@ export default function Layout({ user, onLogout }) {
         minHeight: '100vh',
         background: 'var(--bg-primary)'
       }}>
-        {/* Mobile Header */}
+        {/* Mobile Header with Menu Button */}
         <header
           style={{
             height: '56px',
@@ -77,34 +70,18 @@ export default function Layout({ user, onLogout }) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div
+            <button
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
               style={{
-                width: '36px',
-                height: '36px',
+                padding: '8px',
+                background: 'var(--bg-secondary)',
+                border: 'none',
                 borderRadius: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden'
+                cursor: 'pointer'
               }}
             >
-              <img 
-                src="/TDG LOGO.png" 
-                alt="TDG" 
-                style={{ 
-                  width: '100%', 
-                  height: '100%', 
-                  objectFit: 'contain' 
-                }}
-                onError={(e) => {
-                  e.target.style.display = 'none'
-                  e.target.nextSibling.style.display = 'flex'
-                }}
-              />
-              <div style={{ display: 'none', width: '36px', height: '36px', background: 'linear-gradient(135deg, #e63946 0%, #c1121f 100%)', borderRadius: '10px', alignItems: 'center', justifyContent: 'center' }}>
-                <UtensilsCrossed size={18} color="white" />
-              </div>
-            </div>
+              <UtensilsCrossed size={20} color="#6b7280" />
+            </button>
             <h1 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e' }}>
               {getCurrentTitle()}
             </h1>
@@ -198,114 +175,100 @@ export default function Layout({ user, onLogout }) {
           </div>
         )}
 
+        {/* Mobile Sidebar Overlay */}
+        {showMobileMenu && (
+          <>
+            <div 
+              style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(0,0,0,0.5)',
+                zIndex: 150
+              }}
+              onClick={() => setShowMobileMenu(false)}
+            />
+            <div style={{
+              position: 'fixed',
+              top: '56px',
+              left: 0,
+              bottom: 0,
+              width: '280px',
+              background: 'white',
+              zIndex: 200,
+              overflowY: 'auto',
+              boxShadow: '4px 0 20px rgba(0,0,0,0.1)'
+            }}>
+              {/* Logo */}
+              <div style={{ padding: '20px', borderBottom: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg, #e63946 0%, #c1121f 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <UtensilsCrossed size={20} color="white" />
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '18px', color: '#1a1a2e' }}>TDG Billing</div>
+                    <div style={{ fontSize: '12px', color: '#6b7280' }}>Restaurant POS</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sidebar Navigation */}
+              <div style={{ padding: '12px' }}>
+                {navItems.map(item => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setShowMobileMenu(false)}
+                    style={({ isActive }) => ({
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '14px 16px',
+                      marginBottom: '4px',
+                      borderRadius: '12px',
+                      color: isActive ? '#e63946' : '#4b5563',
+                      background: isActive ? '#fef2f2' : 'transparent',
+                      textDecoration: 'none',
+                      fontWeight: isActive ? 600 : 500,
+                      transition: 'all 0.2s'
+                    })}
+                  >
+                    <item.icon size={20} />
+                    {item.label}
+                  </NavLink>
+                ))}
+              </div>
+
+              {/* Logout Button */}
+              <div style={{ padding: '16px', borderTop: '1px solid var(--border)', marginTop: 'auto' }}>
+                <button
+                  onClick={() => { setShowMobileMenu(false); onLogout() }}
+                  style={{
+                    width: '100%',
+                    padding: '14px',
+                    background: '#fef2f2',
+                    border: 'none',
+                    borderRadius: '12px',
+                    color: '#dc2626',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <LogOut size={18} />
+                  Logout
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+
         {/* Mobile Content */}
-        <main style={{ flex: 1, padding: '16px', paddingBottom: '140px' }}>
+        <main style={{ flex: 1, padding: '16px', paddingBottom: '80px' }}>
           <Outlet />
         </main>
-
-        {/* Mobile Bottom Nav - Two rows */}
-        <nav
-          style={{
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            background: 'white',
-            borderTop: '1px solid #e5e7eb',
-            padding: '8px 4px',
-            paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
-            zIndex: 100
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-            {bottomNavItems.map(item => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                style={({ isActive }) => ({
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '2px',
-                  padding: '8px 12px',
-                  color: isActive ? '#e63946' : '#9ca3af',
-                  textDecoration: 'none',
-                  transition: 'all 0.2s'
-                })}
-              >
-                <item.icon size={22} />
-                <span style={{ fontSize: '10px', fontWeight: 600 }}>{item.label}</span>
-              </NavLink>
-            ))}
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '4px' }}>
-            <NavLink
-              to="/hr"
-              style={({ isActive }) => ({
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '2px',
-                padding: '8px 12px',
-                color: isActive ? '#e63946' : '#9ca3af',
-                textDecoration: 'none',
-              })}
-            >
-              <Users size={22} />
-              <span style={{ fontSize: '10px', fontWeight: 600 }}>HR</span>
-            </NavLink>
-            <NavLink
-              to="/online-orders"
-              style={({ isActive }) => ({
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '2px',
-                padding: '8px 12px',
-                color: isActive ? '#e63946' : '#9ca3af',
-                textDecoration: 'none',
-                position: 'relative'
-              })}
-            >
-              <Globe size={22} />
-              {onlineCount > 0 && (
-                <span style={{
-                  position: 'absolute',
-                  top: '4px',
-                  right: '8px',
-                  width: '14px',
-                  height: '14px',
-                  background: '#f59e0b',
-                  borderRadius: '50%',
-                  fontSize: '9px',
-                  fontWeight: 700,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white'
-                }}>
-                  {onlineCount}
-                </span>
-              )}
-              <span style={{ fontSize: '10px', fontWeight: 600 }}>Online</span>
-            </NavLink>
-            <NavLink
-              to="/dashboard"
-              style={({ isActive }) => ({
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '2px',
-                padding: '8px 12px',
-                color: isActive ? '#e63946' : '#9ca3af',
-                textDecoration: 'none',
-              })}
-            >
-              <BarChart3 size={22} />
-              <span style={{ fontSize: '10px', fontWeight: 600 }}>Stats</span>
-            </NavLink>
-          </div>
-        </nav>
       </div>
     )
   }
