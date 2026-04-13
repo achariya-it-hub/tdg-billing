@@ -1,8 +1,5 @@
 {
   "framework": "vite",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "overrides": {
-    "react": "^18.2.0"
-  }
+  "outputDirectory": "dist"
 }
