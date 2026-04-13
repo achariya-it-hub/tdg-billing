@@ -325,9 +325,13 @@ export default function Purchase() {
             }}
           />
         </div>
-        <Button onClick={() => activeTab === 'orders' ? setShowPOModal(true) : activeTab === 'suppliers' ? setShowSupplierModal(true) : null}>
+        <Button onClick={() => {
+          if (activeTab === 'orders') setShowPOModal(true)
+          else if (activeTab === 'suppliers') setShowSupplierModal(true)
+          else if (activeTab === 'grn') toast.info('GRN is created from Purchase Orders using "Receive" button')
+        }}>
           <Plus size={18} />
-          {activeTab === 'orders' ? 'New Order' : activeTab === 'suppliers' ? 'Add Supplier' : ''}
+          {activeTab === 'orders' ? 'New Order' : activeTab === 'suppliers' ? 'Add Supplier' : activeTab === 'grn' ? 'How to Create GRN' : ''}
         </Button>
       </div>
 
@@ -544,6 +548,38 @@ export default function Purchase() {
           </div>
           <Button fullWidth onClick={() => { toast.success('Supplier added successfully'); setShowSupplierModal(false) }}>
             Add Supplier
+          </Button>
+        </div>
+      </Modal>
+
+      {/* Purchase Order Modal */}
+      <Modal isOpen={showPOModal} onClose={() => setShowPOModal(false)} title="Create Purchase Order" size="lg">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Supplier</label>
+              <select style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                <option>Select Supplier</option>
+                {suppliers.map(s => <option key={s.id}>{s.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Expected Delivery</label>
+              <input type="date" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
+            </div>
+          </div>
+          <div>
+            <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Items</label>
+            <div style={{ background: '#f9fafb', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
+              <p style={{ color: '#9ca3af', marginBottom: '12px' }}>Add items to this purchase order</p>
+              <Button variant="secondary" onClick={() => toast.info('Add items feature coming soon')}>
+                <Plus size={18} />
+                Add Item
+              </Button>
+            </div>
+          </div>
+          <Button fullWidth onClick={() => { toast.success('Purchase order created'); setShowPOModal(false) }}>
+            Create Order
           </Button>
         </div>
       </Modal>
