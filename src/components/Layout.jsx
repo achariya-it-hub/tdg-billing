@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { 
   Monitor, ChefHat, Tablet, ShoppingCart, LayoutDashboard, 
-  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, ClipboardList, FileText, Receipt
+  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, ClipboardList, FileText, Receipt, Gem
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
@@ -15,6 +15,7 @@ const navItems = [
   { path: '/inventory', icon: Box, label: 'Inventory' },
   { path: '/menu', icon: BookOpen, label: 'Menu' },
   { path: '/hr', icon: Users, label: 'HR' },
+  { path: '/loyalty', icon: Gem, label: 'Loyalty' },
   { path: '/customers', icon: UserPlus, label: 'Customers' },
   { path: '/reports', icon: FileText, label: 'Reports' },
   { path: '/dashboard', icon: BarChart3, label: 'Dashboard' },

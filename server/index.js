@@ -91,6 +91,46 @@ let inventory = [
   { id: '3', name: 'Fries', currentStock: 30, minimumStock: 10 }
 ]
 
+// ============ LOYALTY SYSTEM ============
+// Tiers: Bronze(0) < Silver(1k) < Gold(3k) < Platinum(6k) < Diamond(15k) < Emerald(25k)
+// Ruby Crown: special status at 25k points
+const TIER_THRESHOLDS = [
+  { name: 'Bronze', minPoints: 0, color: '#cd7f32' },
+  { name: 'Silver', minPoints: 1000, color: '#c0c0c0' },
+  { name: 'Gold', minPoints: 3000, color: '#ffd700' },
+  { name: 'Platinum', minPoints: 6000, color: '#e5e4e2' },
+  { name: 'Diamond', minPoints: 15000, color: '#b9f2ff' },
+  { name: 'Emerald', minPoints: 25000, color: '#50c878' }
+]
+
+function getTier(points) {
+  let tier = TIER_THRESHOLDS[0].name
+  for (const t of TIER_THRESHOLDS) {
+    if (points >= t.minPoints) tier = t.name
+  }
+  return tier
+}
+
+let loyaltyUsers = []
+let dens = []
+let pointTransactions = []
+let usedReferralCodes = new Set()
+let registrationCount = 0
+const MAX_FREE_REGISTRATIONS = 1000
+const MAX_DEN_MEMBERS = 10
+
+function generateReferralCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  while (true) {
+    let code = ''
+    for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)]
+    if (!usedReferralCodes.has(code)) {
+      usedReferralCodes.add(code)
+      return code
+    }
+  }
+}
+
 // ============ API ROUTES ============
 
 // Menu Categories
@@ -202,6 +242,271 @@ app.post('/api/recipes/deduct', (req, res) => {
   
   res.json({ success: true })
 })
+
+// ============ LOYALTY API ROUTES ============
+
+// Get tier info
+app.get('/api/loyalty/tiers', (req, res) => {
+  res.json(TIER_THRESHOLDS)
+})
+
+// Register new user
+app.post('/api/loyalty/register', (req, res) => {
+  const { name, phone, email, referralCode } = req.body
+  
+  if (!name || !phone || !email) {
+    return res.status(400).json({ error: 'Name, phone, and email are required' })
+  }
+  
+  if (loyaltyUsers.find(u => u.phone === phone)) {
+    return res.status(400).json({ error: 'Phone number already registered' })
+  }
+  
+  // Validate referral code
+  let referrer = null
+  if (referralCode) {
+    referrer = loyaltyUsers.find(u => u.referralCode === referralCode)
+    if (!referrer) {
+      return res.status(400).json({ error: 'Invalid referral code' })
+    }
+  }
+  
+  const id = uuid()
+  const code = generateReferralCode()
+  const now = new Date().toISOString()
+  const isFreeAccount = registrationCount < MAX_FREE_REGISTRATIONS
+  
+  const user = {
+    id,
+    referralCode: code,
+    name,
+    phone,
+    email,
+    rubyPoints: 0,
+    tier: 'Bronze',
+    referredBy: referralCode || null,
+    denId: null,
+    createdAt: now
+  }
+  
+  // Add referral bonus points
+  if (referrer && isFreeAccount) {
+    // 50 points to new user (referred person)
+    addPoints(user.id, 50, 'Referral bonus - account opening')
+    // 25 points to referrer
+    addPoints(referrer.id, 25, 'Referral reward - referred ' + name)
+  }
+  
+  // Free account opening bonus (first 1000 only)
+  if (isFreeAccount) {
+    addPoints(user.id, 400, 'Account opening bonus')
+    registrationCount++
+  }
+  
+  loyaltyUsers.push(user)
+  
+  res.status(201).json({ user, isFreeAccount })
+})
+
+// Get user by phone
+app.get('/api/loyalty/user/:phone', (req, res) => {
+  const user = loyaltyUsers.find(u => u.phone === req.params.phone)
+  if (!user) return res.status(404).json({ error: 'User not found' })
+  
+  const userDen = dens.find(d => d.id === user.denId)
+  
+  res.json({
+    ...user,
+    den: userDen || null,
+    transactions: pointTransactions.filter(t => t.userId === user.id).slice(-50)
+  })
+})
+
+// Get user profile including tier progress
+app.get('/api/loyalty/profile/:phone', (req, res) => {
+  const user = loyaltyUsers.find(u => u.phone === req.params.phone)
+  if (!user) return res.status(404).json({ error: 'User not found' })
+  
+  const nextTier = TIER_THRESHOLDS.find(t => t.minPoints > user.rubyPoints) || TIER_THRESHOLDS[TIER_THRESHOLDS.length - 1]
+  const currentTier = TIER_THRESHOLDS.find(t => t.name === getTier(user.rubyPoints))
+  const prevThreshold = TIER_THRESHOLDS[TIER_THRESHOLDS.indexOf(currentTier) - 1]?.minPoints || 0
+  
+  res.json({
+    ...user,
+    tierInfo: currentTier,
+    nextTier: user.rubyPoints >= 25000 ? null : nextTier,
+    progress: {
+      current: user.rubyPoints - prevThreshold,
+      max: nextTier ? nextTier.minPoints - prevThreshold : 0
+    },
+    transactions: pointTransactions.filter(t => t.userId === user.id).slice(-50)
+  })
+})
+
+// Den - create
+app.post('/api/loyalty/den/create', (req, res) => {
+  const { phone, name } = req.body
+  if (!phone || !name) return res.status(400).json({ error: 'Phone and den name required' })
+  
+  const user = loyaltyUsers.find(u => u.phone === phone)
+  if (!user) return res.status(404).json({ error: 'User not found' })
+  if (user.denId) return res.status(400).json({ error: 'User already in a den' })
+  
+  const den = {
+    id: uuid(),
+    name,
+    leaderId: user.id,
+    leaderName: user.name,
+    leaderPhone: user.phone,
+    members: [{ id: user.id, name: user.name, phone: user.phone, joinedAt: new Date().toISOString() }],
+    memberCount: 1,
+    createdAt: new Date().toISOString(),
+    isPrideLion: false
+  }
+  
+  dens.push(den)
+  user.denId = den.id
+  
+  res.status(201).json(den)
+})
+
+// Den - join
+app.post('/api/loyalty/den/join', (req, res) => {
+  const { phone, denCode } = req.body
+  if (!phone || !denCode) return res.status(400).json({ error: 'Phone and den code required' })
+  
+  const user = loyaltyUsers.find(u => u.phone === phone)
+  if (!user) return res.status(404).json({ error: 'User not found' })
+  if (user.denId) return res.status(400).json({ error: 'Already in a den (no cross-adding allowed)' })
+  
+  const den = dens.find(d => d.id === denCode || d.name === denCode)
+  if (!den) return res.status(404).json({ error: 'Den not found' })
+  if (den.memberCount >= MAX_DEN_MEMBERS) return res.status(400).json({ error: 'Den is full (max 10 members)' })
+  
+  // Check if user is already a member
+  if (den.members.find(m => m.id === user.id)) {
+    return res.status(400).json({ error: 'Already a member of this den' })
+  }
+  
+  den.members.push({ id: user.id, name: user.name, phone: user.phone, joinedAt: new Date().toISOString() })
+  den.memberCount = den.members.length
+  user.denId = den.id
+  
+  // If den reaches 10 members, check if leader gets Pride Lion
+  if (den.memberCount >= MAX_DEN_MEMBERS) {
+    den.isPrideLion = true
+    const leader = loyaltyUsers.find(u => u.id === den.leaderId)
+    if (leader) {
+      addPoints(leader.id, 200, 'Pride Lion bonus - den completed 10 members')
+    }
+  }
+  
+  res.json(den)
+})
+
+// Den - get user's den
+app.get('/api/loyalty/den/:phone', (req, res) => {
+  const user = loyaltyUsers.find(u => u.phone === req.params.phone)
+  if (!user) return res.status(404).json({ error: 'User not found' })
+  if (!user.denId) return res.json({ den: null })
+  
+  const den = dens.find(d => d.id === user.denId)
+  res.json({ den })
+})
+
+// Points - transfer
+app.post('/api/loyalty/points/transfer', (req, res) => {
+  const { fromPhone, toPhone, amount } = req.body
+  if (!fromPhone || !toPhone || !amount) {
+    return res.status(400).json({ error: 'fromPhone, toPhone, and amount required' })
+  }
+  
+  if (amount > 200) return res.status(400).json({ error: 'Max transfer is 200 points' })
+  if (amount <= 0) return res.status(400).json({ error: 'Amount must be positive' })
+  
+  const fromUser = loyaltyUsers.find(u => u.phone === fromPhone)
+  const toUser = loyaltyUsers.find(u => u.phone === toPhone)
+  
+  if (!fromUser) return res.status(404).json({ error: 'Sender not found' })
+  if (!toUser) return res.status(404).json({ error: 'Recipient not found' })
+  if (fromUser.rubyPoints < amount) return res.status(400).json({ error: 'Insufficient points' })
+  
+  deductPoints(fromUser.id, amount, `Transfer to ${toUser.name} (${toPhone})`)
+  addPoints(toUser.id, amount, `Transfer from ${fromUser.name} (${fromPhone})`)
+  
+  updateUserTier(fromUser)
+  updateUserTier(toUser)
+  
+  res.json({ success: true, fromBalance: fromUser.rubyPoints, toBalance: toUser.rubyPoints })
+})
+
+// Points - redeem
+app.post('/api/loyalty/points/redeem', (req, res) => {
+  const { phone, amount } = req.body
+  if (!phone || !amount) return res.status(400).json({ error: 'Phone and amount required' })
+  
+  if (amount < 3000) return res.status(400).json({ error: 'Minimum redemption is 3000 points' })
+  if (amount % 100 !== 0) return res.status(400).json({ error: 'Amount must be in multiples of 100' })
+  
+  const user = loyaltyUsers.find(u => u.phone === phone)
+  if (!user) return res.status(404).json({ error: 'User not found' })
+  if (user.rubyPoints < amount) return res.status(400).json({ error: 'Insufficient points' })
+  
+  const rupeeValue = amount // 1 point = 1 rupee
+  deductPoints(user.id, amount, `Redeemed ${rupeeValue} rupees`)
+  
+  res.json({ success: true, redeemedRupees: rupeeValue, balance: user.rubyPoints })
+})
+
+// Points - history
+app.get('/api/loyalty/points/history/:phone', (req, res) => {
+  const user = loyaltyUsers.find(u => u.phone === req.params.phone)
+  if (!user) return res.status(404).json({ error: 'User not found' })
+  
+  res.json(pointTransactions.filter(t => t.userId === user.id).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
+})
+
+// Helper functions
+function addPoints(userId, amount, description) {
+  const user = loyaltyUsers.find(u => u.id === userId)
+  if (!user) return
+  
+  user.rubyPoints += amount
+  updateUserTier(user)
+  
+  pointTransactions.push({
+    id: uuid(),
+    userId,
+    amount,
+    type: 'earn',
+    description,
+    balance: user.rubyPoints,
+    createdAt: new Date().toISOString()
+  })
+}
+
+function deductPoints(userId, amount, description) {
+  const user = loyaltyUsers.find(u => u.id === userId)
+  if (!user) return
+  
+  user.rubyPoints -= amount
+  updateUserTier(user)
+  
+  pointTransactions.push({
+    id: uuid(),
+    userId,
+    amount: -amount,
+    type: 'spend',
+    description,
+    balance: user.rubyPoints,
+    createdAt: new Date().toISOString()
+  })
+}
+
+function updateUserTier(user) {
+  user.tier = getTier(user.rubyPoints)
+  user.isRubyCrown = user.rubyPoints >= 25000
+}
 
 // ============ WEBSOCKET ============
 io.on('connection', (socket) => {
