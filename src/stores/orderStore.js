@@ -136,7 +136,7 @@ export const useOrderStore = create(
           ? 'http://localhost:3001' 
           : 'https://tdg-billing-production.up.railway.app'
         
-        const res = await fetch(`${apiUrl}/api/orders`, {
+        const res = await fetch(`${apiUrl}/api/pos/orders`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

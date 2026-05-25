@@ -3,6 +3,36 @@ import cors from 'cors'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import { v4 as uuid } from 'uuid'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import { readFileSync, writeFileSync, existsSync } from 'fs'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
+const JWT_SECRET = process.env.JWT_SECRET || 'tdg_secret_key_123'
+const DB_PATH = join(__dirname, 'db.json')
+
+function readDb() {
+  try {
+    if (existsSync(DB_PATH)) {
+      return JSON.parse(readFileSync(DB_PATH, 'utf-8'))
+    }
+  } catch (e) {
+    console.error('Error reading db.json:', e.message)
+  }
+  return { users: [], orders: [], transactions: [], menu: null }
+}
+
+function writeDb(data) {
+  try {
+    writeFileSync(DB_PATH, JSON.stringify(data, null, 2))
+  } catch (e) {
+    console.error('Error writing db.json:', e.message)
+  }
+}
 
 const app = express()
 const httpServer = createServer(app)
@@ -131,9 +161,215 @@ function generateReferralCode() {
   }
 }
 
-// ============ API ROUTES ============
+// Auth middleware
+function auth(req, res, next) {
+  const header = req.headers.authorization
+  if (!header || !header.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'No token provided' })
+  }
+  try {
+    const decoded = jwt.verify(header.split(' ')[1], JWT_SECRET)
+    req.userId = decoded.userId
+    next()
+  } catch (e) {
+    return res.status(401).json({ message: 'Invalid token' })
+  }
+}
 
-// Menu Categories
+// ============ MOBILE APP API ROUTES ============
+
+// Auth - Signup
+app.post('/api/auth/signup', async (req, res) => {
+  try {
+    const { name, email, phone, password } = req.body
+    if (!name || !email || !phone || !password) {
+      return res.status(400).json({ message: 'All fields are required' })
+    }
+    const db = readDb()
+    if (db.users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+      return res.status(400).json({ message: 'User with this email already exists' })
+    }
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
+    const newUser = {
+      id: 'u_' + Date.now(),
+      name, email, phone,
+      password: hashedPassword,
+      rubyBalance: 2450,
+      denLevel: 'Gold',
+      completedDens: 4,
+      denProgress: 6,
+      scratchCards: [
+        { id: 's_' + Date.now() + '_1', title: 'Welcome Scratch Card', subtitle: 'Tap to scratch', amount: 100, claimed: false },
+        { id: 's_' + Date.now() + '_2', title: 'New Member Gift', subtitle: 'Tap to scratch', amount: 200, claimed: false }
+      ],
+      denId: null,
+      createdAt: new Date().toISOString()
+    }
+    db.users.push(newUser)
+    writeDb(db)
+    const token = jwt.sign({ userId: newUser.id }, JWT_SECRET, { expiresIn: '7d' })
+    const { password: _, ...userWithoutPassword } = newUser
+    res.status(201).json({ token, user: userWithoutPassword })
+  } catch (error) {
+    console.error("Signup error:", error)
+    res.status(500).json({ message: 'Server error during signup' })
+  }
+})
+
+// Auth - Login
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' })
+    }
+    const db = readDb()
+    const clean = email.trim().toLowerCase()
+    const user = db.users.find(u => u.email.toLowerCase() === clean || u.phone.replace(/[^0-9]/g, '') === clean.replace(/[^0-9]/g, ''))
+    if (!user) return res.status(400).json({ message: 'Invalid credentials' })
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' })
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' })
+    const { password: _, ...userWithoutPassword } = user
+    res.status(200).json({ token, user: userWithoutPassword })
+  } catch (error) {
+    console.error("Login error:", error)
+    res.status(500).json({ message: 'Server error during login' })
+  }
+})
+
+// Auth - Profile
+app.get('/api/auth/profile', auth, (req, res) => {
+  const db = readDb()
+  const user = db.users.find(u => u.id === req.userId)
+  if (!user) return res.status(404).json({ message: 'User not found' })
+  const { password: _, ...userWithoutPassword } = user
+  res.json(userWithoutPassword)
+})
+
+// Auth - Update Profile
+app.put('/api/auth/profile', auth, (req, res) => {
+  const { name, phone, email } = req.body
+  const db = readDb()
+  const idx = db.users.findIndex(u => u.id === req.userId)
+  if (idx === -1) return res.status(404).json({ message: 'User not found' })
+  if (name) db.users[idx].name = name
+  if (phone) db.users[idx].phone = phone
+  if (email) {
+    const other = db.users.find(u => u.id !== req.userId && u.email.toLowerCase() === email.toLowerCase())
+    if (other) return res.status(400).json({ message: 'Email already in use' })
+    db.users[idx].email = email
+  }
+  writeDb(db)
+  const { password: _, ...userWithoutPassword } = db.users[idx]
+  res.json(userWithoutPassword)
+})
+
+// Menu (mobile format)
+app.get('/api/menu', (req, res) => {
+  const db = readDb()
+  if (db.menu) return res.json(db.menu)
+  // Build from existing categories + menuItems
+  res.json({
+    categories: categories.map(c => c.name),
+    items: menuItems.map(item => ({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      category: categories.find(c => c.id === item.categoryId)?.name || 'Other',
+      tag: item.isAvailable ? 'Popular' : '',
+      image: null,
+      isAvailable: item.isAvailable
+    }))
+  })
+})
+
+// Wallet
+app.get('/api/wallet', auth, (req, res) => {
+  const db = readDb()
+  const user = db.users.find(u => u.id === req.userId)
+  if (!user) return res.status(404).json({ message: 'User not found' })
+  const transactions = db.transactions.filter(t => t.userId === req.userId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  res.json({ rubyBalance: user.rubyBalance, scratchCards: user.scratchCards || [], transactions })
+})
+
+// Wallet - Scratch card
+app.post('/api/wallet/scratch', auth, (req, res) => {
+  const { cardId } = req.body
+  if (!cardId) return res.status(400).json({ message: 'Card ID is required' })
+  const db = readDb()
+  const idx = db.users.findIndex(u => u.id === req.userId)
+  if (idx === -1) return res.status(404).json({ message: 'User not found' })
+  const user = db.users[idx]
+  const cardIdx = (user.scratchCards || []).findIndex(c => c.id === cardId)
+  if (cardIdx === -1) return res.status(404).json({ message: 'Scratch card not found' })
+  if (user.scratchCards[cardIdx].claimed) return res.status(400).json({ message: 'Already claimed' })
+  user.scratchCards[cardIdx].claimed = true
+  user.scratchCards[cardIdx].subtitle = 'Claimed'
+  user.rubyBalance += user.scratchCards[cardIdx].amount
+  db.transactions.push({ id: 't_' + Date.now(), userId: user.id, type: 'credit', amount: user.scratchCards[cardIdx].amount, description: 'Scratch Card: ' + user.scratchCards[cardIdx].title, createdAt: new Date().toISOString() })
+  writeDb(db)
+  const transactions = db.transactions.filter(t => t.userId === req.userId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  res.json({ message: 'Claimed!', rubyBalance: user.rubyBalance, scratchCards: user.scratchCards, transactions })
+})
+
+// Wallet - Add rubies
+app.post('/api/wallet/add', auth, (req, res) => {
+  const { amount } = req.body
+  if (!amount || amount <= 0) return res.status(400).json({ message: 'Valid amount required' })
+  const db = readDb()
+  const idx = db.users.findIndex(u => u.id === req.userId)
+  if (idx === -1) return res.status(404).json({ message: 'User not found' })
+  db.users[idx].rubyBalance += Number(amount)
+  db.transactions.push({ id: 't_' + Date.now(), userId: db.users[idx].id, type: 'credit', amount: Number(amount), description: 'Purchased Rubies', createdAt: new Date().toISOString() })
+  writeDb(db)
+  const transactions = db.transactions.filter(t => t.userId === req.userId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  res.json({ message: `Added ${amount} Rubies!`, rubyBalance: db.users[idx].rubyBalance, scratchCards: db.users[idx].scratchCards || [], transactions })
+})
+
+// Den progress
+app.get('/api/den', auth, (req, res) => {
+  const db = readDb()
+  const user = db.users.find(u => u.id === req.userId)
+  if (!user) return res.status(404).json({ message: 'User not found' })
+  res.json({
+    denLevel: user.denLevel || 'Gold',
+    completedDens: user.completedDens !== undefined ? user.completedDens : 4,
+    denProgress: user.denProgress !== undefined ? user.denProgress : 6
+  })
+})
+
+// Mobile orders - get user's orders
+app.get('/api/orders', auth, (req, res) => {
+  const db = readDb()
+  const userOrders = db.orders.filter(o => o.userId === req.userId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  res.json(userOrders)
+})
+
+// Mobile orders - create order
+app.post('/api/orders', auth, (req, res) => {
+  const { items, subtotal, tax, deliveryFee, total, paymentMethod, deliveryAddress } = req.body
+  if (!items || !items.length || subtotal === undefined || total === undefined || !paymentMethod || !deliveryAddress) {
+    return res.status(400).json({ message: 'Order data incomplete' })
+  }
+  const db = readDb()
+  const idx = db.users.findIndex(u => u.id === req.userId)
+  if (idx === -1) return res.status(404).json({ message: 'User not found' })
+  const user = db.users[idx]
+  if (paymentMethod === 'wallet') {
+    if (user.rubyBalance < total) return res.status(400).json({ message: 'Insufficient Rubies' })
+    user.rubyBalance -= total
+    db.transactions.push({ id: 't_' + Date.now(), userId: user.id, type: 'debit', amount: total, description: 'Order Payment', createdAt: new Date().toISOString() })
+  }
+  const nextNum = 10000 + db.orders.length + 1
+  const order = { id: 'ORD' + nextNum, userId: user.id, items, subtotal, tax, deliveryFee, total, status: 'Placed', paymentMethod, deliveryAddress, createdAt: new Date().toISOString() }
+  db.orders.push(order)
+  writeDb(db)
+  res.status(201).json({ message: 'Order placed!', order, rubyBalance: user.rubyBalance })
+})
+
+// ============ MENU API ROUTES ============
 app.get('/api/menu/categories', (req, res) => {
   res.json(categories.sort((a, b) => a.displayOrder - b.displayOrder))
 })
@@ -148,16 +384,16 @@ app.get('/api/menu/items', (req, res) => {
   res.json(items)
 })
 
-// Orders
-app.get('/api/orders', (req, res) => {
+// POS Orders (no auth)
+app.get('/api/pos/orders', (req, res) => {
   const { status, source } = req.query
-  let filtered = [...orders]
-  if (status) filtered = filtered.filter(o => o.status === status)
-  if (source) filtered = filtered.filter(o => o.source === source)
-  res.json(filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
+  let inMemory = [...orders]
+  if (status) inMemory = inMemory.filter(o => o.status === status)
+  if (source) inMemory = inMemory.filter(o => o.source === source)
+  res.json(inMemory.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
 })
 
-app.post('/api/orders', (req, res) => {
+app.post('/api/pos/orders', (req, res) => {
   const { type, source, items, subtotal, tax, total, tableNumber, customerName, notes, paymentMethod } = req.body
   
   const id = uuid()
@@ -200,7 +436,7 @@ app.post('/api/orders', (req, res) => {
   res.status(201).json(order)
 })
 
-app.patch('/api/orders/:id/status', (req, res) => {
+app.patch('/api/pos/orders/:id/status', (req, res) => {
   const { id } = req.params
   const { status } = req.body
   
