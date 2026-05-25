@@ -744,6 +744,15 @@ function updateUserTier(user) {
   user.isRubyCrown = user.rubyPoints >= 25000
 }
 
+// Root + Health
+app.get('/', (req, res) => {
+  res.json({ status: 'UP', message: 'TDG Billing API', endpoints: ['/api/*', '/api/auth/*', '/api/menu', '/api/wallet', '/api/den', '/api/orders', '/api/pos/orders', '/api/menu/*', '/api/inventory', '/api/loyalty/*'] })
+})
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'UP', message: 'TDG Backend is running smoothly.' })
+})
+
 // ============ WEBSOCKET ============
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id)
