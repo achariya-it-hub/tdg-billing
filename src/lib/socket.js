@@ -2,9 +2,16 @@ import { io } from 'socket.io-client'
 
 let socketInstance = null
 
+function getSocketUrl() {
+  if (window.location.hostname === 'localhost') {
+    return 'http://localhost:3001'
+  }
+  return window.location.origin
+}
+
 function createSocket() {
   if (!socketInstance) {
-    socketInstance = io('http://localhost:3001', {
+    socketInstance = io(getSocketUrl(), {
       autoConnect: false,
       reconnection: true,
       reconnectionAttempts: 5,
@@ -20,15 +27,15 @@ export function getSocket() {
 
 export function connectToKitchen() {
   createSocket().connect()
-  createSocket().emit('join:kitchen')
+  createSocket().emit('join-kitchen')
 }
 
 export function connectToPOS() {
   createSocket().connect()
-  createSocket().emit('join:pos')
+  createSocket().emit('join-pos')
 }
 
 export function connectToOnline() {
   createSocket().connect()
-  createSocket().emit('join:online')
+  createSocket().emit('join-online')
 }

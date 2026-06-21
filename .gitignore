@@ -7,3 +7,5 @@ dist/
 .vercel/
 android/
 capacitor/
+server/db.json
+server/billing.db

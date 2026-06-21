@@ -5,7 +5,7 @@ import { Server } from 'socket.io'
 import { v4 as uuid } from 'uuid'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { readFileSync, writeFileSync, existsSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync, statSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 
@@ -32,6 +32,39 @@ function writeDb(data) {
   } catch (e) {
     console.error('Error writing db.json:', e.message)
   }
+}
+
+// Persist ALL in-memory state to db.json (single source of truth)
+// Daily expense tracking
+let expenses = []
+let purchases = []
+
+function saveState() {
+  const db = readDb()
+  db.orders = orders
+  db.loyaltyUsers = loyaltyUsers
+  db.dens = dens
+  db.pointTransactions = pointTransactions
+  db.inventory = inventory
+  db.orderNumber = orderNumber
+  db.usedReferralCodes = [...usedReferralCodes]
+  db.expenses = expenses
+  db.purchases = purchases
+  writeDb(db)
+}
+
+// Restore in-memory state from db.json on startup
+function restoreState() {
+  const db = readDb()
+  if (db.orders?.length) orders = db.orders
+  if (db.loyaltyUsers?.length) loyaltyUsers = db.loyaltyUsers
+  if (db.dens?.length) dens = db.dens
+  if (db.pointTransactions?.length) pointTransactions = db.pointTransactions
+  if (db.inventory?.length) inventory = db.inventory
+  if (db.orderNumber) orderNumber = db.orderNumber
+  if (db.usedReferralCodes?.length) usedReferralCodes = new Set(db.usedReferralCodes)
+  if (db.expenses?.length) expenses = db.expenses
+  if (db.purchases?.length) purchases = db.purchases
 }
 
 const app = express()
@@ -191,10 +224,13 @@ app.post('/api/auth/signup', async (req, res) => {
     }
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
+    const userId = 'u_' + Date.now()
+    const now = new Date().toISOString()
     const newUser = {
-      id: 'u_' + Date.now(),
+      id: userId,
       name, email, phone,
       password: hashedPassword,
+      role: 'user',
       rubyBalance: 2450,
       denLevel: 'Gold',
       completedDens: 4,
@@ -204,10 +240,28 @@ app.post('/api/auth/signup', async (req, res) => {
         { id: 's_' + Date.now() + '_2', title: 'New Member Gift', subtitle: 'Tap to scratch', amount: 200, claimed: false }
       ],
       denId: null,
-      createdAt: new Date().toISOString()
+      createdAt: now
     }
     db.users.push(newUser)
     writeDb(db)
+
+    // SYNC: Also add to loyalty system
+    if (!loyaltyUsers.find(u => u.phone === phone)) {
+      const loyaltyUser = {
+        id: userId,
+        referralCode: generateReferralCode(),
+        name, phone, email,
+        role: 'user',
+        rubyPoints: 0,
+        tier: 'Bronze',
+        referredBy: null,
+        denId: null,
+        createdAt: now
+      }
+      loyaltyUsers.push(loyaltyUser)
+      saveState()
+    }
+
     const token = jwt.sign({ userId: newUser.id }, JWT_SECRET, { expiresIn: '7d' })
     const { password: _, ...userWithoutPassword } = newUser
     res.status(201).json({ token, user: userWithoutPassword })
@@ -340,14 +394,30 @@ app.get('/api/den', auth, (req, res) => {
   })
 })
 
-// Mobile orders - get user's orders
+// Mobile orders - get user's orders (merged with billing orders)
 app.get('/api/orders', auth, (req, res) => {
   const db = readDb()
+  const user = db.users.find(u => u.id === req.userId)
+  if (!user) return res.status(404).json({ message: 'User not found' })
+  
+  // Admin sees ALL orders
+  if (user.role === 'admin') {
+    const allOrders = [
+      ...db.orders,
+      ...orders.map(o => ({ ...o, _source: 'billing' }))
+    ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    return res.json(allOrders)
+  }
+  
   const userOrders = db.orders.filter(o => o.userId === req.userId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-  res.json(userOrders)
+  // Include billing system orders linked by phone
+  const billingOrders = orders.filter(o => o.customerPhone === user.phone).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  // Merge into a single list for backward compat with Flutter app
+  const allOrders = [...userOrders, ...billingOrders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  res.json(allOrders)
 })
 
-// Mobile orders - create order
+// Mobile orders - create order (synced to billing system)
 app.post('/api/orders', auth, (req, res) => {
   const { items, subtotal, tax, deliveryFee, total, paymentMethod, deliveryAddress } = req.body
   if (!items || !items.length || subtotal === undefined || total === undefined || !paymentMethod || !deliveryAddress) {
@@ -363,10 +433,53 @@ app.post('/api/orders', auth, (req, res) => {
     db.transactions.push({ id: 't_' + Date.now(), userId: user.id, type: 'debit', amount: total, description: 'Order Payment', createdAt: new Date().toISOString() })
   }
   const nextNum = 10000 + db.orders.length + 1
-  const order = { id: 'ORD' + nextNum, userId: user.id, items, subtotal, tax, deliveryFee, total, status: 'Placed', paymentMethod, deliveryAddress, createdAt: new Date().toISOString() }
+  const now = new Date().toISOString()
+  const order = { id: 'ORD' + nextNum, userId: user.id, items, subtotal, tax, deliveryFee, total, status: 'Placed', paymentMethod, deliveryAddress, createdAt: now }
   db.orders.push(order)
   writeDb(db)
-  res.status(201).json({ message: 'Order placed!', order, rubyBalance: user.rubyBalance })
+
+  // SYNC: Push into billing in-memory orders so Kitchen/POS can see it
+  const billingOrderId = uuid()
+  const billingOrderNum = ++orderNumber
+  const billingOrder = {
+    id: billingOrderId,
+    orderNumber: billingOrderNum,
+    type: 'delivery',
+    status: 'pending',
+    source: 'mobile',
+    subtotal: subtotal || 0,
+    tax: tax || 0,
+    total: total || 0,
+    paymentMethod: paymentMethod || 'cash',
+    paymentStatus: paymentMethod === 'wallet' ? 'paid' : 'pending',
+    tableNumber: '',
+    customerName: user.name,
+    customerPhone: user.phone,
+    userId: user.id,
+    notes: deliveryAddress || '',
+    createdAt: now,
+    updatedAt: now,
+    items: items.map(item => ({
+      id: uuid(),
+      menuItemId: item.menuItemId,
+      menuItemName: item.name,
+      quantity: item.quantity,
+      unitPrice: item.price,
+      totalPrice: (item.price || 0) * (item.quantity || 1),
+      status: 'pending'
+    }))
+  }
+  orders.unshift(billingOrder)
+  io.emit('order:created', billingOrder)
+  io.to('kitchen').emit('kot:created', {
+    id: billingOrderId,
+    orderNumber: `K${billingOrderNum}`,
+    items: billingOrder.items,
+    createdAt: now
+  })
+  saveState()
+
+  res.status(201).json({ message: 'Order placed!', order, billingOrderId, rubyBalance: user.rubyBalance })
 })
 
 // ============ MENU API ROUTES ============
@@ -394,7 +507,7 @@ app.get('/api/pos/orders', (req, res) => {
 })
 
 app.post('/api/pos/orders', (req, res) => {
-  const { type, source, items, subtotal, tax, total, tableNumber, customerName, notes, paymentMethod } = req.body
+  const { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod } = req.body
   
   const id = uuid()
   const orderNum = ++orderNumber
@@ -413,6 +526,7 @@ app.post('/api/pos/orders', (req, res) => {
     paymentStatus: 'pending',
     tableNumber: tableNumber || '',
     customerName: customerName || '',
+    customerPhone: customerPhone || '',
     notes: notes || '',
     createdAt: now,
     updatedAt: now,
@@ -428,6 +542,7 @@ app.post('/api/pos/orders', (req, res) => {
   }
   
   orders.unshift(order)
+  saveState()
   
   // Emit to connected clients
   io.emit('order:created', order)
@@ -438,13 +553,44 @@ app.post('/api/pos/orders', (req, res) => {
 
 app.patch('/api/pos/orders/:id/status', (req, res) => {
   const { id } = req.params
-  const { status } = req.body
+  const { status, paymentStatus } = req.body
   
   const order = orders.find(o => o.id === id)
   if (order) {
-    order.status = status
+    order.status = status || order.status
+    order.paymentStatus = paymentStatus || order.paymentStatus
+    order.paymentMethod = req.body.paymentMethod || order.paymentMethod
     order.updatedAt = new Date().toISOString()
     io.emit('order:updated', order)
+    saveState()
+
+    // SYNC: When order completed, add Ruby points to linked mobile user
+    if ((status === 'completed' || status === 'served') && order.customerPhone) {
+      const db = readDb()
+      const pointsEarned = Math.floor(order.total || 0)
+      if (pointsEarned > 0) {
+        // Update db.json user
+        const mobileUser = db.users.find(u => u.phone === order.customerPhone)
+        if (mobileUser) {
+          mobileUser.rubyBalance = (mobileUser.rubyBalance || 0) + pointsEarned
+          db.transactions.push({
+            id: 't_' + Date.now(),
+            userId: mobileUser.id,
+            type: 'credit',
+            amount: pointsEarned,
+            description: 'Order #' + order.orderNumber + ' completed',
+            createdAt: new Date().toISOString()
+          })
+          writeDb(db)
+        }
+        // Update loyalty system user
+        const loyaltyUser = loyaltyUsers.find(u => u.phone === order.customerPhone)
+        if (loyaltyUser) {
+          addPoints(loyaltyUser.id, pointsEarned, 'Order #' + order.orderNumber + ' completed')
+        }
+        saveState()
+      }
+    }
   }
   
   res.json({ success: true })
@@ -518,6 +664,7 @@ app.post('/api/loyalty/register', (req, res) => {
     name,
     phone,
     email,
+    role: 'user',
     rubyPoints: 0,
     tier: 'Bronze',
     referredBy: referralCode || null,
@@ -540,6 +687,24 @@ app.post('/api/loyalty/register', (req, res) => {
   }
   
   loyaltyUsers.push(user)
+  saveState()
+
+  // SYNC: Also create mobile user in db.json
+  const db = readDb()
+  if (!db.users.find(u => u.phone === phone)) {
+    db.users.push({
+      id: 'u_' + Date.now(),
+      name, email, phone,
+      rubyBalance: user.rubyPoints,
+      scratchCards: [
+        { id: 's_' + Date.now() + '_1', title: 'Welcome Scratch Card', subtitle: 'Tap to scratch', amount: 100, claimed: false },
+        { id: 's_' + Date.now() + '_2', title: 'New Member Gift', subtitle: 'Tap to scratch', amount: 200, claimed: false }
+      ],
+      denId: null,
+      createdAt: now
+    })
+    writeDb(db)
+  }
   
   res.status(201).json({ user, isFreeAccount })
 })
@@ -602,6 +767,7 @@ app.post('/api/loyalty/den/create', (req, res) => {
   
   dens.push(den)
   user.denId = den.id
+  saveState()
   
   res.status(201).json(den)
 })
@@ -637,6 +803,7 @@ app.post('/api/loyalty/den/join', (req, res) => {
     }
   }
   
+  saveState()
   res.json(den)
 })
 
@@ -672,6 +839,7 @@ app.post('/api/loyalty/points/transfer', (req, res) => {
   
   updateUserTier(fromUser)
   updateUserTier(toUser)
+  saveState()
   
   res.json({ success: true, fromBalance: fromUser.rubyPoints, toBalance: toUser.rubyPoints })
 })
@@ -690,6 +858,7 @@ app.post('/api/loyalty/points/redeem', (req, res) => {
   
   const rupeeValue = amount // 1 point = 1 rupee
   deductPoints(user.id, amount, `Redeemed ${rupeeValue} rupees`)
+  saveState()
   
   res.json({ success: true, redeemedRupees: rupeeValue, balance: user.rubyPoints })
 })
@@ -703,6 +872,17 @@ app.get('/api/loyalty/points/history/:phone', (req, res) => {
 })
 
 // Helper functions
+function syncLoyaltyToDbJson(userId) {
+  const loyaltyUser = loyaltyUsers.find(u => u.id === userId)
+  if (!loyaltyUser) return
+  const db = readDb()
+  const mobileUser = db.users.find(u => u.phone === loyaltyUser.phone)
+  if (mobileUser) {
+    mobileUser.rubyBalance = loyaltyUser.rubyPoints
+    writeDb(db)
+  }
+}
+
 function addPoints(userId, amount, description) {
   const user = loyaltyUsers.find(u => u.id === userId)
   if (!user) return
@@ -719,6 +899,8 @@ function addPoints(userId, amount, description) {
     balance: user.rubyPoints,
     createdAt: new Date().toISOString()
   })
+  syncLoyaltyToDbJson(userId)
+  saveState()
 }
 
 function deductPoints(userId, amount, description) {
@@ -737,6 +919,8 @@ function deductPoints(userId, amount, description) {
     balance: user.rubyPoints,
     createdAt: new Date().toISOString()
   })
+  syncLoyaltyToDbJson(userId)
+  saveState()
 }
 
 function updateUserTier(user) {
@@ -744,9 +928,125 @@ function updateUserTier(user) {
   user.isRubyCrown = user.rubyPoints >= 25000
 }
 
+// ============ EXPENSES ============
+app.get('/api/expenses', (req, res) => {
+  const { date } = req.query
+  let result = [...expenses].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  if (date) result = result.filter(e => e.createdAt.startsWith(date))
+  res.json(result)
+})
+
+app.post('/api/expenses', (req, res) => {
+  const { category, amount, description } = req.body
+  if (!category || !amount) return res.status(400).json({ error: 'Category and amount required' })
+  const expense = {
+    id: uuid(),
+    category,
+    amount: Number(amount),
+    description: description || '',
+    createdAt: new Date().toISOString()
+  }
+  expenses.unshift(expense)
+  saveState()
+  res.status(201).json(expense)
+})
+
+// ============ PURCHASES (supplier orders) ============
+app.get('/api/purchases', (req, res) => {
+  const { date } = req.query
+  let result = [...purchases].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  if (date) result = result.filter(p => p.createdAt.startsWith(date))
+  res.json(result)
+})
+
+app.post('/api/purchases', (req, res) => {
+  const { supplier, items, total } = req.body
+  if (!supplier || !items || !items.length || total === undefined) {
+    return res.status(400).json({ error: 'Supplier, items, and total required' })
+  }
+  const purchase = {
+    id: uuid(),
+    supplier,
+    items,
+    total: Number(total),
+    createdAt: new Date().toISOString()
+  }
+  purchases.unshift(purchase)
+  saveState()
+  res.status(201).json(purchase)
+})
+
+// ============ DAILY CLOSING REPORT ============
+app.get('/api/reports/daily-closing', (req, res) => {
+  const date = req.query.date || new Date().toISOString().split('T')[0]
+
+  // Filter orders for the given date
+  const dayOrders = orders.filter(o => o.createdAt && o.createdAt.startsWith(date))
+  const completedOrders = dayOrders.filter(o => o.status === 'completed' || o.status === 'served' || o.status === 'delivered')
+  const cancelledOrders = dayOrders.filter(o => o.status === 'cancelled')
+
+  // Total invoices (completed/served/delivered)
+  const totalInvoices = completedOrders.length
+
+  // Total sale value
+  const totalSales = completedOrders.reduce((sum, o) => sum + (o.total || 0), 0)
+
+  // By payment method
+  const byPaymentMethod = {}
+  completedOrders.forEach(o => {
+    const method = o.paymentMethod || 'cash'
+    byPaymentMethod[method] = (byPaymentMethod[method] || 0) + (o.total || 0)
+  })
+
+  // By source (POS, mobile, kiosk, etc.)
+  const bySource = {}
+  completedOrders.forEach(o => {
+    const src = o.source || 'pos'
+    bySource[src] = (bySource[src] || 0)
+    bySource[src]++
+  })
+
+  // Average basket value
+  const avgBasketValue = totalInvoices > 0 ? Math.round(totalSales / totalInvoices) : 0
+
+  // Expenses for the day
+  const dayExpenses = expenses.filter(e => e.createdAt.startsWith(date))
+  const totalExpenses = dayExpenses.reduce((sum, e) => sum + (e.amount || 0), 0)
+
+  // Purchases for the day
+  const dayPurchases = purchases.filter(p => p.createdAt.startsWith(date))
+  const totalPurchases = dayPurchases.reduce((sum, p) => sum + (p.total || 0), 0)
+
+  // Gross profit = totalSales - totalPurchases - totalExpenses
+  const grossProfit = totalSales - totalPurchases - totalExpenses
+
+  // Status breakdown
+  const statusBreakdown = {}
+  dayOrders.forEach(o => {
+    const s = o.status || 'unknown'
+    statusBreakdown[s] = (statusBreakdown[s] || 0) + 1
+  })
+
+  res.json({
+    date,
+    totalInvoices,
+    totalSales: Math.round(totalSales),
+    totalPurchases: Math.round(totalPurchases),
+    totalExpenses: Math.round(totalExpenses),
+    grossProfit: Math.round(grossProfit),
+    avgBasketValue,
+    byPaymentMethod,
+    bySource,
+    statusBreakdown,
+    cancelledCount: cancelledOrders.length,
+    expenses: dayExpenses,
+    purchases: dayPurchases
+  })
+})
+
 // Root + Health
 app.get('/', (req, res) => {
-  res.json({ status: 'UP', message: 'TDG Billing API', endpoints: ['/api/*', '/api/auth/*', '/api/menu', '/api/wallet', '/api/den', '/api/orders', '/api/pos/orders', '/api/menu/*', '/api/inventory', '/api/loyalty/*'] })
+  res.json({ status: 'UP', message: 'TDG Billing API', endpoints: ['/api/*', '/api/auth/*', '/api/menu', '/api/wallet', '/api/den', '/api/orders', '/api/pos/orders', '/api/menu/*', '/api/inventory', '/api/loyalty/*', '/api/expenses', '/api/purchases', '/api/reports/daily-closing'] })
 })
 
 app.get('/health', (req, res) => {
@@ -770,10 +1070,72 @@ io.on('connection', (socket) => {
   })
 })
 
+// Restore persisted state on startup
+restoreState()
+
+// Seed admin user for mobile app
+async function seedAdmin() {
+  const db = readDb()
+  if (!db.users.find(u => u.email === 'admin@tdg.com')) {
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash('admin123', salt)
+    const adminUser = {
+      id: 'u_admin',
+      name: 'Admin',
+      email: 'admin@tdg.com',
+      phone: '0000000000',
+      password: hashedPassword,
+      role: 'admin',
+      rubyBalance: 99999,
+      denLevel: 'Emerald',
+      completedDens: 10,
+      denProgress: 10,
+      scratchCards: [],
+      denId: null,
+      createdAt: new Date().toISOString()
+    }
+    db.users.push(adminUser)
+    writeDb(db)
+    console.log('Admin user seeded: admin@tdg.com / admin123')
+  }
+  if (!loyaltyUsers.find(u => u.phone === '0000000000')) {
+    loyaltyUsers.push({
+      id: 'u_admin',
+      referralCode: 'ADMIN01',
+      name: 'Admin',
+      phone: '0000000000',
+      email: 'admin@tdg.com',
+      role: 'admin',
+      rubyPoints: 99999,
+      tier: 'Emerald',
+      referredBy: null,
+      denId: null,
+      createdAt: new Date().toISOString()
+    })
+    saveState()
+  }
+}
+seedAdmin()
+
+// Serve built frontend in production
+const distPath = join(__dirname, '..', 'dist')
+try {
+  statSync(distPath)
+  app.use(express.static(distPath))
+  // SPA fallback — serve index.html for any non-API path
+  app.get(/^\/(?!api\/).*/, (req, res) => {
+    res.sendFile(join(distPath, 'index.html'))
+  })
+  console.log('Serving frontend from:', distPath)
+} catch {
+  console.log('No dist folder — frontend not served by server')
+}
+
 // Start server
 const PORT = process.env.PORT || 3001
 httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
+  console.log(`Restored: ${orders.length} orders, ${loyaltyUsers.length} loyalty users, ${dens.length} dens, ${inventory.length} inventory items`)
 })
 
 export default app

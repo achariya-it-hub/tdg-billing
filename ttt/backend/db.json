@@ -1,0 +1,372 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "name": "ROHIT",
+      "email": "rohit@example.com",
+      "phone": "+91 9876543210",
+      "password": "$2a$10$7Z8.y.7k7XwU2Z71Q2u6ZeG5W2rV/T7t1b/F1l6Z2H8j7K7V8e2bC",
+      "rubyBalance": 2450,
+      "denLevel": "Gold",
+      "completedDens": 4,
+      "denProgress": 6,
+      "scratchCards": [
+        {
+          "id": "s1",
+          "title": "Weekend Special",
+          "subtitle": "Tap to scratch",
+          "amount": 150,
+          "claimed": false
+        },
+        {
+          "id": "s2",
+          "title": "Mega Reward",
+          "subtitle": "Tap to scratch",
+          "amount": 500,
+          "claimed": false
+        },
+        {
+          "id": "s3",
+          "title": "Daily Bonus",
+          "subtitle": "Claimed",
+          "amount": 50,
+          "claimed": true
+        }
+      ]
+    },
+    {
+      "id": "u_1779433881905",
+      "name": "Bala",
+      "email": "ithead@achariya.org",
+      "phone": "7904761795",
+      "password": "$2a$10$aZ.8cdMtBXOYqJoR6dRpY.SVQ48eIOEMskPKW1zSSIFlk/fFULaQi",
+      "rubyBalance": 2950,
+      "denLevel": "Gold",
+      "completedDens": 4,
+      "denProgress": 6,
+      "scratchCards": [
+        {
+          "id": "s_1779433881907_1",
+          "title": "Welcome Scratch Card",
+          "subtitle": "Tap to scratch",
+          "amount": 100,
+          "claimed": false
+        },
+        {
+          "id": "s_1779433881907_2",
+          "title": "New Member Gift",
+          "subtitle": "Tap to scratch",
+          "amount": 200,
+          "claimed": false
+        }
+      ]
+    }
+  ],
+  "transactions": [
+    {
+      "id": "t1",
+      "userId": "u1",
+      "type": "credit",
+      "amount": 150,
+      "description": "Referral Bonus",
+      "createdAt": "2026-05-18T19:11:06.983Z"
+    },
+    {
+      "id": "t2",
+      "userId": "u1",
+      "type": "debit",
+      "amount": 199,
+      "description": "Order #10023 Payment",
+      "createdAt": "2026-05-19T19:11:06.983Z"
+    },
+    {
+      "id": "t3",
+      "userId": "u1",
+      "type": "credit",
+      "amount": 500,
+      "description": "Den Reward",
+      "createdAt": "2026-05-20T07:11:06.983Z"
+    },
+    {
+      "id": "t_1779433894626",
+      "userId": "u_1779433881905",
+      "type": "credit",
+      "amount": 500,
+      "description": "Purchased Rubies",
+      "createdAt": "2026-05-22T07:11:34.626Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "ORD10023",
+      "userId": "u1",
+      "items": [
+        {
+          "name": "The Classic Gyro",
+          "price": 199,
+          "quantity": 1
+        }
+      ],
+      "subtotal": 199,
+      "tax": 18,
+      "deliveryFee": 30,
+      "total": 247,
+      "status": "Delivered",
+      "paymentMethod": "Cash on Delivery",
+      "deliveryAddress": "123, Luxury Suites, Sector 5, HSR Layout, Bengaluru",
+      "createdAt": "2026-05-19T19:11:06.983Z"
+    },
+    {
+      "id": "ORD10002",
+      "userId": "walkin",
+      "customerName": "Walk-in Customer",
+      "customerPhone": "",
+      "items": [
+        {
+          "name": "The Classic Gyro",
+          "price": 199,
+          "quantity": 1
+        },
+        {
+          "name": "Spicy Chicken Gyro",
+          "price": 219,
+          "quantity": 1
+        },
+        {
+          "name": "BBQ Chicken Gyro",
+          "price": 219,
+          "quantity": 3
+        },
+        {
+          "name": "Lamb Gyro",
+          "price": 249,
+          "quantity": 2
+        }
+      ],
+      "subtotal": 1573,
+      "tax": 79,
+      "deliveryFee": 0,
+      "total": 1652,
+      "status": "Completed",
+      "paymentMethod": "Cash",
+      "deliveryAddress": "",
+      "orderType": "Dine-in",
+      "tableNumber": "w1",
+      "createdAt": "2026-05-25T09:33:30.079Z"
+    }
+  ],
+  "menu": {
+    "categories": [
+      "Gyros",
+      "Fries",
+      "Combos",
+      "Drinks"
+    ],
+    "items": [
+      {
+        "id": "m1",
+        "category": "Gyros",
+        "name": "The Classic Gyro",
+        "desc": "Juicy grilled chicken, fresh veggies & our special sauce.",
+        "price": 199,
+        "tag": "Bestseller",
+        "image": "assets/images/gyro.png"
+      },
+      {
+        "id": "m2",
+        "category": "Gyros",
+        "name": "Spicy Chicken Gyro",
+        "desc": "Spicy chicken, jalapeños, lettuce & spicy sauce.",
+        "price": 219,
+        "tag": "Spicy",
+        "image": "assets/images/gyro.png"
+      },
+      {
+        "id": "m3",
+        "category": "Gyros",
+        "name": "BBQ Chicken Gyro",
+        "desc": "BBQ chicken, onions, cheese & BBQ sauce.",
+        "price": 219,
+        "tag": "",
+        "image": "assets/images/gyro.png"
+      },
+      {
+        "id": "m4",
+        "category": "Gyros",
+        "name": "Veggie Gyro",
+        "desc": "Falafel, hummus, veggies & tahini sauce.",
+        "price": 179,
+        "tag": "Healthy",
+        "image": "assets/images/gyro.png"
+      },
+      {
+        "id": "m5",
+        "category": "Gyros",
+        "name": "Lamb Gyro",
+        "desc": "Tender lamb, onions, lettuce & garlic sauce.",
+        "price": 249,
+        "tag": "Premium",
+        "image": "assets/images/gyro.png"
+      },
+      {
+        "id": "m6",
+        "category": "Fries",
+        "name": "Classic Fries",
+        "desc": "Crispy golden fries with seasoning.",
+        "price": 99,
+        "tag": "",
+        "image": "assets/images/fries.png"
+      },
+      {
+        "id": "m7",
+        "category": "Fries",
+        "name": "Loaded Fries",
+        "desc": "Fries topped with cheese, jalapeños & sauce.",
+        "price": 149,
+        "tag": "Spicy",
+        "image": "assets/images/fries.png"
+      },
+      {
+        "id": "m8",
+        "category": "Fries",
+        "name": "Masala Fries",
+        "desc": "Spiced fries with Indian masala blend.",
+        "price": 119,
+        "tag": "",
+        "image": "assets/images/fries.png"
+      },
+      {
+        "id": "m9",
+        "category": "Combos",
+        "name": "Gyro + Fries Combo",
+        "desc": "Any gyro + classic fries + drink.",
+        "price": 299,
+        "tag": "Value pack",
+        "image": "assets/images/gyro.png"
+      },
+      {
+        "id": "m10",
+        "category": "Combos",
+        "name": "Double Gyro Combo",
+        "desc": "Two gyros + fries.",
+        "price": 399,
+        "tag": "Feast",
+        "image": "assets/images/gyro.png"
+      },
+      {
+        "id": "m11",
+        "category": "Drinks",
+        "name": "Coke Can",
+        "desc": "Chilled Coca-Cola 330ml.",
+        "price": 60,
+        "tag": "",
+        "image": "assets/images/drink.png"
+      },
+      {
+        "id": "m12",
+        "category": "Drinks",
+        "name": "Fresh Lime Soda",
+        "desc": "Sweet or salted fresh lime soda.",
+        "price": 69,
+        "tag": "Refreshing",
+        "image": "assets/images/drink.png"
+      },
+      {
+        "id": "m13",
+        "category": "Drinks",
+        "name": "Water Bottle",
+        "desc": "500ml mineral water.",
+        "price": 30,
+        "tag": "",
+        "image": "assets/images/drink.png"
+      }
+    ]
+  },
+  "inventory": [
+    {
+      "id": "i1",
+      "name": "Gyro Meat (kg)",
+      "stock": 25.5,
+      "unit": "kg",
+      "lowStockThreshold": 5
+    },
+    {
+      "id": "i2",
+      "name": "Falafel Patty (pcs)",
+      "stock": 80,
+      "unit": "pcs",
+      "lowStockThreshold": 20
+    },
+    {
+      "id": "i3",
+      "name": "Potatoes (kg)",
+      "stock": 45,
+      "unit": "kg",
+      "lowStockThreshold": 10
+    },
+    {
+      "id": "i4",
+      "name": "Cheese Sauce (liters)",
+      "stock": 8.5,
+      "unit": "liters",
+      "lowStockThreshold": 2
+    },
+    {
+      "id": "i5",
+      "name": "Gyro Bread (pcs)",
+      "stock": 120,
+      "unit": "pcs",
+      "lowStockThreshold": 30
+    },
+    {
+      "id": "i6",
+      "name": "Coke Can (330ml)",
+      "stock": 48,
+      "unit": "pcs",
+      "lowStockThreshold": 12
+    },
+    {
+      "id": "i7",
+      "name": "Water Bottle (500ml)",
+      "stock": 60,
+      "unit": "pcs",
+      "lowStockThreshold": 15
+    }
+  ],
+  "purchases": [
+    {
+      "id": "p1",
+      "supplier": "Fresh Farms Ltd",
+      "date": "2026-05-22T09:28:15.000Z",
+      "items": [
+        {
+          "name": "Potatoes (kg)",
+          "quantity": 20,
+          "unit": "kg",
+          "price": 30
+        }
+      ],
+      "total": 600
+    },
+    {
+      "id": "p2",
+      "supplier": "Global Foods",
+      "date": "2026-05-24T09:28:15.000Z",
+      "items": [
+        {
+          "name": "Gyro Bread (pcs)",
+          "quantity": 100,
+          "unit": "pcs",
+          "price": 15
+        },
+        {
+          "name": "Coke Can (330ml)",
+          "quantity": 24,
+          "unit": "pcs",
+          "price": 35
+        }
+      ],
+      "total": 2340
+    }
+  ]
+}

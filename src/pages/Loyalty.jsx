@@ -4,7 +4,7 @@ import { Smartphone, Gift, Users, Gem, ArrowUpDown, Wallet, Award, ChevronRight,
 const getApiUrl = () => {
   return window.location.hostname === 'localhost'
     ? 'http://localhost:3001'
-    : 'https://tdg-billing-production.up.railway.app'
+    : window.location.origin
 }
 
 const TIER_COLORS = {

@@ -58,11 +58,28 @@ export default function Kitchen() {
     }
   }
 
+  const getApiUrl = () => {
+    return window.location.hostname === 'localhost'
+      ? 'http://localhost:3001'
+      : window.location.origin
+  }
+
   const updateOrderStatus = async (orderId, status) => {
+    // Optimistic UI update
     if (status === 'ready' || status === 'completed') {
       setOrders(prev => prev.filter(o => o.id !== orderId))
     } else {
       setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o))
+    }
+    // Sync with backend
+    try {
+      await fetch(`${getApiUrl()}/api/pos/orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      })
+    } catch (err) {
+      console.error('Failed to sync order status:', err)
     }
   }
 

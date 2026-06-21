@@ -28,7 +28,7 @@ export default function POS() {
   const { categories, menuItems, fetchCategories, fetchMenuItems } = useMenuStore()
   const {
     currentOrder, addItem, updateItemQuantity, removeItem,
-    setOrderType, setTableNumber, setCustomerName, clearOrder,
+    setOrderType, setTableNumber, setCustomerName, setCustomerPhone, clearOrder,
     holdOrder, recallOrder, heldOrders, getSubtotal, getTax, getTotal, placeOrder
   } = useOrderStore()
 
@@ -256,11 +256,24 @@ export default function POS() {
                 width: '100%',
                 padding: '12px',
                 borderRadius: '10px',
-                marginBottom: '12px',
+                marginBottom: '8px',
                 fontSize: '14px'
               }}
             />
           )}
+          <input
+            type="tel"
+            placeholder="Customer Phone (for loyalty points)"
+            value={currentOrder.customerPhone}
+            onChange={(e) => setCustomerPhone(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '12px',
+              borderRadius: '10px',
+              marginBottom: '12px',
+              fontSize: '14px'
+            }}
+          />
 
           {/* Items */}
           <div style={{ maxHeight: '300px', overflow: 'auto', marginBottom: '16px' }}>
@@ -578,6 +591,35 @@ export default function POS() {
               placeholder="Table Number"
               value={currentOrder.tableNumber}
               onChange={(e) => setTableNumber(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                fontSize: '14px',
+                marginBottom: '8px'
+              }}
+            />
+            <input
+              type="tel"
+              placeholder="Customer Phone (for loyalty points)"
+              value={currentOrder.customerPhone}
+              onChange={(e) => setCustomerPhone(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                fontSize: '14px'
+              }}
+            />
+          </div>
+        )}
+        {(currentOrder.type === 'takeaway' || currentOrder.type === 'delivery') && (
+          <div style={{ padding: '12px', borderBottom: '1px solid var(--border)' }}>
+            <input
+              type="tel"
+              placeholder="Customer Phone (for loyalty points)"
+              value={currentOrder.customerPhone}
+              onChange={(e) => setCustomerPhone(e.target.value)}
               style={{
                 width: '100%',
                 padding: '10px 12px',

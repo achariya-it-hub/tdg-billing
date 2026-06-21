@@ -9,6 +9,7 @@ export const useOrderStore = create(
     type: 'dine-in',
     tableNumber: '',
     customerName: '',
+    customerPhone: '',
     notes: ''
   },
   orders: [],
@@ -70,6 +71,10 @@ export const useOrderStore = create(
     set(state => ({ currentOrder: { ...state.currentOrder, customerName } }))
   },
   
+  setCustomerPhone: (customerPhone) => {
+    set(state => ({ currentOrder: { ...state.currentOrder, customerPhone } }))
+  },
+  
   setNotes: (notes) => {
     set(state => ({ currentOrder: { ...state.currentOrder, notes } }))
   },
@@ -81,6 +86,7 @@ export const useOrderStore = create(
         type: 'dine-in',
         tableNumber: '',
         customerName: '',
+        customerPhone: '',
         notes: ''
       }
     })
@@ -132,9 +138,9 @@ export const useOrderStore = create(
       // Try to send to backend
       let newOrder = null
       try {
-        const apiUrl = window.location.hostname === 'localhost' 
-          ? 'http://localhost:3001' 
-          : 'https://tdg-billing-production.up.railway.app'
+        const apiUrl = window.location.hostname === 'localhost'
+          ? 'http://localhost:3001'
+          : window.location.origin
         
         const res = await fetch(`${apiUrl}/api/pos/orders`, {
           method: 'POST',
@@ -145,7 +151,8 @@ export const useOrderStore = create(
             subtotal,
             tax,
             total,
-            paymentMethod
+            paymentMethod,
+            customerPhone: order.customerPhone || ''
           })
         })
         
@@ -164,6 +171,7 @@ export const useOrderStore = create(
           type: order.type || 'dine-in',
           tableNumber: order.tableNumber || '',
           customerName: order.customerName || '',
+          customerPhone: order.customerPhone || '',
           notes: order.notes || '',
           items: items.map(item => ({
             id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -189,7 +197,7 @@ export const useOrderStore = create(
       set(state => ({ orders: [newOrder, ...state.orders] }))
       
       set({
-        currentOrder: { items: [], type: 'dine-in', tableNumber: '', customerName: '', notes: '' }
+        currentOrder: { items: [], type: 'dine-in', tableNumber: '', customerName: '', customerPhone: '', notes: '' }
       })
       
       console.log('Order placed:', newOrder)

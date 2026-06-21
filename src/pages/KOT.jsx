@@ -69,9 +69,25 @@ export default function KOT() {
     }))
   }
 
+  const getApiUrl = () => {
+    return window.location.hostname === 'localhost'
+      ? 'http://localhost:3001'
+      : window.location.origin
+  }
+
   const bumpOrder = async (orderId) => {
     setOrders(prev => prev.filter(o => o.id !== orderId))
     if (currentIndex > 0) setCurrentIndex(prev => prev - 1)
+    // Sync with backend - mark as ready so billing can see it
+    try {
+      await fetch(`${getApiUrl()}/api/pos/orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'ready' })
+      })
+    } catch (err) {
+      console.error('Failed to sync bump:', err)
+    }
   }
 
   const currentOrder = orders[currentIndex]

@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { BarChart3, FileText, Package, Utensils, Receipt, XCircle, TrendingDown, TrendingUp, Clock, Calendar, Filter, Download } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { BarChart3, FileText, Package, Utensils, Receipt, XCircle, TrendingDown, TrendingUp, Download, Sun, DollarSign, ShoppingCart, TrendingUp as TrendingUpIcon, ReceiptText } from 'lucide-react'
+
 
 const sampleKOTData = [
   { id: 'K001', table: 'T1', items: ['Zinger Burger x2', 'Pepsi x2'], total: 656, time: '12:30 PM', status: 'completed' },
@@ -33,6 +34,7 @@ const sampleRecipeData = [
 ]
 
 const reportTypes = [
+  { id: 'daily-closing', name: 'Daily Closing', icon: Sun, desc: 'Day Summary & Profit' },
   { id: 'kot', name: 'KOT Report', icon: FileText, desc: 'Kitchen Order Tickets' },
   { id: 'bill', name: 'Bill Report', icon: Receipt, desc: 'Bills & Payments' },
   { id: 'kot-cancelled', name: 'Cancelled KOT', icon: XCircle, desc: 'Cancelled Orders' },
@@ -44,11 +46,31 @@ const reportTypes = [
 ]
 
 export default function Reports() {
-  const [activeReport, setActiveReport] = useState('kot')
+  const [activeReport, setActiveReport] = useState('daily-closing')
   const [dateRange, setDateRange] = useState('today')
+  const [closing, setClosing] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  const getDateString = () => {
+    const d = new Date()
+    if (dateRange === 'yesterday') d.setDate(d.getDate() - 1)
+    return d.toISOString().split('T')[0]
+  }
+
+  useEffect(() => {
+    if (activeReport === 'daily-closing') {
+      setLoading(true)
+      fetch(`/api/reports/daily-closing?date=${getDateString()}`)
+        .then(r => r.json())
+        .then(data => setClosing(data))
+        .catch(() => setClosing(null))
+        .finally(() => setLoading(false))
+    }
+  }, [activeReport, dateRange])
 
   const getReportTitle = () => {
     switch (activeReport) {
+      case 'daily-closing': return 'Daily Closing Report'
       case 'kot': return 'KOT Report'
       case 'bill': return 'Bill Report'
       case 'kot-cancelled': return 'Cancelled KOT Report'
@@ -63,6 +85,166 @@ export default function Reports() {
 
   const renderReport = () => {
     switch (activeReport) {
+      case 'daily-closing':
+        return (
+          <div>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '60px 0', color: '#6b7280' }}>Loading...</div>
+            ) : !closing ? (
+              <div style={{ textAlign: 'center', padding: '60px 0', color: '#6b7280' }}>
+                No data available for this date. Place some orders first.
+              </div>
+            ) : (
+              <>
+                {/* KPI Cards */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '20px' }}>
+                  <div style={{ background: '#f0fdf4', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+                    <ReceiptText size={22} color="#10b981" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '32px', fontWeight: 700, color: '#10b981' }}>{closing.totalInvoices}</div>
+                    <div style={{ fontSize: '13px', color: '#166534' }}>Total Invoices</div>
+                  </div>
+                  <div style={{ background: '#eff6ff', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+                    <DollarSign size={22} color="#2563eb" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '32px', fontWeight: 700, color: '#2563eb' }}>₹{closing.totalSales.toLocaleString()}</div>
+                    <div style={{ fontSize: '13px', color: '#1e40af' }}>Total Sales</div>
+                  </div>
+                  <div style={{ background: '#fef3c7', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+                    <ShoppingCart size={22} color="#f59e0b" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '32px', fontWeight: 700, color: '#f59e0b' }}>₹{closing.avgBasketValue.toLocaleString()}</div>
+                    <div style={{ fontSize: '13px', color: '#92400e' }}>Avg Basket Value</div>
+                  </div>
+                  <div style={{ background: closing.grossProfit >= 0 ? '#f0fdf4' : '#fef2f2', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+                    <TrendingUpIcon size={22} color={closing.grossProfit >= 0 ? '#10b981' : '#dc2626'} style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '32px', fontWeight: 700, color: closing.grossProfit >= 0 ? '#10b981' : '#dc2626' }}>₹{closing.grossProfit.toLocaleString()}</div>
+                    <div style={{ fontSize: '13px', color: closing.grossProfit >= 0 ? '#166534' : '#991b1b' }}>Gross Profit</div>
+                  </div>
+                </div>
+
+                {/* Revenue vs Cost */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '20px' }}>
+                  <div style={{ background: 'white', borderRadius: '16px', padding: '20px' }}>
+                    <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Cost Breakdown</h4>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                      <span style={{ color: '#6b7280' }}>Total Sales</span>
+                      <span style={{ fontWeight: 700, color: '#10b981' }}>₹{closing.totalSales.toLocaleString()}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                      <span style={{ color: '#6b7280' }}>Purchases</span>
+                      <span style={{ fontWeight: 700, color: '#dc2626' }}>- ₹{closing.totalPurchases.toLocaleString()}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                      <span style={{ color: '#6b7280' }}>Expenses</span>
+                      <span style={{ fontWeight: 700, color: '#dc2626' }}>- ₹{closing.totalExpenses.toLocaleString()}</span>
+                    </div>
+                    <div style={{ borderTop: '2px solid #f3f4f6', paddingTop: '12px', display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ fontWeight: 700 }}>Gross Profit</span>
+                      <span style={{ fontWeight: 800, color: closing.grossProfit >= 0 ? '#10b981' : '#dc2626' }}>₹{closing.grossProfit.toLocaleString()}</span>
+                    </div>
+                  </div>
+
+                  <div style={{ background: 'white', borderRadius: '16px', padding: '20px' }}>
+                    <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Payment Methods</h4>
+                    {Object.keys(closing.byPaymentMethod).length === 0 ? (
+                      <p style={{ color: '#9ca3af', fontSize: '13px' }}>No data</p>
+                    ) : Object.entries(closing.byPaymentMethod).map(([method, amount]) => (
+                      <div key={method} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                        <span style={{ textTransform: 'capitalize', color: '#6b7280' }}>{method}</span>
+                        <span style={{ fontWeight: 700 }}>₹{Math.round(amount).toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ background: 'white', borderRadius: '16px', padding: '20px' }}>
+                    <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Order Sources</h4>
+                    {Object.keys(closing.bySource).length === 0 ? (
+                      <p style={{ color: '#9ca3af', fontSize: '13px' }}>No data</p>
+                    ) : Object.entries(closing.bySource).map(([source, count]) => (
+                      <div key={source} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                        <span style={{ textTransform: 'capitalize', color: '#6b7280' }}>{source}</span>
+                        <span style={{ fontWeight: 700 }}>{count}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Status Breakdown */}
+                <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '20px' }}>
+                  <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Order Status Breakdown</h4>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    {Object.entries(closing.statusBreakdown).map(([status, count]) => (
+                      <div key={status} style={{
+                        padding: '10px 18px',
+                        borderRadius: '10px',
+                        background: status === 'completed' || status === 'served' || status === 'delivered' ? '#f0fdf4' :
+                                    status === 'cancelled' ? '#fef2f2' : '#fef3c7',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px'
+                      }}>
+                        <span style={{ textTransform: 'capitalize', fontWeight: 600, fontSize: '14px', color: '#374151' }}>{status}</span>
+                        <span style={{ fontWeight: 800, fontSize: '18px', color: 
+                          status === 'completed' || status === 'served' || status === 'delivered' ? '#10b981' :
+                          status === 'cancelled' ? '#dc2626' : '#f59e0b'
+                        }}>{count}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Recent Expenses */}
+                {closing.expenses?.length > 0 && (
+                  <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden', marginBottom: '20px' }}>
+                    <div style={{ padding: '16px 20px', borderBottom: '1px solid #f3f4f6', fontWeight: 700, fontSize: '14px' }}>Today's Expenses</div>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ background: '#f9fafb' }}>
+                          <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Category</th>
+                          <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Description</th>
+                          <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {closing.expenses.map(exp => (
+                          <tr key={exp.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                            <td style={{ padding: '12px 16px', fontWeight: 600, textTransform: 'capitalize' }}>{exp.category}</td>
+                            <td style={{ padding: '12px 16px', color: '#6b7280' }}>{exp.description}</td>
+                            <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, color: '#dc2626' }}>₹{exp.amount}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* Recent Purchases */}
+                {closing.purchases?.length > 0 && (
+                  <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden' }}>
+                    <div style={{ padding: '16px 20px', borderBottom: '1px solid #f3f4f6', fontWeight: 700, fontSize: '14px' }}>Today's Purchases</div>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ background: '#f9fafb' }}>
+                          <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Supplier</th>
+                          <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Items</th>
+                          <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {closing.purchases.map(p => (
+                          <tr key={p.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                            <td style={{ padding: '12px 16px', fontWeight: 600 }}>{p.supplier}</td>
+                            <td style={{ padding: '12px 16px', textAlign: 'right', color: '#6b7280' }}>{p.items?.length || 0}</td>
+                            <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, color: '#dc2626' }}>₹{p.total?.toLocaleString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )
+
       case 'kot':
         return (
           <div>
