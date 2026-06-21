@@ -38,6 +38,13 @@ function writeDb(data) {
 // Daily expense tracking
 let expenses = []
 let purchases = []
+let onlineOrders = []
+let aggregators = [
+  { id: 'swiggy', name: 'Swiggy', displayName: 'Swiggy', isActive: true, defaultPrepTime: 25, color: '#ff5200' },
+  { id: 'zomato', name: 'Zomato', displayName: 'Zomato', isActive: true, defaultPrepTime: 20, color: '#e23744' },
+  { id: 'zepto', name: 'Zepto', displayName: 'Zepto', isActive: true, defaultPrepTime: 15, color: '#9d2b6b' },
+  { id: 'direct', name: 'Direct', displayName: 'Direct Order', isActive: true, defaultPrepTime: 20, color: '#4895ef' }
+]
 
 function saveState() {
   const db = readDb()
@@ -50,6 +57,8 @@ function saveState() {
   db.usedReferralCodes = [...usedReferralCodes]
   db.expenses = expenses
   db.purchases = purchases
+  db.onlineOrders = onlineOrders
+  db.aggregators = aggregators
   writeDb(db)
 }
 
@@ -65,6 +74,8 @@ function restoreState() {
   if (db.usedReferralCodes?.length) usedReferralCodes = new Set(db.usedReferralCodes)
   if (db.expenses?.length) expenses = db.expenses
   if (db.purchases?.length) purchases = db.purchases
+  if (db.onlineOrders?.length) onlineOrders = db.onlineOrders
+  if (db.aggregators?.length) aggregators = db.aggregators
 }
 
 const app = express()
@@ -596,6 +607,138 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
   res.json({ success: true })
 })
 
+// ─── Online Orders (Zomato/Swiggy/Zepto) ───
+app.get('/api/online-orders', (req, res) => {
+  res.json(onlineOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
+})
+
+app.get('/api/online-orders/aggregators', (req, res) => {
+  res.json(aggregators)
+})
+
+app.post('/api/online-orders/aggregators/toggle', (req, res) => {
+  const { id, isActive } = req.body
+  const agg = aggregators.find(a => a.id === id)
+  if (agg) agg.isActive = isActive
+  saveState()
+  res.json(aggregators)
+})
+
+// Webhook: receive order from aggregator or manual entry
+app.post('/api/online-orders/webhook', (req, res) => {
+  const { aggregator, externalOrderId, customerName, customerPhone, customerAddress, items, total, notes } = req.body
+  const agg = aggregators.find(a => a.id === aggregator) || aggregators[3]
+  const id = uuid()
+  const now = new Date().toISOString()
+  const onlineOrder = {
+    id,
+    aggregator: aggregator || 'direct',
+    aggregatorName: agg?.name || 'Direct',
+    externalOrderId: externalOrderId || `${aggregator.toUpperCase()}-${Date.now() % 10000}`,
+    customerName: customerName || 'Guest',
+    customerPhone: customerPhone || '',
+    customerAddress: customerAddress || '',
+    items: items || [],
+    total: total || 0,
+    platformStatus: 'received',
+    estimatedTime: agg?.defaultPrepTime || 20,
+    internalOrderId: null,
+    internalOrder: null,
+    notes: notes || '',
+    createdAt: now,
+    updatedAt: now
+  }
+  onlineOrders.unshift(onlineOrder)
+  saveState()
+  io.emit('online-order:new', { id: onlineOrder.id })
+  res.status(201).json(onlineOrder)
+})
+
+// Accept online order → create internal POS order → push to kitchen
+app.post('/api/online-orders/:id/accept', (req, res) => {
+  const { id } = req.params
+  const onlineOrder = onlineOrders.find(o => o.id === id)
+  if (!onlineOrder) return res.status(404).json({ error: 'Order not found' })
+
+  onlineOrder.platformStatus = 'accepted'
+  onlineOrder.estimatedTime = req.body.estimatedTime || onlineOrder.estimatedTime
+  onlineOrder.updatedAt = new Date().toISOString()
+
+  // Create internal POS order for kitchen
+  const orderNum = ++orderNumber
+  const now = new Date().toISOString()
+  const internalOrder = {
+    id: uuid(),
+    orderNumber: orderNum,
+    type: 'delivery',
+    status: 'pending',
+    source: 'online',
+    subtotal: onlineOrder.total,
+    tax: Math.round(onlineOrder.total * 0.18),
+    total: Math.round(onlineOrder.total * 1.18),
+    paymentMethod: 'online',
+    paymentStatus: 'paid',
+    tableNumber: '',
+    customerName: onlineOrder.customerName,
+    customerPhone: onlineOrder.customerPhone,
+    notes: `Online: ${onlineOrder.aggregatorName} #${onlineOrder.externalOrderId}`,
+    createdAt: now,
+    updatedAt: now,
+    items: (onlineOrder.items || []).map(i => ({
+      id: uuid(),
+      menuItemId: null,
+      menuItemName: i.name,
+      quantity: i.quantity,
+      unitPrice: i.price || Math.round(i.total / i.quantity),
+      totalPrice: i.total || i.price * i.quantity,
+      status: 'pending'
+    }))
+  }
+
+  orders.unshift(internalOrder)
+  onlineOrder.internalOrderId = internalOrder.id
+  onlineOrder.internalOrder = internalOrder
+  saveState()
+
+  io.emit('order:created', internalOrder)
+  io.to('kitchen').emit('kot:created', {
+    id: internalOrder.id,
+    orderNumber: `K${orderNum}`,
+    items: internalOrder.items,
+    createdAt: now,
+    source: 'online',
+    aggregator: onlineOrder.aggregator,
+    aggregatorName: onlineOrder.aggregatorName,
+    externalOrderId: onlineOrder.externalOrderId
+  })
+
+  res.json(onlineOrder)
+})
+
+app.patch('/api/online-orders/:id/status', (req, res) => {
+  const { id } = req.params
+  const { platformStatus } = req.body
+  const onlineOrder = onlineOrders.find(o => o.id === id)
+  if (!onlineOrder) return res.status(404).json({ error: 'Order not found' })
+
+  onlineOrder.platformStatus = platformStatus
+  onlineOrder.updatedAt = new Date().toISOString()
+  saveState()
+  io.emit('online-order:status', { id, platformStatus })
+
+  // Sync back to internal order if linked
+  if (onlineOrder.internalOrderId && (platformStatus === 'ready' || platformStatus === 'out-for-delivery')) {
+    const internalOrder = orders.find(o => o.id === onlineOrder.internalOrderId)
+    if (internalOrder) {
+      internalOrder.status = platformStatus === 'ready' ? 'ready' : 'completed'
+      internalOrder.updatedAt = new Date().toISOString()
+      io.emit('order:updated', internalOrder)
+    }
+  }
+
+  res.json(onlineOrder)
+})
+
 // Inventory
 app.get('/api/inventory', (req, res) => {
   res.json(inventory)
@@ -1046,7 +1189,7 @@ app.get('/api/reports/daily-closing', (req, res) => {
 
 // Root + Health
 app.get('/', (req, res) => {
-  res.json({ status: 'UP', message: 'TDG Billing API', endpoints: ['/api/*', '/api/auth/*', '/api/menu', '/api/wallet', '/api/den', '/api/orders', '/api/pos/orders', '/api/menu/*', '/api/inventory', '/api/loyalty/*', '/api/expenses', '/api/purchases', '/api/reports/daily-closing'] })
+  res.json({ status: 'UP', message: 'TDG Billing API', endpoints: ['/api/*', '/api/auth/*', '/api/menu', '/api/wallet', '/api/den', '/api/orders', '/api/pos/orders', '/api/online-orders', '/api/menu/*', '/api/inventory', '/api/loyalty/*', '/api/expenses', '/api/purchases', '/api/reports/daily-closing'] })
 })
 
 app.get('/health', (req, res) => {
@@ -1063,6 +1206,10 @@ io.on('connection', (socket) => {
   
   socket.on('join-pos', () => {
     socket.join('pos')
+  })
+  
+  socket.on('join-online', () => {
+    socket.join('online')
   })
   
   socket.on('kot:bump', (kotId) => {

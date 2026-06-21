@@ -1,63 +1,106 @@
 import { create } from 'zustand'
 
-const sampleOrders = [
-  { id: 'on1', aggregatorId: 'swiggy', aggregatorName: 'Swiggy', orderNumber: 'SW-12345', customerName: 'John Doe', items: [{ name: 'Zinger Burger', quantity: 2 }, { name: 'Pepsi', quantity: 2 }], total: 656, platformStatus: 'received', createdAt: new Date().toISOString() },
-  { id: 'on2', aggregatorId: 'zomato', aggregatorName: 'Zomato', orderNumber: 'ZM-98765', customerName: 'Jane Smith', items: [{ name: 'Chicken Burger', quantity: 1 }, { name: 'Fries', quantity: 1 }], total: 278, platformStatus: 'accepted', createdAt: new Date(Date.now() - 300000).toISOString() },
-  { id: 'on3', aggregatorId: 'zepto', aggregatorName: 'Zepto', orderNumber: 'ZT-45678', customerName: 'Mike Johnson', items: [{ name: 'Choco Lava Cake', quantity: 2 }], total: 298, platformStatus: 'preparing', createdAt: new Date(Date.now() - 600000).toISOString() }
-]
-
-const sampleAggregators = [
-  { id: 'swiggy', name: 'Swiggy', isActive: true, icon: '🟠', color: '#ff6600' },
-  { id: 'zomato', name: 'Zomato', isActive: true, icon: '#cb202d', color: '#cb202d' },
-  { id: 'zepto', name: 'Zepto', isActive: true, icon: '🟢', color: '#00a86b' }
-]
-
 export const useOnlineOrderStore = create((set, get) => ({
-  onlineOrders: sampleOrders,
-  aggregators: sampleAggregators,
+  onlineOrders: [],
+  aggregators: [],
   loading: false,
-  
+
+  getApiUrl: () => {
+    return window.location.hostname === 'localhost'
+      ? 'http://localhost:3001'
+      : window.location.origin
+  },
+
   fetchOnlineOrders: async () => {
-    // Use local sample data
-    set({ onlineOrders: sampleOrders, loading: false })
+    try {
+      const res = await fetch(`${get().getApiUrl()}/api/online-orders`)
+      if (res.ok) set({ onlineOrders: await res.json(), loading: false })
+    } catch (err) {
+      console.error('Failed to fetch online orders:', err)
+      set({ loading: false })
+    }
   },
-  
+
   fetchAggregators: async () => {
-    // Use local sample data
-    set({ aggregators: sampleAggregators })
+    try {
+      const res = await fetch(`${get().getApiUrl()}/api/online-orders/aggregators`)
+      if (res.ok) set({ aggregators: await res.json() })
+    } catch (err) {
+      console.error('Failed to fetch aggregators:', err)
+    }
   },
-  
-  acceptOrder: async (aggregatorId, orderId, estimatedTime) => {
-    // Local only
-    set(state => ({
-      onlineOrders: state.onlineOrders.map(o =>
-        o.id === orderId ? { ...o, platformStatus: 'accepted' } : o
-      )
-    }))
+
+  acceptOrder: async (aggregator, orderId, estimatedTime) => {
+    try {
+      const res = await fetch(`${get().getApiUrl()}/api/online-orders/${orderId}/accept`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estimatedTime })
+      })
+      if (res.ok) {
+        const updated = await res.json()
+        set(state => ({
+          onlineOrders: state.onlineOrders.map(o => o.id === orderId ? updated : o)
+        }))
+      }
+    } catch (err) {
+      console.error('Failed to accept order:', err)
+    }
   },
-  
-  updateStatus: async (aggregatorId, orderId, status) => {
-    // Local only
-    set(state => ({
-      onlineOrders: state.onlineOrders.map(o =>
-        o.id === orderId ? { ...o, platformStatus: status } : o
-      )
-    }))
+
+  updateStatus: async (aggregator, orderId, status) => {
+    try {
+      const res = await fetch(`${get().getApiUrl()}/api/online-orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ platformStatus: status })
+      })
+      if (res.ok) {
+        const updated = await res.json()
+        set(state => ({
+          onlineOrders: state.onlineOrders.map(o => o.id === orderId ? updated : o)
+        }))
+      }
+    } catch (err) {
+      console.error('Failed to update status:', err)
+    }
   },
-  
+
+  submitManualOrder: async (orderData) => {
+    try {
+      const res = await fetch(`${get().getApiUrl()}/api/online-orders/webhook`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      })
+      if (res.ok) {
+        const created = await res.json()
+        set(state => ({ onlineOrders: [created, ...state.onlineOrders] }))
+        return created
+      }
+    } catch (err) {
+      console.error('Failed to submit manual order:', err)
+    }
+    return null
+  },
+
   toggleAggregatorStatus: async (id, isActive) => {
-    // Local only
-    set(state => ({
-      aggregators: state.aggregators.map(a =>
-        a.id === id ? { ...a, isActive } : a
-      )
-    }))
+    try {
+      const res = await fetch(`${get().getApiUrl()}/api/online-orders/aggregators/toggle`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, isActive })
+      })
+      if (res.ok) set({ aggregators: await res.json() })
+    } catch (err) {
+      console.error('Failed to toggle aggregator:', err)
+    }
   },
-  
+
   getOrdersByStatus: (status) => {
     return get().onlineOrders.filter(o => o.platformStatus === status)
   },
-  
+
   getNewOrders: () => {
     return get().onlineOrders.filter(o => o.platformStatus === 'received')
   }

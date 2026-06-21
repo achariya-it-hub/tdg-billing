@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { RefreshCw, Check, X, Clock, AlertCircle, Wifi, WifiOff, ChevronRight } from 'lucide-react'
+import { RefreshCw, Check, X, Clock, AlertCircle, Wifi, WifiOff, ChevronRight, Plus, ExternalLink } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
@@ -37,11 +37,13 @@ export default function OnlineOrders() {
   const {
     onlineOrders, aggregators, loading,
     fetchOnlineOrders, fetchAggregators,
-    acceptOrder, updateStatus, toggleAggregatorStatus
+    acceptOrder, updateStatus, toggleAggregatorStatus, submitManualOrder
   } = useOnlineOrderStore()
 
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [showConfigModal, setShowConfigModal] = useState(false)
+  const [showManualEntry, setShowManualEntry] = useState(false)
+  const [manualOrder, setManualOrder] = useState({ aggregator: 'direct', externalOrderId: '', customerName: '', customerPhone: '', customerAddress: '', items: [{ name: '', quantity: 1, price: 0 }], total: 0 })
   const [connected, setConnected] = useState(false)
 
   useEffect(() => {
@@ -108,7 +110,7 @@ export default function OnlineOrders() {
                 onClick={() => setShowConfigModal(true)}
                 style={{
                   padding: '8px 16px',
-                  background: a.isActive ? aggregatorColors[a.name] : 'var(--bg-secondary)',
+                  background: a.isActive ? aggregatorColors[a.id] : 'var(--bg-secondary)',
                   borderRadius: '8px',
                   display: 'flex',
                   alignItems: 'center',
@@ -126,6 +128,10 @@ export default function OnlineOrders() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: connected ? 'var(--accent-success)' : 'var(--accent-primary)' }}>
               {connected ? <Wifi size={16} /> : <WifiOff size={16} />}
             </div>
+            <Button variant="secondary" onClick={() => setShowManualEntry(true)}>
+              <Plus size={16} />
+              Manual Entry
+            </Button>
             <Button variant="secondary" onClick={fetchOnlineOrders}>
               <RefreshCw size={16} />
               Refresh
@@ -305,7 +311,7 @@ export default function OnlineOrders() {
               )}
 
               <h4 style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '24px', marginBottom: '8px' }}>ITEMS</h4>
-              {selectedOrder.internalOrder?.items?.map((item, i) => (
+              {(selectedOrder.internalOrder?.items || selectedOrder.items || []).map((item, i) => (
                 <div
                   key={i}
                   style={{
@@ -315,14 +321,14 @@ export default function OnlineOrders() {
                     borderBottom: '1px solid var(--border)'
                   }}
                 >
-                  <span>{item.quantity}x {item.menuItemName}</span>
-                  <span style={{ fontWeight: 600 }}>₹{item.totalPrice}</span>
+                  <span>{item.quantity || item.qty}x {item.menuItemName || item.name}</span>
+                  <span style={{ fontWeight: 600 }}>₹{item.totalPrice || item.price * item.quantity || item.price * item.qty || 0}</span>
                 </div>
               ))}
 
               <h4 style={{ fontSize: '14px', color: 'var(--text-muted)', marginTop: '24px', marginBottom: '8px' }}>ORDER VALUE</h4>
               <div style={{ fontFamily: 'Bebas Neue', fontSize: '36px', color: 'var(--accent-primary)' }}>
-                ₹{selectedOrder.internalOrder?.total || 0}
+                ₹{selectedOrder.internalOrder?.total || selectedOrder.total || 0}
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginTop: '24px' }}>
@@ -386,7 +392,7 @@ export default function OnlineOrders() {
                   {a.name.substring(0, 2).toUpperCase()}
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 600, fontSize: '18px' }}>{a.displayName}</div>
+                  <div style={{ fontWeight: 600, fontSize: '18px' }}>{a.displayName || a.name}</div>
                   <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
                     Default prep time: {a.defaultPrepTime}m
                   </div>
@@ -400,6 +406,129 @@ export default function OnlineOrders() {
               </div>
             </Card>
           ))}
+        </div>
+      </Modal>
+
+      {/* Manual Entry Modal */}
+      <Modal
+        isOpen={showManualEntry}
+        onClose={() => setShowManualEntry(false)}
+        title="Manual Order Entry"
+        size="lg"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Aggregator</label>
+              <select
+                value={manualOrder.aggregator}
+                onChange={(e) => setManualOrder({ ...manualOrder, aggregator: e.target.value })}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', fontSize: '14px' }}
+              >
+                {aggregators.map(a => (
+                  <option key={a.id} value={a.id}>{a.displayName || a.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>External Order ID</label>
+              <input
+                type="text" placeholder="e.g. SW-12345"
+                value={manualOrder.externalOrderId}
+                onChange={(e) => setManualOrder({ ...manualOrder, externalOrderId: e.target.value })}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', fontSize: '14px' }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Customer Name</label>
+              <input
+                type="text" placeholder="Customer name"
+                value={manualOrder.customerName}
+                onChange={(e) => setManualOrder({ ...manualOrder, customerName: e.target.value })}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', fontSize: '14px' }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Customer Phone</label>
+              <input
+                type="tel" placeholder="Phone number"
+                value={manualOrder.customerPhone}
+                onChange={(e) => setManualOrder({ ...manualOrder, customerPhone: e.target.value })}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', fontSize: '14px' }}
+              />
+            </div>
+          </div>
+          <div>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Delivery Address</label>
+            <input
+              type="text" placeholder="Delivery address"
+              value={manualOrder.customerAddress}
+              onChange={(e) => setManualOrder({ ...manualOrder, customerAddress: e.target.value })}
+              style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', fontSize: '14px' }}
+            />
+          </div>
+          <div>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Items</label>
+            {manualOrder.items.map((item, i) => (
+              <div key={i} style={{ display: 'flex', gap: '8px', marginBottom: '8px', alignItems: 'center' }}>
+                <input
+                  type="text" placeholder="Item name"
+                  value={item.name}
+                  onChange={(e) => {
+                    const items = [...manualOrder.items]
+                    items[i] = { ...items[i], name: e.target.value }
+                    setManualOrder({ ...manualOrder, items })
+                  }}
+                  style={{ flex: 1, padding: '10px 12px', borderRadius: '8px', fontSize: '14px' }}
+                />
+                <input
+                  type="number" placeholder="Qty"
+                  value={item.quantity}
+                  onChange={(e) => {
+                    const items = [...manualOrder.items]
+                    items[i] = { ...items[i], quantity: parseInt(e.target.value) || 0 }
+                    setManualOrder({ ...manualOrder, items })
+                  }}
+                  style={{ width: '60px', padding: '10px 12px', borderRadius: '8px', fontSize: '14px' }}
+                />
+                <input
+                  type="number" placeholder="Price"
+                  value={item.price}
+                  onChange={(e) => {
+                    const items = [...manualOrder.items]
+                    items[i] = { ...items[i], price: parseInt(e.target.value) || 0 }
+                    setManualOrder({ ...manualOrder, items })
+                  }}
+                  style={{ width: '80px', padding: '10px 12px', borderRadius: '8px', fontSize: '14px' }}
+                />
+                {manualOrder.items.length > 1 && (
+                  <button onClick={() => {
+                    setManualOrder({ ...manualOrder, items: manualOrder.items.filter((_, j) => j !== i) })
+                  }} style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer' }}>
+                    <X size={18} />
+                  </button>
+                )}
+              </div>
+            ))}
+            <Button variant="secondary" onClick={() => {
+              setManualOrder({ ...manualOrder, items: [...manualOrder.items, { name: '', quantity: 1, price: 0 }] })
+            }} style={{ marginTop: '8px' }}>
+              + Add Item
+            </Button>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <Button onClick={async () => {
+              const total = manualOrder.items.reduce((s, i) => s + (i.price * i.quantity), 0)
+              const result = await submitManualOrder({ ...manualOrder, total })
+              if (result) {
+                setShowManualEntry(false)
+                setManualOrder({ aggregator: 'direct', externalOrderId: '', customerName: '', customerPhone: '', customerAddress: '', items: [{ name: '', quantity: 1, price: 0 }], total: 0 })
+              }
+            }}>
+              <ExternalLink size={16} />
+              Submit Order
+            </Button>
+          </div>
         </div>
       </Modal>
     </div>
