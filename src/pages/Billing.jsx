@@ -151,54 +151,158 @@ export default function Billing() {
     const total = calculateTotal(bill)
     const tax = calculateTax(total)
     const grandTotal = total + tax
+    const now = new Date()
+    const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
     const html = `
       <!DOCTYPE html>
       <html>
       <head>
         <title>Invoice ${bill.orderNumber || bill.id}</title>
         <style>
-          body { font-family: Arial, sans-serif; padding: 20px; max-width: 300px; margin: 0 auto; }
-          .header { text-align: center; margin-bottom: 20px; }
-          .logo-text { font-size: 20px; font-weight: bold; color: #e63946; }
-          .divider { border-bottom: 1px dashed #333; margin: 15px 0; }
-          .item { display: flex; justify-content: space-between; margin: 5px 0; }
-          .total { font-weight: bold; font-size: 18px; margin-top: 10px; }
-          .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+          @page { margin: 0; size: 80mm auto; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            width: 80mm;
+            padding: 8px 12px;
+            color: #1a1a1a;
+            line-height: 1.4;
+          }
+          .center { text-align: center; }
+          .header { padding-bottom: 10px; border-bottom: 2px solid #1a1a1a; margin-bottom: 10px; }
+          .brand-name { font-family: 'Georgia', serif; font-size: 20px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #c1121f; }
+          .brand-tagline { font-size: 9px; letter-spacing: 1px; color: #666; margin-top: 2px; }
+          .brand-details { font-size: 9px; color: #888; margin-top: 4px; line-height: 1.3; }
+          .divider { border-top: 1px dashed #999; margin: 8px 0; }
+          .divider-thick { border-top: 2px solid #1a1a1a; margin: 8px 0; }
+          .info-row { display: flex; justify-content: space-between; font-size: 10px; margin: 2px 0; }
+          .info-label { color: #666; }
+          .info-value { font-weight: 600; }
+          .col-header { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #999; padding-bottom: 4px; margin-bottom: 4px; }
+          .item-row { display: flex; justify-content: space-between; font-size: 10px; padding: 2px 0; }
+          .item-name { flex: 1; }
+          .item-qty { width: 30px; text-align: center; }
+          .item-price { width: 55px; text-align: right; }
+          .subtotal-row { display: flex; justify-content: space-between; font-size: 11px; padding: 3px 0; }
+          .total-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; padding: 6px 0; border-top: 2px solid #1a1a1a; border-bottom: 2px solid #1a1a1a; margin: 6px 0; }
+          .total-amount { color: #c1121f; }
+          .payment-info { font-size: 10px; margin: 4px 0; }
+          .footer { text-align: center; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #999; }
+          .footer-thanks { font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #c1121f; margin-bottom: 2px; }
+          .footer-message { font-size: 9px; color: #888; }
+          .gst-info { font-size: 8px; color: #aaa; text-align: center; margin-top: 6px; }
+          @media print {
+            body { width: 80mm; }
+            .no-print { display: none; }
+          }
         </style>
       </head>
       <body>
-        <div class="header">
-          <div class="logo-text">TDG BILLING</div>
-          <div>Restaurant Management System</div>
-        </div>
-        <div class="divider"></div>
-        <div><strong>Invoice No:</strong> ${bill.orderNumber || bill.id}</div>
-        <div><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
-        <div><strong>Time:</strong> ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-        <div><strong>Table:</strong> ${bill.tableNumber || 'N/A'}</div>
-        <div class="divider"></div>
-        ${items.map(item => `
-          <div class="item">
-            <span>${item.menuItemName || item.name} x${item.quantity || item.qty}</span>
-            <span>₹${((item.totalPrice || item.price * item.quantity) || 0).toFixed(0)}</span>
+        <!-- Header -->
+        <div class="header center">
+          <div class="brand-name">Ten Den Gyros</div>
+          <div class="brand-tagline">Restaurant Management System</div>
+          <div class="brand-details">
+            Shop 1 & 2, R.S.No.345/3 Kottakuppam,<br/>
+            Viluppuram<br/>
+            Ph: 000000000
           </div>
-        `).join('')}
+        </div>
+
+        <!-- Invoice Info -->
+        <div class="info-row">
+          <span class="info-label">Bill No:</span>
+          <span class="info-value">${String(bill.orderNumber || bill.id).padStart(6, '0')}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Date:</span>
+          <span class="info-value">${dateStr}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Time:</span>
+          <span class="info-value">${timeStr}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Table:</span>
+          <span class="info-value">${bill.tableNumber || 'Takeaway'}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Payment:</span>
+          <span class="info-value" style="text-transform:capitalize">${bill.paymentMethod || 'cash'}</span>
+        </div>
+        ${bill.customerName ? `<div class="info-row"><span class="info-label">Customer:</span><span class="info-value">${bill.customerName}</span></div>` : ''}
+
         <div class="divider"></div>
-        <div class="item"><span>Subtotal</span><span>₹${total.toFixed(0)}</span></div>
-        <div class="item"><span>Tax (18%)</span><span>₹${tax.toFixed(0)}</span></div>
-        <div class="total">Total: ₹${grandTotal.toFixed(0)}</div>
-        <div class="item"><span>Payment:</span><span>${bill.paymentMethod || 'cash'}</span></div>
+
+        <!-- Column Headers -->
+        <div class="col-header">
+          <span class="item-name">Item</span>
+          <span class="item-qty">Qty</span>
+          <span class="item-price">Amount</span>
+        </div>
+
+        <!-- Items -->
+        ${items.map((item, i) => {
+          const name = item.menuItemName || item.name || ''
+          const qty = item.quantity || item.qty || 1
+          const amt = (item.totalPrice || item.price * qty || 0)
+          return `
+            <div class="item-row">
+              <span class="item-name">${name.length > 22 ? name.slice(0, 20) + '..' : name}</span>
+              <span class="item-qty">${qty}</span>
+              <span class="item-price">₹${amt.toFixed(0)}</span>
+            </div>
+          `
+        }).join('')}
+
         <div class="divider"></div>
+
+        <!-- Totals -->
+        <div class="subtotal-row">
+          <span>Subtotal</span>
+          <span>₹${total.toFixed(0)}</span>
+        </div>
+        <div class="subtotal-row">
+          <span>GST @ 18%</span>
+          <span>₹${tax.toFixed(0)}</span>
+        </div>
+        <div class="divider-thick"></div>
+        <div class="total-row">
+          <span>Total</span>
+          <span class="total-amount">₹${grandTotal.toFixed(0)}</span>
+        </div>
+
+        <!-- Round Off -->
+        <div class="payment-info" style="text-align:right;color:#888;font-size:9px">
+          Round Off: ₹0.00
+        </div>
+
+        <!-- Payment Method -->
+        <div class="payment-info center" style="margin-top:8px;font-size:11px">
+          Payment: ${bill.paymentMethod ? bill.paymentMethod.toUpperCase() : 'CASH'}
+        </div>
+
+        <!-- Footer -->
         <div class="footer">
-          Thank you for dining with us!<br/>
-          Please visit again
+          <div class="footer-thanks">Thank You!</div>
+          <div class="footer-message">We look forward to serving you again</div>
+          <div class="footer-message" style="margin-top:4px">Happy Dining!</div>
+        </div>
+
+        <div class="gst-info">
+          This is a computer-generated invoice
         </div>
       </body>
       </html>
     `
     printWindow.document.write(html)
     printWindow.document.close()
-    printWindow.onload = () => printWindow.print()
+    printWindow.onload = () => {
+      printWindow.focus()
+      setTimeout(() => printWindow.print(), 300)
+    }
   }
 
   return (
