@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChefHat, Clock, ShoppingBag, BarChart3, Globe, Lock, User, Eye, EyeOff, UtensilsCrossed } from 'lucide-react'
+import API_BASE from '../lib/apiConfig'
 
 const features = [
   { icon: ShoppingBag, title: 'Fast POS', desc: 'Quick billing with touch-optimized interface' },
@@ -46,24 +47,27 @@ export default function Login() {
     setError('')
   }
 
-  const demoUsers = {
-    '1234': { id: 'u1', name: 'Admin', role: 'admin' },
-    '5678': { id: 'u2', name: 'Manager', role: 'manager' },
-    '0000': { id: 'u3', name: 'Cashier', role: 'cashier' },
-    '9999': { id: 'u4', name: 'Kitchen', role: 'kitchen' },
-    '8888': { id: 'u5', name: 'Kitchen Staff', role: 'kitchen' }
-  }
-
   const handleLogin = async (pinToUse = pin) => {
     setLoading(true)
     setError('')
     
-    const user = demoUsers[pinToUse]
-    if (user) {
-      localStorage.setItem('user', JSON.stringify(user))
-      navigate('/pos')
-    } else {
-      setError('Invalid PIN')
+    try {
+      const res = await fetch(`${API_BASE}/api/billing/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: pinToUse })
+      })
+      const data = await res.json()
+      
+      if (res.ok && data.user) {
+        localStorage.setItem('user', JSON.stringify(data.user))
+        navigate('/pos')
+      } else {
+        setError(data.error || 'Invalid PIN')
+        setPin('')
+      }
+    } catch (err) {
+      setError('Connection error. Check server.')
       setPin('')
     }
     

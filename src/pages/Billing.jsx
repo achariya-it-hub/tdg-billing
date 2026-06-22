@@ -31,7 +31,8 @@ export default function Billing() {
         fetch(`${getApiUrl()}/api/pos/orders?status=completed`)
       ])
       if (readyRes.ok) {
-        const ready = await readyRes.json()
+        let ready = await readyRes.json()
+        ready = ready.filter(o => o.type !== 'delivery' && o.source !== 'online')
         setPendingKOTs(ready)
       }
       if (paidRes.ok) {
@@ -48,6 +49,7 @@ export default function Billing() {
     const socket = getSocket()
     socket.connect()
     socket.on('order:updated', (order) => {
+      if (order.type === 'delivery' || order.source === 'online') return
       if (order.status === 'ready') {
         setPendingKOTs(prev => {
           if (prev.find(o => o.id === order.id)) return prev
@@ -65,6 +67,7 @@ export default function Billing() {
       }
     })
     socket.on('order:created', (order) => {
+      if (order.type === 'delivery' || order.source === 'online') return
       if (order.status === 'ready') {
         setPendingKOTs(prev => [...prev, order])
       }
@@ -89,6 +92,37 @@ export default function Billing() {
   const handlePayment = async () => {
     if (!selectedKOT) return
     setProcessing(true)
+
+    if (selectedPayment === 'wallet') {
+      const phone = selectedKOT.customerPhone
+      if (!phone) {
+        alert('Customer phone required for wallet payment')
+        setProcessing(false)
+        return
+      }
+      try {
+        const res = await fetch(`${getApiUrl()}/api/loyalty/user/${encodeURIComponent(phone)}`)
+        if (res.ok) {
+          const data = await res.json()
+          const balance = data.rubyPoints || 0
+          const total = calculateTotal(selectedKOT) + calculateTax(calculateTotal(selectedKOT))
+          if (balance < total) {
+            alert(`Insufficient wallet: ₹${balance} available, need ₹${total.toFixed(0)}`)
+            setProcessing(false)
+            return
+          }
+        } else {
+          alert('Customer not found in loyalty system')
+          setProcessing(false)
+          return
+        }
+      } catch {
+        alert('Could not verify wallet balance')
+        setProcessing(false)
+        return
+      }
+    }
+
     try {
       const res = await fetch(`${getApiUrl()}/api/pos/orders/${selectedKOT.id}/status`, {
         method: 'PATCH',

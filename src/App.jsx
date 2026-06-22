@@ -17,6 +17,7 @@ import HR from './pages/HR'
 import Customers from './pages/Customers'
 import Captain from './pages/Captain'
 import Loyalty from './pages/Loyalty'
+import Users from './pages/Users'
 import Layout from './components/Layout'
 import { useState, useEffect } from 'react'
 
@@ -107,6 +108,7 @@ export default function App() {
               <Route path="/online-orders" element={<OnlineOrders />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/loyalty" element={<Loyalty />} />
+              <Route path="/users" element={<Users />} />
             </Route>
           </Route>
         </Routes>

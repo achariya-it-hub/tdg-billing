@@ -35,6 +35,52 @@ function writeDb(data) {
 }
 
 // Persist ALL in-memory state to db.json (single source of truth)
+// Billing system users (PIN-based login for billing staff)
+let billingUsers = []
+const BILLING_MODULES = [
+  'pos', 'captain', 'kitchen', 'billing', 'kot', 'purchase',
+  'inventory', 'menu', 'hr', 'loyalty', 'customers', 'reports',
+  'dashboard', 'onlineOrders', 'users'
+]
+
+function makePermissions(all) {
+  const perms = {}
+  for (const mod of BILLING_MODULES) {
+    perms[mod] = { view: all, create: all, update: all, delete: all }
+  }
+  return perms
+}
+
+const CASHIER_MODULES = ['pos', 'billing', 'customers']
+const KITCHEN_MODULES = ['kitchen', 'kot']
+const MANAGER_RESTRICT = ['users']
+
+function getDefaultPermissions(role) {
+  if (role === 'admin') return makePermissions(true)
+  const perms = makePermissions(false)
+  if (role === 'manager') {
+    for (const mod of BILLING_MODULES) {
+      if (!MANAGER_RESTRICT.includes(mod)) {
+        perms[mod] = { view: true, create: true, update: true, delete: true }
+      }
+    }
+    return perms
+  }
+  if (role === 'cashier') {
+    for (const mod of CASHIER_MODULES) {
+      perms[mod] = { view: true, create: true, update: true, delete: false }
+    }
+    return perms
+  }
+  if (role === 'kitchen') {
+    for (const mod of KITCHEN_MODULES) {
+      perms[mod] = { view: true, create: true, update: true, delete: false }
+    }
+    return perms
+  }
+  return perms
+}
+
 // Daily expense tracking
 let expenses = []
 let purchases = []
@@ -59,6 +105,7 @@ function saveState() {
   db.purchases = purchases
   db.onlineOrders = onlineOrders
   db.aggregators = aggregators
+  db.billingUsers = billingUsers
   writeDb(db)
 }
 
@@ -76,6 +123,7 @@ function restoreState() {
   if (db.purchases?.length) purchases = db.purchases
   if (db.onlineOrders?.length) onlineOrders = db.onlineOrders
   if (db.aggregators?.length) aggregators = db.aggregators
+  if (db.billingUsers?.length) billingUsers = db.billingUsers
 }
 
 const app = express()
@@ -331,6 +379,110 @@ app.put('/api/auth/profile', auth, (req, res) => {
   res.json(userWithoutPassword)
 })
 
+// ============ BILLING USERS API (PIN-based login for billing staff) ============
+
+// Billing login - verify PIN
+app.post('/api/billing/login', async (req, res) => {
+  try {
+    const { pin } = req.body
+    if (!pin || pin.length !== 4) {
+      return res.status(400).json({ error: '4-digit PIN required' })
+    }
+    const user = billingUsers.find(u => u.pin === pin)
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid PIN' })
+    }
+    const { pin: _, ...userWithoutPin } = user
+    // Don't expose hashed PIN to frontend
+    const safeUser = { ...userWithoutPin, permissions: user.permissions || getDefaultPermissions(user.role) }
+    res.json({ user: safeUser })
+  } catch (error) {
+    console.error('Billing login error:', error)
+    res.status(500).json({ error: 'Server error during login' })
+  }
+})
+
+// Change own PIN
+app.post('/api/billing/change-pin', (req, res) => {
+  const { userId, currentPin, newPin } = req.body
+  if (!userId || !currentPin || !newPin) {
+    return res.status(400).json({ error: 'userId, currentPin, and newPin required' })
+  }
+  if (newPin.length !== 4) {
+    return res.status(400).json({ error: 'New PIN must be 4 digits' })
+  }
+  const user = billingUsers.find(u => u.id === userId)
+  if (!user) return res.status(404).json({ error: 'User not found' })
+  if (user.pin !== currentPin) return res.status(400).json({ error: 'Current PIN is incorrect' })
+  if (billingUsers.find(u => u.id !== userId && u.pin === newPin)) {
+    return res.status(400).json({ error: 'New PIN already in use by another user' })
+  }
+  user.pin = newPin
+  saveState()
+  res.json({ success: true, message: 'PIN changed successfully' })
+})
+
+// List billing users
+app.get('/api/billing/users', (req, res) => {
+  const safe = billingUsers.map(({ pin, ...u }) => ({ ...u, permissions: u.permissions || getDefaultPermissions(u.role) }))
+  res.json(safe)
+})
+
+// Create billing user
+app.post('/api/billing/users', async (req, res) => {
+  try {
+    const { name, pin, role } = req.body
+    if (!name || !pin || !role) return res.status(400).json({ error: 'Name, PIN, and role required' })
+    if (pin.length !== 4) return res.status(400).json({ error: 'PIN must be 4 digits' })
+    if (billingUsers.find(u => u.pin === pin)) return res.status(400).json({ error: 'PIN already in use' })
+    
+    const id = 'bu_' + Date.now()
+    const permissions = req.body.permissions || getDefaultPermissions(role)
+    const newUser = { id, name, pin, role, permissions, createdAt: new Date().toISOString() }
+    billingUsers.push(newUser)
+    saveState()
+    
+    const { pin: _, ...safe } = newUser
+    res.status(201).json({ user: { ...safe, permissions } })
+  } catch (error) {
+    res.status(500).json({ error: 'Error creating user' })
+  }
+})
+
+// Update billing user
+app.put('/api/billing/users/:id', async (req, res) => {
+  try {
+    const idx = billingUsers.findIndex(u => u.id === req.params.id)
+    if (idx === -1) return res.status(404).json({ error: 'User not found' })
+    
+    const { name, role, permissions, pin } = req.body
+    if (name) billingUsers[idx].name = name
+    if (role) billingUsers[idx].role = role
+    if (permissions) billingUsers[idx].permissions = permissions
+    if (pin) {
+      if (pin.length !== 4) return res.status(400).json({ error: 'PIN must be 4 digits' })
+      if (billingUsers.find((u, i) => i !== idx && u.pin === pin)) return res.status(400).json({ error: 'PIN already in use' })
+      billingUsers[idx].pin = pin
+    }
+    saveState()
+    
+    const { pin: _, ...safe } = billingUsers[idx]
+    res.json({ user: { ...safe, permissions: billingUsers[idx].permissions } })
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating user' })
+  }
+})
+
+// Delete billing user
+app.delete('/api/billing/users/:id', (req, res) => {
+  const idx = billingUsers.findIndex(u => u.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'User not found' })
+  if (billingUsers[idx].role === 'admin') return res.status(400).json({ error: 'Cannot delete admin user' })
+  billingUsers.splice(idx, 1)
+  saveState()
+  res.json({ success: true })
+})
+
 // Menu (mobile format)
 app.get('/api/menu', (req, res) => {
   const db = readDb()
@@ -575,29 +727,53 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
     io.emit('order:updated', order)
     saveState()
 
-    // SYNC: When order completed, add Ruby points to linked mobile user
+    // SYNC: When order completed, handle wallet deduction OR points earning
     if ((status === 'completed' || status === 'served') && order.customerPhone) {
       const db = readDb()
-      const pointsEarned = Math.floor(order.total || 0)
-      if (pointsEarned > 0) {
-        // Update db.json user
-        const mobileUser = db.users.find(u => u.phone === order.customerPhone)
-        if (mobileUser) {
-          mobileUser.rubyBalance = (mobileUser.rubyBalance || 0) + pointsEarned
-          db.transactions.push({
-            id: 't_' + Date.now(),
-            userId: mobileUser.id,
-            type: 'credit',
-            amount: pointsEarned,
-            description: 'Order #' + order.orderNumber + ' completed',
-            createdAt: new Date().toISOString()
-          })
-          writeDb(db)
-        }
-        // Update loyalty system user
-        const loyaltyUser = loyaltyUsers.find(u => u.phone === order.customerPhone)
-        if (loyaltyUser) {
-          addPoints(loyaltyUser.id, pointsEarned, 'Order #' + order.orderNumber + ' completed')
+      const pointsAmount = Math.floor(order.total || 0)
+      if (pointsAmount > 0) {
+        const isWallet = order.paymentMethod === 'wallet'
+        if (isWallet) {
+          // Wallet payment: DEDUCT points (customer pays with wallet)
+          const mobileUser = db.users.find(u => u.phone === order.customerPhone)
+          if (mobileUser) {
+            const current = mobileUser.rubyBalance || 0
+            if (current >= pointsAmount) {
+              mobileUser.rubyBalance = current - pointsAmount
+              db.transactions.push({
+                id: 't_' + Date.now(),
+                userId: mobileUser.id,
+                type: 'debit',
+                amount: pointsAmount,
+                description: 'Wallet payment for Order #' + order.orderNumber,
+                createdAt: new Date().toISOString()
+              })
+              writeDb(db)
+            }
+          }
+          const loyaltyUser = loyaltyUsers.find(u => u.phone === order.customerPhone)
+          if (loyaltyUser && loyaltyUser.rubyPoints >= pointsAmount) {
+            deductPoints(loyaltyUser.id, pointsAmount, 'Wallet payment for Order #' + order.orderNumber)
+          }
+        } else {
+          // Regular payment: ADD points (customer earns loyalty points)
+          const mobileUser = db.users.find(u => u.phone === order.customerPhone)
+          if (mobileUser) {
+            mobileUser.rubyBalance = (mobileUser.rubyBalance || 0) + pointsAmount
+            db.transactions.push({
+              id: 't_' + Date.now(),
+              userId: mobileUser.id,
+              type: 'credit',
+              amount: pointsAmount,
+              description: 'Order #' + order.orderNumber + ' completed',
+              createdAt: new Date().toISOString()
+            })
+            writeDb(db)
+          }
+          const loyaltyUser = loyaltyUsers.find(u => u.phone === order.customerPhone)
+          if (loyaltyUser) {
+            addPoints(loyaltyUser.id, pointsAmount, 'Order #' + order.orderNumber + ' completed')
+          }
         }
         saveState()
       }
@@ -854,8 +1030,40 @@ app.post('/api/loyalty/register', (req, res) => {
 
 // Get user by phone
 app.get('/api/loyalty/user/:phone', (req, res) => {
-  const user = loyaltyUsers.find(u => u.phone === req.params.phone)
-  if (!user) return res.status(404).json({ error: 'User not found' })
+  let user = loyaltyUsers.find(u => u.phone === req.params.phone)
+  if (!user) {
+    // Fallback: try db.json users and auto-create loyalty entry
+    const db = readDb()
+    const mobileUser = db.users.find(u => u.phone === req.params.phone)
+    if (mobileUser) {
+      const id = mobileUser.id || 'loy_' + Date.now()
+      user = {
+        id,
+        referralCode: mobileUser.id?.slice(0, 6).toUpperCase() || 'REF' + Date.now().toString().slice(-4),
+        name: mobileUser.name || 'Customer',
+        phone: mobileUser.phone,
+        email: mobileUser.email || '',
+        role: 'user',
+        rubyPoints: mobileUser.rubyBalance || 0,
+        tier: getTier(mobileUser.rubyBalance || 0),
+        referredBy: null,
+        denId: null,
+        createdAt: mobileUser.createdAt || new Date().toISOString()
+      }
+      loyaltyUsers.push(user)
+      saveState()
+    } else {
+      // Unknown phone — return zero-balance user so frontend shows "Insufficient balance"
+      const id = 'loy_' + Date.now()
+      user = {
+        id, name: 'Customer', phone: req.params.phone, email: '', role: 'user',
+        rubyPoints: 0, tier: 'Bronze', referralCode: 'NEW', referredBy: null, denId: null,
+        createdAt: new Date().toISOString()
+      }
+      loyaltyUsers.push(user)
+      saveState()
+    }
+  }
   
   const userDen = dens.find(d => d.id === user.denId)
   
@@ -1260,6 +1468,29 @@ async function seedAdmin() {
       createdAt: new Date().toISOString()
     })
     saveState()
+  }
+
+  // Seed billing users if empty
+  if (billingUsers.length === 0) {
+    const defaultUsers = [
+      { name: 'Admin', pin: '1234', role: 'admin' },
+      { name: 'Manager', pin: '5678', role: 'manager' },
+      { name: 'Cashier', pin: '0000', role: 'cashier' },
+      { name: 'Kitchen', pin: '9999', role: 'kitchen' },
+      { name: 'Kitchen Staff', pin: '8888', role: 'kitchen' },
+    ]
+    for (const u of defaultUsers) {
+      billingUsers.push({
+        id: 'bu_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        name: u.name,
+        pin: u.pin,
+        role: u.role,
+        permissions: getDefaultPermissions(u.role),
+        createdAt: new Date().toISOString()
+      })
+    }
+    saveState()
+    console.log('Seeded ' + defaultUsers.length + ' billing users')
   }
 }
 seedAdmin()

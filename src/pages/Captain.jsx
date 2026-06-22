@@ -46,6 +46,7 @@ export default function Captain() {
   const [showOrderModal, setShowOrderModal] = useState(false)
   const [showBillModal, setShowBillModal] = useState(false)
   const [orderItems, setOrderItems] = useState([])
+  const [showMenuView, setShowMenuView] = useState(false)
 
   useEffect(() => {
     fetchCategories()
@@ -69,6 +70,7 @@ export default function Captain() {
   const selectTable = (table) => {
     setSelectedTable(table)
     setOrderItems([])
+    setShowMenuView(table.status !== 'occupied')
     setShowOrderModal(true)
   }
 
@@ -369,146 +371,215 @@ export default function Captain() {
       {/* Order Modal */}
       <Modal
         isOpen={showOrderModal}
-        onClose={() => { setShowOrderModal(false); setOrderItems([]); setSelectedTable(null) }}
+        onClose={() => { setShowOrderModal(false); setOrderItems([]); setSelectedTable(null); setShowMenuView(false) }}
         title={`Order for ${selectedTable?.number}`}
         size="full"
       >
         <div style={{ display: 'flex', flexDirection: 'column', height: '70vh' }}>
-          {/* Category Pills */}
-          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '12px', marginBottom: '12px', flexShrink: 0 }}>
-            <button
-              onClick={() => setSelectedCategory(null)}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '20px',
-                background: !selectedCategory ? '#e63946' : '#f3f4f6',
-                color: !selectedCategory ? 'white' : '#6b7280',
-                fontWeight: 600,
-                fontSize: '12px',
-                whiteSpace: 'nowrap',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              All
-            </button>
-            {categories.map(cat => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '20px',
-                  background: selectedCategory === cat.id ? cat.color : '#f3f4f6',
-                  color: selectedCategory === cat.id ? 'white' : '#6b7280',
-                  fontWeight: 600,
-                  fontSize: '12px',
-                  whiteSpace: 'nowrap',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-              >
-                <span>{categoryIcons[cat.name]?.[0]}</span>
-                {cat.name}
-              </button>
-            ))}
-          </div>
-
-          {/* Menu Grid */}
-          <div style={{ flex: 1, overflow: 'auto', marginBottom: '12px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-              {menuItems
-                .filter(item => !selectedCategory || item.categoryId === selectedCategory)
-                .map(item => (
+          {showMenuView ? (
+            <>
+              {/* Category Pills */}
+              <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '12px', marginBottom: '12px', flexShrink: 0 }}>
+                <button
+                  onClick={() => setSelectedCategory(null)}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    background: !selectedCategory ? '#e63946' : '#f3f4f6',
+                    color: !selectedCategory ? 'white' : '#6b7280',
+                    fontWeight: 600,
+                    fontSize: '12px',
+                    whiteSpace: 'nowrap',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  All
+                </button>
+                {categories.map(cat => (
                   <button
-                    key={item.id}
-                    onClick={() => addToOrder(item)}
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
                     style={{
-                      padding: 0,
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '12px',
-                      background: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '20px',
+                      background: selectedCategory === cat.id ? cat.color : '#f3f4f6',
+                      color: selectedCategory === cat.id ? 'white' : '#6b7280',
+                      fontWeight: 600,
+                      fontSize: '12px',
+                      whiteSpace: 'nowrap',
+                      border: 'none',
                       cursor: 'pointer',
-                      textAlign: 'left',
-                      overflow: 'hidden'
-                    }}
-                  >
-                    <div style={{
-                      height: '60px',
-                      background: categories.find(c => c.id === item.categoryId)?.color || '#6b7280',
-                      opacity: 0.3,
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '28px'
-                    }}>
-                      {categoryIcons[categories.find(c => c.id === item.categoryId)?.name] || '🍽️'}
-                    </div>
-                    <div style={{ padding: '8px' }}>
-                      <div style={{ fontSize: '11px', fontWeight: 600, lineHeight: 1.2, marginBottom: '4px' }}>
-                        {item.name}
-                      </div>
-                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#10b981' }}>
-                        ₹{item.price}
-                      </div>
-                    </div>
+                      gap: '4px'
+                    }}
+                  >
+                    <span>{categoryIcons[cat.name]?.[0]}</span>
+                    {cat.name}
                   </button>
                 ))}
-            </div>
-          </div>
+              </div>
 
-          {/* Order Summary */}
+              {/* Menu Grid */}
+              <div style={{ flex: 1, overflow: 'auto', marginBottom: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                  {menuItems
+                    .filter(item => !selectedCategory || item.categoryId === selectedCategory)
+                    .map(item => (
+                      <button
+                        key={item.id}
+                        onClick={() => addToOrder(item)}
+                        style={{
+                          padding: 0,
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '12px',
+                          background: 'white',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <div style={{
+                          height: '60px',
+                          background: categories.find(c => c.id === item.categoryId)?.color || '#6b7280',
+                          opacity: 0.3,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '28px'
+                        }}>
+                          {categoryIcons[categories.find(c => c.id === item.categoryId)?.name] || '🍽️'}
+                        </div>
+                        <div style={{ padding: '8px' }}>
+                          <div style={{ fontSize: '11px', fontWeight: 600, lineHeight: 1.2, marginBottom: '4px' }}>
+                            {item.name}
+                          </div>
+                          <div style={{ fontSize: '13px', fontWeight: 700, color: '#10b981' }}>
+                            ₹{item.price}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Ordered Items List */}
+              <div style={{ flex: 1, overflow: 'auto', marginBottom: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>Ordered Items</h3>
+                  <button
+                    onClick={() => setShowMenuView(true)}
+                    style={{
+                      padding: '10px 16px',
+                      background: '#e63946',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontWeight: 600,
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    <Plus size={16} />
+                    Add Item
+                  </button>
+                </div>
+
+                {orderItems.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '48px 0', color: '#9ca3af' }}>
+                    <ShoppingBag size={48} style={{ marginBottom: '12px' }} />
+                    <p>No items ordered yet</p>
+                    <button
+                      onClick={() => setShowMenuView(true)}
+                      style={{
+                        marginTop: '12px',
+                        padding: '12px 24px',
+                        background: '#e63946',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '10px',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Browse Menu
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {orderItems.map(item => (
+                      <div key={item.menuItemId} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        padding: '14px',
+                        background: '#f9fafb',
+                        borderRadius: '12px'
+                      }}>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontWeight: 600, fontSize: '14px' }}>{item.menuItemName}</div>
+                          <div style={{ fontSize: '12px', color: '#6b7280' }}>₹{item.price} each</div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <button
+                            onClick={() => updateQty(item.menuItemId, -1)}
+                            style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#f3f4f6', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <span style={{ width: '28px', textAlign: 'center', fontWeight: 700 }}>{item.quantity}</span>
+                          <button
+                            onClick={() => updateQty(item.menuItemId, 1)}
+                            style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e63946', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                        <span style={{ width: '60px', textAlign: 'right', fontWeight: 700 }}>₹{item.total}</span>
+                        <button onClick={() => removeFromOrder(item.menuItemId)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                          <Trash2 size={16} color="#ef4444" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Order Summary (always visible) */}
           <div style={{
             background: '#f9fafb',
             borderRadius: '16px',
             padding: '16px',
-            maxHeight: '200px',
             overflow: 'auto',
             flexShrink: 0
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <h4 style={{ fontSize: '14px', fontWeight: 600, margin: 0 }}>Current Order</h4>
+              <h4 style={{ fontSize: '14px', fontWeight: 600, margin: 0 }}>Order Summary</h4>
               <span style={{ fontSize: '13px', color: '#6b7280' }}>{orderItems.length} items</span>
             </div>
 
             {orderItems.length === 0 ? (
-              <p style={{ textAlign: 'center', color: '#9ca3af', padding: '20px' }}>Tap items to add</p>
+              <p style={{ textAlign: 'center', color: '#9ca3af', padding: '12px' }}>No items</p>
             ) : (
               <>
                 {orderItems.map(item => (
                   <div key={item.menuItemId} style={{
                     display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #e5e7eb'
+                    justifyContent: 'space-between',
+                    padding: '6px 0',
+                    borderBottom: '1px solid #e5e7eb',
+                    fontSize: '13px'
                   }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '13px', fontWeight: 600 }}>{item.menuItemName}</div>
-                      <div style={{ fontSize: '11px', color: '#6b7280' }}>₹{item.price}</div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <button
-                        onClick={() => updateQty(item.menuItemId, -1)}
-                        style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#f3f4f6', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      >
-                        <Minus size={14} />
-                      </button>
-                      <span style={{ width: '24px', textAlign: 'center', fontWeight: 600 }}>{item.quantity}</span>
-                      <button
-                        onClick={() => updateQty(item.menuItemId, 1)}
-                        style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#e63946', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}
-                      >
-                        <Plus size={14} />
-                      </button>
-                    </div>
-                    <span style={{ width: '50px', textAlign: 'right', fontWeight: 600 }}>₹{item.total}</span>
-                    <button onClick={() => removeFromOrder(item.menuItemId)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                      <Trash2 size={14} color="#ef4444" />
-                    </button>
+                    <span>{item.menuItemName} x{item.quantity}</span>
+                    <span style={{ fontWeight: 600 }}>₹{item.total}</span>
                   </div>
                 ))}
 
@@ -531,10 +602,17 @@ export default function Captain() {
           </div>
 
           {/* Send Button */}
-          <Button fullWidth size="lg" onClick={sendToKitchen} disabled={orderItems.length === 0} style={{ marginTop: '12px' }}>
-            <Send size={18} />
-            Send to Kitchen
-          </Button>
+          <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+            {showMenuView && (
+              <Button variant="secondary" onClick={() => setShowMenuView(false)} style={{ flex: 1 }}>
+                Back to Order
+              </Button>
+            )}
+            <Button fullWidth size="lg" onClick={sendToKitchen} disabled={orderItems.length === 0} style={{ flex: showMenuView ? 2 : 1 }}>
+              <Send size={18} />
+              Send to Kitchen
+            </Button>
+          </div>
         </div>
       </Modal>
 

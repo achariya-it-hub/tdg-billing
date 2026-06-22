@@ -57,10 +57,39 @@ export default function POS() {
     }
   }, [selectedCategory])
 
+  const getApiUrl = () => {
+    return window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
+  }
+
   const handlePlaceOrder = async (paymentMethod) => {
     if (!currentOrder.items || currentOrder.items.length === 0) {
       toast.error('Add items to place order')
       return
+    }
+    if (paymentMethod === 'wallet') {
+      const phone = currentOrder.customerPhone
+      if (!phone) {
+        toast.error('Customer phone required for wallet payment')
+        return
+      }
+      try {
+        const res = await fetch(`${getApiUrl()}/api/loyalty/user/${encodeURIComponent(phone)}`)
+        if (res.ok) {
+          const data = await res.json()
+          const balance = data.rubyPoints || 0
+          const total = getTotal()
+          if (balance < total) {
+            toast.error(`Insufficient wallet: ₹${balance} available, need ₹${total.toFixed(2)}`)
+            return
+          }
+        } else {
+          toast.error('Customer not found in loyalty system')
+          return
+        }
+      } catch {
+        toast.error('Could not verify wallet balance')
+        return
+      }
     }
     setProcessing(true)
     try {
@@ -247,9 +276,7 @@ export default function POS() {
           </div>
 
           {currentOrder.type === 'dine-in' && (
-            <input
-              type="text"
-              placeholder="Table Number"
+            <select
               value={currentOrder.tableNumber}
               onChange={(e) => setTableNumber(e.target.value)}
               style={{
@@ -257,9 +284,16 @@ export default function POS() {
                 padding: '12px',
                 borderRadius: '10px',
                 marginBottom: '8px',
-                fontSize: '14px'
+                fontSize: '14px',
+                background: 'white',
+                border: '1px solid var(--border)'
               }}
-            />
+            >
+              <option value="">Select Table</option>
+              {Array.from({ length: 20 }, (_, i) => `T${i + 1}`).map(t => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
           )}
           <input
             type="tel"
@@ -586,9 +620,7 @@ export default function POS() {
 
         {currentOrder.type === 'dine-in' && (
           <div style={{ padding: '12px', borderBottom: '1px solid var(--border)' }}>
-            <input
-              type="text"
-              placeholder="Table Number"
+            <select
               value={currentOrder.tableNumber}
               onChange={(e) => setTableNumber(e.target.value)}
               style={{
@@ -596,9 +628,16 @@ export default function POS() {
                 padding: '10px 12px',
                 borderRadius: '8px',
                 fontSize: '14px',
-                marginBottom: '8px'
+                marginBottom: '8px',
+                background: 'white',
+                border: '1px solid var(--border)'
               }}
-            />
+            >
+              <option value="">Select Table</option>
+              {Array.from({ length: 20 }, (_, i) => `T${i + 1}`).map(t => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
             <input
               type="tel"
               placeholder="Customer Phone (for loyalty points)"
