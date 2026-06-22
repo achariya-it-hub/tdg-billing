@@ -174,8 +174,15 @@ export default function Kitchen() {
                     alignItems: 'center',
                     justifyContent: 'space-between'
                   }}>
-                    <div style={{ fontFamily: 'Bebas Neue', fontSize: '36px', color: 'white' }}>
-                      {order.orderNumber}
+                    <div>
+                      <div style={{ fontFamily: 'Bebas Neue', fontSize: '36px', color: 'white' }}>
+                        {order.orderNumber}
+                      </div>
+                      {order.tableNumber && (
+                        <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)', fontWeight: 600 }}>
+                          Table {order.tableNumber}
+                        </div>
+                      )}
                     </div>
                     <div style={{ textAlign: 'right', color: 'white' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontFamily: 'JetBrains Mono' }}>
@@ -337,16 +344,23 @@ export default function Kitchen() {
                     justifyContent: 'space-between'
                   }}
                 >
-                  <span
-                    style={{
-                      fontFamily: 'Bebas Neue',
-                      fontSize: '48px',
-                      lineHeight: 1,
-                      color: 'white'
-                    }}
-                  >
-                    {order.orderNumber}
-                  </span>
+                  <div>
+                    <span
+                      style={{
+                        fontFamily: 'Bebas Neue',
+                        fontSize: '48px',
+                        lineHeight: 1,
+                        color: 'white'
+                      }}
+                    >
+                      {order.orderNumber}
+                    </span>
+                    {order.tableNumber && (
+                      <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)', fontWeight: 600, marginTop: '4px' }}>
+                        Table {order.tableNumber}
+                      </div>
+                    )}
+                  </div>
                   <div style={{ textAlign: 'right', color: 'white' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Clock size={14} />

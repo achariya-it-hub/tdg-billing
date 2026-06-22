@@ -638,6 +638,8 @@ app.post('/api/orders', auth, (req, res) => {
     id: billingOrderId,
     orderNumber: `K${billingOrderNum}`,
     items: billingOrder.items,
+    tableNumber: billingOrder.tableNumber,
+    type: billingOrder.type,
     createdAt: now
   })
   saveState()
@@ -709,7 +711,7 @@ app.post('/api/pos/orders', (req, res) => {
   
   // Emit to connected clients
   io.emit('order:created', order)
-  io.to('kitchen').emit('kot:created', { id, orderNumber: `K${orderNum}`, items: order.items, createdAt: now })
+  io.to('kitchen').emit('kot:created', { id, orderNumber: `K${orderNum}`, items: order.items, tableNumber: order.tableNumber, type: order.type, createdAt: now })
   
   res.status(201).json(order)
 })
@@ -881,6 +883,8 @@ app.post('/api/online-orders/:id/accept', (req, res) => {
     id: internalOrder.id,
     orderNumber: `K${orderNum}`,
     items: internalOrder.items,
+    tableNumber: internalOrder.tableNumber,
+    type: internalOrder.type,
     createdAt: now,
     source: 'online',
     aggregator: onlineOrder.aggregator,

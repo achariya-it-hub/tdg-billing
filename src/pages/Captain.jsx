@@ -6,6 +6,8 @@ import Modal from '../components/ui/Modal'
 import { useToast } from '../components/ui/Toaster'
 import { useMenuStore } from '../stores/menuStore'
 import { useOrderStore } from '../stores/orderStore'
+import { getSocket } from '../lib/socket'
+import API_BASE from '../lib/apiConfig'
 
 const categoryIcons = {
   'Burgers': '🍔',
@@ -27,12 +29,6 @@ const sampleTables = [
   { id: 't8', number: 'T8', seats: 2, status: 'available', currentOrder: null },
 ]
 
-const sampleActiveOrders = [
-  { id: 1, table: 'T1', items: ['Zinger Burger x1', 'Pepsi x2'], status: 'preparing', time: '5 min', total: 437 },
-  { id: 2, table: 'T2', items: ['Hot Wings x1', 'Fries x2'], status: 'ready', time: '12 min', total: 447 },
-  { id: 3, table: 'T4', items: ['Family Bucket x1'], status: 'preparing', time: '3 min', total: 999 },
-]
-
 export default function Captain() {
   const toast = useToast()
   const { categories, menuItems, fetchCategories, fetchMenuItems } = useMenuStore()
@@ -40,7 +36,7 @@ export default function Captain() {
 
   const [activeTab, setActiveTab] = useState('tables')
   const [tables] = useState(sampleTables)
-  const [activeOrders] = useState(sampleActiveOrders)
+  const [orders, setOrders] = useState([])
   const [selectedTable, setSelectedTable] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [showOrderModal, setShowOrderModal] = useState(false)
@@ -48,15 +44,40 @@ export default function Captain() {
   const [orderItems, setOrderItems] = useState([])
   const [showMenuView, setShowMenuView] = useState(false)
 
+  const fetchOrders = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/pos/orders`)
+      if (res.ok) {
+        const data = await res.json()
+        setOrders(data)
+      }
+    } catch (err) {
+      console.error('Failed to fetch orders:', err)
+    }
+  }
+
   useEffect(() => {
     fetchCategories()
     fetchMenuItems()
+    fetchOrders()
+    const socket = getSocket()
+    socket.connect()
+    socket.on('order:created', (order) => {
+      setOrders(prev => [order, ...prev])
+    })
+    socket.on('order:updated', (order) => {
+      setOrders(prev => prev.map(o => o.id === order.id ? order : o))
+    })
+    return () => {
+      socket.off('order:created')
+      socket.off('order:updated')
+    }
   }, [])
 
   const availableTables = tables.filter(t => t.status === 'available')
   const occupiedTables = tables.filter(t => t.status === 'occupied')
-  const preparingOrders = activeOrders.filter(o => o.status === 'preparing')
-  const readyOrders = activeOrders.filter(o => o.status === 'ready')
+  const preparingOrders = orders.filter(o => o.status === 'preparing' || o.status === 'pending')
+  const readyOrders = orders.filter(o => o.status === 'ready')
 
   const getTableStatusColor = (status) => {
     switch (status) {
@@ -69,8 +90,25 @@ export default function Captain() {
 
   const selectTable = (table) => {
     setSelectedTable(table)
-    setOrderItems([])
-    setShowMenuView(table.status !== 'occupied')
+    const tableOrders = orders.filter(o =>
+      o.tableNumber === table.number &&
+      o.status !== 'completed' &&
+      o.status !== 'cancelled' &&
+      o.status !== 'served'
+    )
+    const existingItems = tableOrders.flatMap(o =>
+      (o.items || []).map(item => ({
+        menuItemId: item.menuItemId,
+        menuItemName: item.menuItemName,
+        price: item.unitPrice,
+        quantity: item.quantity,
+        total: item.totalPrice,
+        orderId: o.id,
+        orderItemId: item.id
+      }))
+    )
+    setOrderItems(existingItems)
+    setShowMenuView(table.status !== 'occupied' || existingItems.length === 0)
     setShowOrderModal(true)
   }
 
@@ -109,12 +147,54 @@ export default function Captain() {
     setOrderItems(orderItems.filter(i => i.menuItemId !== menuItemId))
   }
 
-  const sendToKitchen = () => {
+  const markServed = async (order) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/pos/orders/${order.id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'served' })
+      })
+      if (res.ok) {
+        toast.success(`Order ${order.orderNumber} marked as served`)
+      }
+    } catch (err) {
+      console.error('Failed to mark served:', err)
+    }
+  }
+
+  const sendToKitchen = async () => {
     if (orderItems.length === 0) {
       toast.error('Add items first')
       return
     }
-    toast.success(`Order sent to kitchen for ${selectedTable?.number}`)
+    try {
+      const res = await fetch(`${API_BASE}/api/pos/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'dine-in',
+          source: 'captain',
+          items: orderItems.map(i => ({
+            menuItemId: i.menuItemId,
+            menuItemName: i.menuItemName,
+            quantity: i.quantity,
+            unitPrice: i.price,
+            totalPrice: i.total
+          })),
+          subtotal,
+          tax,
+          total,
+          tableNumber: selectedTable?.number || ''
+        })
+      })
+      if (res.ok) {
+        toast.success(`Order sent to kitchen for ${selectedTable?.number}`)
+      } else {
+        toast.error('Failed to send order')
+      }
+    } catch (err) {
+      toast.error('Failed to send order')
+    }
     setShowOrderModal(false)
     setOrderItems([])
     setSelectedTable(null)
@@ -164,7 +244,7 @@ export default function Captain() {
       }}>
         {[
           { id: 'tables', label: 'Tables', icon: Users, count: tables.length },
-          { id: 'orders', label: 'Orders', icon: ChefHat, count: activeOrders.length },
+          { id: 'orders', label: 'Orders', icon: ChefHat, count: orders.filter(o => o.status !== 'completed' && o.status !== 'served' && o.status !== 'cancelled').length },
           { id: 'ready', label: 'Ready', icon: Bell, count: readyOrders.length },
         ].map(tab => (
           <button
@@ -287,9 +367,9 @@ export default function Captain() {
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                   <div>
-                    <span style={{ fontSize: '18px', fontWeight: 700 }}>{order.table}</span>
+                    <span style={{ fontSize: '18px', fontWeight: 700 }}>{order.tableNumber || `#${order.orderNumber}`}</span>
                     <span style={{ fontSize: '12px', color: '#6b7280', marginLeft: '8px' }}>
-                      <Clock size={12} /> {order.time}
+                      <Clock size={12} /> {order.createdAt ? new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                     </span>
                   </div>
                   <span style={{
@@ -300,11 +380,11 @@ export default function Captain() {
                     fontSize: '12px',
                     fontWeight: 600
                   }}>
-                    Preparing
+                    {order.status === 'pending' ? 'Pending' : 'Preparing'}
                   </span>
                 </div>
                 <div style={{ fontSize: '13px', color: '#4b5563', marginBottom: '8px' }}>
-                  {order.items.join(', ')}
+                  {(order.items || []).map(i => `${i.menuItemName} x${i.quantity}`).join(', ')}
                 </div>
                 <div style={{ fontSize: '16px', fontWeight: 700, color: '#10b981' }}>
                   ₹{order.total}
@@ -333,7 +413,7 @@ export default function Captain() {
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                   <div>
-                    <span style={{ fontSize: '18px', fontWeight: 700 }}>{order.table}</span>
+                    <span style={{ fontSize: '18px', fontWeight: 700 }}>{order.tableNumber || `#${order.orderNumber}`}</span>
                     <span style={{ fontSize: '12px', color: '#6b7280', marginLeft: '8px' }}>
                       Ready to serve!
                     </span>
@@ -350,9 +430,9 @@ export default function Captain() {
                   </span>
                 </div>
                 <div style={{ fontSize: '13px', color: '#4b5563', marginBottom: '12px' }}>
-                  {order.items.join(', ')}
+                  {(order.items || []).map(i => `${i.menuItemName} x${i.quantity}`).join(', ')}
                 </div>
-                <Button fullWidth>
+                <Button fullWidth onClick={() => markServed(order)}>
                   <Check size={16} />
                   Served
                 </Button>
