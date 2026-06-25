@@ -1,0 +1,8 @@
+run = "node server/index.js"
+entrypoint = "server/index.js"
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "npm install && node server/index.js"]
