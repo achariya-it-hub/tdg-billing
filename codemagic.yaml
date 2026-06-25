@@ -5,6 +5,8 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
+      groups:
+        - app_store_connect_credentials
     triggering:
       events:
         - push
@@ -19,6 +21,13 @@ workflows:
       - name: Build iOS
         script: |
           cd ttt
-          flutter build ipa --release --no-codesign
+          flutter build ipa --release \
+            --export-options-plist=/usr/local/opt/codemagic/scripts/ios/ExportOptions.plist
     artifacts:
       - ttt/build/ios/ipa/*.ipa
+    distribution:
+      ios:
+        api_key: $APP_STORE_CONNECT_API_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_API_ISSUER_ID
+        key: $APP_STORE_CONNECT_API_PRIVATE_KEY
+        submit_to_app_store: false
