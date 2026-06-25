@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
-import 'referral_screen.dart';
+import 'asset_screen.dart';
 
 class DenLevelScreen extends StatefulWidget {
   const DenLevelScreen({super.key});
@@ -562,8 +562,8 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
           ),
           _buildBenefitItem(
             icon: Icons.trending_up_rounded,
-            title: 'Higher Referral Bonus',
-            subtitle: 'Earn more with every successful referral.',
+            title: 'Higher Asset Bonus',
+            subtitle: 'Earn more with every successful asset activation.',
             onTap: () {},
           ),
           const Divider(color: Color(0xFF222222), height: 1),
@@ -865,7 +865,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                     Navigator.pop(context);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const ReferralScreen()),
+                      MaterialPageRoute(builder: (_) => const AssetScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(

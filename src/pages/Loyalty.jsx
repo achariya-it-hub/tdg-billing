@@ -313,10 +313,12 @@ export default function Loyalty() {
                   style={{
                     flex: 1,
                     padding: '14px 16px',
-                    border: '1px solid #e5e7eb',
+                    border: '1.5px solid #e5e7eb',
                     borderRadius: '12px',
                     fontSize: '16px',
-                    outline: 'none'
+                    outline: 'none',
+                    background: 'rgba(255,255,255,0.75)',
+                    backdropFilter: 'blur(10px)'
                   }}
                 />
                 <button
@@ -324,13 +326,14 @@ export default function Loyalty() {
                   disabled={loading || !phone}
                   style={{
                     padding: '14px 24px',
-                    background: '#e63946',
+                    background: 'linear-gradient(135deg, #e63946, #c1121f)',
                     color: 'white',
                     border: 'none',
                     borderRadius: '12px',
                     fontWeight: 600,
                     cursor: 'pointer',
-                    opacity: loading || !phone ? 0.6 : 1
+                    opacity: loading || !phone ? 0.6 : 1,
+                    boxShadow: '0 2px 8px rgba(230,57,70,0.3)'
                   }}
                 >
                   {loading ? '...' : 'Go'}
@@ -463,7 +466,7 @@ export default function Loyalty() {
                 style={{
                   width: '100%',
                   padding: '16px',
-                  background: '#e63946',
+                  background: 'linear-gradient(135deg, #e63946, #c1121f)',
                   color: 'white',
                   border: 'none',
                   borderRadius: '12px',
@@ -471,7 +474,8 @@ export default function Loyalty() {
                   fontSize: '16px',
                   cursor: 'pointer',
                   marginTop: '8px',
-                  opacity: loading ? 0.6 : 1
+                  opacity: loading ? 0.6 : 1,
+                  boxShadow: '0 4px 16px rgba(230,57,70,0.3)'
                 }}
               >
                 {loading ? 'Creating...' : 'Create Account'}
@@ -663,11 +667,14 @@ export default function Loyalty() {
         <div>
           {/* Wallet Card */}
           <div style={{
-            background: 'white',
+            background: 'rgba(255,255,255,0.75)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
             borderRadius: '16px',
             padding: '20px',
             marginBottom: '16px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+            border: '1px solid rgba(255,255,255,0.3)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
               <Smartphone size={20} color="#e63946" />
@@ -697,11 +704,14 @@ export default function Loyalty() {
 
           {/* Redeem */}
           <div style={{
-            background: 'white',
+            background: 'rgba(255,255,255,0.75)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
             borderRadius: '16px',
             padding: '20px',
             marginBottom: '16px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+            border: '1px solid rgba(255,255,255,0.3)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
           }}>
             <div style={{ fontWeight: 700, color: '#1a1a2e', marginBottom: '12px' }}>Redeem Points</div>
             <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px' }}>
@@ -744,10 +754,13 @@ export default function Loyalty() {
 
           {/* Recent Transactions */}
           <div style={{
-            background: 'white',
+            background: 'rgba(255,255,255,0.75)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
             borderRadius: '16px',
             padding: '20px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+            border: '1px solid rgba(255,255,255,0.3)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
           }}>
             <div style={{ fontWeight: 700, color: '#1a1a2e', marginBottom: '12px' }}>Recent Activity</div>
             {transactions.length === 0 ? (
@@ -787,11 +800,14 @@ export default function Loyalty() {
       {tab === 'den' && (
         <div>
           <div style={{
-            background: 'white',
+            background: 'rgba(255,255,255,0.75)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
             borderRadius: '16px',
             padding: '20px',
             marginBottom: '16px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+            border: '1px solid rgba(255,255,255,0.3)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
               <Swords size={20} color="#e63946" />
@@ -954,10 +970,13 @@ export default function Loyalty() {
       {tab === 'transfer' && (
         <div>
           <div style={{
-            background: 'white',
+            background: 'rgba(255,255,255,0.75)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
             borderRadius: '16px',
             padding: '20px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+            border: '1px solid rgba(255,255,255,0.3)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
               <ArrowUpDown size={20} color="#e63946" />
@@ -1034,10 +1053,13 @@ export default function Loyalty() {
       {tab === 'tiers' && (
         <div>
           <div style={{
-            background: 'white',
+            background: 'rgba(255,255,255,0.75)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
             borderRadius: '16px',
             padding: '20px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+            border: '1px solid rgba(255,255,255,0.3)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
               <Award size={20} color="#e63946" />

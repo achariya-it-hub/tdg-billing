@@ -1,14 +1,13 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { 
   Monitor, ChefHat, Tablet, ShoppingCart, LayoutDashboard, 
-  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, ClipboardList, FileText, Receipt, Gem, Shield, KeyRound, X
+  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, FileText, Receipt, Gem, Shield, KeyRound, X, DollarSign, Settings
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import API_BASE from '../lib/apiConfig'
 
 const navItems = [
   { path: '/pos', icon: Monitor, label: 'POS', module: 'pos' },
-  { path: '/captain', icon: ClipboardList, label: 'Captain', module: 'captain' },
   { path: '/kitchen', icon: ChefHat, label: 'Kitchen', module: 'kitchen' },
   { path: '/billing', icon: Receipt, label: 'Billing', module: 'billing' },
   { path: '/kot', icon: Tablet, label: 'KOT', module: 'kot' },
@@ -19,6 +18,7 @@ const navItems = [
   { path: '/loyalty', icon: Gem, label: 'Loyalty', module: 'loyalty' },
   { path: '/customers', icon: UserPlus, label: 'Customers', module: 'customers' },
   { path: '/reports', icon: FileText, label: 'Reports', module: 'reports' },
+  { path: '/expenses', icon: DollarSign, label: 'Expenses', module: 'expenses' },
   { path: '/dashboard', icon: BarChart3, label: 'Dashboard', module: 'dashboard' },
   { path: '/users', icon: Shield, label: 'Users', module: 'users' },
 ]
@@ -30,11 +30,19 @@ export default function Layout({ user, onLogout }) {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
 
+  const [showInstallBtn, setShowInstallBtn] = useState(false)
   const [showPinModal, setShowPinModal] = useState(false)
   const [pinForm, setPinForm] = useState({ currentPin: '', newPin: '', confirmPin: '' })
   const [pinError, setPinError] = useState('')
   const [pinSuccess, setPinSuccess] = useState('')
   const [pinSaving, setPinSaving] = useState(false)
+
+  useEffect(() => {
+    const handler = () => setShowInstallBtn(true)
+    window.addEventListener('pwa-install-ready', handler)
+    if (window.getPWAPrompt?.()) setShowInstallBtn(true)
+    return () => window.removeEventListener('pwa-install-ready', handler)
+  }, [])
 
   const handleChangePin = async () => {
     setPinError('')
@@ -71,12 +79,15 @@ export default function Layout({ user, onLogout }) {
 
   const hasView = (module) => {
     if (!user) return true
-    if (user.role === 'admin') return true
-    if (!user.permissions) return true // legacy users see all
+    if (user.role === 'admin' || user.role === 'super-admin') return true
+    if (!user.permissions) return true
     return user.permissions?.[module]?.view === true
   }
 
   const visibleNavItems = navItems.filter(item => hasView(item.module))
+  if (user?.role === 'super-admin') {
+    visibleNavItems.push({ path: '/settings', icon: Settings, label: 'Settings', module: 'settings' })
+  }
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024)
@@ -108,8 +119,10 @@ export default function Layout({ user, onLogout }) {
         <header
           style={{
             height: '56px',
-            background: 'white',
-            borderBottom: '1px solid var(--border)',
+            background: 'rgba(255,255,255,0.8)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            borderBottom: '1px solid rgba(0,0,0,0.04)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -124,7 +137,7 @@ export default function Layout({ user, onLogout }) {
               onClick={() => setShowMobileMenu(!showMobileMenu)}
               style={{
                 padding: '8px',
-                background: 'var(--bg-secondary)',
+                background: 'rgba(0,0,0,0.04)',
                 border: 'none',
                 borderRadius: '10px',
                 cursor: 'pointer'
@@ -176,7 +189,7 @@ export default function Layout({ user, onLogout }) {
               onClick={() => setShowUserMenu(!showUserMenu)}
               style={{
                 padding: '8px',
-                background: 'var(--bg-secondary)',
+                background: 'rgba(0,0,0,0.04)',
                 borderRadius: '10px',
                 border: 'none',
                 cursor: 'pointer'
@@ -193,14 +206,17 @@ export default function Layout({ user, onLogout }) {
             position: 'fixed',
             top: '56px',
             right: '16px',
-            background: 'white',
+            background: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
             borderRadius: '16px',
             padding: '16px',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+            border: '1px solid rgba(255,255,255,0.3)',
+            boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
             zIndex: 200,
             minWidth: '200px'
           }}>
-            <div style={{ marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--border)' }}>
+            <div style={{ marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
               <div style={{ fontWeight: 600, color: '#1a1a2e' }}>{user?.name}</div>
               <div style={{ fontSize: '13px', color: '#6b7280', textTransform: 'capitalize' }}>{user?.role}</div>
             </div>
@@ -209,7 +225,7 @@ export default function Layout({ user, onLogout }) {
               style={{
                 width: '100%',
                 padding: '12px',
-                background: '#f5f3ff',
+                background: 'rgba(124, 58, 237, 0.08)',
                 border: 'none',
                 borderRadius: '10px',
                 color: '#7c3aed',
@@ -230,7 +246,7 @@ export default function Layout({ user, onLogout }) {
               style={{
                 width: '100%',
                 padding: '12px',
-                background: '#fef2f2',
+                background: 'rgba(220,38,38,0.08)',
                 border: 'none',
                 borderRadius: '10px',
                 color: '#dc2626',
@@ -255,7 +271,9 @@ export default function Layout({ user, onLogout }) {
               style={{
                 position: 'fixed',
                 inset: 0,
-                background: 'rgba(0,0,0,0.5)',
+                background: 'rgba(0,0,0,0.4)',
+                backdropFilter: 'blur(4px)',
+                WebkitBackdropFilter: 'blur(4px)',
                 zIndex: 150
               }}
               onClick={() => setShowMobileMenu(false)}
@@ -266,15 +284,18 @@ export default function Layout({ user, onLogout }) {
               left: 0,
               bottom: 0,
               width: '280px',
-              background: 'white',
+              background: 'rgba(255,255,255,0.9)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
               zIndex: 200,
               overflowY: 'auto',
-              boxShadow: '4px 0 20px rgba(0,0,0,0.1)'
+              borderRight: '1px solid rgba(255,255,255,0.3)',
+              boxShadow: '4px 0 30px rgba(0,0,0,0.08)'
             }}>
               {/* Logo */}
-              <div style={{ padding: '20px', borderBottom: '1px solid var(--border)' }}>
+              <div style={{ padding: '20px', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg, #e63946 0%, #c1121f 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg, #e63946 0%, #c1121f 100%)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(230,57,70,0.3)' }}>
                     <UtensilsCrossed size={20} color="white" />
                   </div>
                   <div>
@@ -299,7 +320,7 @@ export default function Layout({ user, onLogout }) {
                       marginBottom: '4px',
                       borderRadius: '12px',
                       color: isActive ? '#e63946' : '#4b5563',
-                      background: isActive ? '#fef2f2' : 'transparent',
+                      background: isActive ? 'linear-gradient(135deg, rgba(230,57,70,0.08) 0%, rgba(230,57,70,0.03) 100%)' : 'transparent',
                       textDecoration: 'none',
                       fontWeight: isActive ? 600 : 500,
                       transition: 'all 0.2s'
@@ -311,14 +332,56 @@ export default function Layout({ user, onLogout }) {
                 ))}
               </div>
 
+              {/* Install PWA Button (Mobile) */}
+              {showInstallBtn && (
+                <div style={{ padding: '0 12px 8px' }}>
+                  <button
+                    onClick={() => {
+                      if (window.isPWAiOS) {
+                        alert('To install TDG POS on your iPhone:\n\n1. Tap the Share button (□↗) below\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add" in the top-right corner\n\nThe app will appear on your home screen!')
+                      } else {
+                        const prompt = window.getPWAPrompt?.()
+                        if (prompt) {
+                          prompt.prompt()
+                          prompt.userChoice.then(() => {
+                            window.clearPWAPrompt?.()
+                            setShowInstallBtn(false)
+                            setShowMobileMenu(false)
+                          })
+                        } else {
+                          alert('To install:\n\nAndroid: Use Chrome menu → Install app\n\nDesktop: Click the install icon in the address bar')
+                        }
+                      }
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '14px',
+                      background: 'linear-gradient(135deg, rgba(34,197,94,0.1), rgba(34,197,94,0.03))',
+                      border: '1px solid rgba(34,197,94,0.2)',
+                      borderRadius: '12px',
+                      color: '#22c55e',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Install App
+                  </button>
+                </div>
+              )}
+
               {/* Logout Button */}
-              <div style={{ padding: '16px', borderTop: '1px solid var(--border)', marginTop: 'auto' }}>
+              <div style={{ padding: '16px', borderTop: '1px solid rgba(0,0,0,0.04)', marginTop: 'auto' }}>
                 <button
                   onClick={() => { setShowMobileMenu(false); onLogout() }}
                   style={{
                     width: '100%',
                     padding: '14px',
-                    background: '#fef2f2',
+                    background: 'rgba(220,38,38,0.08)',
                     border: 'none',
                     borderRadius: '12px',
                     color: '#dc2626',
@@ -345,16 +408,21 @@ export default function Layout({ user, onLogout }) {
       </div>
     ) : (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
+      {/* Glass Sidebar */}
       <nav
         style={{
           width: '80px',
-          background: 'white',
-          borderRight: '1px solid var(--border)',
+          background: 'rgba(255, 255, 255, 0.75)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderRight: '1px solid rgba(255, 255, 255, 0.3)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           padding: '20px 0',
-          gap: '4px'
+          gap: '2px',
+          position: 'relative',
+          zIndex: 10
         }}
       >
         <div
@@ -366,23 +434,20 @@ export default function Layout({ user, onLogout }) {
             alignItems: 'center',
             justifyContent: 'center',
             marginBottom: '20px',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            boxShadow: '0 4px 12px rgba(230, 57, 70, 0.25)'
           }}
         >
           <img 
             src="/TDG LOGO.png" 
             alt="TDG" 
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              objectFit: 'contain' 
-            }}
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
             onError={(e) => {
               e.target.style.display = 'none'
               e.target.nextSibling.style.display = 'flex'
             }}
           />
-          <div style={{ display: 'none', width: '52px', height: '52px', background: 'linear-gradient(135deg, #e63946 0%, #c1121f 100%)', borderRadius: '14px', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(230, 57, 70, 0.3)' }}>
+          <div style={{ display: 'none', width: '52px', height: '52px', background: 'linear-gradient(135deg, #e63946 0%, #c1121f 100%)', borderRadius: '14px', alignItems: 'center', justifyContent: 'center' }}>
             <UtensilsCrossed size={24} color="white" />
           </div>
         </div>
@@ -393,22 +458,37 @@ export default function Layout({ user, onLogout }) {
             to={item.path}
             title={item.label}
             style={({ isActive }) => ({
-              width: '56px',
-              height: '56px',
+              width: '52px',
+              height: '52px',
               borderRadius: '14px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '2px',
-              background: isActive ? 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)' : 'transparent',
+              background: isActive 
+                ? 'linear-gradient(135deg, rgba(230,57,70,0.12) 0%, rgba(230,57,70,0.04) 100%)' 
+                : 'transparent',
               color: isActive ? '#e63946' : '#9ca3af',
-              transition: 'all 0.2s',
-              textDecoration: 'none'
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              textDecoration: 'none',
+              position: 'relative'
             })}
           >
-            <item.icon size={22} />
-            <span style={{ fontSize: '9px', fontWeight: 600 }}>{item.label}</span>
+            {location.pathname.startsWith(item.path) && (
+              <div style={{
+                position: 'absolute',
+                left: '-14px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '3px',
+                height: '20px',
+                background: 'linear-gradient(180deg, #e63946, #c1121f)',
+                borderRadius: '0 3px 3px 0'
+              }} />
+            )}
+            <item.icon size={20} />
+            <span style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.3px' }}>{item.label}</span>
           </NavLink>
         ))}
 
@@ -419,39 +499,40 @@ export default function Layout({ user, onLogout }) {
             to="/online-orders"
             title="Online Orders"
             style={({ isActive }) => ({
-              width: '56px',
-              height: '56px',
+              width: '52px',
+              height: '52px',
               borderRadius: '14px',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '2px',
-              background: isActive ? 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)' : 'transparent',
+              background: isActive ? 'rgba(37,99,235,0.1)' : 'transparent',
               color: isActive ? '#2563eb' : '#9ca3af',
               transition: 'all 0.2s',
               textDecoration: 'none',
               position: 'relative'
             })}
           >
-            <Globe size={22} />
+            <Globe size={20} />
             <span style={{ fontSize: '9px', fontWeight: 600 }}>Online</span>
             {onlineCount > 0 && (
               <span
                 style={{
                   position: 'absolute',
-                  top: '6px',
-                  right: '6px',
-                  width: '18px',
-                  height: '18px',
-                  background: '#f59e0b',
+                  top: '4px',
+                  right: '4px',
+                  width: '16px',
+                  height: '16px',
+                  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
                   borderRadius: '50%',
-                  fontSize: '10px',
+                  fontSize: '9px',
                   fontWeight: 700,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: 'white'
+                  color: 'white',
+                  boxShadow: '0 2px 6px rgba(245,158,11,0.4)'
                 }}
               >
                 {onlineCount}
@@ -460,12 +541,58 @@ export default function Layout({ user, onLogout }) {
           </NavLink>
         )}
 
+        {/* Install PWA button */}
+        {showInstallBtn && (
+          <button
+            onClick={() => {
+              if (window.isPWAiOS) {
+                // iOS: show manual instructions
+                setShowInstallBtn(false)
+                alert('To install TDG POS on your iPhone:\n\n1. Tap the Share button (□↗) below\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add" in the top-right corner\n\nThe app will appear on your home screen!')
+              } else {
+                const prompt = window.getPWAPrompt?.()
+                if (prompt) {
+                  prompt.prompt()
+                  prompt.userChoice.then(() => {
+                    window.clearPWAPrompt?.()
+                    setShowInstallBtn(false)
+                  })
+                } else {
+                  // Fallback: show instructions
+                  alert('To install:\n\nAndroid: Tap "Add to Home Screen" when prompted, or use Chrome menu → Install app\n\nDesktop: Click the install icon in the address bar')
+                  setShowInstallBtn(false)
+                }
+              }
+            }}
+            title="Install App"
+            style={{
+              width: '52px',
+              height: '52px',
+              borderRadius: '14px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '2px',
+              background: 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05))',
+              color: '#22c55e',
+              transition: 'all 0.2s',
+              border: '1px solid rgba(34,197,94,0.2)',
+              cursor: 'pointer',
+              marginTop: '4px'
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span style={{ fontSize: '9px', fontWeight: 600 }}>Install</span>
+          </button>
+        )}
+
         <button
           onClick={onLogout}
           title="Logout"
           style={{
-            width: '56px',
-            height: '56px',
+            width: '52px',
+            height: '52px',
             borderRadius: '14px',
             display: 'flex',
             flexDirection: 'column',
@@ -477,10 +604,12 @@ export default function Layout({ user, onLogout }) {
             transition: 'all 0.2s',
             border: 'none',
             cursor: 'pointer',
-            marginTop: '8px'
+            marginTop: '4px'
           }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(220,38,38,0.06)'; e.currentTarget.style.color = '#dc2626' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#9ca3af' }}
         >
-          <LogOut size={22} />
+          <LogOut size={20} />
           <span style={{ fontSize: '9px', fontWeight: 600 }}>Logout</span>
         </button>
       </nav>
@@ -489,41 +618,51 @@ export default function Layout({ user, onLogout }) {
         <header
           style={{
             height: '64px',
-            background: 'white',
-            borderBottom: '1px solid var(--border)',
+            background: 'rgba(255, 255, 255, 0.75)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            borderBottom: '1px solid rgba(0, 0, 0, 0.04)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0 32px'
+            padding: '0 32px',
+            position: 'sticky',
+            top: 0,
+            zIndex: 9
           }}
         >
-          <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1a1a2e', letterSpacing: '1px' }}>
+          <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1a1a2e', letterSpacing: '-0.02em' }}>
             {getCurrentTitle()}
           </h1>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             <div style={{ position: 'relative' }}>
               <div
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '12px',
-                  padding: '8px 16px',
-                  background: 'var(--bg-secondary)',
+                  gap: '10px',
+                  padding: '8px 14px',
+                  background: 'rgba(0,0,0,0.03)',
                   borderRadius: '12px',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  border: '1px solid rgba(0,0,0,0.03)'
                 }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.05)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.03)' }}
               >
                 <User size={18} color="#6b7280" />
                 <span style={{ fontSize: '14px', fontWeight: 600, color: '#1a1a2e' }}>{user?.name}</span>
                 <span style={{
                   fontSize: '11px',
                   color: '#6b7280',
-                  background: 'white',
+                  background: 'rgba(0,0,0,0.04)',
                   padding: '2px 8px',
                   borderRadius: '6px',
-                  textTransform: 'capitalize'
+                  textTransform: 'capitalize',
+                  fontWeight: 500
                 }}>
                   {user?.role}
                 </span>
@@ -535,10 +674,13 @@ export default function Layout({ user, onLogout }) {
                   top: '100%',
                   right: 0,
                   marginTop: '8px',
-                  background: 'white',
+                  background: 'rgba(255,255,255,0.9)',
+                  backdropFilter: 'blur(24px)',
+                  WebkitBackdropFilter: 'blur(24px)',
                   borderRadius: '16px',
                   padding: '16px',
-                  boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
                   zIndex: 200,
                   minWidth: '200px'
                 }}>
@@ -547,7 +689,7 @@ export default function Layout({ user, onLogout }) {
                     style={{
                       width: '100%',
                       padding: '12px',
-                      background: '#f5f3ff',
+                      background: 'rgba(124, 58, 237, 0.08)',
                       border: 'none',
                       borderRadius: '10px',
                       color: '#7c3aed',
@@ -568,7 +710,7 @@ export default function Layout({ user, onLogout }) {
                     style={{
                       width: '100%',
                       padding: '12px',
-                      background: '#fef2f2',
+                      background: 'rgba(220,38,38,0.08)',
                       border: 'none',
                       borderRadius: '10px',
                       color: '#dc2626',
@@ -589,7 +731,11 @@ export default function Layout({ user, onLogout }) {
             <span style={{ 
               fontFamily: 'JetBrains Mono',
               fontSize: '14px', 
-              color: '#6b7280' 
+              color: '#6b7280',
+              background: 'rgba(0,0,0,0.03)',
+              padding: '6px 12px',
+              borderRadius: '8px',
+              letterSpacing: '0.5px'
             }}>
               {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
             </span>
@@ -608,30 +754,32 @@ export default function Layout({ user, onLogout }) {
       {layout}
       {showPinModal && (
         <>
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 500 }} onClick={() => { setShowPinModal(false); setPinError(''); setPinSuccess(''); setPinForm({ currentPin: '', newPin: '', confirmPin: '' }) }} />
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', zIndex: 500 }} onClick={() => { setShowPinModal(false); setPinError(''); setPinSuccess(''); setPinForm({ currentPin: '', newPin: '', confirmPin: '' }) }} />
           <div style={{
             position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-            background: 'white', borderRadius: '20px', padding: '32px', width: '90%', maxWidth: '380px', zIndex: 501,
-            boxShadow: '0 40px 80px rgba(0,0,0,0.2)'
+            background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)',
+            borderRadius: '24px', padding: '32px', width: '90%', maxWidth: '380px', zIndex: 501,
+            border: '1px solid rgba(255,255,255,0.3)',
+            boxShadow: '0 40px 80px rgba(0,0,0,0.15)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <KeyRound size={20} color="#7c3aed" /> Change PIN
               </h3>
               <button onClick={() => { setShowPinModal(false); setPinError(''); setPinSuccess(''); setPinForm({ currentPin: '', newPin: '', confirmPin: '' }) }}
-                style={{ padding: '8px', border: 'none', background: '#f3f4f6', borderRadius: '8px', cursor: 'pointer' }}>
+                style={{ padding: '8px', border: 'none', background: 'rgba(0,0,0,0.04)', borderRadius: '8px', cursor: 'pointer' }}>
                 <X size={18} color="#6b7280" />
               </button>
             </div>
 
             {pinSuccess && (
-              <div style={{ background: '#f0fdf4', color: '#16a34a', padding: '12px', borderRadius: '10px', fontSize: '14px', textAlign: 'center', marginBottom: '16px', border: '1px solid #bbf7d0' }}>
+              <div style={{ background: 'rgba(22,163,74,0.08)', color: '#16a34a', padding: '12px', borderRadius: '10px', fontSize: '14px', textAlign: 'center', marginBottom: '16px', border: '1px solid rgba(22,163,74,0.15)' }}>
                 {pinSuccess}
               </div>
             )}
 
             {pinError && (
-              <div style={{ background: '#fef2f2', color: '#dc2626', padding: '12px', borderRadius: '10px', fontSize: '14px', textAlign: 'center', marginBottom: '16px', border: '1px solid #fecaca' }}>
+              <div style={{ background: 'rgba(220,38,38,0.08)', color: '#dc2626', padding: '12px', borderRadius: '10px', fontSize: '14px', textAlign: 'center', marginBottom: '16px', border: '1px solid rgba(220,38,38,0.15)' }}>
                 {pinError}
               </div>
             )}
@@ -640,22 +788,22 @@ export default function Layout({ user, onLogout }) {
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>Current PIN</label>
               <input type="password" maxLength={4} value={pinForm.currentPin}
                 onChange={e => setPinForm({ ...pinForm, currentPin: e.target.value.replace(/\D/g, '').slice(0, 4) })}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #e5e7eb', fontSize: '14px', textAlign: 'center', letterSpacing: '4px' }} />
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid var(--border)', fontSize: '14px', textAlign: 'center', letterSpacing: '4px' }} />
             </div>
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>New PIN</label>
               <input type="password" maxLength={4} value={pinForm.newPin}
                 onChange={e => setPinForm({ ...pinForm, newPin: e.target.value.replace(/\D/g, '').slice(0, 4) })}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #e5e7eb', fontSize: '14px', textAlign: 'center', letterSpacing: '4px' }} />
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid var(--border)', fontSize: '14px', textAlign: 'center', letterSpacing: '4px' }} />
             </div>
             <div style={{ marginBottom: '24px' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>Confirm New PIN</label>
               <input type="password" maxLength={4} value={pinForm.confirmPin}
                 onChange={e => setPinForm({ ...pinForm, confirmPin: e.target.value.replace(/\D/g, '').slice(0, 4) })}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #e5e7eb', fontSize: '14px', textAlign: 'center', letterSpacing: '4px' }} />
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid var(--border)', fontSize: '14px', textAlign: 'center', letterSpacing: '4px' }} />
             </div>
             <button onClick={handleChangePin} disabled={pinSaving}
-              style={{ width: '100%', padding: '14px', border: 'none', borderRadius: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', background: pinSaving ? '#9ca3af' : '#7c3aed', color: 'white' }}>
+              style={{ width: '100%', padding: '14px', border: 'none', borderRadius: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', background: pinSaving ? '#9ca3af' : 'linear-gradient(135deg, #7c3aed, #6d28d9)', color: 'white', boxShadow: '0 4px 16px rgba(124,58,237,0.3)' }}>
               {pinSaving ? 'Saving...' : 'Change PIN'}
             </button>
           </div>

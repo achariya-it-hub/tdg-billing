@@ -6,10 +6,13 @@ const styles = {
     gap: '8px',
     fontWeight: 600,
     borderRadius: '12px',
-    transition: 'all 0.15s ease',
+    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
     WebkitTapHighlightColor: 'transparent',
     touchAction: 'manipulation',
     border: 'none',
+    position: 'relative',
+    overflow: 'hidden',
+    userSelect: 'none',
   },
   sizes: {
     sm: { padding: '10px 14px', fontSize: '13px', minHeight: '36px' },
@@ -19,32 +22,35 @@ const styles = {
   },
   variants: {
     primary: { 
-      background: 'var(--accent-primary)', 
+      background: 'linear-gradient(135deg, #e63946 0%, #c1121f 100%)',
       color: 'white',
-      boxShadow: '0 2px 8px rgba(230, 57, 70, 0.3)'
+      boxShadow: '0 4px 16px rgba(230, 57, 70, 0.3)',
     },
     secondary: { 
-      background: 'var(--bg-elevated)', 
+      background: 'rgba(255, 255, 255, 0.8)',
+      backdropFilter: 'blur(10px)',
       color: 'var(--text-primary)',
-      border: '1px solid var(--border)'
+      border: '1px solid var(--border)',
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
     },
     ghost: { 
       background: 'transparent', 
       color: 'var(--text-secondary)' 
     },
     success: { 
-      background: 'var(--accent-success)', 
+      background: 'linear-gradient(135deg, #2a9d8f 0%, #21867a 100%)',
       color: 'white',
-      boxShadow: '0 2px 8px rgba(42, 157, 143, 0.3)'
+      boxShadow: '0 4px 16px rgba(42, 157, 143, 0.3)',
     },
     warning: { 
-      background: 'var(--accent-warning)', 
-      color: 'var(--bg-primary)' 
+      background: 'linear-gradient(135deg, #e9c46a 0%, #d4a043 100%)',
+      color: '#1a1a2e',
+      boxShadow: '0 4px 16px rgba(233, 196, 106, 0.3)',
     },
     danger: { 
-      background: '#dc2626', 
+      background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
       color: 'white',
-      boxShadow: '0 2px 8px rgba(220, 38, 38, 0.3)'
+      boxShadow: '0 4px 16px rgba(220, 38, 38, 0.3)',
     },
   }
 }
@@ -68,10 +74,23 @@ export default function Button({
         width: fullWidth ? '100%' : 'auto',
         opacity: disabled || loading ? 0.6 : 1,
         cursor: disabled || loading ? 'not-allowed' : 'pointer',
-        userSelect: 'none',
         ...style
       }}
       disabled={disabled || loading}
+      onMouseEnter={(e) => {
+        if (!disabled && !loading) {
+          if (variant === 'primary' || variant === 'success' || variant === 'danger') {
+            e.currentTarget.style.boxShadow = '0 6px 24px rgba(230, 57, 70, 0.4)'
+          }
+          e.currentTarget.style.transform = 'translateY(-1px)'
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!disabled && !loading) {
+          e.currentTarget.style.transform = 'translateY(0)'
+          e.currentTarget.style.boxShadow = styles.variants[variant].boxShadow || 'none'
+        }
+      }}
       {...props}
     >
       {loading && (

@@ -42,8 +42,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     ),
     NotificationItem(
       id: '2',
-      title: '400 RUBIES CREDITED',
-      message: 'Congratulations! 400 welcome bonus Rubies have been added to your TDG Wallet.',
+      title: '500 POINTS CREDITED',
+      message: 'Congratulations! 500 welcome bonus points have been added to your TDG Wallet.',
       timestamp: DateTime.now().subtract(const Duration(hours: 2)),
       icon: Icons.card_giftcard_rounded,
       iconBgColor: const Color(0xFFFFCC00),
@@ -347,13 +347,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  Widget _buildRichText(String text, TextStyle baseStyle, {Color rubyColor = const Color(0xFFBC2221)}) {
-    final parts = text.split(RegExp(r'(Rubies|RUBIES)'));
+  Widget _buildRichText(String text, TextStyle baseStyle, {Color accentColor = const Color(0xFFD4A520)}) {
+    final parts = text.split(RegExp(r'(Points|POINTS)'));
     if (parts.length == 1) {
       return Text(text, style: baseStyle);
     }
     
-    final matches = RegExp(r'(Rubies|RUBIES)').allMatches(text).toList();
+    final matches = RegExp(r'(Points|POINTS)').allMatches(text).toList();
     final List<InlineSpan> children = [];
     
     for (int i = 0; i < parts.length; i++) {
@@ -368,7 +368,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 2.0),
               child: Icon(
                 Icons.diamond_rounded,
-                color: rubyColor,
+                color: accentColor,
                 size: (baseStyle.fontSize ?? 13) * 1.1,
               ),
             ),

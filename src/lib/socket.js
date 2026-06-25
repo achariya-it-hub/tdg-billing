@@ -26,16 +26,31 @@ export function getSocket() {
 }
 
 export function connectToKitchen() {
-  createSocket().connect()
-  createSocket().emit('join-kitchen')
+  const socket = createSocket()
+  socket.connect()
+  if (socket.connected) {
+    socket.emit('join-kitchen')
+  } else {
+    socket.once('connect', () => socket.emit('join-kitchen'))
+  }
 }
 
 export function connectToPOS() {
-  createSocket().connect()
-  createSocket().emit('join-pos')
+  const socket = createSocket()
+  socket.connect()
+  if (socket.connected) {
+    socket.emit('join-pos')
+  } else {
+    socket.once('connect', () => socket.emit('join-pos'))
+  }
 }
 
 export function connectToOnline() {
-  createSocket().connect()
-  createSocket().emit('join-online')
+  const socket = createSocket()
+  socket.connect()
+  if (socket.connected) {
+    socket.emit('join-online')
+  } else {
+    socket.once('connect', () => socket.emit('join-online'))
+  }
 }

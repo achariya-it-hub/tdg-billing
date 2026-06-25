@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Receipt, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet, RefreshCw } from 'lucide-react'
 import { getSocket } from '../lib/socket'
+import { useSettings } from '../lib/settingsContext'
 
 const paymentMethods = [
   { id: 'cash', name: 'Cash', icon: Banknote },
@@ -10,8 +11,12 @@ const paymentMethods = [
 ]
 
 export default function Billing() {
+  const { settings } = useSettings()
+  const company = settings?.company || { name: 'Ten Den Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '000000000' }
+  const [newKOTs, setNewKOTs] = useState([])
   const [pendingKOTs, setPendingKOTs] = useState([])
   const [paidBills, setPaidBills] = useState([])
+  const [complimentaryOrders, setComplimentaryOrders] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedKOT, setSelectedKOT] = useState(null)
   const [showPayment, setShowPayment] = useState(false)
@@ -26,18 +31,25 @@ export default function Billing() {
 
   const fetchOrders = async () => {
     try {
-      const [readyRes, paidRes] = await Promise.all([
-        fetch(`${getApiUrl()}/api/pos/orders?status=ready`),
+      const [allRes, paidRes] = await Promise.all([
+        fetch(`${getApiUrl()}/api/pos/orders`),
         fetch(`${getApiUrl()}/api/pos/orders?status=completed`)
       ])
-      if (readyRes.ok) {
-        let ready = await readyRes.json()
-        ready = ready.filter(o => o.type !== 'delivery' && o.source !== 'online')
-        setPendingKOTs(ready)
+      if (allRes.ok) {
+        const all = await allRes.json()
+        const filtered = all.filter(o => o.type !== 'delivery' && o.source !== 'online')
+        const comp = filtered.filter(o => o.complimentary)
+        setComplimentaryOrders(comp)
+        const nonComp = filtered.filter(o => !o.complimentary)
+        setNewKOTs(nonComp.filter(o => o.status === 'pending'))
+        setPendingKOTs(nonComp.filter(o => o.status === 'ready'))
       }
       if (paidRes.ok) {
         const paid = await paidRes.json()
-        setPaidBills(paid)
+        const paidComp = paid.filter(o => o.complimentary)
+        const paidRegular = paid.filter(o => !o.complimentary)
+        setPaidBills(paidRegular)
+        if (paidComp.length) setComplimentaryOrders(prev => [...prev, ...paidComp])
       }
     } catch (err) {
       console.error('Failed to fetch orders:', err)
@@ -50,25 +62,57 @@ export default function Billing() {
     socket.connect()
     socket.on('order:updated', (order) => {
       if (order.type === 'delivery' || order.source === 'online') return
+      if (order.complimentary) {
+        if (order.status === 'ready' || order.status === 'pending') {
+          setComplimentaryOrders(prev => {
+            if (prev.find(o => o.id === order.id)) return prev
+            return [order, ...prev]
+          })
+          setNewKOTs(prev => prev.filter(o => o.id !== order.id))
+          setPendingKOTs(prev => prev.filter(o => o.id !== order.id))
+          setPaidBills(prev => prev.filter(o => o.id !== order.id))
+        } else {
+          setComplimentaryOrders(prev => prev.filter(o => o.id !== order.id))
+          setNewKOTs(prev => prev.filter(o => o.id !== order.id))
+          setPendingKOTs(prev => prev.filter(o => o.id !== order.id))
+          setPaidBills(prev => prev.filter(o => o.id !== order.id))
+        }
+        return
+      }
       if (order.status === 'ready') {
+        setNewKOTs(prev => prev.filter(o => o.id !== order.id))
         setPendingKOTs(prev => {
           if (prev.find(o => o.id === order.id)) return prev
           return [...prev, order]
         })
         setPaidBills(prev => prev.filter(o => o.id !== order.id))
       } else if (order.status === 'completed') {
+        setNewKOTs(prev => prev.filter(o => o.id !== order.id))
         setPendingKOTs(prev => prev.filter(o => o.id !== order.id))
         setPaidBills(prev => {
           if (prev.find(o => o.id === order.id)) return prev
           return [order, ...prev]
         })
       } else {
+        setNewKOTs(prev => prev.filter(o => o.id !== order.id))
         setPendingKOTs(prev => prev.filter(o => o.id !== order.id))
       }
     })
     socket.on('order:created', (order) => {
       if (order.type === 'delivery' || order.source === 'online') return
-      if (order.status === 'ready') {
+      if (order.complimentary) {
+        setComplimentaryOrders(prev => {
+          if (prev.find(o => o.id === order.id)) return prev
+          return [order, ...prev]
+        })
+        return
+      }
+      if (order.status === 'pending') {
+        setNewKOTs(prev => {
+          if (prev.find(o => o.id === order.id)) return prev
+          return [...prev, order]
+        })
+      } else if (order.status === 'ready') {
         setPendingKOTs(prev => [...prev, order])
       }
     })
@@ -83,6 +127,20 @@ export default function Billing() {
   }
 
   const calculateTax = (total) => total * 0.18
+
+  const acceptKOT = async (kot) => {
+    try {
+      await fetch(`${getApiUrl()}/api/pos/orders/${kot.id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'ready' })
+      })
+    } catch (err) {
+      console.error('Failed to accept KOT:', err)
+    }
+    setSelectedKOT(kot)
+    setShowPayment(true)
+  }
 
   const handleGenerateBill = (kot) => {
     setSelectedKOT(kot)
@@ -202,12 +260,11 @@ export default function Billing() {
       <body>
         <!-- Header -->
         <div class="header center">
-          <div class="brand-name">Ten Den Gyros</div>
+          <div class="brand-name">${company.name}</div>
           <div class="brand-tagline">Restaurant Management System</div>
           <div class="brand-details">
-            Shop 1 & 2, R.S.No.345/3 Kottakuppam,<br/>
-            Viluppuram<br/>
-            Ph: 000000000
+            ${company.address ? company.address.replace(/,\s*/g, ',<br/>') + '<br/>' : ''}
+            Ph: ${company.phone || '000000000'}
           </div>
         </div>
 
@@ -305,6 +362,25 @@ export default function Billing() {
     }
   }
 
+  const glassCard = {
+    background: 'rgba(255,255,255,0.75)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    borderRadius: '16px',
+    border: '1px solid rgba(255,255,255,0.3)',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)'
+  }
+
+  const gradientBtn = (color1, color2) => ({
+    background: `linear-gradient(135deg, ${color1}, ${color2})`,
+    color: 'white',
+    border: 'none',
+    borderRadius: '10px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    boxShadow: `0 2px 8px ${color1}40`
+  })
+
   return (
     <div>
       <div style={{ marginBottom: '24px' }}>
@@ -315,39 +391,144 @@ export default function Billing() {
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
-        <div style={{ background: 'white', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
-          <div style={{ fontSize: '32px', fontWeight: 700, color: '#e63946' }}>{pendingKOTs.length}</div>
-          <div style={{ fontSize: '13px', color: '#6b7280' }}>Ready for Billing</div>
-        </div>
-        <div style={{ background: 'white', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
-          <div style={{ fontSize: '32px', fontWeight: 700, color: '#10b981' }}>{paidBills.length}</div>
-          <div style={{ fontSize: '13px', color: '#6b7280' }}>Bills Today</div>
-        </div>
-        <div style={{ background: 'white', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
-          <div style={{ fontSize: '32px', fontWeight: 700, color: '#2563eb' }}>₹{paidBills.reduce((s, b) => s + calculateTotal(b), 0)}</div>
-          <div style={{ fontSize: '13px', color: '#6b7280' }}>Total Collected</div>
-        </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px', marginBottom: '24px' }}>
+        {[
+          { value: newKOTs.length, label: 'Pending KOTs', color: '#f59e0b', bg: '#fffbeb' },
+          { value: pendingKOTs.length, label: 'Ready for Billing', color: '#e63946', bg: '#fef2f2' },
+          { value: complimentaryOrders.length, label: 'Complimentary', color: '#8b5cf6', bg: '#f5f3ff' },
+          { value: paidBills.length, label: 'Bills Today', color: '#10b981', bg: '#ecfdf5' },
+          { value: `₹${paidBills.reduce((s, b) => s + calculateTotal(b), 0)}`, label: 'Total Collected', color: '#2563eb', bg: '#eff6ff' }
+        ].map((stat, i) => (
+          <div key={i} style={{ ...glassCard, padding: '20px', textAlign: 'center' }}>
+            <div style={{ fontSize: '32px', fontWeight: 700, color: stat.color }}>{stat.value}</div>
+            <div style={{ fontSize: '13px', color: '#6b7280', marginTop: '4px' }}>{stat.label}</div>
+          </div>
+        ))}
       </div>
 
       <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
-        <Button variant="secondary" onClick={fetchOrders}>
+        <button onClick={fetchOrders} style={{
+          padding: '10px 20px', borderRadius: '12px',
+          background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.3)', color: '#4b5563',
+          fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+        }}>
           <RefreshCw size={16} />
           Refresh
-        </Button>
+        </button>
       </div>
 
+      {/* New KOTs (Pending) */}
+      <div style={{ marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>New KOTs (Pending)</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
+          {newKOTs.map(kot => (
+            <div key={kot.id} style={{
+              ...glassCard,
+              padding: '16px',
+              borderLeft: '4px solid #f59e0b'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <div>
+                  <span style={{ fontSize: '20px', fontWeight: 700 }}>K{kot.orderNumber}</span>
+                  <span style={{ marginLeft: '12px', fontSize: '14px', color: '#6b7280' }}>{kot.tableNumber ? `Table ${kot.tableNumber}` : kot.type}</span>
+                </div>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: '#6b7280' }}>
+                  <Clock size={14} /> {new Date(kot.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+              <div style={{ fontSize: '13px', color: '#4b5563', marginBottom: '12px' }}>
+                {kot.items.map(i => `${i.menuItemName || i.name} x${i.quantity}`).join(', ')}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ fontSize: '20px', fontWeight: 700, color: '#f59e0b' }}>
+                  ₹{calculateTotal(kot)}
+                </div>
+                <button
+                  onClick={() => acceptKOT(kot)}
+                  style={{
+                    padding: '10px 20px',
+                    ...gradientBtn('#f59e0b', '#d97706'),
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '13px'
+                  }}
+                >
+                  <Receipt size={16} />
+                  Accept & Bill
+                </button>
+              </div>
+            </div>
+          ))}
+          {newKOTs.length === 0 && (
+            <div style={{ ...glassCard, padding: '32px', textAlign: 'center', color: '#9ca3af' }}>
+              No pending KOTs
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Complimentary Orders */}
+      {complimentaryOrders.length > 0 && (
+        <div style={{ marginBottom: '24px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>Complimentary Orders</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
+            {complimentaryOrders.map(order => (
+              <div key={order.id} style={{
+                ...glassCard,
+                padding: '16px',
+                borderLeft: '4px solid #8b5cf6'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <div>
+                    <span style={{ fontSize: '20px', fontWeight: 700 }}>K{order.orderNumber}</span>
+                    <span style={{ marginLeft: '12px', fontSize: '14px', color: '#6b7280' }}>{order.tableNumber ? `Table ${order.tableNumber}` : order.type}</span>
+                  </div>
+                  <span style={{
+                    padding: '4px 10px',
+                    background: '#f3e8ff',
+                    color: '#8b5cf6',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    fontWeight: 600
+                  }}>
+                    {order.complimentaryType || 'Complimentary'}
+                  </span>
+                </div>
+                <div style={{ fontSize: '13px', color: '#4b5563', marginBottom: '8px' }}>
+                  {order.items.map(i => `${i.menuItemName || i.name} x${i.quantity}`).join(', ')}
+                </div>
+                {order.specialRemarks && (
+                  <div style={{ fontSize: '12px', color: '#8b5cf6', fontStyle: 'italic', marginBottom: '8px' }}>
+                    "{order.specialRemarks}"
+                  </div>
+                )}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontSize: '18px', fontWeight: 700, color: '#8b5cf6' }}>
+                    ₹0
+                  </div>
+                  <span style={{ fontSize: '12px', color: '#6b7280' }}>
+                    {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-        {/* Pending KOTs */}
+        {/* Ready KOTs */}
         <div>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>Pending KOTs (Ready)</h3>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>Ready for Billing</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {pendingKOTs.map(kot => (
               <div key={kot.id} style={{
-                background: 'white',
-                borderRadius: '16px',
+                ...glassCard,
                 padding: '16px',
-                border: '2px solid #10b981'
+                borderLeft: '4px solid #10b981'
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                   <div>
@@ -369,15 +550,11 @@ export default function Billing() {
                     onClick={() => handleGenerateBill(kot)}
                     style={{
                       padding: '10px 20px',
-                      background: '#e63946',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
+                      ...gradientBtn('#e63946', '#c1121f'),
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px'
+                      gap: '8px',
+                      fontSize: '13px'
                     }}
                   >
                     <Receipt size={16} />
@@ -387,7 +564,7 @@ export default function Billing() {
               </div>
             ))}
             {pendingKOTs.length === 0 && (
-              <div style={{ background: 'white', padding: '32px', borderRadius: '16px', textAlign: 'center', color: '#9ca3af' }}>
+              <div style={{ ...glassCard, padding: '32px', textAlign: 'center', color: '#9ca3af' }}>
                 No KOTs ready for billing
               </div>
             )}
@@ -400,8 +577,7 @@ export default function Billing() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {paidBills.map(bill => (
               <div key={bill.id} style={{
-                background: 'white',
-                borderRadius: '12px',
+                ...glassCard,
                 padding: '16px',
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -441,18 +617,24 @@ export default function Billing() {
         <div style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(0,0,0,0.5)',
+          background: 'rgba(0,0,0,0.4)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 1000
         }}>
           <div style={{
-            background: 'white',
+            background: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
             borderRadius: '24px',
             padding: '32px',
             width: '90%',
-            maxWidth: '450px'
+            maxWidth: '450px',
+            border: '1px solid rgba(255,255,255,0.3)',
+            boxShadow: '0 24px 60px rgba(0,0,0,0.15)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <h3 style={{ fontSize: '24px', fontWeight: 700 }}>Generate Bill</h3>
@@ -461,7 +643,7 @@ export default function Billing() {
               </button>
             </div>
 
-            <div style={{ background: '#f9fafb', borderRadius: '16px', padding: '16px', marginBottom: '20px' }}>
+            <div style={{ background: 'rgba(0,0,0,0.02)', borderRadius: '16px', padding: '16px', marginBottom: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <span>KOT #{selectedKOT.orderNumber}</span>
                 <span>{selectedKOT.tableNumber ? `Table ${selectedKOT.tableNumber}` : selectedKOT.type}</span>
@@ -497,7 +679,7 @@ export default function Billing() {
                     onClick={() => setSelectedPayment(pm.id)}
                     style={{
                       padding: '16px',
-                      background: selectedPayment === pm.id ? '#e63946' : '#f3f4f6',
+                      background: selectedPayment === pm.id ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'rgba(0,0,0,0.03)',
                       color: selectedPayment === pm.id ? 'white' : '#4b5563',
                       border: 'none',
                       borderRadius: '12px',
@@ -505,7 +687,9 @@ export default function Billing() {
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
-                      gap: '8px'
+                      gap: '8px',
+                      transition: 'all 0.2s',
+                      boxShadow: selectedPayment === pm.id ? '0 2px 8px rgba(230,57,70,0.3)' : 'none'
                     }}
                   >
                     <pm.icon size={24} />
@@ -521,7 +705,7 @@ export default function Billing() {
               style={{
                 width: '100%',
                 padding: '16px',
-                background: processing ? '#9ca3af' : '#10b981',
+                background: processing ? '#9ca3af' : 'linear-gradient(135deg, #10b981, #059669)',
                 color: 'white',
                 border: 'none',
                 borderRadius: '12px',
@@ -531,7 +715,8 @@ export default function Billing() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '12px'
+                gap: '12px',
+                boxShadow: processing ? 'none' : '0 4px 16px rgba(16,185,129,0.3)'
               }}
             >
               {processing ? (

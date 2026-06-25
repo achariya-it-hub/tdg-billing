@@ -41,11 +41,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() => _isLoading = true);
 
     try {
+      final referral = _referralController.text.trim();
       await ApiService().signup(
         name: name,
         email: email,
         phone: phone,
         password: password,
+        referredBy: referral.isNotEmpty ? referral : null,
       );
       if (mounted) {
         _showSuccessDialog(context);
@@ -162,7 +164,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     letterSpacing: 0.2,
                                   ),
                                   children: [
-                                    const TextSpan(text: 'Start your journey with 400 '),
+                                    const TextSpan(text: 'Start your journey with 500 '),
                                     WidgetSpan(
                                       alignment: PlaceholderAlignment.middle,
                                       child: Icon(
@@ -183,7 +185,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             _buildTextField(
                               label: 'REFERRAL CODE (OPTIONAL)',
                               controller: _referralController,
-                              hint: 'Enter code for 50 Rubies bonus',
+                              hint: 'Enter code for asset linking',
                               icon: Icons.card_giftcard_rounded,
                             ),
                             
@@ -328,7 +330,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   fontWeight: FontWeight.w800,
                 ),
                 children: [
-                  const TextSpan(text: '400 '),
+                  const TextSpan(text: '500 '),
                   WidgetSpan(
                     alignment: PlaceholderAlignment.middle,
                     child: Icon(
@@ -343,7 +345,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Convert them to ₹400 on your first ₹1000 spend.',
+              'Convert them to ₹500 on your first ₹1000 spend.',
               textAlign: TextAlign.center,
               style: GoogleFonts.outfit(
                 color: TDGColors.greyLight,

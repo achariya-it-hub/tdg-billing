@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'screens/onboarding_screen.dart';
+import 'screens/main_nav_screen.dart';
 import 'theme/colors.dart';
+import 'services/api_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.light,
   ));
+  await ApiService().init();
   runApp(const TDGApp());
 }
 
@@ -26,6 +29,8 @@ class TDGApp extends StatelessWidget {
           statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
           statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
         ));
+
+        final api = ApiService();
 
         return MaterialApp(
           title: 'Ten Dens Gyros',
@@ -51,7 +56,7 @@ class TDGApp extends StatelessWidget {
               surface: TDGColors.cardDark,
             ),
           ),
-          home: const OnboardingScreen(),
+          home: api.isAuthenticated ? const MainNavScreen() : const OnboardingScreen(),
         );
       },
     );

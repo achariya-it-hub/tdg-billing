@@ -18,6 +18,7 @@ const BILLING_MODULES = [
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'onlineOrders', label: 'Online Orders' },
   { id: 'users', label: 'Users' },
+  { id: 'expenses', label: 'Expenses' },
 ]
 
 const PERM_ACTIONS = ['view', 'create', 'update', 'delete']
@@ -128,24 +129,35 @@ export default function Users() {
     return `${count} permissions`
   }
 
+  const glassCard = {
+    background: 'rgba(255,255,255,0.75)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    borderRadius: '16px',
+    border: '1px solid rgba(255,255,255,0.3)',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)'
+  }
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#1a1a2e' }}>Billing Users</h2>
         {canManage && (
           <button onClick={openCreate} style={{
-            padding: '10px 20px', background: '#e63946', color: 'white', border: 'none',
-            borderRadius: '10px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
+            padding: '10px 20px', borderRadius: '10px',
+            background: 'linear-gradient(135deg, #e63946, #c1121f)', color: 'white', border: 'none',
+            fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px',
+            boxShadow: '0 2px 8px rgba(230,57,70,0.3)'
           }}>
             <UserPlus size={18} /> Add User
           </button>
         )}
       </div>
 
-      <div style={{ background: 'white', borderRadius: '16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+      <div style={{ ...glassCard, overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ borderBottom: '1px solid var(--border)', background: '#f9fafb' }}>
+            <tr style={{ borderBottom: '1px solid rgba(0,0,0,0.06)', background: 'rgba(0,0,0,0.02)' }}>
               <th style={{ padding: '14px 20px', textAlign: 'left', fontSize: '13px', fontWeight: 600, color: '#6b7280' }}>Name</th>
               <th style={{ padding: '14px 20px', textAlign: 'left', fontSize: '13px', fontWeight: 600, color: '#6b7280' }}>Role</th>
               <th style={{ padding: '14px 20px', textAlign: 'left', fontSize: '13px', fontWeight: 600, color: '#6b7280' }}>Permissions</th>
@@ -154,12 +166,12 @@ export default function Users() {
           </thead>
           <tbody>
             {users.map(user => (
-              <tr key={user.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+              <tr key={user.id} style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
                 <td style={{ padding: '14px 20px', fontWeight: 600, color: '#1a1a2e' }}>{user.name}</td>
                 <td style={{ padding: '14px 20px' }}>
                   <span style={{
-                    padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 600,
-                    background: user.role === 'admin' ? '#fef2f2' : user.role === 'manager' ? '#eff6ff' : '#f9fafb',
+                    padding: '4px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 600,
+                    background: user.role === 'admin' ? 'rgba(239,68,68,0.08)' : user.role === 'manager' ? 'rgba(59,130,246,0.08)' : 'rgba(0,0,0,0.04)',
                     color: user.role === 'admin' ? '#dc2626' : user.role === 'manager' ? '#2563eb' : '#6b7280',
                     textTransform: 'capitalize'
                   }}>{user.role}</span>
@@ -168,11 +180,11 @@ export default function Users() {
                 <td style={{ padding: '14px 20px', textAlign: 'right' }}>
                   {canManage && (
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                      <button onClick={() => openEdit(user)} style={{ padding: '6px', border: '1px solid #e5e7eb', borderRadius: '8px', background: 'white', cursor: 'pointer' }}>
+                      <button onClick={() => openEdit(user)} style={{ padding: '6px', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '8px', background: 'rgba(255,255,255,0.75)', cursor: 'pointer', backdropFilter: 'blur(10px)' }}>
                         <Pencil size={16} color="#6b7280" />
                       </button>
-                      {user.role !== 'admin' && (
-                        <button onClick={() => handleDelete(user.id)} style={{ padding: '6px', border: '1px solid #e5e7eb', borderRadius: '8px', background: 'white', cursor: 'pointer' }}>
+                      {user.role !== 'admin' && user.role !== 'super-admin' && (
+                        <button onClick={() => handleDelete(user.id)} style={{ padding: '6px', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '8px', background: 'rgba(255,255,255,0.75)', cursor: 'pointer', backdropFilter: 'blur(10px)' }}>
                           <Trash2 size={16} color="#dc2626" />
                         </button>
                       )}
@@ -193,11 +205,13 @@ export default function Users() {
       {/* Create/Edit Modal */}
       {showModal && (
         <>
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 300 }} onClick={() => setShowModal(false)} />
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', zIndex: 300 }} onClick={() => setShowModal(false)} />
           <div style={{
             position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-            background: 'white', borderRadius: '20px', padding: '32px', width: '90%', maxWidth: '640px',
-            maxHeight: '90vh', overflow: 'auto', zIndex: 301, boxShadow: '0 40px 80px rgba(0,0,0,0.2)'
+            background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+            borderRadius: '24px', padding: '32px', width: '90%', maxWidth: '640px',
+            maxHeight: '90vh', overflow: 'auto', zIndex: 301,
+            border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 24px 60px rgba(0,0,0,0.15)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#1a1a2e', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -228,6 +242,7 @@ export default function Users() {
                   const role = e.target.value
                   setForm({ ...form, role, permissions: editing ? form.permissions : EmptyPermissions() })
                 }} style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #e5e7eb', fontSize: '14px', background: 'white' }}>
+                  <option value="super-admin">Super Admin</option>
                   <option value="admin">Admin</option>
                   <option value="manager">Manager</option>
                   <option value="cashier">Cashier</option>
@@ -245,7 +260,7 @@ export default function Users() {
                   return (
                     <div key={mod.id} style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      padding: '8px 12px', borderRadius: '8px', background: '#f9fafb'
+                      padding: '8px 12px', borderRadius: '10px', background: 'rgba(0,0,0,0.02)'
                     }}>
                       <span style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', minWidth: '140px' }}>{mod.label}</span>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -271,7 +286,8 @@ export default function Users() {
             <button onClick={handleSave} disabled={saving || !form.name}
               style={{
                 width: '100%', padding: '14px', border: 'none', borderRadius: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer',
-                background: saving ? '#9ca3af' : '#e63946', color: 'white'
+                background: saving ? '#9ca3af' : 'linear-gradient(135deg, #e63946, #c1121f)', color: 'white',
+                boxShadow: saving ? 'none' : '0 4px 16px rgba(230,57,70,0.3)'
               }}>
               {saving ? 'Saving...' : editing ? 'Update User' : 'Create User'}
             </button>

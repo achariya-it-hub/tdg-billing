@@ -20,6 +20,6 @@ workflows:
       - name: Build iOS
         script: |
           cd ttt
-          flutter build ios --release --no-codesign
+          flutter build ipa --release --no-codesign
     artifacts:
-      - ttt/build/ios/iphoneos/Runner.app
+      - ttt/build/ios/ipa/*.ipa

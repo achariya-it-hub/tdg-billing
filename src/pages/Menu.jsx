@@ -82,10 +82,12 @@ const sampleRecipes = [
   },
 ]
 
+const API = () => window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
+
 export default function MenuManagement() {
   const toast = useToast()
-  const [categories, setCategories] = useState(sampleCategories)
-  const [menuItems, setMenuItems] = useState(sampleMenuItems)
+  const [categories, setCategories] = useState([])
+  const [menuItems, setMenuItems] = useState([])
   const [inventory, setInventory] = useState(sampleInventory)
   const [recipes, setRecipes] = useState(sampleRecipes)
   const [activeTab, setActiveTab] = useState('menu')
@@ -96,6 +98,12 @@ export default function MenuManagement() {
   const [recipeIngredients, setRecipeIngredients] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [showItemModal, setShowItemModal] = useState(false)
+  const [showCategoryModal, setShowCategoryModal] = useState(false)
+  const [editItemId, setEditItemId] = useState(null)
+  const [editCategoryId, setEditCategoryId] = useState(null)
+  const [itemForm, setItemForm] = useState({ name: '', price: '', categoryId: '', description: '', isAvailable: true })
+  const [catForm, setCatForm] = useState({ name: '', color: '#6b7280' })
 
   const filteredMenuItems = menuItems.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -147,6 +155,109 @@ export default function MenuManagement() {
     }
     
     return { canMake, reasons }
+  }
+
+  useEffect(() => {
+    fetch(`${API()}/api/admin/menu/categories`).then(r => r.json()).then(d => { if (d?.length) setCategories(d) }).catch(() => setCategories(sampleCategories))
+    fetch(`${API()}/api/admin/menu/items`).then(r => r.json()).then(d => { if (d?.length) setMenuItems(d) }).catch(() => setMenuItems(sampleMenuItems))
+    fetch(`${API()}/api/inventory`).then(r => r.json()).then(d => { if (d?.length) setInventory(d) }).catch(() => setInventory(sampleInventory))
+  }, [])
+
+  const saveItem = async () => {
+    if (!itemForm.name || !itemForm.price || !itemForm.categoryId) { toast.error('Name, price, and category required'); return }
+    const body = { ...itemForm, price: Number(itemForm.price) }
+    try {
+      if (editItemId) {
+        const r = await fetch(`${API()}/api/admin/menu/items/${editItemId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+        if (!r.ok) throw Error()
+        const updated = await r.json()
+        setMenuItems(prev => prev.map(i => i.id === editItemId ? updated : i))
+        toast.success('Item updated')
+      } else {
+        const r = await fetch(`${API()}/api/admin/menu/items`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+        if (!r.ok) throw Error()
+        const created = await r.json()
+        setMenuItems(prev => [...prev, created])
+        toast.success('Item added')
+      }
+      setShowItemModal(false)
+      setEditItemId(null)
+      setItemForm({ name: '', price: '', categoryId: '', description: '', isAvailable: true })
+    } catch { toast.error('Failed to save item') }
+  }
+
+  const deleteItem = async (id) => {
+    if (!window.confirm('Delete this menu item?')) return
+    try {
+      const r = await fetch(`${API()}/api/admin/menu/items/${id}`, { method: 'DELETE' })
+      if (!r.ok) throw Error()
+      setMenuItems(prev => prev.filter(i => i.id !== id))
+      toast.success('Item deleted')
+    } catch { toast.error('Failed to delete item') }
+  }
+
+  const toggleAvailable = async (id) => {
+    try {
+      const r = await fetch(`${API()}/api/admin/menu/items/${id}/toggle`, { method: 'PUT' })
+      if (!r.ok) throw Error()
+      const updated = await r.json()
+      setMenuItems(prev => prev.map(i => i.id === id ? updated : i))
+    } catch { toast.error('Failed to toggle') }
+  }
+
+  const saveCategory = async () => {
+    if (!catForm.name) { toast.error('Category name required'); return }
+    try {
+      if (editCategoryId) {
+        const r = await fetch(`${API()}/api/admin/menu/categories/${editCategoryId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(catForm) })
+        if (!r.ok) throw Error()
+        const updated = await r.json()
+        setCategories(prev => prev.map(c => c.id === editCategoryId ? updated : c))
+        toast.success('Category updated')
+      } else {
+        const r = await fetch(`${API()}/api/admin/menu/categories`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(catForm) })
+        if (!r.ok) throw Error()
+        const created = await r.json()
+        setCategories(prev => [...prev, created])
+        toast.success('Category added')
+      }
+      setShowCategoryModal(false)
+      setEditCategoryId(null)
+      setCatForm({ name: '', color: '#6b7280' })
+    } catch { toast.error('Failed to save category') }
+  }
+
+  const deleteCategory = async (id) => {
+    if (!window.confirm('Delete this category? Items in it will become uncategorized.')) return
+    try {
+      const r = await fetch(`${API()}/api/admin/menu/categories/${id}`, { method: 'DELETE' })
+      if (!r.ok) throw Error()
+      setCategories(prev => prev.filter(c => c.id !== id))
+      setMenuItems(prev => prev.map(i => i.categoryId === id ? { ...i, categoryId: null } : i))
+      toast.success('Category deleted')
+    } catch { toast.error('Failed to delete category') }
+  }
+
+  const openItemModal = (item) => {
+    if (item) {
+      setEditItemId(item.id)
+      setItemForm({ name: item.name, price: String(item.price), categoryId: item.categoryId || '', description: item.description || '', isAvailable: item.isAvailable !== false })
+    } else {
+      setEditItemId(null)
+      setItemForm({ name: '', price: '', categoryId: categories[0]?.id || '', description: '', isAvailable: true })
+    }
+    setShowItemModal(true)
+  }
+
+  const openCategoryModal = (cat) => {
+    if (cat) {
+      setEditCategoryId(cat.id)
+      setCatForm({ name: cat.name, color: cat.color || '#6b7280' })
+    } else {
+      setEditCategoryId(null)
+      setCatForm({ name: '', color: '#6b7280' })
+    }
+    setShowCategoryModal(true)
   }
 
   const openRecipeModal = (menuItem) => {
@@ -229,6 +340,15 @@ export default function MenuManagement() {
     return sum + (ing.quantity * (invItem?.costPerUnit || 0))
   }, 0)
 
+  const glassCard = {
+    background: 'rgba(255,255,255,0.75)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    borderRadius: '16px',
+    border: '1px solid rgba(255,255,255,0.3)',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)'
+  }
+
   return (
     <div>
       <div style={{ marginBottom: '24px' }}>
@@ -240,50 +360,22 @@ export default function MenuManagement() {
 
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
-        <Card>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '48px', height: '48px', background: '#fef2f2', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <UtensilsCrossed size={24} color="#e63946" />
+        {[
+          { icon: <UtensilsCrossed size={24} color="#e63946" />, value: menuItems.length, label: 'Menu Items', iconBg: 'rgba(230,57,70,0.08)' },
+          { icon: <BookOpen size={24} color="#f59e0b" />, value: recipes.length, label: 'Recipes Mapped', iconBg: 'rgba(245,158,11,0.08)' },
+          { icon: <Calculator size={24} color="#3b82f6" />, value: menuItems.length - recipes.length, label: 'Unmapped Items', iconBg: 'rgba(59,130,246,0.08)' },
+          { icon: <Package size={24} color="#10b981" />, value: inventory.length, label: 'Inventory Items', iconBg: 'rgba(16,185,129,0.08)' }
+        ].map((stat, i) => (
+          <div key={i} style={{ ...glassCard, padding: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '48px', height: '48px', background: stat.iconBg, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {stat.icon}
             </div>
             <div>
-              <div style={{ fontSize: '24px', fontWeight: 700 }}>{menuItems.length}</div>
-              <div style={{ fontSize: '13px', color: '#6b7280' }}>Menu Items</div>
+              <div style={{ fontSize: '24px', fontWeight: 700 }}>{stat.value}</div>
+              <div style={{ fontSize: '13px', color: '#6b7280' }}>{stat.label}</div>
             </div>
           </div>
-        </Card>
-        <Card>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '48px', height: '48px', background: '#fffbeb', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <BookOpen size={24} color="#f59e0b" />
-            </div>
-            <div>
-              <div style={{ fontSize: '24px', fontWeight: 700 }}>{recipes.length}</div>
-              <div style={{ fontSize: '13px', color: '#6b7280' }}>Recipes Mapped</div>
-            </div>
-          </div>
-        </Card>
-        <Card>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '48px', height: '48px', background: '#eff6ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Calculator size={24} color="#3b82f6" />
-            </div>
-            <div>
-              <div style={{ fontSize: '24px', fontWeight: 700 }}>{menuItems.length - recipes.length}</div>
-              <div style={{ fontSize: '13px', color: '#6b7280' }}>Unmapped Items</div>
-            </div>
-          </div>
-        </Card>
-        <Card>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '48px', height: '48px', background: '#f0fdf4', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Package size={24} color="#10b981" />
-            </div>
-            <div>
-              <div style={{ fontSize: '24px', fontWeight: 700 }}>{inventory.length}</div>
-              <div style={{ fontSize: '13px', color: '#6b7280' }}>Inventory Items</div>
-            </div>
-          </div>
-        </Card>
+        ))}
       </div>
 
       {/* Tabs */}
@@ -299,14 +391,17 @@ export default function MenuManagement() {
             style={{
               padding: '12px 24px',
               borderRadius: '12px',
-              background: activeTab === tab.id ? '#e63946' : 'white',
+              background: activeTab === tab.id ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'rgba(255,255,255,0.75)',
+              backdropFilter: activeTab === tab.id ? 'none' : 'blur(20px)',
+              WebkitBackdropFilter: activeTab === tab.id ? 'none' : 'blur(20px)',
               color: activeTab === tab.id ? 'white' : '#6b7280',
               fontWeight: 600,
-              border: 'none',
+              border: activeTab === tab.id ? 'none' : '1px solid rgba(255,255,255,0.3)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              gap: '8px',
+              boxShadow: activeTab === tab.id ? '0 2px 8px rgba(230,57,70,0.3)' : '0 1px 3px rgba(0,0,0,0.04)'
             }}
           >
             <tab.icon size={18} />
@@ -353,6 +448,14 @@ export default function MenuManagement() {
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
+            <Button variant="secondary" onClick={() => openItemModal(null)}>
+              <Plus size={18} />
+              Add Item
+            </Button>
+            <Button variant="ghost" onClick={() => openCategoryModal(null)}>
+              <Plus size={18} />
+              Add Category
+            </Button>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '16px' }}>
@@ -375,22 +478,19 @@ export default function MenuManagement() {
                         background: category?.color || '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        opacity: item.isAvailable === false ? 0.4 : 1
                       }}>
                         <UtensilsCrossed size={24} color="white" />
                       </div>
                       <div>
-                        <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e' }}>{item.name}</h3>
+                        <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e', textDecoration: item.isAvailable === false ? 'line-through' : 'none', opacity: item.isAvailable === false ? 0.5 : 1 }}>{item.name}</h3>
                         <span style={{ fontSize: '12px', color: '#6b7280' }}>{category?.name}</span>
                       </div>
                     </div>
-                    <span style={{
-                      fontSize: '20px',
-                      fontWeight: 700,
-                      color: '#10b981'
-                    }}>
-                      ₹{item.price}
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '20px', fontWeight: 700, color: '#10b981' }}>₹{item.price}</span>
+                    </div>
                   </div>
 
                   <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>{item.description}</p>
@@ -449,6 +549,15 @@ export default function MenuManagement() {
                     <Button variant={recipe ? 'secondary' : 'primary'} size="sm" style={{ flex: 1 }} onClick={() => openRecipeModal(item)}>
                       <BookOpen size={14} />
                       {recipe ? 'Edit Recipe' : 'Map Recipe'}
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => openItemModal(item)}>
+                      <Edit size={14} />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => toggleAvailable(item.id)}>
+                      {item.isAvailable === false ? <Check size={14} color="#10b981" /> : <X size={14} color="#ef4444" />}
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => deleteItem(item.id)}>
+                      <Trash2 size={14} color="#ef4444" />
                     </Button>
                     {recipe && (
                       <Button variant="ghost" size="sm" onClick={() => deleteRecipe(item.id)}>
@@ -545,7 +654,7 @@ export default function MenuManagement() {
 
       {/* Inventory Tab */}
       {activeTab === 'inventory' && (
-        <Card padding="none">
+        <div style={{ ...glassCard, overflow: 'hidden' }}>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
@@ -577,7 +686,7 @@ export default function MenuManagement() {
               </tbody>
             </table>
           </div>
-        </Card>
+        </div>
       )}
 
       {/* Recipe Modal */}
@@ -708,6 +817,69 @@ export default function MenuManagement() {
               </div>
             )
           })}
+        </div>
+      </Modal>
+
+      {/* Add/Edit Item Modal */}
+      <Modal isOpen={showItemModal} onClose={() => { setShowItemModal(false); setEditItemId(null) }} title={editItemId ? 'Edit Item' : 'Add Menu Item'} size="md">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div>
+            <label style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '6px' }}>Name</label>
+            <input value={itemForm.name} onChange={e => setItemForm(p => ({ ...p, name: e.target.value }))} placeholder="Item name" style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)', fontSize: '14px', boxSizing: 'border-box' }} />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '6px' }}>Price (₹)</label>
+              <input type="number" value={itemForm.price} onChange={e => setItemForm(p => ({ ...p, price: e.target.value }))} placeholder="0" style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)', fontSize: '14px', boxSizing: 'border-box' }} />
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '6px' }}>Category</label>
+              <select value={itemForm.categoryId} onChange={e => setItemForm(p => ({ ...p, categoryId: e.target.value }))} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)', fontSize: '14px', background: 'white', boxSizing: 'border-box' }}>
+                {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
+          </div>
+          <div>
+            <label style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '6px' }}>Description</label>
+            <textarea value={itemForm.description} onChange={e => setItemForm(p => ({ ...p, description: e.target.value }))} placeholder="Optional description" rows={3} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)', fontSize: '14px', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'inherit' }} />
+          </div>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+            <input type="checkbox" checked={itemForm.isAvailable} onChange={e => setItemForm(p => ({ ...p, isAvailable: e.target.checked }))} />
+            <span style={{ fontSize: '14px' }}>Available for ordering</span>
+          </label>
+          <Button fullWidth onClick={saveItem}>
+            <Check size={18} />
+            {editItemId ? 'Update Item' : 'Add Item'}
+          </Button>
+        </div>
+      </Modal>
+
+      {/* Add/Edit Category Modal */}
+      <Modal isOpen={showCategoryModal} onClose={() => { setShowCategoryModal(false); setEditCategoryId(null) }} title={editCategoryId ? 'Edit Category' : 'Add Category'} size="sm">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div>
+            <label style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '6px' }}>Category Name</label>
+            <input value={catForm.name} onChange={e => setCatForm(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Burgers" style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)', fontSize: '14px', boxSizing: 'border-box' }} />
+          </div>
+          <div>
+            <label style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '6px' }}>Color</label>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input type="color" value={catForm.color} onChange={e => setCatForm(p => ({ ...p, color: e.target.value }))} style={{ width: '48px', height: '48px', borderRadius: '10px', border: 'none', cursor: 'pointer', padding: 0 }} />
+              <span style={{ fontSize: '13px', color: '#6b7280' }}>{catForm.color}</span>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {categories.length > 0 && editCategoryId && (
+              <Button variant="danger" style={{ flex: 1 }} onClick={() => { deleteCategory(editCategoryId); setShowCategoryModal(false) }}>
+                <Trash2 size={16} />
+                Delete
+              </Button>
+            )}
+            <Button fullWidth onClick={saveCategory}>
+              <Check size={18} />
+              {editCategoryId ? 'Update Category' : 'Add Category'}
+            </Button>
+          </div>
         </div>
       </Modal>
     </div>

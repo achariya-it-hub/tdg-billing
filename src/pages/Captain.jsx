@@ -43,6 +43,8 @@ export default function Captain() {
   const [showBillModal, setShowBillModal] = useState(false)
   const [orderItems, setOrderItems] = useState([])
   const [showMenuView, setShowMenuView] = useState(false)
+  const [complimentaryType, setComplimentaryType] = useState('')
+  const [specialRemarks, setSpecialRemarks] = useState('')
 
   const fetchOrders = async () => {
     try {
@@ -167,6 +169,10 @@ export default function Captain() {
       toast.error('Add items first')
       return
     }
+    if (!selectedTable) {
+      toast.error('No table selected')
+      return
+    }
     try {
       const res = await fetch(`${API_BASE}/api/pos/orders`, {
         method: 'POST',
@@ -184,7 +190,10 @@ export default function Captain() {
           subtotal,
           tax,
           total,
-          tableNumber: selectedTable?.number || ''
+          tableNumber: selectedTable?.number || '',
+          complimentary: !!complimentaryType,
+          complimentaryType,
+          specialRemarks
         })
       })
       if (res.ok) {
@@ -198,6 +207,8 @@ export default function Captain() {
     setShowOrderModal(false)
     setOrderItems([])
     setSelectedTable(null)
+    setComplimentaryType('')
+    setSpecialRemarks('')
   }
 
   const subtotal = orderItems.reduce((sum, i) => sum + i.total, 0)
@@ -451,7 +462,7 @@ export default function Captain() {
       {/* Order Modal */}
       <Modal
         isOpen={showOrderModal}
-        onClose={() => { setShowOrderModal(false); setOrderItems([]); setSelectedTable(null); setShowMenuView(false) }}
+        onClose={() => { setShowOrderModal(false); setOrderItems([]); setSelectedTable(null); setShowMenuView(false); setComplimentaryType(''); setSpecialRemarks('') }}
         title={`Order for ${selectedTable?.number}`}
         size="full"
       >
@@ -681,6 +692,49 @@ export default function Captain() {
             )}
           </div>
 
+          {/* Special Remarks */}
+          <div style={{ marginBottom: '8px' }}>
+            <input
+              placeholder="Special remarks for kitchen..."
+              value={specialRemarks}
+              onChange={e => setSpecialRemarks(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '10px',
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '13px',
+                outline: 'none',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
+
+          {/* Non-Chargeable */}
+          <div style={{ marginBottom: '8px' }}>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              {['', 'MD', 'Chairman', 'Internal Corporate', 'VIP'].map(type => (
+                <button
+                  key={type}
+                  onClick={() => setComplimentaryType(type)}
+                  style={{
+                    padding: '6px 12px',
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    background: complimentaryType === type ? (type ? 'var(--accent-warning)' : '#f3f4f6') : '#f3f4f6',
+                    color: complimentaryType === type ? 'white' : '#6b7280',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {type || 'Chargeable'}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Send Button */}
           <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
             {showMenuView && (
@@ -688,9 +742,9 @@ export default function Captain() {
                 Back to Order
               </Button>
             )}
-            <Button fullWidth size="lg" onClick={sendToKitchen} disabled={orderItems.length === 0} style={{ flex: showMenuView ? 2 : 1 }}>
+            <Button fullWidth size="lg" onClick={sendToKitchen} disabled={orderItems.length === 0} variant={complimentaryType ? 'warning' : 'primary'} style={{ flex: showMenuView ? 2 : 1 }}>
               <Send size={18} />
-              Send to Kitchen
+              {complimentaryType ? 'Send (Complimentary)' : 'Send to Kitchen'}
             </Button>
           </div>
         </div>

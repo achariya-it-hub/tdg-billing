@@ -27,7 +27,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       int pending = 0;
       int completed = 0;
       for (final o in orders) {
-        final t = (o['total'] ?? 0).toInt();
+        final t = ((o['total'] ?? 0) as num).toInt();
         totalRevenue += t;
         final s = (o['status'] ?? '').toString().toLowerCase();
         if (s == 'pending' || s == 'placed' || s == 'preparing') pending++;

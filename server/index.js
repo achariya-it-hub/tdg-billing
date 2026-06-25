@@ -5,7 +5,7 @@ import { Server } from 'socket.io'
 import { v4 as uuid } from 'uuid'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { readFileSync, writeFileSync, existsSync, statSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 
@@ -26,9 +26,22 @@ function readDb() {
   return { users: [], orders: [], transactions: [], menu: null }
 }
 
+const BACKUP_DIR = join(__dirname, 'backups')
+
 function writeDb(data) {
   try {
     writeFileSync(DB_PATH, JSON.stringify(data, null, 2))
+    // Auto-backup on every write (keeps last 2 copies)
+    try {
+      if (!existsSync(BACKUP_DIR)) mkdirSync(BACKUP_DIR, { recursive: true })
+      const ts = new Date().toISOString().replace(/[:.]/g, '-')
+      writeFileSync(join(BACKUP_DIR, `db-${ts}.json`), JSON.stringify(data, null, 2))
+      // Keep only last 20 backups
+      const files = readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json')).sort().reverse()
+      for (const old of files.slice(20)) rmSync(join(BACKUP_DIR, old))
+    } catch (be) {
+      console.error('Backup error:', be.message)
+    }
   } catch (e) {
     console.error('Error writing db.json:', e.message)
   }
@@ -40,7 +53,7 @@ let billingUsers = []
 const BILLING_MODULES = [
   'pos', 'captain', 'kitchen', 'billing', 'kot', 'purchase',
   'inventory', 'menu', 'hr', 'loyalty', 'customers', 'reports',
-  'dashboard', 'onlineOrders', 'users'
+  'dashboard', 'onlineOrders', 'users', 'expenses'
 ]
 
 function makePermissions(all) {
@@ -56,7 +69,7 @@ const KITCHEN_MODULES = ['kitchen', 'kot']
 const MANAGER_RESTRICT = ['users']
 
 function getDefaultPermissions(role) {
-  if (role === 'admin') return makePermissions(true)
+  if (role === 'admin' || role === 'super-admin') return makePermissions(true)
   const perms = makePermissions(false)
   if (role === 'manager') {
     for (const mod of BILLING_MODULES) {
@@ -84,7 +97,16 @@ function getDefaultPermissions(role) {
 // Daily expense tracking
 let expenses = []
 let purchases = []
+let suppliers = []
+let purchaseOrders = []
+let poItems = []
+let grns = []
 let onlineOrders = []
+let settings = {
+  company: { name: 'Ten Den Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '000000000', email: '', gst: '', logo: null },
+  theme: { accentPrimary: '#e63946', accentPrimaryDark: '#c1121f', bgPrimary: '#f5f5f7' },
+  printers: [{ id: 'default', name: 'Default Printer', ip: '', type: 'browser', isDefault: true }]
+}
 let aggregators = [
   { id: 'swiggy', name: 'Swiggy', displayName: 'Swiggy', isActive: true, defaultPrepTime: 25, color: '#ff5200' },
   { id: 'zomato', name: 'Zomato', displayName: 'Zomato', isActive: true, defaultPrepTime: 20, color: '#e23744' },
@@ -106,11 +128,30 @@ function saveState() {
   db.onlineOrders = onlineOrders
   db.aggregators = aggregators
   db.billingUsers = billingUsers
+  db.categories = categories
+  db.menuItems = menuItems
+  db.suppliers = suppliers
+  db.purchaseOrders = purchaseOrders
+  db.poItems = poItems
+  db.grns = grns
+  db.settings = settings
   writeDb(db)
 }
 
 // Restore in-memory state from db.json on startup
 function restoreState() {
+  // Safety: if db.json was wiped by deploy, restore latest backup
+  if (!existsSync(DB_PATH) && existsSync(BACKUP_DIR)) {
+    const backups = readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json')).sort().reverse()
+    if (backups.length > 0) {
+      const latest = join(BACKUP_DIR, backups[0])
+      try {
+        const data = readFileSync(latest, 'utf-8')
+        writeFileSync(DB_PATH, data)
+        console.log('Auto-restored db.json from backup:', backups[0])
+      } catch (e) { console.error('Backup restore failed:', e.message) }
+    }
+  }
   const db = readDb()
   if (db.orders?.length) orders = db.orders
   if (db.loyaltyUsers?.length) loyaltyUsers = db.loyaltyUsers
@@ -123,7 +164,22 @@ function restoreState() {
   if (db.purchases?.length) purchases = db.purchases
   if (db.onlineOrders?.length) onlineOrders = db.onlineOrders
   if (db.aggregators?.length) aggregators = db.aggregators
-  if (db.billingUsers?.length) billingUsers = db.billingUsers
+  if (db.categories?.length) categories = db.categories
+  if (db.menuItems?.length) menuItems = db.menuItems
+  if (db.suppliers?.length) suppliers = db.suppliers
+  if (db.purchaseOrders?.length) purchaseOrders = db.purchaseOrders
+  if (db.poItems?.length) poItems = db.poItems
+  if (db.grns?.length) grns = db.grns
+  if (db.settings) settings = { ...settings, ...db.settings }
+  if (db.billingUsers?.length) {
+    billingUsers = db.billingUsers
+    // Migrate plaintext PINs to bcrypt hashes (existing data from before hashing was implemented)
+    billingUsers.forEach(u => {
+      if (u.pin && u.pin.length === 4 && /^\d{4}$/.test(u.pin)) {
+        u.pin = bcrypt.hashSync(u.pin, 10)
+      }
+    })
+  }
 }
 
 const app = express()
@@ -133,7 +189,12 @@ const io = new Server(httpServer, {
 })
 
 app.use(cors())
-app.use(express.json())
+app.use(express.json({ limit: '10mb' }))
+
+// Serve uploaded files (logos etc.)
+const UPLOADS_DIR = join(__dirname, 'uploads')
+if (!existsSync(UPLOADS_DIR)) mkdirSync(UPLOADS_DIR, { recursive: true })
+app.use('/uploads', express.static(UPLOADS_DIR))
 
 // In-memory database
 let orders = []
@@ -273,7 +334,7 @@ function auth(req, res, next) {
 // Auth - Signup
 app.post('/api/auth/signup', async (req, res) => {
   try {
-    const { name, email, phone, password } = req.body
+    const { name, email, phone, password, referredBy } = req.body
     if (!name || !email || !phone || !password) {
       return res.status(400).json({ message: 'All fields are required' })
     }
@@ -290,36 +351,60 @@ app.post('/api/auth/signup', async (req, res) => {
       name, email, phone,
       password: hashedPassword,
       role: 'user',
-      rubyBalance: 2450,
-      denLevel: 'Gold',
-      completedDens: 4,
-      denProgress: 6,
-      scratchCards: [
-        { id: 's_' + Date.now() + '_1', title: 'Welcome Scratch Card', subtitle: 'Tap to scratch', amount: 100, claimed: false },
-        { id: 's_' + Date.now() + '_2', title: 'New Member Gift', subtitle: 'Tap to scratch', amount: 200, claimed: false }
-      ],
-      denId: null,
+      points: 500,
+      assets: [],
+      totalDistributed: 0,
+      cashbackEarned: 0,
+      assetsDinedCount: 0,
+      allAssetsActive: false,
+      bonusClaimed: false,
+      referredBy: referredBy || null,
+      referredByName: null,
       createdAt: now
     }
+
+    // Link to master user if referredBy is provided
+    if (referredBy) {
+      const master = db.users.find(u => u.id === referredBy || u.email.toLowerCase() === referredBy.toLowerCase() || u.phone.replace(/[^0-9]/g, '') === referredBy.replace(/[^0-9]/g, ''))
+      if (master) {
+        newUser.referredBy = master.id
+        newUser.referredByName = master.name
+        // Update master's asset list - mark as active
+        const masterAssets = master.assets || []
+        const assetIdx = masterAssets.findIndex(a => a.phone === phone)
+        if (assetIdx >= 0) {
+          masterAssets[assetIdx].status = 'active'
+          masterAssets[assetIdx].activatedAt = now
+          master.assetsDinedCount = master.assetsDinedCount || 0
+        } else if (masterAssets.length < 10) {
+          // Auto-add as asset if master has less than 10
+          masterAssets.push({
+            id: 'a_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+            name, phone,
+            status: 'active',
+            activatedAt: now,
+            hasDined: false,
+            pointsDistributed: 0
+          })
+        }
+        master.assets = masterAssets
+        // Give referrer +50 bonus points
+        master.points = (master.points || 0) + 50
+        if (!db.transactions) db.transactions = []
+        db.transactions.push({
+          id: 't_' + Date.now() + '_ref',
+          userId: master.id,
+          type: 'credit',
+          amount: 50,
+          description: `Referral bonus: ${name} joined your den`,
+          createdAt: now
+        })
+        writeDb(db)
+      }
+    }
+
     db.users.push(newUser)
     writeDb(db)
-
-    // SYNC: Also add to loyalty system
-    if (!loyaltyUsers.find(u => u.phone === phone)) {
-      const loyaltyUser = {
-        id: userId,
-        referralCode: generateReferralCode(),
-        name, phone, email,
-        role: 'user',
-        rubyPoints: 0,
-        tier: 'Bronze',
-        referredBy: null,
-        denId: null,
-        createdAt: now
-      }
-      loyaltyUsers.push(loyaltyUser)
-      saveState()
-    }
 
     const token = jwt.sign({ userId: newUser.id }, JWT_SECRET, { expiresIn: '7d' })
     const { password: _, ...userWithoutPassword } = newUser
@@ -379,6 +464,251 @@ app.put('/api/auth/profile', auth, (req, res) => {
   res.json(userWithoutPassword)
 })
 
+// ============ ASSET MANAGEMENT API ============
+
+// Get user's assets and points
+app.get('/api/assets', auth, (req, res) => {
+  const db = readDb()
+  const user = db.users.find(u => u.id === req.userId)
+  if (!user) return res.status(404).json({ message: 'User not found' })
+  res.json({
+    points: user.points || 0,
+    assets: user.assets || [],
+    totalDistributed: user.totalDistributed || 0,
+    cashbackEarned: user.cashbackEarned || 0,
+    assetsDinedCount: user.assetsDinedCount || 0,
+    allAssetsActive: user.allAssetsActive || false,
+    bonusClaimed: user.bonusClaimed || false
+  })
+})
+
+// Add an asset (friend)
+app.post('/api/assets', auth, (req, res) => {
+  const { name, phone } = req.body
+  if (!name || !phone) return res.status(400).json({ message: 'Name and phone required' })
+
+  const db = readDb()
+  const user = db.users.find(u => u.id === req.userId)
+  if (!user) return res.status(404).json({ message: 'User not found' })
+
+  const assets = user.assets || []
+  if (assets.length >= 10) return res.status(400).json({ message: 'Maximum 10 assets allowed' })
+  if (assets.find(a => a.phone === phone)) return res.status(400).json({ message: 'Asset with this phone already added' })
+
+  // Check if this phone belongs to an existing user
+  const existingUser = db.users.find(u => u.phone === phone)
+  const newAsset = {
+    id: 'a_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+    name,
+    phone,
+    status: existingUser ? 'active' : 'pending',
+    activatedAt: existingUser ? new Date().toISOString() : null,
+    hasDined: false,
+    pointsDistributed: 0
+  }
+
+  assets.push(newAsset)
+  user.assets = assets
+
+  // If existing user, mark them as an asset and sync
+  if (existingUser) {
+    existingUser.referredBy = user.id
+    existingUser.referredByName = user.name
+  }
+
+  writeDb(db)
+  res.json({ success: true, asset: newAsset, assets: user.assets })
+})
+
+// Replace an asset (if friend hasn't activated)
+app.put('/api/assets/:assetId', auth, (req, res) => {
+  const { assetId } = req.params
+  const { name, phone } = req.body
+  if (!name || !phone) return res.status(400).json({ message: 'Name and phone required' })
+
+  const db = readDb()
+  const user = db.users.find(u => u.id === req.userId)
+  if (!user) return res.status(404).json({ message: 'User not found' })
+
+  const assets = user.assets || []
+  const idx = assets.findIndex(a => a.id === assetId)
+  if (idx === -1) return res.status(404).json({ message: 'Asset not found' })
+
+  // Only allow replacement if asset hasn't activated (no dine recorded)
+  if (assets[idx].hasDined) return res.status(400).json({ message: 'Cannot replace an asset who has already dined' })
+
+  assets[idx] = { ...assets[idx], name, phone, status: 'pending', activatedAt: null }
+  user.assets = assets
+  writeDb(db)
+  res.json({ success: true, asset: assets[idx], assets: user.assets })
+})
+
+// Remove an asset
+app.delete('/api/assets/:assetId', auth, (req, res) => {
+  const { assetId } = req.params
+  const db = readDb()
+  const user = db.users.find(u => u.id === req.userId)
+  if (!user) return res.status(404).json({ message: 'User not found' })
+
+  const assets = user.assets || []
+  const idx = assets.findIndex(a => a.id === assetId)
+  if (idx === -1) return res.status(404).json({ message: 'Asset not found' })
+
+  // Return undistributed points back
+  const undistributedPoints = assets[idx].pointsDistributed || 0
+  assets.splice(idx, 1)
+  user.assets = assets
+  user.totalDistributed = (user.totalDistributed || 0) - undistributedPoints
+
+  writeDb(db)
+  res.json({ success: true, assets: user.assets, pointsRefunded: undistributedPoints })
+})
+
+// Distribute points to an asset
+app.post('/api/assets/distribute', auth, (req, res) => {
+  const { assetId, amount } = req.body
+  if (!assetId || !amount || amount <= 0) return res.status(400).json({ message: 'Asset ID and valid amount required' })
+
+  const db = readDb()
+  const user = db.users.find(u => u.id === req.userId)
+  if (!user) return res.status(404).json({ message: 'User not found' })
+
+  const assets = user.assets || []
+  const asset = assets.find(a => a.id === assetId)
+  if (!asset) return res.status(404).json({ message: 'Asset not found' })
+
+  const availablePoints = (user.points || 0) - (user.totalDistributed || 0)
+  if (amount > availablePoints) return res.status(400).json({ message: 'Insufficient available points', available: availablePoints })
+
+  // Credit points to the asset's account if they exist
+  const assetUser = db.users.find(u => u.phone === asset.phone)
+  if (assetUser) {
+    assetUser.points = (assetUser.points || 0) + amount
+    if (!db.transactions) db.transactions = []
+    db.transactions.push({
+      id: 't_' + Date.now(),
+      userId: assetUser.id,
+      type: 'credit',
+      amount,
+      description: 'Points received from ' + user.name,
+      createdAt: new Date().toISOString()
+    })
+    asset.status = 'active'
+    asset.activatedAt = asset.activatedAt || new Date().toISOString()
+  }
+
+  asset.pointsDistributed = (asset.pointsDistributed || 0) + amount
+  user.totalDistributed = (user.totalDistributed || 0) + amount
+
+  // Check if all 10 assets have been distributed to and all dined
+  checkAllAssetsBonus(user, db)
+
+  writeDb(db)
+  res.json({
+    success: true,
+    asset,
+    points: user.points,
+    totalDistributed: user.totalDistributed,
+    availablePoints: (user.points || 0) - (user.totalDistributed || 0)
+  })
+})
+
+// Get discount info for a customer (used by billing app + checkout)
+// Query params: ?billAmount=XXX
+app.get('/api/assets/discount/:phone', (req, res) => {
+  const db = readDb()
+  const customer = db.users.find(u => u.phone === req.params.phone)
+  if (!customer) return res.json({ discount: 0, message: 'No account', isAsset: false })
+
+  const billAmount = Number(req.query.billAmount) || 0
+  const isAsset = !!customer.referredBy
+  let discount = 0
+  let message = ''
+
+  // Asset promotional discount based on bill amount
+  if (isAsset) {
+    if (billAmount > 0 && billAmount < 500) {
+      discount = 20
+      message = '20% asset discount (bill under ₹500)'
+    } else if (billAmount >= 500) {
+      discount = 25
+      message = '25% asset discount (bill ₹500+)'
+    } else {
+      discount = 20
+      message = '20% asset discount'
+    }
+  }
+
+  // Flat 10% for any logged-in app user (stacks with asset discount)
+  const loggedInDiscount = 10
+  const loggedInMessage = ' + 10% app login discount'
+
+  const totalDiscount = discount + loggedInDiscount
+  const finalMessage = isAsset
+    ? '$message$loggedInMessage'
+    : '10% app login discount'
+
+  res.json({
+    discount: isAsset ? totalDiscount : loggedInDiscount,
+    message: finalMessage,
+    assetDiscount: discount,
+    loggedInDiscount: loggedInDiscount,
+    points: customer.points || 0,
+    isAsset,
+    canRedeemPoints: isAsset
+  })
+})
+
+// Get master user for cashback when asset pays bill
+app.get('/api/assets/master/:phone', (req, res) => {
+  const db = readDb()
+  const customer = db.users.find(u => u.phone === req.params.phone)
+  if (!customer || !customer.referredBy) return res.json({ master: null })
+
+  const master = db.users.find(u => u.id === customer.referredBy)
+  if (!master) return res.json({ master: null })
+
+  res.json({ master: { id: master.id, name: master.name } })
+})
+
+// Helper: check if all 10 assets have dined and give bonus
+function checkAllAssetsBonus(user, db) {
+  const assets = user.assets || []
+  if (assets.length < 10) return false
+
+  const allDined = assets.every(a => a.hasDined)
+  if (allDined && !user.allAssetsActive) {
+    user.allAssetsActive = true
+    // +500 bonus
+    user.points = (user.points || 0) + 500
+    if (!db.transactions) db.transactions = []
+    db.transactions.push({
+      id: 't_' + Date.now(),
+      userId: user.id,
+      type: 'credit',
+      amount: 500,
+      description: 'All 10 assets dined! Bonus points',
+      createdAt: new Date().toISOString()
+    })
+
+    // +100 sharing bonus
+    if (!user.bonusClaimed) {
+      user.bonusClaimed = true
+      user.points += 100
+      db.transactions.push({
+        id: 't_' + Date.now() + '_b',
+        userId: user.id,
+        type: 'credit',
+        amount: 100,
+        description: 'Sharing bonus - 10 assets completed',
+        createdAt: new Date().toISOString()
+      })
+    }
+    return true
+  }
+  return false
+}
+
 // ============ BILLING USERS API (PIN-based login for billing staff) ============
 
 // Billing login - verify PIN
@@ -388,12 +718,11 @@ app.post('/api/billing/login', async (req, res) => {
     if (!pin || pin.length !== 4) {
       return res.status(400).json({ error: '4-digit PIN required' })
     }
-    const user = billingUsers.find(u => u.pin === pin)
+    const user = billingUsers.find(u => bcrypt.compareSync(pin, u.pin))
     if (!user) {
       return res.status(401).json({ error: 'Invalid PIN' })
     }
     const { pin: _, ...userWithoutPin } = user
-    // Don't expose hashed PIN to frontend
     const safeUser = { ...userWithoutPin, permissions: user.permissions || getDefaultPermissions(user.role) }
     res.json({ user: safeUser })
   } catch (error) {
@@ -413,11 +742,11 @@ app.post('/api/billing/change-pin', (req, res) => {
   }
   const user = billingUsers.find(u => u.id === userId)
   if (!user) return res.status(404).json({ error: 'User not found' })
-  if (user.pin !== currentPin) return res.status(400).json({ error: 'Current PIN is incorrect' })
-  if (billingUsers.find(u => u.id !== userId && u.pin === newPin)) {
+  if (!bcrypt.compareSync(currentPin, user.pin)) return res.status(400).json({ error: 'Current PIN is incorrect' })
+  if (billingUsers.some(u => u.id !== userId && bcrypt.compareSync(newPin, u.pin))) {
     return res.status(400).json({ error: 'New PIN already in use by another user' })
   }
-  user.pin = newPin
+  user.pin = bcrypt.hashSync(newPin, 10)
   saveState()
   res.json({ success: true, message: 'PIN changed successfully' })
 })
@@ -434,11 +763,11 @@ app.post('/api/billing/users', async (req, res) => {
     const { name, pin, role } = req.body
     if (!name || !pin || !role) return res.status(400).json({ error: 'Name, PIN, and role required' })
     if (pin.length !== 4) return res.status(400).json({ error: 'PIN must be 4 digits' })
-    if (billingUsers.find(u => u.pin === pin)) return res.status(400).json({ error: 'PIN already in use' })
+    if (billingUsers.some(u => bcrypt.compareSync(pin, u.pin))) return res.status(400).json({ error: 'PIN already in use' })
     
     const id = 'bu_' + Date.now()
     const permissions = req.body.permissions || getDefaultPermissions(role)
-    const newUser = { id, name, pin, role, permissions, createdAt: new Date().toISOString() }
+    const newUser = { id, name, pin: bcrypt.hashSync(pin, 10), role, permissions, createdAt: new Date().toISOString() }
     billingUsers.push(newUser)
     saveState()
     
@@ -461,8 +790,8 @@ app.put('/api/billing/users/:id', async (req, res) => {
     if (permissions) billingUsers[idx].permissions = permissions
     if (pin) {
       if (pin.length !== 4) return res.status(400).json({ error: 'PIN must be 4 digits' })
-      if (billingUsers.find((u, i) => i !== idx && u.pin === pin)) return res.status(400).json({ error: 'PIN already in use' })
-      billingUsers[idx].pin = pin
+      if (billingUsers.some((u, i) => i !== idx && bcrypt.compareSync(pin, u.pin))) return res.status(400).json({ error: 'PIN already in use' })
+      billingUsers[idx].pin = bcrypt.hashSync(pin, 10)
     }
     saveState()
     
@@ -477,10 +806,189 @@ app.put('/api/billing/users/:id', async (req, res) => {
 app.delete('/api/billing/users/:id', (req, res) => {
   const idx = billingUsers.findIndex(u => u.id === req.params.id)
   if (idx === -1) return res.status(404).json({ error: 'User not found' })
-  if (billingUsers[idx].role === 'admin') return res.status(400).json({ error: 'Cannot delete admin user' })
+  if (billingUsers[idx].role === 'admin' || billingUsers[idx].role === 'super-admin') return res.status(400).json({ error: 'Cannot delete admin user' })
   billingUsers.splice(idx, 1)
   saveState()
   res.json({ success: true })
+})
+
+// ============ SETTINGS API ============
+
+// Public: get settings (needed for theme on login page)
+app.get('/api/settings', (req, res) => {
+  res.json(settings)
+})
+
+// Helper: verify super-admin PIN from request body
+function verifySuperAdmin(pin) {
+  if (!pin || pin.length !== 4) return { ok: false, error: '4-digit PIN required' }
+  const user = billingUsers.find(u => bcrypt.compareSync(pin, u.pin))
+  if (!user) return { ok: false, error: 'Invalid PIN' }
+  if (user.role !== 'super-admin') return { ok: false, error: 'Super admin access required' }
+  return { ok: true, user }
+}
+
+// Update company info
+app.put('/api/settings/company', (req, res) => {
+  const auth = verifySuperAdmin(req.body.pin)
+  if (!auth.ok) return res.status(403).json({ error: auth.error })
+  const { name, address, phone, email, gst } = req.body
+  if (name !== undefined) settings.company.name = name
+  if (address !== undefined) settings.company.address = address
+  if (phone !== undefined) settings.company.phone = phone
+  if (email !== undefined) settings.company.email = email
+  if (gst !== undefined) settings.company.gst = gst
+  const db = readDb(); db.settings = settings; writeDb(db)
+  res.json({ success: true, settings })
+})
+
+// Update theme
+app.put('/api/settings/theme', (req, res) => {
+  const auth = verifySuperAdmin(req.body.pin)
+  if (!auth.ok) return res.status(403).json({ error: auth.error })
+  const { accentPrimary, accentPrimaryDark, bgPrimary } = req.body
+  if (accentPrimary !== undefined) settings.theme.accentPrimary = accentPrimary
+  if (accentPrimaryDark !== undefined) settings.theme.accentPrimaryDark = accentPrimaryDark
+  if (bgPrimary !== undefined) settings.theme.bgPrimary = bgPrimary
+  const db = readDb(); db.settings = settings; writeDb(db)
+  res.json({ success: true, settings })
+})
+
+// Update printers
+app.put('/api/settings/printers', (req, res) => {
+  const auth = verifySuperAdmin(req.body.pin)
+  if (!auth.ok) return res.status(403).json({ error: auth.error })
+  if (req.body.printers) settings.printers = req.body.printers
+  const db = readDb(); db.settings = settings; writeDb(db)
+  res.json({ success: true, settings })
+})
+
+// Upload logo
+app.post('/api/settings/upload-logo', (req, res) => {
+  const pin = req.query.pin || req.headers['x-pin']
+  const auth = verifySuperAdmin(pin)
+  if (!auth.ok) return res.status(403).json({ error: auth.error })
+
+  const chunks = []
+  req.on('data', chunk => chunks.push(chunk))
+  req.on('end', () => {
+    try {
+      const buf = Buffer.concat(chunks)
+      const ct = req.headers['content-type'] || ''
+      let ext = 'png'
+      if (ct.includes('jpeg') || ct.includes('jpg')) ext = 'jpg'
+      else if (ct.includes('svg')) ext = 'svg'
+      else if (ct.includes('webp')) ext = 'webp'
+
+      const logoPath = join(UPLOADS_DIR, `logo.${ext}`)
+      writeFileSync(logoPath, buf)
+      settings.company.logo = `/uploads/logo.${ext}`
+      const db = readDb(); db.settings = settings; writeDb(db)
+      res.json({ success: true, logo: settings.company.logo })
+    } catch (e) {
+      res.status(500).json({ error: 'Logo upload failed: ' + e.message })
+    }
+  })
+})
+
+// Upload customers CSV
+app.post('/api/settings/upload-customers', (req, res) => {
+  const pin = req.query.pin || req.headers['x-pin']
+  const auth = verifySuperAdmin(pin)
+  if (!auth.ok) return res.status(403).json({ error: auth.error })
+
+  const chunks = []
+  req.on('data', chunk => chunks.push(chunk))
+  req.on('end', () => {
+    try {
+      const csv = Buffer.concat(chunks).toString('utf-8')
+      const lines = csv.trim().split('\n')
+      if (lines.length < 2) return res.status(400).json({ error: 'CSV must have header + at least 1 row' })
+
+      const header = lines[0].toLowerCase().split(',').map(h => h.trim())
+      const nameIdx = header.indexOf('name')
+      const phoneIdx = header.indexOf('phone')
+      const emailIdx = header.indexOf('email')
+
+      let imported = 0, skipped = 0, errors = []
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(',').map(c => c.trim())
+        const name = nameIdx >= 0 ? cols[nameIdx] : ''
+        const phone = phoneIdx >= 0 ? cols[phoneIdx] : ''
+        const email = emailIdx >= 0 ? cols[emailIdx] : ''
+
+        if (!phone) { errors.push(`Row ${i + 1}: no phone`); skipped++; continue }
+        if (loyaltyUsers.find(u => u.phone === phone)) { skipped++; continue }
+
+        loyaltyUsers.push({
+          id: 'lu_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          name: name || 'Customer',
+          phone,
+          email: email || '',
+          rubyPoints: 0,
+          tier: 'Bronze',
+          referredBy: null,
+          denId: null,
+          createdAt: new Date().toISOString()
+        })
+        imported++
+      }
+      saveState()
+      res.json({ success: true, imported, skipped, errors })
+    } catch (e) {
+      res.status(500).json({ error: 'CSV parse failed: ' + e.message })
+    }
+  })
+})
+
+// Download backup
+app.get('/api/settings/export-backup', (req, res) => {
+  const pin = req.query.pin
+  const auth = verifySuperAdmin(pin)
+  if (!auth.ok) return res.status(403).json({ error: auth.error })
+
+  const db = readDb()
+  res.setHeader('Content-Type', 'application/json')
+  res.setHeader('Content-Disposition', `attachment; filename="tdg-backup-${new Date().toISOString().slice(0,10)}.json"`)
+  res.json(db)
+})
+
+// Restore from backup
+app.post('/api/settings/restore-backup', (req, res) => {
+  const pin = req.query.pin || req.headers['x-pin']
+  const auth = verifySuperAdmin(pin)
+  if (!auth.ok) return res.status(403).json({ error: auth.error })
+
+  const chunks = []
+  req.on('data', chunk => chunks.push(chunk))
+  req.on('end', () => {
+    try {
+      const backupData = JSON.parse(Buffer.concat(chunks).toString('utf-8'))
+      // Save current as safety backup
+      const ts = new Date().toISOString().replace(/[:.]/g, '-')
+      const safetyPath = join(BACKUP_DIR, `db-pre-restore-${ts}.json`)
+      if (!existsSync(BACKUP_DIR)) mkdirSync(BACKUP_DIR, { recursive: true })
+      writeFileSync(safetyPath, JSON.stringify(readDb(), null, 2))
+
+      // Restore
+      writeFileSync(DB_PATH, JSON.stringify(backupData, null, 2))
+      restoreState()
+      res.json({ success: true, message: 'Backup restored. Page will reload.', backup: safetyPath })
+    } catch (e) {
+      res.status(500).json({ error: 'Invalid backup file: ' + e.message })
+    }
+  })
+})
+
+// Full settings update
+app.put('/api/settings', (req, res) => {
+  const auth = verifySuperAdmin(req.body.pin)
+  if (!auth.ok) return res.status(403).json({ error: auth.error })
+  if (req.body.company) settings.company = { ...settings.company, ...req.body.company }
+  if (req.body.theme) settings.theme = { ...settings.theme, ...req.body.theme }
+  if (req.body.printers) settings.printers = req.body.printers
+  const db = readDb(); db.settings = settings; writeDb(db)
+  res.json({ success: true, settings })
 })
 
 // Menu (mobile format)
@@ -508,7 +1016,17 @@ app.get('/api/wallet', auth, (req, res) => {
   const user = db.users.find(u => u.id === req.userId)
   if (!user) return res.status(404).json({ message: 'User not found' })
   const transactions = db.transactions.filter(t => t.userId === req.userId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-  res.json({ rubyBalance: user.rubyBalance, scratchCards: user.scratchCards || [], transactions })
+  res.json({
+    points: user.points || 0,
+    cashbackEarned: user.cashbackEarned || 0,
+    totalDistributed: user.totalDistributed || 0,
+    availablePoints: (user.points || 0) - (user.totalDistributed || 0),
+    assets: user.assets || [],
+    assetsDinedCount: user.assetsDinedCount || 0,
+    allAssetsActive: user.allAssetsActive || false,
+    bonusClaimed: user.bonusClaimed || false,
+    transactions
+  })
 })
 
 // Wallet - Scratch card
@@ -524,36 +1042,70 @@ app.post('/api/wallet/scratch', auth, (req, res) => {
   if (user.scratchCards[cardIdx].claimed) return res.status(400).json({ message: 'Already claimed' })
   user.scratchCards[cardIdx].claimed = true
   user.scratchCards[cardIdx].subtitle = 'Claimed'
-  user.rubyBalance += user.scratchCards[cardIdx].amount
+  user.points = (user.points || 0) + user.scratchCards[cardIdx].amount
+  if (!db.transactions) db.transactions = []
   db.transactions.push({ id: 't_' + Date.now(), userId: user.id, type: 'credit', amount: user.scratchCards[cardIdx].amount, description: 'Scratch Card: ' + user.scratchCards[cardIdx].title, createdAt: new Date().toISOString() })
   writeDb(db)
   const transactions = db.transactions.filter(t => t.userId === req.userId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-  res.json({ message: 'Claimed!', rubyBalance: user.rubyBalance, scratchCards: user.scratchCards, transactions })
+  res.json({ message: 'Claimed!', points: user.points, scratchCards: user.scratchCards, transactions })
 })
 
-// Wallet - Add rubies
+// Wallet - Add points
 app.post('/api/wallet/add', auth, (req, res) => {
   const { amount } = req.body
   if (!amount || amount <= 0) return res.status(400).json({ message: 'Valid amount required' })
   const db = readDb()
   const idx = db.users.findIndex(u => u.id === req.userId)
   if (idx === -1) return res.status(404).json({ message: 'User not found' })
-  db.users[idx].rubyBalance += Number(amount)
-  db.transactions.push({ id: 't_' + Date.now(), userId: db.users[idx].id, type: 'credit', amount: Number(amount), description: 'Purchased Rubies', createdAt: new Date().toISOString() })
+  db.users[idx].points = (db.users[idx].points || 0) + Number(amount)
+  if (!db.transactions) db.transactions = []
+  db.transactions.push({ id: 't_' + Date.now(), userId: db.users[idx].id, type: 'credit', amount: Number(amount), description: 'Points added', createdAt: new Date().toISOString() })
   writeDb(db)
   const transactions = db.transactions.filter(t => t.userId === req.userId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-  res.json({ message: `Added ${amount} Rubies!`, rubyBalance: db.users[idx].rubyBalance, scratchCards: db.users[idx].scratchCards || [], transactions })
+  res.json({ message: `Added ${amount} points!`, points: db.users[idx].points, transactions })
 })
 
-// Den progress
+// Wallet - Redeem points (used as bill discount)
+app.post('/api/wallet/redeem', auth, (req, res) => {
+  const { amount } = req.body
+  if (!amount || amount <= 0) return res.status(400).json({ message: 'Valid amount required' })
+  const db = readDb()
+  const idx = db.users.findIndex(u => u.id === req.userId)
+  if (idx === -1) return res.status(404).json({ message: 'User not found' })
+  const user = db.users[idx]
+  const userPoints = user.points || 0
+  if (userPoints < amount) return res.status(400).json({ message: 'Insufficient points' })
+  user.points = userPoints - Number(amount)
+  if (!db.transactions) db.transactions = []
+  db.transactions.push({ id: 't_' + Date.now(), userId: user.id, type: 'debit', amount: Number(amount), description: 'Points redeemed for bill discount', createdAt: new Date().toISOString() })
+  writeDb(db)
+  const transactions = db.transactions.filter(t => t.userId === req.userId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  res.json({ message: `Redeemed ${amount} points!`, points: user.points, transactions })
+})
+
+// Den progress (now Asset system)
 app.get('/api/den', auth, (req, res) => {
   const db = readDb()
   const user = db.users.find(u => u.id === req.userId)
   if (!user) return res.status(404).json({ message: 'User not found' })
+  const assets = user.assets || []
   res.json({
-    denLevel: user.denLevel || 'Gold',
-    completedDens: user.completedDens !== undefined ? user.completedDens : 4,
-    denProgress: user.denProgress !== undefined ? user.denProgress : 6
+    points: user.points || 0,
+    assetsCount: assets.length,
+    maxAssets: 10,
+    assetsDinedCount: user.assetsDinedCount || 0,
+    allAssetsActive: user.allAssetsActive || false,
+    totalDistributed: user.totalDistributed || 0,
+    cashbackEarned: user.cashbackEarned || 0,
+    bonusClaimed: user.bonusClaimed || false,
+    assets: assets.map(a => ({
+      id: a.id,
+      name: a.name,
+      phone: a.phone,
+      status: a.status,
+      hasDined: a.hasDined,
+      pointsDistributed: a.pointsDistributed
+    }))
   })
 })
 
@@ -662,6 +1214,87 @@ app.get('/api/menu/items', (req, res) => {
   res.json(items)
 })
 
+// Menu Item CRUD
+app.post('/api/admin/menu/items', (req, res) => {
+  const { name, price, categoryId, description, isAvailable } = req.body
+  if (!name || !price || !categoryId) return res.status(400).json({ error: 'name, price, and categoryId required' })
+  const id = 'm_' + Date.now()
+  const item = { id, name, price: Number(price), categoryId, description: description || '', isAvailable: isAvailable !== false }
+  menuItems.push(item)
+  saveState()
+  res.status(201).json(item)
+})
+
+app.put('/api/admin/menu/items/:id', (req, res) => {
+  const idx = menuItems.findIndex(i => i.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'Item not found' })
+  const { name, price, categoryId, description, isAvailable } = req.body
+  if (name !== undefined) menuItems[idx].name = name
+  if (price !== undefined) menuItems[idx].price = Number(price)
+  if (categoryId !== undefined) menuItems[idx].categoryId = categoryId
+  if (description !== undefined) menuItems[idx].description = description
+  if (isAvailable !== undefined) menuItems[idx].isAvailable = isAvailable
+  saveState()
+  res.json(menuItems[idx])
+})
+
+app.delete('/api/admin/menu/items/:id', (req, res) => {
+  const idx = menuItems.findIndex(i => i.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'Item not found' })
+  menuItems.splice(idx, 1)
+  saveState()
+  res.json({ success: true })
+})
+
+app.put('/api/admin/menu/items/:id/toggle', (req, res) => {
+  const idx = menuItems.findIndex(i => i.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'Item not found' })
+  menuItems[idx].isAvailable = !menuItems[idx].isAvailable
+  saveState()
+  res.json(menuItems[idx])
+})
+
+// Category CRUD
+app.post('/api/admin/menu/categories', (req, res) => {
+  const { name, color } = req.body
+  if (!name) return res.status(400).json({ error: 'name required' })
+  const id = 'cat_' + Date.now()
+  const displayOrder = categories.length + 1
+  const cat = { id, name, color: color || '#6b7280', displayOrder }
+  categories.push(cat)
+  saveState()
+  res.status(201).json(cat)
+})
+
+app.put('/api/admin/menu/categories/:id', (req, res) => {
+  const idx = categories.findIndex(c => c.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'Category not found' })
+  const { name, color, displayOrder } = req.body
+  if (name !== undefined) categories[idx].name = name
+  if (color !== undefined) categories[idx].color = color
+  if (displayOrder !== undefined) categories[idx].displayOrder = displayOrder
+  saveState()
+  res.json(categories[idx])
+})
+
+app.delete('/api/admin/menu/categories/:id', (req, res) => {
+  const idx = categories.findIndex(c => c.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'Category not found' })
+  categories.splice(idx, 1)
+  menuItems.forEach(item => { if (item.categoryId === req.params.id) item.categoryId = null })
+  saveState()
+  res.json({ success: true })
+})
+
+// Menu Items Admin list (full data)
+app.get('/api/admin/menu/items', (req, res) => {
+  res.json(menuItems)
+})
+
+app.get('/api/admin/menu/categories', (req, res) => {
+  res.json(categories.sort((a, b) => a.displayOrder - b.displayOrder))
+})
+
 // POS Orders (no auth)
 app.get('/api/pos/orders', (req, res) => {
   const { status, source } = req.query
@@ -672,7 +1305,7 @@ app.get('/api/pos/orders', (req, res) => {
 })
 
 app.post('/api/pos/orders', (req, res) => {
-  const { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod } = req.body
+  const { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod, complimentary, complimentaryType, specialRemarks } = req.body
   
   const id = uuid()
   const orderNum = ++orderNumber
@@ -693,6 +1326,9 @@ app.post('/api/pos/orders', (req, res) => {
     customerName: customerName || '',
     customerPhone: customerPhone || '',
     notes: notes || '',
+    complimentary: complimentary || false,
+    complimentaryType: complimentaryType || '',
+    specialRemarks: specialRemarks || '',
     createdAt: now,
     updatedAt: now,
     items: items?.map(item => ({
@@ -718,65 +1354,75 @@ app.post('/api/pos/orders', (req, res) => {
 
 app.patch('/api/pos/orders/:id/status', (req, res) => {
   const { id } = req.params
-  const { status, paymentStatus } = req.body
+  const { status, paymentStatus, cancelReason } = req.body
   
   const order = orders.find(o => o.id === id)
   if (order) {
     order.status = status || order.status
     order.paymentStatus = paymentStatus || order.paymentStatus
     order.paymentMethod = req.body.paymentMethod || order.paymentMethod
+    if (status === 'cancelled') {
+      if (cancelReason) order.cancelReason = cancelReason
+      if (req.body.cancelledBy) order.cancelledBy = req.body.cancelledBy
+    }
     order.updatedAt = new Date().toISOString()
     io.emit('order:updated', order)
     saveState()
 
-    // SYNC: When order completed, handle wallet deduction OR points earning
+    // ASSET SYSTEM: When order completed, handle cashback + asset dined tracking
     if ((status === 'completed' || status === 'served') && order.customerPhone) {
       const db = readDb()
-      const pointsAmount = Math.floor(order.total || 0)
-      if (pointsAmount > 0) {
-        const isWallet = order.paymentMethod === 'wallet'
-        if (isWallet) {
-          // Wallet payment: DEDUCT points (customer pays with wallet)
-          const mobileUser = db.users.find(u => u.phone === order.customerPhone)
-          if (mobileUser) {
-            const current = mobileUser.rubyBalance || 0
-            if (current >= pointsAmount) {
-              mobileUser.rubyBalance = current - pointsAmount
+      const billAmount = Math.floor(order.total || 0)
+      if (billAmount > 0) {
+        const customer = db.users.find(u => u.phone === order.customerPhone)
+
+        // 1. Mark asset as dined if customer is someone's asset
+        if (customer && customer.referredBy) {
+          const master = db.users.find(u => u.id === customer.referredBy)
+          if (master) {
+            const assets = master.assets || []
+            const asset = assets.find(a => a.phone === order.customerPhone)
+            if (asset && !asset.hasDined) {
+              asset.hasDined = true
+              asset.dinedAt = new Date().toISOString()
+              master.assetsDinedCount = (master.assetsDinedCount || 0) + 1
+              checkAllAssetsBonus(master, db)
+            }
+
+            // 2. 10% cashback to master (perpetual)
+            const cashback = Math.floor(billAmount * 0.10)
+            if (cashback > 0) {
+              master.points = (master.points || 0) + cashback
+              master.cashbackEarned = (master.cashbackEarned || 0) + cashback
               db.transactions.push({
-                id: 't_' + Date.now(),
-                userId: mobileUser.id,
-                type: 'debit',
-                amount: pointsAmount,
-                description: 'Wallet payment for Order #' + order.orderNumber,
+                id: 't_' + Date.now() + '_cb',
+                userId: master.id,
+                type: 'credit',
+                amount: cashback,
+                description: '10% cashback from ' + (customer.name || order.customerPhone) + ' - Order #' + order.orderNumber,
                 createdAt: new Date().toISOString()
               })
-              writeDb(db)
             }
           }
-          const loyaltyUser = loyaltyUsers.find(u => u.phone === order.customerPhone)
-          if (loyaltyUser && loyaltyUser.rubyPoints >= pointsAmount) {
-            deductPoints(loyaltyUser.id, pointsAmount, 'Wallet payment for Order #' + order.orderNumber)
-          }
-        } else {
-          // Regular payment: ADD points (customer earns loyalty points)
-          const mobileUser = db.users.find(u => u.phone === order.customerPhone)
-          if (mobileUser) {
-            mobileUser.rubyBalance = (mobileUser.rubyBalance || 0) + pointsAmount
+        }
+
+        // 3. Earn points for the customer (1 point = 1 rupee, earned on order)
+        if (customer) {
+          const earnedPoints = Math.floor(billAmount * 0.05) // 5% earning
+          if (earnedPoints > 0) {
+            customer.points = (customer.points || 0) + earnedPoints
             db.transactions.push({
-              id: 't_' + Date.now(),
-              userId: mobileUser.id,
+              id: 't_' + Date.now() + '_ep',
+              userId: customer.id,
               type: 'credit',
-              amount: pointsAmount,
+              amount: earnedPoints,
               description: 'Order #' + order.orderNumber + ' completed',
               createdAt: new Date().toISOString()
             })
-            writeDb(db)
-          }
-          const loyaltyUser = loyaltyUsers.find(u => u.phone === order.customerPhone)
-          if (loyaltyUser) {
-            addPoints(loyaltyUser.id, pointsAmount, 'Order #' + order.orderNumber + ' completed')
           }
         }
+
+        writeDb(db)
         saveState()
       }
     }
@@ -1306,6 +1952,95 @@ app.post('/api/expenses', (req, res) => {
   res.status(201).json(expense)
 })
 
+// ============ SUPPLIER CRUD ============
+app.get('/api/admin/suppliers', (req, res) => {
+  res.json(suppliers)
+})
+
+app.post('/api/admin/suppliers', (req, res) => {
+  const { name, category, contact, email, address, rating, defaultInvoiceNo, invoicePrefix } = req.body
+  if (!name) return res.status(400).json({ error: 'name required' })
+  const id = 'S' + Date.now()
+  const supplier = { id, name, category: category || '', contact: contact || '', email: email || '', address: address || '', rating: rating || 0, defaultInvoiceNo: defaultInvoiceNo || '', invoicePrefix: invoicePrefix || '' }
+  suppliers.push(supplier)
+  saveState()
+  res.status(201).json(supplier)
+})
+
+app.put('/api/admin/suppliers/:id', (req, res) => {
+  const idx = suppliers.findIndex(s => s.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'Supplier not found' })
+  Object.assign(suppliers[idx], req.body)
+  saveState()
+  res.json(suppliers[idx])
+})
+
+app.delete('/api/admin/suppliers/:id', (req, res) => {
+  const idx = suppliers.findIndex(s => s.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'Supplier not found' })
+  suppliers.splice(idx, 1)
+  saveState()
+  res.json({ success: true })
+})
+
+// ============ PURCHASE ORDERS CRUD ============
+app.get('/api/admin/purchase-orders', (req, res) => {
+  res.json(purchaseOrders.sort((a, b) => new Date(b.date) - new Date(a.date)))
+})
+
+app.post('/api/admin/purchase-orders', (req, res) => {
+  const { supplier, items, total, expectedDate } = req.body
+  if (!supplier || !items?.length) return res.status(400).json({ error: 'supplier and items required' })
+  const id = 'PO' + String(purchaseOrders.length + 1).padStart(3, '0')
+  const po = { id, supplier, items: items.length, total: Number(total), status: 'pending', date: new Date().toISOString().split('T')[0], expectedDate: expectedDate || '' }
+  purchaseOrders.push(po)
+  // Save PO items
+  const newItems = items.map((item, i) => ({ id: 'PI' + id + i, poId: id, name: item.name, quantity: item.quantity, unit: item.unit, rate: item.rate, received: 0 }))
+  poItems.push(...newItems)
+  saveState()
+  res.status(201).json({ po, items: newItems })
+})
+
+app.put('/api/admin/purchase-orders/:id', (req, res) => {
+  const idx = purchaseOrders.findIndex(p => p.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'PO not found' })
+  Object.assign(purchaseOrders[idx], req.body)
+  saveState()
+  res.json(purchaseOrders[idx])
+})
+
+app.get('/api/admin/po-items', (req, res) => {
+  const { poId } = req.query
+  let result = poItems
+  if (poId) result = poItems.filter(i => i.poId === poId)
+  res.json(result)
+})
+
+app.post('/api/admin/po-items', (req, res) => {
+  const { poId, name, quantity, unit, rate } = req.body
+  if (!poId || !name) return res.status(400).json({ error: 'poId and name required' })
+  const id = uuid()
+  const item = { id, poId, name, quantity: Number(quantity), unit: unit || 'kg', rate: Number(rate), received: 0 }
+  poItems.push(item)
+  saveState()
+  res.status(201).json(item)
+})
+
+// ============ GRN CRUD ============
+app.get('/api/admin/grns', (req, res) => {
+  res.json(grns.sort((a, b) => new Date(b.date) - new Date(a.date)))
+})
+
+app.post('/api/admin/grns', (req, res) => {
+  const { poId, supplier, items, totalValue, invoiceNo, invoiceImage, receivedBy, remarks, vehicleNo } = req.body
+  if (!poId || !supplier) return res.status(400).json({ error: 'poId and supplier required' })
+  const id = 'GRN' + String(grns.length + 1).padStart(3, '0')
+  const grn = { id, poId, supplier, items: items || 0, totalValue: Number(totalValue) || 0, invoiceNo: invoiceNo || '', invoiceImage: invoiceImage || null, date: new Date().toISOString().split('T')[0], status: 'completed', receivedBy: receivedBy || '', remarks: remarks || '', vehicleNo: vehicleNo || '' }
+  grns.push(grn)
+  saveState()
+  res.status(201).json(grn)
+})
+
 // ============ PURCHASES (supplier orders) ============
 app.get('/api/purchases', (req, res) => {
   const { date } = req.query
@@ -1399,13 +2134,83 @@ app.get('/api/reports/daily-closing', (req, res) => {
   })
 })
 
-// Root + Health
-app.get('/', (req, res) => {
-  res.json({ status: 'UP', message: 'TDG Billing API', endpoints: ['/api/*', '/api/auth/*', '/api/menu', '/api/wallet', '/api/den', '/api/orders', '/api/pos/orders', '/api/online-orders', '/api/menu/*', '/api/inventory', '/api/loyalty/*', '/api/expenses', '/api/purchases', '/api/reports/daily-closing'] })
-})
-
+// Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'UP', message: 'TDG Backend is running smoothly.' })
+})
+
+// Version/diagnostic endpoint — helps verify which deploy is running
+app.get('/api/deploy-version', (req, res) => {
+  res.json({
+    deployedAt: new Date().toISOString(),
+    features: ['bcrypt-pins', 'backup-api', 'ws-8.21.0'],
+    hasBackupRoutes: true
+  })
+})
+
+// Manual backup trigger
+app.post('/api/backup', (req, res) => {
+  try {
+    const db = readDb()
+    const ts = new Date().toISOString().replace(/[:.]/g, '-')
+    if (!existsSync(BACKUP_DIR)) mkdirSync(BACKUP_DIR, { recursive: true })
+    const backupPath = join(BACKUP_DIR, `db-manual-${ts}.json`)
+    writeFileSync(backupPath, JSON.stringify(db, null, 2))
+    res.json({ success: true, path: backupPath })
+  } catch (e) {
+    res.status(500).json({ error: 'Backup failed: ' + e.message })
+  }
+})
+
+// List available backups
+app.get('/api/backups', (req, res) => {
+  try {
+    if (!existsSync(BACKUP_DIR)) return res.json([])
+    const files = readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json')).sort().reverse()
+    res.json(files.map(f => ({ name: f, size: statSync(join(BACKUP_DIR, f)).size, date: f.replace('db-', '').replace('db-manual-', '').replace('.json', '').replace(/-/g, ':') })))
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+// Reset operational data (orders, billing, KOTs, POs, GRNs, expenses) — ADMIN ONLY
+app.post('/api/reset', async (req, res) => {
+  try {
+    const { pin } = req.body
+    if (!pin || pin.length !== 4) {
+      return res.status(400).json({ error: '4-digit PIN required' })
+    }
+    const user = billingUsers.find(u => bcrypt.compareSync(pin, u.pin))
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid PIN' })
+    }
+    if (user.role !== 'super-admin') {
+      return res.status(403).json({ error: 'Only super admin can reset data' })
+    }
+
+    // Backup first
+    const db = readDb()
+    const ts = new Date().toISOString().replace(/[:.]/g, '-')
+    if (!existsSync(BACKUP_DIR)) mkdirSync(BACKUP_DIR, { recursive: true })
+    const backupPath = join(BACKUP_DIR, `db-pre-reset-${ts}.json`)
+    writeFileSync(backupPath, JSON.stringify(db, null, 2))
+
+    // Clear operational data
+    orders = []
+    orderNumber = 1000
+    purchaseOrders = []
+    poItems = []
+    grns = []
+    expenses = []
+    purchases = []
+    onlineOrders = []
+
+    saveState()
+    console.log(`Data reset by admin ${user.name}. Backup:`, backupPath)
+    res.json({ success: true, message: 'Operational data reset', backup: backupPath, admin: user.name })
+  } catch (e) {
+    res.status(500).json({ error: 'Reset failed: ' + e.message })
+  }
 })
 
 // ============ WEBSOCKET ============
@@ -1477,17 +2282,17 @@ async function seedAdmin() {
   // Seed billing users if empty
   if (billingUsers.length === 0) {
     const defaultUsers = [
+      { name: 'Super Admin', pin: '1010', role: 'super-admin' },
       { name: 'Admin', pin: '1234', role: 'admin' },
       { name: 'Manager', pin: '5678', role: 'manager' },
       { name: 'Cashier', pin: '0000', role: 'cashier' },
-      { name: 'Kitchen', pin: '9999', role: 'kitchen' },
-      { name: 'Kitchen Staff', pin: '8888', role: 'kitchen' },
+      { name: 'Kitchen', pin: '8888', role: 'kitchen' },
     ]
     for (const u of defaultUsers) {
       billingUsers.push({
         id: 'bu_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
         name: u.name,
-        pin: u.pin,
+        pin: bcrypt.hashSync(u.pin, 10),
         role: u.role,
         permissions: getDefaultPermissions(u.role),
         createdAt: new Date().toISOString()
@@ -1495,6 +2300,27 @@ async function seedAdmin() {
     }
     saveState()
     console.log('Seeded ' + defaultUsers.length + ' billing users')
+  }
+
+  // Ensure super-admin user exists (migration for existing databases)
+  if (!billingUsers.find(u => u.role === 'super-admin')) {
+    billingUsers.push({
+      id: 'bu_superadmin',
+      name: 'Super Admin',
+      pin: bcrypt.hashSync('1010', 10),
+      role: 'super-admin',
+      permissions: getDefaultPermissions('super-admin'),
+      createdAt: new Date().toISOString()
+    })
+    saveState()
+    console.log('Migrated: created super-admin user (PIN: 1010)')
+  }
+
+  // Ensure settings exist in db.json
+  if (!db.settings) {
+    db.settings = settings
+    writeDb(db)
+    console.log('Migrated: initialized settings in db.json')
   }
 }
 seedAdmin()

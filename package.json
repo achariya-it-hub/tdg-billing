@@ -7,6 +7,7 @@
     "client": "vite",
     "server": "node server/index.js",
     "build": "vite build",
+    "deploy": "vite build && node scripts/deploy.js",
     "preview": "vite preview",
     "start": "vite build && node server/index.js"
   },
@@ -16,7 +17,9 @@
     "express": "^4.18.2",
     "framer-motion": "^11.0.5",
     "jsonwebtoken": "^9.0.3",
+    "jszip": "^3.10.1",
     "lucide-react": "^0.344.0",
+    "playwright": "^1.61.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.1",
@@ -32,5 +35,9 @@
     "@vitejs/plugin-react": "^4.2.1",
     "concurrently": "^8.2.2",
     "vite": "^5.1.4"
+  },
+  "overrides": {
+    "ws": "8.21.0",
+    "undici": "7.28.0"
   }
 }

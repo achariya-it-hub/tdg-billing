@@ -10,7 +10,9 @@ export const useOrderStore = create(
     tableNumber: '',
     customerName: '',
     customerPhone: '',
-    notes: ''
+    notes: '',
+    complimentary: false,
+    complimentaryType: ''
   },
   orders: [],
   heldOrders: [],
@@ -78,7 +80,21 @@ export const useOrderStore = create(
   setNotes: (notes) => {
     set(state => ({ currentOrder: { ...state.currentOrder, notes } }))
   },
-  
+
+  setComplimentary: (complimentaryType) => {
+    set(state => ({
+      currentOrder: {
+        ...state.currentOrder,
+        complimentary: !!complimentaryType,
+        complimentaryType
+      }
+    }))
+  },
+
+  setSpecialRemarks: (specialRemarks) => {
+    set(state => ({ currentOrder: { ...state.currentOrder, specialRemarks } }))
+  },
+
   clearOrder: () => {
     set({
       currentOrder: {
@@ -87,7 +103,10 @@ export const useOrderStore = create(
         tableNumber: '',
         customerName: '',
         customerPhone: '',
-        notes: ''
+        notes: '',
+        complimentary: false,
+        complimentaryType: '',
+        specialRemarks: ''
       }
     })
   },
@@ -151,7 +170,7 @@ export const useOrderStore = create(
             subtotal,
             tax,
             total,
-            paymentMethod,
+            paymentMethod: paymentMethod || undefined,
             customerPhone: order.customerPhone || ''
           })
         })
@@ -189,6 +208,9 @@ export const useOrderStore = create(
           status: 'pending',
           paymentStatus: 'pending',
           source: 'pos',
+          complimentary: order.complimentary || false,
+          complimentaryType: order.complimentaryType || '',
+          specialRemarks: order.specialRemarks || '',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         }
@@ -197,7 +219,7 @@ export const useOrderStore = create(
       set(state => ({ orders: [newOrder, ...state.orders] }))
       
       set({
-        currentOrder: { items: [], type: 'dine-in', tableNumber: '', customerName: '', customerPhone: '', notes: '' }
+        currentOrder: { items: [], type: 'dine-in', tableNumber: '', customerName: '', customerPhone: '', notes: '', complimentary: false, complimentaryType: '', specialRemarks: '' }
       })
       
       console.log('Order placed:', newOrder)

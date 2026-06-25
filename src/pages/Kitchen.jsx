@@ -111,15 +111,17 @@ export default function Kitchen() {
               onClick={() => setFilter(f)}
               style={{
                 padding: '10px 16px',
-                borderRadius: '20px',
-                background: filter === f ? 'var(--accent-primary)' : 'var(--bg-card)',
-                color: filter === f ? 'white' : 'var(--text-secondary)',
+                borderRadius: '12px',
+                background: filter === f ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'rgba(255,255,255,0.75)',
+                color: filter === f ? 'white' : '#4b5563',
                 fontWeight: 600,
                 fontSize: '13px',
                 border: 'none',
                 cursor: 'pointer',
                 textTransform: 'capitalize',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                backdropFilter: 'blur(20px)',
+                boxShadow: filter === f ? '0 2px 8px rgba(230,57,70,0.3)' : '0 1px 3px rgba(0,0,0,0.04)'
               }}
             >
               {f}
@@ -129,15 +131,16 @@ export default function Kitchen() {
             onClick={fetchOrders}
             style={{
               padding: '10px 16px',
-              borderRadius: '20px',
-              background: 'var(--bg-card)',
-              color: 'var(--text-secondary)',
+              borderRadius: '12px',
+              background: 'rgba(255,255,255,0.75)',
+              color: '#4b5563',
               fontWeight: 600,
               fontSize: '13px',
               border: 'none',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              marginLeft: 'auto'
+              marginLeft: 'auto',
+              backdropFilter: 'blur(20px)'
             }}
           >
             <RefreshCw size={14} />
@@ -257,21 +260,20 @@ export default function Kitchen() {
     )
   }
 
+  const glassCard = {
+    background: 'rgba(255,255,255,0.75)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    borderRadius: '16px',
+    border: '1px solid rgba(255,255,255,0.3)',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)'
+  }
+
   // Desktop Kitchen Layout
   return (
     <div style={{ height: 'calc(100vh - 104px)' }}>
       {/* Filter Bar */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: '24px',
-          padding: '16px',
-          background: 'var(--bg-card)',
-          borderRadius: '12px'
-        }}
-      >
+      <div style={{ ...glassCard, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', padding: '16px 20px' }}>
         <div style={{ display: 'flex', gap: '8px' }}>
           {['all', 'pending', 'preparing', 'ready'].map(f => (
             <button
@@ -279,80 +281,60 @@ export default function Kitchen() {
               onClick={() => setFilter(f)}
               style={{
                 padding: '10px 20px',
-                borderRadius: '8px',
-                background: filter === f ? 'var(--accent-primary)' : 'var(--bg-secondary)',
-                color: filter === f ? 'white' : 'var(--text-secondary)',
+                borderRadius: '12px',
+                background: filter === f ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'rgba(0,0,0,0.03)',
+                color: filter === f ? 'white' : '#4b5563',
                 fontWeight: 600,
                 border: 'none',
                 cursor: 'pointer',
-                textTransform: 'capitalize'
+                textTransform: 'capitalize',
+                transition: 'all 0.2s',
+                boxShadow: filter === f ? '0 2px 8px rgba(230,57,70,0.3)' : 'none'
               }}
             >
               {f}
             </button>
           ))}
         </div>
-        <Button variant="secondary" onClick={fetchOrders}>
-          <RefreshCw size={16} />
-          Refresh
-        </Button>
+        <button onClick={fetchOrders} style={{
+          padding: '10px 20px', borderRadius: '12px',
+          background: 'rgba(0,0,0,0.03)', border: 'none',
+          color: '#4b5563', fontWeight: 600, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s'
+        }}>
+          <RefreshCw size={16} /> Refresh
+        </button>
       </div>
 
       {/* Orders Grid */}
       {filteredOrders.length === 0 ? (
-        <div
-          style={{
-            height: '60%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--text-muted)',
-            gap: '16px'
-          }}
-        >
-          <ChefHat size={64} />
+        <div style={{
+          height: '60%', display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center', color: '#9ca3af', gap: '16px'
+        }}>
+          <div style={{ ...glassCard, width: '100px', height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <ChefHat size={48} />
+          </div>
           <span style={{ fontSize: '24px', fontFamily: 'Bebas Neue' }}>No Active Orders</span>
         </div>
       ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '16px'
-          }}
-        >
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
           {filteredOrders.map(order => {
             const mins = getTimeElapsed(order.createdAt)
             const isUrgent = mins >= 10
-
             return (
-              <Card
-                key={order.id}
-                padding="none"
-                style={{
-                  overflow: 'hidden',
-                  animation: isUrgent ? 'glow 2s infinite' : undefined
-                }}
-              >
-                <div
-                  style={{
-                    padding: '16px',
-                    background: getTimeColor(mins),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                  }}
-                >
+              <div key={order.id} style={{
+                ...glassCard, overflow: 'hidden',
+                animation: isUrgent ? 'glow 2s infinite' : undefined,
+                transition: 'all 0.2s'
+              }}>
+                <div style={{
+                  padding: '16px',
+                  background: `linear-gradient(135deg, ${getTimeColor(mins)}, ${getTimeColor(mins)}dd)`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                }}>
                   <div>
-                    <span
-                      style={{
-                        fontFamily: 'Bebas Neue',
-                        fontSize: '48px',
-                        lineHeight: 1,
-                        color: 'white'
-                      }}
-                    >
+                    <span style={{ fontFamily: 'Bebas Neue', fontSize: '48px', lineHeight: 1, color: 'white' }}>
                       {order.orderNumber}
                     </span>
                     {order.tableNumber && (
@@ -364,86 +346,55 @@ export default function Kitchen() {
                   <div style={{ textAlign: 'right', color: 'white' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Clock size={14} />
-                      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '14px' }}>
-                        {mins}m
-                      </span>
+                      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '14px' }}>{mins}m</span>
                     </div>
-                    {order.type === 'delivery' && (
-                      <span style={{ fontSize: '10px', textTransform: 'uppercase' }}>
-                        Delivery
-                      </span>
-                    )}
+                    {order.type === 'delivery' && <span style={{ fontSize: '10px', textTransform: 'uppercase' }}>Delivery</span>}
                   </div>
                 </div>
-
                 <div style={{ padding: '16px' }}>
                   {order.items.map((item, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        padding: '12px',
-                        background: 'var(--bg-secondary)',
-                        borderRadius: '8px',
-                        marginBottom: '8px'
-                      }}
-                    >
-                      <span
-                        style={{
-                          width: '28px',
-                          height: '28px',
-                          background: item.status === 'ready' ? 'var(--accent-success)' : 'var(--bg-elevated)',
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'white'
-                        }}
-                      >
+                    <div key={i} style={{
+                      display: 'flex', alignItems: 'center', gap: '12px',
+                      padding: '12px', background: 'rgba(0,0,0,0.02)', borderRadius: '10px', marginBottom: '8px'
+                    }}>
+                      <span style={{
+                        width: '28px', height: '28px',
+                        background: item.status === 'ready' ? 'linear-gradient(135deg, #2a9d8f, #21867a)' : 'rgba(0,0,0,0.05)',
+                        borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700
+                      }}>
                         {item.status === 'ready' ? <Check size={14} /> : item.quantity}
                       </span>
-                      <span style={{ flex: 1, fontWeight: 600 }}>{item.menuItemName}</span>
+                      <span style={{ flex: 1, fontWeight: 600, fontSize: '14px' }}>{item.menuItemName}</span>
                     </div>
                   ))}
                 </div>
-
-                <div style={{ padding: '12px', borderTop: '1px solid var(--border)' }}>
+                <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     {order.status === 'pending' && (
-                      <Button
-                        fullWidth
-                        size="md"
-                        onClick={() => updateOrderStatus(order.id, 'preparing')}
-                      >
-                        Start
-                      </Button>
+                      <button onClick={() => updateOrderStatus(order.id, 'preparing')} style={{
+                        flex: 1, padding: '12px', border: 'none', borderRadius: '10px',
+                        background: 'linear-gradient(135deg, #e63946, #c1121f)', color: 'white',
+                        fontWeight: 600, cursor: 'pointer', boxShadow: '0 2px 8px rgba(230,57,70,0.3)'
+                      }}>Start</button>
                     )}
                     {order.status === 'preparing' && (
-                      <Button
-                        fullWidth
-                        variant="success"
-                        size="md"
-                        onClick={() => updateOrderStatus(order.id, 'ready')}
-                      >
-                        <Check size={16} />
-                        Ready
-                      </Button>
+                      <button onClick={() => updateOrderStatus(order.id, 'ready')} style={{
+                        flex: 1, padding: '12px', border: 'none', borderRadius: '10px',
+                        background: 'linear-gradient(135deg, #2a9d8f, #21867a)', color: 'white',
+                        fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                        boxShadow: '0 2px 8px rgba(42,157,143,0.3)'
+                      }}><Check size={16} /> Ready</button>
                     )}
                     {order.status === 'ready' && (
-                      <Button
-                        fullWidth
-                        variant="secondary"
-                        size="md"
-                        onClick={() => updateOrderStatus(order.id, 'completed')}
-                      >
-                        Complete
-                      </Button>
+                      <button onClick={() => updateOrderStatus(order.id, 'completed')} style={{
+                        flex: 1, padding: '12px', border: 'none', borderRadius: '10px',
+                        background: 'rgba(0,0,0,0.05)', color: '#4b5563',
+                        fontWeight: 600, cursor: 'pointer'
+                      }}>Complete</button>
                     )}
                   </div>
                 </div>
-              </Card>
+              </div>
             )
           })}
         </div>

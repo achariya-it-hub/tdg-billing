@@ -29,20 +29,20 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
 
   final List<Map<String, String>> _faqs = [
     {
-      'question': 'How do I unlock my 400 welcome Rubies?',
-      'answer': 'Your welcome Rubies are credited to your wallet immediately but remain locked. They automatically unlock and become redeemable once your total order amount across all dens exceeds ₹1,000.'
+      'question': 'How do I earn points?',
+      'answer': 'You earn points with every order. Add assets to your team and earn 10% cashback when they dine. Complete all 10 assets for a +500 point bonus!'
     },
     {
-      'question': 'What is the minimum value for Ruby redemption?',
-      'answer': 'To initiate a redemption or withdrawal to your bank account, you must have a minimum balance of 3,000 unlocked Rubies. Peer-to-peer transfers are limited to 200 Rubies per transaction.'
+      'question': 'What is the minimum balance for redemption?',
+      'answer': 'You can redeem points directly from your wallet. Points are worth ₹1 each for discounts on your bills.'
     },
     {
       'question': 'How does the Den tier progression work?',
       'answer': 'Members start at Bronze and progress through Silver, Gold, Platinum, Diamond, and Emerald tiers by building and active participation in Dens. Completing 10 full Dens rewards you with the "Pride Lion" status.'
     },
     {
-      'question': 'How much do I earn from referrals?',
-      'answer': 'You earn 25 Rubies for every friend who signs up using your unique referral code. Additionally, your referred friend gets a bonus of 50 Rubies credited to their wallet upon account creation.'
+      'question': 'How do assets work?',
+      'answer': 'Add up to 10 people as your assets. They get 20-25% discount on bills. When they dine, you earn 10% cashback. When all 10 dine, you get a +500 point bonus!'
     }
   ];
 

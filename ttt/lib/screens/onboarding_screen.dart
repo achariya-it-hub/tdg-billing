@@ -17,37 +17,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   bool _isLoading = false;
 
   void _handleGetStarted() async {
-    setState(() => _isLoading = true);
-    try {
-      // Auto-login with the default demo user account
-      await ApiService().login(email: 'rohit@example.com', password: 'password123');
-      if (mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const MainNavScreen()),
-          (route) => false,
-        );
-      }
-    } catch (e) {
-      debugPrint("Auto-login failed: $e");
-      if (mounted) {
-        // Fallback: if auto-login fails, still navigate to main nav but show message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Auto-login failed: ${e.toString().replaceAll('Exception: ', '')}. Entering as Guest.'),
-            backgroundColor: Colors.orangeAccent,
-          ),
-        );
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const MainNavScreen()),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
   }
 
   @override
@@ -139,7 +112,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Column(
       children: [
         Text(
-          'EAT. EARN.',
+          'EAT . SHARE .',
           style: GoogleFonts.outfit(
             color: Colors.white,
             fontSize: 38,
@@ -149,7 +122,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
         ),
         Text(
-          'EMPIRE.',
+          'ENJOY',
           style: GoogleFonts.outfit(
             color: TDGColors.gold,
             fontSize: 38,
@@ -160,7 +133,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         const SizedBox(height: 16),
         Text(
-          'Order. Refer. Climb.\nRule your Den.',
+          'Add friends. Share points.\nRule your Den.',
           textAlign: TextAlign.center,
           style: GoogleFonts.outfit(
             color: Colors.white70,

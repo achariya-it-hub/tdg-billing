@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import 'wallet_screen.dart';
-import 'offers_screen.dart';
-import 'referral_screen.dart';
-import 'den_level_screen.dart';
+import 'asset_screen.dart';
 import 'notifications_screen.dart';
 import '../widgets/tdg_logo.dart';
 import '../services/api_service.dart';
@@ -82,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildOfferOfTheDay() {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const OffersScreen()));
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const AssetScreen()));
       },
       child: Container(
         margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -250,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     // Order Now button
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const OffersScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const AssetScreen()));
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TDGColors.gold,
@@ -393,7 +391,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               children: [
                 Text(
-                  'TDG WALLET BALANCE',
+                  'POINTS BALANCE',
                   style: TextStyle(
                     color: TDGColors.grey,
                     fontSize: 11,
@@ -431,7 +429,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  '${ApiService().currentUser?['rubyBalance'] ?? 0}',
+                  '${ApiService().currentUser?['points'] ?? 0}',
                   style: TextStyle(color: TDGColors.white,
                     fontSize: 28,
                     fontWeight: FontWeight.w800,
@@ -452,12 +450,12 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 _walletAction(
                   Icons.add_circle_outline,
-                  'Add Rubies',
+                  'Add Points',
                   () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WalletScreen())),
                 ),
                 _walletAction(
                   Icons.send_outlined,
-                  'Transfer',
+                  'Distribute',
                   () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WalletScreen())),
                 ),
                 _walletAction(
@@ -467,8 +465,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 _walletAction(
                   Icons.local_offer_outlined,
-                  'Offers',
-                  () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OffersScreen())),
+                  'Assets',
+                  () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AssetScreen())),
                 ),
               ],
             ),
@@ -526,7 +524,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildReferEarnBanner() {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReferralScreen())),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AssetScreen())),
       child: Container(
         margin: const EdgeInsets.fromLTRB(16, 14, 16, 0),
         padding: const EdgeInsets.all(16),
@@ -548,7 +546,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ShaderMask(
                     shaderCallback: (b) => TDGColors.goldGradient.createShader(b),
                     child: Text(
-                      'REFER & EARN',
+                      'BUILD YOUR DEN',
                       style: TextStyle(color: TDGColors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
@@ -558,7 +556,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Build your empire.',
+                    'Add 10 assets. Earn 500 bonus.',
                     style: TextStyle(color: TDGColors.greyLight, fontSize: 12),
                   ),
                   const SizedBox(height: 12),
@@ -572,7 +570,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'Refer Now',
+                          'Add Assets',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 13,

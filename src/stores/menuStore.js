@@ -78,7 +78,7 @@ export const useMenuStore = create((set, get) => ({
     try {
       const apiUrl = window.location.hostname === 'localhost' 
         ? 'http://localhost:3001' 
-        : 'https://tdg-billing-production.up.railway.app'
+        : window.location.origin
       
       const res = await fetch(`${apiUrl}/api/menu/categories`)
       const data = await res.json()
@@ -97,7 +97,7 @@ export const useMenuStore = create((set, get) => ({
     try {
       const apiUrl = window.location.hostname === 'localhost' 
         ? 'http://localhost:3001' 
-        : 'https://tdg-billing-production.up.railway.app'
+        : window.location.origin
       
       const url = categoryId ? `${apiUrl}/api/menu/items?categoryId=${categoryId}` : `${apiUrl}/api/menu/items`
       const res = await fetch(url)

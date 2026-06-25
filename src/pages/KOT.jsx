@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Check, AlertTriangle, Wifi, WifiOff, RefreshCw, ChevronLeft, ChevronRight, Printer } from 'lucide-react'
+import { Check, AlertTriangle, Wifi, WifiOff, RefreshCw, ChevronLeft, ChevronRight, Printer, X } from 'lucide-react'
 import { getSocket, connectToKitchen } from '../lib/socket'
 import PrintService from '../lib/printService'
 
@@ -7,6 +7,11 @@ export default function KOT() {
   const [orders, setOrders] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [connected, setConnected] = useState(false)
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  const [cancelReason, setCancelReason] = useState('')
+  const [cancelPin, setCancelPin] = useState('')
+  const [cancelError, setCancelError] = useState('')
+  const [cancelProcessing, setCancelProcessing] = useState(false)
 
   useEffect(() => {
     const socket = getSocket()
@@ -90,6 +95,35 @@ export default function KOT() {
     }
   }
 
+  const closeCancelModal = () => { setShowCancelModal(false); setCancelPin(''); setCancelError('') }
+
+  const handleCancelOrder = async () => {
+    if (!cancelReason.trim()) { setCancelError('Please enter a cancellation reason'); return }
+    if (cancelPin.length < 4) { setCancelError('Please enter a 4-digit PIN'); return }
+    setCancelProcessing(true)
+    setCancelError('')
+    try {
+      const res = await fetch(`${getApiUrl()}/api/billing/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: cancelPin })
+      })
+      const data = await res.json()
+      if (!res.ok || !data.user) { setCancelError('Invalid PIN'); setCancelProcessing(false); return }
+      const role = data.user.role
+      if (role !== 'admin' && role !== 'manager' && role !== 'super-admin') { setCancelError('Only Manager, Admin, or Super Admin can cancel KOT'); setCancelProcessing(false); return }
+      await fetch(`${getApiUrl()}/api/pos/orders/${currentOrder.id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'cancelled', cancelReason: cancelReason.trim(), cancelledBy: data.user.name })
+      })
+      setOrders(prev => prev.filter(o => o.id !== currentOrder.id))
+      if (currentIndex > 0) setCurrentIndex(prev => prev - 1)
+      setShowCancelModal(false)
+      setCancelPin('')
+    } catch { setCancelError('Network error. Try again.'); setCancelProcessing(false) }
+  }
+
   const currentOrder = orders[currentIndex]
   const completedCount = currentOrder?.items.filter(i => i.isCompleted).length || 0
   const allCompleted = currentOrder?.items.every(i => i.isCompleted) || false
@@ -106,11 +140,17 @@ export default function KOT() {
       {/* Status Bar */}
       <div
         style={{
-          padding: '16px',
-          background: 'var(--bg-card)',
+          padding: '16px 20px',
+          background: 'rgba(255,255,255,0.75)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(255,255,255,0.3)',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          marginBottom: '16px'
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -151,7 +191,7 @@ export default function KOT() {
           <div
             style={{
               textAlign: 'center',
-              color: 'var(--text-muted)'
+              color: '#9ca3af'
             }}
           >
             <div style={{ fontSize: '64px', marginBottom: '16px' }}>🍽️</div>
@@ -162,17 +202,20 @@ export default function KOT() {
             style={{
               width: '100%',
               maxWidth: '500px',
-              background: 'var(--bg-card)',
+              background: 'rgba(255,255,255,0.85)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
               borderRadius: '24px',
               overflow: 'hidden',
-              boxShadow: '0 20px 40px var(--shadow)'
+              border: '1px solid rgba(255,255,255,0.3)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
             }}
           >
             {/* Order Header */}
             <div
               style={{
                 padding: '32px',
-                background: 'var(--accent-primary)',
+                background: 'linear-gradient(135deg, #e63946, #c1121f)',
                 textAlign: 'center'
               }}
             >
@@ -196,7 +239,7 @@ export default function KOT() {
               />
             </div>
 
-            {/* Items */}
+              {/* Items */}
             <div style={{ padding: '24px' }}>
               {currentOrder.items.map((item, index) => (
                 <button
@@ -209,7 +252,7 @@ export default function KOT() {
                     gap: '16px',
                     padding: '20px',
                     marginBottom: '12px',
-                    background: item.isCompleted ? 'var(--accent-success)' : 'var(--bg-secondary)',
+                    background: item.isCompleted ? 'linear-gradient(135deg, #2a9d8f, #21867a)' : 'rgba(0,0,0,0.03)',
                     border: 'none',
                     borderRadius: '16px',
                     cursor: 'pointer',
@@ -221,7 +264,7 @@ export default function KOT() {
                       width: '48px',
                       height: '48px',
                       borderRadius: '12px',
-                      background: item.isCompleted ? 'rgba(255,255,255,0.2)' : 'var(--bg-elevated)',
+                      background: item.isCompleted ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.06)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -238,7 +281,7 @@ export default function KOT() {
                       textAlign: 'left',
                       fontSize: '20px',
                       fontWeight: 600,
-                      color: 'white',
+                      color: item.isCompleted ? 'white' : '#1a1a2e',
                       textDecoration: item.isCompleted ? 'line-through' : 'none',
                       opacity: item.isCompleted ? 0.7 : 1
                     }}
@@ -251,49 +294,70 @@ export default function KOT() {
 
 {/* Action Buttons */}
              <div style={{ padding: '24px', paddingTop: 0, display: 'flex', gap: '12px' }}>
-               <button
-                 onClick={() => bumpOrder(currentOrder.id)}
-                 disabled={!allCompleted}
-                 style={{
-                   flex: 1,
-                   padding: '24px',
-                   fontSize: '20px',
-                   fontFamily: 'Bebas Neue',
-                   fontWeight: 700,
-                   background: allCompleted ? 'var(--accent-success)' : 'var(--bg-secondary)',
-                   color: allCompleted ? 'white' : 'var(--text-muted)',
-                   border: 'none',
-                   borderRadius: '16px',
-                   cursor: allCompleted ? 'pointer' : 'not-allowed',
-                   letterSpacing: '1px',
-                   transition: 'all 0.2s'
-                 }}
-               >
-                 {allCompleted ? '✓ BUMP ORDER' : `${completedCount}/${currentOrder.items.length} ITEMS READY`}
-               </button>
-               <button
-                 onClick={() => PrintService.printKOT(currentOrder)}
-                 style={{
-                   flex: 1,
-                   padding: '24px',
-                   fontSize: '16px',
-                   fontFamily: 'Bebas Neue',
-                   fontWeight: 600,
-                   background: 'var(--bg-secondary)',
-                   color: 'var(--accent-primary)',
-                   border: 'none',
-                   borderRadius: '16px',
-                   cursor: 'pointer',
-                   display: 'flex',
-                   alignItems: 'center',
-                   justifyContent: 'center',
-                   gap: '8px',
-                   transition: 'all 0.2s'
-                 }}
-               >
-                 <Printer size={20} />
-                 Print
-               </button>
+                <button
+                  onClick={() => bumpOrder(currentOrder.id)}
+                  disabled={!allCompleted}
+                  style={{
+                    flex: 1,
+                    padding: '24px',
+                    fontSize: '20px',
+                    fontFamily: 'Bebas Neue',
+                    fontWeight: 700,
+                    background: allCompleted ? 'var(--accent-success)' : 'var(--bg-secondary)',
+                    color: allCompleted ? 'white' : 'var(--text-muted)',
+                    border: 'none',
+                    borderRadius: '16px',
+                    cursor: allCompleted ? 'pointer' : 'not-allowed',
+                    letterSpacing: '1px',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {allCompleted ? '✓ BUMP ORDER' : `${completedCount}/${currentOrder.items.length} ITEMS READY`}
+                </button>
+                <button
+                  onClick={() => PrintService.printKOT(currentOrder)}
+                  style={{
+                    flex: 1,
+                    padding: '24px',
+                    fontSize: '16px',
+                    fontFamily: 'Bebas Neue',
+                    fontWeight: 600,
+                    background: 'rgba(0,0,0,0.04)',
+                    color: '#e63946',
+                    border: 'none',
+                    borderRadius: '16px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <Printer size={20} />
+                  Print
+                </button>
+                <button
+                  onClick={() => { setCancelReason(''); setShowCancelModal(true) }}
+                  style={{
+                    padding: '24px',
+                    fontSize: '14px',
+                    fontFamily: 'Bebas Neue',
+                    fontWeight: 600,
+                    background: 'rgba(239,68,68,0.08)',
+                    color: '#dc2626',
+                    border: 'none',
+                    borderRadius: '16px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  ✕ Cancel
+                </button>
              </div>
           </div>
         ) : null}
@@ -304,7 +368,11 @@ export default function KOT() {
         <div
           style={{
             padding: '24px',
-            background: 'var(--bg-card)',
+            background: 'rgba(255,255,255,0.75)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255,255,255,0.3)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -317,19 +385,20 @@ export default function KOT() {
             style={{
               width: '56px',
               height: '56px',
-              borderRadius: '50%',
-              background: 'var(--bg-secondary)',
+              borderRadius: '16px',
+              background: currentIndex === 0 ? 'rgba(0,0,0,0.03)' : 'linear-gradient(135deg, #e63946, #c1121f)',
               border: 'none',
-              color: currentIndex === 0 ? 'var(--text-muted)' : 'white',
+              color: currentIndex === 0 ? '#9ca3af' : 'white',
               cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              boxShadow: currentIndex === 0 ? 'none' : '0 2px 8px rgba(230,57,70,0.3)'
             }}
           >
             <ChevronLeft size={28} />
           </button>
-          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '18px' }}>
+          <span style={{ fontFamily: 'JetBrains Mono', fontSize: '18px', fontWeight: 600 }}>
             {currentIndex + 1} / {orders.length}
           </span>
           <button
@@ -338,18 +407,131 @@ export default function KOT() {
             style={{
               width: '56px',
               height: '56px',
-              borderRadius: '50%',
-              background: 'var(--bg-secondary)',
+              borderRadius: '16px',
+              background: currentIndex === orders.length - 1 ? 'rgba(0,0,0,0.03)' : 'linear-gradient(135deg, #e63946, #c1121f)',
               border: 'none',
-              color: currentIndex === orders.length - 1 ? 'var(--text-muted)' : 'white',
+              color: currentIndex === orders.length - 1 ? '#9ca3af' : 'white',
               cursor: currentIndex === orders.length - 1 ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              boxShadow: currentIndex === orders.length - 1 ? 'none' : '0 2px 8px rgba(230,57,70,0.3)'
             }}
           >
             <ChevronRight size={28} />
           </button>
+        </div>
+      )}
+
+      {/* Cancel Reason Modal */}
+      {showCancelModal && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)',
+          backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+        }}>
+          <div style={{
+            background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)', borderRadius: '24px', padding: '32px',
+            width: '90%', maxWidth: '400px', border: '1px solid rgba(255,255,255,0.3)',
+            boxShadow: '0 24px 60px rgba(0,0,0,0.15)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                Cancel KOT {currentOrder?.orderNumber}
+              </h3>
+              <button onClick={closeCancelModal} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                <X size={24} color="var(--text-muted)" />
+              </button>
+            </div>
+
+            <textarea
+              placeholder="Enter reason for cancellation..."
+              value={cancelReason}
+              onChange={e => setCancelReason(e.target.value)}
+              style={{
+                width: '100%', minHeight: '100px', padding: '12px',
+                border: '1.5px solid #e5e7eb', borderRadius: '12px',
+                fontSize: '14px', background: 'white',
+                color: '#1a1a2e', outline: 'none',
+                resize: 'vertical', boxSizing: 'border-box',
+                fontFamily: 'inherit', marginBottom: '16px'
+              }}
+            />
+
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '8px' }}>
+                Authorize (Manager / Admin PIN)
+              </label>
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                {[0, 1, 2, 3].map(i => (
+                  <div key={i} style={{
+                    width: '48px', height: '48px', borderRadius: '12px',
+                    background: cancelPin.length > i ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'rgba(0,0,0,0.04)',
+                    border: `2px solid ${cancelPin.length > i ? '#e63946' : '#e5e7eb'}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'all 0.2s',
+                    boxShadow: cancelPin.length > i ? '0 2px 8px rgba(230,57,70,0.3)' : 'none'
+                  }}>
+                    {cancelPin.length > i && (
+                      <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: 'white' }} />
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '16px' }}>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, '⌫'].map((key, i) => (
+                  key === '' ? <div key={i} /> : (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        if (key === '⌫') setCancelPin(p => p.slice(0, -1))
+                        else if (cancelPin.length < 4) setCancelPin(p => p + key)
+                      }}
+                      style={{
+                        height: '52px', borderRadius: '12px', border: 'none',
+                        background: key === '⌫' ? 'rgba(0,0,0,0.04)' : 'white',
+                        color: '#1a1a2e', fontSize: '20px', fontWeight: 600,
+                        cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+                        transition: 'all 0.15s'
+                      }}
+                    >
+                      {key === '⌫' ? '⌫' : key}
+                    </button>
+                  )
+                ))}
+              </div>
+              {cancelError && (
+                <div style={{ color: '#dc2626', fontSize: '13px', textAlign: 'center', marginBottom: '12px' }}>{cancelError}</div>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={closeCancelModal}
+                style={{
+                  flex: 1, padding: '14px', border: 'none', borderRadius: '12px',
+                  fontSize: '16px', fontWeight: 600, cursor: 'pointer',
+                  background: 'rgba(0,0,0,0.04)', color: '#4b5563'
+                }}
+              >
+                Keep Order
+              </button>
+              <button
+                onClick={handleCancelOrder}
+                disabled={cancelProcessing}
+                style={{
+                  flex: 1, padding: '14px', border: 'none', borderRadius: '12px',
+                  fontSize: '16px', fontWeight: 600, cursor: cancelProcessing ? 'not-allowed' : 'pointer',
+                  background: cancelProcessing ? '#9ca3af' : 'linear-gradient(135deg, #dc2626, #b91c1c)',
+                  color: 'white',
+                  boxShadow: cancelProcessing ? 'none' : '0 2px 8px rgba(220,38,38,0.3)'
+                }}
+              >
+                {cancelProcessing ? 'Verifying...' : 'Cancel KOT'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

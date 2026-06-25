@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../theme/colors.dart';
-import 'referral_screen.dart';
+import 'asset_screen.dart';
 
 class OffersScreen extends StatefulWidget {
   const OffersScreen({super.key});
@@ -39,7 +39,7 @@ class _OffersScreenState extends State<OffersScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          _buildReferralOffer(),
+          _buildAssetOffer(),
           const SizedBox(height: 12),
           _buildDiscountOffer(
             'FLAT 20% OFF',
@@ -97,7 +97,7 @@ class _OffersScreenState extends State<OffersScreen> {
     );
   }
 
-  Widget _buildReferralOffer() {
+  Widget _buildAssetOffer() {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -118,27 +118,27 @@ class _OffersScreenState extends State<OffersScreen> {
                 ShaderMask(
                   shaderCallback: (b) => TDGColors.goldGradient.createShader(b),
                   child: const Text(
-                    'MEGA REFERRAL BONUS',
+                    'ASSET BONUS',
                     style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800, letterSpacing: 0.5),
                   ),
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  'Refer 5 friends & earn',
+                  'Add 10 assets & earn',
                   style: TextStyle(color: Colors.white70, fontSize: 12),
                 ),
                 const SizedBox(height: 6),
                 ShaderMask(
                   shaderCallback: (b) => TDGColors.goldGradient.createShader(b),
                   child: const Text(
-                    '₹500',
+                    '+500 pts',
                     style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900),
                   ),
                 ),
                 const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const ReferralScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const AssetScreen()));
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
@@ -147,7 +147,7 @@ class _OffersScreenState extends State<OffersScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Text(
-                      'Refer Now',
+                      'Add Assets',
                       style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 13),
                     ),
                   ),

@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
+import { getCompanyInfo } from './getCompanyInfo'
 
 // Print service for generating and printing KOT tickets
 const PrintService = {
   // Generate KOT ticket content as HTML
-  generateKOTHTML: (kot) => {
+  generateKOTHTML: async (kot) => {
+    const company = await getCompanyInfo()
     const items = kot.items || []
     const itemsHtml = items.map((item, i) => {
       const name = item.menuItemName || item.name || 'Item'
@@ -70,7 +72,7 @@ const PrintService = {
         </head>
         <body>
           <div class="header">
-            <div class="brand-name">Ten Den Gyros</div>
+            <div class="brand-name">${company.name || 'Ten Den Gyros'}</div>
             <div class="kot-label">Kitchen Order Ticket</div>
             <div class="order-info">
               <span><span class="info-label">KOT:</span> <span class="info-value">#${orderNum}</span></span>
@@ -93,7 +95,7 @@ const PrintService = {
           ${kot.notes ? `<div class="divider"></div><div style="font-size:10px;color:#666"><strong>Notes:</strong> ${kot.notes}</div>` : ''}
 
           <div class="footer">
-            <div class="footer-text">Ten Den Gyros</div>
+            <div class="footer-text">${company.name || 'Ten Den Gyros'}</div>
           </div>
         </body>
       </html>
@@ -101,7 +103,7 @@ const PrintService = {
   },
 
   // Print KOT ticket using browser print
-  printKOT: (kot) => {
+  printKOT: async (kot) => {
     console.log('Printing KOT:', kot)
     try {
       const printWindow = window.open('', '_blank', 'width=400,height=600')
@@ -110,7 +112,7 @@ const PrintService = {
         return
       }
       
-      const html = PrintService.generateKOTHTML(kot)
+      const html = await PrintService.generateKOTHTML(kot)
       printWindow.document.open()
       printWindow.document.write(html)
       printWindow.document.close()
@@ -127,8 +129,8 @@ const PrintService = {
   },
 
   // Print directly to POS printer (if available)
-  printToPOSPrinter: (kot) => {
-    return PrintService.printKOT(kot);
+  printToPOSPrinter: async (kot) => {
+    return await PrintService.printKOT(kot);
   }
 };
 

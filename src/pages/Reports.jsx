@@ -98,22 +98,22 @@ export default function Reports() {
               <>
                 {/* KPI Cards */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '20px' }}>
-                  <div style={{ background: '#f0fdf4', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px', textAlign: 'center' }}>
                     <ReceiptText size={22} color="#10b981" style={{ marginBottom: '8px' }} />
                     <div style={{ fontSize: '32px', fontWeight: 700, color: '#10b981' }}>{closing.totalInvoices}</div>
                     <div style={{ fontSize: '13px', color: '#166534' }}>Total Invoices</div>
                   </div>
-                  <div style={{ background: '#eff6ff', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px', textAlign: 'center' }}>
                     <DollarSign size={22} color="#2563eb" style={{ marginBottom: '8px' }} />
                     <div style={{ fontSize: '32px', fontWeight: 700, color: '#2563eb' }}>₹{closing.totalSales.toLocaleString()}</div>
                     <div style={{ fontSize: '13px', color: '#1e40af' }}>Total Sales</div>
                   </div>
-                  <div style={{ background: '#fef3c7', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px', textAlign: 'center' }}>
                     <ShoppingCart size={22} color="#f59e0b" style={{ marginBottom: '8px' }} />
                     <div style={{ fontSize: '32px', fontWeight: 700, color: '#f59e0b' }}>₹{closing.avgBasketValue.toLocaleString()}</div>
                     <div style={{ fontSize: '13px', color: '#92400e' }}>Avg Basket Value</div>
                   </div>
-                  <div style={{ background: closing.grossProfit >= 0 ? '#f0fdf4' : '#fef2f2', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px', textAlign: 'center' }}>
                     <TrendingUpIcon size={22} color={closing.grossProfit >= 0 ? '#10b981' : '#dc2626'} style={{ marginBottom: '8px' }} />
                     <div style={{ fontSize: '32px', fontWeight: 700, color: closing.grossProfit >= 0 ? '#10b981' : '#dc2626' }}>₹{closing.grossProfit.toLocaleString()}</div>
                     <div style={{ fontSize: '13px', color: closing.grossProfit >= 0 ? '#166534' : '#991b1b' }}>Gross Profit</div>
@@ -122,7 +122,7 @@ export default function Reports() {
 
                 {/* Revenue vs Cost */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '20px' }}>
-                  <div style={{ background: 'white', borderRadius: '16px', padding: '20px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px' }}>
                     <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Cost Breakdown</h4>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                       <span style={{ color: '#6b7280' }}>Total Sales</span>
@@ -142,7 +142,7 @@ export default function Reports() {
                     </div>
                   </div>
 
-                  <div style={{ background: 'white', borderRadius: '16px', padding: '20px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px' }}>
                     <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Payment Methods</h4>
                     {Object.keys(closing.byPaymentMethod).length === 0 ? (
                       <p style={{ color: '#9ca3af', fontSize: '13px' }}>No data</p>
@@ -154,7 +154,7 @@ export default function Reports() {
                     ))}
                   </div>
 
-                  <div style={{ background: 'white', borderRadius: '16px', padding: '20px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px' }}>
                     <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Order Sources</h4>
                     {Object.keys(closing.bySource).length === 0 ? (
                       <p style={{ color: '#9ca3af', fontSize: '13px' }}>No data</p>
@@ -168,7 +168,7 @@ export default function Reports() {
                 </div>
 
                 {/* Status Breakdown */}
-                <div style={{ background: 'white', borderRadius: '16px', padding: '20px', marginBottom: '20px' }}>
+                <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px', marginBottom: '20px' }}>
                   <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Order Status Breakdown</h4>
                   <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     {Object.entries(closing.statusBreakdown).map(([status, count]) => (
@@ -193,7 +193,7 @@ export default function Reports() {
 
                 {/* Recent Expenses */}
                 {closing.expenses?.length > 0 && (
-                  <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden', marginBottom: '20px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden', marginBottom: '20px' }}>
                     <div style={{ padding: '16px 20px', borderBottom: '1px solid #f3f4f6', fontWeight: 700, fontSize: '14px' }}>Today's Expenses</div>
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                       <thead>
@@ -218,7 +218,7 @@ export default function Reports() {
 
                 {/* Recent Purchases */}
                 {closing.purchases?.length > 0 && (
-                  <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
                     <div style={{ padding: '16px 20px', borderBottom: '1px solid #f3f4f6', fontWeight: 700, fontSize: '14px' }}>Today's Purchases</div>
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                       <thead>
@@ -266,10 +266,10 @@ export default function Reports() {
                 <div style={{ fontSize: '13px', color: '#991b1b' }}>Cancelled</div>
               </div>
             </div>
-            <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden' }}>
+            <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#f9fafb' }}>
+                  <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>KOT #</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Table</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Items</th>
@@ -323,10 +323,10 @@ export default function Reports() {
                 <div style={{ fontSize: '13px', color: '#6b21a8' }}>Transactions</div>
               </div>
             </div>
-            <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden' }}>
+            <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#f9fafb' }}>
+                  <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Bill #</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>KOT Ref</th>
                     <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Amount</th>
@@ -382,10 +382,10 @@ export default function Reports() {
       case 'food-cost':
         return (
           <div>
-            <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden' }}>
+            <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#f9fafb' }}>
+                  <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Menu Item</th>
                     <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Cost</th>
                     <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Price</th>
@@ -423,10 +423,10 @@ export default function Reports() {
       case 'consumption':
         return (
           <div>
-            <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden' }}>
+            <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#f9fafb' }}>
+                  <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Item</th>
                     <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Opening</th>
                     <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Received</th>
@@ -453,10 +453,10 @@ export default function Reports() {
       case 'stock-opening':
         return (
           <div>
-            <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden' }}>
+            <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#f9fafb' }}>
+                  <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Item</th>
                     <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Quantity</th>
                     <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Unit Cost</th>
@@ -481,10 +481,10 @@ export default function Reports() {
       case 'stock-closing':
         return (
           <div>
-            <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden' }}>
+            <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#f9fafb' }}>
+                  <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Item</th>
                     <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Quantity</th>
                     <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Unit Cost</th>
@@ -509,10 +509,10 @@ export default function Reports() {
       case 'recipe':
         return (
           <div>
-            <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden' }}>
+            <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#f9fafb' }}>
+                  <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Menu Item</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Ingredients</th>
                     <th style={{ padding: '16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Status</th>
@@ -565,13 +565,16 @@ export default function Reports() {
             onClick={() => setActiveReport(report.id)}
             style={{
               padding: '16px',
-              background: activeReport === report.id ? '#e63946' : 'white',
+              background: activeReport === report.id ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'rgba(255,255,255,0.75)',
+              backdropFilter: activeReport === report.id ? 'none' : 'blur(20px)',
+              WebkitBackdropFilter: activeReport === report.id ? 'none' : 'blur(20px)',
               color: activeReport === report.id ? 'white' : '#4b5563',
-              border: `2px solid ${activeReport === report.id ? '#e63946' : '#e5e7eb'}`,
+              border: activeReport === report.id ? 'none' : '1px solid rgba(255,255,255,0.3)',
               borderRadius: '12px',
               cursor: 'pointer',
               textAlign: 'left',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              boxShadow: activeReport === report.id ? '0 4px 16px rgba(230,57,70,0.3)' : '0 1px 3px rgba(0,0,0,0.04)'
             }}
           >
             <report.icon size={24} style={{ marginBottom: '8px' }} />
@@ -587,9 +590,13 @@ export default function Reports() {
         justifyContent: 'space-between', 
         alignItems: 'center', 
         marginBottom: '20px',
-        background: 'white',
+        background: 'rgba(255,255,255,0.75)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         padding: '16px 20px',
-        borderRadius: '12px'
+        borderRadius: '16px',
+        border: '1px solid rgba(255,255,255,0.3)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
       }}>
         <h3 style={{ fontSize: '20px', fontWeight: 700 }}>{getReportTitle()}</h3>
         
@@ -613,15 +620,16 @@ export default function Reports() {
           
           <button style={{
             padding: '10px 16px',
-            background: '#f3f4f6',
+            background: 'rgba(0,0,0,0.03)',
             border: 'none',
-            borderRadius: '8px',
+            borderRadius: '10px',
             fontSize: '14px',
             fontWeight: 500,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px'
+            gap: '8px',
+            color: '#4b5563'
           }}>
             <Download size={16} />
             Export

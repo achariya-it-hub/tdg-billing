@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import 'orders_screen.dart';
-import 'my_team_screen.dart';
 import 'edit_profile_screen.dart';
 import 'payment_methods_screen.dart';
 import 'terms_conditions_screen.dart';
 import 'login_screen.dart';
 import 'help_support_screen.dart';
 import 'admin_dashboard_screen.dart';
+import 'asset_screen.dart';
 import '../services/api_service.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -145,8 +145,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildMenuItem(context, Icons.receipt_long_rounded, 'My Orders', () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const OrdersScreen()));
                   }),
-                  _buildMenuItem(context, Icons.people_outline_rounded, 'My Team', () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const MyTeamScreen()));
+                  _buildMenuItem(context, Icons.group_add_rounded, 'My Assets', () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const AssetScreen()));
                   }),
                   // Admin dashboard - only visible to admin users
                   if (user?['role'] == 'admin')

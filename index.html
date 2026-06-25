@@ -7,16 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#e63946" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="TDG POS" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/icon-512.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <title>TDG Billing - Restaurant Management</title>
+    <meta name="description" content="Premium Restaurant Management System - POS, Kitchen Display, Online Orders" />
     <style>
       body {
         margin: 0;
-        background: #ffffff;
+        background: #0f0f1a;
         color: #1a1a2e;
         font-family: 'Inter', -apple-system, sans-serif;
       }
@@ -29,16 +32,34 @@
         justify-content: center;
         min-height: 100vh;
         flex-direction: column;
-        gap: 16px;
-        background: #ffffff;
+        gap: 24px;
+        background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
+      }
+      .loading-logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, rgba(230,57,70,0.15), rgba(230,57,70,0.05));
+        border: 1px solid rgba(230,57,70,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
       }
       .loading-spinner {
-        width: 40px;
-        height: 40px;
-        border: 3px solid #e5e5eb;
+        width: 36px;
+        height: 36px;
+        border: 2px solid rgba(255,255,255,0.06);
         border-top-color: #e63946;
         border-radius: 50%;
         animation: spin 1s linear infinite;
+      }
+      .loading-text {
+        color: rgba(255,255,255,0.3);
+        font-size: 14px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        font-weight: 500;
       }
       @keyframes spin {
         to { transform: rotate(360deg); }
@@ -48,8 +69,9 @@
   <body>
     <div id="root">
       <div class="loading">
+        <div class="loading-logo">🍽️</div>
         <div class="loading-spinner"></div>
-        <span style="color: #4a4a68;">Loading TDG Billing...</span>
+        <span class="loading-text">Loading TDG Billing...</span>
       </div>
     </div>
     <script type="module" src="/src/main.jsx"></script>

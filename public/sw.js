@@ -2,7 +2,8 @@ const CACHE_NAME = 'tdg-pos-v1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/manifest.json',
+  '/icon-192.png'
 ];
 
 self.addEventListener('install', (event) => {

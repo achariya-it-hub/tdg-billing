@@ -15,10 +15,12 @@ import Inventory from './pages/Inventory'
 import Menu from './pages/Menu'
 import HR from './pages/HR'
 import Customers from './pages/Customers'
-import Captain from './pages/Captain'
 import Loyalty from './pages/Loyalty'
 import Users from './pages/Users'
+import Expenses from './pages/Expenses'
+import Settings from './pages/Settings'
 import Layout from './components/Layout'
+import { SettingsProvider } from './lib/settingsContext'
 import { useState, useEffect } from 'react'
 
 function ProtectedRoute() {
@@ -85,34 +87,37 @@ function AppLayout() {
 export default function App() {
   return (
     <BrowserRouter>
-      <ToastProvider>
-        <OfflineIndicator />
-        <Routes>
-          <Route path="/kiosk" element={<Kiosk />} />
-          <Route path="/login" element={<Login />} />
-          
-          <Route element={<ProtectedRoute />}>
-            <Route element={<AppLayout />}>
-              <Route path="/" element={<Navigate to="/pos" replace />} />
-              <Route path="/pos" element={<POS />} />
-              <Route path="/kitchen" element={<Kitchen />} />
-              <Route path="/kot" element={<KOT />} />
-              <Route path="/purchase" element={<Purchase />} />
-              <Route path="/inventory" element={<Inventory />} />
-              <Route path="/menu" element={<Menu />} />
-              <Route path="/hr" element={<HR />} />
-              <Route path="/customers" element={<Customers />} />
-              <Route path="/captain" element={<Captain />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/billing" element={<Billing />} />
-              <Route path="/online-orders" element={<OnlineOrders />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/loyalty" element={<Loyalty />} />
-              <Route path="/users" element={<Users />} />
+      <SettingsProvider>
+        <ToastProvider>
+          <OfflineIndicator />
+          <Routes>
+            <Route path="/kiosk" element={<Kiosk />} />
+            <Route path="/login" element={<Login />} />
+            
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AppLayout />}>
+                <Route path="/" element={<Navigate to="/pos" replace />} />
+                <Route path="/pos" element={<POS />} />
+                <Route path="/kitchen" element={<Kitchen />} />
+                <Route path="/kot" element={<KOT />} />
+                <Route path="/purchase" element={<Purchase />} />
+                <Route path="/inventory" element={<Inventory />} />
+                <Route path="/menu" element={<Menu />} />
+                <Route path="/hr" element={<HR />} />
+                <Route path="/customers" element={<Customers />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/billing" element={<Billing />} />
+                <Route path="/online-orders" element={<OnlineOrders />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/loyalty" element={<Loyalty />} />
+                <Route path="/users" element={<Users />} />
+                <Route path="/expenses" element={<Expenses />} />
+                <Route path="/settings" element={<Settings />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
-      </ToastProvider>
+          </Routes>
+        </ToastProvider>
+      </SettingsProvider>
     </BrowserRouter>
   )
 }
