@@ -77,9 +77,14 @@ export default function LandingPage() {
   }, [])
 
   // Filter out a few gyros for the "Signature Gyros" showcase section
-  const signatureGyros = menuItems 
+  let signatureGyros = menuItems 
     ? menuItems.filter(item => item.name.toLowerCase().includes('gyro')).slice(0, 4)
     : []
+
+  // If no items match the 'gyro' keyword, fallback to displaying the first 4 items from the live database
+  if (signatureGyros.length === 0 && menuItems && menuItems.length > 0) {
+    signatureGyros = menuItems.slice(0, 4)
+  }
 
   // Fallback signature items if database is empty
   const defaultSignatures = [
