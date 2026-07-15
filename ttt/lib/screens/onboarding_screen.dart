@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/colors.dart';
-import 'main_nav_screen.dart';
 import 'login_screen.dart';
 import '../widgets/tdg_button.dart';
 import '../services/api_service.dart';
@@ -158,23 +157,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             onPressed: _handleGetStarted,
             icon: const Icon(Icons.arrow_forward_rounded, size: 20, color: Colors.black),
             gradient: TDGColors.goldGradient,
-            borderRadius: BorderRadius.circular(30), // Premium pill shape matching mockup
-          ),
-        ),
-        const SizedBox(height: 12),
-        TextButton(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const LoginScreen()),
-          ),
-          child: Text(
-            'Login',
-            style: GoogleFonts.outfit(
-              color: TDGColors.gold,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
-            ),
+            borderRadius: BorderRadius.circular(30),
           ),
         ),
       ],

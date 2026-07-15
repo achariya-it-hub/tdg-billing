@@ -27,6 +27,33 @@ function readDb() {
 }
 
 const BACKUP_DIR = join(__dirname, 'backups')
+const DAILY_BACKUP_DIR = join(__dirname, 'daily-backups')
+
+let lastDailyBackupDate = ''
+
+function performDailyBackup() {
+  const today = new Date().toISOString().split('T')[0]
+  if (lastDailyBackupDate === today) return false
+  try {
+    if (!existsSync(DAILY_BACKUP_DIR)) mkdirSync(DAILY_BACKUP_DIR, { recursive: true })
+    const backupPath = join(DAILY_BACKUP_DIR, `daily-${today}.json`)
+    if (existsSync(backupPath)) { lastDailyBackupDate = today; return false }
+    const data = readFileSync(DB_PATH, 'utf-8')
+    let parsed = JSON.parse(data)
+    writeFileSync(backupPath, JSON.stringify(parsed, null, 2))
+    lastDailyBackupDate = today
+    // Keep last 30 daily backups
+    const files = readdirSync(DAILY_BACKUP_DIR)
+      .filter(f => f.startsWith('daily-') && f.endsWith('.json'))
+      .sort().reverse()
+    for (const old of files.slice(30)) rmSync(join(DAILY_BACKUP_DIR, old))
+    console.log(`Daily backup saved: daily-${today}.json`)
+    return true
+  } catch (e) {
+    console.error('Daily backup error:', e.message)
+    return false
+  }
+}
 
 function writeDb(data) {
   try {
@@ -101,9 +128,10 @@ let suppliers = []
 let purchaseOrders = []
 let poItems = []
 let grns = []
+let vendorPayments = []
 let onlineOrders = []
 let settings = {
-  company: { name: 'Ten Den Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '000000000', email: '', gst: '', logo: null },
+  company: { name: 'Ten Den Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '000000000', email: '', gst: '', logo: null, upiId: '' },
   theme: { accentPrimary: '#e63946', accentPrimaryDark: '#c1121f', bgPrimary: '#f5f5f7' },
   printers: [{ id: 'default', name: 'Default Printer', ip: '', type: 'browser', isDefault: true }]
 }
@@ -134,6 +162,7 @@ function saveState() {
   db.purchaseOrders = purchaseOrders
   db.poItems = poItems
   db.grns = grns
+  db.vendorPayments = vendorPayments
   db.settings = settings
   writeDb(db)
 }
@@ -170,6 +199,7 @@ function restoreState() {
   if (db.purchaseOrders?.length) purchaseOrders = db.purchaseOrders
   if (db.poItems?.length) poItems = db.poItems
   if (db.grns?.length) grns = db.grns
+  if (db.vendorPayments?.length) vendorPayments = db.vendorPayments
   if (db.settings) settings = { ...settings, ...db.settings }
   if (db.billingUsers?.length) {
     billingUsers = db.billingUsers
@@ -202,70 +232,95 @@ let orderNumber = 1000
 let categories = [
   { id: 'c1', name: 'Gyros', displayOrder: 1, color: '#e63946' },
   { id: 'c2', name: 'Burger', displayOrder: 2, color: '#f59e0b' },
-  { id: 'c3', name: 'Fried items', displayOrder: 3, color: '#10b981' },
-  { id: 'c4', name: 'Golden crunchy chicken', displayOrder: 4, color: '#dc2626' },
-  { id: 'c5', name: 'Golden Glaze Chicken', displayOrder: 5, color: '#fbbf24' },
+  { id: 'c3', name: 'Salads', displayOrder: 3, color: '#10b981' },
+  { id: 'c4', name: 'Sides', displayOrder: 4, color: '#dc2626' },
+  { id: 'c5', name: 'TDG Crispy Chicken', displayOrder: 5, color: '#fbbf24' },
   { id: 'c6', name: 'Thick Shakes', displayOrder: 6, color: '#8b5cf6' },
-  { id: 'c7', name: 'Ice Cream', displayOrder: 7, color: '#ec4899' },
+  { id: 'c7', name: 'Softy', displayOrder: 7, color: '#ec4899' },
   { id: 'c8', name: 'Desserts', displayOrder: 8, color: '#f472b6' },
   { id: 'c9', name: 'Beverages', displayOrder: 9, color: '#3b82f6' }
 ]
 
 let menuItems = [
-  { id: 'm1', categoryId: 'c1', name: 'Veg - BBQ Paneer', price: 100, isAvailable: true },
-  { id: 'm2', categoryId: 'c1', name: 'Veg - Beetroot Falafal', price: 100, isAvailable: true },
-  { id: 'm3', categoryId: 'c1', name: 'Veg - Mushroom Falafal', price: 100, isAvailable: true },
-  { id: 'm4', categoryId: 'c1', name: 'Non-Veg - Sour Cream Chicken', price: 100, isAvailable: true },
-  { id: 'm5', categoryId: 'c1', name: 'Non-Veg - BBQ Chicken', price: 100, isAvailable: true },
-  { id: 'm6', categoryId: 'c1', name: 'Non-Veg - Peri Peri Chicken', price: 100, isAvailable: true },
-  { id: 'm7', categoryId: 'c1', name: 'Non-Veg - Crunchy Chicken', price: 100, isAvailable: true },
-  { id: 'm8', categoryId: 'c1', name: 'Non-Veg - Fried Fish', price: 100, isAvailable: true },
-  { id: 'm9', categoryId: 'c1', name: 'Non-Veg - BBQ Prawn', price: 100, isAvailable: true },
-  { id: 'm10', categoryId: 'c2', name: 'Veg - Spinach (veg meat)', price: 100, isAvailable: true },
-  { id: 'm11', categoryId: 'c2', name: 'Veg - Beetroot', price: 100, isAvailable: true },
-  { id: 'm12', categoryId: 'c2', name: 'Non-Veg - Fried Chicken', price: 100, isAvailable: true },
-  { id: 'm13', categoryId: 'c2', name: 'Non-Veg - Sourcream Chicken', price: 100, isAvailable: true },
-  { id: 'm14', categoryId: 'c2', name: 'Non-Veg - BBQ Chicken', price: 100, isAvailable: true },
-  { id: 'm15', categoryId: 'c2', name: 'Non-Veg - Fish with Egg', price: 100, isAvailable: true },
-  { id: 'm16', categoryId: 'c3', name: 'Veg Nuggets', price: 100, isAvailable: true },
-  { id: 'm17', categoryId: 'c3', name: 'French Fries', price: 100, isAvailable: true },
-  { id: 'm18', categoryId: 'c3', name: 'Chicken Nuggets', price: 100, isAvailable: true },
-  { id: 'm19', categoryId: 'c3', name: 'Fish Finger', price: 100, isAvailable: true },
-  { id: 'm20', categoryId: 'c4', name: 'Fried Chicken (1pc)', price: 69, isAvailable: true },
-  { id: 'm21', categoryId: 'c4', name: 'Fried Chicken (2pc)', price: 129, isAvailable: true },
-  { id: 'm22', categoryId: 'c4', name: 'Fried Chicken (4pc)', price: 249, isAvailable: true },
-  { id: 'm23', categoryId: 'c4', name: 'Fried Chicken (8pc)', price: 499, isAvailable: true },
-  { id: 'm24', categoryId: 'c4', name: 'Strips (3pc)', price: 119, isAvailable: true },
-  { id: 'm25', categoryId: 'c4', name: 'Strips (6pc)', price: 229, isAvailable: true },
-  { id: 'm26', categoryId: 'c4', name: 'Strips (9pc)', price: 349, isAvailable: true },
-  { id: 'm27', categoryId: 'c4', name: 'Strips (12pc)', price: 479, isAvailable: true },
-  { id: 'm28', categoryId: 'c4', name: 'Wings (3pc)', price: 109, isAvailable: true },
-  { id: 'm29', categoryId: 'c4', name: 'Wings (6pc)', price: 219, isAvailable: true },
-  { id: 'm30', categoryId: 'c4', name: 'Wings (9pc)', price: 329, isAvailable: true },
-  { id: 'm31', categoryId: 'c4', name: 'Wings (12pc)', price: 429, isAvailable: true },
-  { id: 'm32', categoryId: 'c5', name: 'Glaze Strips (3pc)', price: 149, isAvailable: true },
-  { id: 'm33', categoryId: 'c5', name: 'Glaze Strips (6pc)', price: 299, isAvailable: true },
-  { id: 'm34', categoryId: 'c5', name: 'Glaze Wings (3pc)', price: 149, isAvailable: true },
-  { id: 'm35', categoryId: 'c5', name: 'Glaze Wings (6pc)', price: 299, isAvailable: true },
-  { id: 'm36', categoryId: 'c6', name: 'Chocolate Blizzard', price: 100, isAvailable: true },
-  { id: 'm37', categoryId: 'c6', name: 'Vanilla Blizzard', price: 100, isAvailable: true },
-  { id: 'm38', categoryId: 'c6', name: 'Strawberry Blizzard', price: 100, isAvailable: true },
-  { id: 'm39', categoryId: 'c7', name: 'Bourbon Softy', price: 59, isAvailable: true },
-  { id: 'm40', categoryId: 'c7', name: 'Vanila Softy', price: 49, isAvailable: true },
-  { id: 'm41', categoryId: 'c7', name: 'Choco Dip Softy', price: 89, isAvailable: true },
-  { id: 'm42', categoryId: 'c7', name: 'Caramel Sundae', price: 69, isAvailable: true },
-  { id: 'm43', categoryId: 'c7', name: 'Strawberry Sundae', price: 69, isAvailable: true },
-  { id: 'm44', categoryId: 'c7', name: 'Chocolate Sundae', price: 69, isAvailable: true },
-  { id: 'm45', categoryId: 'c8', name: 'Chocolate Donuts', price: 119, isAvailable: true },
-  { id: 'm46', categoryId: 'c8', name: 'Vanila Donuts', price: 99, isAvailable: true },
-  { id: 'm47', categoryId: 'c8', name: 'Tiramissu', price: 249, isAvailable: true },
-  { id: 'm48', categoryId: 'c8', name: 'Redvelvet Cake', price: 249, isAvailable: true },
-  { id: 'm49', categoryId: 'c8', name: 'Banoffee', price: 249, isAvailable: true },
-  { id: 'm50', categoryId: 'c8', name: 'Caramel Hazelnut', price: 249, isAvailable: true },
-  { id: 'm51', categoryId: 'c8', name: 'Chocolate Dome', price: 249, isAvailable: true },
-  { id: 'm52', categoryId: 'c9', name: 'Coke', price: 39, isAvailable: true },
-  { id: 'm53', categoryId: 'c9', name: 'Lemonade', price: 39, isAvailable: true },
-  { id: 'm54', categoryId: 'c9', name: 'Kombhucha', price: 99, isAvailable: true }
+  // Gyros (c1)
+  { id: 'm1', categoryId: 'c1', name: 'Non-Veg - Spicy Chicken Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm2', categoryId: 'c1', name: 'Non-Veg - Spicy Chicken Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm3', categoryId: 'c1', name: 'Non-Veg - Cream Chicken Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm4', categoryId: 'c1', name: 'Non-Veg - Cream Chicken Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm5', categoryId: 'c1', name: 'Non-Veg - BBQ Chicken Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm6', categoryId: 'c1', name: 'Non-Veg - BBQ Chicken Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm7', categoryId: 'c1', name: 'Non-Veg - Pesto Chicken Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm8', categoryId: 'c1', name: 'Non-Veg - Pesto Chicken Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm9', categoryId: 'c1', name: 'Veg - Spicy Paneer Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm10', categoryId: 'c1', name: 'Veg - Spicy Paneer Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm11', categoryId: 'c1', name: 'Veg - Cream Paneer Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm12', categoryId: 'c1', name: 'Veg - Cream Paneer Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm13', categoryId: 'c1', name: 'Veg - BBQ Paneer Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm14', categoryId: 'c1', name: 'Veg - BBQ Paneer Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm15', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm16', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Large)', price: 249, isAvailable: true },
+
+  // Burgers (c2)
+  { id: 'm17', categoryId: 'c2', name: 'Non-Veg - Spicy Egg Burger', price: 79, isAvailable: true },
+  { id: 'm18', categoryId: 'c2', name: 'Non-Veg - Crispy Chicken Burger', price: 99, isAvailable: true },
+  { id: 'm19', categoryId: 'c2', name: 'Veg - Spicy Paneer Burger', price: 99, isAvailable: true },
+
+  // Salads (c3)
+  { id: 'm20', categoryId: 'c3', name: 'Non-Veg - Chicken Salad', price: 99, isAvailable: true },
+  { id: 'm21', categoryId: 'c3', name: 'Veg - Paneer Salad', price: 99, isAvailable: true },
+
+  // Sides (c4)
+  { id: 'm22', categoryId: 'c4', name: 'Non-Veg - Loaded Chicken Fries', price: 199, isAvailable: true },
+  { id: 'm23', categoryId: 'c4', name: 'Veg - Fries (Salted, Peri Peri Or Cajun)', price: 99, isAvailable: true },
+  { id: 'm24', categoryId: 'c4', name: 'Veg - Loaded Paneer Fries', price: 199, isAvailable: true },
+  { id: 'm25', categoryId: 'c4', name: 'Veg - 6 pcs Halloumi Strips', price: 149, isAvailable: true },
+
+  // TDG Crispy Chicken (c5)
+  // Leg & Thigh
+  { id: 'm26', categoryId: 'c5', name: 'Non-Veg - 1 Pc Crispy Chicken (1 Dip)', price: 70, isAvailable: true },
+  { id: 'm27', categoryId: 'c5', name: 'Non-Veg - 2 Pc Crispy Chicken (1 Dip)', price: 140, isAvailable: true },
+  { id: 'm28', categoryId: 'c5', name: 'Non-Veg - 4 Pc Crispy Chicken (2 Dip)', price: 280, isAvailable: true },
+  { id: 'm29', categoryId: 'c5', name: 'Non-Veg - 8 Pc Crispy Chicken (4 Dip)', price: 560, isAvailable: true },
+  { id: 'm30', categoryId: 'c5', name: 'Non-Veg - 12 Pc Crispy Chicken (6 Dip)', price: 840, isAvailable: true },
+  // Wings
+  { id: 'm31', categoryId: 'c5', name: 'Non-Veg - 3 Pc Crispy Wings (1 Dip)', price: 90, isAvailable: true },
+  { id: 'm32', categoryId: 'c5', name: 'Non-Veg - 6 Pc Crispy Wings (2 Dip)', price: 180, isAvailable: true },
+  { id: 'm33', categoryId: 'c5', name: 'Non-Veg - 9 Pc Crispy Wings (3 Dip)', price: 270, isAvailable: true },
+  { id: 'm34', categoryId: 'c5', name: 'Non-Veg - 20 Pc Crispy Wings (6 Dip)', price: 600, isAvailable: true },
+  { id: 'm35', categoryId: 'c5', name: 'Non-Veg - 60 Pc Crispy Wings (12 Dip)', price: 1500, isAvailable: true },
+  // Strips
+  { id: 'm36', categoryId: 'c5', name: 'Non-Veg - 3 Pc Crispy Strips (1 Dip)', price: 120, isAvailable: true },
+  { id: 'm37', categoryId: 'c5', name: 'Non-Veg - 6 Pc Crispy Strips (2 Dip)', price: 240, isAvailable: true },
+  { id: 'm38', categoryId: 'c5', name: 'Non-Veg - 9 Pc Crispy Strips (3 Dip)', price: 360, isAvailable: true },
+  { id: 'm39', categoryId: 'c5', name: 'Non-Veg - 20 Pc Crispy Strips (6 Dip)', price: 800, isAvailable: true },
+  { id: 'm40', categoryId: 'c5', name: 'Non-Veg - 60 Pc Crispy Strips (12 Dip)', price: 2400, isAvailable: true },
+
+  // Thick Shakes (c6)
+  { id: 'm41', categoryId: 'c6', name: 'Veg - Vanilla Shake (Regular)', price: 79, isAvailable: true },
+  { id: 'm42', categoryId: 'c6', name: 'Veg - Vanilla Shake (Large)', price: 139, isAvailable: true },
+  { id: 'm43', categoryId: 'c6', name: 'Veg - Strawberry Shake (Regular)', price: 79, isAvailable: true },
+  { id: 'm44', categoryId: 'c6', name: 'Veg - Strawberry Shake (Large)', price: 139, isAvailable: true },
+  { id: 'm45', categoryId: 'c6', name: 'Veg - Biscoff Shake (Regular)', price: 79, isAvailable: true },
+  { id: 'm46', categoryId: 'c6', name: 'Veg - Biscoff Shake (Large)', price: 139, isAvailable: true },
+  { id: 'm47', categoryId: 'c6', name: 'Veg - Oreo Shake (Regular)', price: 79, isAvailable: true },
+  { id: 'm48', categoryId: 'c6', name: 'Veg - Oreo Shake (Large)', price: 139, isAvailable: true },
+  { id: 'm49', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Regular)', price: 79, isAvailable: true },
+  { id: 'm50', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Large)', price: 139, isAvailable: true },
+
+  // Softy (c7)
+  { id: 'm51', categoryId: 'c7', name: 'Veg - Vanilla Softy', price: 39, isAvailable: true },
+
+  // Desserts (c8)
+  { id: 'm52', categoryId: 'c8', name: 'Veg - Chocolate Brownie', price: 99, isAvailable: true },
+  { id: 'm53', categoryId: 'c8', name: 'Veg - Blondy Cake', price: 99, isAvailable: true },
+
+  // Beverages (c9)
+  { id: 'm54', categoryId: 'c9', name: 'Veg - Sprite / Coca-Cola (Regular)', price: 59, isAvailable: true },
+  { id: 'm55', categoryId: 'c9', name: 'Veg - Sprite / Coca-Cola (Large)', price: 99, isAvailable: true },
+  { id: 'm56', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Regular)', price: 59, isAvailable: true },
+  { id: 'm57', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Large)', price: 99, isAvailable: true },
+  { id: 'm58', categoryId: 'c9', name: 'Veg - Hot Chocolate', price: 99, isAvailable: true },
+  { id: 'm59', categoryId: 'c9', name: 'Veg - Signature Tea', price: 99, isAvailable: true }
 ]
 
 let inventory = [
@@ -331,16 +386,46 @@ function auth(req, res, next) {
 
 // ============ MOBILE APP API ROUTES ============
 
+// Verify asset OTP — called by the referred person during signup
+app.post('/api/assets/verify-otp', (req, res) => {
+  const { phone, otp } = req.body
+  if (!phone || !otp) return res.status(400).json({ message: 'Phone and OTP required' })
+
+  const db = readDb()
+  // Find any master user who has this phone as a pending asset with matching OTP
+  for (const master of db.users) {
+    const assets = master.assets || []
+    const asset = assets.find(a => a.phone === phone && a.status === 'pending' && a.otp === otp)
+    if (asset) {
+      // Check OTP expiry
+      if (asset.otpExpiry && new Date(asset.otpExpiry) < new Date()) {
+        return res.status(400).json({ message: 'OTP expired. Ask your referrer to add you again.' })
+      }
+      // OTP valid — activate asset
+      asset.status = 'active'
+      asset.activatedAt = new Date().toISOString()
+      asset.otp = null
+      asset.otpExpiry = null
+      writeDb(db)
+      return res.json({ success: true, message: 'OTP verified', masterName: master.name, masterId: master.id })
+    }
+  }
+  res.status(400).json({ message: 'Invalid OTP or phone number' })
+})
+
 // Auth - Signup
 app.post('/api/auth/signup', async (req, res) => {
   try {
-    const { name, email, phone, password, referredBy } = req.body
+    const { name, email, phone, password, referredBy, otp } = req.body
     if (!name || !email || !phone || !password) {
       return res.status(400).json({ message: 'All fields are required' })
     }
     const db = readDb()
     if (db.users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
       return res.status(400).json({ message: 'User with this email already exists' })
+    }
+    if (db.users.find(u => u.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''))) {
+      return res.status(400).json({ message: 'User with this phone number already exists' })
     }
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
@@ -369,12 +454,26 @@ app.post('/api/auth/signup', async (req, res) => {
       if (master) {
         newUser.referredBy = master.id
         newUser.referredByName = master.name
-        // Update master's asset list - mark as active
+        // Update master's asset list - verify OTP if provided
         const masterAssets = master.assets || []
         const assetIdx = masterAssets.findIndex(a => a.phone === phone)
         if (assetIdx >= 0) {
+          // OTP verification: if asset has an OTP, must match
+          if (masterAssets[assetIdx].otp && masterAssets[assetIdx].status === 'pending') {
+            if (!otp) {
+              return res.status(400).json({ message: 'OTP required to verify referral. Ask your referrer for the code.' })
+            }
+            if (masterAssets[assetIdx].otp !== otp) {
+              return res.status(400).json({ message: 'Invalid OTP. Please check the code from your referrer.' })
+            }
+            if (masterAssets[assetIdx].otpExpiry && new Date(masterAssets[assetIdx].otpExpiry) < new Date()) {
+              return res.status(400).json({ message: 'OTP expired. Ask your referrer to add you again.' })
+            }
+          }
           masterAssets[assetIdx].status = 'active'
           masterAssets[assetIdx].activatedAt = now
+          masterAssets[assetIdx].otp = null
+          masterAssets[assetIdx].otpExpiry = null
           master.assetsDinedCount = master.assetsDinedCount || 0
         } else if (masterAssets.length < 10) {
           // Auto-add as asset if master has less than 10
@@ -437,6 +536,51 @@ app.post('/api/auth/login', async (req, res) => {
   }
 })
 
+// Auth - Forgot Password (send OTP)
+app.post('/api/auth/forgot-password', (req, res) => {
+  const { phone } = req.body
+  if (!phone) return res.status(400).json({ message: 'Phone number required' })
+
+  const db = readDb()
+  const user = db.users.find(u => u.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''))
+  if (!user) return res.status(404).json({ message: 'No account found with this phone number' })
+
+  const otp = String(Math.floor(1000 + Math.random() * 9000))
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString() // 10 minutes
+  user.forgotPasswordOtp = otp
+  user.forgotPasswordOtpExpiry = otpExpiry
+  writeDb(db)
+
+  console.log(`[FORGOT PASSWORD] OTP for ${phone}: ${otp}`)
+  res.json({ success: true, message: 'OTP sent successfully' })
+})
+
+// Auth - Reset Password (verify OTP + set new password)
+app.post('/api/auth/reset-password', async (req, res) => {
+  const { phone, otp, newPassword } = req.body
+  if (!phone || !otp || !newPassword) return res.status(400).json({ message: 'Phone, OTP, and new password required' })
+  if (newPassword.length < 6) return res.status(400).json({ message: 'Password must be at least 6 characters' })
+
+  const db = readDb()
+  const user = db.users.find(u => u.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''))
+  if (!user) return res.status(404).json({ message: 'User not found' })
+
+  if (!user.forgotPasswordOtp || user.forgotPasswordOtp !== otp) {
+    return res.status(400).json({ message: 'Invalid OTP' })
+  }
+  if (user.forgotPasswordOtpExpiry && new Date(user.forgotPasswordOtpExpiry) < new Date()) {
+    return res.status(400).json({ message: 'OTP expired. Please request a new one.' })
+  }
+
+  const salt = await bcrypt.genSalt(10)
+  user.password = await bcrypt.hash(newPassword, salt)
+  user.forgotPasswordOtp = null
+  user.forgotPasswordOtpExpiry = null
+  writeDb(db)
+
+  res.json({ success: true, message: 'Password reset successful' })
+})
+
 // Auth - Profile
 app.get('/api/auth/profile', auth, (req, res) => {
   const db = readDb()
@@ -495,29 +639,26 @@ app.post('/api/assets', auth, (req, res) => {
   if (assets.length >= 10) return res.status(400).json({ message: 'Maximum 10 assets allowed' })
   if (assets.find(a => a.phone === phone)) return res.status(400).json({ message: 'Asset with this phone already added' })
 
-  // Check if this phone belongs to an existing user
-  const existingUser = db.users.find(u => u.phone === phone)
+  // Generate 4-digit OTP
+  const otp = String(Math.floor(1000 + Math.random() * 9000))
+  const otpExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
+
   const newAsset = {
     id: 'a_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
     name,
     phone,
-    status: existingUser ? 'active' : 'pending',
-    activatedAt: existingUser ? new Date().toISOString() : null,
+    status: 'pending',
+    activatedAt: null,
     hasDined: false,
-    pointsDistributed: 0
+    pointsDistributed: 0,
+    otp,
+    otpExpiry
   }
 
   assets.push(newAsset)
   user.assets = assets
-
-  // If existing user, mark them as an asset and sync
-  if (existingUser) {
-    existingUser.referredBy = user.id
-    existingUser.referredByName = user.name
-  }
-
   writeDb(db)
-  res.json({ success: true, asset: newAsset, assets: user.assets })
+  res.json({ success: true, asset: newAsset, assets: user.assets, otp })
 })
 
 // Replace an asset (if friend hasn't activated)
@@ -812,6 +953,130 @@ app.delete('/api/billing/users/:id', (req, res) => {
   res.json({ success: true })
 })
 
+// Get all mobile app customers
+app.get('/api/customers', (req, res) => {
+  const db = readDb()
+  const customers = (db.users || []).map(u => ({
+    id: u.id,
+    name: u.name || '',
+    phone: u.phone || '',
+    email: u.email || '',
+    points: u.points || 0,
+    totalOrders: (u.orderHistory || []).length,
+    totalSpent: (u.orderHistory || []).reduce((s, o) => s + (o.total || 0), 0),
+    createdAt: u.createdAt || u.signupAt || '',
+    lastVisit: u.lastVisit || u.updatedAt || u.createdAt || ''
+  }))
+  res.json(customers)
+})
+
+// ============ BILLING CUSTOMER / ASSET MANAGEMENT ============
+
+// Create a mobile app customer from billing app
+app.post('/api/billing/customers', async (req, res) => {
+  const { pin, name, email, phone } = req.body
+  if (!pin || pin.length !== 4) return res.status(400).json({ error: 'Valid billing PIN required' })
+  const billingUser = billingUsers.find(u => bcrypt.compareSync(pin, u.pin))
+  if (!billingUser) return res.status(403).json({ error: 'Invalid PIN' })
+  if (!name || !email || !phone) return res.status(400).json({ error: 'Name, email, and phone required' })
+
+  const db = readDb()
+  if (db.users.find(u => u.email.toLowerCase() === email.toLowerCase())) return res.status(400).json({ error: 'Email already registered' })
+  if (db.users.find(u => u.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''))) return res.status(400).json({ error: 'Phone already registered' })
+
+  const salt = await bcrypt.genSalt(10)
+  const hashedPassword = await bcrypt.hash(phone.slice(-6), salt)
+  const now = new Date().toISOString()
+  const newUser = {
+    id: 'u_' + Date.now(),
+    name, email, phone,
+    password: hashedPassword,
+    role: 'user',
+    points: 500,
+    assets: [],
+    totalDistributed: 0,
+    cashbackEarned: 0,
+    assetsDinedCount: 0,
+    allAssetsActive: false,
+    bonusClaimed: false,
+    referredBy: null,
+    referredByName: null,
+    createdAt: now
+  }
+  db.users.push(newUser)
+  writeDb(db)
+  res.json({ success: true, customer: { id: newUser.id, name, email, phone, points: 500, createdAt: now }, password: phone.slice(-6) })
+})
+
+// Get a customer's den/assets from billing app
+app.get('/api/billing/customer-assets/:phone', (req, res) => {
+  const pin = req.query.pin
+  if (!pin || pin.length !== 4) return res.status(400).json({ error: 'Valid billing PIN required' })
+  const billingUser = billingUsers.find(u => bcrypt.compareSync(pin, u.pin))
+  if (!billingUser) return res.status(403).json({ error: 'Invalid PIN' })
+
+  const db = readDb()
+  const customer = db.users.find(u => u.phone.replace(/[^0-9]/g, '') === req.params.phone.replace(/[^0-9]/g, ''))
+  if (!customer) return res.status(404).json({ error: 'Customer not found' })
+
+  res.json({
+    id: customer.id,
+    name: customer.name,
+    phone: customer.phone,
+    points: customer.points || 0,
+    totalDistributed: customer.totalDistributed || 0,
+    cashbackEarned: customer.cashbackEarned || 0,
+    assetsDinedCount: customer.assetsDinedCount || 0,
+    allAssetsActive: customer.allAssetsActive || false,
+    bonusClaimed: customer.bonusClaimed || false,
+    assets: (customer.assets || []).map(a => ({
+      id: a.id,
+      name: a.name,
+      phone: a.phone,
+      status: a.status,
+      hasDined: a.hasDined,
+      pointsDistributed: a.pointsDistributed || 0
+    }))
+  })
+})
+
+// Add an asset to a customer's den from billing app
+app.post('/api/billing/assets', async (req, res) => {
+  const { pin, customerPhone, name, phone } = req.body
+  if (!pin || pin.length !== 4) return res.status(400).json({ error: 'Valid billing PIN required' })
+  const billingUser = billingUsers.find(u => bcrypt.compareSync(pin, u.pin))
+  if (!billingUser) return res.status(403).json({ error: 'Invalid PIN' })
+  if (!customerPhone || !name || !phone) return res.status(400).json({ error: 'Customer phone, asset name, and asset phone required' })
+
+  const db = readDb()
+  const customer = db.users.find(u => u.phone.replace(/[^0-9]/g, '') === customerPhone.replace(/[^0-9]/g, ''))
+  if (!customer) return res.status(404).json({ error: 'Customer not found' })
+
+  const assets = customer.assets || []
+  if (assets.length >= 10) return res.status(400).json({ error: 'Maximum 10 assets allowed' })
+  if (assets.find(a => a.phone === phone)) return res.status(400).json({ error: 'Asset with this phone already added' })
+
+  const otp = String(Math.floor(1000 + Math.random() * 9000))
+  const otpExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+
+  const newAsset = {
+    id: 'a_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+    name,
+    phone,
+    status: 'pending',
+    activatedAt: null,
+    hasDined: false,
+    pointsDistributed: 0,
+    otp,
+    otpExpiry
+  }
+
+  assets.push(newAsset)
+  customer.assets = assets
+  writeDb(db)
+  res.json({ success: true, asset: newAsset, assets: customer.assets, otp })
+})
+
 // ============ SETTINGS API ============
 
 // Public: get settings (needed for theme on login page)
@@ -838,6 +1103,7 @@ app.put('/api/settings/company', (req, res) => {
   if (phone !== undefined) settings.company.phone = phone
   if (email !== undefined) settings.company.email = email
   if (gst !== undefined) settings.company.gst = gst
+  if (upiId !== undefined) settings.company.upiId = upiId
   const db = readDb(); db.settings = settings; writeDb(db)
   res.json({ success: true, settings })
 })
@@ -1216,10 +1482,10 @@ app.get('/api/menu/items', (req, res) => {
 
 // Menu Item CRUD
 app.post('/api/admin/menu/items', (req, res) => {
-  const { name, price, categoryId, description, isAvailable } = req.body
+  const { name, price, categoryId, description, isAvailable, image } = req.body
   if (!name || !price || !categoryId) return res.status(400).json({ error: 'name, price, and categoryId required' })
   const id = 'm_' + Date.now()
-  const item = { id, name, price: Number(price), categoryId, description: description || '', isAvailable: isAvailable !== false }
+  const item = { id, name, price: Number(price), categoryId, description: description || '', isAvailable: isAvailable !== false, image: image || null }
   menuItems.push(item)
   saveState()
   res.status(201).json(item)
@@ -1228,12 +1494,13 @@ app.post('/api/admin/menu/items', (req, res) => {
 app.put('/api/admin/menu/items/:id', (req, res) => {
   const idx = menuItems.findIndex(i => i.id === req.params.id)
   if (idx === -1) return res.status(404).json({ error: 'Item not found' })
-  const { name, price, categoryId, description, isAvailable } = req.body
+  const { name, price, categoryId, description, isAvailable, image } = req.body
   if (name !== undefined) menuItems[idx].name = name
   if (price !== undefined) menuItems[idx].price = Number(price)
   if (categoryId !== undefined) menuItems[idx].categoryId = categoryId
   if (description !== undefined) menuItems[idx].description = description
   if (isAvailable !== undefined) menuItems[idx].isAvailable = isAvailable
+  if (image !== undefined) menuItems[idx].image = image
   saveState()
   res.json(menuItems[idx])
 })
@@ -1241,9 +1508,70 @@ app.put('/api/admin/menu/items/:id', (req, res) => {
 app.delete('/api/admin/menu/items/:id', (req, res) => {
   const idx = menuItems.findIndex(i => i.id === req.params.id)
   if (idx === -1) return res.status(404).json({ error: 'Item not found' })
+  // Delete associated image file if exists
+  const item = menuItems[idx]
+  if (item.image && item.image.startsWith('/uploads/menu/')) {
+    try {
+      const imgPath = join(UPLOADS_DIR, 'menu', item.image.split('/uploads/menu/')[1])
+      if (existsSync(imgPath)) rmSync(imgPath)
+    } catch (e) { console.error('Image delete error:', e.message) }
+  }
   menuItems.splice(idx, 1)
   saveState()
   res.json({ success: true })
+})
+
+// Upload menu item image
+app.post('/api/admin/menu/items/:id/image', (req, res) => {
+  const item = menuItems.find(i => i.id === req.params.id)
+  if (!item) return res.status(404).json({ error: 'Item not found' })
+
+  const menuImgDir = join(UPLOADS_DIR, 'menu')
+  if (!existsSync(menuImgDir)) mkdirSync(menuImgDir, { recursive: true })
+
+  const chunks = []
+  req.on('data', chunk => chunks.push(chunk))
+  req.on('end', () => {
+    try {
+      const buf = Buffer.concat(chunks)
+      const ct = req.headers['content-type'] || ''
+      let ext = 'jpg'
+      if (ct.includes('png')) ext = 'png'
+      else if (ct.includes('webp')) ext = 'webp'
+      else if (ct.includes('gif')) ext = 'gif'
+
+      // Remove old image if exists
+      if (item.image && item.image.startsWith('/uploads/menu/')) {
+        try {
+          const oldPath = join(menuImgDir, item.image.split('/uploads/menu/')[1])
+          if (existsSync(oldPath)) rmSync(oldPath)
+        } catch (e) { /* ignore */ }
+      }
+
+      const filename = `${item.id}.${ext}`
+      writeFileSync(join(menuImgDir, filename), buf)
+      item.image = `/uploads/menu/${filename}`
+      saveState()
+      res.json({ success: true, image: item.image })
+    } catch (e) {
+      res.status(500).json({ error: 'Image upload failed: ' + e.message })
+    }
+  })
+})
+
+// Delete menu item image
+app.delete('/api/admin/menu/items/:id/image', (req, res) => {
+  const item = menuItems.find(i => i.id === req.params.id)
+  if (!item) return res.status(404).json({ error: 'Item not found' })
+  if (item.image && item.image.startsWith('/uploads/menu/')) {
+    try {
+      const imgPath = join(UPLOADS_DIR, 'menu', item.image.split('/uploads/menu/')[1])
+      if (existsSync(imgPath)) rmSync(imgPath)
+    } catch (e) { /* ignore */ }
+  }
+  item.image = null
+  saveState()
+  res.json({ success: true, image: null })
 })
 
 app.put('/api/admin/menu/items/:id/toggle', (req, res) => {
@@ -2041,6 +2369,265 @@ app.post('/api/admin/grns', (req, res) => {
   res.status(201).json(grn)
 })
 
+// ============ VENDOR PAYMENTS ============
+app.get('/api/admin/vendor-payments', (req, res) => {
+  res.json(vendorPayments.sort((a, b) => new Date(b.paymentDate) - new Date(a.paymentDate)))
+})
+
+app.post('/api/admin/vendor-payments', (req, res) => {
+  const { supplier, poId, grnId, amount, paymentMethod, reference, paymentDate, notes } = req.body
+  if (!supplier || !amount || !paymentMethod) return res.status(400).json({ error: 'Supplier, amount, and paymentMethod required' })
+  const payment = {
+    id: 'VP' + Date.now(),
+    supplier,
+    poId: poId || '',
+    grnId: grnId || '',
+    amount: Number(amount),
+    paymentMethod,
+    reference: reference || '',
+    paymentDate: paymentDate || new Date().toISOString().split('T')[0],
+    notes: notes || '',
+    createdAt: new Date().toISOString()
+  }
+  vendorPayments.unshift(payment)
+  saveState()
+  res.status(201).json(payment)
+})
+
+app.put('/api/admin/vendor-payments/:id', (req, res) => {
+  const idx = vendorPayments.findIndex(p => p.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'Payment not found' })
+  Object.assign(vendorPayments[idx], req.body)
+  saveState()
+  res.json(vendorPayments[idx])
+})
+
+app.delete('/api/admin/vendor-payments/:id', (req, res) => {
+  const idx = vendorPayments.findIndex(p => p.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'Payment not found' })
+  vendorPayments.splice(idx, 1)
+  saveState()
+  res.json({ success: true })
+})
+
+// ============ GST / ACCOUNTS ============
+app.get('/api/accounts/gst-summary', (req, res) => {
+  const period = req.query.period || new Date().toISOString().slice(0, 7)
+  const salesTaxRate = 0.05
+  const purchaseTaxRate = 0.05
+
+  // Output GST from sales
+  const periodOrders = orders.filter(o => o.createdAt && o.createdAt.startsWith(period))
+  const completedOrders = periodOrders.filter(o => o.status === 'completed' || o.status === 'served' || o.status === 'delivered')
+  const totalSales = completedOrders.reduce((sum, o) => sum + (o.total || 0), 0)
+  const outputGst = Math.round(totalSales * salesTaxRate * 100 / (100 + salesTaxRate * 100))
+
+  // Input GST from purchases
+  const periodPurchases = purchases.filter(p => p.createdAt && p.createdAt.startsWith(period))
+  const totalPurchases = periodPurchases.reduce((sum, p) => sum + (p.total || 0), 0)
+  const inputGst = Math.round(totalPurchases * purchaseTaxRate * 100 / (100 + purchaseTaxRate * 100))
+
+  // Input GST from GRNs (goods receipt value)
+  const periodGrns = grns.filter(g => g.date && g.date.startsWith(period.slice(0, 10)))
+  const totalGrnValue = periodGrns.reduce((sum, g) => sum + (g.totalValue || 0), 0)
+  const inputGstGrn = Math.round(totalGrnValue * purchaseTaxRate * 100 / (100 + purchaseTaxRate * 100))
+
+  // By payment method (output)
+  const byPaymentMethod = {}
+  completedOrders.forEach(o => {
+    const method = o.paymentMethod || 'cash'
+    byPaymentMethod[method] = (byPaymentMethod[method] || 0) + (o.total || 0)
+  })
+
+  // Invoice count
+  const invoiceCount = completedOrders.length
+
+  // Individual taxable invoices (output)
+  const salesInvoices = completedOrders.map(o => {
+    const taxable = Math.round((o.total || 0) * 100 / (100 + salesTaxRate * 100))
+    return {
+      id: o.id || o.billNo || '',
+      date: (o.createdAt || '').split('T')[0],
+      customer: o.customerName || o.table || 'Walk-in',
+      total: Math.round(o.total || 0),
+      taxable,
+      gst: Math.round(o.total || 0) - taxable,
+      paymentMethod: o.paymentMethod || 'cash',
+      source: o.source || 'pos'
+    }
+  })
+
+  // Individual purchase invoices (input)
+  const purchaseInvoices = periodPurchases.map(p => {
+    const taxable = Math.round((p.total || 0) * 100 / (100 + purchaseTaxRate * 100))
+    return {
+      id: p.id || '',
+      date: (p.createdAt || '').split('T')[0],
+      supplier: p.supplier || 'Unknown',
+      items: p.items?.length || 0,
+      total: Math.round(p.total || 0),
+      taxable,
+      gst: Math.round(p.total || 0) - taxable
+    }
+  })
+
+  // Individual GRN invoices (input)
+  const grnInvoices = periodGrns.map(g => {
+    const taxable = Math.round((g.totalValue || 0) * 100 / (100 + purchaseTaxRate * 100))
+    return {
+      id: g.id || '',
+      date: (g.date || '').split('T')[0],
+      supplier: g.supplier || 'Unknown',
+      invoiceNo: g.invoiceNo || '',
+      total: Math.round(g.totalValue || 0),
+      taxable,
+      gst: Math.round(g.totalValue || 0) - taxable
+    }
+  })
+
+  res.json({
+    period,
+    salesTaxRate: salesTaxRate * 100,
+    purchaseTaxRate: purchaseTaxRate * 100,
+    // Output
+    totalSales: Math.round(totalSales),
+    taxableSales: Math.round(totalSales * 100 / (100 + salesTaxRate * 100)),
+    outputGst,
+    invoiceCount,
+    byPaymentMethod,
+    salesInvoices,
+    // Input
+    totalPurchases: Math.round(totalPurchases),
+    totalGrnValue: Math.round(totalGrnValue),
+    taxablePurchases: Math.round(totalPurchases * 100 / (100 + purchaseTaxRate * 100)),
+    inputGst,
+    inputGstGrn,
+    purchaseInvoices,
+    grnInvoices,
+    // Net
+    netGstPayable: outputGst - inputGst - inputGstGrn,
+    netGstRefund: outputGst - inputGst - inputGstGrn < 0 ? Math.abs(outputGst - inputGst - inputGstGrn) : 0
+  })
+})
+
+app.get('/api/accounts/vendor-balances', (req, res) => {
+  const balances = suppliers.map(s => {
+    const poTotal = purchaseOrders
+      .filter(po => po.supplier === s.name)
+      .reduce((sum, po) => sum + (po.total || 0), 0)
+    const paidTotal = vendorPayments
+      .filter(vp => vp.supplier === s.name)
+      .reduce((sum, vp) => sum + (vp.amount || 0), 0)
+    return {
+      supplierId: s.id,
+      supplierName: s.name,
+      category: s.category,
+      contact: s.contact,
+      totalOrdered: poTotal,
+      totalPaid: paidTotal,
+      balance: poTotal - paidTotal,
+      paymentCount: vendorPayments.filter(vp => vp.supplier === s.name).length
+    }
+  })
+  res.json(balances)
+})
+
+// ============ DUE BILLS (outstanding invoices per vendor) ============
+app.get('/api/accounts/due-bills', (req, res) => {
+  const bills = []
+
+  // From Purchase Orders
+  purchaseOrders.forEach(po => {
+    const paidAmt = vendorPayments
+      .filter(vp => vp.poId === po.id)
+      .reduce((sum, vp) => sum + (vp.amount || 0), 0)
+    const balance = (po.total || 0) - paidAmt
+    if (balance > 0) {
+      bills.push({
+        id: po.id,
+        type: 'PO',
+        supplier: po.supplier,
+        date: po.date || '',
+        total: po.total || 0,
+        paid: paidAmt,
+        balance,
+        status: paidAmt === 0 ? 'unpaid' : 'partial',
+        ref: po.id,
+        invoiceNo: '',
+        items: po.items || 0,
+        expectedDate: po.expectedDate || ''
+      })
+    }
+  })
+
+  // From GRNs
+  grns.forEach(grn => {
+    const paidAmt = vendorPayments
+      .filter(vp => vp.grnId === grn.id)
+      .reduce((sum, vp) => sum + (vp.amount || 0), 0)
+    const balance = (grn.totalValue || 0) - paidAmt
+    // Also check for payments linked to the parent PO
+    const poPaidAmt = grn.poId ? vendorPayments
+      .filter(vp => vp.poId === grn.poId)
+      .reduce((sum, vp) => sum + (vp.amount || 0), 0) : 0
+    if (balance > 0 || (grn.totalValue > 0 && paidAmt < grn.totalValue)) {
+      const effectivePaid = Math.max(paidAmt, poPaidAmt > 0 ? paidAmt : 0)
+      const effectiveBalance = (grn.totalValue || 0) - effectivePaid
+      if (effectiveBalance > 0) {
+        bills.push({
+          id: grn.id,
+          type: 'GRN',
+          supplier: grn.supplier,
+          date: grn.date || '',
+          total: grn.totalValue || 0,
+          paid: effectivePaid,
+          balance: effectiveBalance,
+          status: effectivePaid === 0 ? 'unpaid' : 'partial',
+          ref: grn.poId || '',
+          invoiceNo: grn.invoiceNo || '',
+          items: grn.items || 0,
+          notes: grn.remarks || ''
+        })
+      }
+    }
+  })
+
+  // From direct purchases (simple /api/purchases entries)
+  purchases.forEach(p => {
+    const paidAmt = vendorPayments
+      .filter(vp => vp.supplier === p.supplier && !vp.poId && !vp.grnId)
+      .reduce((sum, vp) => sum + (vp.amount || 0), 0)
+    // Skip if already covered by PO/GRN payment
+    const alreadyCovered = vendorPayments.some(vp =>
+      (vp.poId && purchaseOrders.some(po => po.id === vp.poId && po.supplier === p.supplier)) ||
+      (vp.grnId && grns.some(g => g.id === vp.grnId && g.supplier === p.supplier))
+    )
+    if (!alreadyCovered) {
+      const balance = (p.total || 0) - paidAmt
+      if (balance > 0) {
+        bills.push({
+          id: p.id,
+          type: 'PURCHASE',
+          supplier: p.supplier,
+          date: (p.createdAt || '').split('T')[0],
+          total: p.total || 0,
+          paid: paidAmt,
+          balance,
+          status: 'unpaid',
+          ref: '',
+          invoiceNo: '',
+          items: p.items?.length || 0,
+          notes: ''
+        })
+      }
+    }
+  })
+
+  // Sort by date descending
+  bills.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
+  res.json(bills)
+})
+
 // ============ PURCHASES (supplier orders) ============
 app.get('/api/purchases', (req, res) => {
   const { date } = req.query
@@ -2069,6 +2656,11 @@ app.post('/api/purchases', (req, res) => {
 // ============ DAILY CLOSING REPORT ============
 app.get('/api/reports/daily-closing', (req, res) => {
   const date = req.query.date || new Date().toISOString().split('T')[0]
+
+  // Trigger daily backup when today's closing is viewed
+  if (date === new Date().toISOString().split('T')[0]) {
+    performDailyBackup()
+  }
 
   // Filter orders for the given date
   const dayOrders = orders.filter(o => o.createdAt && o.createdAt.startsWith(date))
@@ -2134,6 +2726,198 @@ app.get('/api/reports/daily-closing', (req, res) => {
   })
 })
 
+// P&L (Profit & Loss) Report
+app.get('/api/reports/pnl', (req, res) => {
+  const date = req.query.date || new Date().toISOString().split('T')[0]
+  const period = req.query.period || 'day' // day, week, month
+
+  let fromDate, toDate
+  if (period === 'week') {
+    const d = new Date(date)
+    const dayOfWeek = d.getDay()
+    fromDate = new Date(d); fromDate.setDate(d.getDate() - dayOfWeek)
+    toDate = new Date(fromDate); toDate.setDate(toDate.getDate() + 6)
+  } else if (period === 'month') {
+    const d = new Date(date)
+    fromDate = new Date(d.getFullYear(), d.getMonth(), 1)
+    toDate = new Date(d.getFullYear(), d.getMonth() + 1, 0)
+  } else {
+    fromDate = new Date(date)
+    toDate = new Date(date)
+  }
+
+  const fromStr = fromDate.toISOString().split('T')[0]
+  const toStr = toDate.toISOString().split('T')[0]
+
+  // Revenue: completed/served/delivered orders
+  const periodOrders = orders.filter(o =>
+    o.createdAt && o.createdAt.slice(0, 10) >= fromStr && o.createdAt.slice(0, 10) <= toStr &&
+    (o.status === 'completed' || o.status === 'served' || o.status === 'delivered')
+  )
+  const totalRevenue = periodOrders.reduce((sum, o) => sum + (o.total || 0), 0)
+  const orderCount = periodOrders.length
+
+  // Revenue by payment method
+  const revenueByMethod = {}
+  periodOrders.forEach(o => {
+    const m = o.paymentMethod || 'cash'
+    revenueByMethod[m] = (revenueByMethod[m] || 0) + (o.total || 0)
+  })
+
+  // COGS: purchases in period
+  const periodPurchases = purchases.filter(p =>
+    p.createdAt && p.createdAt.slice(0, 10) >= fromStr && p.createdAt.slice(0, 10) <= toStr
+  )
+  const totalCogs = periodPurchases.reduce((sum, p) => sum + (p.total || 0), 0)
+
+  // Gross Profit
+  const grossProfit = totalRevenue - totalCogs
+
+  // Expenses by category
+  const periodExpenses = expenses.filter(e =>
+    e.createdAt && e.createdAt.slice(0, 10) >= fromStr && e.createdAt.slice(0, 10) <= toStr
+  )
+  const totalExpenses = periodExpenses.reduce((sum, e) => sum + (e.amount || 0), 0)
+  const expensesByCategory = {}
+  periodExpenses.forEach(e => {
+    const cat = e.category || 'other'
+    expensesByCategory[cat] = (expensesByCategory[cat] || 0) + (e.amount || 0)
+  })
+
+  // Net Profit
+  const netProfit = grossProfit - totalExpenses
+
+  // Cancelled orders
+  const cancelledOrders = orders.filter(o =>
+    o.createdAt && o.createdAt.slice(0, 10) >= fromStr && o.createdAt.slice(0, 10) <= toStr &&
+    o.status === 'cancelled'
+  )
+  const cancelledRevenue = cancelledOrders.reduce((sum, o) => sum + (o.total || 0), 0)
+
+  res.json({
+    period: { from: fromStr, to: toStr, label: period },
+    revenue: { total: Math.round(totalRevenue), orderCount, byMethod: revenueByMethod },
+    cogs: { total: Math.round(totalCogs), purchaseCount: periodPurchases.length },
+    grossProfit: Math.round(grossProfit),
+    grossMargin: totalRevenue > 0 ? Math.round((grossProfit / totalRevenue) * 100) : 0,
+    expenses: { total: Math.round(totalExpenses), count: periodExpenses.length, byCategory: expensesByCategory },
+    netProfit: Math.round(netProfit),
+    netMargin: totalRevenue > 0 ? Math.round((netProfit / totalRevenue) * 100) : 0,
+    cancelled: { count: cancelledOrders.length, revenue: Math.round(cancelledRevenue) }
+  })
+})
+
+// Purchase Orders Report
+app.get('/api/reports/purchase-orders', (req, res) => {
+  const { from, to } = req.query
+  const today = new Date().toISOString().split('T')[0]
+  const fromStr = from || today
+  const toStr = to || today
+
+  const filtered = purchaseOrders.filter(po =>
+    po.date >= fromStr && po.date <= toStr
+  ).sort((a, b) => b.date.localeCompare(a.date))
+
+  const byStatus = {}
+  const bySupplier = {}
+  let totalValue = 0
+  filtered.forEach(po => {
+    const s = po.status || 'pending'
+    byStatus[s] = (byStatus[s] || 0) + 1
+    bySupplier[po.supplier] = (bySupplier[po.supplier] || 0) + (po.total || 0)
+    totalValue += (po.total || 0)
+  })
+
+  res.json({ orders: filtered, summary: { total: filtered.length, totalValue: Math.round(totalValue), byStatus, bySupplier } })
+})
+
+// GRN Report
+app.get('/api/reports/grns', (req, res) => {
+  const { from, to } = req.query
+  const today = new Date().toISOString().split('T')[0]
+  const fromStr = from || today
+  const toStr = to || today
+
+  const filtered = grns.filter(g =>
+    g.date >= fromStr && g.date <= toStr
+  ).sort((a, b) => b.date.localeCompare(a.date))
+
+  const bySupplier = {}
+  let totalValue = 0
+  filtered.forEach(g => {
+    bySupplier[g.supplier] = (bySupplier[g.supplier] || 0) + (g.totalValue || 0)
+    totalValue += (g.totalValue || 0)
+  })
+
+  res.json({ grns: filtered, summary: { total: filtered.length, totalValue: Math.round(totalValue), bySupplier } })
+})
+
+// Customer Report
+app.get('/api/reports/customers', (req, res) => {
+  const db = readDb()
+  const { from, to } = req.query
+  const today = new Date().toISOString().split('T')[0]
+  const fromStr = from || '2000-01-01'
+  const toStr = to || today
+
+  const allUsers = (db.users || []).filter(u => u.role === 'user' || u.role === 'customer')
+  const periodUsers = allUsers.filter(u => {
+    const d = u.createdAt ? u.createdAt.slice(0, 10) : ''
+    return d >= fromStr && d <= toStr
+  })
+
+  // Compute aggregate from orders for each customer
+  const customerStats = periodUsers.map(u => {
+    const customerOrders = orders.filter(o => o.customerPhone === u.phone && o.status !== 'cancelled')
+    const totalSpent = customerOrders.reduce((s, o) => s + (o.total || 0), 0)
+    const lastOrder = customerOrders.sort((a, b) => b.createdAt?.localeCompare(a.createdAt || ''))[0]
+    return {
+      id: u.id, name: u.name, phone: u.phone, email: u.email || '',
+      points: u.points || 0, totalOrders: customerOrders.length,
+      totalSpent: Math.round(totalSpent),
+      createdAt: u.createdAt, lastVisit: lastOrder?.createdAt || u.lastVisit || ''
+    }
+  }).sort((a, b) => b.totalSpent - a.totalSpent)
+
+  const activeCustomers = customerStats.filter(c => c.totalOrders > 0)
+  const totalSpentAll = customerStats.reduce((s, c) => s + c.totalSpent, 0)
+
+  res.json({
+    customers: customerStats,
+    summary: {
+      total: customerStats.length,
+      active: activeCustomers.length,
+      totalSpent: Math.round(totalSpentAll),
+      avgPerCustomer: customerStats.length > 0 ? Math.round(totalSpentAll / customerStats.length) : 0
+    }
+  })
+})
+
+// Expense Report
+app.get('/api/reports/expenses', (req, res) => {
+  const { from, to } = req.query
+  const today = new Date().toISOString().split('T')[0]
+  const fromStr = from || today
+  const toStr = to || today
+
+  const filtered = expenses.filter(e =>
+    e.createdAt && e.createdAt.slice(0, 10) >= fromStr && e.createdAt.slice(0, 10) <= toStr
+  ).sort((a, b) => b.createdAt?.localeCompare(a.createdAt || ''))
+
+  const byCategory = {}
+  let totalAmount = 0
+  filtered.forEach(e => {
+    const cat = e.category || 'other'
+    byCategory[cat] = (byCategory[cat] || 0) + (e.amount || 0)
+    totalAmount += (e.amount || 0)
+  })
+
+  res.json({
+    expenses: filtered,
+    summary: { total: filtered.length, totalAmount: Math.round(totalAmount), byCategory }
+  })
+})
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'UP', message: 'TDG Backend is running smoothly.' })
@@ -2173,6 +2957,44 @@ app.get('/api/backups', (req, res) => {
   }
 })
 
+// List daily backups
+app.get('/api/backups/daily', (req, res) => {
+  try {
+    if (!existsSync(DAILY_BACKUP_DIR)) return res.json([])
+    const files = readdirSync(DAILY_BACKUP_DIR)
+      .filter(f => f.startsWith('daily-') && f.endsWith('.json'))
+      .sort().reverse()
+    res.json(files.map(f => ({
+      name: f,
+      date: f.replace('daily-', '').replace('.json', ''),
+      size: statSync(join(DAILY_BACKUP_DIR, f)).size
+    })))
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+// Restore from a daily backup by date
+app.post('/api/backups/daily/restore', (req, res) => {
+  try {
+    const { date } = req.body
+    if (!date) return res.status(400).json({ error: 'date required (YYYY-MM-DD)' })
+    const backupPath = join(DAILY_BACKUP_DIR, `daily-${date}.json`)
+    if (!existsSync(backupPath)) return res.status(404).json({ error: `No daily backup for ${date}` })
+    // Save current state as safety backup
+    const ts = new Date().toISOString().replace(/[:.]/g, '-')
+    if (!existsSync(BACKUP_DIR)) mkdirSync(BACKUP_DIR, { recursive: true })
+    const safetyPath = join(BACKUP_DIR, `db-pre-restore-${ts}.json`)
+    writeFileSync(safetyPath, readFileSync(DB_PATH))
+    // Restore the daily backup
+    writeFileSync(DB_PATH, readFileSync(backupPath))
+    console.log(`Restored daily backup from ${date}. Safety copy: ${safetyPath}`)
+    res.json({ success: true, message: `Restored from ${date} backup`, safety: safetyPath })
+  } catch (e) {
+    res.status(500).json({ error: 'Restore failed: ' + e.message })
+  }
+})
+
 // Reset operational data (orders, billing, KOTs, POs, GRNs, expenses) — ADMIN ONLY
 app.post('/api/reset', async (req, res) => {
   try {
@@ -2201,6 +3023,7 @@ app.post('/api/reset', async (req, res) => {
     purchaseOrders = []
     poItems = []
     grns = []
+    vendorPayments = []
     expenses = []
     purchases = []
     onlineOrders = []
@@ -2344,6 +3167,11 @@ const PORT = process.env.PORT || 3001
 httpServer.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
   console.log(`Restored: ${orders.length} orders, ${loyaltyUsers.length} loyalty users, ${dens.length} dens, ${inventory.length} inventory items`)
+  // Schedule daily backup check every hour
+  performDailyBackup()
+  const DAILY_BACKUP_INTERVAL = 60 * 60 * 1000 // 1 hour
+  setInterval(performDailyBackup, DAILY_BACKUP_INTERVAL)
+  console.log('Daily backup scheduler active (checks every hour)')
 })
 
 export default app

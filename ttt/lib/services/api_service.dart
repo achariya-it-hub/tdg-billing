@@ -13,6 +13,7 @@ class ApiService {
   bool _initialized = false;
 
   bool get isAuthenticated => _token != null;
+  String get baseUrl => AppConfig.baseUrl;
 
   Future<void> init() async {
     if (_initialized) return;
@@ -41,6 +42,16 @@ class ApiService {
     await prefs.remove('current_user');
   }
 
+  Never _handleError(dynamic e) {
+    if (e is FormatException) {
+      throw Exception('Server returned an invalid response. Please try again later.');
+    } else if (e.toString().contains('SocketException') || e.toString().contains('Connection refused') || e.toString().contains('Failed host lookup')) {
+      throw Exception('Cannot connect to the server. Please check your internet connection.');
+    } else {
+      throw e;
+    }
+  }
+
   Map<String, String> _getHeaders() {
     final headers = {
       'Content-Type': 'application/json',
@@ -66,6 +77,7 @@ class ApiService {
     required String phone,
     required String password,
     String? referredBy,
+    String? otp,
   }) async {
     final url = Uri.parse('${AppConfig.baseUrl}/auth/signup');
     final body = {
@@ -75,6 +87,7 @@ class ApiService {
       'password': password,
     };
     if (referredBy != null) body['referredBy'] = referredBy;
+    if (otp != null) body['otp'] = otp;
 
     try {
       final response = await http.post(url, headers: _getHeaders(), body: jsonEncode(body));
@@ -88,7 +101,7 @@ class ApiService {
         throw Exception(data['message'] ?? 'Failed to signup');
       }
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -113,7 +126,7 @@ class ApiService {
         throw Exception(data['message'] ?? 'Failed to login');
       }
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -130,7 +143,7 @@ class ApiService {
         throw Exception(data['message'] ?? 'Failed to load profile');
       }
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -155,7 +168,7 @@ class ApiService {
         throw Exception(data['message'] ?? 'Failed to update profile');
       }
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -168,7 +181,7 @@ class ApiService {
       if (response.statusCode == 200) return jsonDecode(response.body);
       throw Exception('Failed to load menu');
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -198,7 +211,7 @@ class ApiService {
       if (response.statusCode == 201) return data;
       throw Exception(data['message'] ?? 'Failed to place order');
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -209,7 +222,7 @@ class ApiService {
       if (response.statusCode == 200) return jsonDecode(response.body);
       throw Exception('Failed to load orders');
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -228,7 +241,7 @@ class ApiService {
       }
       throw Exception('Failed to load wallet');
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -243,7 +256,7 @@ class ApiService {
       if (response.statusCode == 200) return jsonDecode(response.body);
       throw Exception('Failed to add points');
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -256,7 +269,7 @@ class ApiService {
       if (response.statusCode == 200) return jsonDecode(response.body);
       throw Exception('Failed to load assets');
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -272,7 +285,7 @@ class ApiService {
       if (response.statusCode == 200) return data;
       throw Exception(data['message'] ?? 'Failed to add asset');
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -288,7 +301,7 @@ class ApiService {
       if (response.statusCode == 200) return data;
       throw Exception(data['message'] ?? 'Failed to replace asset');
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -299,24 +312,30 @@ class ApiService {
       if (response.statusCode == 200) return jsonDecode(response.body);
       throw Exception('Failed to remove asset');
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
   Future<Map<String, dynamic>> distributePoints(String assetId, int amount) async {
     final url = Uri.parse('${AppConfig.baseUrl}/assets/distribute');
-    try {
-      final response = await http.post(
-        url,
-        headers: _getHeaders(),
-        body: jsonEncode({'assetId': assetId, 'amount': amount}),
-      );
-      final data = jsonDecode(response.body);
-      if (response.statusCode == 200) return data;
-      throw Exception(data['message'] ?? 'Failed to distribute points');
-    } catch (e) {
-      rethrow;
-    }
+    final response = await http.post(
+      url,
+      headers: _getHeaders(),
+      body: jsonEncode({'assetId': assetId, 'amount': amount}),
+    );
+    if (response.statusCode != 200) throw Exception(jsonDecode(response.body)['message'] ?? 'Failed to distribute');
+    return jsonDecode(response.body);
+  }
+
+  Future<Map<String, dynamic>> verifyAssetOtp(String phone, String otp) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/assets/verify-otp');
+    final response = await http.post(
+      url,
+      headers: _getHeaders(),
+      body: jsonEncode({'phone': phone, 'otp': otp}),
+    );
+    if (response.statusCode != 200) throw Exception(jsonDecode(response.body)['message'] ?? 'OTP verification failed');
+    return jsonDecode(response.body);
   }
 
   // --- DEN/ASSET PROGRESS ---
@@ -328,7 +347,7 @@ class ApiService {
       if (response.statusCode == 200) return jsonDecode(response.body);
       throw Exception('Failed to load progress');
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -341,7 +360,7 @@ class ApiService {
       if (response.statusCode == 200) return jsonDecode(response.body);
       throw Exception('Failed to get discount');
     } catch (e) {
-      rethrow;
+      _handleError(e);
     }
   }
 
@@ -362,7 +381,47 @@ class ApiService {
       }
       throw Exception(data['message'] ?? 'Failed to redeem points');
     } catch (e) {
-      rethrow;
+      _handleError(e);
+    }
+  }
+
+  Future<void> sendForgotPasswordOtp(String phone) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/auth/forgot-password');
+    try {
+      final response = await http.post(url, headers: {'Content-Type': 'application/json'}, body: jsonEncode({'phone': phone}));
+      final data = jsonDecode(response.body);
+      if (response.statusCode != 200) throw Exception(data['message'] ?? 'Failed to send OTP');
+    } catch (e) {
+      _handleError(e);
+    }
+  }
+
+  Future<void> sendForgotPasswordEmailOtp(String email) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/auth/forgot-password-email');
+    try {
+      final response = await http.post(url, headers: {'Content-Type': 'application/json'}, body: jsonEncode({'email': email}));
+      final data = jsonDecode(response.body);
+      if (response.statusCode != 200) throw Exception(data['message'] ?? 'Failed to send OTP');
+    } catch (e) {
+      _handleError(e);
+    }
+  }
+
+  Future<void> resetPassword({String? phone, String? email, required String otp, required String newPassword}) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/auth/reset-password');
+    final body = {
+      'otp': otp,
+      'newPassword': newPassword,
+    };
+    if (phone != null) body['phone'] = phone;
+    if (email != null) body['email'] = email;
+
+    try {
+      final response = await http.post(url, headers: {'Content-Type': 'application/json'}, body: jsonEncode(body));
+      final data = jsonDecode(response.body);
+      if (response.statusCode != 200) throw Exception(data['message'] ?? 'Failed to reset password');
+    } catch (e) {
+      _handleError(e);
     }
   }
 }

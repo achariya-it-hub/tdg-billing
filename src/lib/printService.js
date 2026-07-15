@@ -40,31 +40,33 @@ const PrintService = {
               width: 80mm;
               padding: 8px 12px;
               font-size: 12px;
-              color: #1a1a1a;
-              line-height: 1.4;
+              font-weight: 900;
+              color: #000;
+              line-height: 1.3;
             }
             .center { text-align: center; }
-            .header { text-align: center; padding-bottom: 10px; border-bottom: 2px solid #1a1a1a; margin-bottom: 10px; }
-            .brand-name { font-family: 'Georgia', serif; font-size: 18px; font-weight: 700; letter-spacing: 2px; color: #c1121f; }
-            .kot-label { font-size: 10px; letter-spacing: 3px; color: #666; margin-top: 2px; text-transform: uppercase; }
-            .order-info { display: flex; justify-content: space-between; font-size: 10px; margin-top: 6px; }
-            .info-label { color: #888; }
-            .info-value { font-weight: 600; }
-            .divider { border-top: 1px dashed #999; margin: 8px 0; }
-            .divider-thick { border-top: 2px solid #1a1a1a; margin: 8px 0; }
+            .header { text-align: center; padding-bottom: 10px; border-bottom: 3px solid #000; margin-bottom: 10px; }
+            .brand-name { font-family: 'Georgia', serif; font-size: 18px; font-weight: 900; letter-spacing: 2px; color: #000; }
+            .kot-label { font-size: 10px; font-weight: 900; letter-spacing: 3px; color: #000; margin-top: 2px; text-transform: uppercase; }
+            .order-info { display: flex; justify-content: center; font-size: 10px; font-weight: 900; margin-top: 6px; color: #000; }
+            .info-label { color: #000; }
+            .info-value { font-weight: 900; }
+            .order-number { font-size: 22px; font-weight: 900; letter-spacing: 2px; margin: 4px 0; }
+            .divider { border-top: 2px dashed #000; margin: 8px 0; }
+            .divider-thick { border-top: 3px solid #000; margin: 8px 0; }
             .priority-tag { display: inline-block; padding: 2px 10px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; border-radius: 2px; }
             .priority-high { background: #c1121f; color: white; }
             .priority-medium { background: #f59e0b; color: white; }
             .priority-normal { background: #10b981; color: white; }
-            .col-header { display: flex; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #999; padding-bottom: 4px; margin-bottom: 4px; }
+            .col-header { display: flex; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #000; padding-bottom: 4px; margin-bottom: 4px; }
             .col-header .item-qty { width: 30px; }
             .col-header .item-name { flex: 1; }
-            .item-row { display: flex; font-size: 11px; padding: 3px 0; }
+            .item-row { display: flex; font-size: 12px; font-weight: 900; padding: 3px 0; }
             .item-row .item-qty { width: 30px; }
-            .item-row .item-name { flex: 1; font-weight: 600; }
-            .item-note { font-size: 9px; color: #888; padding-left: 30px; margin-bottom: 2px; }
-            .footer { text-align: center; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #999; }
-            .footer-text { font-size: 10px; color: #888; }
+            .item-row .item-name { flex: 1; font-weight: 900; }
+            .item-note { font-size: 10px; font-weight: 900; color: #000; padding-left: 30px; margin-bottom: 2px; }
+            .footer { text-align: center; margin-top: 10px; padding-top: 10px; border-top: 2px dashed #000; }
+            .footer-text { font-size: 10px; font-weight: 900; color: #000; }
             @media print {
               body { width: 80mm; }
             }
@@ -74,10 +76,9 @@ const PrintService = {
           <div class="header">
             <div class="brand-name">${company.name || 'Ten Den Gyros'}</div>
             <div class="kot-label">Kitchen Order Ticket</div>
-            <div class="order-info">
-              <span><span class="info-label">KOT:</span> <span class="info-value">#${orderNum}</span></span>
-              <span><span class="info-label">Time:</span> ${createdAt}</span>
-              <span><span class="info-value">${orderType === 'dine-in' ? 'T: ' + tableNum : orderType.toUpperCase()}</span></span>
+            <div class="order-number center">#${orderNum}</div>
+            <div class="order-info center">
+              <span>${createdAt} • ${orderType.toUpperCase()}</span>
             </div>
           </div>
 

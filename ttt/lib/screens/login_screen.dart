@@ -5,6 +5,7 @@ import '../widgets/tdg_button.dart';
 import '../widgets/tdg_logo.dart';
 import 'main_nav_screen.dart';
 import 'signup_screen.dart';
+import 'forgot_password_screen.dart';
 import '../services/api_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -190,7 +191,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             Align(
                               alignment: Alignment.centerRight,
                               child: TextButton(
-                                onPressed: () {},
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
+                                ),
                                 child: Text(
                                   'Forgot Password?',
                                   style: GoogleFonts.outfit(

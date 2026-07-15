@@ -84,20 +84,20 @@ export default function Dashboard() {
     setResetProcessing(false)
   }
 
-  const StatCard = ({ icon: Icon, label, value, change, prefix = '', suffix = '' }) => (
+  const StatCard = ({ icon: Icon, label, value, change, prefix = '', suffix = '' }) => {
+    const gradient = gradientMap[Icon.name] || 'linear-gradient(135deg, #e63946, #c1121f)'
+    return (
     <div style={{
-      background: 'rgba(255,255,255,0.75)',
-      backdropFilter: 'blur(20px)',
-      WebkitBackdropFilter: 'blur(20px)',
+      background: '#fff',
       borderRadius: '20px',
-      border: '1px solid rgba(255,255,255,0.3)',
+      border: 'none',
       padding: '24px',
       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       cursor: 'default',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)'
+      boxShadow: `0 4px 16px rgba(0,0,0,0.06)`
     }}
-    onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.08)' }}
-    onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03)' }}
+    onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.1)' }}
+    onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.06)' }}
     >
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
@@ -123,7 +123,7 @@ export default function Dashboard() {
         <div style={{
           width: '52px',
           height: '52px',
-          background: gradientMap[Icon.name] || 'linear-gradient(135deg, #e63946, #c1121f)',
+          background: gradient,
           borderRadius: '16px',
           display: 'flex',
           alignItems: 'center',
@@ -134,7 +134,8 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
-  )
+    )
+  }
 
   return (
     <div>

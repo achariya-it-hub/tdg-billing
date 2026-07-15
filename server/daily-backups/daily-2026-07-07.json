@@ -73,6 +73,106 @@
   ],
   "orders": [
     {
+      "id": "c77e7f5e-ada4-4e62-90a0-6fad95cb95ca",
+      "orderNumber": 1114,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 400,
+      "tax": 72,
+      "total": 472,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "",
+      "createdAt": "2026-07-02T17:13:10.847Z",
+      "updatedAt": "2026-07-02T17:13:54.986Z",
+      "items": [
+        {
+          "id": "753d5285-9ae8-4be5-86a8-05323ffdc546",
+          "menuItemId": "m1",
+          "menuItemName": "Veg - BBQ Paneer",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "cfc496f3-51d1-4c37-aa29-1451cb2adf28",
+          "menuItemId": "m2",
+          "menuItemName": "Veg - Beetroot Falafal",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "b0ec7091-8a59-4b7d-850b-bea3e063cecb",
+          "menuItemId": "m4",
+          "menuItemName": "Non-Veg - Sour Cream Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "72049494-76eb-4cda-b8af-bd0c39f6b00c",
+          "menuItemId": "m14",
+          "menuItemName": "Non-Veg - BBQ Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "2e3d5277-9523-456a-b983-4efcd05ebfb1",
+      "orderNumber": 1113,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 200,
+      "tax": 36,
+      "total": 236,
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "tableNumber": "",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "",
+      "createdAt": "2026-06-30T09:36:36.736Z",
+      "updatedAt": "2026-06-30T09:37:00.787Z",
+      "items": [
+        {
+          "id": "42326c02-059f-46de-9d7b-516404a1e2fb",
+          "menuItemId": "m10",
+          "menuItemName": "Veg - Spinach (veg meat)",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "feee96a6-78d8-4e98-97d2-813493bb7b84",
+          "menuItemId": "m11",
+          "menuItemName": "Veg - Beetroot",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
       "id": "6e2efd8b-5fbc-43e8-bc7a-f059633bb07c",
       "orderNumber": 1112,
       "type": "dine-in",
@@ -91,7 +191,7 @@
       "complimentaryType": "",
       "specialRemarks": "",
       "createdAt": "2026-06-24T10:50:52.025Z",
-      "updatedAt": "2026-06-24T10:51:07.464Z",
+      "updatedAt": "2026-07-02T17:14:15.813Z",
       "items": [
         {
           "id": "960c2af9-b7d2-4c5a-b9ff-d12458b5c772",
@@ -132,7 +232,7 @@
       "complimentaryType": "",
       "specialRemarks": "",
       "createdAt": "2026-06-24T10:50:20.039Z",
-      "updatedAt": "2026-06-24T10:50:31.163Z",
+      "updatedAt": "2026-07-02T17:14:17.891Z",
       "items": [
         {
           "id": "24e562c9-4dca-4930-8693-9fba9cd7dc8e",
@@ -154,7 +254,7 @@
       "subtotal": 400,
       "tax": 72,
       "total": 472,
-      "paymentMethod": "card",
+      "paymentMethod": "cash",
       "paymentStatus": "paid",
       "tableNumber": "T5",
       "customerName": "",
@@ -164,7 +264,7 @@
       "complimentaryType": "",
       "specialRemarks": "",
       "createdAt": "2026-06-24T10:06:50.321Z",
-      "updatedAt": "2026-06-24T10:49:37.434Z",
+      "updatedAt": "2026-07-02T17:14:20.667Z",
       "items": [
         {
           "id": "80eaed98-5d70-4ebd-9921-df6cb465477d",
@@ -186,7 +286,7 @@
       "subtotal": 600,
       "tax": 108,
       "total": 708,
-      "paymentMethod": "card",
+      "paymentMethod": "upi",
       "paymentStatus": "paid",
       "tableNumber": "T2",
       "customerName": "",
@@ -196,7 +296,7 @@
       "complimentaryType": "",
       "specialRemarks": "",
       "createdAt": "2026-06-24T10:06:44.520Z",
-      "updatedAt": "2026-06-24T10:49:42.596Z",
+      "updatedAt": "2026-07-02T17:14:35.374Z",
       "items": [
         {
           "id": "e58c700f-c420-41b7-ae6c-0b89666f44ab",
@@ -218,7 +318,7 @@
       "subtotal": 400,
       "tax": 72,
       "total": 472,
-      "paymentMethod": "card",
+      "paymentMethod": "cash",
       "paymentStatus": "paid",
       "tableNumber": "T1",
       "customerName": "",
@@ -228,7 +328,7 @@
       "complimentaryType": "",
       "specialRemarks": "",
       "createdAt": "2026-06-24T10:00:31.306Z",
-      "updatedAt": "2026-06-24T10:49:40.865Z",
+      "updatedAt": "2026-07-02T17:14:32.757Z",
       "items": [
         {
           "id": "5e7a9408-6234-41c5-9cb2-ec06e58f4007",
@@ -4520,7 +4620,7 @@
       "minimumStock": 10
     }
   ],
-  "orderNumber": 1112,
+  "orderNumber": 1114,
   "usedReferralCodes": [
     "2RGMR8",
     "TXK2LF"
@@ -6083,6 +6183,111 @@
         }
       },
       "createdAt": "2026-06-21T03:54:09.877Z"
+    },
+    {
+      "id": "bu_superadmin",
+      "name": "Super Admin",
+      "pin": "$2b$10$EPZeyFEmAk5IDdXuy9CTxukXtCIobU.Ov2fbxMGkpsDvuoupiPN9.",
+      "role": "super-admin",
+      "permissions": {
+        "pos": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "captain": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kitchen": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "billing": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kot": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "purchase": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "inventory": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "menu": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "hr": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "loyalty": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "customers": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "reports": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "dashboard": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "onlineOrders": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "users": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "expenses": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        }
+      },
+      "createdAt": "2026-06-24T17:54:30.333Z"
     }
   ],
   "categories": [
@@ -6100,19 +6305,19 @@
     },
     {
       "id": "c3",
-      "name": "Fried items",
+      "name": "Salads",
       "displayOrder": 3,
       "color": "#10b981"
     },
     {
       "id": "c4",
-      "name": "Golden crunchy chicken",
+      "name": "Sides",
       "displayOrder": 4,
       "color": "#dc2626"
     },
     {
       "id": "c5",
-      "name": "Golden Glaze Chicken",
+      "name": "TDG Crispy Chicken",
       "displayOrder": 5,
       "color": "#fbbf24"
     },
@@ -6124,7 +6329,7 @@
     },
     {
       "id": "c7",
-      "name": "Ice Cream",
+      "name": "Softy",
       "displayOrder": 7,
       "color": "#ec4899"
     },
@@ -6145,378 +6350,399 @@
     {
       "id": "m1",
       "categoryId": "c1",
-      "name": "Veg - BBQ Paneer",
-      "price": 100,
+      "name": "Non-Veg - Spicy Chicken Gyro (Regular)",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m2",
       "categoryId": "c1",
-      "name": "Veg - Beetroot Falafal",
-      "price": 100,
+      "name": "Non-Veg - Spicy Chicken Gyro (Large)",
+      "price": 249,
       "isAvailable": true
     },
     {
       "id": "m3",
       "categoryId": "c1",
-      "name": "Veg - Mushroom Falafal",
-      "price": 100,
+      "name": "Non-Veg - Cream Chicken Gyro (Regular)",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m4",
       "categoryId": "c1",
-      "name": "Non-Veg - Sour Cream Chicken",
-      "price": 100,
+      "name": "Non-Veg - Cream Chicken Gyro (Large)",
+      "price": 249,
       "isAvailable": true
     },
     {
       "id": "m5",
       "categoryId": "c1",
-      "name": "Non-Veg - BBQ Chicken",
-      "price": 100,
+      "name": "Non-Veg - BBQ Chicken Gyro (Regular)",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m6",
       "categoryId": "c1",
-      "name": "Non-Veg - Peri Peri Chicken",
-      "price": 100,
+      "name": "Non-Veg - BBQ Chicken Gyro (Large)",
+      "price": 249,
       "isAvailable": true
     },
     {
       "id": "m7",
       "categoryId": "c1",
-      "name": "Non-Veg - Crunchy Chicken",
-      "price": 100,
+      "name": "Non-Veg - Pesto Chicken Gyro (Regular)",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m8",
       "categoryId": "c1",
-      "name": "Non-Veg - Fried Fish",
-      "price": 100,
+      "name": "Non-Veg - Pesto Chicken Gyro (Large)",
+      "price": 249,
       "isAvailable": true
     },
     {
       "id": "m9",
       "categoryId": "c1",
-      "name": "Non-Veg - BBQ Prawn",
-      "price": 100,
+      "name": "Veg - Spicy Paneer Gyro (Regular)",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m10",
-      "categoryId": "c2",
-      "name": "Veg - Spinach (veg meat)",
-      "price": 100,
+      "categoryId": "c1",
+      "name": "Veg - Spicy Paneer Gyro (Large)",
+      "price": 249,
       "isAvailable": true
     },
     {
       "id": "m11",
-      "categoryId": "c2",
-      "name": "Veg - Beetroot",
-      "price": 100,
+      "categoryId": "c1",
+      "name": "Veg - Cream Paneer Gyro (Regular)",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m12",
-      "categoryId": "c2",
-      "name": "Non-Veg - Fried Chicken",
-      "price": 100,
+      "categoryId": "c1",
+      "name": "Veg - Cream Paneer Gyro (Large)",
+      "price": 249,
       "isAvailable": true
     },
     {
       "id": "m13",
-      "categoryId": "c2",
-      "name": "Non-Veg - Sourcream Chicken",
-      "price": 100,
+      "categoryId": "c1",
+      "name": "Veg - BBQ Paneer Gyro (Regular)",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m14",
-      "categoryId": "c2",
-      "name": "Non-Veg - BBQ Chicken",
-      "price": 100,
+      "categoryId": "c1",
+      "name": "Veg - BBQ Paneer Gyro (Large)",
+      "price": 249,
       "isAvailable": true
     },
     {
       "id": "m15",
-      "categoryId": "c2",
-      "name": "Non-Veg - Fish with Egg",
-      "price": 100,
+      "categoryId": "c1",
+      "name": "Veg - Pesto Paneer Gyro (Regular)",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m16",
-      "categoryId": "c3",
-      "name": "Veg Nuggets",
-      "price": 100,
+      "categoryId": "c1",
+      "name": "Veg - Pesto Paneer Gyro (Large)",
+      "price": 249,
       "isAvailable": true
     },
     {
       "id": "m17",
-      "categoryId": "c3",
-      "name": "French Fries",
-      "price": 100,
+      "categoryId": "c2",
+      "name": "Non-Veg - Spicy Egg Burger",
+      "price": 79,
       "isAvailable": true
     },
     {
       "id": "m18",
-      "categoryId": "c3",
-      "name": "Chicken Nuggets",
-      "price": 100,
+      "categoryId": "c2",
+      "name": "Non-Veg - Crispy Chicken Burger",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m19",
-      "categoryId": "c3",
-      "name": "Fish Finger",
-      "price": 100,
+      "categoryId": "c2",
+      "name": "Veg - Spicy Paneer Burger",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m20",
-      "categoryId": "c4",
-      "name": "Fried Chicken (1pc)",
-      "price": 69,
+      "categoryId": "c3",
+      "name": "Non-Veg - Chicken Salad",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m21",
-      "categoryId": "c4",
-      "name": "Fried Chicken (2pc)",
-      "price": 129,
+      "categoryId": "c3",
+      "name": "Veg - Paneer Salad",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m22",
       "categoryId": "c4",
-      "name": "Fried Chicken (4pc)",
-      "price": 249,
+      "name": "Non-Veg - Loaded Chicken Fries",
+      "price": 149,
       "isAvailable": true
     },
     {
       "id": "m23",
       "categoryId": "c4",
-      "name": "Fried Chicken (8pc)",
-      "price": 499,
+      "name": "Non-Veg - Fries",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m24",
       "categoryId": "c4",
-      "name": "Strips (3pc)",
-      "price": 119,
+      "name": "Veg - Loaded Paneer Fries",
+      "price": 149,
       "isAvailable": true
     },
     {
       "id": "m25",
       "categoryId": "c4",
-      "name": "Strips (6pc)",
-      "price": 229,
+      "name": "Veg - 6 pcs Halloumi Strips",
+      "price": 149,
       "isAvailable": true
     },
     {
       "id": "m26",
-      "categoryId": "c4",
-      "name": "Strips (9pc)",
-      "price": 349,
+      "categoryId": "c5",
+      "name": "Non-Veg - 1 pcs Crispy Chicken (1 Dip)",
+      "price": 70,
       "isAvailable": true
     },
     {
       "id": "m27",
-      "categoryId": "c4",
-      "name": "Strips (12pc)",
-      "price": 479,
+      "categoryId": "c5",
+      "name": "Non-Veg - 2 Pcs Crispy Chicken (1 Dip)",
+      "price": 140,
       "isAvailable": true
     },
     {
       "id": "m28",
-      "categoryId": "c4",
-      "name": "Wings (3pc)",
-      "price": 109,
+      "categoryId": "c5",
+      "name": "Non-Veg - 4 pcs Crispy Chicken (2 Dip)",
+      "price": 280,
       "isAvailable": true
     },
     {
       "id": "m29",
-      "categoryId": "c4",
-      "name": "Wings (6pc)",
-      "price": 219,
+      "categoryId": "c5",
+      "name": "Non-Veg - 8 pcs Crispy Chicken (4 Dip)",
+      "price": 560,
       "isAvailable": true
     },
     {
       "id": "m30",
-      "categoryId": "c4",
-      "name": "Wings (9pc)",
-      "price": 329,
+      "categoryId": "c5",
+      "name": "Non-Veg - 12 pcs Crispy Chicken (6 Dip)",
+      "price": 840,
       "isAvailable": true
     },
     {
       "id": "m31",
-      "categoryId": "c4",
-      "name": "Wings (12pc)",
-      "price": 429,
+      "categoryId": "c5",
+      "name": "Non-Veg - 3 pcs Crispy Wings (1 Dip)",
+      "price": 90,
       "isAvailable": true
     },
     {
       "id": "m32",
       "categoryId": "c5",
-      "name": "Glaze Strips (3pc)",
-      "price": 149,
+      "name": "Non-Veg - 6 pcs Crispy Wings (2 Dip)",
+      "price": 180,
       "isAvailable": true
     },
     {
       "id": "m33",
       "categoryId": "c5",
-      "name": "Glaze Strips (6pc)",
-      "price": 299,
+      "name": "Non-Veg - 9 pcs Crispy Wings (3 Dip)",
+      "price": 270,
       "isAvailable": true
     },
     {
       "id": "m34",
       "categoryId": "c5",
-      "name": "Glaze Wings (3pc)",
-      "price": 149,
+      "name": "Non-Veg - 20 pcs Crispy Wings (6 Dip)",
+      "price": 600,
       "isAvailable": true
     },
     {
       "id": "m35",
       "categoryId": "c5",
-      "name": "Glaze Wings (6pc)",
-      "price": 299,
+      "name": "Non-Veg - 60 pcs Crispy Wings (12 Dip)",
+      "price": 1500,
       "isAvailable": true
     },
     {
       "id": "m36",
-      "categoryId": "c6",
-      "name": "Chocolate Blizzard",
-      "price": 100,
+      "categoryId": "c5",
+      "name": "Non-Veg - 3 Pcs Crispy Strips (1 Dip + Regular Drink)",
+      "price": 120,
       "isAvailable": true
     },
     {
       "id": "m37",
-      "categoryId": "c6",
-      "name": "Vanilla Blizzard",
-      "price": 100,
+      "categoryId": "c5",
+      "name": "Non-Veg - 6 Pcs Crispy Strips (2 Dip)",
+      "price": 240,
       "isAvailable": true
     },
     {
       "id": "m38",
-      "categoryId": "c6",
-      "name": "Strawberry Blizzard",
-      "price": 100,
+      "categoryId": "c5",
+      "name": "Non-Veg - 9 Pcs Crispy Strips (3 Dip)",
+      "price": 360,
       "isAvailable": true
     },
     {
       "id": "m39",
-      "categoryId": "c7",
-      "name": "Bourbon Softy",
-      "price": 59,
+      "categoryId": "c5",
+      "name": "Non-Veg - 20 Pcs Crispy Strips (6 Dip)",
+      "price": 800,
       "isAvailable": true
     },
     {
       "id": "m40",
-      "categoryId": "c7",
-      "name": "Vanila Softy",
-      "price": 49,
+      "categoryId": "c5",
+      "name": "Non-Veg - 60 Pcs Crispy Strips (12 Dip)",
+      "price": 2400,
       "isAvailable": true
     },
     {
       "id": "m41",
-      "categoryId": "c7",
-      "name": "Choco Dip Softy",
-      "price": 89,
+      "categoryId": "c6",
+      "name": "Veg - Vanilla Shake (Regular)",
+      "price": 79,
       "isAvailable": true
     },
     {
       "id": "m42",
-      "categoryId": "c7",
-      "name": "Caramel Sundae",
-      "price": 69,
+      "categoryId": "c6",
+      "name": "Veg - Vanilla Shake (Large)",
+      "price": 139,
       "isAvailable": true
     },
     {
       "id": "m43",
-      "categoryId": "c7",
-      "name": "Strawberry Sundae",
-      "price": 69,
+      "categoryId": "c6",
+      "name": "Veg - Strawberry Shake (Regular)",
+      "price": 79,
       "isAvailable": true
     },
     {
       "id": "m44",
-      "categoryId": "c7",
-      "name": "Chocolate Sundae",
-      "price": 69,
+      "categoryId": "c6",
+      "name": "Veg - Strawberry Shake (Large)",
+      "price": 139,
       "isAvailable": true
     },
     {
       "id": "m45",
-      "categoryId": "c8",
-      "name": "Chocolate Donuts",
-      "price": 119,
+      "categoryId": "c6",
+      "name": "Veg - Biscoff Shake (Regular)",
+      "price": 79,
       "isAvailable": true
     },
     {
       "id": "m46",
-      "categoryId": "c8",
-      "name": "Vanila Donuts",
-      "price": 99,
+      "categoryId": "c6",
+      "name": "Veg - Biscoff Shake (Large)",
+      "price": 139,
       "isAvailable": true
     },
     {
       "id": "m47",
-      "categoryId": "c8",
-      "name": "Tiramissu",
-      "price": 249,
+      "categoryId": "c6",
+      "name": "Veg - Oreo Shake (Regular)",
+      "price": 79,
       "isAvailable": true
     },
     {
       "id": "m48",
-      "categoryId": "c8",
-      "name": "Redvelvet Cake",
-      "price": 249,
+      "categoryId": "c6",
+      "name": "Veg - Oreo Shake (Large)",
+      "price": 139,
       "isAvailable": true
     },
     {
       "id": "m49",
-      "categoryId": "c8",
-      "name": "Banoffee",
-      "price": 249,
+      "categoryId": "c6",
+      "name": "Veg - Kunafa Pistachio Shake (Regular)",
+      "price": 79,
       "isAvailable": true
     },
     {
       "id": "m50",
-      "categoryId": "c8",
-      "name": "Caramel Hazelnut",
-      "price": 249,
+      "categoryId": "c6",
+      "name": "Veg - Kunafa Pistachio Shake (Large)",
+      "price": 139,
       "isAvailable": true
     },
     {
       "id": "m51",
-      "categoryId": "c8",
-      "name": "Chocolate Dome",
-      "price": 249,
+      "categoryId": "c7",
+      "name": "Veg - Vanilla Softy",
+      "price": 39,
       "isAvailable": true
     },
     {
       "id": "m52",
-      "categoryId": "c9",
-      "name": "Coke",
-      "price": 39,
+      "categoryId": "c8",
+      "name": "Veg - Chocolate Brownie",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m53",
-      "categoryId": "c9",
-      "name": "Lemonade",
-      "price": 39,
+      "categoryId": "c8",
+      "name": "Veg - Blondy Cake",
+      "price": 99,
       "isAvailable": true
     },
     {
       "id": "m54",
       "categoryId": "c9",
-      "name": "Kombhucha",
+      "name": "Cola (Regular)",
+      "price": 59,
+      "isAvailable": true
+    },
+    {
+      "id": "m55",
+      "categoryId": "c9",
+      "name": "Cola (Large)",
+      "price": 99,
+      "isAvailable": true
+    },
+    {
+      "id": "m56",
+      "categoryId": "c9",
+      "name": "Lemonade (Regular)",
+      "price": 59,
+      "isAvailable": true
+    },
+    {
+      "id": "m57",
+      "categoryId": "c9",
+      "name": "Lemonade (Large)",
       "price": 99,
       "isAvailable": true
     }
@@ -6558,6 +6784,15 @@
   ],
   "purchaseOrders": [
     {
+      "id": "PO002",
+      "supplier": "AAA",
+      "items": 1,
+      "total": 20000,
+      "status": "completed",
+      "date": "2026-07-02",
+      "expectedDate": "2026-07-03"
+    },
+    {
       "id": "PO001",
       "supplier": "AAA",
       "items": 1,
@@ -6565,6 +6800,15 @@
       "status": "completed",
       "date": "2026-06-24",
       "expectedDate": "2026-06-24"
+    },
+    {
+      "id": "PO003",
+      "supplier": "Anbarasu",
+      "items": 1,
+      "total": 100000,
+      "status": "completed",
+      "date": "2026-07-02",
+      "expectedDate": "2026-07-01"
     }
   ],
   "poItems": [
@@ -6576,9 +6820,41 @@
       "unit": "kg",
       "rate": 1000,
       "received": 0
+    },
+    {
+      "id": "PIPO0020",
+      "poId": "PO002",
+      "name": "Chicken Breast",
+      "quantity": 4,
+      "unit": "kg",
+      "rate": 5000,
+      "received": 0
+    },
+    {
+      "id": "PIPO0030",
+      "poId": "PO003",
+      "name": "Burger Buns",
+      "quantity": 100,
+      "unit": "kg",
+      "rate": 1000,
+      "received": 0
     }
   ],
   "grns": [
+    {
+      "id": "GRN002",
+      "poId": "PO002",
+      "supplier": "AAA",
+      "items": 1,
+      "totalValue": 20000,
+      "invoiceNo": "INV-2026-9562",
+      "invoiceImage": null,
+      "date": "2026-07-02",
+      "status": "completed",
+      "receivedBy": "",
+      "remarks": "",
+      "vehicleNo": ""
+    },
     {
       "id": "GRN001",
       "poId": "PO001",
@@ -6592,6 +6868,58 @@
       "receivedBy": "",
       "remarks": "",
       "vehicleNo": ""
+    },
+    {
+      "id": "GRN003",
+      "poId": "PO003",
+      "supplier": "Anbarasu",
+      "items": 1,
+      "totalValue": 100000,
+      "invoiceNo": "INV-2026-7429",
+      "invoiceImage": null,
+      "date": "2026-07-02",
+      "status": "completed",
+      "receivedBy": "",
+      "remarks": "",
+      "vehicleNo": ""
+    }
+  ],
+  "settings": {
+    "company": {
+      "name": "Ten Den Gyros",
+      "address": "Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram",
+      "phone": "000000000",
+      "email": "",
+      "gst": "",
+      "logo": null
+    },
+    "theme": {
+      "accentPrimary": "#e63946",
+      "accentPrimaryDark": "#c1121f",
+      "bgPrimary": "#f5f5f7"
+    },
+    "printers": [
+      {
+        "id": "default",
+        "name": "Default Printer",
+        "ip": "",
+        "type": "browser",
+        "isDefault": true
+      }
+    ]
+  },
+  "vendorPayments": [
+    {
+      "id": "VP1783009311980",
+      "supplier": "AAA",
+      "poId": "PO001",
+      "grnId": "GRN001",
+      "amount": 100,
+      "paymentMethod": "bank",
+      "reference": "",
+      "paymentDate": "2026-07-02",
+      "notes": "",
+      "createdAt": "2026-07-02T16:21:51.980Z"
     }
   ]
 }

@@ -8,6 +8,7 @@
     "server": "node server/index.js",
     "build": "vite build",
     "deploy": "vite build && node scripts/deploy.js",
+    "deploy:hostinger": "node scripts/deploy-hostinger.js",
     "preview": "vite preview",
     "start": "vite build && node server/index.js"
   },
@@ -26,6 +27,7 @@
     "recharts": "^2.12.2",
     "socket.io": "^4.7.4",
     "socket.io-client": "^4.7.4",
+    "tesseract.js": "^7.0.0",
     "uuid": "^9.0.1",
     "zustand": "^4.5.1"
   },

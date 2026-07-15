@@ -88,7 +88,7 @@ class _AssetScreenState extends State<AssetScreen> {
             ),
             SizedBox(height: 8),
             Text(
-              'Max 10 assets. You can replace pending assets.',
+              'Max 10 assets. Share the OTP with your friend to verify.',
               style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
             ),
           ],
@@ -100,8 +100,12 @@ class _AssetScreenState extends State<AssetScreen> {
               if (nameCtrl.text.isEmpty || phoneCtrl.text.isEmpty) return;
               Navigator.pop(ctx);
               try {
-                await ApiService().addAsset(nameCtrl.text, phoneCtrl.text);
+                final result = await ApiService().addAsset(nameCtrl.text, phoneCtrl.text);
+                final otp = result['otp'];
                 _fetchAssets();
+                if (mounted && otp != null) {
+                  _showOtpDialog(nameCtrl.text, phoneCtrl.text, otp);
+                }
               } catch (e) {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -111,6 +115,117 @@ class _AssetScreenState extends State<AssetScreen> {
               }
             },
             child: Text('Add', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showOtpDialog(String name, String phone, String otp) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: TDGColors.cardMid,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: TDGColors.gold),
+        ),
+        title: Text('ASSET ADDED', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('$name ($phone) has been added.', style: TextStyle(color: TDGColors.greyLight, fontSize: 13)),
+            SizedBox(height: 16),
+            Text('Share this OTP with them:', style: TextStyle(color: TDGColors.white, fontSize: 12)),
+            SizedBox(height: 8),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              decoration: BoxDecoration(
+                color: TDGColors.cardDark,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: TDGColors.gold, width: 2),
+              ),
+              child: Text(
+                otp,
+                style: TextStyle(color: TDGColors.gold, fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: 8),
+              ),
+            ),
+            SizedBox(height: 12),
+            Text(
+              'Your friend must enter this OTP when signing up with your referral code.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('DONE', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showVerifyOtpDialog(String name, String phone) {
+    final otpCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: TDGColors.cardMid,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: Colors.green),
+        ),
+        title: Text('VERIFY OTP', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Enter the OTP shared with $name', style: TextStyle(color: TDGColors.greyLight, fontSize: 13)),
+            SizedBox(height: 14),
+            TextField(
+              controller: otpCtrl,
+              keyboardType: TextInputType.number,
+              maxLength: 4,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: TDGColors.white, fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: 8),
+              decoration: InputDecoration(
+                counterText: '',
+                hintText: '0000',
+                hintStyle: TextStyle(color: TDGColors.grey, fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: 8),
+                filled: true,
+                fillColor: TDGColors.cardDark,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: TDGColors.gold)),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: TDGColors.gold, width: 2)),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text('Cancel', style: TextStyle(color: TDGColors.greyLight))),
+          TextButton(
+            onPressed: () async {
+              final otp = otpCtrl.text.trim();
+              if (otp.length != 4) return;
+              Navigator.pop(ctx);
+              try {
+                await ApiService().verifyAssetOtp(phone, otp);
+                _fetchAssets();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('OTP verified! Asset activated.'), backgroundColor: Colors.green),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+                  );
+                }
+              }
+            },
+            child: Text('VERIFY', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -469,15 +584,20 @@ class _AssetScreenState extends State<AssetScreen> {
                   '${asset['phone'] ?? ''} • $statusText',
                   style: TextStyle(color: statusColor, fontSize: 12),
                 ),
-                if (distributed > 0)
-                  Text(
-                    '$distributed pts distributed',
-                    style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
-                  ),
-              ],
-            ),
-          ),
-          PopupMenuButton(
+                    if (distributed > 0)
+                      Text(
+                        '$distributed pts distributed',
+                        style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
+                      ),
+                  ],
+                ),
+              ),
+              if (!isDined && status == 'pending')
+                TextButton(
+                  onPressed: () => _showVerifyOtpDialog(asset['name'] ?? '', asset['phone'] ?? ''),
+                  child: Text('Verify', style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
+                ),
+              PopupMenuButton(
             icon: Icon(Icons.more_vert, color: TDGColors.greyLight),
             color: TDGColors.cardMid,
             itemBuilder: (ctx) => [

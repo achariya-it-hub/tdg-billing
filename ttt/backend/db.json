@@ -5,7 +5,7 @@
       "name": "ROHIT",
       "email": "rohit@example.com",
       "phone": "+91 9876543210",
-      "password": "$2a$10$7Z8.y.7k7XwU2Z71Q2u6ZeG5W2rV/T7t1b/F1l6Z2H8j7K7V8e2bC",
+      "password": "$2a$10$6nx0oNp8V9.8GmFFcV69WeKN/ym5Lmblx5wi2K2EK4xom8ifJxz0q",
       "rubyBalance": 2450,
       "denLevel": "Gold",
       "completedDens": 4,
@@ -54,6 +54,33 @@
         },
         {
           "id": "s_1779433881907_2",
+          "title": "New Member Gift",
+          "subtitle": "Tap to scratch",
+          "amount": 200,
+          "claimed": false
+        }
+      ]
+    },
+    {
+      "id": "u_1783261403959",
+      "name": "Test User",
+      "email": "testuser@example.com",
+      "phone": "+91 9999999999",
+      "password": "$2a$10$C0HHtCW48dhvDh01CCLMXOu4Qlbbl.HytFCQ8oCd10yRJQrHn0UxS",
+      "rubyBalance": 2450,
+      "denLevel": "Gold",
+      "completedDens": 4,
+      "denProgress": 6,
+      "scratchCards": [
+        {
+          "id": "s_1783261403959_1",
+          "title": "Welcome Scratch Card",
+          "subtitle": "Tap to scratch",
+          "amount": 100,
+          "claimed": false
+        },
+        {
+          "id": "s_1783261403959_2",
           "title": "New Member Gift",
           "subtitle": "Tap to scratch",
           "amount": 200,

@@ -28,6 +28,9 @@ app.post('/api/auth/signup', authController.signup);
 app.post('/api/auth/login', authController.login);
 app.get('/api/auth/profile', auth, authController.getProfile);
 app.put('/api/auth/profile', auth, authController.updateProfile);
+app.post('/api/auth/forgot-password', authController.forgotPassword);
+app.post('/api/auth/forgot-password-email', authController.forgotPasswordEmail);
+app.post('/api/auth/reset-password', authController.resetPassword);
 
 // Menu Routes
 app.get('/api/menu', menuController.getMenu);

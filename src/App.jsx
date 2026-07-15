@@ -3,6 +3,8 @@ import { ToastProvider } from './components/ui/Toaster'
 import OfflineIndicator from './components/OfflineIndicator'
 import Login from './pages/Login'
 import Kiosk from './pages/Kiosk'
+import LandingPage from './pages/LandingPage'
+import CustomerAuth from './pages/CustomerAuth'
 import Reports from './pages/Reports'
 import Billing from './pages/Billing'
 import POS from './pages/POS'
@@ -18,6 +20,7 @@ import Customers from './pages/Customers'
 import Loyalty from './pages/Loyalty'
 import Users from './pages/Users'
 import Expenses from './pages/Expenses'
+import Accounts from './pages/Accounts'
 import Settings from './pages/Settings'
 import Layout from './components/Layout'
 import { SettingsProvider } from './lib/settingsContext'
@@ -58,7 +61,7 @@ function ProtectedRoute() {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/staff-login" replace />
   }
 
   return <Outlet />
@@ -76,7 +79,7 @@ function AppLayout() {
 
   const handleLogout = () => {
     localStorage.removeItem('user')
-    window.location.href = '/login'
+    window.location.href = '/staff-login'
   }
 
   return (
@@ -85,37 +88,91 @@ function AppLayout() {
 }
 
 export default function App() {
+  const hostname = window.location.hostname;
+
+  const getRoutes = () => {
+    if (hostname.includes('pos.')) {
+      // POS Subdomain: pos.tendengyros.com
+      return (
+        <Routes>
+          <Route path="/" element={<Navigate to="/staff-login" replace />} />
+          <Route path="/staff-login" element={<Login />} />
+          <Route path="/login" element={<Navigate to="/staff-login" replace />} />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AppLayout />}>
+              <Route path="/pos" element={<POS />} />
+              <Route path="/kitchen" element={<Kitchen />} />
+              <Route path="/kot" element={<KOT />} />
+              <Route path="/purchase" element={<Purchase />} />
+              <Route path="/inventory" element={<Inventory />} />
+              <Route path="/menu" element={<Menu />} />
+              <Route path="/hr" element={<HR />} />
+              <Route path="/customers" element={<Customers />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/billing" element={<Billing />} />
+              <Route path="/online-orders" element={<OnlineOrders />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/loyalty" element={<Loyalty />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/expenses" element={<Expenses />} />
+              <Route path="/accounts" element={<Accounts />} />
+              <Route path="/settings" element={<Settings />} />
+            </Route>
+          </Route>
+          <Route path="*" element={<Navigate to="/staff-login" replace />} />
+        </Routes>
+      )
+    } else if (hostname.includes('den.')) {
+      // Den Subdomain: den.tendengyros.com (Guest Auth & Self Order Kiosk)
+      return (
+        <Routes>
+          <Route path="/" element={<Navigate to="/kiosk" replace />} />
+          <Route path="/kiosk" element={<Kiosk />} />
+          <Route path="/login" element={<CustomerAuth />} />
+          <Route path="*" element={<Navigate to="/kiosk" replace />} />
+        </Routes>
+      )
+    } else {
+      // Main Domain: tendengyros.com (And localhost / local fallback for development)
+      return (
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/kiosk" element={<Kiosk />} />
+          <Route path="/login" element={<CustomerAuth />} />
+          <Route path="/staff-login" element={<Login />} />
+          
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AppLayout />}>
+              <Route path="/pos" element={<POS />} />
+              <Route path="/kitchen" element={<Kitchen />} />
+              <Route path="/kot" element={<KOT />} />
+              <Route path="/purchase" element={<Purchase />} />
+              <Route path="/inventory" element={<Inventory />} />
+              <Route path="/menu" element={<Menu />} />
+              <Route path="/hr" element={<HR />} />
+              <Route path="/customers" element={<Customers />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/billing" element={<Billing />} />
+              <Route path="/online-orders" element={<OnlineOrders />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/loyalty" element={<Loyalty />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/expenses" element={<Expenses />} />
+              <Route path="/accounts" element={<Accounts />} />
+              <Route path="/settings" element={<Settings />} />
+            </Route>
+          </Route>
+        </Routes>
+      )
+    }
+  }
+
   return (
     <BrowserRouter>
       <SettingsProvider>
         <ToastProvider>
           <OfflineIndicator />
-          <Routes>
-            <Route path="/kiosk" element={<Kiosk />} />
-            <Route path="/login" element={<Login />} />
-            
-            <Route element={<ProtectedRoute />}>
-              <Route element={<AppLayout />}>
-                <Route path="/" element={<Navigate to="/pos" replace />} />
-                <Route path="/pos" element={<POS />} />
-                <Route path="/kitchen" element={<Kitchen />} />
-                <Route path="/kot" element={<KOT />} />
-                <Route path="/purchase" element={<Purchase />} />
-                <Route path="/inventory" element={<Inventory />} />
-                <Route path="/menu" element={<Menu />} />
-                <Route path="/hr" element={<HR />} />
-                <Route path="/customers" element={<Customers />} />
-                <Route path="/reports" element={<Reports />} />
-                <Route path="/billing" element={<Billing />} />
-                <Route path="/online-orders" element={<OnlineOrders />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/loyalty" element={<Loyalty />} />
-                <Route path="/users" element={<Users />} />
-                <Route path="/expenses" element={<Expenses />} />
-                <Route path="/settings" element={<Settings />} />
-              </Route>
-            </Route>
-          </Routes>
+          {getRoutes()}
         </ToastProvider>
       </SettingsProvider>
     </BrowserRouter>

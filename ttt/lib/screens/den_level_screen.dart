@@ -14,15 +14,7 @@ class DenLevelScreen extends StatefulWidget {
 class _DenLevelScreenState extends State<DenLevelScreen> {
   bool _isLoading = false;
   Map<String, dynamic>? _denProgress;
-
-  final List<Map<String, dynamic>> _mockDenMembers = [
-    {'name': 'Rohit Sharma', 'role': 'Den Leader', 'joined': '10 May', 'earned': 1200, 'avatarColor': Colors.amber, 'status': 'Online'},
-    {'name': 'Bala Subramanian', 'role': 'Co-Leader', 'joined': '11 May', 'earned': 950, 'avatarColor': Colors.orange, 'status': 'Online'},
-    {'name': 'Priya Mehta', 'role': 'Elite Champion', 'joined': '12 May', 'earned': 800, 'avatarColor': Colors.purple, 'status': 'Active'},
-    {'name': 'Aman Verma', 'role': 'Active Member', 'joined': '13 May', 'earned': 550, 'avatarColor': Colors.blue, 'status': 'Active'},
-    {'name': 'Sahil Khan', 'role': 'Active Member', 'joined': '14 May', 'earned': 450, 'avatarColor': Colors.teal, 'status': 'Offline'},
-    {'name': 'Neha Gupta', 'role': 'New Recruit', 'joined': '15 May', 'earned': 200, 'avatarColor': Colors.pink, 'status': 'Online'},
-  ];
+  List<dynamic> _assets = [];
 
   @override
   void initState() {
@@ -37,6 +29,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
       if (mounted) {
         setState(() {
           _denProgress = progress;
+          _assets = progress['assets'] ?? [];
         });
       }
     } catch (e) {
@@ -197,7 +190,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Loyalty. Rewards. Prestige.',
+                            'Eat. Earn. Share.',
                             style: GoogleFonts.inter(
                               color: const Color(0xFFE5C158),
                               fontSize: 12,
@@ -399,11 +392,10 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
   }
 
   Widget _buildPrideProgressCard(BuildContext context) {
-    final completedDens = _denProgress?['completedDens'] ?? 4;
-    final members = _denProgress?['membersInCurrentDen'] ?? _denProgress?['denProgress'] ?? 6;
-    final requiredMembers = _denProgress?['requiredMembersPerDen'] ?? 10;
-    final double progressPercent = requiredMembers > 0 ? (members / requiredMembers) : 0.0;
-    final int degreesCompleted = (progressPercent * 5).toInt();
+    final totalAssets = _assets.length;
+    final dinedAssets = _assets.where((a) => a['hasDined'] == true).length;
+    final requiredAssets = 10;
+    final double progressPercent = requiredAssets > 0 ? (totalAssets / requiredAssets) : 0.0;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -443,7 +435,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'THE PRIDE LION',
+                      'YOUR ASSETS',
                       style: GoogleFonts.outfit(
                         color: Colors.white,
                         fontSize: 16,
@@ -453,7 +445,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      'Complete 10 Dens to become a Pride Lion.',
+                      'Refer 10 friends to complete your Den.',
                       style: GoogleFonts.inter(
                         color: TDGColors.grey,
                         fontSize: 11,
@@ -461,11 +453,6 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                     ),
                   ],
                 ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: TDGColors.grey,
-                size: 20,
               ),
             ],
           ),
@@ -476,25 +463,38 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(10, (index) {
-                final isCompleted = index < completedDens;
+                final isAdded = index < totalAssets;
+                final asset = isAdded ? _assets[index] : null;
+                final hasDined = asset?['hasDined'] == true;
                 return GestureDetector(
-                  onTap: () => _showDenMembersBottomSheet(context),
+                  onTap: isAdded ? () => _showDenMembersBottomSheet(context) : null,
                   child: Container(
                     width: 32,
                     height: 32,
                     margin: const EdgeInsets.symmetric(horizontal: 3),
                     decoration: BoxDecoration(
-                      color: isCompleted ? const Color(0xFF1E1600) : const Color(0xFF151515),
+                      color: isAdded ? const Color(0xFF1E1600) : const Color(0xFF151515),
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(
-                        color: isCompleted ? const Color(0xFFFFCC00) : const Color(0xFF252525),
+                        color: hasDined
+                            ? const Color(0xFF4CAF50)
+                            : isAdded
+                                ? const Color(0xFFFFCC00)
+                                : const Color(0xFF252525),
                         width: 1,
                       ),
                     ),
                     padding: const EdgeInsets.all(4),
-                    child: isCompleted
-                        ? Image.asset(
-                            'assets/images/den_lion.png',
+                    child: isAdded
+                        ? Center(
+                            child: Text(
+                              (asset?['name'] ?? '?')[0].toString().toUpperCase(),
+                              style: GoogleFonts.outfit(
+                                color: hasDined ? const Color(0xFF4CAF50) : TDGColors.gold,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
                           )
                         : null,
                   ),
@@ -505,7 +505,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
           const SizedBox(height: 14),
           Center(
             child: Text(
-              '$completedDens / 10 Dens Completed',
+              '$totalAssets / 10 Assets Added',
               style: GoogleFonts.outfit(
                 color: const Color(0xFFFFCC00),
                 fontSize: 12,
@@ -515,7 +515,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
           ),
           const Divider(color: Color(0xFF222222), height: 28),
           Text(
-            'Get 45 Degrees ( $degreesCompleted / 5 Completed )',
+            'Assets Dined: $dinedAssets / $totalAssets',
             style: GoogleFonts.inter(
               color: Colors.white,
               fontSize: 12,
@@ -642,9 +642,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
   }
 
   void _showDenMembersBottomSheet(BuildContext context) {
-    final currentLevel = _denProgress?['denLevel'] ?? _denProgress?['currentLevel'] ?? 'Gold';
-    final members = _denProgress?['membersInCurrentDen'] ?? _denProgress?['denProgress'] ?? 6;
-    final requiredMembers = _denProgress?['requiredMembersPerDen'] ?? 10;
+    final assetsCount = _assets.length;
 
     showModalBottomSheet(
       context: context,
@@ -669,7 +667,6 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Pull handle
               Container(
                 width: 40,
                 height: 4,
@@ -679,7 +676,6 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              // Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -689,7 +685,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                       ShaderMask(
                         shaderCallback: (bounds) => TDGColors.goldGradient.createShader(bounds),
                         child: Text(
-                          '${currentLevel.toUpperCase()} DEN MEMBERS',
+                          'MY ASSETS',
                           style: GoogleFonts.outfit(
                             color: Colors.white,
                             fontSize: 16,
@@ -700,7 +696,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '$members / $requiredMembers Active Members in Current Den',
+                        '$assetsCount / 10 Assets Added',
                         style: GoogleFonts.inter(color: TDGColors.grey, fontSize: 12),
                       ),
                     ],
@@ -713,150 +709,179 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
               ),
               const Divider(color: Color(0xFF2A2A2A), height: 24),
               const SizedBox(height: 8),
-              
-              // Members list
               ConstrainedBox(
                 constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.height * 0.5,
                 ),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _mockDenMembers.length,
-                  itemBuilder: (context, index) {
-                    final member = _mockDenMembers[index];
-                    final isOnline = member['status'] == 'Online';
-                    
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: TDGColors.cardDark,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: TDGColors.border),
-                      ),
-                      child: Row(
-                        children: [
-                          // Avatar stack with online indicator
-                          Stack(
+                child: _assets.isEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32),
+                        child: Center(
+                          child: Column(
                             children: [
-                              Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: TDGColors.goldGradient,
-                                ),
-                                padding: const EdgeInsets.all(2),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: TDGColors.cardLight,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      member['name'].substring(0, 1),
-                                      style: GoogleFonts.outfit(
-                                        color: TDGColors.gold,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: Container(
-                                  width: 12,
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: isOnline ? const Color(0xFF4CAF50) : const Color(0xFF9E9E9E),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: TDGColors.cardDark, width: 2),
-                                  ),
-                                ),
+                              Icon(Icons.person_add_outlined, color: TDGColors.grey, size: 40),
+                              const SizedBox(height: 12),
+                              Text(
+                                'No assets yet.\nInvite friends to build your Den!',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.inter(color: TDGColors.grey, fontSize: 13),
                               ),
                             ],
                           ),
-                          const SizedBox(width: 14),
-                          
-                          // Member Details
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                        ),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _assets.length,
+                        itemBuilder: (context, index) {
+                          final asset = _assets[index];
+                          final String name = asset['name'] ?? 'Unknown';
+                          final String phone = asset['phone'] ?? '';
+                          final String status = asset['status'] ?? 'pending';
+                          final bool hasDined = asset['hasDined'] == true;
+                          final int pointsDistributed = asset['pointsDistributed'] ?? 0;
+                          final bool isActive = status == 'active';
+
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: TDGColors.cardDark,
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: hasDined
+                                    ? const Color(0xFF4CAF50).withOpacity(0.4)
+                                    : TDGColors.border,
+                              ),
+                            ),
+                            child: Row(
                               children: [
-                                Text(
-                                  member['name'],
-                                  style: GoogleFonts.outfit(
-                                    color: TDGColors.white, 
-                                    fontSize: 14, 
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
+                                Stack(
                                   children: [
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      width: 44,
+                                      height: 44,
                                       decoration: BoxDecoration(
-                                        color: TDGColors.gold.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(4),
-                                        border: Border.all(color: TDGColors.gold.withOpacity(0.3), width: 0.5),
+                                        shape: BoxShape.circle,
+                                        gradient: hasDined
+                                            ? const LinearGradient(colors: [Color(0xFF66BB6A), Color(0xFF43A047)])
+                                            : TDGColors.goldGradient,
                                       ),
-                                      child: Text(
-                                        member['role'],
-                                        style: GoogleFonts.inter(
-                                          color: TDGColors.gold, 
-                                          fontSize: 9, 
-                                          fontWeight: FontWeight.w600,
+                                      padding: const EdgeInsets.all(2),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: TDGColors.cardLight,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            name.substring(0, 1).toUpperCase(),
+                                            style: GoogleFonts.outfit(
+                                              color: hasDined ? const Color(0xFF4CAF50) : TDGColors.gold,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(width: 8),
+                                    Positioned(
+                                      right: 0,
+                                      bottom: 0,
+                                      child: Container(
+                                        width: 12,
+                                        height: 12,
+                                        decoration: BoxDecoration(
+                                          color: isActive ? const Color(0xFF4CAF50) : const Color(0xFFFFB300),
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: TDGColors.cardDark, width: 2),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        name,
+                                        style: GoogleFonts.outfit(
+                                          color: TDGColors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                            decoration: BoxDecoration(
+                                              color: hasDined
+                                                  ? const Color(0xFF4CAF50).withOpacity(0.1)
+                                                  : TDGColors.gold.withOpacity(0.1),
+                                              borderRadius: BorderRadius.circular(4),
+                                              border: Border.all(
+                                                color: hasDined
+                                                    ? const Color(0xFF4CAF50).withOpacity(0.3)
+                                                    : TDGColors.gold.withOpacity(0.3),
+                                                width: 0.5,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              hasDined ? 'Dined' : status.toUpperCase(),
+                                              style: GoogleFonts.inter(
+                                                color: hasDined ? const Color(0xFF4CAF50) : TDGColors.gold,
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                          if (phone.isNotEmpty) ...[
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              phone,
+                                              style: GoogleFonts.inter(
+                                                color: TDGColors.grey,
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Spacer(),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
                                     Text(
-                                      'Joined ${member['joined']}',
+                                      '+$pointsDistributed pts',
+                                      style: GoogleFonts.outfit(
+                                        color: const Color(0xFF4CAF50),
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Distributed',
                                       style: GoogleFonts.inter(
-                                        color: TDGColors.grey, 
-                                        fontSize: 10,
+                                        color: TDGColors.grey,
+                                        fontSize: 9,
                                       ),
                                     ),
                                   ],
                                 ),
                               ],
                             ),
-                          ),
-                          
-                          // Earnings
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                '+${member['earned']} R',
-                                style: GoogleFonts.outfit(
-                                  color: const Color(0xFF4CAF50), 
-                                  fontSize: 13, 
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              Text(
-                                'Contributed',
-                                style: GoogleFonts.inter(
-                                  color: TDGColors.grey, 
-                                  fontSize: 9,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
               ),
               const SizedBox(height: 12),
-              
-              // Invite Button
               SizedBox(
                 width: double.infinity,
                 height: 48,
@@ -877,9 +902,9 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                     elevation: 0,
                   ),
                   child: Text(
-                    'Invite Friends to Den',
+                    'Add New Asset',
                     style: GoogleFonts.outfit(
-                      fontSize: 14, 
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
                     ),

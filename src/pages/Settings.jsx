@@ -145,8 +145,12 @@ function CompanyTab({ pin, settings, onSaved }) {
         <label style={labelStyle}>Address</label>
         <textarea style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }} value={form.address || ''} onChange={e => setForm({ ...form, address: e.target.value })} />
       </div>
-      <div style={{ marginBottom: '20px' }}>
-        <label style={labelStyle}>Logo</label>
+        <div style={{ marginBottom: '20px' }}>
+          <label style={labelStyle}>UPI ID / VPA</label>
+          <input style={inputStyle} value={form.upiId || ''} onChange={e => setForm({ ...form, upiId: e.target.value })} placeholder="e.g. merchant@upi" />
+        </div>
+        <div style={{ marginBottom: '20px' }}>
+          <label style={labelStyle}>Logo</label>
         {form.logo && <img src={form.logo} alt="Logo" style={{ height: '60px', marginBottom: '12px', borderRadius: '8px', border: '1px solid #e5e7eb' }} />}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <label style={{ ...btnPrimary, fontSize: '13px', padding: '8px 16px', cursor: 'pointer' }}>

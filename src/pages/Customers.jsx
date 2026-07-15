@@ -1,53 +1,58 @@
 import { useState, useEffect } from 'react'
-import { Users, Plus, Search, UserPlus, Gift, Star, Crown, TrendingUp, CreditCard, Phone, Mail, Calendar, MapPin, Award, Edit, Trash2, ChevronRight, History, Percent } from 'lucide-react'
+import { Users, Search, UserPlus, Gift, Star, Crown, TrendingUp, Users2, Plus, Copy, X, Check } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
-import Modal from '../components/ui/Modal'
-import { useToast } from '../components/ui/Toaster'
-
-const sampleCustomers = [
-  { id: '1', name: 'Rahul Sharma', phone: '+91 98765 43210', email: 'rahul.sharma@email.com', address: '42 MG Road, Mumbai', totalOrders: 45, totalSpent: 12500, points: 1250, tier: 'gold', joinDate: '2023-03-15', lastVisit: '2024-01-14' },
-  { id: '2', name: 'Priya Patel', phone: '+91 98765 43211', email: 'priya.patel@email.com', address: '15 Link Road, Mumbai', totalOrders: 28, totalSpent: 7800, points: 780, tier: 'silver', joinDate: '2023-06-20', lastVisit: '2024-01-13' },
-  { id: '3', name: 'Amit Kumar', phone: '+91 98765 43212', email: 'amit.kumar@email.com', address: '78 Station Road, Mumbai', totalOrders: 62, totalSpent: 18500, points: 2475, tier: 'platinum', joinDate: '2022-11-05', lastVisit: '2024-01-15' },
-  { id: '4', name: 'Sneha Gupta', phone: '+91 98765 43213', email: 'sneha.gupta@email.com', address: '23 JVPD Scheme, Mumbai', totalOrders: 15, totalSpent: 4200, points: 420, tier: 'bronze', joinDate: '2024-01-01', lastVisit: '2024-01-10' },
-  { id: '5', name: 'Vikram Singh', phone: '+91 98765 43214', email: 'vikram.singh@email.com', address: '56 Andheri East, Mumbai', totalOrders: 35, totalSpent: 9800, points: 980, tier: 'silver', joinDate: '2023-08-12', lastVisit: '2024-01-12' },
-]
-
-const sampleTransactions = [
-  { id: '1', customer: 'Rahul Sharma', points: 50, type: 'earned', order: 'ORD-1001', date: '2024-01-14', note: 'Order purchase' },
-  { id: '2', customer: 'Rahul Sharma', points: 200, type: 'redeemed', order: 'GIFT-001', date: '2024-01-13', note: 'Free meal redemption' },
-  { id: '3', customer: 'Amit Kumar', points: 150, type: 'earned', order: 'ORD-1045', date: '2024-01-15', note: 'Order purchase' },
-  { id: '4', customer: 'Priya Patel', points: 30, type: 'earned', order: 'ORD-1032', date: '2024-01-13', note: 'Order purchase' },
-  { id: '5', customer: 'Vikram Singh', points: 100, type: 'bonus', order: '-', date: '2024-01-10', note: 'Birthday bonus' },
-]
+import API_BASE from '../lib/apiConfig'
 
 const tierConfig = {
   platinum: { min: 2000, color: '#8b5cf6', bg: '#f5f3ff', icon: Crown, label: 'Platinum', discount: '15%' },
-  gold: { min: 1000, color: '#f59e0b', bg: '#fffbeb', icon: Award, label: 'Gold', discount: '10%' },
+  gold: { min: 1000, color: '#f59e0b', bg: '#fffbeb', icon: Crown, label: 'Gold', discount: '10%' },
   silver: { min: 500, color: '#6b7280', bg: '#f9fafb', icon: Star, label: 'Silver', discount: '5%' },
   bronze: { min: 0, color: '#92400e', bg: '#fef3c7', icon: Star, label: 'Bronze', discount: '2%' },
 }
 
 export default function Customers() {
-  const toast = useToast()
-  const [customers, setCustomers] = useState(sampleCustomers)
-  const [transactions, setTransactions] = useState(sampleTransactions)
+  const [user, setUser] = useState(null)
+  const [customers, setCustomers] = useState([])
+  const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('customers')
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [showPointsModal, setShowPointsModal] = useState(false)
-  const [selectedCustomer, setSelectedCustomer] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
 
-  const totalMembers = customers.length
-  const totalPointsIssued = customers.reduce((sum, c) => sum + c.points, 0)
-  const avgSpent = Math.round(customers.reduce((sum, c) => sum + c.totalSpent, 0) / customers.length)
-  const platinumCount = customers.filter(c => c.tier === 'platinum').length
+  const [searchPhone, setSearchPhone] = useState('')
+  const [denCustomer, setDenCustomer] = useState(null)
+  const [denLoading, setDenLoading] = useState(false)
+  const [denError, setDenError] = useState('')
 
-  const filteredCustomers = customers.filter(c =>
-    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.phone.includes(searchTerm) ||
-    c.email.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const [form, setForm] = useState({ name: '', email: '', phone: '' })
+  const [formLoading, setFormLoading] = useState(false)
+  const [formResult, setFormResult] = useState(null)
+  const [formError, setFormError] = useState('')
+
+  const [assetForm, setAssetForm] = useState({ name: '', phone: '' })
+  const [assetLoading, setAssetLoading] = useState(false)
+  const [assetOtp, setAssetOtp] = useState(null)
+
+  useEffect(() => {
+    try {
+      const u = JSON.parse(localStorage.getItem('user') || '{}')
+      setUser(u)
+    } catch {}
+    fetchCustomers()
+  }, [])
+
+  const getPin = () => user?.pin || ''
+
+  const fetchCustomers = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/customers`)
+      const data = await res.json()
+      setCustomers(Array.isArray(data) ? data : [])
+    } catch (e) {
+      console.error('Failed to fetch customers:', e)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const getTier = (points) => {
     if (points >= 2000) return 'platinum'
@@ -56,293 +61,382 @@ export default function Customers() {
     return 'bronze'
   }
 
-  const handleAddCustomer = () => {
-    toast.success('Customer added successfully!')
-    setShowAddModal(false)
+  const totalMembers = customers.length
+  const totalPointsIssued = customers.reduce((s, c) => s + (c.points || 0), 0)
+  const avgSpent = customers.length ? Math.round(customers.reduce((s, c) => s + (c.totalSpent || 0), 0) / customers.length) : 0
+  const platinumCount = customers.filter(c => getTier(c.points) === 'platinum').length
+
+  const filteredCustomers = customers.filter(c =>
+    (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (c.phone || '').includes(searchTerm) ||
+    (c.email || '').toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  const searchCustomer = async () => {
+    if (searchPhone.length < 8) { setDenError('Enter at least 8 digits'); return }
+    setDenLoading(true)
+    setDenError('')
+    setDenCustomer(null)
+    try {
+      const res = await fetch(`${API_BASE}/api/billing/customer-assets/${encodeURIComponent(searchPhone)}?pin=${getPin()}`)
+      const data = await res.json()
+      if (res.ok) setDenCustomer(data)
+      else setDenError(data.error || 'Customer not found')
+    } catch {
+      setDenError('Connection error')
+    }
+    setDenLoading(false)
   }
 
-  const handleAddPoints = (type) => {
-    toast.success(`${type === 'earned' ? 'Points credited' : 'Points redeemed'} successfully!`)
-    setShowPointsModal(false)
+  const handleCreateCustomer = async () => {
+    if (!form.name || !form.email || !form.phone) { setFormError('All fields required'); return }
+    setFormLoading(true)
+    setFormError('')
+    setFormResult(null)
+    try {
+      const res = await fetch(`${API_BASE}/api/billing/customers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), ...form })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setFormResult(data)
+        setForm({ name: '', email: '', phone: '' })
+        fetchCustomers()
+      } else {
+        setFormError(data.error || 'Failed to create customer')
+      }
+    } catch {
+      setFormError('Connection error')
+    }
+    setFormLoading(false)
+  }
+
+  const handleAddAsset = async () => {
+    if (!assetForm.name || !assetForm.phone || !denCustomer) return
+    setAssetLoading(true)
+    setAssetOtp(null)
+    try {
+      const res = await fetch(`${API_BASE}/api/billing/assets`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), customerPhone: denCustomer.phone, ...assetForm })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setAssetOtp(data.otp)
+        setAssetForm({ name: '', phone: '' })
+        searchCustomer()
+      } else {
+        alert(data.error || 'Failed to add asset')
+      }
+    } catch {
+      alert('Connection error')
+    }
+    setAssetLoading(false)
+  }
+
+  const copyOtp = (text) => {
+    navigator.clipboard.writeText(text).catch(() => {})
+  }
+
+  const inputStyle = {
+    width: '100%', padding: '12px 16px', borderRadius: '12px',
+    border: '1px solid #e5e7eb', fontSize: '14px', outline: 'none',
+    background: 'white', boxSizing: 'border-box'
   }
 
   return (
     <div>
-      {/* Header */}
       <div style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '28px', fontWeight: 700, color: '#1a1a2e', marginBottom: '8px' }}>
-          Customer Management
-        </h2>
-        <p style={{ color: '#6b7280' }}>Manage customers and reward points</p>
+        <h2 style={{ fontSize: '28px', fontWeight: 700, color: '#1a1a2e', marginBottom: '8px' }}>Customer Management</h2>
+        <p style={{ color: '#6b7280' }}>Manage customers, reward points, and asset network</p>
       </div>
 
-      {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
-        <Card>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '48px', height: '48px', background: '#eff6ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Users size={24} color="#3b82f6" />
-            </div>
-            <div>
-              <div style={{ fontSize: '24px', fontWeight: 700 }}>{totalMembers}</div>
-              <div style={{ fontSize: '13px', color: '#6b7280' }}>Total Members</div>
-            </div>
-          </div>
-        </Card>
-        <Card>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '48px', height: '48px', background: '#fffbeb', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Star size={24} color="#f59e0b" />
-            </div>
-            <div>
-              <div style={{ fontSize: '24px', fontWeight: 700 }}>{totalPointsIssued.toLocaleString()}</div>
-              <div style={{ fontSize: '13px', color: '#6b7280' }}>Points Issued</div>
-            </div>
-          </div>
-        </Card>
-        <Card>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '48px', height: '48px', background: '#f0fdf4', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <TrendingUp size={24} color="#10b981" />
-            </div>
-            <div>
-              <div style={{ fontSize: '24px', fontWeight: 700 }}>₹{avgSpent.toLocaleString()}</div>
-              <div style={{ fontSize: '13px', color: '#6b7280' }}>Avg Spending</div>
-            </div>
-          </div>
-        </Card>
-        <Card>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '48px', height: '48px', background: '#f5f3ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Crown size={24} color="#8b5cf6" />
-            </div>
-            <div>
-              <div style={{ fontSize: '24px', fontWeight: 700 }}>{platinumCount}</div>
-              <div style={{ fontSize: '13px', color: '#6b7280' }}>Platinum Members</div>
-            </div>
-          </div>
-        </Card>
+        <Card><div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ width: '48px', height: '48px', background: '#eff6ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Users size={24} color="#3b82f6" /></div>
+          <div><div style={{ fontSize: '24px', fontWeight: 700 }}>{totalMembers}</div><div style={{ fontSize: '13px', color: '#6b7280' }}>Total Members</div></div>
+        </div></Card>
+        <Card><div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ width: '48px', height: '48px', background: '#fffbeb', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Star size={24} color="#f59e0b" /></div>
+          <div><div style={{ fontSize: '24px', fontWeight: 700 }}>{totalPointsIssued.toLocaleString()}</div><div style={{ fontSize: '13px', color: '#6b7280' }}>Points Issued</div></div>
+        </div></Card>
+        <Card><div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ width: '48px', height: '48px', background: '#f0fdf4', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><TrendingUp size={24} color="#10b981" /></div>
+          <div><div style={{ fontSize: '24px', fontWeight: 700 }}>₹{avgSpent.toLocaleString()}</div><div style={{ fontSize: '13px', color: '#6b7280' }}>Avg Spending</div></div>
+        </div></Card>
+        <Card><div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ width: '48px', height: '48px', background: '#f5f3ff', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Crown size={24} color="#8b5cf6" /></div>
+          <div><div style={{ fontSize: '24px', fontWeight: 700 }}>{platinumCount}</div><div style={{ fontSize: '13px', color: '#6b7280' }}>Platinum Members</div></div>
+        </div></Card>
       </div>
 
-      {/* Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
         {[
           { id: 'customers', label: 'Customers', icon: Users },
-          { id: 'points', label: 'Points History', icon: Gift },
+          { id: 'den', label: 'Den Members', icon: Users2 },
+          { id: 'create', label: 'Create Customer', icon: UserPlus },
           { id: 'tiers', label: 'Tier Benefits', icon: Crown },
         ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            style={{
-              padding: '12px 24px',
-              borderRadius: '12px',
-              background: activeTab === tab.id ? '#e63946' : 'white',
-              color: activeTab === tab.id ? 'white' : '#6b7280',
-              fontWeight: 600,
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
-          >
-            <tab.icon size={18} />
-            {tab.label}
+          <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
+            padding: '12px 24px', borderRadius: '12px',
+            background: activeTab === tab.id ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'white',
+            color: activeTab === tab.id ? 'white' : '#6b7280',
+            fontWeight: 600, border: 'none', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px',
+            boxShadow: activeTab === tab.id ? '0 4px 16px rgba(230,57,70,0.3)' : '0 1px 3px rgba(0,0,0,0.04)'
+          }}>
+            <tab.icon size={18} /> {tab.label}
           </button>
         ))}
       </div>
 
-      {/* Search & Actions */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-        <div style={{ flex: 1, position: 'relative' }}>
-          <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
-          <input
-            type="text"
-            placeholder="Search by name, phone, or email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '14px 16px 14px 48px',
-              borderRadius: '12px',
-              border: '1px solid var(--border)',
-              background: 'white',
-              fontSize: '14px'
-            }}
-          />
-        </div>
-        <Button onClick={() => setShowAddModal(true)}>
-          <UserPlus size={18} />
-          Add Customer
-        </Button>
-      </div>
-
-      {/* Customers Grid */}
       {activeTab === 'customers' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '16px' }}>
-          {filteredCustomers.map(customer => {
-            const tier = tierConfig[customer.tier]
-            const TierIcon = tier.icon
-            
-            return (
-              <Card key={customer.id} hover>
-                <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
-                  <div style={{
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '16px',
-                    background: tier.bg,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '24px',
-                    fontWeight: 700,
-                    color: tier.color
-                  }}>
-                    {customer.name.split(' ').map(n => n[0]).join('')}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e' }}>{customer.name}</h3>
-                      <span style={{
-                        padding: '4px 10px',
-                        borderRadius: '8px',
-                        fontSize: '11px',
-                        fontWeight: 600,
-                        background: tier.bg,
-                        color: tier.color,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}>
-                        <TierIcon size={12} />
-                        {tier.label}
-                      </span>
+        <>
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+            <div style={{ flex: 1, position: 'relative' }}>
+              <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+              <input type="text" placeholder="Search by name, phone, or email..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ width: '100%', padding: '14px 16px 14px 48px', borderRadius: '12px', border: '1px solid var(--border)', background: 'white', fontSize: '14px' }} />
+            </div>
+            <Button onClick={() => window.location.reload()}><Search size={18} /> Refresh</Button>
+          </div>
+
+          {loading ? <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>Loading...</div> :
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '16px' }}>
+            {filteredCustomers.map(customer => {
+              const tierKey = getTier(customer.points || 0)
+              const tier = tierConfig[tierKey]
+              const TierIcon = tier.icon
+              const initials = (customer.name || '?').split(' ').map(n => n[0]).join('').toUpperCase()
+              return (
+                <Card key={customer.id} hover>
+                  <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
+                    <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: tier.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 700, color: tier.color }}>
+                      {initials}
                     </div>
-                    <div style={{ fontSize: '13px', color: '#6b7280' }}>{customer.phone}</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                        <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e' }}>{customer.name || 'Unknown'}</h3>
+                        <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 600, background: tier.bg, color: tier.color, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <TierIcon size={12} /> {tier.label}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '13px', color: '#6b7280' }}>{customer.phone || 'No phone'}</div>
+                    </div>
                   </div>
-                </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '16px' }}>
+                    <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '12px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '20px', fontWeight: 700, color: '#f59e0b' }}>{customer.points || 0}</div>
+                      <div style={{ fontSize: '11px', color: '#9ca3af' }}>Points</div>
+                    </div>
+                    <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '12px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '20px', fontWeight: 700, color: '#10b981' }}>{customer.totalOrders || 0}</div>
+                      <div style={{ fontSize: '11px', color: '#9ca3af' }}>Orders</div>
+                    </div>
+                    <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '12px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '20px', fontWeight: 700, color: '#3b82f6' }}>₹{(customer.totalSpent || 0).toLocaleString()}</div>
+                      <div style={{ fontSize: '11px', color: '#9ca3af' }}>Spent</div>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>
+                    <div style={{ marginBottom: '4px' }}>Joined: {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString('en-IN') : '-'}</div>
+                    <div>Last visit: {customer.lastVisit ? new Date(customer.lastVisit).toLocaleDateString('en-IN') : '-'}</div>
+                  </div>
+                </Card>
+              )
+            })}
+            {filteredCustomers.length === 0 && <p style={{ color: '#9ca3af', textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>No customers found</p>}
+          </div>}
+        </>
+      )}
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '16px' }}>
-                  <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '12px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '20px', fontWeight: 700, color: '#f59e0b' }}>{customer.points}</div>
-                    <div style={{ fontSize: '11px', color: '#9ca3af' }}>Points</div>
-                  </div>
-                  <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '12px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '20px', fontWeight: 700, color: '#10b981' }}>{customer.totalOrders}</div>
-                    <div style={{ fontSize: '11px', color: '#9ca3af' }}>Orders</div>
-                  </div>
-                  <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '12px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '20px', fontWeight: 700, color: '#3b82f6' }}>₹{customer.totalSpent.toLocaleString()}</div>
-                    <div style={{ fontSize: '11px', color: '#9ca3af' }}>Spent</div>
-                  </div>
-                </div>
+      {activeTab === 'den' && (
+        <div>
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
+            <div style={{ flex: 1, position: 'relative' }}>
+              <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+              <input type="tel" placeholder="Search customer by phone number..." value={searchPhone}
+                onChange={(e) => setSearchPhone(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && searchCustomer()}
+                style={{ width: '100%', padding: '14px 16px 14px 48px', borderRadius: '12px', border: '1px solid #e5e7eb', background: 'white', fontSize: '14px' }} />
+            </div>
+            <Button onClick={searchCustomer} loading={denLoading}><Search size={18} /> Search</Button>
+          </div>
 
-                <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                    <Calendar size={14} />
-                    Joined: {customer.joinDate}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <TrendingUp size={14} />
-                    Last visit: {customer.lastVisit}
-                  </div>
-                </div>
+          {denError && (
+            <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', padding: '16px', color: '#dc2626', fontSize: '14px', marginBottom: '16px' }}>
+              {denError}
+            </div>
+          )}
 
-                <div style={{ display: 'flex', gap: '8px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
-                  <Button 
-                    variant="secondary" 
-                    size="sm" 
-                    style={{ flex: 1 }}
-                    onClick={() => { setSelectedCustomer(customer); setShowPointsModal(true) }}
-                  >
-                    <Gift size={14} />
-                    Manage Points
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <Edit size={14} />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <Trash2 size={14} color="#ef4444" />
-                  </Button>
+          {denCustomer && (
+            <div>
+              <div style={{ background: 'white', borderRadius: '16px', padding: '24px', marginBottom: '20px', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+                  <div>
+                    <h3 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '4px' }}>{denCustomer.name}</h3>
+                    <div style={{ color: '#6b7280', fontSize: '14px' }}>{denCustomer.phone}</div>
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#9ca3af', background: '#f3f4f6', padding: '6px 12px', borderRadius: '8px' }}>
+                    ID: {denCustomer.id}
+                  </div>
                 </div>
-              </Card>
-            )
-          })}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+                  <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '12px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '24px', fontWeight: 700, color: '#f59e0b' }}>{denCustomer.points}</div>
+                    <div style={{ fontSize: '12px', color: '#9ca3af' }}>Points</div>
+                  </div>
+                  <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '12px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '24px', fontWeight: 700, color: '#10b981' }}>{denCustomer.assets?.length || 0}/10</div>
+                    <div style={{ fontSize: '12px', color: '#9ca3af' }}>Assets</div>
+                  </div>
+                  <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '12px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '24px', fontWeight: 700, color: '#3b82f6' }}>{denCustomer.assetsDinedCount || 0}</div>
+                    <div style={{ fontSize: '12px', color: '#9ca3af' }}>Dined</div>
+                  </div>
+                  <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '12px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '24px', fontWeight: 700, color: '#8b5cf6' }}>₹{denCustomer.totalDistributed || 0}</div>
+                    <div style={{ fontSize: '12px', color: '#9ca3af' }}>Distributed</div>
+                  </div>
+                </div>
+                {denCustomer.allAssetsActive && (
+                  <div style={{ marginTop: '16px', background: '#fef3c7', border: '1px solid #fde68a', borderRadius: '10px', padding: '12px', display: 'flex', alignItems: 'center', gap: '8px', color: '#92400e', fontSize: '13px', fontWeight: 600 }}>
+                    <Crown size={18} /> All 10 assets completed! +500 bonus earned.
+                  </div>
+                )}
+              </div>
+
+              <h4 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '12px', color: '#1a1a2e' }}>
+                Assets ({denCustomer.assets?.length || 0}/10)
+              </h4>
+
+              <div style={{ marginBottom: '20px' }}>
+                <div style={{ background: '#f9fafb', borderRadius: '10px', height: '10px', overflow: 'hidden', marginBottom: '6px' }}>
+                  <div style={{ width: `${((denCustomer.assets?.length || 0) / 10) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #f59e0b, #d97706)', borderRadius: '10px', transition: 'width 0.3s' }} />
+                </div>
+                <div style={{ fontSize: '12px', color: '#9ca3af' }}>{denCustomer.assetsDinedCount || 0} of {denCustomer.assets?.length || 0} assets have dined</div>
+              </div>
+
+              {(denCustomer.assets?.length || 0) < 10 && (
+                <div style={{ background: 'white', borderRadius: '12px', padding: '20px', marginBottom: '20px', border: '2px dashed #d1d5db' }}>
+                  <h5 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: '#4b5563' }}>Add Asset to Den</h5>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+                    <div style={{ flex: '1 1 200px' }}>
+                      <label style={{ fontSize: '12px', fontWeight: 500, color: '#6b7280', display: 'block', marginBottom: '4px' }}>Name</label>
+                      <input type="text" placeholder="Friend's name" value={assetForm.name} onChange={(e) => setAssetForm({ ...assetForm, name: e.target.value })} style={inputStyle} />
+                    </div>
+                    <div style={{ flex: '1 1 200px' }}>
+                      <label style={{ fontSize: '12px', fontWeight: 500, color: '#6b7280', display: 'block', marginBottom: '4px' }}>Phone</label>
+                      <input type="tel" placeholder="Friend's phone" value={assetForm.phone} onChange={(e) => setAssetForm({ ...assetForm, phone: e.target.value })} style={inputStyle} />
+                    </div>
+                    <Button onClick={handleAddAsset} loading={assetLoading}><Plus size={18} /> Add</Button>
+                  </div>
+
+                  {assetOtp && (
+                    <div style={{ marginTop: '16px', background: '#fffbeb', border: '2px solid #f59e0b', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '13px', color: '#92400e', marginBottom: '8px' }}>Asset added! Share this OTP with the friend:</div>
+                      <div style={{ fontSize: '36px', fontWeight: 900, color: '#d97706', letterSpacing: '8px', fontFamily: 'monospace', marginBottom: '12px' }}>{assetOtp}</div>
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                        <Button size="sm" onClick={() => copyOtp(assetOtp)}><Copy size={14} /> Copy OTP</Button>
+                        <Button size="sm" variant="secondary" onClick={() => setAssetOtp(null)}><X size={14} /> Dismiss</Button>
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#92400e', marginTop: '8px' }}>They must enter this OTP when signing up with the referral code.</div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div style={{ display: 'grid', gap: '12px' }}>
+                {(denCustomer.assets || []).map(asset => (
+                  <div key={asset.id} style={{
+                    background: 'white', borderRadius: '12px', padding: '16px',
+                    border: '1px solid #e5e7eb',
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    borderLeft: `4px solid ${asset.status === 'active' ? '#10b981' : '#f59e0b'}`
+                  }}>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '15px' }}>{asset.name}</div>
+                      <div style={{ color: '#6b7280', fontSize: '13px' }}>{asset.phone}</div>
+                      <div style={{ display: 'flex', gap: '12px', marginTop: '6px', fontSize: '12px', color: '#9ca3af' }}>
+                        <span>Status: <span style={{ color: asset.status === 'active' ? '#10b981' : '#f59e0b', fontWeight: 600 }}>{asset.status}</span></span>
+                        <span>Dined: {asset.hasDined ? <Check size={14} color="#10b981" style={{ display: 'inline' }} /> : 'No'}</span>
+                        <span>Points: {asset.pointsDistributed || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {(denCustomer.assets || []).length === 0 && (
+                  <div style={{ textAlign: 'center', padding: '40px', color: '#9ca3af', fontSize: '14px' }}>
+                    No assets in this den yet
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Points History */}
-      {activeTab === 'points' && (
-        <Card padding="none">
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                  <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Customer</th>
-                  <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Points</th>
-                  <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Type</th>
-                  <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Order Ref</th>
-                  <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Date</th>
-                  <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase' }}>Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map(tx => (
-                  <tr key={tx.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                    <td style={{ padding: '16px', fontWeight: 600 }}>{tx.customer}</td>
-                    <td style={{ padding: '16px' }}>
-                      <span style={{
-                        fontWeight: 700,
-                        color: tx.type === 'earned' ? '#10b981' : tx.type === 'redeemed' ? '#ef4444' : '#f59e0b'
-                      }}>
-                        {tx.type === 'earned' ? '+' : tx.type === 'redeemed' ? '-' : '+'}{tx.points}
-                      </span>
-                    </td>
-                    <td style={{ padding: '16px' }}>
-                      <span style={{
-                        padding: '6px 12px',
-                        borderRadius: '8px',
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        background: tx.type === 'earned' ? '#f0fdf4' : tx.type === 'redeemed' ? '#fef2f2' : '#fffbeb',
-                        color: tx.type === 'earned' ? '#10b981' : tx.type === 'redeemed' ? '#ef4444' : '#f59e0b',
-                        textTransform: 'capitalize'
-                      }}>
-                        {tx.type}
-                      </span>
-                    </td>
-                    <td style={{ padding: '16px', fontFamily: 'JetBrains Mono', fontSize: '13px' }}>{tx.order}</td>
-                    <td style={{ padding: '16px', color: '#6b7280' }}>{tx.date}</td>
-                    <td style={{ padding: '16px', color: '#6b7280' }}>{tx.note}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {activeTab === 'create' && (
+        <div style={{ maxWidth: '500px' }}>
+          <div style={{ background: 'white', borderRadius: '16px', padding: '32px', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '4px' }}>Register New Customer</h3>
+            <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '24px' }}>
+              Creates a mobile app account with 500 starting points. Default password is last 6 digits of phone.
+            </p>
+
+            {formResult && (
+              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#166534', fontSize: '16px', fontWeight: 600, marginBottom: '12px' }}>
+                  <Check size={20} /> Customer Created
+                </div>
+                <div style={{ fontSize: '14px', color: '#374151', marginBottom: '8px' }}>
+                  <div><strong>Name:</strong> {formResult.customer.name}</div>
+                  <div><strong>Email:</strong> {formResult.customer.email}</div>
+                  <div><strong>Phone:</strong> {formResult.customer.phone}</div>
+                  <div><strong>Password:</strong> <code style={{ background: '#fef3c7', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>{formResult.password}</code></div>
+                </div>
+                <Button size="sm" onClick={() => setFormResult(null)}><UserPlus size={14} /> Add Another</Button>
+              </div>
+            )}
+
+            {formError && (
+              <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', padding: '12px', color: '#dc2626', fontSize: '14px', marginBottom: '16px' }}>
+                {formError}
+              </div>
+            )}
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 500, color: '#374151', display: 'block', marginBottom: '4px' }}>Full Name</label>
+              <input type="text" placeholder="e.g. John Smith" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={inputStyle} />
+            </div>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 500, color: '#374151', display: 'block', marginBottom: '4px' }}>Email Address</label>
+              <input type="email" placeholder="e.g. john@email.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} style={inputStyle} />
+            </div>
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 500, color: '#374151', display: 'block', marginBottom: '4px' }}>Phone Number</label>
+              <input type="tel" placeholder="e.g. 9876543210" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} style={inputStyle} />
+            </div>
+            <Button onClick={handleCreateCustomer} loading={formLoading} fullWidth>
+              <UserPlus size={18} /> Create Customer
+            </Button>
           </div>
-        </Card>
+        </div>
       )}
 
-      {/* Tier Benefits */}
       {activeTab === 'tiers' && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
           {Object.entries(tierConfig).reverse().map(([tier, config]) => {
             const TierIcon = config.icon
             const nextTier = Object.entries(tierConfig).find(([t, c]) => c.min > config.min)
-            
+            const count = customers.filter(c => getTier(c.points) === tier).length
             return (
               <Card key={tier} style={{ borderTop: `4px solid ${config.color}` }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                  <div style={{
-                    width: '48px',
-                    height: '48px',
-                    background: config.bg,
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
+                  <div style={{ width: '48px', height: '48px', background: config.bg, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <TierIcon size={24} color={config.color} />
                   </div>
                   <div>
@@ -350,198 +444,18 @@ export default function Customers() {
                     <p style={{ fontSize: '12px', color: '#6b7280' }}>{config.min}+ points</p>
                   </div>
                 </div>
-                
                 <div style={{ background: config.bg, borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <Percent size={18} color={config.color} />
-                    <span style={{ fontWeight: 600, color: config.color }}>{config.discount} Off</span>
-                  </div>
+                  <span style={{ fontWeight: 600, color: config.color }}>{config.discount} Off</span>
                   <p style={{ fontSize: '13px', color: '#6b7280' }}>On every order</p>
                 </div>
-
                 <div style={{ fontSize: '13px', color: '#6b7280' }}>
-                  {nextTier ? (
-                    <p>{customers.filter(c => c.tier === tier).length} members • {nextTier[1].min - config.min} pts to next tier</p>
-                  ) : (
-                    <p>{customers.filter(c => c.tier === tier).length} members • Top tier</p>
-                  )}
+                  {nextTier ? <p>{count} members &bull; {nextTier[1].min - config.min} pts to next tier</p> : <p>{count} members &bull; Top tier</p>}
                 </div>
               </Card>
             )
           })}
         </div>
       )}
-
-      {/* Add Customer Modal */}
-      <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="Add New Customer" size="lg">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div>
-            <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Full Name *</label>
-            <input type="text" placeholder="Enter customer name" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div>
-              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Phone *</label>
-              <input type="text" placeholder="+91 XXXXX XXXXX" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
-            </div>
-            <div>
-              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Email</label>
-              <input type="email" placeholder="customer@email.com" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
-            </div>
-          </div>
-          <div>
-            <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Address</label>
-            <textarea placeholder="Full address" rows={2} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)', resize: 'none' }} />
-          </div>
-          <div>
-            <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Date of Birth</label>
-            <input type="date" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
-          </div>
-          <div style={{ background: '#fef9c3', borderRadius: '12px', padding: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              <Gift size={18} color="#ca8a04" />
-              <span style={{ fontWeight: 600, color: '#854d0e' }}>Welcome Bonus</span>
-            </div>
-            <p style={{ fontSize: '13px', color: '#854d0e' }}>New customers get 100 bonus points on signup!</p>
-          </div>
-          <Button fullWidth onClick={handleAddCustomer}>
-            <UserPlus size={18} />
-            Add Customer
-          </Button>
-        </div>
-      </Modal>
-
-      {/* Points Management Modal */}
-      <Modal isOpen={showPointsModal} onClose={() => setShowPointsModal(false)} title={`${selectedCustomer?.name || ''} - Points Management`} size="lg">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {/* Customer Summary */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-            <div style={{ background: '#fffbeb', padding: '16px', borderRadius: '12px', textAlign: 'center' }}>
-              <div style={{ fontSize: '28px', fontWeight: 700, color: '#f59e0b' }}>{selectedCustomer?.points || 0}</div>
-              <div style={{ fontSize: '12px', color: '#92400e' }}>Current Points</div>
-            </div>
-            <div style={{ background: '#f0fdf4', padding: '16px', borderRadius: '12px', textAlign: 'center' }}>
-              <div style={{ fontSize: '28px', fontWeight: 700, color: '#10b981' }}>{selectedCustomer?.totalOrders || 0}</div>
-              <div style={{ fontSize: '12px', color: '#166534' }}>Total Orders</div>
-            </div>
-            <div style={{ background: '#eff6ff', padding: '16px', borderRadius: '12px', textAlign: 'center' }}>
-              <div style={{ fontSize: '28px', fontWeight: 700, color: '#3b82f6' }}>{tierConfig[selectedCustomer?.tier]?.label}</div>
-              <div style={{ fontSize: '12px', color: '#1e40af' }}>Current Tier</div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            <Button 
-              variant="success" 
-              fullWidth 
-              onClick={() => handleAddPoints('earned')}
-              style={{ padding: '20px' }}
-            >
-              <TrendingUp size={20} />
-              Credit Points
-            </Button>
-            <Button 
-              variant="danger" 
-              fullWidth 
-              onClick={() => handleAddPoints('redeemed')}
-              style={{ padding: '20px' }}
-            >
-              <CreditCard size={20} />
-              Redeem Points
-            </Button>
-          </div>
-
-          {/* Custom Amount */}
-          <div style={{ background: '#f9fafb', borderRadius: '12px', padding: '16px' }}>
-            <h4 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px' }}>Quick Credit</h4>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {[10, 25, 50, 100, 200, 500].map(amount => (
-                <button
-                  key={amount}
-                  style={{
-                    padding: '10px 16px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border)',
-                    background: 'white',
-                    fontWeight: 600,
-                    cursor: 'pointer'
-                  }}
-                  onClick={() => toast.info(`+${amount} points credited!`)}
-                >
-                  +{amount}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Redeem Options */}
-          <div style={{ background: '#fef2f2', borderRadius: '12px', padding: '16px' }}>
-            <h4 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: '#991b1b' }}>Redeem Rewards</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {[
-                { points: 100, reward: 'Free Coffee' },
-                { points: 200, reward: 'Free Side Dish' },
-                { points: 500, reward: 'Free Meal' },
-                { points: 1000, reward: '₹100 Off' },
-              ].map(item => (
-                <button
-                  key={item.points}
-                  style={{
-                    padding: '12px',
-                    borderRadius: '8px',
-                    border: '1px solid #fecaca',
-                    background: 'white',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    cursor: 'pointer'
-                  }}
-                  onClick={() => {
-                    if ((selectedCustomer?.points || 0) >= item.points) {
-                      toast.success(`Redeemed: ${item.reward}`)
-                    } else {
-                      toast.error('Not enough points')
-                    }
-                  }}
-                >
-                  <span style={{ fontWeight: 600 }}>{item.reward}</span>
-                  <span style={{ color: '#dc2626', fontWeight: 600 }}>{item.points} pts</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Transaction History */}
-          <div>
-            <h4 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px' }}>Recent Transactions</h4>
-            <div style={{ maxHeight: '200px', overflow: 'auto' }}>
-              {transactions.filter(t => t.customer === selectedCustomer?.name).map(tx => (
-                <div key={tx.id} style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  padding: '10px 0',
-                  borderBottom: '1px solid var(--border)'
-                }}>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: '13px' }}>{tx.note}</div>
-                    <div style={{ fontSize: '11px', color: '#9ca3af' }}>{tx.date}</div>
-                  </div>
-                  <span style={{
-                    fontWeight: 700,
-                    color: tx.type === 'earned' ? '#10b981' : '#ef4444'
-                  }}>
-                    {tx.type === 'earned' ? '+' : '-'}{tx.points}
-                  </span>
-                </div>
-              ))}
-              {transactions.filter(t => t.customer === selectedCustomer?.name).length === 0 && (
-                <p style={{ color: '#9ca3af', textAlign: 'center', padding: '20px' }}>No transactions yet</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </Modal>
     </div>
   )
 }

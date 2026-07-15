@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { Package, Plus, Search, Edit, Trash2, Truck, Phone, Mail, MapPin, ChevronRight, AlertTriangle, CheckCircle, FileText, XCircle, ArrowRight, Upload, Image, X, Loader2, ScanLine, Printer } from 'lucide-react'
+import { Package, Plus, Search, Edit, Trash2, Truck, Phone, Mail, MapPin, ChevronRight, AlertTriangle, CheckCircle, FileText, XCircle, ArrowRight, Upload, Image, X, Loader2, ScanLine, Printer, Camera } from 'lucide-react'
+
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
@@ -38,6 +39,11 @@ export default function Purchase() {
   const [poForm, setPoForm] = useState({ supplier: '', expectedDate: '', items: [] })
   const [showPOItemModal, setShowPOItemModal] = useState(false)
   const [poItemForm, setPoItemForm] = useState({ name: '', quantity: '', unit: 'kg', rate: '' })
+  const [showImageImportModal, setShowImageImportModal] = useState(false)
+  const [importImagePreview, setImportImagePreview] = useState(null)
+  const [importedItems, setImportedItems] = useState([])
+  const [isProcessingImage, setIsProcessingImage] = useState(false)
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
     Promise.all([
@@ -268,6 +274,104 @@ export default function Purchase() {
         resolve(selected)
       }, 2000)
     })
+  }
+
+  const processPOImageOCR = async (imageData) => {
+    setIsProcessingImage(true)
+    try {
+      const { createWorker } = await import('tesseract.js')
+      const worker = await createWorker('eng')
+      const { data: { text } } = await worker.recognize(imageData)
+      await worker.terminate()
+
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 1)
+      const sortedInventory = [...globalInventory].sort((a, b) => b.name.length - a.name.length)
+      const parsed = []
+
+      for (const line of lines) {
+        const cleaned = line.replace(/[|_\[\]{}()]/g, ' ').replace(/\s+/g, ' ').trim()
+        if (!cleaned || /^\d+$/.test(cleaned) || cleaned.length < 3) continue
+
+        let matched = false
+        for (const inv of sortedInventory) {
+          const idx = cleaned.toLowerCase().indexOf(inv.name.toLowerCase())
+          if (idx === -1) continue
+
+          const before = cleaned.slice(0, idx).trim()
+          const after = cleaned.slice(idx + inv.name.length).trim()
+          const rest = (before + ' ' + after).trim()
+          const nums = rest.match(/\d+\.?\d*/g)?.map(Number) || []
+
+          let quantity = null, rate = null, unit = 'kg'
+          if (nums.length >= 2) {
+            quantity = nums[0]; rate = nums[nums.length - 1]
+          } else if (nums.length === 1) {
+            quantity = nums[0]
+          }
+
+          const unitMatch = rest.match(/\b(kg|kgs|kilogram|pcs|pieces|liters|ltrs|boxes|box|pack|gms|grams|dozen)\b/i)
+          if (unitMatch) {
+            const u = unitMatch[1].toLowerCase()
+            if (['pcs', 'pieces', 'box', 'boxes', 'pack', 'dozen'].includes(u)) unit = 'pcs'
+            else if (['liters', 'ltrs'].includes(u)) unit = 'liters'
+            else unit = 'kg'
+          } else if (inv.unit) {
+            unit = inv.unit
+          }
+
+          parsed.push({ name: inv.name, quantity: quantity || '', unit, rate: rate || '', _fromOcr: true })
+          matched = true
+          break
+        }
+
+        if (!matched) {
+          const nums = cleaned.match(/\d+\.?\d*/g)?.map(Number) || []
+          if (nums.length > 0) {
+            const namePart = cleaned.replace(/\d+\.?\d*/g, '').replace(/\s+/g, ' ').trim()
+            if (namePart.length > 1) {
+              parsed.push({
+                name: namePart,
+                quantity: nums.length >= 2 ? nums[0] : nums[0],
+                rate: nums.length >= 2 ? nums[nums.length - 1] : '',
+                unit: cleaned.match(/\b(kg|pcs|liters|boxes)\b/i)?.[1]?.toLowerCase() || 'kg',
+                _fromOcr: true
+              })
+            }
+          }
+        }
+      }
+      return parsed
+    } catch (err) {
+      console.error('OCR error:', err)
+      toast.error('Failed to read image. Please try again or add items manually.')
+      return []
+    } finally {
+      setIsProcessingImage(false)
+    }
+  }
+
+  const handleImageFileSelect = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = async (ev) => {
+      const dataUrl = ev.target.result
+      setImportImagePreview(dataUrl)
+
+      const items = await processPOImageOCR(dataUrl)
+      setImportedItems(items.length > 0 ? items : [])
+      if (items.length > 0) {
+        setShowImageImportModal(true)
+        toast.success(`Extracted ${items.length} items from image`)
+      } else {
+        toast.error('Could not extract items. Try adding them manually.')
+        setShowImageImportModal(false)
+        setImportImagePreview(null)
+      }
+    }
+    reader.readAsDataURL(file)
+    e.target.value = ''
   }
 
   const processVendorInvoice = async (file) => {
@@ -843,13 +947,20 @@ export default function Purchase() {
           </div>
 
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563' }}>Items ({poForm.items.length})</label>
-              <Button size="sm" variant="secondary" onClick={() => { setPoItemForm({ name: '', quantity: '', unit: 'kg', rate: '' }); setShowPOItemModal(true) }}>
-                <Plus size={16} />
-                Add Item
-              </Button>
-            </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563' }}>Items ({poForm.items.length})</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <Button size="sm" variant="secondary" onClick={() => fileInputRef.current?.click()}>
+                    <Camera size={16} />
+                    Import from Image
+                  </Button>
+                  <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={handleImageFileSelect} style={{ display: 'none' }} />
+                  <Button size="sm" variant="secondary" onClick={() => { setPoItemForm({ name: '', quantity: '', unit: 'kg', rate: '' }); setShowPOItemModal(true) }}>
+                    <Plus size={16} />
+                    Add Item
+                  </Button>
+                </div>
+              </div>
             {poForm.items.length === 0 ? (
               <div style={{ background: '#f9fafb', borderRadius: '12px', padding: '32px', textAlign: 'center' }}>
                 <Package size={32} color="#9ca3af" style={{ marginBottom: '8px' }} />
@@ -953,6 +1064,131 @@ export default function Purchase() {
             <Plus size={18} />
             Add to Order
           </Button>
+        </div>
+      </Modal>
+
+      {/* Image Import Verification Modal */}
+      <Modal isOpen={showImageImportModal} onClose={() => { setShowImageImportModal(false); setImportImagePreview(null); setImportedItems([]) }} title="Verify Imported Items" size="lg">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {importImagePreview && (
+            <div style={{ maxHeight: '200px', overflow: 'hidden', borderRadius: '12px', background: '#f3f4f6', textAlign: 'center' }}>
+              <img src={importImagePreview} alt="Uploaded" style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }} />
+            </div>
+          )}
+          {isProcessingImage ? (
+            <div style={{ textAlign: 'center', padding: '32px' }}>
+              <Loader2 size={32} className="spin" style={{ color: '#3b82f6' }} />
+              <p style={{ marginTop: '12px', color: '#6b7280' }}>Processing image with OCR...</p>
+            </div>
+          ) : (
+            <>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563' }}>{importedItems.length} item{importedItems.length !== 1 ? 's' : ''} extracted</span>
+                {importedItems.length > 0 && (
+                  <span style={{ fontSize: '12px', color: '#6b7280' }}>
+                    Matched against {globalInventory.length} inventory items
+                  </span>
+                )}
+              </div>
+              {importedItems.length === 0 ? (
+                <div style={{ background: '#f9fafb', borderRadius: '12px', padding: '32px', textAlign: 'center' }}>
+                  <Package size={32} color="#9ca3af" style={{ marginBottom: '8px' }} />
+                  <p style={{ color: '#6b7280' }}>No items could be extracted. Please add items manually.</p>
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: '#f9fafb' }}>
+                        <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Item Name</th>
+                        <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Qty</th>
+                        <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Unit</th>
+                        <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Rate (₹)</th>
+                        <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {importedItems.map((item, i) => (
+                        <tr key={i} style={{ borderTop: '1px solid var(--border)' }}>
+                          <td style={{ padding: '6px 12px' }}>
+                            <select value={item.name} onChange={e => {
+                              const newItems = [...importedItems]
+                              newItems[i] = { ...newItems[i], name: e.target.value }
+                              setImportedItems(newItems)
+                            }} style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid #e5e7eb', fontSize: '13px', background: 'white' }}>
+                              <option value="">Select item...</option>
+                              {globalInventory.map(inv => (
+                                <option key={inv.id} value={inv.name}>{inv.name}</option>
+                              ))}
+                            </select>
+                          </td>
+                          <td style={{ padding: '6px 12px' }}>
+                            <input type="number" value={item.quantity} onChange={e => {
+                              const newItems = [...importedItems]
+                              newItems[i] = { ...newItems[i], quantity: Number(e.target.value) }
+                              setImportedItems(newItems)
+                            }} min="1" style={{ width: '70px', padding: '6px 8px', borderRadius: '6px', border: '1px solid #e5e7eb', fontSize: '13px' }} />
+                          </td>
+                          <td style={{ padding: '6px 12px' }}>
+                            <select value={item.unit} onChange={e => {
+                              const newItems = [...importedItems]
+                              newItems[i] = { ...newItems[i], unit: e.target.value }
+                              setImportedItems(newItems)
+                            }} style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid #e5e7eb', fontSize: '13px', background: 'white' }}>
+                              <option value="kg">kg</option>
+                              <option value="pcs">pcs</option>
+                              <option value="liters">liters</option>
+                              <option value="boxes">boxes</option>
+                            </select>
+                          </td>
+                          <td style={{ padding: '6px 12px' }}>
+                            <input type="number" value={item.rate} onChange={e => {
+                              const newItems = [...importedItems]
+                              newItems[i] = { ...newItems[i], rate: Number(e.target.value) }
+                              setImportedItems(newItems)
+                            }} min="0" style={{ width: '80px', padding: '6px 8px', borderRadius: '6px', border: '1px solid #e5e7eb', fontSize: '13px' }} />
+                          </td>
+                          <td style={{ padding: '6px 12px', fontWeight: 600, fontSize: '13px' }}>
+                            ₹{(Number(item.quantity) * Number(item.rate)).toLocaleString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr style={{ background: '#f9fafb' }}>
+                        <td colSpan={4} style={{ padding: '12px', textAlign: 'right', fontWeight: 600 }}>Total:</td>
+                        <td style={{ padding: '12px', fontWeight: 700, color: '#e63946' }}>
+                          ₹{importedItems.reduce((s, i) => s + Number(i.quantity) * Number(i.rate), 0).toLocaleString()}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              )}
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                <Button variant="secondary" onClick={() => { setShowImageImportModal(false); setImportImagePreview(null); setImportedItems([]) }}>
+                  Cancel
+                </Button>
+                <Button disabled={importedItems.length === 0} onClick={() => {
+                  const validItems = importedItems.filter(i => i.name && Number(i.quantity) > 0)
+                  if (validItems.length === 0) { toast.error('No valid items to add'); return }
+                  setPoForm(p => ({ ...p, items: [...p.items, ...validItems.map(i => ({
+                    name: i.name,
+                    quantity: Number(i.quantity),
+                    unit: i.unit,
+                    rate: Number(i.rate)
+                  }))] }))
+                  setShowImageImportModal(false)
+                  setImportImagePreview(null)
+                  setImportedItems([])
+                  toast.success(`Added ${validItems.length} item${validItems.length !== 1 ? 's' : ''} to order`)
+                }}>
+                  <Plus size={18} />
+                  Add All to Order
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </Modal>
 

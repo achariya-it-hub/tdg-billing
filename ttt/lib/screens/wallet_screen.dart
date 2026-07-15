@@ -14,6 +14,7 @@ class _WalletScreenState extends State<WalletScreen> {
   int _points = 0;
   int _cashbackEarned = 0;
   int _availablePoints = 0;
+  String _userName = '';
   List<dynamic> _transactions = [];
 
   @override
@@ -25,13 +26,19 @@ class _WalletScreenState extends State<WalletScreen> {
   Future<void> _fetchWalletData() async {
     if (mounted) setState(() => _isLoading = true);
     try {
-      final wallet = await ApiService().getWallet();
+      final results = await Future.wait([
+        ApiService().getWallet(),
+        ApiService().getProfile().catchError((_) => <String, dynamic>{}),
+      ]);
+      final wallet = results[0];
+      final profile = results[1];
       if (mounted) {
         setState(() {
           _points = wallet['points'] ?? 0;
           _cashbackEarned = wallet['cashbackEarned'] ?? 0;
           _availablePoints = wallet['availablePoints'] ?? 0;
           _transactions = wallet['transactions'] ?? [];
+          _userName = profile['name'] ?? '';
         });
       }
     } catch (e) {
@@ -41,8 +48,7 @@ class _WalletScreenState extends State<WalletScreen> {
     }
   }
 
-  void _handleAddPoints() async {
-    final controller = TextEditingController(text: '500');
+  void _handleRedeem() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -51,41 +57,21 @@ class _WalletScreenState extends State<WalletScreen> {
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: TDGColors.gold),
         ),
-        title: Text('ADD POINTS', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold)),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          style: TextStyle(color: TDGColors.white),
-          decoration: InputDecoration(
-            labelText: 'Amount',
-            labelStyle: TextStyle(color: TDGColors.grey),
-            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: TDGColors.border)),
-            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: TDGColors.gold)),
-          ),
+        title: Row(
+          children: [
+            Icon(Icons.redeem_rounded, color: TDGColors.gold),
+            const SizedBox(width: 10),
+            Text('REDEEM POINTS', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+          ],
+        ),
+        content: Text(
+          'You can redeem your points as a direct discount during checkout when placing upcoming orders!\n\n1 Point = ₹1 Discount',
+          style: TextStyle(color: Colors.white.withOpacity(0.7), height: 1.5, fontSize: 13),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('CANCEL', style: TextStyle(color: TDGColors.grey))),
           TextButton(
-            onPressed: () async {
-              final amount = double.tryParse(controller.text) ?? 0;
-              Navigator.pop(context);
-              if (amount > 0) {
-                if (mounted) setState(() => _isLoading = true);
-                try {
-                  await ApiService().addPoints(amount);
-                  _fetchWalletData();
-                } catch (e) {
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: $e')),
-                    );
-                  }
-                } finally {
-                  if (mounted) setState(() => _isLoading = false);
-                }
-              }
-            },
-            child: Text('ADD', style: TextStyle(color: TDGColors.gold)),
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -156,28 +142,55 @@ class _WalletScreenState extends State<WalletScreen> {
 
   Widget _buildWalletCard() {
     return Container(
-      height: 180,
+      height: 200,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: TDGColors.gold.withOpacity(0.15), blurRadius: 20, offset: Offset(0, 8))],
+        boxShadow: [BoxShadow(color: TDGColors.gold.withOpacity(0.2), blurRadius: 24, offset: Offset(0, 10))],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset('assets/images/gold_card.jpg', fit: BoxFit.cover),
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.black.withOpacity(0.6), Colors.black.withOpacity(0.3)],
+                  colors: [Color(0xFF1A1200), Color(0xFF2C1E00), Color(0xFF1A1200)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
               ),
             ),
+            Positioned(
+              top: -40,
+              right: -40,
+              child: Container(
+                width: 160,
+                height: 160,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [TDGColors.gold.withOpacity(0.12), Colors.transparent],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: -30,
+              left: -20,
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [TDGColors.gold.withOpacity(0.08), Colors.transparent],
+                  ),
+                ),
+              ),
+            ),
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -185,20 +198,38 @@ class _WalletScreenState extends State<WalletScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Total Points', style: TextStyle(color: Colors.white70, fontSize: 12, letterSpacing: 1)),
+                      Row(
+                        children: [
+                          Image.asset('assets/images/logo.png', height: 32, errorBuilder: (_, __, ___) => Icon(Icons.restaurant, color: TDGColors.gold, size: 28)),
+                          SizedBox(width: 10),
+                          Text('TEN DEN GYROS', style: TextStyle(color: TDGColors.gold, fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
+                        ],
+                      ),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: TDGColors.gold.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: TDGColors.gold.withOpacity(0.3)),
                         ),
-                        child: Text('1 Point = ₹1', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600)),
+                        child: Text('1 Pt = ₹1', style: TextStyle(color: TDGColors.gold, fontSize: 10, fontWeight: FontWeight.w700)),
                       ),
                     ],
                   ),
-                  Text(
-                    _points.toString(),
-                    style: TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.w900),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (_userName.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Text(_userName.toUpperCase(), style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 11, letterSpacing: 1.5, fontWeight: FontWeight.w600)),
+                        ),
+                      Text(
+                        _points.toString(),
+                        style: TextStyle(color: Colors.white, fontSize: 42, fontWeight: FontWeight.w900, height: 1),
+                      ),
+                      Text('TOTAL POINTS', style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 10, letterSpacing: 2, fontWeight: FontWeight.w600)),
+                    ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -206,14 +237,14 @@ class _WalletScreenState extends State<WalletScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Cashback Earned', style: TextStyle(color: Colors.white60, fontSize: 10)),
+                          Text('Cashback Earned', style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 10)),
                           Text('₹$_cashbackEarned', style: TextStyle(color: TDGColors.gold, fontSize: 16, fontWeight: FontWeight.w800)),
                         ],
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text('Available to Spend', style: TextStyle(color: Colors.white60, fontSize: 10)),
+                          Text('Available to Spend', style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 10)),
                           Text('$_availablePoints pts', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800)),
                         ],
                       ),
@@ -229,54 +260,29 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 
   Widget _buildActionButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: _handleAddPoints,
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                color: TDGColors.cardDark,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: TDGColors.border),
+    return SizedBox(
+      width: double.infinity,
+      child: GestureDetector(
+        onTap: _handleRedeem,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: TDGColors.cardDark,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: TDGColors.border),
+          ),
+          child: Column(
+            children: [
+              Icon(Icons.redeem_rounded, color: TDGColors.gold, size: 28),
+              const SizedBox(height: 8),
+              Text(
+                'Redeem Points',
+                style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w600, fontSize: 13),
               ),
-              child: Column(
-                children: [
-                  Icon(Icons.add_circle_outline_rounded, color: TDGColors.gold, size: 28),
-                  SizedBox(height: 8),
-                  Text('Add Points', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w600, fontSize: 13)),
-                ],
-              ),
-            ),
+            ],
           ),
         ),
-        SizedBox(width: 12),
-        Expanded(
-          child: GestureDetector(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Redeem feature coming soon')),
-              );
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                color: TDGColors.cardDark,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: TDGColors.border),
-              ),
-              child: Column(
-                children: [
-                  Icon(Icons.redeem_rounded, color: TDGColors.gold, size: 28),
-                  SizedBox(height: 8),
-                  Text('Redeem', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w600, fontSize: 13)),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 

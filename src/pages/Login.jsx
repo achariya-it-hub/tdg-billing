@@ -85,8 +85,7 @@ export default function Login() {
     }}>
       {/* Animated gradient overlay */}
       <div className="animate-gradient" style={{
-        position: 'absolute',
-        inset: 0,
+        position: 'absolute', inset: 0,
         background: 'radial-gradient(ellipse at 20% 50%, rgba(230, 57, 70, 0.12) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(244, 162, 97, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 50% 80%, rgba(42, 157, 143, 0.06) 0%, transparent 50%)',
         backgroundSize: '200% 200%',
         animation: 'gradientShift 8s ease infinite',
@@ -95,8 +94,7 @@ export default function Login() {
 
       {/* Grid pattern */}
       <div style={{
-        position: 'absolute',
-        inset: 0,
+        position: 'absolute', inset: 0,
         backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
         backgroundSize: '60px 60px',
         pointerEvents: 'none'
@@ -105,11 +103,8 @@ export default function Login() {
       {/* Floating particles */}
       {particles.map(p => (
         <div key={p.id} style={{
-          position: 'absolute',
-          left: `${p.x}%`,
-          top: `${p.y}%`,
-          fontSize: `${p.size}px`,
-          opacity: 0.08,
+          position: 'absolute', left: `${p.x}%`, top: `${p.y}%`,
+          fontSize: `${p.size}px`, opacity: 0.08,
           animation: `float ${p.duration}s ease-in-out infinite`,
           animationDelay: `${p.delay}s`,
           pointerEvents: 'none',
@@ -120,13 +115,8 @@ export default function Login() {
       ))}
 
       <div style={{
-        flex: 1,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '40px 20px',
-        position: 'relative',
-        zIndex: 1
+        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '40px 20px', position: 'relative', zIndex: 1
       }}>
         <div style={{
           display: 'flex',
@@ -144,19 +134,14 @@ export default function Login() {
             animation: 'fadeInUp 0.6s ease'
           }}>
             <div style={{
-              width: '100px',
-              height: '100px',
-              borderRadius: '24px',
-              background: 'linear-gradient(135deg, rgba(230,57,70,0.15) 0%, rgba(230,57,70,0.05) 100%)',
-              border: '1px solid rgba(230,57,70,0.15)',
-              backdropFilter: 'blur(20px)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '32px',
-              overflow: 'hidden'
+              width: '120px', height: '120px', borderRadius: '24px',
+              background: 'linear-gradient(135deg, #c1121f 0%, #e63946 50%, #f4a261 100%)',
+              border: '2px solid rgba(255,255,255,0.15)',
+              boxShadow: '0 8px 32px rgba(230,57,70,0.3)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              marginBottom: '32px', overflow: 'hidden', padding: '12px'
             }}>
-              <img src="/TDG LOGO.png" alt="TDG" style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              <img src="/tdg-logo.png" alt="TDG" style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
                 onError={(e) => { e.target.style.display = 'none' }} />
             </div>
             <h1 style={{

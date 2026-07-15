@@ -106,7 +106,6 @@ export default function POS() {
 
   const handlePlaceOrder = async () => {
     if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place order'); return }
-    if (currentOrder.type === 'dine-in' && !currentOrder.tableNumber) { toast.error('Please select a table for dine-in orders'); return }
     setProcessing(true)
     try { await placeOrder(); toast.success('Order placed successfully!'); setShowCart(false) }
     catch (err) { console.error('Order error:', err); toast.error('Failed: ' + err.message) }
@@ -228,15 +227,6 @@ export default function POS() {
               </button>
             ))}
           </div>
-          {currentOrder.type === 'dine-in' && (
-            <div style={{ marginBottom: '12px' }}>
-              <div style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280', marginBottom: '4px' }}>Table <span style={{ color: '#e63946' }}>*</span></div>
-              <select value={currentOrder.tableNumber} onChange={(e) => setTableNumber(e.target.value)} style={{ ...inputStyle, background: 'white' }}>
-                <option value="">Select Table</option>
-                {Array.from({ length: 20 }, (_, i) => `T${i + 1}`).map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-            </div>
-          )}
           <input type="tel" placeholder="Customer Phone" value={currentOrder.customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} style={{ ...inputStyle, marginBottom: '12px' }} />
           <div style={{ maxHeight: '300px', overflow: 'auto', marginBottom: '16px' }}>
             {currentOrder.items.length === 0 ? (
@@ -320,17 +310,7 @@ export default function POS() {
           ))}
         </div>
 
-        {currentOrder.type === 'dine-in' && (
-          <div style={{ padding: '12px', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-            <div style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280', marginBottom: '4px' }}>Table <span style={{ color: '#e63946' }}>*</span></div>
-            <select value={currentOrder.tableNumber} onChange={(e) => setTableNumber(e.target.value)} style={{ ...inputStyle, marginBottom: '8px' }}>
-              <option value="">Select Table</option>
-              {Array.from({ length: 20 }, (_, i) => `T${i + 1}`).map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-            <input type="tel" placeholder="Customer Phone" value={currentOrder.customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} style={inputStyle} />
-          </div>
-        )}
-        {(currentOrder.type === 'takeaway' || currentOrder.type === 'delivery') && (
+        {(currentOrder.type === 'dine-in' || currentOrder.type === 'takeaway' || currentOrder.type === 'delivery') && (
           <div style={{ padding: '12px', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
             <input type="tel" placeholder="Customer Phone" value={currentOrder.customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} style={inputStyle} />
           </div>

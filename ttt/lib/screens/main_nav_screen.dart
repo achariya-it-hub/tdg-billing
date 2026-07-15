@@ -29,8 +29,12 @@ class _MainNavScreenState extends State<MainNavScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: TDGColors.background,
+      extendBody: true,
       body: _screens[_currentIndex],
-      bottomNavigationBar: _buildBottomNav(),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: _buildBottomNav(),
+      ),
     );
   }
 

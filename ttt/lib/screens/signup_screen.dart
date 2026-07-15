@@ -18,6 +18,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _referralController = TextEditingController();
+  final _otpController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
@@ -42,12 +43,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     try {
       final referral = _referralController.text.trim();
+      final otp = _otpController.text.trim();
       await ApiService().signup(
         name: name,
         email: email,
         phone: phone,
         password: password,
         referredBy: referral.isNotEmpty ? referral : null,
+        otp: otp.isNotEmpty ? otp : null,
       );
       if (mounted) {
         _showSuccessDialog(context);
@@ -190,6 +193,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             
                             const SizedBox(height: 16),
+                            
+                            // OTP (shown when referral code is entered)
+                            ValueListenableBuilder<TextEditingValue>(
+                              valueListenable: _referralController,
+                              builder: (context, value, _) {
+                                if (value.text.trim().isEmpty) return const SizedBox.shrink();
+                                return Column(
+                                  children: [
+                                    _buildTextField(
+                                      label: 'REFERRAL OTP',
+                                      controller: _otpController,
+                                      hint: 'Enter OTP from your referrer',
+                                      icon: Icons.pin_outlined,
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                    const SizedBox(height: 16),
+                                  ],
+                                );
+                              },
+                            ),
                             
                             // Full Name
                             _buildTextField(

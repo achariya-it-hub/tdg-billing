@@ -73,6 +73,106 @@
   ],
   "orders": [
     {
+      "id": "c77e7f5e-ada4-4e62-90a0-6fad95cb95ca",
+      "orderNumber": 1114,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 400,
+      "tax": 72,
+      "total": 472,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "",
+      "createdAt": "2026-07-02T17:13:10.847Z",
+      "updatedAt": "2026-07-02T17:13:54.986Z",
+      "items": [
+        {
+          "id": "753d5285-9ae8-4be5-86a8-05323ffdc546",
+          "menuItemId": "m1",
+          "menuItemName": "Veg - BBQ Paneer",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "cfc496f3-51d1-4c37-aa29-1451cb2adf28",
+          "menuItemId": "m2",
+          "menuItemName": "Veg - Beetroot Falafal",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "b0ec7091-8a59-4b7d-850b-bea3e063cecb",
+          "menuItemId": "m4",
+          "menuItemName": "Non-Veg - Sour Cream Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "72049494-76eb-4cda-b8af-bd0c39f6b00c",
+          "menuItemId": "m14",
+          "menuItemName": "Non-Veg - BBQ Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "2e3d5277-9523-456a-b983-4efcd05ebfb1",
+      "orderNumber": 1113,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 200,
+      "tax": 36,
+      "total": 236,
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "tableNumber": "",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "",
+      "createdAt": "2026-06-30T09:36:36.736Z",
+      "updatedAt": "2026-06-30T09:37:00.787Z",
+      "items": [
+        {
+          "id": "42326c02-059f-46de-9d7b-516404a1e2fb",
+          "menuItemId": "m10",
+          "menuItemName": "Veg - Spinach (veg meat)",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "feee96a6-78d8-4e98-97d2-813493bb7b84",
+          "menuItemId": "m11",
+          "menuItemName": "Veg - Beetroot",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
       "id": "6e2efd8b-5fbc-43e8-bc7a-f059633bb07c",
       "orderNumber": 1112,
       "type": "dine-in",
@@ -91,7 +191,7 @@
       "complimentaryType": "",
       "specialRemarks": "",
       "createdAt": "2026-06-24T10:50:52.025Z",
-      "updatedAt": "2026-06-24T10:51:07.464Z",
+      "updatedAt": "2026-07-02T17:14:15.813Z",
       "items": [
         {
           "id": "960c2af9-b7d2-4c5a-b9ff-d12458b5c772",
@@ -132,7 +232,7 @@
       "complimentaryType": "",
       "specialRemarks": "",
       "createdAt": "2026-06-24T10:50:20.039Z",
-      "updatedAt": "2026-06-24T10:50:31.163Z",
+      "updatedAt": "2026-07-02T17:14:17.891Z",
       "items": [
         {
           "id": "24e562c9-4dca-4930-8693-9fba9cd7dc8e",
@@ -154,7 +254,7 @@
       "subtotal": 400,
       "tax": 72,
       "total": 472,
-      "paymentMethod": "card",
+      "paymentMethod": "cash",
       "paymentStatus": "paid",
       "tableNumber": "T5",
       "customerName": "",
@@ -164,7 +264,7 @@
       "complimentaryType": "",
       "specialRemarks": "",
       "createdAt": "2026-06-24T10:06:50.321Z",
-      "updatedAt": "2026-06-24T10:49:37.434Z",
+      "updatedAt": "2026-07-02T17:14:20.667Z",
       "items": [
         {
           "id": "80eaed98-5d70-4ebd-9921-df6cb465477d",
@@ -186,7 +286,7 @@
       "subtotal": 600,
       "tax": 108,
       "total": 708,
-      "paymentMethod": "card",
+      "paymentMethod": "upi",
       "paymentStatus": "paid",
       "tableNumber": "T2",
       "customerName": "",
@@ -196,7 +296,7 @@
       "complimentaryType": "",
       "specialRemarks": "",
       "createdAt": "2026-06-24T10:06:44.520Z",
-      "updatedAt": "2026-06-24T10:49:42.596Z",
+      "updatedAt": "2026-07-02T17:14:35.374Z",
       "items": [
         {
           "id": "e58c700f-c420-41b7-ae6c-0b89666f44ab",
@@ -218,7 +318,7 @@
       "subtotal": 400,
       "tax": 72,
       "total": 472,
-      "paymentMethod": "card",
+      "paymentMethod": "cash",
       "paymentStatus": "paid",
       "tableNumber": "T1",
       "customerName": "",
@@ -228,7 +328,7 @@
       "complimentaryType": "",
       "specialRemarks": "",
       "createdAt": "2026-06-24T10:00:31.306Z",
-      "updatedAt": "2026-06-24T10:49:40.865Z",
+      "updatedAt": "2026-07-02T17:14:32.757Z",
       "items": [
         {
           "id": "5e7a9408-6234-41c5-9cb2-ec06e58f4007",
@@ -4520,7 +4620,7 @@
       "minimumStock": 10
     }
   ],
-  "orderNumber": 1112,
+  "orderNumber": 1114,
   "usedReferralCodes": [
     "2RGMR8",
     "TXK2LF"
@@ -6083,6 +6183,111 @@
         }
       },
       "createdAt": "2026-06-21T03:54:09.877Z"
+    },
+    {
+      "id": "bu_superadmin",
+      "name": "Super Admin",
+      "pin": "$2b$10$EPZeyFEmAk5IDdXuy9CTxukXtCIobU.Ov2fbxMGkpsDvuoupiPN9.",
+      "role": "super-admin",
+      "permissions": {
+        "pos": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "captain": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kitchen": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "billing": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kot": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "purchase": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "inventory": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "menu": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "hr": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "loyalty": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "customers": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "reports": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "dashboard": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "onlineOrders": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "users": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "expenses": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        }
+      },
+      "createdAt": "2026-06-24T17:54:30.333Z"
     }
   ],
   "categories": [
@@ -6558,6 +6763,15 @@
   ],
   "purchaseOrders": [
     {
+      "id": "PO002",
+      "supplier": "AAA",
+      "items": 1,
+      "total": 20000,
+      "status": "completed",
+      "date": "2026-07-02",
+      "expectedDate": "2026-07-03"
+    },
+    {
       "id": "PO001",
       "supplier": "AAA",
       "items": 1,
@@ -6565,6 +6779,15 @@
       "status": "completed",
       "date": "2026-06-24",
       "expectedDate": "2026-06-24"
+    },
+    {
+      "id": "PO003",
+      "supplier": "Anbarasu",
+      "items": 1,
+      "total": 100000,
+      "status": "completed",
+      "date": "2026-07-02",
+      "expectedDate": "2026-07-01"
     }
   ],
   "poItems": [
@@ -6576,9 +6799,41 @@
       "unit": "kg",
       "rate": 1000,
       "received": 0
+    },
+    {
+      "id": "PIPO0020",
+      "poId": "PO002",
+      "name": "Chicken Breast",
+      "quantity": 4,
+      "unit": "kg",
+      "rate": 5000,
+      "received": 0
+    },
+    {
+      "id": "PIPO0030",
+      "poId": "PO003",
+      "name": "Burger Buns",
+      "quantity": 100,
+      "unit": "kg",
+      "rate": 1000,
+      "received": 0
     }
   ],
   "grns": [
+    {
+      "id": "GRN002",
+      "poId": "PO002",
+      "supplier": "AAA",
+      "items": 1,
+      "totalValue": 20000,
+      "invoiceNo": "INV-2026-9562",
+      "invoiceImage": null,
+      "date": "2026-07-02",
+      "status": "completed",
+      "receivedBy": "",
+      "remarks": "",
+      "vehicleNo": ""
+    },
     {
       "id": "GRN001",
       "poId": "PO001",
@@ -6588,6 +6843,20 @@
       "invoiceNo": "INV-2026-1021",
       "invoiceImage": null,
       "date": "2026-06-24",
+      "status": "completed",
+      "receivedBy": "",
+      "remarks": "",
+      "vehicleNo": ""
+    },
+    {
+      "id": "GRN003",
+      "poId": "PO003",
+      "supplier": "Anbarasu",
+      "items": 1,
+      "totalValue": 100000,
+      "invoiceNo": "INV-2026-7429",
+      "invoiceImage": null,
+      "date": "2026-07-02",
       "status": "completed",
       "receivedBy": "",
       "remarks": "",
@@ -6617,5 +6886,19 @@
         "isDefault": true
       }
     ]
-  }
+  },
+  "vendorPayments": [
+    {
+      "id": "VP1783009311980",
+      "supplier": "AAA",
+      "poId": "PO001",
+      "grnId": "GRN001",
+      "amount": 100,
+      "paymentMethod": "bank",
+      "reference": "",
+      "paymentDate": "2026-07-02",
+      "notes": "",
+      "createdAt": "2026-07-02T16:21:51.980Z"
+    }
+  ]
 }

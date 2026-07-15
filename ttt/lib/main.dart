@@ -1,18 +1,38 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/main_nav_screen.dart';
 import 'theme/colors.dart';
 import 'services/api_service.dart';
 
 void main() async {
+  HttpOverrides.global = _TDGHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint('Firebase initialization failed: $e');
+  }
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.light,
+    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarDividerColor: Colors.transparent,
+    systemNavigationBarIconBrightness: Brightness.light,
   ));
   await ApiService().init();
   runApp(const TDGApp());
+}
+
+class _TDGHttpOverrides extends HttpOverrides {
+  @override
+  String findProxy(Uri uri) => 'DIRECT';
 }
 
 class TDGApp extends StatelessWidget {
@@ -28,6 +48,9 @@ class TDGApp extends StatelessWidget {
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
           statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+          systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarDividerColor: Colors.transparent,
+          systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
         ));
 
         final api = ApiService();

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Receipt, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet, RefreshCw } from 'lucide-react'
+import { Receipt, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet, RefreshCw, QrCode } from 'lucide-react'
 import { getSocket } from '../lib/socket'
 import { useSettings } from '../lib/settingsContext'
 
@@ -200,11 +200,6 @@ export default function Billing() {
   }
 
   const printInvoice = (bill) => {
-    const printWindow = window.open('', '_blank')
-    if (!printWindow) {
-      alert('Please allow pop-ups for printing')
-      return
-    }
     const items = bill.items || []
     const total = calculateTotal(bill)
     const tax = calculateTax(total)
@@ -212,7 +207,29 @@ export default function Billing() {
     const now = new Date()
     const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
-    const html = `
+    const html = buildInvoiceHTML(bill, items, total, tax, grandTotal, dateStr, timeStr, company, calculateTotal, calculateTax)
+    const iframe = document.createElement('iframe')
+    iframe.style.position = 'fixed'
+    iframe.style.right = '-9999px'
+    iframe.style.bottom = '-9999px'
+    iframe.style.width = '80mm'
+    iframe.style.height = '0'
+    iframe.style.border = 'none'
+    document.body.appendChild(iframe)
+    iframe.contentDocument.open()
+    iframe.contentDocument.write(html)
+    iframe.contentDocument.close()
+    setTimeout(() => {
+      iframe.contentWindow.focus()
+      iframe.contentWindow.print()
+    }, 300)
+  }
+
+  const buildInvoiceHTML = (bill, items, total, tax, grandTotal, dateStr, timeStr, company, calcTotal, calcTax) => {
+    const paymentMethod = (bill.paymentMethod || 'cash').toLowerCase()
+    const upiId = company?.upiId || ''
+    const billTotal = calcTotal ? calcTotal(bill) + (calcTax ? calcTax(calcTotal(bill)) : 0) : grandTotal
+    return `
       <!DOCTYPE html>
       <html>
       <head>
@@ -223,42 +240,41 @@ export default function Billing() {
           body {
             font-family: 'Courier New', Courier, monospace;
             font-size: 12px;
+            font-weight: 900;
             width: 80mm;
             padding: 8px 12px;
-            color: #1a1a1a;
-            line-height: 1.4;
+            color: #000;
+            line-height: 1.3;
           }
           .center { text-align: center; }
-          .header { padding-bottom: 10px; border-bottom: 2px solid #1a1a1a; margin-bottom: 10px; }
-          .brand-name { font-family: 'Georgia', serif; font-size: 20px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #c1121f; }
-          .brand-tagline { font-size: 9px; letter-spacing: 1px; color: #666; margin-top: 2px; }
-          .brand-details { font-size: 9px; color: #888; margin-top: 4px; line-height: 1.3; }
-          .divider { border-top: 1px dashed #999; margin: 8px 0; }
-          .divider-thick { border-top: 2px solid #1a1a1a; margin: 8px 0; }
-          .info-row { display: flex; justify-content: space-between; font-size: 10px; margin: 2px 0; }
-          .info-label { color: #666; }
-          .info-value { font-weight: 600; }
-          .col-header { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #999; padding-bottom: 4px; margin-bottom: 4px; }
-          .item-row { display: flex; justify-content: space-between; font-size: 10px; padding: 2px 0; }
-          .item-name { flex: 1; }
-          .item-qty { width: 30px; text-align: center; }
-          .item-price { width: 55px; text-align: right; }
-          .subtotal-row { display: flex; justify-content: space-between; font-size: 11px; padding: 3px 0; }
-          .total-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; padding: 6px 0; border-top: 2px solid #1a1a1a; border-bottom: 2px solid #1a1a1a; margin: 6px 0; }
-          .total-amount { color: #c1121f; }
-          .payment-info { font-size: 10px; margin: 4px 0; }
-          .footer { text-align: center; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #999; }
-          .footer-thanks { font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #c1121f; margin-bottom: 2px; }
-          .footer-message { font-size: 9px; color: #888; }
-          .gst-info { font-size: 8px; color: #aaa; text-align: center; margin-top: 6px; }
-          @media print {
-            body { width: 80mm; }
-            .no-print { display: none; }
-          }
+          .header { padding-bottom: 10px; border-bottom: 3px solid #000; margin-bottom: 10px; }
+          .brand-name { font-family: 'Georgia', serif; font-size: 22px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: #000; }
+          .brand-tagline { font-size: 10px; font-weight: 900; letter-spacing: 1px; color: #000; margin-top: 2px; }
+          .brand-details { font-size: 10px; font-weight: 900; color: #000; margin-top: 4px; line-height: 1.3; }
+          .divider { border-top: 2px dashed #000; margin: 8px 0; }
+          .divider-thick { border-top: 3px solid #000; margin: 8px 0; }
+          .info-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; margin: 3px 0; }
+          .info-label { color: #000; }
+          .info-value { font-weight: 900; }
+          .bill-number { font-size: 16px; font-weight: 900; margin: 6px 0; }
+          .bill-number .info-value { font-size: 20px; font-weight: 900; letter-spacing: 1px; }
+          .col-header { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #000; padding-bottom: 4px; margin-bottom: 4px; }
+          .item-row { display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; padding: 3px 0; }
+          .item-name { flex: 1; font-weight: 900; }
+          .item-qty { width: 30px; text-align: center; font-weight: 900; }
+          .item-price { width: 55px; text-align: right; font-weight: 900; }
+          .subtotal-row { display: flex; justify-content: space-between; font-size: 12px; font-weight: 900; padding: 4px 0; }
+          .total-row { display: flex; justify-content: space-between; font-size: 18px; font-weight: 900; padding: 8px 0; border-top: 3px solid #000; border-bottom: 3px solid #000; margin: 8px 0; }
+          .total-amount { color: #000; font-weight: 900; }
+          .payment-info { font-size: 11px; font-weight: 900; margin: 4px 0; }
+          .footer { text-align: center; margin-top: 10px; padding-top: 10px; border-top: 2px dashed #000; }
+          .footer-thanks { font-size: 14px; font-weight: 900; letter-spacing: 1px; color: #000; margin-bottom: 2px; }
+          .footer-message { font-size: 10px; font-weight: 900; color: #000; }
+          .gst-info { font-size: 9px; font-weight: 900; color: #000; text-align: center; margin-top: 6px; }
+          @media print { body { width: 80mm; } .no-print { display: none; } }
         </style>
       </head>
       <body>
-        <!-- Header -->
         <div class="header center">
           <div class="brand-name">${company.name}</div>
           <div class="brand-tagline">Restaurant Management System</div>
@@ -267,99 +283,41 @@ export default function Billing() {
             Ph: ${company.phone || '000000000'}
           </div>
         </div>
-
-        <!-- Invoice Info -->
-        <div class="info-row">
-          <span class="info-label">Bill No:</span>
-          <span class="info-value">${String(bill.orderNumber || bill.id).padStart(6, '0')}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Date:</span>
-          <span class="info-value">${dateStr}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Time:</span>
-          <span class="info-value">${timeStr}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Table:</span>
-          <span class="info-value">${bill.tableNumber || 'Takeaway'}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Payment:</span>
-          <span class="info-value" style="text-transform:capitalize">${bill.paymentMethod || 'cash'}</span>
-        </div>
+        <div class="info-row bill-number"><span class="info-label">Bill No:</span><span class="info-value">${String(bill.orderNumber || bill.id).padStart(6, '0')}</span></div>
+        <div class="info-row"><span class="info-label">Date:</span><span class="info-value">${dateStr}</span></div>
+        <div class="info-row"><span class="info-label">Time:</span><span class="info-value">${timeStr}</span></div>
+        <div class="info-row"><span class="info-label">Payment:</span><span class="info-value" style="text-transform:capitalize">${bill.paymentMethod || 'cash'}</span></div>
         ${bill.customerName ? `<div class="info-row"><span class="info-label">Customer:</span><span class="info-value">${bill.customerName}</span></div>` : ''}
-
         <div class="divider"></div>
-
-        <!-- Column Headers -->
-        <div class="col-header">
-          <span class="item-name">Item</span>
-          <span class="item-qty">Qty</span>
-          <span class="item-price">Amount</span>
-        </div>
-
-        <!-- Items -->
+        <div class="col-header"><span class="item-name">Item</span><span class="item-qty">Qty</span><span class="item-price">Amount</span></div>
         ${items.map((item, i) => {
           const name = item.menuItemName || item.name || ''
           const qty = item.quantity || item.qty || 1
           const amt = (item.totalPrice || item.price * qty || 0)
-          return `
-            <div class="item-row">
-              <span class="item-name">${name.length > 22 ? name.slice(0, 20) + '..' : name}</span>
-              <span class="item-qty">${qty}</span>
-              <span class="item-price">₹${amt.toFixed(0)}</span>
-            </div>
-          `
+          return '<div class="item-row"><span class="item-name">' + (name.length > 22 ? name.slice(0, 20) + '..' : name) + '</span><span class="item-qty">' + qty + '</span><span class="item-price">₹' + amt.toFixed(0) + '</span></div>'
         }).join('')}
-
         <div class="divider"></div>
-
-        <!-- Totals -->
-        <div class="subtotal-row">
-          <span>Subtotal</span>
-          <span>₹${total.toFixed(0)}</span>
-        </div>
-        <div class="subtotal-row">
-          <span>GST @ 18%</span>
-          <span>₹${tax.toFixed(0)}</span>
-        </div>
+        <div class="subtotal-row"><span>Subtotal</span><span>₹${total.toFixed(0)}</span></div>
+        <div class="subtotal-row"><span>Tax (5%)</span><span>₹${tax.toFixed(0)}</span></div>
         <div class="divider-thick"></div>
-        <div class="total-row">
-          <span>Total</span>
-          <span class="total-amount">₹${grandTotal.toFixed(0)}</span>
-        </div>
-
-        <!-- Round Off -->
-        <div class="payment-info" style="text-align:right;color:#888;font-size:9px">
-          Round Off: ₹0.00
-        </div>
-
-        <!-- Payment Method -->
-        <div class="payment-info center" style="margin-top:8px;font-size:11px">
-          Payment: ${bill.paymentMethod ? bill.paymentMethod.toUpperCase() : 'CASH'}
-        </div>
-
-        <!-- Footer -->
+        <div class="total-row"><span>TOTAL</span><span class="total-amount">₹${grandTotal.toFixed(0)}</span></div>
+        <div class="payment-info" style="text-align:right;color:#888;font-size:9px">Round Off: ₹0.00</div>
+        <div class="payment-info center" style="margin-top:8px;font-size:11px">Payment: ${(bill.paymentMethod || 'CASH').toUpperCase()}</div>
+        ${paymentMethod === 'upi' && upiId ? `
+        <div class="center" style="margin:10px 0">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent('upi://pay?pa=' + upiId + '&pn=' + company.name + '&am=' + billTotal.toFixed(2) + '&cu=INR')}" alt="QR" style="width:160px;height:160px;border:1px solid #000;border-radius:4px" />
+          <div style="font-size:10px;margin-top:4px">Scan to Pay</div>
+          <div style="font-size:9px;font-weight:700">${upiId}</div>
+        </div>` : ''}
         <div class="footer">
           <div class="footer-thanks">Thank You!</div>
           <div class="footer-message">We look forward to serving you again</div>
           <div class="footer-message" style="margin-top:4px">Happy Dining!</div>
         </div>
-
-        <div class="gst-info">
-          This is a computer-generated invoice
-        </div>
+        <div class="gst-info">This is a computer-generated invoice</div>
       </body>
       </html>
     `
-    printWindow.document.write(html)
-    printWindow.document.close()
-    printWindow.onload = () => {
-      printWindow.focus()
-      setTimeout(() => printWindow.print(), 300)
-    }
   }
 
   const glassCard = {
@@ -399,9 +357,15 @@ export default function Billing() {
           { value: paidBills.length, label: 'Bills Today', color: '#10b981', bg: '#ecfdf5' },
           { value: `₹${paidBills.reduce((s, b) => s + calculateTotal(b), 0)}`, label: 'Total Collected', color: '#2563eb', bg: '#eff6ff' }
         ].map((stat, i) => (
-          <div key={i} style={{ ...glassCard, padding: '20px', textAlign: 'center' }}>
+          <div key={i} style={{
+            background: stat.bg,
+            borderRadius: '16px',
+            padding: '20px', textAlign: 'center',
+            border: `1.5px solid ${stat.color}20`,
+            boxShadow: `0 4px 16px ${stat.color}15`
+          }}>
             <div style={{ fontSize: '32px', fontWeight: 700, color: stat.color }}>{stat.value}</div>
-            <div style={{ fontSize: '13px', color: '#6b7280', marginTop: '4px' }}>{stat.label}</div>
+            <div style={{ fontSize: '13px', color: stat.color, marginTop: '4px', fontWeight: 600 }}>{stat.label}</div>
           </div>
         ))}
       </div>
@@ -587,13 +551,9 @@ export default function Billing() {
                   <div style={{ fontWeight: 600 }}>K{bill.orderNumber}</div>
                   <div style={{ fontSize: '13px', color: '#6b7280' }}>{bill.tableNumber ? `Table ${bill.tableNumber}` : bill.type} • {bill.paymentMethod || 'cash'}</div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontWeight: 700, fontSize: '18px' }}>₹{calculateTotal(bill)}</div>
-                    <div style={{ fontSize: '12px', color: '#10b981' }}>{new Date(bill.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                  </div>
-                  <button 
-                    onClick={() => printInvoice(bill)}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <button 
+                      onClick={() => printInvoice(bill)}
                     style={{
                       background: '#f3f4f6',
                       border: 'none',
@@ -698,6 +658,27 @@ export default function Billing() {
                 ))}
               </div>
             </div>
+
+            {selectedPayment === 'upi' && company.upiId && (
+              <div style={{ textAlign: 'center', marginBottom: '20px', padding: '16px', background: 'white', borderRadius: '16px', border: '2px dashed #d1d5db' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: '#4b5563' }}>
+                  <QrCode size={20} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '8px' }} />
+                  Scan to Pay via UPI
+                </div>
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`upi://pay?pa=${company.upiId}&pn=${company.name}&am=${(calculateTotal(selectedKOT) + calculateTax(calculateTotal(selectedKOT))).toFixed(2)}&cu=INR&tn=Order%20${selectedKOT.orderNumber}`)}`}
+                  alt="UPI QR Code"
+                  style={{ width: '220px', height: '220px', borderRadius: '12px', border: '1px solid #e5e7eb' }}
+                  onError={(e) => { e.target.style.display = 'none' }}
+                />
+                <div style={{ marginTop: '10px', fontSize: '12px', color: '#6b7280' }}>
+                  Pay via GPay, PhonePe, Paytm, or any UPI app
+                </div>
+                <div style={{ marginTop: '4px', fontSize: '13px', fontWeight: 700, color: '#1a1a2e' }}>
+                  {company.upiId}
+                </div>
+              </div>
+            )}
 
             <button
               onClick={handlePayment}

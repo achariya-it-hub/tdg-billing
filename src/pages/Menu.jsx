@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { UtensilsCrossed, Plus, Search, BookOpen, Package, Edit, Trash2, Check, X, ChevronRight, AlertTriangle, Calculator } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { UtensilsCrossed, Plus, Search, BookOpen, Package, Edit, Trash2, Check, X, ChevronRight, AlertTriangle, Calculator, ImagePlus } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
@@ -104,6 +104,43 @@ export default function MenuManagement() {
   const [editCategoryId, setEditCategoryId] = useState(null)
   const [itemForm, setItemForm] = useState({ name: '', price: '', categoryId: '', description: '', isAvailable: true })
   const [catForm, setCatForm] = useState({ name: '', color: '#6b7280' })
+  const [imagePreview, setImagePreview] = useState(null)
+  const [imageFile, setImageFile] = useState(null)
+  const fileInputRef = useRef(null)
+
+  const handleImageSelect = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 5 * 1024 * 1024) { toast.error('Image must be under 5MB'); return }
+    setImageFile(file)
+    setImagePreview(URL.createObjectURL(file))
+  }
+
+  const uploadItemImage = async (itemId) => {
+    if (!imageFile) return
+    try {
+      const r = await fetch(`${API()}/api/admin/menu/items/${itemId}/image`, {
+        method: 'POST',
+        headers: { 'Content-Type': imageFile.type },
+        body: imageFile
+      })
+      if (!r.ok) throw Error()
+      const { image } = await r.json()
+      setMenuItems(prev => prev.map(i => i.id === itemId ? { ...i, image } : i))
+      setImageFile(null)
+      setImagePreview(null)
+    } catch { toast.error('Image upload failed') }
+  }
+
+  const removeItemImage = async (itemId) => {
+    try {
+      const r = await fetch(`${API()}/api/admin/menu/items/${itemId}/image`, { method: 'DELETE' })
+      if (!r.ok) throw Error()
+      setMenuItems(prev => prev.map(i => i.id === itemId ? { ...i, image: null } : i))
+      setImageFile(null)
+      setImagePreview(null)
+    } catch { toast.error('Failed to remove image') }
+  }
 
   const filteredMenuItems = menuItems.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -172,17 +209,21 @@ export default function MenuManagement() {
         if (!r.ok) throw Error()
         const updated = await r.json()
         setMenuItems(prev => prev.map(i => i.id === editItemId ? updated : i))
+        if (imageFile) await uploadItemImage(editItemId)
         toast.success('Item updated')
       } else {
         const r = await fetch(`${API()}/api/admin/menu/items`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
         if (!r.ok) throw Error()
         const created = await r.json()
-        setMenuItems(prev => [...prev, created])
+        if (imageFile) await uploadItemImage(created.id)
+        setMenuItems(prev => prev.map(i => i.id === created.id ? { ...created, image: imagePreview ? `/uploads/menu/${created.id}.jpg` : null } : [...prev, created]))
         toast.success('Item added')
       }
       setShowItemModal(false)
       setEditItemId(null)
       setItemForm({ name: '', price: '', categoryId: '', description: '', isAvailable: true })
+      setImageFile(null)
+      setImagePreview(null)
     } catch { toast.error('Failed to save item') }
   }
 
@@ -242,9 +283,13 @@ export default function MenuManagement() {
     if (item) {
       setEditItemId(item.id)
       setItemForm({ name: item.name, price: String(item.price), categoryId: item.categoryId || '', description: item.description || '', isAvailable: item.isAvailable !== false })
+      setImagePreview(item.image ? (item.image.startsWith('http') ? item.image : `${API()}${item.image}`) : null)
+      setImageFile(null)
     } else {
       setEditItemId(null)
       setItemForm({ name: '', price: '', categoryId: categories[0]?.id || '', description: '', isAvailable: true })
+      setImagePreview(null)
+      setImageFile(null)
     }
     setShowItemModal(true)
   }
@@ -471,18 +516,32 @@ export default function MenuManagement() {
                 <Card key={item.id} hover>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{
-                        width: '48px',
-                        height: '48px',
-                        borderRadius: '12px',
-                        background: category?.color || '#6b7280',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        opacity: item.isAvailable === false ? 0.4 : 1
-                      }}>
-                        <UtensilsCrossed size={24} color="white" />
-                      </div>
+                      {item.image ? (
+                        <img
+                          src={item.image.startsWith('http') ? item.image : `${API()}${item.image}`}
+                          alt={item.name}
+                          style={{
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '12px',
+                            objectFit: 'cover',
+                            opacity: item.isAvailable === false ? 0.4 : 1
+                          }}
+                        />
+                      ) : (
+                        <div style={{
+                          width: '48px',
+                          height: '48px',
+                          borderRadius: '12px',
+                          background: category?.color || '#6b7280',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          opacity: item.isAvailable === false ? 0.4 : 1
+                        }}>
+                          <UtensilsCrossed size={24} color="white" />
+                        </div>
+                      )}
                       <div>
                         <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e', textDecoration: item.isAvailable === false ? 'line-through' : 'none', opacity: item.isAvailable === false ? 0.5 : 1 }}>{item.name}</h3>
                         <span style={{ fontSize: '12px', color: '#6b7280' }}>{category?.name}</span>
@@ -821,7 +880,7 @@ export default function MenuManagement() {
       </Modal>
 
       {/* Add/Edit Item Modal */}
-      <Modal isOpen={showItemModal} onClose={() => { setShowItemModal(false); setEditItemId(null) }} title={editItemId ? 'Edit Item' : 'Add Menu Item'} size="md">
+      <Modal isOpen={showItemModal} onClose={() => { setShowItemModal(false); setEditItemId(null); setImagePreview(null); setImageFile(null) }} title={editItemId ? 'Edit Item' : 'Add Menu Item'} size="md">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
             <label style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '6px' }}>Name</label>
@@ -842,6 +901,47 @@ export default function MenuManagement() {
           <div>
             <label style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '6px' }}>Description</label>
             <textarea value={itemForm.description} onChange={e => setItemForm(p => ({ ...p, description: e.target.value }))} placeholder="Optional description" rows={3} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)', fontSize: '14px', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'inherit' }} />
+          </div>
+          <div>
+            <label style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '6px' }}>Item Image</label>
+            <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageSelect} style={{ display: 'none' }} />
+            {imagePreview ? (
+              <div style={{ position: 'relative', display: 'inline-block' }}>
+                <img src={imagePreview} alt="Preview" style={{ width: '120px', height: '120px', objectFit: 'cover', borderRadius: '12px', border: '2px solid #e5e7eb' }} />
+                <button
+                  onClick={() => { setImagePreview(null); setImageFile(null); if (fileInputRef.current) fileInputRef.current.value = '' }}
+                  style={{ position: 'absolute', top: '-6px', right: '-6px', width: '24px', height: '24px', borderRadius: '50%', background: '#ef4444', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', lineHeight: 1 }}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                style={{
+                  width: '120px',
+                  height: '120px',
+                  borderRadius: '12px',
+                  border: '2px dashed #d1d5db',
+                  background: '#f9fafb',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  color: '#9ca3af',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#e63946'; e.currentTarget.style.color = '#e63946' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#d1d5db'; e.currentTarget.style.color = '#9ca3af' }}
+              >
+                <ImagePlus size={24} />
+                <span style={{ fontSize: '11px', fontWeight: 500 }}>Upload Image</span>
+              </button>
+            )}
+            <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '4px' }}>JPG, PNG or WebP. Max 5MB.</div>
           </div>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
             <input type="checkbox" checked={itemForm.isAvailable} onChange={e => setItemForm(p => ({ ...p, isAvailable: e.target.checked }))} />

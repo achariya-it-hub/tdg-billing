@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { 
   Monitor, ChefHat, Tablet, ShoppingCart, LayoutDashboard, 
-  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, FileText, Receipt, Gem, Shield, KeyRound, X, DollarSign, Settings
+  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, FileText, Receipt, Gem, Shield, KeyRound, X, DollarSign, Settings, Landmark
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import API_BASE from '../lib/apiConfig'
@@ -19,6 +19,7 @@ const navItems = [
   { path: '/customers', icon: UserPlus, label: 'Customers', module: 'customers' },
   { path: '/reports', icon: FileText, label: 'Reports', module: 'reports' },
   { path: '/expenses', icon: DollarSign, label: 'Expenses', module: 'expenses' },
+  { path: '/accounts', icon: Landmark, label: 'Accounts', module: 'purchase' },
   { path: '/dashboard', icon: BarChart3, label: 'Dashboard', module: 'dashboard' },
   { path: '/users', icon: Shield, label: 'Users', module: 'users' },
 ]
@@ -31,6 +32,8 @@ export default function Layout({ user, onLogout }) {
   const [showMobileMenu, setShowMobileMenu] = useState(false)
 
   const [showInstallBtn, setShowInstallBtn] = useState(false)
+  const [isOffline, setIsOffline] = useState(typeof navigator !== 'undefined' && !navigator.onLine)
+  const [queuedCount, setQueuedCount] = useState(0)
   const [showPinModal, setShowPinModal] = useState(false)
   const [pinForm, setPinForm] = useState({ currentPin: '', newPin: '', confirmPin: '' })
   const [pinError, setPinError] = useState('')
@@ -102,9 +105,43 @@ export default function Layout({ user, onLogout }) {
     return () => clearInterval(interval)
   }, [])
 
+  // Network status tracking
+  useEffect(() => {
+    const goOnline = () => setIsOffline(false)
+    const goOffline = () => setIsOffline(true)
+    window.addEventListener('online', goOnline)
+    window.addEventListener('offline', goOffline)
+    setIsOffline(!navigator.onLine)
+    return () => {
+      window.removeEventListener('online', goOnline)
+      window.removeEventListener('offline', goOffline)
+    }
+  }, [])
+
+  // Listen for SW messages (queue count, replayed)
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.data?.type === 'QUEUE_COUNT') setQueuedCount(e.data.count)
+      if (e.data?.type === 'QUEUE_REPLAYED') setQueuedCount(0)
+      if (e.data?.type === 'OFFLINE_QUEUED') setQueuedCount(c => c + 1)
+    }
+    navigator.serviceWorker?.addEventListener('message', handler)
+    // Poll queue count periodically
+    const poll = setInterval(() => {
+      navigator.serviceWorker?.controller?.postMessage({ type: 'GET_QUEUE_COUNT' })
+    }, 5000)
+    return () => {
+      navigator.serviceWorker?.removeEventListener('message', handler)
+      clearInterval(poll)
+    }
+  }, [])
+
   const getCurrentTitle = () => {
     if (location.pathname === '/online-orders') return 'Online Orders'
-    return navItems.find(n => location.pathname.startsWith(n.path))?.label || 'TDG'
+    if (location.pathname === '/accounts') return 'Accounts'
+    const item = navItems.find(n => location.pathname.startsWith(n.path))
+    if (item) return item.label
+    return 'TDG'
   }
 
   // Mobile Layout with Sidebar
@@ -184,7 +221,23 @@ export default function Layout({ user, onLogout }) {
               )}
             </NavLink>
             )}
-            
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {isOffline && (
+                <div title="Offline - Changes queued" style={{
+                  width: '8px', height: '8px', borderRadius: '50%',
+                  background: '#f59e0b', boxShadow: '0 0 6px rgba(245,158,11,0.5)'
+                }} />
+              )}
+              {queuedCount > 0 && (
+                <span style={{
+                  fontSize: '10px', fontWeight: 700, color: '#f59e0b',
+                  background: 'rgba(245,158,11,0.1)', padding: '1px 5px',
+                  borderRadius: '8px', minWidth: '16px', textAlign: 'center'
+                }}>{queuedCount}</span>
+              )}
+            </div>
+
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
               style={{
@@ -541,6 +594,22 @@ export default function Layout({ user, onLogout }) {
           </NavLink>
         )}
 
+        {/* Offline indicator */}
+        <div title={isOffline ? `Offline - ${queuedCount} queued` : 'Online'}
+          style={{
+            width: '40px', padding: '6px', marginBottom: '4px',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px'
+          }}>
+          <div style={{
+            width: '10px', height: '10px', borderRadius: '50%',
+            background: isOffline ? '#f59e0b' : '#10b981',
+            boxShadow: isOffline ? '0 0 8px rgba(245,158,11,0.5)' : '0 0 8px rgba(16,185,129,0.4)'
+          }} />
+          {queuedCount > 0 && (
+            <span style={{ fontSize: '9px', fontWeight: 700, color: '#f59e0b' }}>{queuedCount}</span>
+          )}
+        </div>
+
         {/* Install PWA button */}
         {showInstallBtn && (
           <button
@@ -636,6 +705,20 @@ export default function Layout({ user, onLogout }) {
           </h1>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+
+            {/* Offline indicator */}
+            {isOffline && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{
+                  width: '8px', height: '8px', borderRadius: '50%',
+                  background: '#f59e0b', boxShadow: '0 0 6px rgba(245,158,11,0.5)'
+                }} />
+                <span style={{ fontSize: '12px', fontWeight: 600, color: '#f59e0b' }}>
+                  Offline{queuedCount > 0 ? ` (${queuedCount})` : ''}
+                </span>
+              </div>
+            )}
+
             <div style={{ position: 'relative' }}>
               <div
                 onClick={() => setShowUserMenu(!showUserMenu)}
