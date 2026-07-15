@@ -18,7 +18,8 @@ import {
   Mail,
   Menu as MenuIcon,
   User,
-  ArrowUp
+  ArrowUp,
+  X
 } from 'lucide-react'
 import { useMenuStore } from '../stores/menuStore'
 
@@ -27,6 +28,7 @@ export default function LandingPage() {
   const [customer, setCustomer] = useState(null)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [showScrollTop, setShowScrollTop] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const toggleVisibility = () => {
@@ -128,6 +130,107 @@ export default function LandingPage() {
       fontFamily: "'Lexend Deca', sans-serif",
       overflowX: 'hidden'
     }}>
+      <style>{`
+        /* Global responsive rules */
+        .desktop-nav {
+          display: flex;
+        }
+        .desktop-actions {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+        .mobile-menu-btn {
+          display: none;
+          background: transparent;
+          border: none;
+          color: white;
+          cursor: pointer;
+          align-items: center;
+          justify-content: center;
+        }
+        .responsive-grid-4 {
+          display: grid !important;
+          grid-template-columns: repeat(4, 1fr) !important;
+          gap: 24px !important;
+        }
+        .responsive-grid-3 {
+          display: grid !important;
+          grid-template-columns: repeat(3, 1fr) !important;
+          gap: 24px !important;
+        }
+        .responsive-story-grid {
+          display: grid !important;
+          grid-template-columns: 0.9fr 1.1fr !important;
+          gap: 60px !important;
+        }
+        .responsive-timeline-grid {
+          display: grid !important;
+          grid-template-columns: repeat(4, 1fr) !important;
+          gap: 20px !important;
+        }
+        .responsive-footer-grid {
+          display: grid !important;
+          grid-template-columns: 1.2fr 0.8fr 0.8fr 1.2fr !important;
+          gap: 40px !important;
+        }
+        
+        @media (max-width: 1024px) {
+          .desktop-nav {
+            display: none !important;
+          }
+          .desktop-actions {
+            display: none !important;
+          }
+          .mobile-menu-btn {
+            display: flex !important;
+          }
+          .responsive-grid-4 {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+          .responsive-grid-3 {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+          .responsive-story-grid {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+          }
+          .responsive-timeline-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+          .responsive-footer-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+        
+        @media (max-width: 768px) {
+          .responsive-grid-4 {
+            grid-template-columns: 1fr !important;
+          }
+          .responsive-grid-3 {
+            grid-template-columns: 1fr !important;
+          }
+          .responsive-timeline-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+          .timeline-connector {
+            display: none !important;
+          }
+          header {
+            padding: 12px 20px !important;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .responsive-timeline-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .responsive-footer-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
+
       {/* 1. Header (Sticky glassmorphic) */}
       <header style={{
         position: 'sticky',
@@ -162,7 +265,7 @@ export default function LandingPage() {
         </Link>
 
         {/* Desktop Navigation (Highlighted Golden Text Shadow Animations) */}
-        <nav style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
+        <nav className="desktop-nav" style={{ gap: '28px', alignItems: 'center' }}>
           <motion.a 
             href="#hero" 
             whileHover={{ y: -2, textShadow: '0 0 10px rgba(255, 215, 0, 0.85)', color: '#ffd700' }}
@@ -201,7 +304,7 @@ export default function LandingPage() {
         </nav>
 
         {/* Action Button & Account Portal */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div className="desktop-actions">
           <Link to={customer ? "/kiosk" : "/login"} style={{
             backgroundColor: '#e63946',
             color: '#fff',
@@ -253,6 +356,80 @@ export default function LandingPage() {
             </Link>
           )}
         </div>
+
+        {/* Mobile Hamburger Menu Toggle Button */}
+        <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          {isMobileMenuOpen ? <X size={28} /> : <MenuIcon size={28} />}
+        </button>
+
+        {/* Mobile Dropdown Drawer Menu */}
+        {isMobileMenuOpen && (
+          <div style={{
+            position: 'absolute',
+            top: '80px',
+            left: 0,
+            right: 0,
+            backgroundColor: '#292c30',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            padding: '20px 40px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+            zIndex: 99
+          }}>
+            <a href="#hero" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#ffd700', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>HOME</a>
+            <a href="#menu" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>MENU</a>
+            <a href="#about" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>ABOUT</a>
+            <a href="#testimonials" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>REVIEWS</a>
+            <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>CONTACT</a>
+            
+            <Link to={customer ? "/kiosk" : "/login"} onClick={() => setIsMobileMenuOpen(false)} style={{
+              backgroundColor: '#e63946',
+              color: '#fff',
+              padding: '12px',
+              borderRadius: '4px',
+              fontSize: '14px',
+              fontWeight: 800,
+              textDecoration: 'none',
+              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}>
+              ORDER NOW <ArrowRight size={14} />
+            </Link>
+
+            {customer ? (
+              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} style={{
+                color: '#ffd700',
+                textDecoration: 'none',
+                fontSize: '14px',
+                fontWeight: 800,
+                textAlign: 'center',
+                padding: '10px',
+                borderRadius: '20px',
+                border: '1px solid rgba(255, 215, 0, 0.2)',
+                background: 'rgba(255, 215, 0, 0.05)'
+              }}>
+                MY DEN (🪙{customer.points})
+              </Link>
+            ) : (
+              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} style={{
+                color: '#ffd700',
+                textDecoration: 'none',
+                fontSize: '14px',
+                fontWeight: 800,
+                textAlign: 'center',
+                padding: '10px',
+                borderRadius: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.15)'
+              }}>
+                SIGN IN
+              </Link>
+            )}
+          </div>
+        )}
       </header>
 
       {/* 2. Hero Section (Full Width / Full Bleed Background Image Slider) */}
@@ -410,13 +587,10 @@ export default function LandingPage() {
 
       {/* 3. Four Feature Cards (Embossed & Animated on entry) */}
       <section style={{ padding: '60px 40px', backgroundColor: '#1f2124' }}>
-        <div style={{
+        <div className="responsive-grid-4" style={{
           maxWidth: '1200px',
-          margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '24px'
-        }} className="md-grid-2">
+          margin: '0 auto'
+        }}>
           
           {[
             { icon: <Flame size={22} color="#ffd700" />, title: 'FRESH INGREDIENTS', desc: 'We use only the freshest ingredients, daily.' },
@@ -495,11 +669,7 @@ export default function LandingPage() {
           </div>
 
           {/* Cards Grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '24px'
-          }} className="md-grid-2">
+          <div className="responsive-grid-4">
             {displaySignatures.map((item, idx) => (
               <motion.div 
                 key={item.id}
@@ -574,13 +744,11 @@ export default function LandingPage() {
         borderTop: '1px solid rgba(255,255,255,0.03)',
         borderBottom: '1px solid rgba(255,255,255,0.03)'
       }}>
-        <div style={{
+        <div className="responsive-grid-4" style={{
           maxWidth: '1200px',
           margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
           textAlign: 'center'
-        }} className="md-grid-2">
+        }}>
           
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
             <div style={{ width: '42px', height: '42px', borderRadius: '50%', backgroundColor: 'rgba(255,215,0,0.1)', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
@@ -631,7 +799,7 @@ export default function LandingPage() {
       <section id="about" style={{ padding: '80px 40px', backgroundColor: '#292c30' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: '60px', alignItems: 'center' }} className="md-grid-1">
+          <div className="responsive-story-grid" style={{ alignItems: 'center' }}>
             
             {/* Story text */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -673,15 +841,12 @@ export default function LandingPage() {
                 height: '2px',
                 backgroundColor: 'rgba(255,215,0,0.15)',
                 zIndex: 1
-              }} className="md-hidden" />
+              }} className="timeline-connector" />
 
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '20px',
+              <div className="responsive-timeline-grid" style={{
                 position: 'relative',
                 zIndex: 2
-              }} className="md-grid-1">
+              }}>
                 {timelineMilestones.map((node, idx) => (
                   <motion.div 
                     key={idx} 
@@ -735,11 +900,7 @@ export default function LandingPage() {
             <div style={{ width: '60px', height: '2px', backgroundColor: '#ffd700', margin: '12px auto 0 auto' }} />
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '24px'
-          }} className="md-grid-1">
+          <div className="responsive-grid-3">
             {testimonials.map((t, idx) => (
               <motion.div 
                 key={idx}
@@ -864,15 +1025,12 @@ export default function LandingPage() {
         padding: '80px 40px 40px 40px',
         color: '#9ca3af'
       }}>
-        <div style={{ 
-          maxWidth: '1200px', 
-          margin: '0 auto', 
-          display: 'grid', 
-          gridTemplateColumns: '1.2fr 0.8fr 0.8fr 1.2fr', 
-          gap: '40px',
+        <div className="responsive-footer-grid" style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
           paddingBottom: '60px',
           borderBottom: '1px solid rgba(255,255,255,0.05)'
-        }} className="md-grid-2">
+        }}>
           
           {/* Col 1: Logo & text */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
