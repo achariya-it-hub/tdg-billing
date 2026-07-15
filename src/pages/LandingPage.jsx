@@ -108,16 +108,16 @@ export default function LandingPage() {
 
   // CSS Spacing Styles for Embossed Look
   const embossedCardStyle = {
-    backgroundColor: '#0a0a0d',
-    border: '1px solid rgba(255, 255, 255, 0.05)',
-    boxShadow: 'inset 1px 1px 0px rgba(255,255,255,0.06), inset -1px -1px 0px rgba(0,0,0,0.6), 0 12px 24px rgba(0,0,0,0.5)',
+    backgroundColor: '#34393e',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
+    boxShadow: 'inset 1px 1px 0px rgba(255,255,255,0.1), inset -1px -1px 0px rgba(0,0,0,0.5), 0 12px 24px rgba(0,0,0,0.4)',
     borderRadius: '8px',
     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
   }
 
   return (
     <div style={{ 
-      backgroundColor: '#08080a', 
+      backgroundColor: '#292c30', 
       color: '#ffffff', 
       minHeight: '100vh', 
       fontFamily: "'Inter', sans-serif",
@@ -128,7 +128,7 @@ export default function LandingPage() {
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        background: 'rgba(8, 8, 10, 0.95)',
+        background: 'rgba(41, 44, 48, 0.95)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
         padding: '16px 40px',
@@ -267,7 +267,7 @@ export default function LandingPage() {
         <div style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(to right, rgba(8, 8, 10, 0.95) 0%, rgba(8, 8, 10, 0.8) 45%, rgba(8, 8, 10, 0.3) 100%)',
+          background: 'linear-gradient(to right, rgba(41, 44, 48, 0.95) 0%, rgba(41, 44, 48, 0.8) 45%, rgba(41, 44, 48, 0.3) 100%)',
           zIndex: 1
         }} />
 
@@ -338,7 +338,7 @@ export default function LandingPage() {
               </Link>
 
               <a href="#menu" style={{
-                backgroundColor: 'rgba(8, 8, 10, 0.6)',
+                backgroundColor: 'rgba(41, 44, 48, 0.6)',
                 backdropFilter: 'blur(8px)',
                 color: '#fff',
                 border: '1.5px solid rgba(255, 255, 255, 0.2)',
@@ -404,7 +404,7 @@ export default function LandingPage() {
       </section>
 
       {/* 3. Four Feature Cards (Embossed & Animated on entry) */}
-      <section style={{ padding: '60px 40px', backgroundColor: '#060608' }}>
+      <section style={{ padding: '60px 40px', backgroundColor: '#1f2124' }}>
         <div style={{
           maxWidth: '1200px',
           margin: '0 auto',
@@ -461,7 +461,7 @@ export default function LandingPage() {
       </section>
 
       {/* 4. Signature Gyros Section (Embossed & Animated on entry) */}
-      <section id="menu" style={{ padding: '80px 40px', backgroundColor: '#08080a' }}>
+      <section id="menu" style={{ padding: '80px 40px', backgroundColor: '#292c30' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
           {/* Header */}
@@ -565,7 +565,7 @@ export default function LandingPage() {
       {/* 5. Stats Counter Strip */}
       <section style={{
         padding: '50px 40px',
-        backgroundColor: '#060608',
+        backgroundColor: '#1f2124',
         borderTop: '1px solid rgba(255,255,255,0.03)',
         borderBottom: '1px solid rgba(255,255,255,0.03)'
       }}>
@@ -623,7 +623,7 @@ export default function LandingPage() {
       </section>
 
       {/* 6. Our Story Section */}
-      <section id="about" style={{ padding: '80px 40px', backgroundColor: '#08080a' }}>
+      <section id="about" style={{ padding: '80px 40px', backgroundColor: '#292c30' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
           <div style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: '60px', alignItems: 'center' }} className="md-grid-1">
@@ -720,7 +720,7 @@ export default function LandingPage() {
       </section>
 
       {/* 7. What Our Customers Say (Testimonials / Embossed cards) */}
-      <section id="testimonials" style={{ padding: '80px 40px', backgroundColor: '#060608' }}>
+      <section id="testimonials" style={{ padding: '80px 40px', backgroundColor: '#1f2124' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
           <div style={{ textAlign: 'center', marginBottom: '48px' }}>
@@ -820,7 +820,7 @@ export default function LandingPage() {
         <div style={{
           position: 'absolute',
           inset: 0,
-          backgroundColor: 'rgba(8, 8, 10, 0.85)',
+          backgroundColor: 'rgba(41, 44, 48, 0.85)',
           zIndex: 1
         }} />
 
@@ -854,7 +854,7 @@ export default function LandingPage() {
 
       {/* 9. Footer */}
       <footer id="contact" style={{
-        backgroundColor: '#050507',
+        backgroundColor: '#15171a',
         borderTop: '1px solid rgba(255,255,255,0.05)',
         padding: '80px 40px 40px 40px',
         color: '#9ca3af'
