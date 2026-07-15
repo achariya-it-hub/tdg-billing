@@ -120,7 +120,7 @@ export default function LandingPage() {
       backgroundColor: '#292c30', 
       color: '#ffffff', 
       minHeight: '100vh', 
-      fontFamily: "'Inter', sans-serif",
+      fontFamily: "'Lexend Deca', sans-serif",
       overflowX: 'hidden'
     }}>
       {/* 1. Header (Sticky glassmorphic) */}
@@ -161,35 +161,35 @@ export default function LandingPage() {
           <motion.a 
             href="#hero" 
             whileHover={{ y: -2, textShadow: '0 0 10px rgba(255, 215, 0, 0.85)', color: '#ffd700' }}
-            style={{ color: '#ffd700', textDecoration: 'none', fontSize: '12px', fontWeight: 700, letterSpacing: '1.5px', transition: 'color 0.2s' }}
+            style={{ color: '#ffd700', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1.5px', transition: 'color 0.2s' }}
           >
             HOME
           </motion.a>
           <motion.a 
             href="#menu" 
             whileHover={{ y: -2, textShadow: '0 0 10px rgba(255, 215, 0, 0.85)', color: '#ffd700' }}
-            style={{ color: '#fff', textDecoration: 'none', fontSize: '12px', fontWeight: 700, letterSpacing: '1.5px', transition: 'color 0.2s' }}
+            style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1.5px', transition: 'color 0.2s' }}
           >
             MENU
           </motion.a>
           <motion.a 
             href="#about" 
             whileHover={{ y: -2, textShadow: '0 0 10px rgba(255, 215, 0, 0.85)', color: '#ffd700' }}
-            style={{ color: '#fff', textDecoration: 'none', fontSize: '12px', fontWeight: 700, letterSpacing: '1.5px', transition: 'color 0.2s' }}
+            style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1.5px', transition: 'color 0.2s' }}
           >
             ABOUT
           </motion.a>
           <motion.a 
             href="#testimonials" 
             whileHover={{ y: -2, textShadow: '0 0 10px rgba(255, 215, 0, 0.85)', color: '#ffd700' }}
-            style={{ color: '#fff', textDecoration: 'none', fontSize: '12px', fontWeight: 700, letterSpacing: '1.5px', transition: 'color 0.2s' }}
+            style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1.5px', transition: 'color 0.2s' }}
           >
             REVIEWS
           </motion.a>
           <motion.a 
             href="#contact" 
             whileHover={{ y: -2, textShadow: '0 0 10px rgba(255, 215, 0, 0.85)', color: '#ffd700' }}
-            style={{ color: '#fff', textDecoration: 'none', fontSize: '12px', fontWeight: 700, letterSpacing: '1.5px', transition: 'color 0.2s' }}
+            style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1.5px', transition: 'color 0.2s' }}
           >
             CONTACT
           </motion.a>
