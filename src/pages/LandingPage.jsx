@@ -354,6 +354,23 @@ export default function LandingPage() {
               }}>
                 VIEW MENU <ArrowRight size={16} />
               </a>
+
+              <a href="/app.apk" download style={{
+                backgroundColor: 'rgba(255, 215, 0, 0.08)',
+                color: '#ffd700',
+                border: '1.5px dashed rgba(255, 215, 0, 0.4)',
+                padding: '14px 32px',
+                fontSize: '13px',
+                fontWeight: 800,
+                textDecoration: 'none',
+                letterSpacing: '1px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                borderRadius: '4px'
+              }}>
+                DOWNLOAD APP 📱
+              </a>
             </motion.div>
 
             {/* Bottom scroll down indicator */}
@@ -870,6 +887,7 @@ export default function LandingPage() {
               <a href="#menu" style={{ color: '#9ca3af', textDecoration: 'none' }}>Menu</a>
               <a href="#about" style={{ color: '#9ca3af', textDecoration: 'none' }}>About Us</a>
               <a href="#testimonials" style={{ color: '#9ca3af', textDecoration: 'none' }}>Reviews</a>
+              <a href="/app.apk" download style={{ color: '#ffd700', textDecoration: 'none', fontWeight: 600 }}>Download Android App 📱</a>
             </div>
           </div>
 
