@@ -309,7 +309,7 @@ export default function LandingPage() {
 
         {/* Action Button & Account Portal */}
         <div className="desktop-actions">
-          <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{
+          <a href={`${denUrl}/`} style={{
             backgroundColor: '#e63946',
             color: '#fff',
             padding: '10px 24px',
@@ -326,7 +326,7 @@ export default function LandingPage() {
           </a>
           
           {customer ? (
-            <a href={`${denUrl}/login`} style={{
+            <a href={`${denUrl}/`} style={{
               color: '#ffd700',
               textDecoration: 'none',
               fontSize: '12px',
@@ -343,7 +343,7 @@ export default function LandingPage() {
               <User size={14} /> MY DEN (🪙{customer.points})
             </a>
           ) : (
-            <a href={`${denUrl}/login`} style={{
+            <a href={`${denUrl}/`} style={{
               color: '#ffd700',
               textDecoration: 'none',
               fontSize: '12px',
@@ -387,7 +387,7 @@ export default function LandingPage() {
             <a href="#testimonials" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>REVIEWS</a>
             <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>CONTACT</a>
             
-            <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} onClick={() => setIsMobileMenuOpen(false)} style={{
+            <a href={`${denUrl}/`} onClick={() => setIsMobileMenuOpen(false)} style={{
               backgroundColor: '#e63946',
               color: '#fff',
               padding: '12px',
@@ -405,7 +405,7 @@ export default function LandingPage() {
             </a>
 
             {customer ? (
-              <a href={`${denUrl}/login`} onClick={() => setIsMobileMenuOpen(false)} style={{
+              <a href={`${denUrl}/`} onClick={() => setIsMobileMenuOpen(false)} style={{
                 color: '#ffd700',
                 textDecoration: 'none',
                 fontSize: '14px',
@@ -420,7 +420,7 @@ export default function LandingPage() {
                 MY DEN (🪙{customer.points})
               </a>
             ) : (
-              <a href={`${denUrl}/login`} onClick={() => setIsMobileMenuOpen(false)} style={{
+              <a href={`${denUrl}/`} onClick={() => setIsMobileMenuOpen(false)} style={{
                 color: '#ffd700',
                 textDecoration: 'none',
                 fontSize: '14px',
@@ -508,7 +508,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6, delay: 0.3 }}
               style={{ display: 'flex', gap: '16px', marginTop: '12px' }}
             >
-              <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{
+              <a href={`${denUrl}/`} style={{
                 backgroundColor: '#ffd700',
                 color: '#000',
                 padding: '14px 32px',
@@ -720,7 +720,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Button */}
-                <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{
+                <a href={`${denUrl}/`} style={{
                   backgroundColor: '#e63946',
                   color: '#fff',
                   padding: '14px',
@@ -1001,7 +1001,7 @@ export default function LandingPage() {
           <h2 style={{ fontSize: '56px', fontWeight: 950, color: '#ffd700', lineHeight: 1 }}>LET'S EAT!</h2>
           
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
-            <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{
+            <a href={`${denUrl}/`} style={{
               backgroundColor: '#e63946',
               color: '#fff',
               padding: '16px 36px',
@@ -1064,10 +1064,10 @@ export default function LandingPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <h4 style={{ fontSize: '12px', fontWeight: 900, color: '#fff', letterSpacing: '1px', textTransform: 'uppercase' }}>OUR MENU</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
-              <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{ color: '#9ca3af', textDecoration: 'none' }}>Gyros</a>
-              <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{ color: '#9ca3af', textDecoration: 'none' }}>Wraps</a>
-              <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{ color: '#9ca3af', textDecoration: 'none' }}>Crispy Bites</a>
-              <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{ color: '#9ca3af', textDecoration: 'none' }}>Desserts</a>
+              <a href={`${denUrl}/`} style={{ color: '#9ca3af', textDecoration: 'none' }}>Gyros</a>
+              <a href={`${denUrl}/`} style={{ color: '#9ca3af', textDecoration: 'none' }}>Wraps</a>
+              <a href={`${denUrl}/`} style={{ color: '#9ca3af', textDecoration: 'none' }}>Crispy Bites</a>
+              <a href={`${denUrl}/`} style={{ color: '#9ca3af', textDecoration: 'none' }}>Desserts</a>
             </div>
           </div>
 

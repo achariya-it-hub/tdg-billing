@@ -3150,6 +3150,26 @@ seedAdmin()
 
 // Serve built frontend in production
 const distPath = join(__dirname, '..', 'dist')
+const flutterWebPath = join(__dirname, '..', 'ttt', 'build', 'web')
+
+// Serve Flutter Web App for den.tendengyros.com subdomain
+app.use((req, res, next) => {
+  const host = req.headers.host || ''
+  if (host.startsWith('den.') && !req.path.startsWith('/api/')) {
+    try {
+      statSync(flutterWebPath)
+      return express.static(flutterWebPath)(req, res, (err) => {
+        if (err) return next(err)
+        // SPA fallback — serve Flutter web's index.html for non-asset routing
+        res.sendFile(join(flutterWebPath, 'index.html'))
+      })
+    } catch (e) {
+      console.log('Flutter Web App build not found, falling back to default frontend')
+    }
+  }
+  next()
+})
+
 try {
   statSync(distPath)
   app.use(express.static(distPath))
