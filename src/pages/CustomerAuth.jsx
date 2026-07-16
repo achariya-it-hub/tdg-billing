@@ -35,11 +35,36 @@ export default function CustomerAuth() {
   })
 
   useEffect(() => {
+    // Check URL parameters for session credentials (for subdomain redirection)
+    const params = new URLSearchParams(window.location.search)
+    const tokenParam = params.get('token')
+    const userParam = params.get('user')
+
+    if (tokenParam && userParam) {
+      try {
+        localStorage.setItem('customer_token', tokenParam)
+        localStorage.setItem('customer_user', decodeURIComponent(userParam))
+        
+        // Clean URL parameter list
+        window.history.replaceState({}, document.title, window.location.pathname)
+        
+        const parsedUser = JSON.parse(decodeURIComponent(userParam))
+        setCustomer(parsedUser)
+        
+        setTimeout(() => {
+          navigate('/kiosk')
+        }, 800)
+        return
+      } catch (e) {
+        console.error('Failed to parse URL login credentials', e)
+      }
+    }
+
     const savedCustomer = localStorage.getItem('customer_user')
     if (savedCustomer) {
       setCustomer(JSON.parse(savedCustomer))
     }
-  }, [])
+  }, [navigate])
 
   const handleInputChange = (e) => {
     setFormData({
@@ -88,7 +113,13 @@ export default function CustomerAuth() {
         
         // Wait and redirect to kiosk
         setTimeout(() => {
-          navigate('/kiosk')
+          const isMainDomain = !window.location.hostname.includes('den.') && !window.location.hostname.includes('pos.')
+          if (isMainDomain && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            const redirectUrl = `https://den.tendengyros.com/login?token=${data.token}&user=${encodeURIComponent(JSON.stringify(data.user))}`
+            window.location.href = redirectUrl
+          } else {
+            navigate('/kiosk')
+          }
         }, 1500)
       } else {
         setError(data.message || 'Authentication failed. Please check your details.')

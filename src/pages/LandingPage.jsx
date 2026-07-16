@@ -113,6 +113,10 @@ export default function LandingPage() {
     { year: '2024', title: 'THE FUTURE', desc: 'Continuing to serve with passion.', img: '/crispy_chicken.png' }
   ]
 
+  const denUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? ''
+    : 'https://den.tendengyros.com'
+
   // CSS Spacing Styles for Embossed Look
   const embossedCardStyle = {
     backgroundColor: '#34393e',
@@ -305,7 +309,7 @@ export default function LandingPage() {
 
         {/* Action Button & Account Portal */}
         <div className="desktop-actions">
-          <Link to={customer ? "/kiosk" : "/login"} style={{
+          <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{
             backgroundColor: '#e63946',
             color: '#fff',
             padding: '10px 24px',
@@ -319,10 +323,10 @@ export default function LandingPage() {
             gap: '8px'
           }}>
             ORDER NOW <ArrowRight size={14} />
-          </Link>
+          </a>
           
           {customer ? (
-            <Link to="/login" style={{
+            <a href={`${denUrl}/login`} style={{
               color: '#ffd700',
               textDecoration: 'none',
               fontSize: '12px',
@@ -337,9 +341,9 @@ export default function LandingPage() {
               background: 'rgba(255, 215, 0, 0.05)'
             }}>
               <User size={14} /> MY DEN (🪙{customer.points})
-            </Link>
+            </a>
           ) : (
-            <Link to="/login" style={{
+            <a href={`${denUrl}/login`} style={{
               color: '#ffd700',
               textDecoration: 'none',
               fontSize: '12px',
@@ -353,7 +357,7 @@ export default function LandingPage() {
               borderRadius: '20px'
             }}>
               <User size={14} /> SIGN IN
-            </Link>
+            </a>
           )}
         </div>
 
@@ -383,7 +387,7 @@ export default function LandingPage() {
             <a href="#testimonials" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>REVIEWS</a>
             <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>CONTACT</a>
             
-            <Link to={customer ? "/kiosk" : "/login"} onClick={() => setIsMobileMenuOpen(false)} style={{
+            <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} onClick={() => setIsMobileMenuOpen(false)} style={{
               backgroundColor: '#e63946',
               color: '#fff',
               padding: '12px',
@@ -398,10 +402,10 @@ export default function LandingPage() {
               gap: '8px'
             }}>
               ORDER NOW <ArrowRight size={14} />
-            </Link>
+            </a>
 
             {customer ? (
-              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} style={{
+              <a href={`${denUrl}/login`} onClick={() => setIsMobileMenuOpen(false)} style={{
                 color: '#ffd700',
                 textDecoration: 'none',
                 fontSize: '14px',
@@ -410,12 +414,13 @@ export default function LandingPage() {
                 padding: '10px',
                 borderRadius: '20px',
                 border: '1px solid rgba(255, 215, 0, 0.2)',
-                background: 'rgba(255, 215, 0, 0.05)'
+                background: 'rgba(255, 215, 0, 0.05)',
+                display: 'block'
               }}>
                 MY DEN (🪙{customer.points})
-              </Link>
+              </a>
             ) : (
-              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} style={{
+              <a href={`${denUrl}/login`} onClick={() => setIsMobileMenuOpen(false)} style={{
                 color: '#ffd700',
                 textDecoration: 'none',
                 fontSize: '14px',
@@ -423,10 +428,11 @@ export default function LandingPage() {
                 textAlign: 'center',
                 padding: '10px',
                 borderRadius: '20px',
-                border: '1px solid rgba(255, 255, 255, 0.15)'
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                display: 'block'
               }}>
                 SIGN IN
-              </Link>
+              </a>
             )}
           </div>
         )}
@@ -502,7 +508,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6, delay: 0.3 }}
               style={{ display: 'flex', gap: '16px', marginTop: '12px' }}
             >
-              <Link to={customer ? "/kiosk" : "/login"} style={{
+              <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{
                 backgroundColor: '#ffd700',
                 color: '#000',
                 padding: '14px 32px',
@@ -517,7 +523,7 @@ export default function LandingPage() {
                 boxShadow: '0 4px 15px rgba(255, 215, 0, 0.3)'
               }}>
                 ORDER NOW <ArrowRight size={16} />
-              </Link>
+              </a>
 
               <a href="#menu" style={{
                 backgroundColor: 'rgba(41, 44, 48, 0.6)',
@@ -714,7 +720,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Button */}
-                <Link to={customer ? "/kiosk" : "/login"} style={{
+                <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{
                   backgroundColor: '#e63946',
                   color: '#fff',
                   padding: '14px',
@@ -729,7 +735,7 @@ export default function LandingPage() {
                   gap: '6px'
                 }}>
                   ORDER NOW <ShoppingBag size={14} />
-                </Link>
+                </a>
               </motion.div>
             ))}
           </div>
@@ -995,7 +1001,7 @@ export default function LandingPage() {
           <h2 style={{ fontSize: '56px', fontWeight: 950, color: '#ffd700', lineHeight: 1 }}>LET'S EAT!</h2>
           
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
-            <Link to={customer ? "/kiosk" : "/login"} style={{
+            <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{
               backgroundColor: '#e63946',
               color: '#fff',
               padding: '16px 36px',
@@ -1010,7 +1016,7 @@ export default function LandingPage() {
               boxShadow: '0 4px 15px rgba(230,57,70,0.3)'
             }}>
               ORDER ONLINE NOW <ArrowRight size={16} />
-            </Link>
+            </a>
             <span style={{ fontSize: '11px', color: '#9ca3af', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
               🚀 FAST DELIVERY TO YOUR DOOR
             </span>
@@ -1058,10 +1064,10 @@ export default function LandingPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <h4 style={{ fontSize: '12px', fontWeight: 900, color: '#fff', letterSpacing: '1px', textTransform: 'uppercase' }}>OUR MENU</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
-              <Link to={customer ? "/kiosk" : "/login"} style={{ color: '#9ca3af', textDecoration: 'none' }}>Gyros</Link>
-              <Link to={customer ? "/kiosk" : "/login"} style={{ color: '#9ca3af', textDecoration: 'none' }}>Wraps</Link>
-              <Link to={customer ? "/kiosk" : "/login"} style={{ color: '#9ca3af', textDecoration: 'none' }}>Crispy Bites</Link>
-              <Link to={customer ? "/kiosk" : "/login"} style={{ color: '#9ca3af', textDecoration: 'none' }}>Desserts</Link>
+              <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{ color: '#9ca3af', textDecoration: 'none' }}>Gyros</a>
+              <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{ color: '#9ca3af', textDecoration: 'none' }}>Wraps</a>
+              <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{ color: '#9ca3af', textDecoration: 'none' }}>Crispy Bites</a>
+              <a href={customer ? `${denUrl}/kiosk` : `${denUrl}/login`} style={{ color: '#9ca3af', textDecoration: 'none' }}>Desserts</a>
             </div>
           </div>
 
