@@ -1259,9 +1259,7 @@ app.put('/api/settings', (req, res) => {
 
 // Menu (mobile format)
 app.get('/api/menu', (req, res) => {
-  const db = readDb()
-  if (db.menu) return res.json(db.menu)
-  // Build from existing categories + menuItems
+  // Build from existing categories + menuItems dynamically so POS updates are reflected
   res.json({
     categories: categories.map(c => c.name),
     items: menuItems.map(item => ({
@@ -1270,7 +1268,7 @@ app.get('/api/menu', (req, res) => {
       price: item.price,
       category: categories.find(c => c.id === item.categoryId)?.name || 'Other',
       tag: item.isAvailable ? 'Popular' : '',
-      image: null,
+      image: item.image || null,
       isAvailable: item.isAvailable
     }))
   })

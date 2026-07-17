@@ -179,6 +179,13 @@ export default function LandingPage() {
           gap: 40px !important;
         }
         
+        .hero-buttons {
+          display: flex;
+          gap: 16px;
+          margin-top: 12px;
+          flex-wrap: wrap;
+        }
+        
         @media (max-width: 1024px) {
           .desktop-nav {
             display: none !important;
@@ -222,6 +229,20 @@ export default function LandingPage() {
           }
           header {
             padding: 12px 20px !important;
+          }
+          section, footer {
+            padding: 40px 20px !important;
+          }
+        }
+        
+        @media (max-width: 640px) {
+          .hero-buttons {
+            flex-direction: column;
+            gap: 10px;
+          }
+          .hero-buttons a {
+            width: 100%;
+            justify-content: center;
           }
         }
         
@@ -370,7 +391,7 @@ export default function LandingPage() {
         {isMobileMenuOpen && (
           <div style={{
             position: 'absolute',
-            top: '80px',
+            top: '100%',
             left: 0,
             right: 0,
             backgroundColor: '#292c30',
@@ -487,7 +508,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              style={{ fontSize: 'clamp(36px, 6vw, 64px)', fontWeight: 950, lineHeight: 0.9, letterSpacing: '-2px', textTransform: 'uppercase' }}
+              style={{ fontSize: 'clamp(28px, 6vw, 64px)', fontWeight: 950, lineHeight: 0.9, letterSpacing: '-2px', textTransform: 'uppercase' }}
             >
               {slides[currentSlide].title}
             </motion.h1>
@@ -506,7 +527,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              style={{ display: 'flex', gap: '16px', marginTop: '12px' }}
+              className="hero-buttons"
             >
               <a href={`${denUrl}/`} style={{
                 backgroundColor: '#ffd700',
@@ -998,7 +1019,7 @@ export default function LandingPage() {
 
         <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
           <span style={{ fontSize: '18px', fontWeight: 900, color: '#fff', letterSpacing: '4px' }}>HUNGRY?</span>
-          <h2 style={{ fontSize: '56px', fontWeight: 950, color: '#ffd700', lineHeight: 1 }}>LET'S EAT!</h2>
+          <h2 style={{ fontSize: 'clamp(36px, 8vw, 56px)', fontWeight: 950, color: '#ffd700', lineHeight: 1 }}>LET'S EAT!</h2>
           
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
             <a href={`${denUrl}/`} style={{
