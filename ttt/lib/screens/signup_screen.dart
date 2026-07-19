@@ -117,197 +117,198 @@ class _SignUpScreenState extends State<SignUpScreen> {
               builder: (context, constraints) {
                 return SingleChildScrollView(
                   physics: const ClampingScrollPhysics(),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: IntrinsicHeight(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 28),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 12),
-                            // Back Button
-                            const Align(
-                              alignment: Alignment.topLeft,
-                              child: BackButton(color: Colors.white),
-                            ),
-                            
-                            const Spacer(),
-                            
-                            // Center Brand Logo
-                            const Center(
-                              child: TDGLogo(width: 160),
-                            ),
-                            
-                            const SizedBox(height: 24),
-                            
-                            Center(
-                              child: Text(
-                                'JOIN THE PRIDE',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.outfit(
-                                  color: Colors.white,
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 1.5,
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 500),
+                        child: IntrinsicHeight(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 28),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 12),
+                                // Back Button
+                                const Align(
+                                  alignment: Alignment.topLeft,
+                                  child: BackButton(color: Colors.white),
                                 ),
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Center(
-                              child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  style: GoogleFonts.outfit(
-                                    color: TDGColors.gold,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.2,
-                                  ),
-                                  children: [
-                                    const TextSpan(text: 'Start your journey with 500 '),
-                                    WidgetSpan(
-                                      alignment: PlaceholderAlignment.middle,
-                                      child: Icon(
-                                        Icons.diamond_rounded,
-                                        color: TDGColors.primaryRed,
-                                        size: 16,
-                                      ),
-                                    ),
-                                    const TextSpan(text: ' bonus!'),
-                                  ],
+                                
+                                const Spacer(),
+                                
+                                // Center Brand Logo
+                                const Center(
+                                  child: TDGLogo(width: 160),
                                 ),
-                              ),
-                            ),
-                            
-                            const SizedBox(height: 24),
-                            
-                            // Referral Code (Optional)
-                            _buildTextField(
-                              label: 'REFERRAL CODE (OPTIONAL)',
-                              controller: _referralController,
-                              hint: 'Enter code for asset linking',
-                              icon: Icons.card_giftcard_rounded,
-                            ),
-                            
-                            const SizedBox(height: 16),
-                            
-                            // OTP (shown when referral code is entered)
-                            ValueListenableBuilder<TextEditingValue>(
-                              valueListenable: _referralController,
-                              builder: (context, value, _) {
-                                if (value.text.trim().isEmpty) return const SizedBox.shrink();
-                                return Column(
-                                  children: [
-                                    _buildTextField(
-                                      label: 'REFERRAL OTP',
-                                      controller: _otpController,
-                                      hint: 'Enter OTP from your referrer',
-                                      icon: Icons.pin_outlined,
-                                      keyboardType: TextInputType.number,
-                                    ),
-                                    const SizedBox(height: 16),
-                                  ],
-                                );
-                              },
-                            ),
-                            
-                            // Full Name
-                            _buildTextField(
-                              label: 'FULL NAME',
-                              controller: _nameController,
-                              hint: 'Enter your name',
-                              icon: Icons.person_outline,
-                            ),
-                            
-                            const SizedBox(height: 16),
-                            
-                            // Phone Number
-                            _buildTextField(
-                              label: 'PHONE NUMBER',
-                              controller: _phoneController,
-                              hint: 'Enter your mobile number',
-                              icon: Icons.phone_android_outlined,
-                              keyboardType: TextInputType.phone,
-                            ),
-                            
-                            const SizedBox(height: 16),
-                            
-                            // Email Address
-                            _buildTextField(
-                              label: 'EMAIL ADDRESS',
-                              controller: _emailController,
-                              hint: 'Enter your email id',
-                              icon: Icons.mail_outline_rounded,
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            
-                            const SizedBox(height: 16),
-                            
-                            // Password
-                            _buildTextField(
-                              label: 'PASSWORD',
-                              controller: _passwordController,
-                              hint: 'Create a password',
-                              icon: Icons.lock_outline,
-                              isPassword: true,
-                              obscureText: _obscurePassword,
-                              onToggleVisibility: () {
-                                setState(() => _obscurePassword = !_obscurePassword);
-                              },
-                            ),
-                            
-                            const SizedBox(height: 24),
-                            
-                            // Create Account Button
-                            TDGButton(
-                              text: 'Create Account',
-                              gradient: TDGColors.goldGradient,
-                              isLoading: _isLoading,
-                              onPressed: _handleSignUp,
-                              borderRadius: BorderRadius.circular(30), // Premium pill shape
-                            ),
-                            
-                            const SizedBox(height: 24),
-                            
-                            // Already a member?
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Already a member? ",
+                                
+                                const SizedBox(height: 24),
+                                
+                                Center(
+                                  child: Text(
+                                    'JOIN THE PRIDE',
+                                    textAlign: TextAlign.center,
                                     style: GoogleFonts.outfit(
-                                      color: Colors.white70,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
+                                      color: Colors.white,
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.5,
                                     ),
                                   ),
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                      minimumSize: Size.zero,
-                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                    ),
-                                    child: Text(
-                                      'Login',
+                                ),
+                                const SizedBox(height: 6),
+                                Center(
+                                  child: RichText(
+                                    textAlign: TextAlign.center,
+                                    text: TextSpan(
                                       style: GoogleFonts.outfit(
                                         color: TDGColors.gold,
                                         fontSize: 14,
-                                        fontWeight: FontWeight.w700,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.2,
                                       ),
+                                      children: [
+                                        const TextSpan(text: 'Start your journey with 500 '),
+                                        WidgetSpan(
+                                          alignment: PlaceholderAlignment.middle,
+                                          child: Icon(
+                                            Icons.diamond_rounded,
+                                            color: TDGColors.primaryRed,
+                                            size: 16,
+                                          ),
+                                        ),
+                                        const TextSpan(text: ' bonus!'),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                                
+                                const SizedBox(height: 24),
+                                
+                                // Referral Code (Optional)
+                                _buildTextField(
+                                  label: 'REFERRAL CODE (OPTIONAL)',
+                                  controller: _referralController,
+                                  hint: 'Enter code for asset linking',
+                                  icon: Icons.card_giftcard_rounded,
+                                ),
+                                
+                                const SizedBox(height: 16),
+                                
+                                // OTP (shown when referral code is entered)
+                                ValueListenableBuilder<TextEditingValue>(
+                                  valueListenable: _referralController,
+                                  builder: (context, value, _) {
+                                    if (value.text.trim().isEmpty) return const SizedBox.shrink();
+                                    return Column(
+                                      children: [
+                                        _buildTextField(
+                                          label: 'REFERRAL OTP',
+                                          controller: _otpController,
+                                          hint: 'Enter OTP from your referrer',
+                                          icon: Icons.pin_outlined,
+                                          keyboardType: TextInputType.number,
+                                        ),
+                                        const SizedBox(height: 16),
+                                      ],
+                                    );
+                                  },
+                                ),
+                                
+                                // Full Name
+                                _buildTextField(
+                                  label: 'FULL NAME',
+                                  controller: _nameController,
+                                  hint: 'Enter your name',
+                                  icon: Icons.person_outline,
+                                ),
+                                
+                                const SizedBox(height: 16),
+                                
+                                // Phone Number
+                                _buildTextField(
+                                  label: 'PHONE NUMBER',
+                                  controller: _phoneController,
+                                  hint: 'Enter your mobile number',
+                                  icon: Icons.phone_android_outlined,
+                                  keyboardType: TextInputType.phone,
+                                ),
+                                
+                                const SizedBox(height: 16),
+                                
+                                // Email Address
+                                _buildTextField(
+                                  label: 'EMAIL ADDRESS',
+                                  controller: _emailController,
+                                  hint: 'Enter your email id',
+                                  icon: Icons.mail_outline_rounded,
+                                  keyboardType: TextInputType.emailAddress,
+                                ),
+                                
+                                const SizedBox(height: 16),
+                                
+                                // Password
+                                _buildTextField(
+                                  label: 'PASSWORD',
+                                  controller: _passwordController,
+                                  hint: 'Create a password',
+                                  icon: Icons.lock_outline,
+                                  isPassword: true,
+                                  obscureText: _obscurePassword,
+                                  onToggleVisibility: () {
+                                    setState(() => _obscurePassword = !_obscurePassword);
+                                  },
+                                ),
+                                
+                                const SizedBox(height: 24),
+                                
+                                // Create Account Button
+                                TDGButton(
+                                  text: 'Create Account',
+                                  gradient: TDGColors.goldGradient,
+                                  isLoading: _isLoading,
+                                  onPressed: _handleSignUp,
+                                  borderRadius: BorderRadius.circular(30), // Premium pill shape
+                                ),
+                                
+                                const SizedBox(height: 24),
+                                
+                                // Already a member?
+                                Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Already a member? ",
+                                        style: GoogleFonts.outfit(
+                                          color: Colors.white70,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        style: TextButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                          minimumSize: Size.zero,
+                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        ),
+                                        child: Text(
+                                          'Login',
+                                          style: GoogleFonts.outfit(
+                                            color: TDGColors.gold,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                
+                                const Spacer(),
+                                const SizedBox(height: 24),
+                              ],
                             ),
-                            
-                            const Spacer(),
-                            const SizedBox(height: 24),
-                          ],
+                          ),
                         ),
                       ),
                     ),

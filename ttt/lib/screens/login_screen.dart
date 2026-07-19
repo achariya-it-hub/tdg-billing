@@ -112,152 +112,157 @@ class _LoginScreenState extends State<LoginScreen> {
                     constraints: BoxConstraints(
                       minHeight: constraints.maxHeight,
                     ),
-                    child: IntrinsicHeight(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 28),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 12),
-                            // Back Button
-                            const Align(
-                              alignment: Alignment.topLeft,
-                              child: BackButton(color: Colors.white),
-                            ),
-                            
-                            const Spacer(),
-                            
-                            // Center Brand Logo
-                            const Center(
-                              child: TDGLogo(width: 160),
-                            ),
-                            
-                             const SizedBox(height: 24),
-                            
-                            Center(
-                              child: Text(
-                                'LOGIN TO YOUR DEN',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.outfit(
-                                  color: Colors.white,
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 1.5,
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 500),
+                        child: IntrinsicHeight(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 28),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 12),
+                                // Back Button
+                                const Align(
+                                  alignment: Alignment.topLeft,
+                                  child: BackButton(color: Colors.white),
                                 ),
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Center(
-                              child: Text(
-                                'Your empire awaits you.',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.outfit(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  letterSpacing: 0.2,
+                                
+                                const Spacer(),
+                                
+                                // Center Brand Logo
+                                const Center(
+                                  child: TDGLogo(width: 160),
                                 ),
-                              ),
-                            ),
-                            
-                            const SizedBox(height: 24),
-                            
-                            // Phone/Email Field
-                            _buildTextField(
-                              label: 'PHONE NUMBER / EMAIL',
-                              controller: _phoneController,
-                              hint: 'Enter your credentials',
-                              icon: Icons.person_outline,
-                            ),
-                            
-                            const SizedBox(height: 16),
-                            
-                            // Password Field
-                            _buildTextField(
-                              label: 'PASSWORD',
-                              controller: _passwordController,
-                              hint: 'Enter your secret key',
-                              icon: Icons.lock_outline,
-                              isPassword: true,
-                              obscureText: _obscurePassword,
-                              onToggleVisibility: () {
-                                setState(() => _obscurePassword = !_obscurePassword);
-                              },
-                            ),
-                            
-                            const SizedBox(height: 8),
-                            
-                            // Forgot Password
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton(
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
-                                ),
-                                child: Text(
-                                  'Forgot Password?',
-                                  style: GoogleFonts.outfit(
-                                    color: TDGColors.gold,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
+                                
+                                 const SizedBox(height: 24),
+                                
+                                Center(
+                                  child: Text(
+                                    'LOGIN TO YOUR DEN',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.outfit(
+                                      color: Colors.white,
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.5,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            
-                            const SizedBox(height: 16),
-                            
-                            // Login Button
-                            TDGButton(
-                              text: 'Login Now',
-                              gradient: TDGColors.goldGradient,
-                              isLoading: _isLoading,
-                              onPressed: _handleLogin,
-                              borderRadius: BorderRadius.circular(30), // Premium pill shape
-                            ),
-                            
-                            const SizedBox(height: 24),
-                            
-                            // Sign Up link at the bottom
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "New to the Pride? ",
+                                const SizedBox(height: 6),
+                                Center(
+                                  child: Text(
+                                    'Your empire awaits you.',
+                                    textAlign: TextAlign.center,
                                     style: GoogleFonts.outfit(
                                       color: Colors.white70,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
+                                      letterSpacing: 0.2,
                                     ),
                                   ),
-                                  TextButton(
+                                ),
+                                
+                                const SizedBox(height: 24),
+                                
+                                // Phone/Email Field
+                                _buildTextField(
+                                  label: 'PHONE NUMBER / EMAIL',
+                                  controller: _phoneController,
+                                  hint: 'Enter your credentials',
+                                  icon: Icons.person_outline,
+                                ),
+                                
+                                const SizedBox(height: 16),
+                                
+                                // Password Field
+                                _buildTextField(
+                                  label: 'PASSWORD',
+                                  controller: _passwordController,
+                                  hint: 'Enter your secret key',
+                                  icon: Icons.lock_outline,
+                                  isPassword: true,
+                                  obscureText: _obscurePassword,
+                                  onToggleVisibility: () {
+                                    setState(() => _obscurePassword = !_obscurePassword);
+                                  },
+                                ),
+                                
+                                const SizedBox(height: 8),
+                                
+                                // Forgot Password
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: TextButton(
                                     onPressed: () => Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (_) => const SignUpScreen()),
-                                    ),
-                                    style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero,
-                                      minimumSize: Size.zero,
-                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
                                     ),
                                     child: Text(
-                                      'Join Now',
+                                      'Forgot Password?',
                                       style: GoogleFonts.outfit(
                                         color: TDGColors.gold,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                                
+                                const SizedBox(height: 16),
+                                
+                                // Login Button
+                                TDGButton(
+                                  text: 'Login Now',
+                                  gradient: TDGColors.goldGradient,
+                                  isLoading: _isLoading,
+                                  onPressed: _handleLogin,
+                                  borderRadius: BorderRadius.circular(30), // Premium pill shape
+                                ),
+                                
+                                const SizedBox(height: 24),
+                                
+                                // Sign Up link at the bottom
+                                Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "New to the Pride? ",
+                                        style: GoogleFonts.outfit(
+                                          color: Colors.white70,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (_) => const SignUpScreen()),
+                                        ),
+                                        style: TextButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                          minimumSize: Size.zero,
+                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        ),
+                                        child: Text(
+                                          'Join Now',
+                                          style: GoogleFonts.outfit(
+                                            color: TDGColors.gold,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                
+                                const Spacer(),
+                                const SizedBox(height: 24),
+                              ],
                             ),
-                            
-                            const Spacer(),
-                            const SizedBox(height: 24),
-                          ],
+                          ),
                         ),
                       ),
                     ),

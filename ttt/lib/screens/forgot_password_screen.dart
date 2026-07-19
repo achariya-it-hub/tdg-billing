@@ -234,44 +234,46 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               builder: (context, constraints) {
                 return SingleChildScrollView(
                   physics: const ClampingScrollPhysics(),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                    child: IntrinsicHeight(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 28),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 12),
-                            const Align(
-                              alignment: Alignment.topLeft,
-                              child: BackButton(color: Colors.white),
-                            ),
-                            const Spacer(),
-                            const Center(child: TDGLogo(width: 140)),
-                            const SizedBox(height: 24),
-                            Center(
-                              child: Text(
-                                _step == 1 ? 'FORGOT PASSWORD' : 'RESET PASSWORD',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.outfit(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 500),
+                      child: IntrinsicHeight(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 28),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 12),
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: BackButton(color: Colors.white),
                               ),
-                            ),
-                            const SizedBox(height: 6),
-                            Center(
-                              child: Text(
-                                _step == 1
-                                    ? (_isEmailMode ? 'Enter your email address to receive an OTP' : 'Enter your phone number to receive an OTP')
-                                    : 'Enter the OTP and set your new password',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w400),
+                              const Spacer(),
+                              const Center(child: TDGLogo(width: 140)),
+                              const SizedBox(height: 24),
+                              Center(
+                                child: Text(
+                                  _step == 1 ? 'FORGOT PASSWORD' : 'RESET PASSWORD',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.outfit(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 28),
-                            if (_step == 1) _buildStep1() else _buildStep2(),
-                            const Spacer(),
-                            const SizedBox(height: 24),
-                          ],
+                              const SizedBox(height: 6),
+                              Center(
+                                child: Text(
+                                  _step == 1
+                                      ? (_isEmailMode ? 'Enter your email address to receive an OTP' : 'Enter your phone number to receive an OTP')
+                                      : 'Enter the OTP and set your new password',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w400),
+                                ),
+                              ),
+                              const SizedBox(height: 28),
+                              if (_step == 1) _buildStep1() else _buildStep2(),
+                              const Spacer(),
+                              const SizedBox(height: 24),
+                            ],
+                          ),
                         ),
                       ),
                     ),
