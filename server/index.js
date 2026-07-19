@@ -622,7 +622,9 @@ app.get('/api/assets', auth, (req, res) => {
     cashbackEarned: user.cashbackEarned || 0,
     assetsDinedCount: user.assetsDinedCount || 0,
     allAssetsActive: user.allAssetsActive || false,
-    bonusClaimed: user.bonusClaimed || false
+    bonusClaimed: user.bonusClaimed || false,
+    referredBy: user.referredBy || null,
+    referredByName: user.referredByName || null
   })
 })
 
@@ -1362,6 +1364,8 @@ app.get('/api/den', auth, (req, res) => {
     totalDistributed: user.totalDistributed || 0,
     cashbackEarned: user.cashbackEarned || 0,
     bonusClaimed: user.bonusClaimed || false,
+    referredBy: user.referredBy || null,
+    referredByName: user.referredByName || null,
     assets: assets.map(a => ({
       id: a.id,
       name: a.name,
@@ -2059,8 +2063,17 @@ app.get('/api/loyalty/profile/:phone', (req, res) => {
   const currentTier = TIER_THRESHOLDS.find(t => t.name === getTier(user.rubyPoints))
   const prevThreshold = TIER_THRESHOLDS[TIER_THRESHOLDS.indexOf(currentTier) - 1]?.minPoints || 0
   
+  let referredByName = null
+  if (user.referredBy) {
+    const referrer = loyaltyUsers.find(u => u.referralCode === user.referredBy || u.phone === user.referredBy || u.id === user.referredBy)
+    if (referrer) {
+      referredByName = referrer.name
+    }
+  }
+
   res.json({
     ...user,
+    referredByName,
     tierInfo: currentTier,
     nextTier: user.rubyPoints >= 25000 ? null : nextTier,
     progress: {
@@ -2141,7 +2154,34 @@ app.get('/api/loyalty/den/:phone', (req, res) => {
   if (!user.denId) return res.json({ den: null })
   
   const den = dens.find(d => d.id === user.denId)
-  res.json({ den })
+  if (!den) return res.json({ den: null })
+
+  // Map members to include referredBy and referredByName
+  const membersWithReferral = den.members.map(m => {
+    const memberUser = loyaltyUsers.find(u => u.id === m.id)
+    let referredBy = null
+    let referredByName = null
+    if (memberUser && memberUser.referredBy) {
+      referredBy = memberUser.referredBy
+      const referrer = loyaltyUsers.find(u => u.referralCode === memberUser.referredBy || u.phone === memberUser.referredBy || u.id === memberUser.referredBy)
+      if (referrer) {
+        referredByName = referrer.name
+      }
+    }
+    return {
+      ...m,
+      referralCode: memberUser ? memberUser.referralCode : null,
+      referredBy,
+      referredByName
+    }
+  })
+
+  res.json({
+    den: {
+      ...den,
+      members: membersWithReferral
+    }
+  })
 })
 
 // Points - transfer

@@ -15,6 +15,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
   bool _isLoading = false;
   Map<String, dynamic>? _denProgress;
   List<dynamic> _assets = [];
+  String? _referredByName;
 
   @override
   void initState() {
@@ -30,6 +31,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
         setState(() {
           _denProgress = progress;
           _assets = progress['assets'] ?? [];
+          _referredByName = progress['referredByName'];
         });
       }
     } catch (e) {
@@ -79,6 +81,46 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                   const SizedBox(height: 20),
                   _buildPrideProgressCard(context),
                   const SizedBox(height: 20),
+                  if (_referredByName != null && _referredByName!.isNotEmpty) ...[
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: TDGColors.cardDark,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: const Color(0xFF4CAF50).withOpacity(0.4)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.person_pin_rounded, color: Color(0xFF4CAF50), size: 22),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'ADDED TO PROFILE BY',
+                                style: GoogleFonts.outfit(
+                                  color: TDGColors.grey,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                _referredByName!,
+                                style: GoogleFonts.outfit(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                   _buildBenefitsCard(),
                   const SizedBox(height: 20),
                 ],
@@ -708,6 +750,18 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                 ],
               ),
               const Divider(color: Color(0xFF2A2A2A), height: 24),
+              if (_referredByName != null && _referredByName!.isNotEmpty) ...[
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Text(
+                      'You were added to profile by: $_referredByName',
+                      style: GoogleFonts.inter(color: const Color(0xFF4CAF50), fontSize: 12, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
+              ],
               const SizedBox(height: 8),
               ConstrainedBox(
                 constraints: BoxConstraints(
@@ -842,7 +896,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                                           if (phone.isNotEmpty) ...[
                                             const SizedBox(width: 8),
                                             Text(
-                                              phone,
+                                              '$phone • Added by you',
                                               style: GoogleFonts.inter(
                                                 color: TDGColors.grey,
                                                 fontSize: 10,

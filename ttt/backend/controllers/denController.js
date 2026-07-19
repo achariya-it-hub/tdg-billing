@@ -11,7 +11,9 @@ exports.getDenProgress = (req, res) => {
     return res.status(200).json({
       denLevel: user.denLevel || 'Gold',
       completedDens: user.completedDens !== undefined ? user.completedDens : 4,
-      denProgress: user.denProgress !== undefined ? user.denProgress : 6
+      denProgress: user.denProgress !== undefined ? user.denProgress : 6,
+      referredBy: user.referredBy || null,
+      referredByName: user.referredByName || null
     });
   } catch (error) {
     console.error("Get Den Progress error:", error);

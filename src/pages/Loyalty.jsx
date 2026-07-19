@@ -873,6 +873,25 @@ export default function Loyalty() {
                         {m.name} {m.id === userDen.leaderId && '(Leader)'}
                       </div>
                       <div style={{ fontSize: '12px', color: '#9ca3af' }}>{m.phone}</div>
+                      {m.id === user.id ? (
+                        (m.referredByName || user.referredByName) && (
+                          <div style={{ fontSize: '11px', color: '#10b981', fontWeight: 600, marginTop: '2px' }}>
+                            Added by: {m.referredByName || user.referredByName}
+                          </div>
+                        )
+                      ) : (
+                        m.referredBy === user.referralCode ? (
+                          <div style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 600, marginTop: '2px' }}>
+                            Added by you
+                          </div>
+                        ) : (
+                          m.referredByName && (
+                            <div style={{ fontSize: '11px', color: '#10b981', fontWeight: 600, marginTop: '2px' }}>
+                              Added by: {m.referredByName}
+                            </div>
+                          )
+                        )
+                      )}
                     </div>
                   </div>
                 ))}

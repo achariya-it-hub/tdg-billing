@@ -18,6 +18,7 @@ class _AssetScreenState extends State<AssetScreen> {
   bool _allAssetsActive = false;
   bool _bonusClaimed = false;
   List<dynamic> _assets = [];
+  String? _referredByName;
 
   @override
   void initState() {
@@ -38,6 +39,7 @@ class _AssetScreenState extends State<AssetScreen> {
           _allAssetsActive = data['allAssetsActive'] ?? false;
           _bonusClaimed = data['bonusClaimed'] ?? false;
           _assets = data['assets'] ?? [];
+          _referredByName = data['referredByName'];
         });
       }
     } catch (e) {
@@ -492,6 +494,39 @@ class _AssetScreenState extends State<AssetScreen> {
                   ),
                   SizedBox(height: 20),
 
+                  // Added By Referral info
+                  if (_referredByName != null && _referredByName!.isNotEmpty) ...[
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: TDGColors.cardDark,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: Colors.green.withOpacity(0.4)),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.person_pin_rounded, color: Colors.green, size: 22),
+                          SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Added to profile by',
+                                style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
+                              ),
+                              SizedBox(height: 2),
+                              Text(
+                                _referredByName!,
+                                style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w700, fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                  ],
+
                   // Add Asset Button
                   if (_assets.length < 10)
                     GestureDetector(
@@ -580,9 +615,18 @@ class _AssetScreenState extends State<AssetScreen> {
               children: [
                 Text(asset['name'] ?? '', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w600, fontSize: 15)),
                 SizedBox(height: 2),
-                Text(
-                  '${asset['phone'] ?? ''} • $statusText',
-                  style: TextStyle(color: statusColor, fontSize: 12),
+                Row(
+                  children: [
+                    Text(
+                      '${asset['phone'] ?? ''} • $statusText',
+                      style: TextStyle(color: statusColor, fontSize: 12),
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      '• Added by you',
+                      style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
+                    ),
+                  ],
                 ),
                     if (distributed > 0)
                       Text(
