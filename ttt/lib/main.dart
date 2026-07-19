@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'screens/onboarding_screen.dart';
+import 'screens/login_screen.dart';
 import 'screens/main_nav_screen.dart';
 import 'theme/colors.dart';
 import 'services/api_service.dart';
@@ -79,7 +79,7 @@ class TDGApp extends StatelessWidget {
               surface: TDGColors.cardDark,
             ),
           ),
-          home: api.isAuthenticated ? const MainNavScreen() : const OnboardingScreen(),
+          home: api.isAuthenticated ? const MainNavScreen() : const LoginScreen(),
         );
       },
     );
