@@ -117,6 +117,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
               builder: (context, constraints) {
                 return SingleChildScrollView(
                   physics: const ClampingScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 500),
