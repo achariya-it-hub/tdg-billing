@@ -296,16 +296,16 @@ let menuItems = [
   { id: 'm40', categoryId: 'c5', name: 'Non-Veg - 60 Pc Crispy Strips (12 Dip)', price: 2400, isAvailable: true },
 
   // Thick Shakes (c6)
-  { id: 'm41', categoryId: 'c6', name: 'Veg - Vanilla Shake (Regular)', price: 79, isAvailable: true },
-  { id: 'm42', categoryId: 'c6', name: 'Veg - Vanilla Shake (Large)', price: 139, isAvailable: true },
-  { id: 'm43', categoryId: 'c6', name: 'Veg - Strawberry Shake (Regular)', price: 79, isAvailable: true },
-  { id: 'm44', categoryId: 'c6', name: 'Veg - Strawberry Shake (Large)', price: 139, isAvailable: true },
-  { id: 'm45', categoryId: 'c6', name: 'Veg - Biscoff Shake (Regular)', price: 79, isAvailable: true },
-  { id: 'm46', categoryId: 'c6', name: 'Veg - Biscoff Shake (Large)', price: 139, isAvailable: true },
-  { id: 'm47', categoryId: 'c6', name: 'Veg - Oreo Shake (Regular)', price: 79, isAvailable: true },
-  { id: 'm48', categoryId: 'c6', name: 'Veg - Oreo Shake (Large)', price: 139, isAvailable: true },
-  { id: 'm49', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Regular)', price: 79, isAvailable: true },
-  { id: 'm50', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Large)', price: 139, isAvailable: true },
+  { id: 'm41', categoryId: 'c6', name: 'Veg - Vanilla Shake (Regular)', price: 99, isAvailable: true },
+  { id: 'm42', categoryId: 'c6', name: 'Veg - Vanilla Shake (Large)', price: 199, isAvailable: true },
+  { id: 'm43', categoryId: 'c6', name: 'Veg - Strawberry Shake (Regular)', price: 99, isAvailable: true },
+  { id: 'm44', categoryId: 'c6', name: 'Veg - Strawberry Shake (Large)', price: 199, isAvailable: true },
+  { id: 'm45', categoryId: 'c6', name: 'Veg - Biscoff Shake (Regular)', price: 99, isAvailable: true },
+  { id: 'm46', categoryId: 'c6', name: 'Veg - Biscoff Shake (Large)', price: 199, isAvailable: true },
+  { id: 'm47', categoryId: 'c6', name: 'Veg - Dark Chocolate Shake (Regular)', price: 99, isAvailable: true },
+  { id: 'm48', categoryId: 'c6', name: 'Veg - Dark Chocolate Shake (Large)', price: 199, isAvailable: true },
+  { id: 'm49', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Regular)', price: 99, isAvailable: true },
+  { id: 'm50', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Large)', price: 199, isAvailable: true },
 
   // Softy (c7)
   { id: 'm51', categoryId: 'c7', name: 'Veg - Vanilla Softy', price: 39, isAvailable: true },
@@ -319,7 +319,7 @@ let menuItems = [
   { id: 'm55', categoryId: 'c9', name: 'Veg - Sprite / Coca-Cola (Large)', price: 99, isAvailable: true },
   { id: 'm56', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Regular)', price: 59, isAvailable: true },
   { id: 'm57', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Large)', price: 99, isAvailable: true },
-  { id: 'm58', categoryId: 'c9', name: 'Veg - Hot Chocolate', price: 99, isAvailable: true },
+  { id: 'm58', categoryId: 'c9', name: 'Veg - Hot Chocolate', price: 149, isAvailable: true },
   { id: 'm59', categoryId: 'c9', name: 'Veg - Signature Tea', price: 99, isAvailable: true }
 ]
 
