@@ -37,7 +37,14 @@ const sampleRecipeData = [
   { menuItem: 'Non-Veg - 6 Pc Crispy Wings (2 Dip)', ingredients: 'Chicken Wings x6, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Wings Box, Tissues, Bags, Labour', cost: 73.61, price: 180, margin: '59.1%' },
   { menuItem: 'Non-Veg - 9 Pc Crispy Wings (3 Dip)', ingredients: 'Chicken Wings x9, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Wings Box, Tissues, Bags, Labour', cost: 92.51, price: 270, margin: '65.7%' },
   { menuItem: 'Non-Veg - 20 Pc Crispy Wings (6 Dip)', ingredients: 'Chicken Wings x20, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Wings Box, Tissues, Bags, Labour', cost: 186.55, price: 600, margin: '68.9%' },
-  { menuItem: 'Non-Veg - 60 Pc Crispy Wings (12 Dip)', ingredients: 'Chicken Wings x60, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Wings Box, Tissues, Bags, Labour', cost: 398.55, price: 1500, margin: '73.4%' }
+  { menuItem: 'Non-Veg - 60 Pc Crispy Wings (12 Dip)', ingredients: 'Chicken Wings x60, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Wings Box, Tissues, Bags, Labour', cost: 398.55, price: 1500, margin: '73.4%' },
+  { menuItem: 'Non-Veg - 3 Pc Crispy Strips (1 Dip)', ingredients: 'Chicken Strips x3, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Dinning Tray, Tissues, Bags, Labour', cost: 61.96, price: 120, margin: '48.4%' },
+  { menuItem: 'Non-Veg - 6 Pc Crispy Strips (2 Dip)', ingredients: 'Chicken Strips x6, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Dinning Tray, Tissues, Bags, Labour', cost: 90.46, price: 240, margin: '62.3%' },
+  { menuItem: 'Non-Veg - 9 Pc Crispy Strips (3 Dip)', ingredients: 'Chicken Strips x9, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Dinning Tray, Tissues, Bags, Labour', cost: 119.86, price: 360, margin: '66.7%' },
+  { menuItem: 'Non-Veg - 20 Pc Crispy Strips (6 Dip)', ingredients: 'Chicken Strips x20, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Dinning Tray, Tissues, Bags, Labour', cost: 247.65, price: 800, margin: '69.0%' },
+  { menuItem: 'Non-Veg - 60 Pc Crispy Strips (12 Dip)', ingredients: 'Chicken Strips x60, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Dinning Tray, Tissues, Bags, Labour', cost: 703.90, price: 2400, margin: '70.7%' },
+  { menuItem: 'Veg - Fries (Peri Peri)', ingredients: 'Potato, Refined Oil, Peri Peri Masala, Cup, Paper Bags, Tissues, Bags, Labour', cost: 47.53, price: 99, margin: '52.0%' },
+  { menuItem: 'Veg - Fries (Kaju)', ingredients: 'Potato, Refined Oil, Kaju, Cup, Paper Bags, Tissues, Bags, Labour', cost: 47.64, price: 99, margin: '51.9%' }
 ]
 
 const reportTypes = [
