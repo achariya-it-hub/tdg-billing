@@ -26,11 +26,18 @@ const sampleInventoryData = [
 ]
 
 const sampleRecipeData = [
-  { menuItem: 'Zinger Burger', ingredients: 'Chicken, Bun, Lettuce, Tomato, Cheese, Oil', cost: 85, price: 249, margin: '66%' },
-  { menuItem: 'Hot Wings (6pc)', ingredients: 'Chicken Wings, Oil', cost: 82, price: 299, margin: '73%' },
-  { menuItem: 'Classic Burger', ingredients: 'Chicken, Bun, Lettuce, Tomato', cost: 62, price: 199, margin: '69%' },
-  { menuItem: 'Pepsi (500ml)', ingredients: 'Pepsy Syrup, Water', cost: 12, price: 79, margin: '85%' },
-  { menuItem: 'Masala Chai', ingredients: 'Tea Leaves, Milk, Spices', cost: 8, price: 49, margin: '84%' },
+  { menuItem: 'Non-Veg - Crispy Chicken Burger', ingredients: 'Burger Bun, Veggies, Patty x2, Cheese, Burger Sauce, Packaging, Labour', cost: 77.43, price: 99, margin: '21.8%' },
+  { menuItem: 'Non-Veg - Spicy Egg Burger', ingredients: 'Burger Bun, Veggies, Patty x1, Cheese, Burger Sauce, Packaging, Labour', cost: 57.03, price: 79, margin: '27.8%' },
+  { menuItem: 'Veg - Spicy Paneer Burger', ingredients: 'Burger Bun, Veggies, Patty x1, Cheese, Burger Sauce, Packaging, Labour', cost: 87.31, price: 99, margin: '11.8%' },
+  { menuItem: 'Veg - Sprite / Coca-Cola (Regular)', ingredients: 'Cola/Sprite 330ml, Ice Cube, Lime/Peach, Cup with Lid, Straw, Labour', cost: 33.15, price: 59, margin: '43.8%' },
+  { menuItem: 'Veg - Sprite / Coca-Cola (Large)', ingredients: 'Cola/Sprite 650ml, Ice Cube, Lime/Peach, Cup with Lid, Straw, Labour', cost: 59.70, price: 99, margin: '39.7%' },
+  { menuItem: 'Veg - Chocolate Brownie', ingredients: 'Butter, Dark Compound, Egg, Vanilla, White Sugar, Maida, Brown Sugar, Milk Compound, Packaging, Labour', cost: 44.80, price: 99, margin: '54.7%' },
+  { menuItem: 'Veg - Blondy Cake', ingredients: 'Butter, White Compound, Egg, Vanilla, White Sugar, Maida, Packaging, Labour', cost: 43.60, price: 99, margin: '56.0%' },
+  { menuItem: 'Non-Veg - 3 Pc Crispy Wings (1 Dip)', ingredients: 'Chicken Wings x3, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Wings Box, Tissues, Bags, Labour', cost: 54.71, price: 90, margin: '39.2%' },
+  { menuItem: 'Non-Veg - 6 Pc Crispy Wings (2 Dip)', ingredients: 'Chicken Wings x6, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Wings Box, Tissues, Bags, Labour', cost: 73.61, price: 180, margin: '59.1%' },
+  { menuItem: 'Non-Veg - 9 Pc Crispy Wings (3 Dip)', ingredients: 'Chicken Wings x9, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Wings Box, Tissues, Bags, Labour', cost: 92.51, price: 270, margin: '65.7%' },
+  { menuItem: 'Non-Veg - 20 Pc Crispy Wings (6 Dip)', ingredients: 'Chicken Wings x20, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Wings Box, Tissues, Bags, Labour', cost: 186.55, price: 600, margin: '68.9%' },
+  { menuItem: 'Non-Veg - 60 Pc Crispy Wings (12 Dip)', ingredients: 'Chicken Wings x60, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Wings Box, Tissues, Bags, Labour', cost: 398.55, price: 1500, margin: '73.4%' }
 ]
 
 const reportTypes = [
