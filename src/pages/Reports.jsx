@@ -46,7 +46,21 @@ const sampleRecipeData = [
   { menuItem: 'Veg - Fries (Peri Peri)', ingredients: 'Potato, Refined Oil, Peri Peri Masala, Cup, Paper Bags, Tissues, Bags, Labour', cost: 47.53, price: 99, margin: '52.0%' },
   { menuItem: 'Veg - Fries (Kaju)', ingredients: 'Potato, Refined Oil, Kaju, Cup, Paper Bags, Tissues, Bags, Labour', cost: 47.64, price: 99, margin: '51.9%' },
   { menuItem: 'Non-Veg - Spicy Chicken Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Spicy Chicken, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 63.60, price: 99, margin: '35.8%' },
-  { menuItem: 'Non-Veg - Spicy Chicken Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Spicy Chicken, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 95.80, price: 249, margin: '61.5%' }
+  { menuItem: 'Non-Veg - Spicy Chicken Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Spicy Chicken, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 95.80, price: 249, margin: '61.5%' },
+  { menuItem: 'Non-Veg - Cream Chicken Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Cream Chicken, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 62.21, price: 99, margin: '37.2%' },
+  { menuItem: 'Non-Veg - Cream Chicken Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Cream Chicken, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 93.01, price: 249, margin: '62.6%' },
+  { menuItem: 'Non-Veg - BBQ Chicken Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, BBQ Chicken, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 62.95, price: 99, margin: '36.4%' },
+  { menuItem: 'Non-Veg - BBQ Chicken Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, BBQ Chicken, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 92.65, price: 249, margin: '62.8%' },
+  { menuItem: 'Non-Veg - Pesto Chicken Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Chicken, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 67.59, price: 99, margin: '31.7%' },
+  { menuItem: 'Non-Veg - Pesto Chicken Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Chicken, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 103.79, price: 249, margin: '58.3%' },
+  { menuItem: 'Veg - Spicy Paneer Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Spicy Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 71.64, price: 99, margin: '27.6%' },
+  { menuItem: 'Veg - Spicy Paneer Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Spicy Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 111.34, price: 249, margin: '55.3%' },
+  { menuItem: 'Veg - Cream Paneer Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Cream Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 70.25, price: 99, margin: '29.0%' },
+  { menuItem: 'Veg - Cream Paneer Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Cream Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 108.55, price: 249, margin: '56.4%' },
+  { menuItem: 'Veg - BBQ Paneer Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, BBQ Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 70.45, price: 99, margin: '28.8%' },
+  { menuItem: 'Veg - BBQ Paneer Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, BBQ Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 107.65, price: 249, margin: '56.8%' },
+  { menuItem: 'Veg - Pesto Paneer Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 75.09, price: 99, margin: '24.2%' },
+  { menuItem: 'Veg - Pesto Paneer Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 118.79, price: 249, margin: '52.3%' }
 ]
 
 const reportTypes = [
