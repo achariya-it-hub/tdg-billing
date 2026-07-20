@@ -44,7 +44,9 @@ const sampleRecipeData = [
   { menuItem: 'Non-Veg - 20 Pc Crispy Strips (6 Dip)', ingredients: 'Chicken Strips x20, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Dinning Tray, Tissues, Bags, Labour', cost: 247.65, price: 800, margin: '69.0%' },
   { menuItem: 'Non-Veg - 60 Pc Crispy Strips (12 Dip)', ingredients: 'Chicken Strips x60, Fried Chicken Mixer, Extra Hot & Spicy, Refined Oil, Dinning Tray, Tissues, Bags, Labour', cost: 703.90, price: 2400, margin: '70.7%' },
   { menuItem: 'Veg - Fries (Peri Peri)', ingredients: 'Potato, Refined Oil, Peri Peri Masala, Cup, Paper Bags, Tissues, Bags, Labour', cost: 47.53, price: 99, margin: '52.0%' },
-  { menuItem: 'Veg - Fries (Kaju)', ingredients: 'Potato, Refined Oil, Kaju, Cup, Paper Bags, Tissues, Bags, Labour', cost: 47.64, price: 99, margin: '51.9%' }
+  { menuItem: 'Veg - Fries (Kaju)', ingredients: 'Potato, Refined Oil, Kaju, Cup, Paper Bags, Tissues, Bags, Labour', cost: 47.64, price: 99, margin: '51.9%' },
+  { menuItem: 'Non-Veg - Spicy Chicken Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Spicy Chicken, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 63.60, price: 99, margin: '35.8%' },
+  { menuItem: 'Non-Veg - Spicy Chicken Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Spicy Chicken, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 95.80, price: 249, margin: '61.5%' }
 ]
 
 const reportTypes = [
