@@ -62,7 +62,19 @@ const sampleRecipeData = [
   { menuItem: 'Veg - Pesto Paneer Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 75.63, price: 99, margin: '23.6%' },
   { menuItem: 'Veg - Pesto Paneer Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 119.33, price: 249, margin: '52.1%' },
   { menuItem: 'Non-Veg - Chicken Salad', ingredients: 'Iceberg, Veggies, Olives, Chicken, Honey Mustard, Burger Sauce, Jalapenos, Dinning Tray, Wooden Spoon, Tissues, Bags, Labour', cost: 69.05, price: 99, margin: '30.3%' },
-  { menuItem: 'Veg - Paneer Salad', ingredients: 'Iceberg, Veggies, Paneer, Olives, Honey Mustard, Burger Sauce, Jalapenos, Dinning Tray, Wooden Spoon, Tissues, Bags, Labour', cost: 76.18, price: 99, margin: '23.1%' }
+  { menuItem: 'Veg - Paneer Salad', ingredients: 'Iceberg, Veggies, Paneer, Olives, Honey Mustard, Burger Sauce, Jalapenos, Dinning Tray, Wooden Spoon, Tissues, Bags, Labour', cost: 76.18, price: 99, margin: '23.1%' },
+  // Thick Shakes (c6)
+  { menuItem: 'Veg - Vanilla Shake (Regular)', ingredients: 'Milk Base, Vanilla Crush, Beverages Cup 330ml with Lid, Paper Straw, Labour', cost: 66.27, price: 99, margin: '33.1%' },
+  { menuItem: 'Veg - Vanilla Shake (Large)', ingredients: 'Milk Base, Vanilla Crush, Beverages Cup 650ml with Lid, Paper Straw, Labour', cost: 125.95, price: 199, margin: '36.7%' },
+  { menuItem: 'Veg - Strawberry Shake (Regular)', ingredients: 'Milk Base, Strawberry Crush, Beverages Cup 330ml with Lid, Paper Straw, Labour', cost: 93.27, price: 99, margin: '5.8%' },
+  { menuItem: 'Veg - Strawberry Shake (Large)', ingredients: 'Milk Base, Strawberry Crush, Beverages Cup 650ml with Lid, Paper Straw, Labour', cost: 179.95, price: 199, margin: '9.6%' },
+  { menuItem: 'Veg - Biscoff Shake (Regular)', ingredients: 'Milk Base, Biscoff Crush, Beverages Cup 330ml with Lid, Paper Straw, Labour', cost: 72.27, price: 99, margin: '27.0%' },
+  { menuItem: 'Veg - Biscoff Shake (Large)', ingredients: 'Milk Base, Biscoff Crush, Beverages Cup 650ml with Lid, Paper Straw, Labour', cost: 137.95, price: 199, margin: '30.7%' },
+  { menuItem: 'Veg - Dark Chocolate Shake (Regular)', ingredients: 'Milk Base, Caboury Hot Chocolate, Beverages Cup 330ml with Lid, Paper Straw, Labour', cost: 85.27, price: 99, margin: '13.9%' },
+  { menuItem: 'Veg - Dark Chocolate Shake (Large)', ingredients: 'Milk Base, Caboury Hot Chocolate, Beverages Cup 650ml with Lid, Paper Straw, Wastage, Labour', cost: 172.14, price: 199, margin: '13.5%' },
+  { menuItem: 'Veg - Hot Chocolate (Regular)', ingredients: 'Milk, Caboury Hot Chocolate, Beverages Cup 330ml with Lid, Paper Straw, Labour', cost: 59.29, price: 149, margin: '60.2%' },
+  { menuItem: 'Veg - Kunafa Pistachio Shake (Regular)', ingredients: 'Milk Base, Kunafa Mix, Pistachio Paste, Beverages Cup 330ml with Lid, Paper Straw, Labour', cost: 117.27, price: 199, margin: '41.1%' },
+  { menuItem: 'Veg - Kunafa Pistachio Shake (Large)', ingredients: 'Milk Base, Kunafa Mix, Pistachio Paste, Beverages Cup 650ml with Lid, Paper Straw, Labour', cost: 227.95, price: 299, margin: '23.8%' }
 ]
 
 const reportTypes = [

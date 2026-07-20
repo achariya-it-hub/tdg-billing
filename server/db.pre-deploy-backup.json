@@ -69,9 +69,437 @@
       ],
       "denId": null,
       "createdAt": "2026-06-23T15:44:04.688Z"
+    },
+    {
+      "id": "u_1784106528623",
+      "name": "Aravindan Jayakumar",
+      "email": "it.manager@achariya.org",
+      "phone": "9442255279",
+      "password": "$2b$10$bkuV26sA27oyI6NMuEVoy.yaW57x6y44W.2IEyX2iJdHpHCBs5tj6",
+      "role": "user",
+      "points": 500,
+      "assets": [],
+      "totalDistributed": 0,
+      "cashbackEarned": 0,
+      "assetsDinedCount": 0,
+      "allAssetsActive": false,
+      "bonusClaimed": false,
+      "referredBy": null,
+      "referredByName": null,
+      "createdAt": "2026-07-15T09:08:48.623Z"
     }
   ],
   "orders": [
+    {
+      "id": "ord_mock_1783413622393_9",
+      "orderNumber": 1124,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 650,
+      "tax": 117,
+      "total": 767,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "",
+      "customerName": "Mock Customer 10",
+      "customerPhone": "9999900009",
+      "notes": "Auto-generated test bill",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "Test run",
+      "createdAt": "2026-07-07T08:40:22.386Z",
+      "updatedAt": "2026-07-07T08:40:22.386Z",
+      "items": [
+        {
+          "id": "item_mock_1_9",
+          "menuItemId": "m17",
+          "menuItemName": "Non-Veg - Spicy Egg Burger",
+          "quantity": 2,
+          "unitPrice": 79,
+          "totalPrice": 158,
+          "status": "completed"
+        },
+        {
+          "id": "item_mock_2_9",
+          "menuItemId": "m51",
+          "menuItemName": "Veg - Vanilla Softy",
+          "quantity": 1,
+          "unitPrice": 39,
+          "totalPrice": 39,
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "ord_mock_1783413622393_8",
+      "orderNumber": 1123,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 600,
+      "tax": 108,
+      "total": 708,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T9",
+      "customerName": "Mock Customer 9",
+      "customerPhone": "9999900008",
+      "notes": "Auto-generated test bill",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "Test run",
+      "createdAt": "2026-07-07T08:40:22.386Z",
+      "updatedAt": "2026-07-07T08:40:22.386Z",
+      "items": [
+        {
+          "id": "item_mock_1_8",
+          "menuItemId": "m17",
+          "menuItemName": "Non-Veg - Spicy Egg Burger",
+          "quantity": 2,
+          "unitPrice": 79,
+          "totalPrice": 158,
+          "status": "completed"
+        },
+        {
+          "id": "item_mock_2_8",
+          "menuItemId": "m51",
+          "menuItemName": "Veg - Vanilla Softy",
+          "quantity": 1,
+          "unitPrice": 39,
+          "totalPrice": 39,
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "ord_mock_1783413622393_7",
+      "orderNumber": 1122,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 550,
+      "tax": 99,
+      "total": 649,
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "tableNumber": "",
+      "customerName": "Mock Customer 8",
+      "customerPhone": "9999900007",
+      "notes": "Auto-generated test bill",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "Test run",
+      "createdAt": "2026-07-07T08:40:22.386Z",
+      "updatedAt": "2026-07-07T08:40:22.386Z",
+      "items": [
+        {
+          "id": "item_mock_1_7",
+          "menuItemId": "m17",
+          "menuItemName": "Non-Veg - Spicy Egg Burger",
+          "quantity": 2,
+          "unitPrice": 79,
+          "totalPrice": 158,
+          "status": "completed"
+        },
+        {
+          "id": "item_mock_2_7",
+          "menuItemId": "m51",
+          "menuItemName": "Veg - Vanilla Softy",
+          "quantity": 1,
+          "unitPrice": 39,
+          "totalPrice": 39,
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "ord_mock_1783413622393_6",
+      "orderNumber": 1121,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 500,
+      "tax": 90,
+      "total": 590,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T7",
+      "customerName": "Mock Customer 7",
+      "customerPhone": "9999900006",
+      "notes": "Auto-generated test bill",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "Test run",
+      "createdAt": "2026-07-07T08:40:22.386Z",
+      "updatedAt": "2026-07-07T08:40:22.386Z",
+      "items": [
+        {
+          "id": "item_mock_1_6",
+          "menuItemId": "m17",
+          "menuItemName": "Non-Veg - Spicy Egg Burger",
+          "quantity": 2,
+          "unitPrice": 79,
+          "totalPrice": 158,
+          "status": "completed"
+        },
+        {
+          "id": "item_mock_2_6",
+          "menuItemId": "m51",
+          "menuItemName": "Veg - Vanilla Softy",
+          "quantity": 1,
+          "unitPrice": 39,
+          "totalPrice": 39,
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "ord_mock_1783413622393_5",
+      "orderNumber": 1120,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 450,
+      "tax": 81,
+      "total": 531,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "",
+      "customerName": "Mock Customer 6",
+      "customerPhone": "9999900005",
+      "notes": "Auto-generated test bill",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "Test run",
+      "createdAt": "2026-07-07T08:40:22.386Z",
+      "updatedAt": "2026-07-07T08:40:22.386Z",
+      "items": [
+        {
+          "id": "item_mock_1_5",
+          "menuItemId": "m17",
+          "menuItemName": "Non-Veg - Spicy Egg Burger",
+          "quantity": 2,
+          "unitPrice": 79,
+          "totalPrice": 158,
+          "status": "completed"
+        },
+        {
+          "id": "item_mock_2_5",
+          "menuItemId": "m51",
+          "menuItemName": "Veg - Vanilla Softy",
+          "quantity": 1,
+          "unitPrice": 39,
+          "totalPrice": 39,
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "ord_mock_1783413622393_4",
+      "orderNumber": 1119,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 400,
+      "tax": 72,
+      "total": 472,
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "tableNumber": "T5",
+      "customerName": "Mock Customer 5",
+      "customerPhone": "9999900004",
+      "notes": "Auto-generated test bill",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "Test run",
+      "createdAt": "2026-07-07T08:40:22.386Z",
+      "updatedAt": "2026-07-07T08:40:22.386Z",
+      "items": [
+        {
+          "id": "item_mock_1_4",
+          "menuItemId": "m17",
+          "menuItemName": "Non-Veg - Spicy Egg Burger",
+          "quantity": 2,
+          "unitPrice": 79,
+          "totalPrice": 158,
+          "status": "completed"
+        },
+        {
+          "id": "item_mock_2_4",
+          "menuItemId": "m51",
+          "menuItemName": "Veg - Vanilla Softy",
+          "quantity": 1,
+          "unitPrice": 39,
+          "totalPrice": 39,
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "ord_mock_1783413622393_3",
+      "orderNumber": 1118,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 350,
+      "tax": 63,
+      "total": 413,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "",
+      "customerName": "Mock Customer 4",
+      "customerPhone": "9999900003",
+      "notes": "Auto-generated test bill",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "Test run",
+      "createdAt": "2026-07-07T08:40:22.386Z",
+      "updatedAt": "2026-07-07T08:40:22.386Z",
+      "items": [
+        {
+          "id": "item_mock_1_3",
+          "menuItemId": "m17",
+          "menuItemName": "Non-Veg - Spicy Egg Burger",
+          "quantity": 2,
+          "unitPrice": 79,
+          "totalPrice": 158,
+          "status": "completed"
+        },
+        {
+          "id": "item_mock_2_3",
+          "menuItemId": "m51",
+          "menuItemName": "Veg - Vanilla Softy",
+          "quantity": 1,
+          "unitPrice": 39,
+          "totalPrice": 39,
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "ord_mock_1783413622393_2",
+      "orderNumber": 1117,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 300,
+      "tax": 54,
+      "total": 354,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T3",
+      "customerName": "Mock Customer 3",
+      "customerPhone": "9999900002",
+      "notes": "Auto-generated test bill",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "Test run",
+      "createdAt": "2026-07-07T08:40:22.386Z",
+      "updatedAt": "2026-07-07T08:40:22.386Z",
+      "items": [
+        {
+          "id": "item_mock_1_2",
+          "menuItemId": "m17",
+          "menuItemName": "Non-Veg - Spicy Egg Burger",
+          "quantity": 2,
+          "unitPrice": 79,
+          "totalPrice": 158,
+          "status": "completed"
+        },
+        {
+          "id": "item_mock_2_2",
+          "menuItemId": "m51",
+          "menuItemName": "Veg - Vanilla Softy",
+          "quantity": 1,
+          "unitPrice": 39,
+          "totalPrice": 39,
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "ord_mock_1783413622393_1",
+      "orderNumber": 1116,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 250,
+      "tax": 45,
+      "total": 295,
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "tableNumber": "",
+      "customerName": "Mock Customer 2",
+      "customerPhone": "9999900001",
+      "notes": "Auto-generated test bill",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "Test run",
+      "createdAt": "2026-07-07T08:40:22.386Z",
+      "updatedAt": "2026-07-07T08:40:22.386Z",
+      "items": [
+        {
+          "id": "item_mock_1_1",
+          "menuItemId": "m17",
+          "menuItemName": "Non-Veg - Spicy Egg Burger",
+          "quantity": 2,
+          "unitPrice": 79,
+          "totalPrice": 158,
+          "status": "completed"
+        },
+        {
+          "id": "item_mock_2_1",
+          "menuItemId": "m51",
+          "menuItemName": "Veg - Vanilla Softy",
+          "quantity": 1,
+          "unitPrice": 39,
+          "totalPrice": 39,
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "ord_mock_1783413622393_0",
+      "orderNumber": 1115,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 200,
+      "tax": 36,
+      "total": 236,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T1",
+      "customerName": "Mock Customer 1",
+      "customerPhone": "9999900000",
+      "notes": "Auto-generated test bill",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "Test run",
+      "createdAt": "2026-07-07T08:40:22.386Z",
+      "updatedAt": "2026-07-07T08:40:22.386Z",
+      "items": [
+        {
+          "id": "item_mock_1_0",
+          "menuItemId": "m17",
+          "menuItemName": "Non-Veg - Spicy Egg Burger",
+          "quantity": 2,
+          "unitPrice": 79,
+          "totalPrice": 158,
+          "status": "completed"
+        },
+        {
+          "id": "item_mock_2_0",
+          "menuItemId": "m51",
+          "menuItemName": "Veg - Vanilla Softy",
+          "quantity": 1,
+          "unitPrice": 39,
+          "totalPrice": 39,
+          "status": "completed"
+        }
+      ]
+    },
     {
       "id": "c77e7f5e-ada4-4e62-90a0-6fad95cb95ca",
       "orderNumber": 1114,
@@ -4699,6 +5127,106 @@
   ],
   "purchases": [
     {
+      "id": "PURCH_MOCK_109",
+      "poId": "PO_MOCK_109",
+      "grnId": "GRN_MOCK_109",
+      "supplier": "Athiyaman",
+      "total": 3300,
+      "date": "2026-07-07",
+      "status": "paid",
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "PURCH_MOCK_108",
+      "poId": "PO_MOCK_108",
+      "grnId": "GRN_MOCK_108",
+      "supplier": "Anbarasu",
+      "total": 3100,
+      "date": "2026-07-07",
+      "status": "paid",
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "PURCH_MOCK_107",
+      "poId": "PO_MOCK_107",
+      "grnId": "GRN_MOCK_107",
+      "supplier": "Athiyaman",
+      "total": 2900,
+      "date": "2026-07-07",
+      "status": "paid",
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "PURCH_MOCK_106",
+      "poId": "PO_MOCK_106",
+      "grnId": "GRN_MOCK_106",
+      "supplier": "Anbarasu",
+      "total": 2700,
+      "date": "2026-07-07",
+      "status": "paid",
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "PURCH_MOCK_105",
+      "poId": "PO_MOCK_105",
+      "grnId": "GRN_MOCK_105",
+      "supplier": "Athiyaman",
+      "total": 2500,
+      "date": "2026-07-07",
+      "status": "paid",
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "PURCH_MOCK_104",
+      "poId": "PO_MOCK_104",
+      "grnId": "GRN_MOCK_104",
+      "supplier": "Anbarasu",
+      "total": 2300,
+      "date": "2026-07-07",
+      "status": "paid",
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "PURCH_MOCK_103",
+      "poId": "PO_MOCK_103",
+      "grnId": "GRN_MOCK_103",
+      "supplier": "Athiyaman",
+      "total": 2100,
+      "date": "2026-07-07",
+      "status": "paid",
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "PURCH_MOCK_102",
+      "poId": "PO_MOCK_102",
+      "grnId": "GRN_MOCK_102",
+      "supplier": "Anbarasu",
+      "total": 1900,
+      "date": "2026-07-07",
+      "status": "paid",
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "PURCH_MOCK_101",
+      "poId": "PO_MOCK_101",
+      "grnId": "GRN_MOCK_101",
+      "supplier": "Athiyaman",
+      "total": 1700,
+      "date": "2026-07-07",
+      "status": "paid",
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "PURCH_MOCK_100",
+      "poId": "PO_MOCK_100",
+      "grnId": "GRN_MOCK_100",
+      "supplier": "Anbarasu",
+      "total": 1500,
+      "date": "2026-07-07",
+      "status": "paid",
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
       "id": "d02b3d5b-2eae-49b5-98ba-9e4ebbee0e96",
       "supplier": "Fresh Poultry Co.",
       "items": [
@@ -6498,13 +7026,13 @@
       "id": "m22",
       "categoryId": "c4",
       "name": "Non-Veg - Loaded Chicken Fries",
-      "price": 149,
+      "price": 199,
       "isAvailable": true
     },
     {
       "id": "m23",
       "categoryId": "c4",
-      "name": "Non-Veg - Fries",
+      "name": "Veg - Fries (Salted, Peri Peri Or Cajun)",
       "price": 99,
       "isAvailable": true
     },
@@ -6512,7 +7040,7 @@
       "id": "m24",
       "categoryId": "c4",
       "name": "Veg - Loaded Paneer Fries",
-      "price": 149,
+      "price": 199,
       "isAvailable": true
     },
     {
@@ -6525,105 +7053,105 @@
     {
       "id": "m26",
       "categoryId": "c5",
-      "name": "Non-Veg - 1 pcs Crispy Chicken (1 Dip)",
+      "name": "Non-Veg - 1 Pc Crispy Chicken (1 Dip)",
       "price": 70,
       "isAvailable": true
     },
     {
       "id": "m27",
       "categoryId": "c5",
-      "name": "Non-Veg - 2 Pcs Crispy Chicken (1 Dip)",
+      "name": "Non-Veg - 2 Pc Crispy Chicken (1 Dip)",
       "price": 140,
       "isAvailable": true
     },
     {
       "id": "m28",
       "categoryId": "c5",
-      "name": "Non-Veg - 4 pcs Crispy Chicken (2 Dip)",
+      "name": "Non-Veg - 4 Pc Crispy Chicken (2 Dip)",
       "price": 280,
       "isAvailable": true
     },
     {
       "id": "m29",
       "categoryId": "c5",
-      "name": "Non-Veg - 8 pcs Crispy Chicken (4 Dip)",
+      "name": "Non-Veg - 8 Pc Crispy Chicken (4 Dip)",
       "price": 560,
       "isAvailable": true
     },
     {
       "id": "m30",
       "categoryId": "c5",
-      "name": "Non-Veg - 12 pcs Crispy Chicken (6 Dip)",
+      "name": "Non-Veg - 12 Pc Crispy Chicken (6 Dip)",
       "price": 840,
       "isAvailable": true
     },
     {
       "id": "m31",
       "categoryId": "c5",
-      "name": "Non-Veg - 3 pcs Crispy Wings (1 Dip)",
+      "name": "Non-Veg - 3 Pc Crispy Wings (1 Dip)",
       "price": 90,
       "isAvailable": true
     },
     {
       "id": "m32",
       "categoryId": "c5",
-      "name": "Non-Veg - 6 pcs Crispy Wings (2 Dip)",
+      "name": "Non-Veg - 6 Pc Crispy Wings (2 Dip)",
       "price": 180,
       "isAvailable": true
     },
     {
       "id": "m33",
       "categoryId": "c5",
-      "name": "Non-Veg - 9 pcs Crispy Wings (3 Dip)",
+      "name": "Non-Veg - 9 Pc Crispy Wings (3 Dip)",
       "price": 270,
       "isAvailable": true
     },
     {
       "id": "m34",
       "categoryId": "c5",
-      "name": "Non-Veg - 20 pcs Crispy Wings (6 Dip)",
+      "name": "Non-Veg - 20 Pc Crispy Wings (6 Dip)",
       "price": 600,
       "isAvailable": true
     },
     {
       "id": "m35",
       "categoryId": "c5",
-      "name": "Non-Veg - 60 pcs Crispy Wings (12 Dip)",
+      "name": "Non-Veg - 60 Pc Crispy Wings (12 Dip)",
       "price": 1500,
       "isAvailable": true
     },
     {
       "id": "m36",
       "categoryId": "c5",
-      "name": "Non-Veg - 3 Pcs Crispy Strips (1 Dip + Regular Drink)",
+      "name": "Non-Veg - 3 Pc Crispy Strips (1 Dip)",
       "price": 120,
       "isAvailable": true
     },
     {
       "id": "m37",
       "categoryId": "c5",
-      "name": "Non-Veg - 6 Pcs Crispy Strips (2 Dip)",
+      "name": "Non-Veg - 6 Pc Crispy Strips (2 Dip)",
       "price": 240,
       "isAvailable": true
     },
     {
       "id": "m38",
       "categoryId": "c5",
-      "name": "Non-Veg - 9 Pcs Crispy Strips (3 Dip)",
+      "name": "Non-Veg - 9 Pc Crispy Strips (3 Dip)",
       "price": 360,
       "isAvailable": true
     },
     {
       "id": "m39",
       "categoryId": "c5",
-      "name": "Non-Veg - 20 Pcs Crispy Strips (6 Dip)",
+      "name": "Non-Veg - 20 Pc Crispy Strips (6 Dip)",
       "price": 800,
       "isAvailable": true
     },
     {
       "id": "m40",
       "categoryId": "c5",
-      "name": "Non-Veg - 60 Pcs Crispy Strips (12 Dip)",
+      "name": "Non-Veg - 60 Pc Crispy Strips (12 Dip)",
       "price": 2400,
       "isAvailable": true
     },
@@ -6721,28 +7249,42 @@
     {
       "id": "m54",
       "categoryId": "c9",
-      "name": "Cola (Regular)",
+      "name": "Veg - Sprite / Coca-Cola (Regular)",
       "price": 59,
       "isAvailable": true
     },
     {
       "id": "m55",
       "categoryId": "c9",
-      "name": "Cola (Large)",
+      "name": "Veg - Sprite / Coca-Cola (Large)",
       "price": 99,
       "isAvailable": true
     },
     {
       "id": "m56",
       "categoryId": "c9",
-      "name": "Lemonade (Regular)",
+      "name": "Veg - Ice Tea (Peach / Lime) (Regular)",
       "price": 59,
       "isAvailable": true
     },
     {
       "id": "m57",
       "categoryId": "c9",
-      "name": "Lemonade (Large)",
+      "name": "Veg - Ice Tea (Peach / Lime) (Large)",
+      "price": 99,
+      "isAvailable": true
+    },
+    {
+      "id": "m58",
+      "categoryId": "c9",
+      "name": "Veg - Hot Chocolate",
+      "price": 99,
+      "isAvailable": true
+    },
+    {
+      "id": "m59",
+      "categoryId": "c9",
+      "name": "Veg - Signature Tea",
       "price": 99,
       "isAvailable": true
     }
@@ -6783,6 +7325,96 @@
     }
   ],
   "purchaseOrders": [
+    {
+      "id": "PO_MOCK_109",
+      "supplier": "Athiyaman",
+      "items": 2,
+      "total": 3300,
+      "status": "completed",
+      "date": "2026-07-07",
+      "expectedDate": "2026-07-07"
+    },
+    {
+      "id": "PO_MOCK_108",
+      "supplier": "Anbarasu",
+      "items": 2,
+      "total": 3100,
+      "status": "completed",
+      "date": "2026-07-07",
+      "expectedDate": "2026-07-07"
+    },
+    {
+      "id": "PO_MOCK_107",
+      "supplier": "Athiyaman",
+      "items": 2,
+      "total": 2900,
+      "status": "completed",
+      "date": "2026-07-07",
+      "expectedDate": "2026-07-07"
+    },
+    {
+      "id": "PO_MOCK_106",
+      "supplier": "Anbarasu",
+      "items": 2,
+      "total": 2700,
+      "status": "completed",
+      "date": "2026-07-07",
+      "expectedDate": "2026-07-07"
+    },
+    {
+      "id": "PO_MOCK_105",
+      "supplier": "Athiyaman",
+      "items": 2,
+      "total": 2500,
+      "status": "completed",
+      "date": "2026-07-07",
+      "expectedDate": "2026-07-07"
+    },
+    {
+      "id": "PO_MOCK_104",
+      "supplier": "Anbarasu",
+      "items": 2,
+      "total": 2300,
+      "status": "completed",
+      "date": "2026-07-07",
+      "expectedDate": "2026-07-07"
+    },
+    {
+      "id": "PO_MOCK_103",
+      "supplier": "Athiyaman",
+      "items": 2,
+      "total": 2100,
+      "status": "completed",
+      "date": "2026-07-07",
+      "expectedDate": "2026-07-07"
+    },
+    {
+      "id": "PO_MOCK_102",
+      "supplier": "Anbarasu",
+      "items": 2,
+      "total": 1900,
+      "status": "completed",
+      "date": "2026-07-07",
+      "expectedDate": "2026-07-07"
+    },
+    {
+      "id": "PO_MOCK_101",
+      "supplier": "Athiyaman",
+      "items": 2,
+      "total": 1700,
+      "status": "completed",
+      "date": "2026-07-07",
+      "expectedDate": "2026-07-07"
+    },
+    {
+      "id": "PO_MOCK_100",
+      "supplier": "Anbarasu",
+      "items": 2,
+      "total": 1500,
+      "status": "completed",
+      "date": "2026-07-07",
+      "expectedDate": "2026-07-07"
+    },
     {
       "id": "PO002",
       "supplier": "AAA",
@@ -6841,6 +7473,196 @@
     }
   ],
   "grns": [
+    {
+      "id": "GRN_MOCK_109",
+      "poId": "PO_MOCK_109",
+      "supplier": "Athiyaman",
+      "date": "2026-07-07",
+      "receivedBy": "Admin",
+      "totalValue": 3300,
+      "notes": "Auto-generated test GRN",
+      "items": [
+        {
+          "name": "Chicken Breast",
+          "orderedQty": 19,
+          "receivedQty": 19,
+          "unit": "kg",
+          "unitPrice": 150
+        }
+      ],
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "GRN_MOCK_108",
+      "poId": "PO_MOCK_108",
+      "supplier": "Anbarasu",
+      "date": "2026-07-07",
+      "receivedBy": "Admin",
+      "totalValue": 3100,
+      "notes": "Auto-generated test GRN",
+      "items": [
+        {
+          "name": "Chicken Breast",
+          "orderedQty": 18,
+          "receivedQty": 18,
+          "unit": "kg",
+          "unitPrice": 150
+        }
+      ],
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "GRN_MOCK_107",
+      "poId": "PO_MOCK_107",
+      "supplier": "Athiyaman",
+      "date": "2026-07-07",
+      "receivedBy": "Admin",
+      "totalValue": 2900,
+      "notes": "Auto-generated test GRN",
+      "items": [
+        {
+          "name": "Chicken Breast",
+          "orderedQty": 17,
+          "receivedQty": 17,
+          "unit": "kg",
+          "unitPrice": 150
+        }
+      ],
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "GRN_MOCK_106",
+      "poId": "PO_MOCK_106",
+      "supplier": "Anbarasu",
+      "date": "2026-07-07",
+      "receivedBy": "Admin",
+      "totalValue": 2700,
+      "notes": "Auto-generated test GRN",
+      "items": [
+        {
+          "name": "Chicken Breast",
+          "orderedQty": 16,
+          "receivedQty": 16,
+          "unit": "kg",
+          "unitPrice": 150
+        }
+      ],
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "GRN_MOCK_105",
+      "poId": "PO_MOCK_105",
+      "supplier": "Athiyaman",
+      "date": "2026-07-07",
+      "receivedBy": "Admin",
+      "totalValue": 2500,
+      "notes": "Auto-generated test GRN",
+      "items": [
+        {
+          "name": "Chicken Breast",
+          "orderedQty": 15,
+          "receivedQty": 15,
+          "unit": "kg",
+          "unitPrice": 150
+        }
+      ],
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "GRN_MOCK_104",
+      "poId": "PO_MOCK_104",
+      "supplier": "Anbarasu",
+      "date": "2026-07-07",
+      "receivedBy": "Admin",
+      "totalValue": 2300,
+      "notes": "Auto-generated test GRN",
+      "items": [
+        {
+          "name": "Chicken Breast",
+          "orderedQty": 14,
+          "receivedQty": 14,
+          "unit": "kg",
+          "unitPrice": 150
+        }
+      ],
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "GRN_MOCK_103",
+      "poId": "PO_MOCK_103",
+      "supplier": "Athiyaman",
+      "date": "2026-07-07",
+      "receivedBy": "Admin",
+      "totalValue": 2100,
+      "notes": "Auto-generated test GRN",
+      "items": [
+        {
+          "name": "Chicken Breast",
+          "orderedQty": 13,
+          "receivedQty": 13,
+          "unit": "kg",
+          "unitPrice": 150
+        }
+      ],
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "GRN_MOCK_102",
+      "poId": "PO_MOCK_102",
+      "supplier": "Anbarasu",
+      "date": "2026-07-07",
+      "receivedBy": "Admin",
+      "totalValue": 1900,
+      "notes": "Auto-generated test GRN",
+      "items": [
+        {
+          "name": "Chicken Breast",
+          "orderedQty": 12,
+          "receivedQty": 12,
+          "unit": "kg",
+          "unitPrice": 150
+        }
+      ],
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "GRN_MOCK_101",
+      "poId": "PO_MOCK_101",
+      "supplier": "Athiyaman",
+      "date": "2026-07-07",
+      "receivedBy": "Admin",
+      "totalValue": 1700,
+      "notes": "Auto-generated test GRN",
+      "items": [
+        {
+          "name": "Chicken Breast",
+          "orderedQty": 11,
+          "receivedQty": 11,
+          "unit": "kg",
+          "unitPrice": 150
+        }
+      ],
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
+    {
+      "id": "GRN_MOCK_100",
+      "poId": "PO_MOCK_100",
+      "supplier": "Anbarasu",
+      "date": "2026-07-07",
+      "receivedBy": "Admin",
+      "totalValue": 1500,
+      "notes": "Auto-generated test GRN",
+      "items": [
+        {
+          "name": "Chicken Breast",
+          "orderedQty": 10,
+          "receivedQty": 10,
+          "unit": "kg",
+          "unitPrice": 150
+        }
+      ],
+      "createdAt": "2026-07-07T08:40:22.386Z"
+    },
     {
       "id": "GRN002",
       "poId": "PO002",
