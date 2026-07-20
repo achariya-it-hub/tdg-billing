@@ -574,10 +574,23 @@ app.post('/api/auth/reset-password', async (req, res) => {
   res.json({ success: true, message: 'Password reset successful' })
 })
 
+function getMobileUser(userId) {
+  let user = mobileAppUsers.find(u => u.id === userId)
+  if (!user) {
+    const db = readDb()
+    user = (db.users || []).find(u => u.id === userId)
+    if (user) {
+      const idx = mobileAppUsers.findIndex(u => u.id === userId)
+      if (idx >= 0) mobileAppUsers[idx] = user
+      else mobileAppUsers.push(user)
+    }
+  }
+  return user
+}
+
 // Auth - Profile
 app.get('/api/auth/profile', auth, (req, res) => {
-  const db = readDb()
-  const user = db.users.find(u => u.id === req.userId)
+  const user = getMobileUser(req.userId)
   if (!user) return res.status(404).json({ message: 'User not found' })
   const { password: _, ...userWithoutPassword } = user
   res.json(userWithoutPassword)
@@ -586,18 +599,17 @@ app.get('/api/auth/profile', auth, (req, res) => {
 // Auth - Update Profile
 app.put('/api/auth/profile', auth, (req, res) => {
   const { name, phone, email } = req.body
-  const db = readDb()
-  const idx = db.users.findIndex(u => u.id === req.userId)
-  if (idx === -1) return res.status(404).json({ message: 'User not found' })
-  if (name) db.users[idx].name = name
-  if (phone) db.users[idx].phone = phone
+  const user = getMobileUser(req.userId)
+  if (!user) return res.status(404).json({ message: 'User not found' })
+  if (name) user.name = name
+  if (phone) user.phone = phone
   if (email) {
-    const other = db.users.find(u => u.id !== req.userId && u.email.toLowerCase() === email.toLowerCase())
+    const other = mobileAppUsers.find(u => u.id !== req.userId && u.email.toLowerCase() === email.toLowerCase())
     if (other) return res.status(400).json({ message: 'Email already in use' })
-    db.users[idx].email = email
+    user.email = email
   }
-  writeDb(db)
-  const { password: _, ...userWithoutPassword } = db.users[idx]
+  saveState()
+  const { password: _, ...userWithoutPassword } = user
   res.json(userWithoutPassword)
 })
 
@@ -605,7 +617,7 @@ app.put('/api/auth/profile', auth, (req, res) => {
 
 // Get user's assets and points
 app.get('/api/assets', auth, (req, res) => {
-  const user = mobileAppUsers.find(u => u.id === req.userId)
+  const user = getMobileUser(req.userId)
   if (!user) return res.status(404).json({ message: 'User not found' })
   res.json({
     points: user.points || 0,
@@ -626,7 +638,7 @@ app.post('/api/assets', auth, (req, res) => {
   const { name, phone } = req.body
   if (!name || !phone) return res.status(400).json({ message: 'Name and phone required' })
 
-  const user = mobileAppUsers.find(u => u.id === req.userId)
+  const user = getMobileUser(req.userId)
   if (!user) return res.status(404).json({ message: 'User not found' })
 
   const assets = user.assets || []
@@ -1271,7 +1283,7 @@ app.get('/api/menu', (req, res) => {
 
 // Wallet
 app.get('/api/wallet', auth, (req, res) => {
-  const user = mobileAppUsers.find(u => u.id === req.userId)
+  const user = getMobileUser(req.userId)
   if (!user) return res.status(404).json({ message: 'User not found' })
   const transactions = (readDb().transactions || []).filter(t => t.userId === req.userId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
   res.json({

@@ -28,18 +28,32 @@ class _WalletScreenState extends State<WalletScreen> {
     if (mounted) setState(() => _isLoading = true);
     try {
       final results = await Future.wait([
-        ApiService().getWallet(),
-        ApiService().getProfile().catchError((_) => <String, dynamic>{}),
+        ApiService().getWallet().catchError((e) {
+          debugPrint("getWallet error: $e");
+          return <String, dynamic>{};
+        }),
+        ApiService().getProfile().catchError((e) {
+          debugPrint("getProfile error: $e");
+          return <String, dynamic>{};
+        }),
       ]);
       final wallet = results[0];
       final profile = results[1];
+      final user = ApiService().currentUser ?? {};
+
+      final rawPoints = wallet['points'] ?? user['points'] ?? profile['points'] ?? 0;
+      final rawCashback = wallet['cashbackEarned'] ?? user['cashbackEarned'] ?? profile['cashbackEarned'] ?? 0;
+      final rawAvailable = wallet['availablePoints'] ?? user['availablePoints'] ?? rawPoints;
+      final rawTx = wallet['transactions'] ?? [];
+      final rawName = profile['name'] ?? user['name'] ?? '';
+
       if (mounted) {
         setState(() {
-          _points = wallet['points'] ?? 0;
-          _cashbackEarned = wallet['cashbackEarned'] ?? 0;
-          _availablePoints = wallet['availablePoints'] ?? 0;
-          _transactions = wallet['transactions'] ?? [];
-          _userName = profile['name'] ?? '';
+          _points = (rawPoints is num) ? rawPoints.toInt() : (int.tryParse(rawPoints.toString()) ?? 0);
+          _cashbackEarned = (rawCashback is num) ? rawCashback.toInt() : (int.tryParse(rawCashback.toString()) ?? 0);
+          _availablePoints = (rawAvailable is num) ? rawAvailable.toInt() : (int.tryParse(rawAvailable.toString()) ?? 0);
+          _transactions = rawTx;
+          _userName = rawName;
         });
       }
     } catch (e) {
