@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
+import '../utils/responsive.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -94,11 +95,13 @@ class _WalletScreenState extends State<WalletScreen> {
       ),
       body: _isLoading && _transactions.isEmpty
           ? Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(TDGColors.gold)))
-          : RefreshIndicator(
-              onRefresh: _fetchWalletData,
-              color: TDGColors.gold,
-              backgroundColor: TDGColors.cardDark,
-              child: ListView(
+          : ResponsiveWrapper(
+              maxWidth: 1000,
+              child: RefreshIndicator(
+                onRefresh: _fetchWalletData,
+                color: TDGColors.gold,
+                backgroundColor: TDGColors.cardDark,
+                child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
                   _buildWalletCard(),
@@ -137,6 +140,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 ],
               ),
             ),
+          ),
     );
   }
 

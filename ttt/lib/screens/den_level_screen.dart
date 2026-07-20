@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
 import 'asset_screen.dart';
+import '../utils/responsive.dart';
 
 class DenLevelScreen extends StatefulWidget {
   const DenLevelScreen({super.key});
@@ -64,20 +65,23 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
           ),
         ),
       ),
+
       body: _isLoading && _denProgress == null
           ? Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(TDGColors.gold),
               ),
             )
-          : RefreshIndicator(
-              onRefresh: _fetchDenProgress,
-              color: TDGColors.gold,
-              backgroundColor: TDGColors.cardDark,
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                children: [
-                  _buildLevelCard(context, currentLevel),
+          : ResponsiveWrapper(
+              maxWidth: 1100,
+              child: RefreshIndicator(
+                onRefresh: _fetchDenProgress,
+                color: TDGColors.gold,
+                backgroundColor: TDGColors.cardDark,
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  children: [
+                    _buildLevelCard(context, currentLevel),
                   const SizedBox(height: 20),
                   _buildPrideProgressCard(context),
                   const SizedBox(height: 20),

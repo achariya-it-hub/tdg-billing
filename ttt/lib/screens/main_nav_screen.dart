@@ -7,6 +7,8 @@ import 'den_level_screen.dart';
 import 'wallet_screen.dart';
 import 'profile_screen.dart';
 
+import '../utils/responsive.dart';
+
 class MainNavScreen extends StatefulWidget {
   const MainNavScreen({super.key});
 
@@ -27,13 +29,20 @@ class _MainNavScreenState extends State<MainNavScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = Responsive.isDesktop(context);
     return Scaffold(
       backgroundColor: TDGColors.background,
       extendBody: true,
-      body: _screens[_currentIndex],
+      body: ResponsiveWrapper(
+        maxWidth: 1200,
+        child: _screens[_currentIndex],
+      ),
       bottomNavigationBar: SafeArea(
         top: false,
-        child: _buildBottomNav(),
+        child: ResponsiveWrapper(
+          maxWidth: isDesktop ? 800 : 1100,
+          child: _buildBottomNav(),
+        ),
       ),
     );
   }
@@ -41,9 +50,11 @@ class _MainNavScreenState extends State<MainNavScreen> {
   Widget _buildBottomNav() {
     return Container(
       height: 72,
+      margin: EdgeInsets.symmetric(horizontal: Responsive.isDesktop(context) ? 32 : 0),
       decoration: BoxDecoration(
         color: const Color(0xFF111111),
-        border: Border(top: BorderSide(color: TDGColors.border, width: 1)),
+        borderRadius: Responsive.isDesktop(context) ? BorderRadius.circular(24) : null,
+        border: Border.all(color: TDGColors.border, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.5),

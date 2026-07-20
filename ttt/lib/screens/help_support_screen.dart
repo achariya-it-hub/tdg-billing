@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/colors.dart';
 import '../widgets/tdg_button.dart';
+import '../utils/responsive.dart';
 
 class HelpSupportScreen extends StatefulWidget {
   const HelpSupportScreen({super.key});
@@ -195,60 +196,63 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
           ),
           // Scaffold content
           SafeArea(
-            child: Column(
-              children: [
-                // Custom App Bar
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  child: Row(
-                    children: [
-                      const BackButton(color: Colors.white),
-                      const SizedBox(width: 8),
-                      Text(
-                        'HELP & SUPPORT',
-                        style: GoogleFonts.outfit(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
+            child: ResponsiveWrapper(
+              maxWidth: 900,
+              child: Column(
+                children: [
+                  // Custom App Bar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Row(
+                      children: [
+                        const BackButton(color: Colors.white),
+                        const SizedBox(width: 8),
+                        Text(
+                          'HELP & SUPPORT',
+                          style: GoogleFonts.outfit(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    children: [
-                      // Header Message
-                      Text(
-                        'Need assistance? We\'re here to help you get the best experience in The Lion Pride.',
-                        style: GoogleFonts.outfit(
-                          color: Colors.white70,
-                          fontSize: 14,
-                          height: 1.5,
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      children: [
+                        // Header Message
+                        Text(
+                          'Need assistance? We\'re here to help you get the best experience in The Lion Pride.',
+                          style: GoogleFonts.outfit(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            height: 1.5,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 24),
+                        const SizedBox(height: 24),
 
-                      // Contact Methods Section
-                      _buildContactCards(),
+                        // Contact Methods Section
+                        _buildContactCards(),
 
-                      const SizedBox(height: 32),
+                        const SizedBox(height: 32),
 
-                      // Submit a Support Ticket Section
-                      _buildTicketForm(),
+                        // Submit a Support Ticket Section
+                        _buildTicketForm(),
 
-                      const SizedBox(height: 32),
+                        const SizedBox(height: 32),
 
-                      // FAQ Accordion Section
-                      _buildFaqSection(),
-                      
-                      const SizedBox(height: 40),
-                    ],
+                        // FAQ Accordion Section
+                        _buildFaqSection(),
+                        
+                        const SizedBox(height: 40),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

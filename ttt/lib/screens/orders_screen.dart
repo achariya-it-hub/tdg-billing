@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
+import '../utils/responsive.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -74,7 +75,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
           style: TextStyle(color: TDGColors.white, fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 2),
         ),
       ),
-      body: Column(
+      body: ResponsiveWrapper(
+        maxWidth: 1000,
+        child: Column(
         children: [
           // Filter tabs
           Padding(
@@ -155,8 +158,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildOrderCard(dynamic order) {
     final List<dynamic> itemsList = order['items'] ?? [];

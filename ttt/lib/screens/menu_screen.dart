@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import 'cart_screen.dart';
 import '../services/api_service.dart';
+import '../utils/responsive.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -160,16 +161,35 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
             ),
           ),
+
           const SizedBox(height: 12),
           // Menu list
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: (_menuItems[_selectedCategory] ?? []).length,
-              itemBuilder: (context, index) {
-                final item = (_menuItems[_selectedCategory] ?? [])[index];
-                return _buildMenuItem(item);
-              },
+            child: ResponsiveWrapper(
+              maxWidth: 1200,
+              child: Responsive.isMobile(context)
+                  ? ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: (_menuItems[_selectedCategory] ?? []).length,
+                      itemBuilder: (context, index) {
+                        final item = (_menuItems[_selectedCategory] ?? [])[index];
+                        return _buildMenuItem(item);
+                      },
+                    )
+                  : GridView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: Responsive.gridColumns(context, mobile: 1, tablet: 2, desktop: 3),
+                        childAspectRatio: 2.8,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 12,
+                      ),
+                      itemCount: (_menuItems[_selectedCategory] ?? []).length,
+                      itemBuilder: (context, index) {
+                        final item = (_menuItems[_selectedCategory] ?? [])[index];
+                        return _buildMenuItem(item);
+                      },
+                    ),
             ),
           ),
         ],

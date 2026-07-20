@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import 'checkout_screen.dart';
 import '../widgets/tdg_button.dart';
+import '../utils/responsive.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -44,22 +45,25 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                ..._cartItems.asMap().entries.map((entry) => _buildCartItem(entry.key, entry.value)),
-                const SizedBox(height: 16),
-                _buildPromoSection(),
-                const SizedBox(height: 16),
-                _buildPriceSummary(),
-              ],
+      body: ResponsiveWrapper(
+        maxWidth: 800,
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  ..._cartItems.asMap().entries.map((entry) => _buildCartItem(entry.key, entry.value)),
+                  const SizedBox(height: 16),
+                  _buildPromoSection(),
+                  const SizedBox(height: 16),
+                  _buildPriceSummary(),
+                ],
+              ),
             ),
-          ),
-          _buildCheckoutButton(),
-        ],
+            _buildCheckoutButton(),
+          ],
+        ),
       ),
     );
   }

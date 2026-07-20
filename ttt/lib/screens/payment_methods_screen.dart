@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../widgets/tdg_button.dart';
+import '../utils/responsive.dart';
 
 class PaymentMethodsScreen extends StatelessWidget {
   const PaymentMethodsScreen({super.key});
@@ -15,27 +16,30 @@ class PaymentMethodsScreen extends StatelessWidget {
         leading: BackButton(color: TDGColors.white),
         title: Text('PAYMENT METHODS', style: TextStyle(color: TDGColors.white, fontSize: 16, fontWeight: FontWeight.w800)),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('SAVED CARDS', style: TextStyle(color: TDGColors.grey, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1)),
-            const SizedBox(height: 16),
-            _buildCardItem('**** **** **** 4242', 'Visa', '04/26'),
-            const SizedBox(height: 12),
-            _buildCardItem('**** **** **** 9876', 'Mastercard', '12/25'),
-            const SizedBox(height: 32),
-            Text('UPI IDS', style: TextStyle(color: TDGColors.grey, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1)),
-            const SizedBox(height: 16),
-            _buildUPIItem('rohit.sharma@okaxis', 'Active'),
-            const SizedBox(height: 40),
-            TDGButton(
-              text: 'Add New Method',
-              onPressed: () {},
-              icon: const Icon(Icons.add_rounded, color: Colors.black),
-            ),
-          ],
+      body: ResponsiveWrapper(
+        maxWidth: 700,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('SAVED CARDS', style: TextStyle(color: TDGColors.grey, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1)),
+              const SizedBox(height: 16),
+              _buildCardItem('**** **** **** 4242', 'Visa', '04/26'),
+              const SizedBox(height: 12),
+              _buildCardItem('**** **** **** 9876', 'Mastercard', '12/25'),
+              const SizedBox(height: 32),
+              Text('UPI IDS', style: TextStyle(color: TDGColors.grey, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1)),
+              const SizedBox(height: 16),
+              _buildUPIItem('rohit.sharma@okaxis', 'Active'),
+              const SizedBox(height: 40),
+              TDGButton(
+                text: 'Add New Method',
+                onPressed: () {},
+                icon: const Icon(Icons.add_rounded, color: Colors.black),
+              ),
+            ],
+          ),
         ),
       ),
     );

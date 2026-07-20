@@ -9,6 +9,7 @@ import 'help_support_screen.dart';
 import 'admin_dashboard_screen.dart';
 import 'asset_screen.dart';
 import '../services/api_service.dart';
+import '../utils/responsive.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -80,11 +81,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             )
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: _fetchProfile,
-        color: TDGColors.gold,
-        backgroundColor: TDGColors.cardDark,
-        child: ListView(
+      body: ResponsiveWrapper(
+        maxWidth: 800,
+        child: RefreshIndicator(
+          onRefresh: _fetchProfile,
+          color: TDGColors.gold,
+          backgroundColor: TDGColors.cardDark,
+          child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
             const SizedBox(height: 20),
@@ -173,8 +176,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildMenuItem(
     BuildContext context,

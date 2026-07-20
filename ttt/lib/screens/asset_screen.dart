@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
+import '../utils/responsive.dart';
 
 class AssetScreen extends StatefulWidget {
   const AssetScreen({super.key});
@@ -410,9 +411,11 @@ class _AssetScreenState extends State<AssetScreen> {
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator(color: TDGColors.gold))
-          : RefreshIndicator(
-              onRefresh: _fetchAssets,
-              child: ListView(
+          : ResponsiveWrapper(
+              maxWidth: 1100,
+              child: RefreshIndicator(
+                onRefresh: _fetchAssets,
+                child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
                   // Points Card

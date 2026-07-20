@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../theme/colors.dart';
 import 'asset_screen.dart';
+import '../utils/responsive.dart';
 
 class OffersScreen extends StatefulWidget {
   const OffersScreen({super.key});
@@ -27,7 +28,9 @@ class _OffersScreenState extends State<OffersScreen> {
           style: TextStyle(color: TDGColors.white, fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 3),
         ),
       ),
-      body: ListView(
+      body: ResponsiveWrapper(
+        maxWidth: 1000,
+        child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           // Tab
@@ -71,8 +74,8 @@ class _OffersScreenState extends State<OffersScreen> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
 
   Widget _tab(String label, bool isActive) {
     final selected = _showAll == (label == 'All Offers');

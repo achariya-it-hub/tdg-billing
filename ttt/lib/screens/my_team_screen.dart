@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
+import '../utils/responsive.dart';
 
 class MyTeamScreen extends StatefulWidget {
   const MyTeamScreen({super.key});
@@ -32,7 +33,9 @@ class _MyTeamScreenState extends State<MyTeamScreen> {
           style: TextStyle(color: TDGColors.white, fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 2),
         ),
       ),
-      body: Column(
+      body: ResponsiveWrapper(
+        maxWidth: 1000,
+        child: Column(
         children: [
           _buildStatsRow(),
           const SizedBox(height: 24),
@@ -51,7 +54,8 @@ class _MyTeamScreenState extends State<MyTeamScreen> {
           const SizedBox(height: 20),
         ],
       ),
-    );
+    ),
+  );
   }
 
   Widget _buildStatsRow() {

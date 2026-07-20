@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
+import '../utils/responsive.dart';
 
 class TermsConditionsScreen extends StatelessWidget {
   const TermsConditionsScreen({super.key});
@@ -14,7 +15,9 @@ class TermsConditionsScreen extends StatelessWidget {
         leading: BackButton(color: TDGColors.white),
         title: Text('TERMS & CONDITIONS', style: TextStyle(color: TDGColors.white, fontSize: 16, fontWeight: FontWeight.w800)),
       ),
-      body: SingleChildScrollView(
+      body: ResponsiveWrapper(
+        maxWidth: 800,
+        child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +50,8 @@ class TermsConditionsScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 
   Widget _section(String title, String content) {

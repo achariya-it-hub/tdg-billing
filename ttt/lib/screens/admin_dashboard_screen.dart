@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
+import '../utils/responsive.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -70,7 +71,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             )
         ],
       ),
-      body: RefreshIndicator(
+      body: ResponsiveWrapper(
+        maxWidth: 1000,
+        child: RefreshIndicator(
         onRefresh: _fetchStats,
         color: TDGColors.gold,
         backgroundColor: TDGColors.cardDark,
@@ -118,7 +121,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 
   Widget _buildStatCard(String label, String value, IconData icon, Color color) {

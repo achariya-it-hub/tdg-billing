@@ -3,6 +3,7 @@ import '../theme/colors.dart';
 import 'order_placed_screen.dart';
 import '../widgets/tdg_button.dart';
 import '../services/api_service.dart';
+import '../utils/responsive.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final int total;
@@ -110,22 +111,25 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           style: TextStyle(color: TDGColors.white, fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 3),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                _buildDeliveryAddress(),
-                const SizedBox(height: 16),
-                _buildPaymentMethod(),
-                const SizedBox(height: 16),
-                _buildPointsRedeem(),
-              ],
+      body: ResponsiveWrapper(
+        maxWidth: 800,
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  _buildDeliveryAddress(),
+                  const SizedBox(height: 16),
+                  _buildPaymentMethod(),
+                  const SizedBox(height: 16),
+                  _buildPointsRedeem(),
+                ],
+              ),
             ),
-          ),
-          _buildPayNowSection(),
-        ],
+            _buildPayNowSection(),
+          ],
+        ),
       ),
     );
   }

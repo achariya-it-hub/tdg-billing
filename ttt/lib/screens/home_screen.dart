@@ -6,6 +6,8 @@ import 'notifications_screen.dart';
 import '../widgets/tdg_logo.dart';
 import '../services/api_service.dart';
 
+import '../utils/responsive.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -59,19 +61,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isWide = !Responsive.isMobile(context);
+
     return Scaffold(
       backgroundColor: TDGColors.background,
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(child: _buildHeader()),
-            SliverToBoxAdapter(child: _buildWalletCard()),
-            SliverToBoxAdapter(child: _buildOfferOfTheDay()),
-            SliverToBoxAdapter(child: _buildReferEarnBanner()),
-            SliverToBoxAdapter(child: _buildOrderNowSection()),
-            SliverToBoxAdapter(child: _buildPopularItems()),
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
-          ],
+        child: ResponsiveWrapper(
+          maxWidth: 1200,
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(child: _buildHeader()),
+              if (isWide)
+                SliverToBoxAdapter(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: _buildWalletCard()),
+                      Expanded(child: _buildOfferOfTheDay()),
+                    ],
+                  ),
+                )
+              else ...[
+                SliverToBoxAdapter(child: _buildWalletCard()),
+                SliverToBoxAdapter(child: _buildOfferOfTheDay()),
+              ],
+              SliverToBoxAdapter(child: _buildReferEarnBanner()),
+              SliverToBoxAdapter(child: _buildOrderNowSection()),
+              SliverToBoxAdapter(child: _buildPopularItems()),
+              const SliverToBoxAdapter(child: SizedBox(height: 100)),
+            ],
+          ),
         ),
       ),
     );

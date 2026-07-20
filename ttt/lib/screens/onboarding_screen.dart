@@ -5,6 +5,8 @@ import 'login_screen.dart';
 import '../widgets/tdg_button.dart';
 import '../services/api_service.dart';
 
+import '../utils/responsive.dart';
+
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -81,12 +83,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     constraints: BoxConstraints(
                       minHeight: constraints.maxHeight,
                     ),
-                    child: IntrinsicHeight(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 28),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 550),
+                        child: IntrinsicHeight(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 28),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
                             // Push the tagline and CTA down to let the top logo and artwork breathe
                             const Spacer(flex: 12),
                             _buildTagline(),
@@ -98,14 +103,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
                   ),
-                );
-              },
-            ),
-          ),
-        ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
-    );
-  }
+    ],
+  ),
+);
+}
 
   Widget _buildTagline() {
     return Column(

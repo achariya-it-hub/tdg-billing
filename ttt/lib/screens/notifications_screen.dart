@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/colors.dart';
+import '../utils/responsive.dart';
 
 class NotificationItem {
   final String id;
@@ -128,7 +129,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
           // Scaffold content
           SafeArea(
-            child: Column(
+            child: ResponsiveWrapper(
+              maxWidth: 850,
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Custom AppBar
@@ -182,9 +185,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ],
             ),
           ),
-        ],
-      ),
-    );
+        ),
+      ],
+    ),
+  );
   }
 
   Widget _buildNotificationCard(NotificationItem item, int index) {
