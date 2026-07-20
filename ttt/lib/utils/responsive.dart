@@ -59,29 +59,21 @@ class Responsive extends StatelessWidget {
 class ResponsiveWrapper extends StatelessWidget {
   final Widget child;
   final double maxWidth;
-  final Alignment alignment;
 
   const ResponsiveWrapper({
     super.key,
     required this.child,
     this.maxWidth = 1100,
-    this.alignment = Alignment.topCenter,
   });
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final double? h = constraints.maxHeight.isFinite ? constraints.maxHeight : null;
-        return Align(
-          alignment: alignment,
-          child: SizedBox(
-            width: constraints.maxWidth > maxWidth ? maxWidth : constraints.maxWidth,
-            height: h,
-            child: child,
-          ),
-        );
-      },
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: child,
+      ),
     );
   }
 }

@@ -32,20 +32,21 @@ class _MainNavScreenState extends State<MainNavScreen> {
     final isDesktop = Responsive.isDesktop(context);
     return Scaffold(
       backgroundColor: TDGColors.background,
-      body: ResponsiveWrapper(
-        maxWidth: 1200,
-        alignment: Alignment.topCenter,
-        child: IndexedStack(
-          index: _currentIndex,
-          children: _screens,
-        ),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _screens,
       ),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: ResponsiveWrapper(
-          maxWidth: isDesktop ? 800 : 1100,
-          alignment: Alignment.bottomCenter,
-          child: _buildBottomNav(),
+      bottomNavigationBar: Container(
+        color: const Color(0xFF111111),
+        child: SafeArea(
+          top: false,
+          child: Center(
+            heightFactor: 1.0,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: isDesktop ? 800 : double.infinity),
+              child: _buildBottomNav(),
+            ),
+          ),
         ),
       ),
     );
