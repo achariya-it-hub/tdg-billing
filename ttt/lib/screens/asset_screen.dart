@@ -97,16 +97,16 @@ class _AssetScreenState extends State<AssetScreen> {
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: Text('Cancel', style: TextStyle(color: TDGColors.greyLight))),
-          TextButton(
             onPressed: () async {
               if (nameCtrl.text.isEmpty || phoneCtrl.text.isEmpty) return;
+              final name = nameCtrl.text.trim();
+              final phone = phoneCtrl.text.trim();
               Navigator.pop(ctx);
               try {
-                final result = await ApiService().addAsset(nameCtrl.text, phoneCtrl.text);
-                final otp = result['otp'];
+                await ApiService().addAsset(name, phone);
                 _fetchAssets();
-                if (mounted && otp != null) {
-                  _showOtpDialog(nameCtrl.text, phoneCtrl.text, otp);
+                if (mounted) {
+                  _showVerifyOtpDialog(name, phone);
                 }
               } catch (e) {
                 if (mounted) {

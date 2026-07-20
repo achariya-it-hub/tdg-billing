@@ -31,6 +31,9 @@ export default function Customers() {
   const [assetForm, setAssetForm] = useState({ name: '', phone: '' })
   const [assetLoading, setAssetLoading] = useState(false)
   const [assetOtp, setAssetOtp] = useState(null)
+  const [verifyPhone, setVerifyPhone] = useState('')
+  const [verifyOtpCode, setVerifyOtpCode] = useState('')
+  const [verifyLoading, setVerifyLoading] = useState(false)
 
   useEffect(() => {
     try {
@@ -117,6 +120,7 @@ export default function Customers() {
     if (!assetForm.name || !assetForm.phone || !denCustomer) return
     setAssetLoading(true)
     setAssetOtp(null)
+    const targetPhone = assetForm.phone
     try {
       const res = await fetch(`${API_BASE}/api/billing/assets`, {
         method: 'POST',
@@ -126,6 +130,8 @@ export default function Customers() {
       const data = await res.json()
       if (res.ok) {
         setAssetOtp(data.otp)
+        setVerifyPhone(targetPhone)
+        setVerifyOtpCode('')
         setAssetForm({ name: '', phone: '' })
         searchCustomer()
       } else {
@@ -135,6 +141,30 @@ export default function Customers() {
       alert('Connection error')
     }
     setAssetLoading(false)
+  }
+
+  const handleVerifyAssetOtp = async (phone, otp) => {
+    if (!phone || !otp) { alert('Please enter OTP'); return }
+    setVerifyLoading(true)
+    try {
+      const res = await fetch(`${API_BASE}/api/assets/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, otp })
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        alert('OTP Verified! Asset activated successfully.')
+        setAssetOtp(null)
+        setVerifyOtpCode('')
+        searchCustomer()
+      } else {
+        alert(data.message || data.error || 'Invalid OTP')
+      }
+    } catch {
+      alert('Error verifying OTP')
+    }
+    setVerifyLoading(false)
   }
 
   const copyOtp = (text) => {
@@ -337,13 +367,26 @@ export default function Customers() {
 
                   {assetOtp && (
                     <div style={{ marginTop: '16px', background: '#fffbeb', border: '2px solid #f59e0b', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
-                      <div style={{ fontSize: '13px', color: '#92400e', marginBottom: '8px' }}>Asset added! Share this OTP with the friend:</div>
-                      <div style={{ fontSize: '36px', fontWeight: 900, color: '#d97706', letterSpacing: '8px', fontFamily: 'monospace', marginBottom: '12px' }}>{assetOtp}</div>
-                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                        <Button size="sm" onClick={() => copyOtp(assetOtp)}><Copy size={14} /> Copy OTP</Button>
-                        <Button size="sm" variant="secondary" onClick={() => setAssetOtp(null)}><X size={14} /> Dismiss</Button>
+                      <div style={{ fontSize: '13px', color: '#92400e', marginBottom: '4px', fontWeight: 600 }}>OTP Generated for Asset:</div>
+                      <div style={{ fontSize: '32px', fontWeight: 900, color: '#d97706', letterSpacing: '8px', fontFamily: 'monospace', marginBottom: '12px' }}>{assetOtp}</div>
+                      <div style={{ fontSize: '12px', color: '#78350f', marginBottom: '12px' }}>Enter the 4-digit OTP received by the asset below to verify and activate:</div>
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', maxWidth: '320px', margin: '0 auto' }}>
+                        <input
+                          type="text"
+                          maxLength={4}
+                          placeholder="OTP"
+                          value={verifyOtpCode}
+                          onChange={(e) => setVerifyOtpCode(e.target.value)}
+                          style={{ ...inputStyle, textAlign: 'center', fontSize: '18px', fontWeight: 700, letterSpacing: '4px', width: '120px' }}
+                        />
+                        <Button size="sm" onClick={() => handleVerifyAssetOtp(verifyPhone, verifyOtpCode)} loading={verifyLoading}>
+                          Verify OTP
+                        </Button>
                       </div>
-                      <div style={{ fontSize: '11px', color: '#92400e', marginTop: '8px' }}>They must enter this OTP when signing up with the referral code.</div>
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginTop: '12px' }}>
+                        <Button size="sm" variant="secondary" onClick={() => copyOtp(assetOtp)}><Copy size={14} /> Copy OTP</Button>
+                        <Button size="sm" variant="secondary" onClick={() => { setAssetOtp(null); setVerifyOtpCode(''); }}><X size={14} /> Dismiss</Button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -366,6 +409,26 @@ export default function Customers() {
                         <span>Points: {asset.pointsDistributed || 0}</span>
                       </div>
                     </div>
+                    {asset.status === 'pending' && (
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <input
+                          type="text"
+                          maxLength={4}
+                          placeholder="OTP"
+                          id={`otp-input-${asset.id}`}
+                          style={{ width: '80px', padding: '6px 10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '14px', textAlign: 'center', letterSpacing: '2px' }}
+                        />
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            const val = document.getElementById(`otp-input-${asset.id}`)?.value
+                            if (val) handleVerifyAssetOtp(asset.phone, val)
+                          }}
+                        >
+                          Verify
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 ))}
                 {(denCustomer.assets || []).length === 0 && (
