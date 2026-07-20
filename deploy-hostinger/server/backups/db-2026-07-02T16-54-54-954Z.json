@@ -1,0 +1,6799 @@
+{
+  "users": [
+    {
+      "id": "u_admin",
+      "name": "Admin Updated",
+      "email": "admin@tdg.com",
+      "phone": "0000000000",
+      "password": "$2b$10$O46HOsOB4WYhh/QRqmI0ROg8Dht0ejLVA1ZqIdIIaey7D.quoOz2q",
+      "role": "admin",
+      "rubyBalance": 99999,
+      "denLevel": "Emerald",
+      "completedDens": 10,
+      "denProgress": 10,
+      "scratchCards": [],
+      "denId": null,
+      "createdAt": "2026-06-21T01:46:06.118Z"
+    },
+    {
+      "id": "u_1782229443781",
+      "name": "Test User",
+      "email": "test1782229443687@test.com",
+      "phone": "9999993688",
+      "password": "$2b$10$tnXCIYUzCuCA8tUWyB7bG.18xb1zcQjl1slG8dkbCOXiI4XYqfOrC",
+      "role": "user",
+      "rubyBalance": 2450,
+      "denLevel": "Gold",
+      "completedDens": 4,
+      "denProgress": 6,
+      "scratchCards": [
+        {
+          "id": "s_1782229443783_1",
+          "title": "Welcome Scratch Card",
+          "subtitle": "Tap to scratch",
+          "amount": 100,
+          "claimed": false
+        },
+        {
+          "id": "s_1782229443783_2",
+          "title": "New Member Gift",
+          "subtitle": "Tap to scratch",
+          "amount": 200,
+          "claimed": false
+        }
+      ],
+      "denId": null,
+      "createdAt": "2026-06-23T15:44:03.781Z"
+    },
+    {
+      "id": "u_1782229444690",
+      "name": "Loyalty Tester",
+      "email": "loyalty1782229444688@test.com",
+      "phone": "8888844688",
+      "rubyBalance": 0,
+      "scratchCards": [
+        {
+          "id": "s_1782229444690_1",
+          "title": "Welcome Scratch Card",
+          "subtitle": "Tap to scratch",
+          "amount": 100,
+          "claimed": false
+        },
+        {
+          "id": "s_1782229444690_2",
+          "title": "New Member Gift",
+          "subtitle": "Tap to scratch",
+          "amount": 200,
+          "claimed": false
+        }
+      ],
+      "denId": null,
+      "createdAt": "2026-06-23T15:44:04.688Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "2e3d5277-9523-456a-b983-4efcd05ebfb1",
+      "orderNumber": 1113,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 200,
+      "tax": 36,
+      "total": 236,
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "tableNumber": "",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "",
+      "createdAt": "2026-06-30T09:36:36.736Z",
+      "updatedAt": "2026-06-30T09:37:00.787Z",
+      "items": [
+        {
+          "id": "42326c02-059f-46de-9d7b-516404a1e2fb",
+          "menuItemId": "m10",
+          "menuItemName": "Veg - Spinach (veg meat)",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "feee96a6-78d8-4e98-97d2-813493bb7b84",
+          "menuItemId": "m11",
+          "menuItemName": "Veg - Beetroot",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "6e2efd8b-5fbc-43e8-bc7a-f059633bb07c",
+      "orderNumber": 1112,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 200,
+      "tax": 36,
+      "total": 236,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T2",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "",
+      "createdAt": "2026-06-24T10:50:52.025Z",
+      "updatedAt": "2026-06-24T10:51:07.464Z",
+      "items": [
+        {
+          "id": "960c2af9-b7d2-4c5a-b9ff-d12458b5c772",
+          "menuItemId": "m11",
+          "menuItemName": "Veg - Beetroot",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "2f4bbb95-0174-4808-b969-0965ef288200",
+          "menuItemId": "m10",
+          "menuItemName": "Veg - Spinach (veg meat)",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "1cbc1296-2dca-4753-81c0-c7cc2c7cf594",
+      "orderNumber": 1111,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 100,
+      "tax": 18,
+      "total": 118,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T5",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "",
+      "createdAt": "2026-06-24T10:50:20.039Z",
+      "updatedAt": "2026-06-24T10:50:31.163Z",
+      "items": [
+        {
+          "id": "24e562c9-4dca-4930-8693-9fba9cd7dc8e",
+          "menuItemId": "m3",
+          "menuItemName": "Veg - Mushroom Falafal",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "3413bc72-a556-483d-8f1a-926a51597070",
+      "orderNumber": 1110,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 400,
+      "tax": 72,
+      "total": 472,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T5",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "",
+      "createdAt": "2026-06-24T10:06:50.321Z",
+      "updatedAt": "2026-06-24T10:49:37.434Z",
+      "items": [
+        {
+          "id": "80eaed98-5d70-4ebd-9921-df6cb465477d",
+          "menuItemId": "m8",
+          "menuItemName": "Non-Veg - Fried Fish",
+          "quantity": 4,
+          "unitPrice": 100,
+          "totalPrice": 400,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "ba1cf8c4-203a-4512-a4a0-b313462edd13",
+      "orderNumber": 1109,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 600,
+      "tax": 108,
+      "total": 708,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T2",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "",
+      "createdAt": "2026-06-24T10:06:44.520Z",
+      "updatedAt": "2026-06-24T10:49:42.596Z",
+      "items": [
+        {
+          "id": "e58c700f-c420-41b7-ae6c-0b89666f44ab",
+          "menuItemId": "m5",
+          "menuItemName": "Non-Veg - BBQ Chicken",
+          "quantity": 6,
+          "unitPrice": 100,
+          "totalPrice": 600,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "1c67ffc7-bc03-43f2-a9c3-6db2897a0b9e",
+      "orderNumber": 1108,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 400,
+      "tax": 72,
+      "total": 472,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T1",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "complimentary": false,
+      "complimentaryType": "",
+      "specialRemarks": "",
+      "createdAt": "2026-06-24T10:00:31.306Z",
+      "updatedAt": "2026-06-24T10:49:40.865Z",
+      "items": [
+        {
+          "id": "5e7a9408-6234-41c5-9cb2-ec06e58f4007",
+          "menuItemId": "m2",
+          "menuItemName": "Veg - Beetroot Falafal",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "bbf58dc2-764c-4e6f-8bb0-a6fbd6acc9af",
+          "menuItemId": "m6",
+          "menuItemName": "Non-Veg - Peri Peri Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "199ab4d6-8151-4ed7-8a68-c9590593d53f",
+          "menuItemId": "m7",
+          "menuItemName": "Non-Veg - Crunchy Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "a4979657-7421-45bb-a066-dad9abd5e833",
+          "menuItemId": "m8",
+          "menuItemName": "Non-Veg - Fried Fish",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "a5ffcce7-f8ca-45b4-9ab5-aea72de3c6fd",
+      "orderNumber": 1107,
+      "type": "delivery",
+      "status": "ready",
+      "source": "online",
+      "subtotal": 258,
+      "tax": 46,
+      "total": 304,
+      "paymentMethod": "online",
+      "paymentStatus": "paid",
+      "tableNumber": "",
+      "customerName": "Online Customer",
+      "customerPhone": "9999944673",
+      "notes": "Online: Swiggy #SW4673",
+      "createdAt": "2026-06-23T15:44:04.677Z",
+      "updatedAt": "2026-06-23T15:44:04.683Z",
+      "items": [
+        {
+          "id": "956d751b-f82f-463c-9bf8-c3a7535a73b8",
+          "menuItemId": null,
+          "menuItemName": "Chicken Burger",
+          "quantity": 2,
+          "unitPrice": 129,
+          "totalPrice": 258,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "4188249e-0ccd-4bc3-b883-62c8db2cddfc",
+      "orderNumber": 1106,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 269,
+      "tax": 48,
+      "total": 317,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T15",
+      "customerName": "Customer 100",
+      "customerPhone": "999999100",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:04.018Z",
+      "updatedAt": "2026-06-23T15:44:04.497Z",
+      "items": [
+        {
+          "id": "d7f4f270-671b-4a9d-acd9-0123015b3bb8",
+          "menuItemId": "m20",
+          "menuItemName": "Fried Chicken (1pc)",
+          "quantity": 1,
+          "unitPrice": 69,
+          "totalPrice": 69,
+          "status": "pending"
+        },
+        {
+          "id": "002ee36c-5312-4977-b40d-3be4617d52a7",
+          "menuItemId": "m18",
+          "menuItemName": "Chicken Nuggets",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "c412463e-c266-46cf-9ffe-9cf177befb36",
+      "orderNumber": 1105,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 519,
+      "tax": 93,
+      "total": 612,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T10",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:04.015Z",
+      "updatedAt": "2026-06-23T15:44:04.493Z",
+      "items": [
+        {
+          "id": "749274cf-84f8-4b87-8daa-32ae5fa7ef33",
+          "menuItemId": "m18",
+          "menuItemName": "Chicken Nuggets",
+          "quantity": 3,
+          "unitPrice": 100,
+          "totalPrice": 300,
+          "status": "pending"
+        },
+        {
+          "id": "d5b138ce-ad4f-4a4f-8403-83967bdd8043",
+          "menuItemId": "m29",
+          "menuItemName": "Wings (6pc)",
+          "quantity": 1,
+          "unitPrice": 219,
+          "totalPrice": 219,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "2a810599-05c2-4d85-a231-85fda46617ef",
+      "orderNumber": 1104,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 438,
+      "tax": 79,
+      "total": 517,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T7",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:04.013Z",
+      "updatedAt": "2026-06-23T15:44:04.489Z",
+      "items": [
+        {
+          "id": "3d902876-ffc5-4fda-88b7-d9e70785e541",
+          "menuItemId": "m12",
+          "menuItemName": "Non-Veg - Fried Chicken",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        },
+        {
+          "id": "c3261698-3bac-4da9-8145-0e39ee467fbb",
+          "menuItemId": "m45",
+          "menuItemName": "Chocolate Donuts",
+          "quantity": 2,
+          "unitPrice": 119,
+          "totalPrice": 238,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "a8165208-3420-40e4-ac75-efde2cfc1513",
+      "orderNumber": 1103,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 449,
+      "tax": 81,
+      "total": 530,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T10",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:04.010Z",
+      "updatedAt": "2026-06-23T15:44:04.485Z",
+      "items": [
+        {
+          "id": "4af0f025-7b08-4362-8f44-138586a06ee6",
+          "menuItemId": "m16",
+          "menuItemName": "Veg Nuggets",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        },
+        {
+          "id": "a9e7725d-a1fd-4faa-a337-9e03d1a413c8",
+          "menuItemId": "m49",
+          "menuItemName": "Banoffee",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "06b1c3be-3742-46af-a43b-7e48576b3062",
+      "orderNumber": 1102,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 269,
+      "tax": 48,
+      "total": 317,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T20",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:04.008Z",
+      "updatedAt": "2026-06-23T15:44:04.480Z",
+      "items": [
+        {
+          "id": "dd3f0ede-7a5b-4eb0-b0cf-5196d20f68ef",
+          "menuItemId": "m16",
+          "menuItemName": "Veg Nuggets",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        },
+        {
+          "id": "9482206b-c4e4-4871-bb91-010349799a11",
+          "menuItemId": "m44",
+          "menuItemName": "Chocolate Sundae",
+          "quantity": 1,
+          "unitPrice": 69,
+          "totalPrice": 69,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "6181b815-9f9f-4c5c-a912-a6d92ee39b01",
+      "orderNumber": 1101,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 698,
+      "tax": 126,
+      "total": 824,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T14",
+      "customerName": "Customer 95",
+      "customerPhone": "99999995",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:04.006Z",
+      "updatedAt": "2026-06-23T15:44:04.474Z",
+      "items": [
+        {
+          "id": "fae57b72-bdc5-422e-bbd2-68e951b77f30",
+          "menuItemId": "m49",
+          "menuItemName": "Banoffee",
+          "quantity": 2,
+          "unitPrice": 249,
+          "totalPrice": 498,
+          "status": "pending"
+        },
+        {
+          "id": "36197272-cabf-4843-a4bb-eb9b9e61ad76",
+          "menuItemId": "m15",
+          "menuItemName": "Non-Veg - Fish with Egg",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "5a140e3b-a67b-4263-bf3c-278b742d478c",
+      "orderNumber": 1100,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 717,
+      "tax": 129,
+      "total": 846,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T2",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:04.003Z",
+      "updatedAt": "2026-06-23T15:44:04.470Z",
+      "items": [
+        {
+          "id": "6632b51b-61d9-4b46-aec6-3f2a8fe18a10",
+          "menuItemId": "m27",
+          "menuItemName": "Strips (12pc)",
+          "quantity": 1,
+          "unitPrice": 479,
+          "totalPrice": 479,
+          "status": "pending"
+        },
+        {
+          "id": "f35663fd-3a50-49a1-b4c9-dcf5a384f4f7",
+          "menuItemId": "m45",
+          "menuItemName": "Chocolate Donuts",
+          "quantity": 2,
+          "unitPrice": 119,
+          "totalPrice": 238,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "265c816e-fb62-44d9-bda9-8e1cc85ea73b",
+      "orderNumber": 1099,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 318,
+      "tax": 57,
+      "total": 375,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T14",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:04.000Z",
+      "updatedAt": "2026-06-23T15:44:04.466Z",
+      "items": [
+        {
+          "id": "b858fb1e-1d26-4406-a935-bfefb295d085",
+          "menuItemId": "m39",
+          "menuItemName": "Bourbon Softy",
+          "quantity": 2,
+          "unitPrice": 59,
+          "totalPrice": 118,
+          "status": "pending"
+        },
+        {
+          "id": "2570c933-dd60-4b6b-8844-dbaff2effe0a",
+          "menuItemId": "m4",
+          "menuItemName": "Non-Veg - Sour Cream Chicken",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "fa2b7560-877e-4c36-83c1-4a20a0c3dfe4",
+      "orderNumber": 1098,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 400,
+      "tax": 72,
+      "total": 472,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T10",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.998Z",
+      "updatedAt": "2026-06-23T15:44:04.462Z",
+      "items": [
+        {
+          "id": "50198b06-f5d9-417a-8748-2bb0cd17b1a1",
+          "menuItemId": "m16",
+          "menuItemName": "Veg Nuggets",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        },
+        {
+          "id": "ad6b1698-9d5d-49ae-ad81-06a565be84d9",
+          "menuItemId": "m13",
+          "menuItemName": "Non-Veg - Sourcream Chicken",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "1f2388f6-00fa-44d2-9c79-a194cb21abbf",
+      "orderNumber": 1097,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 500,
+      "tax": 90,
+      "total": 590,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T12",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.996Z",
+      "updatedAt": "2026-06-23T15:44:04.458Z",
+      "items": [
+        {
+          "id": "f9820997-2c26-41d5-8f95-353772359e03",
+          "menuItemId": "m6",
+          "menuItemName": "Non-Veg - Peri Peri Chicken",
+          "quantity": 3,
+          "unitPrice": 100,
+          "totalPrice": 300,
+          "status": "pending"
+        },
+        {
+          "id": "fab43e71-799f-46a0-b6bc-0df784291d34",
+          "menuItemId": "m5",
+          "menuItemName": "Non-Veg - BBQ Chicken",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "29dc6ff5-5ba6-43ae-9f40-1455dee5998f",
+      "orderNumber": 1096,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 300,
+      "tax": 54,
+      "total": 354,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T11",
+      "customerName": "Customer 90",
+      "customerPhone": "99999990",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.993Z",
+      "updatedAt": "2026-06-23T15:44:04.452Z",
+      "items": [
+        {
+          "id": "fa57d010-2e41-4f0b-b9e2-9653424fe8f0",
+          "menuItemId": "m37",
+          "menuItemName": "Vanilla Blizzard",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        },
+        {
+          "id": "44b89674-d2f2-4837-ad31-b0bac7230c5c",
+          "menuItemId": "m13",
+          "menuItemName": "Non-Veg - Sourcream Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "b304f453-fe3b-41c8-8faf-6503de2971ad",
+      "orderNumber": 1095,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 338,
+      "tax": 61,
+      "total": 399,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T16",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.990Z",
+      "updatedAt": "2026-06-23T15:44:04.447Z",
+      "items": [
+        {
+          "id": "64517b45-6a6f-471e-90b4-e9b98349985e",
+          "menuItemId": "m20",
+          "menuItemName": "Fried Chicken (1pc)",
+          "quantity": 2,
+          "unitPrice": 69,
+          "totalPrice": 138,
+          "status": "pending"
+        },
+        {
+          "id": "923d7da1-c127-400b-b17a-e98c7855c7fd",
+          "menuItemId": "m15",
+          "menuItemName": "Non-Veg - Fish with Egg",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "27a8cf0c-7fda-4821-b81b-e64b5427bfa1",
+      "orderNumber": 1094,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 536,
+      "tax": 96,
+      "total": 632,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T11",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.988Z",
+      "updatedAt": "2026-06-23T15:44:04.443Z",
+      "items": [
+        {
+          "id": "03e53ec7-78d9-47f6-86a6-5e1f1426b2c4",
+          "menuItemId": "m34",
+          "menuItemName": "Glaze Wings (3pc)",
+          "quantity": 2,
+          "unitPrice": 149,
+          "totalPrice": 298,
+          "status": "pending"
+        },
+        {
+          "id": "c597dbd2-9c55-4948-a2d9-b0573283fb0b",
+          "menuItemId": "m45",
+          "menuItemName": "Chocolate Donuts",
+          "quantity": 2,
+          "unitPrice": 119,
+          "totalPrice": 238,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "33b804a1-1114-4f93-9b1c-ff0c6f99a520",
+      "orderNumber": 1093,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 956,
+      "tax": 172,
+      "total": 1128,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T8",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.986Z",
+      "updatedAt": "2026-06-23T15:44:04.439Z",
+      "items": [
+        {
+          "id": "b1eeb043-d0be-4277-a98e-5997cc2b635b",
+          "menuItemId": "m29",
+          "menuItemName": "Wings (6pc)",
+          "quantity": 3,
+          "unitPrice": 219,
+          "totalPrice": 657,
+          "status": "pending"
+        },
+        {
+          "id": "4dc75a17-a3df-49df-b7c6-e02abeb409f8",
+          "menuItemId": "m35",
+          "menuItemName": "Glaze Wings (6pc)",
+          "quantity": 1,
+          "unitPrice": 299,
+          "totalPrice": 299,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "c83fc4bf-f764-4ae1-b9e8-deba520f6f80",
+      "orderNumber": 1092,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 400,
+      "tax": 72,
+      "total": 472,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T9",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.983Z",
+      "updatedAt": "2026-06-23T15:44:04.434Z",
+      "items": [
+        {
+          "id": "1f14b753-d97a-4bb5-94ac-60c3f74a9361",
+          "menuItemId": "m14",
+          "menuItemName": "Non-Veg - BBQ Chicken",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        },
+        {
+          "id": "d857d63a-bc7e-4725-be67-6e28ba069ae7",
+          "menuItemId": "m38",
+          "menuItemName": "Strawberry Blizzard",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "2987aba6-5957-4eea-ad93-5c609ffbbfe4",
+      "orderNumber": 1091,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 529,
+      "tax": 95,
+      "total": 624,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T9",
+      "customerName": "Customer 85",
+      "customerPhone": "99999985",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.981Z",
+      "updatedAt": "2026-06-23T15:44:04.427Z",
+      "items": [
+        {
+          "id": "679b2a24-593f-49c9-be48-cc1f0af9dc6a",
+          "menuItemId": "m30",
+          "menuItemName": "Wings (9pc)",
+          "quantity": 1,
+          "unitPrice": 329,
+          "totalPrice": 329,
+          "status": "pending"
+        },
+        {
+          "id": "476c56aa-8047-4ed2-858c-a6feece3b89f",
+          "menuItemId": "m15",
+          "menuItemName": "Non-Veg - Fish with Egg",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "36d6cdd1-1c64-4733-9c29-0cd4d0ecfbfe",
+      "orderNumber": 1090,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 197,
+      "tax": 35,
+      "total": 232,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T9",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.979Z",
+      "updatedAt": "2026-06-23T15:44:04.423Z",
+      "items": [
+        {
+          "id": "a2036a9a-4bcc-4e78-9913-0673d5da8908",
+          "menuItemId": "m52",
+          "menuItemName": "Coke",
+          "quantity": 2,
+          "unitPrice": 39,
+          "totalPrice": 78,
+          "status": "pending"
+        },
+        {
+          "id": "8a06416d-4793-4a37-b369-c16e8df6d5c8",
+          "menuItemId": "m24",
+          "menuItemName": "Strips (3pc)",
+          "quantity": 1,
+          "unitPrice": 119,
+          "totalPrice": 119,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "7433ad03-f401-4a4a-82e9-4ddde9a2c593",
+      "orderNumber": 1089,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 495,
+      "tax": 89,
+      "total": 584,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T9",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.977Z",
+      "updatedAt": "2026-06-23T15:44:04.419Z",
+      "items": [
+        {
+          "id": "b87053d1-fb9e-42a9-add7-749a7a2520a6",
+          "menuItemId": "m54",
+          "menuItemName": "Kombhucha",
+          "quantity": 3,
+          "unitPrice": 99,
+          "totalPrice": 297,
+          "status": "pending"
+        },
+        {
+          "id": "c0dd5b2d-4ffc-4284-b92b-5ab95fcf3033",
+          "menuItemId": "m46",
+          "menuItemName": "Vanila Donuts",
+          "quantity": 2,
+          "unitPrice": 99,
+          "totalPrice": 198,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "7ec5729c-99a2-4438-a0e8-af4ef9a15e7f",
+      "orderNumber": 1088,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 858,
+      "tax": 154,
+      "total": 1012,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T17",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.975Z",
+      "updatedAt": "2026-06-23T15:44:04.415Z",
+      "items": [
+        {
+          "id": "4d423dfd-95de-4643-97da-6c0c27f9922a",
+          "menuItemId": "m1",
+          "menuItemName": "Veg - BBQ Paneer",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        },
+        {
+          "id": "dc329c57-9074-4edc-b42f-644c460d9f63",
+          "menuItemId": "m30",
+          "menuItemName": "Wings (9pc)",
+          "quantity": 2,
+          "unitPrice": 329,
+          "totalPrice": 658,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "400bc889-853f-4fa7-843c-5aa0b26d081e",
+      "orderNumber": 1087,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 500,
+      "tax": 90,
+      "total": 590,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T15",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.972Z",
+      "updatedAt": "2026-06-23T15:44:04.411Z",
+      "items": [
+        {
+          "id": "0eeb4676-619a-45ef-a21a-15d9d4c6cc99",
+          "menuItemId": "m3",
+          "menuItemName": "Veg - Mushroom Falafal",
+          "quantity": 3,
+          "unitPrice": 100,
+          "totalPrice": 300,
+          "status": "pending"
+        },
+        {
+          "id": "71d245d6-b5ed-41ad-9bbb-f99b3e29cc3d",
+          "menuItemId": "m38",
+          "menuItemName": "Strawberry Blizzard",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "a188f705-8c69-4e5d-8ab3-553289cb88b3",
+      "orderNumber": 1086,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 1087,
+      "tax": 196,
+      "total": 1283,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T19",
+      "customerName": "Customer 80",
+      "customerPhone": "99999980",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.970Z",
+      "updatedAt": "2026-06-23T15:44:04.405Z",
+      "items": [
+        {
+          "id": "86fc80d2-d690-4ce4-bb21-3db490edb74e",
+          "menuItemId": "m30",
+          "menuItemName": "Wings (9pc)",
+          "quantity": 2,
+          "unitPrice": 329,
+          "totalPrice": 658,
+          "status": "pending"
+        },
+        {
+          "id": "91f15b07-3a8d-486d-bb98-402b538959f7",
+          "menuItemId": "m31",
+          "menuItemName": "Wings (12pc)",
+          "quantity": 1,
+          "unitPrice": 429,
+          "totalPrice": 429,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "6aca0d0c-85d5-4d5d-aab0-161ac98533e1",
+      "orderNumber": 1085,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 847,
+      "tax": 152,
+      "total": 999,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T8",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.968Z",
+      "updatedAt": "2026-06-23T15:44:04.401Z",
+      "items": [
+        {
+          "id": "8a2758f2-d8f4-400d-afbc-3b58270baa10",
+          "menuItemId": "m49",
+          "menuItemName": "Banoffee",
+          "quantity": 3,
+          "unitPrice": 249,
+          "totalPrice": 747,
+          "status": "pending"
+        },
+        {
+          "id": "dce4aa47-7b5d-4115-99e9-9790c5d921f6",
+          "menuItemId": "m19",
+          "menuItemName": "Fish Finger",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "dcc85a60-94b9-41ea-b700-b786b1cb7b83",
+      "orderNumber": 1084,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 847,
+      "tax": 152,
+      "total": 999,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T4",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.965Z",
+      "updatedAt": "2026-06-23T15:44:04.397Z",
+      "items": [
+        {
+          "id": "fbe2600a-f33a-4171-9d13-4b47d436d760",
+          "menuItemId": "m51",
+          "menuItemName": "Chocolate Dome",
+          "quantity": 3,
+          "unitPrice": 249,
+          "totalPrice": 747,
+          "status": "pending"
+        },
+        {
+          "id": "a126aa22-c5e4-42bb-8053-284825ee6fcf",
+          "menuItemId": "m2",
+          "menuItemName": "Veg - Beetroot Falafal",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "4e94d1f6-5dd6-40c3-b981-1e3f2ab66d21",
+      "orderNumber": 1083,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 468,
+      "tax": 84,
+      "total": 552,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T11",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.963Z",
+      "updatedAt": "2026-06-23T15:44:04.393Z",
+      "items": [
+        {
+          "id": "8b9695b2-59db-43a9-ba37-94c7bc0be88d",
+          "menuItemId": "m51",
+          "menuItemName": "Chocolate Dome",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        },
+        {
+          "id": "86fde5ac-aa20-49e1-98f3-fa38d0af2caa",
+          "menuItemId": "m29",
+          "menuItemName": "Wings (6pc)",
+          "quantity": 1,
+          "unitPrice": 219,
+          "totalPrice": 219,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "4d470a4e-df9f-457a-9e90-bad79ca4816c",
+      "orderNumber": 1082,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 500,
+      "tax": 90,
+      "total": 590,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T8",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.960Z",
+      "updatedAt": "2026-06-23T15:44:04.389Z",
+      "items": [
+        {
+          "id": "54c3a036-9b7b-4487-a164-b128e4b85241",
+          "menuItemId": "m37",
+          "menuItemName": "Vanilla Blizzard",
+          "quantity": 3,
+          "unitPrice": 100,
+          "totalPrice": 300,
+          "status": "pending"
+        },
+        {
+          "id": "2450657d-0dee-484a-a45e-22a974906eff",
+          "menuItemId": "m11",
+          "menuItemName": "Veg - Beetroot",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "105ff7fd-20df-4d87-b30e-45de578901d2",
+      "orderNumber": 1081,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 629,
+      "tax": 113,
+      "total": 742,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T16",
+      "customerName": "Customer 75",
+      "customerPhone": "99999975",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.958Z",
+      "updatedAt": "2026-06-23T15:44:04.382Z",
+      "items": [
+        {
+          "id": "45f84332-1996-4a87-bf0e-3842e750da85",
+          "menuItemId": "m2",
+          "menuItemName": "Veg - Beetroot Falafal",
+          "quantity": 3,
+          "unitPrice": 100,
+          "totalPrice": 300,
+          "status": "pending"
+        },
+        {
+          "id": "373e98c9-fcde-4781-891e-b30f3edaca45",
+          "menuItemId": "m30",
+          "menuItemName": "Wings (9pc)",
+          "quantity": 1,
+          "unitPrice": 329,
+          "totalPrice": 329,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "10c83d65-e9b2-4fc2-81de-12b32552791b",
+      "orderNumber": 1080,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 169,
+      "tax": 30,
+      "total": 199,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T13",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.956Z",
+      "updatedAt": "2026-06-23T15:44:04.378Z",
+      "items": [
+        {
+          "id": "8ba90c6d-9de8-4c05-ac04-b757f1b58166",
+          "menuItemId": "m42",
+          "menuItemName": "Caramel Sundae",
+          "quantity": 1,
+          "unitPrice": 69,
+          "totalPrice": 69,
+          "status": "pending"
+        },
+        {
+          "id": "96324ba5-fb3f-4678-a48c-6af2e6b36b73",
+          "menuItemId": "m36",
+          "menuItemName": "Chocolate Blizzard",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "82b02f3d-9b49-4c33-ba87-a89385a81de1",
+      "orderNumber": 1079,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 679,
+      "tax": 122,
+      "total": 801,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T11",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.953Z",
+      "updatedAt": "2026-06-23T15:44:04.372Z",
+      "items": [
+        {
+          "id": "d84599e0-79b6-4142-a45b-8c1f74c7eb66",
+          "menuItemId": "m27",
+          "menuItemName": "Strips (12pc)",
+          "quantity": 1,
+          "unitPrice": 479,
+          "totalPrice": 479,
+          "status": "pending"
+        },
+        {
+          "id": "77d71167-7e09-48e8-9287-ecb301f0ef7f",
+          "menuItemId": "m5",
+          "menuItemName": "Non-Veg - BBQ Chicken",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "c39256e3-f84b-42b8-983e-30a8ca5b34e8",
+      "orderNumber": 1078,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 400,
+      "tax": 72,
+      "total": 472,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T7",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.951Z",
+      "updatedAt": "2026-06-23T15:44:04.367Z",
+      "items": [
+        {
+          "id": "57a94360-125c-449e-9248-c9dfecc451c6",
+          "menuItemId": "m2",
+          "menuItemName": "Veg - Beetroot Falafal",
+          "quantity": 3,
+          "unitPrice": 100,
+          "totalPrice": 300,
+          "status": "pending"
+        },
+        {
+          "id": "af0bc9af-cc80-4d49-a0bb-258c99e1c68d",
+          "menuItemId": "m8",
+          "menuItemName": "Non-Veg - Fried Fish",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "36109770-547e-4424-8070-975899ae1a7a",
+      "orderNumber": 1077,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 647,
+      "tax": 116,
+      "total": 763,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T13",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.948Z",
+      "updatedAt": "2026-06-23T15:44:04.362Z",
+      "items": [
+        {
+          "id": "3f2439f0-b92d-47fe-8a6d-087e8b34c5fc",
+          "menuItemId": "m48",
+          "menuItemName": "Redvelvet Cake",
+          "quantity": 2,
+          "unitPrice": 249,
+          "totalPrice": 498,
+          "status": "pending"
+        },
+        {
+          "id": "9672abb6-cf06-45d3-bee1-ddc851f809fa",
+          "menuItemId": "m32",
+          "menuItemName": "Glaze Strips (3pc)",
+          "quantity": 1,
+          "unitPrice": 149,
+          "totalPrice": 149,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "6adc5ca7-3efe-45b9-ad53-f6e16ea20503",
+      "orderNumber": 1076,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 247,
+      "tax": 44,
+      "total": 291,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T15",
+      "customerName": "Customer 70",
+      "customerPhone": "99999970",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.946Z",
+      "updatedAt": "2026-06-23T15:44:04.355Z",
+      "items": [
+        {
+          "id": "5dc36a86-46e9-442b-88af-c444014bae42",
+          "menuItemId": "m34",
+          "menuItemName": "Glaze Wings (3pc)",
+          "quantity": 1,
+          "unitPrice": 149,
+          "totalPrice": 149,
+          "status": "pending"
+        },
+        {
+          "id": "85e2930f-4a6a-4ee8-a7ec-145b4555ac00",
+          "menuItemId": "m40",
+          "menuItemName": "Vanila Softy",
+          "quantity": 2,
+          "unitPrice": 49,
+          "totalPrice": 98,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "576d1590-9ad7-4b36-864a-3e4748cac8ac",
+      "orderNumber": 1075,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 717,
+      "tax": 129,
+      "total": 846,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T9",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.944Z",
+      "updatedAt": "2026-06-23T15:44:04.350Z",
+      "items": [
+        {
+          "id": "849e7bb9-34d5-437a-a2c5-85e3ebc84f10",
+          "menuItemId": "m45",
+          "menuItemName": "Chocolate Donuts",
+          "quantity": 1,
+          "unitPrice": 119,
+          "totalPrice": 119,
+          "status": "pending"
+        },
+        {
+          "id": "eb108af2-ec7e-48a8-8ad8-72993e262465",
+          "menuItemId": "m35",
+          "menuItemName": "Glaze Wings (6pc)",
+          "quantity": 2,
+          "unitPrice": 299,
+          "totalPrice": 598,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "81f8ebee-3b89-4d8e-bb96-5d68ee982594",
+      "orderNumber": 1074,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 149,
+      "tax": 27,
+      "total": 176,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T4",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.941Z",
+      "updatedAt": "2026-06-23T15:44:04.345Z",
+      "items": [
+        {
+          "id": "d56c62c7-f25d-4c93-80bd-2d293d25788f",
+          "menuItemId": "m40",
+          "menuItemName": "Vanila Softy",
+          "quantity": 1,
+          "unitPrice": 49,
+          "totalPrice": 49,
+          "status": "pending"
+        },
+        {
+          "id": "6c38b70c-370d-4589-a5e9-3853471c6585",
+          "menuItemId": "m4",
+          "menuItemName": "Non-Veg - Sour Cream Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "80c5a459-49fb-4481-be1b-934676d4065f",
+      "orderNumber": 1073,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 397,
+      "tax": 71,
+      "total": 468,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T14",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.939Z",
+      "updatedAt": "2026-06-23T15:44:04.341Z",
+      "items": [
+        {
+          "id": "2a067f93-132f-44cd-acf6-4a51b450beca",
+          "menuItemId": "m46",
+          "menuItemName": "Vanila Donuts",
+          "quantity": 3,
+          "unitPrice": 99,
+          "totalPrice": 297,
+          "status": "pending"
+        },
+        {
+          "id": "0dfd3005-1d59-4660-baed-4cb5d022dfe2",
+          "menuItemId": "m3",
+          "menuItemName": "Veg - Mushroom Falafal",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "ce0cacd2-e9eb-4633-8e77-0cd3b5c1ef36",
+      "orderNumber": 1072,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 289,
+      "tax": 52,
+      "total": 341,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T8",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.937Z",
+      "updatedAt": "2026-06-23T15:44:04.337Z",
+      "items": [
+        {
+          "id": "6c3acce9-d945-4c24-a0e5-baa6b284b497",
+          "menuItemId": "m41",
+          "menuItemName": "Choco Dip Softy",
+          "quantity": 1,
+          "unitPrice": 89,
+          "totalPrice": 89,
+          "status": "pending"
+        },
+        {
+          "id": "e96c85d3-9665-4cdd-96ec-c3b7d05fe0cf",
+          "menuItemId": "m11",
+          "menuItemName": "Veg - Beetroot",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "04b51a97-8803-400a-80fa-69d7fb19c340",
+      "orderNumber": 1071,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 445,
+      "tax": 80,
+      "total": 525,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T6",
+      "customerName": "Customer 65",
+      "customerPhone": "99999965",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.935Z",
+      "updatedAt": "2026-06-23T15:44:04.331Z",
+      "items": [
+        {
+          "id": "243788de-35b0-407c-8715-fcf187d17b69",
+          "menuItemId": "m42",
+          "menuItemName": "Caramel Sundae",
+          "quantity": 3,
+          "unitPrice": 69,
+          "totalPrice": 207,
+          "status": "pending"
+        },
+        {
+          "id": "f467b3b9-6003-4d2a-bbda-c3c337493c80",
+          "menuItemId": "m45",
+          "menuItemName": "Chocolate Donuts",
+          "quantity": 2,
+          "unitPrice": 119,
+          "totalPrice": 238,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "735b6e99-0080-4200-bd77-02874e65d426",
+      "orderNumber": 1070,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 497,
+      "tax": 89,
+      "total": 586,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T7",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.933Z",
+      "updatedAt": "2026-06-23T15:44:04.327Z",
+      "items": [
+        {
+          "id": "f07986e1-0fc2-4457-a411-b51876eac4d0",
+          "menuItemId": "m54",
+          "menuItemName": "Kombhucha",
+          "quantity": 3,
+          "unitPrice": 99,
+          "totalPrice": 297,
+          "status": "pending"
+        },
+        {
+          "id": "2a9736b8-f299-4fc5-a573-e19fabb8a599",
+          "menuItemId": "m12",
+          "menuItemName": "Non-Veg - Fried Chicken",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "b04c56f9-fc56-4191-9a5f-55a4f2e45a39",
+      "orderNumber": 1069,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 400,
+      "tax": 72,
+      "total": 472,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T8",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.931Z",
+      "updatedAt": "2026-06-23T15:44:04.323Z",
+      "items": [
+        {
+          "id": "4858a7c0-7e37-4883-af21-d3b6b93264a7",
+          "menuItemId": "m13",
+          "menuItemName": "Non-Veg - Sourcream Chicken",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        },
+        {
+          "id": "7235062a-4066-4e4b-9210-1780986cc59e",
+          "menuItemId": "m8",
+          "menuItemName": "Non-Veg - Fried Fish",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "76fd753b-0397-4c98-9a24-09858b55f74c",
+      "orderNumber": 1068,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 426,
+      "tax": 77,
+      "total": 503,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T6",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.929Z",
+      "updatedAt": "2026-06-23T15:44:04.318Z",
+      "items": [
+        {
+          "id": "91e5cede-0d8f-4941-944a-18b95b0245ef",
+          "menuItemId": "m45",
+          "menuItemName": "Chocolate Donuts",
+          "quantity": 3,
+          "unitPrice": 119,
+          "totalPrice": 357,
+          "status": "pending"
+        },
+        {
+          "id": "c26f1ea4-dfd5-4039-bfff-099d2343e500",
+          "menuItemId": "m44",
+          "menuItemName": "Chocolate Sundae",
+          "quantity": 1,
+          "unitPrice": 69,
+          "totalPrice": 69,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "6286d132-ffca-45af-b74e-2880702df388",
+      "orderNumber": 1067,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 807,
+      "tax": 145,
+      "total": 952,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T9",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.926Z",
+      "updatedAt": "2026-06-23T15:44:04.313Z",
+      "items": [
+        {
+          "id": "d27de75b-51de-4316-8827-bfab3fe0f855",
+          "menuItemId": "m26",
+          "menuItemName": "Strips (9pc)",
+          "quantity": 2,
+          "unitPrice": 349,
+          "totalPrice": 698,
+          "status": "pending"
+        },
+        {
+          "id": "fe4471b3-a0a4-4bec-a69e-d10d6da40dc5",
+          "menuItemId": "m28",
+          "menuItemName": "Wings (3pc)",
+          "quantity": 1,
+          "unitPrice": 109,
+          "totalPrice": 109,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "0fee070d-8ad1-4374-965e-ad4ff0008f07",
+      "orderNumber": 1066,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 1247,
+      "tax": 224,
+      "total": 1471,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T16",
+      "customerName": "Customer 60",
+      "customerPhone": "99999960",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.924Z",
+      "updatedAt": "2026-06-23T15:44:04.307Z",
+      "items": [
+        {
+          "id": "081ff9fa-e52f-477c-9201-0fdbf4de08b3",
+          "menuItemId": "m26",
+          "menuItemName": "Strips (9pc)",
+          "quantity": 3,
+          "unitPrice": 349,
+          "totalPrice": 1047,
+          "status": "pending"
+        },
+        {
+          "id": "3ab66e24-5073-4992-a311-f456d2a1039e",
+          "menuItemId": "m5",
+          "menuItemName": "Non-Veg - BBQ Chicken",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "8a5b3b2a-18d4-435c-ac3e-aec4dd68f1e4",
+      "orderNumber": 1065,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 288,
+      "tax": 52,
+      "total": 340,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T20",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.922Z",
+      "updatedAt": "2026-06-23T15:44:04.303Z",
+      "items": [
+        {
+          "id": "9dde9646-fe38-493b-9dbb-7ae4d08d0794",
+          "menuItemId": "m29",
+          "menuItemName": "Wings (6pc)",
+          "quantity": 1,
+          "unitPrice": 219,
+          "totalPrice": 219,
+          "status": "pending"
+        },
+        {
+          "id": "fcafe7c9-4e89-4930-a6ff-062a21ac90e1",
+          "menuItemId": "m44",
+          "menuItemName": "Chocolate Sundae",
+          "quantity": 1,
+          "unitPrice": 69,
+          "totalPrice": 69,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "a36cd683-d3b5-4ddb-a33a-bf6db252050f",
+      "orderNumber": 1064,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 449,
+      "tax": 81,
+      "total": 530,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T20",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.919Z",
+      "updatedAt": "2026-06-23T15:44:04.298Z",
+      "items": [
+        {
+          "id": "f1fadd8b-89c8-441e-81b1-1583438fa0b7",
+          "menuItemId": "m51",
+          "menuItemName": "Chocolate Dome",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        },
+        {
+          "id": "71f87471-d1dd-4d41-a7a2-999496c4a72e",
+          "menuItemId": "m7",
+          "menuItemName": "Non-Veg - Crunchy Chicken",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "f554a6a7-9291-4385-8681-56e03e202e4b",
+      "orderNumber": 1063,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 847,
+      "tax": 152,
+      "total": 999,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T6",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.917Z",
+      "updatedAt": "2026-06-23T15:44:04.294Z",
+      "items": [
+        {
+          "id": "a1a50a6d-b14b-4b12-9fce-9d8c060b596b",
+          "menuItemId": "m47",
+          "menuItemName": "Tiramissu",
+          "quantity": 3,
+          "unitPrice": 249,
+          "totalPrice": 747,
+          "status": "pending"
+        },
+        {
+          "id": "4f8f09fe-0508-48af-bc5d-de611fea563c",
+          "menuItemId": "m37",
+          "menuItemName": "Vanilla Blizzard",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "8e5a6c5b-9b7a-4684-ad22-ac7c05659e30",
+      "orderNumber": 1062,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 797,
+      "tax": 143,
+      "total": 940,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T14",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.915Z",
+      "updatedAt": "2026-06-23T15:44:04.290Z",
+      "items": [
+        {
+          "id": "01c2bd5c-e818-4275-a8a9-9b8bf5d8433d",
+          "menuItemId": "m26",
+          "menuItemName": "Strips (9pc)",
+          "quantity": 2,
+          "unitPrice": 349,
+          "totalPrice": 698,
+          "status": "pending"
+        },
+        {
+          "id": "636f85fb-df1e-4b7c-aec3-2680c48c4ca7",
+          "menuItemId": "m46",
+          "menuItemName": "Vanila Donuts",
+          "quantity": 1,
+          "unitPrice": 99,
+          "totalPrice": 99,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "c820365f-27bb-4092-8f30-7c0852f4b647",
+      "orderNumber": 1061,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 747,
+      "tax": 134,
+      "total": 881,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T19",
+      "customerName": "Customer 55",
+      "customerPhone": "99999955",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.912Z",
+      "updatedAt": "2026-06-23T15:44:04.284Z",
+      "items": [
+        {
+          "id": "68675a72-dff0-4e22-899e-2969033a779b",
+          "menuItemId": "m48",
+          "menuItemName": "Redvelvet Cake",
+          "quantity": 2,
+          "unitPrice": 249,
+          "totalPrice": 498,
+          "status": "pending"
+        },
+        {
+          "id": "ba77f40f-9e47-445c-9846-5dc3341da694",
+          "menuItemId": "m50",
+          "menuItemName": "Caramel Hazelnut",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "32fefe99-3d3a-4a13-9a5b-478e4b1af914",
+      "orderNumber": 1060,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 847,
+      "tax": 152,
+      "total": 999,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T6",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.910Z",
+      "updatedAt": "2026-06-23T15:44:04.280Z",
+      "items": [
+        {
+          "id": "8199e1d6-6c49-4b00-81a1-f815d4e99822",
+          "menuItemId": "m47",
+          "menuItemName": "Tiramissu",
+          "quantity": 2,
+          "unitPrice": 249,
+          "totalPrice": 498,
+          "status": "pending"
+        },
+        {
+          "id": "fed27a4e-2be8-47f7-af8f-093206bc0d8c",
+          "menuItemId": "m26",
+          "menuItemName": "Strips (9pc)",
+          "quantity": 1,
+          "unitPrice": 349,
+          "totalPrice": 349,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "d741b52b-45fe-42fb-b689-40670e8c0f72",
+      "orderNumber": 1059,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 847,
+      "tax": 152,
+      "total": 999,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T7",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.908Z",
+      "updatedAt": "2026-06-23T15:44:04.276Z",
+      "items": [
+        {
+          "id": "4d1cc6ae-ab90-4359-b1e0-d2f0ca48d665",
+          "menuItemId": "m50",
+          "menuItemName": "Caramel Hazelnut",
+          "quantity": 3,
+          "unitPrice": 249,
+          "totalPrice": 747,
+          "status": "pending"
+        },
+        {
+          "id": "43c8c7fc-b9d7-41af-887c-9794aff2c8f5",
+          "menuItemId": "m19",
+          "menuItemName": "Fish Finger",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "0277d83e-ef95-429d-8cd5-0acb0b2429e2",
+      "orderNumber": 1058,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 549,
+      "tax": 99,
+      "total": 648,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T12",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.906Z",
+      "updatedAt": "2026-06-23T15:44:04.272Z",
+      "items": [
+        {
+          "id": "f13ec0e7-02e9-4bc9-8c9f-168b357abb9a",
+          "menuItemId": "m18",
+          "menuItemName": "Chicken Nuggets",
+          "quantity": 3,
+          "unitPrice": 100,
+          "totalPrice": 300,
+          "status": "pending"
+        },
+        {
+          "id": "3efe5a60-e179-4923-83ce-336fed3b5c98",
+          "menuItemId": "m47",
+          "menuItemName": "Tiramissu",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "b9d6ac1e-85be-49b1-8f15-64af2d410b86",
+      "orderNumber": 1057,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 300,
+      "tax": 54,
+      "total": 354,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T15",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.904Z",
+      "updatedAt": "2026-06-23T15:44:04.267Z",
+      "items": [
+        {
+          "id": "e18faa5c-8df3-46aa-8709-b159045465ee",
+          "menuItemId": "m9",
+          "menuItemName": "Non-Veg - BBQ Prawn",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        },
+        {
+          "id": "16420acc-e190-41c3-b12d-7ada52ea6428",
+          "menuItemId": "m3",
+          "menuItemName": "Veg - Mushroom Falafal",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "d177759e-2bd0-4ed9-b4a4-36098d9b1ca5",
+      "orderNumber": 1056,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 349,
+      "tax": 63,
+      "total": 412,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T17",
+      "customerName": "Customer 50",
+      "customerPhone": "99999950",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.901Z",
+      "updatedAt": "2026-06-23T15:44:04.261Z",
+      "items": [
+        {
+          "id": "eb9e2fe1-0bae-46ec-8098-4db4b562b929",
+          "menuItemId": "m1",
+          "menuItemName": "Veg - BBQ Paneer",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "eb216089-34d4-4c3b-a2c3-4ac2ca49c013",
+          "menuItemId": "m22",
+          "menuItemName": "Fried Chicken (4pc)",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "501cef05-9ffa-47ac-b1a0-2bfc0de8689b",
+      "orderNumber": 1055,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 1047,
+      "tax": 188,
+      "total": 1235,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T14",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.899Z",
+      "updatedAt": "2026-06-23T15:44:04.256Z",
+      "items": [
+        {
+          "id": "95d3402f-a7aa-4841-b54a-9d92c98e2d64",
+          "menuItemId": "m26",
+          "menuItemName": "Strips (9pc)",
+          "quantity": 2,
+          "unitPrice": 349,
+          "totalPrice": 698,
+          "status": "pending"
+        },
+        {
+          "id": "93b5bd94-9412-4edc-b551-13d755e1eff5",
+          "menuItemId": "m26",
+          "menuItemName": "Strips (9pc)",
+          "quantity": 1,
+          "unitPrice": 349,
+          "totalPrice": 349,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "731ff612-c0b1-4864-a07a-fd2d99b5e45d",
+      "orderNumber": 1054,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 548,
+      "tax": 99,
+      "total": 647,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T2",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.897Z",
+      "updatedAt": "2026-06-23T15:44:04.252Z",
+      "items": [
+        {
+          "id": "01244352-5f3b-425d-a28f-09124b411791",
+          "menuItemId": "m47",
+          "menuItemName": "Tiramissu",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        },
+        {
+          "id": "32d05a36-6ae0-4444-b508-b1f8b23895a2",
+          "menuItemId": "m33",
+          "menuItemName": "Glaze Strips (6pc)",
+          "quantity": 1,
+          "unitPrice": 299,
+          "totalPrice": 299,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "1b0b1a4e-df27-4b18-b6c7-199c7eb68755",
+      "orderNumber": 1053,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 438,
+      "tax": 79,
+      "total": 517,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T16",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.895Z",
+      "updatedAt": "2026-06-23T15:44:04.248Z",
+      "items": [
+        {
+          "id": "59d3a279-b1c4-410f-b745-24ac125f5b74",
+          "menuItemId": "m29",
+          "menuItemName": "Wings (6pc)",
+          "quantity": 1,
+          "unitPrice": 219,
+          "totalPrice": 219,
+          "status": "pending"
+        },
+        {
+          "id": "7b70e35e-482c-44fc-ab08-8f0bd68283ec",
+          "menuItemId": "m29",
+          "menuItemName": "Wings (6pc)",
+          "quantity": 1,
+          "unitPrice": 219,
+          "totalPrice": 219,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "4fde84de-30e8-4057-95d4-1004f1445b71",
+      "orderNumber": 1052,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 338,
+      "tax": 61,
+      "total": 399,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T7",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.893Z",
+      "updatedAt": "2026-06-23T15:44:04.244Z",
+      "items": [
+        {
+          "id": "263826de-22d8-43cd-a093-5052e259e260",
+          "menuItemId": "m38",
+          "menuItemName": "Strawberry Blizzard",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        },
+        {
+          "id": "86b37214-9b27-4069-b45b-cb87c22bfef4",
+          "menuItemId": "m20",
+          "menuItemName": "Fried Chicken (1pc)",
+          "quantity": 2,
+          "unitPrice": 69,
+          "totalPrice": 138,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "00c407d2-d7f9-45fe-88bb-ee4c4f837302",
+      "orderNumber": 1051,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 498,
+      "tax": 90,
+      "total": 588,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T16",
+      "customerName": "Customer 45",
+      "customerPhone": "99999945",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.891Z",
+      "updatedAt": "2026-06-23T15:44:04.238Z",
+      "items": [
+        {
+          "id": "de2fbac3-8172-4c6d-9fac-8917e149b836",
+          "menuItemId": "m50",
+          "menuItemName": "Caramel Hazelnut",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        },
+        {
+          "id": "6d67219e-6ca5-40d4-81e9-18f29a3c54f3",
+          "menuItemId": "m22",
+          "menuItemName": "Fried Chicken (4pc)",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "9584137f-6321-42e7-ad6f-799fa6f32cd1",
+      "orderNumber": 1050,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 1935,
+      "tax": 348,
+      "total": 2283,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T9",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.889Z",
+      "updatedAt": "2026-06-23T15:44:04.234Z",
+      "items": [
+        {
+          "id": "b168d2c9-eb10-4018-8676-354844300611",
+          "menuItemId": "m27",
+          "menuItemName": "Strips (12pc)",
+          "quantity": 3,
+          "unitPrice": 479,
+          "totalPrice": 1437,
+          "status": "pending"
+        },
+        {
+          "id": "81e55374-cf98-4415-9dd8-7ff211daebd5",
+          "menuItemId": "m50",
+          "menuItemName": "Caramel Hazelnut",
+          "quantity": 2,
+          "unitPrice": 249,
+          "totalPrice": 498,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "45dd11c7-6873-4f5c-affa-156991e4e484",
+      "orderNumber": 1049,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 318,
+      "tax": 57,
+      "total": 375,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T1",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.886Z",
+      "updatedAt": "2026-06-23T15:44:04.230Z",
+      "items": [
+        {
+          "id": "2d7e55f1-6bbd-48ca-887e-1f8551cedb75",
+          "menuItemId": "m51",
+          "menuItemName": "Chocolate Dome",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        },
+        {
+          "id": "578f1ce6-54e3-4bb7-8c59-518b2dd88ece",
+          "menuItemId": "m43",
+          "menuItemName": "Strawberry Sundae",
+          "quantity": 1,
+          "unitPrice": 69,
+          "totalPrice": 69,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "66924fe7-b37b-48f9-8e37-491ca7ee4381",
+      "orderNumber": 1048,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 528,
+      "tax": 95,
+      "total": 623,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T13",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.884Z",
+      "updatedAt": "2026-06-23T15:44:04.225Z",
+      "items": [
+        {
+          "id": "a103874f-f044-46c0-a72c-62ce1f2956d7",
+          "menuItemId": "m46",
+          "menuItemName": "Vanila Donuts",
+          "quantity": 1,
+          "unitPrice": 99,
+          "totalPrice": 99,
+          "status": "pending"
+        },
+        {
+          "id": "0de3e424-dd49-495f-94af-d437ce83d98e",
+          "menuItemId": "m31",
+          "menuItemName": "Wings (12pc)",
+          "quantity": 1,
+          "unitPrice": 429,
+          "totalPrice": 429,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "3973a753-60d7-4282-98c2-03746af08fd6",
+      "orderNumber": 1047,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 449,
+      "tax": 81,
+      "total": 530,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T12",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.882Z",
+      "updatedAt": "2026-06-23T15:44:04.221Z",
+      "items": [
+        {
+          "id": "61d8028f-cbcd-490a-aef4-f20901a81303",
+          "menuItemId": "m8",
+          "menuItemName": "Non-Veg - Fried Fish",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        },
+        {
+          "id": "c3b5ee3f-c333-4577-be3a-e8683af654f3",
+          "menuItemId": "m51",
+          "menuItemName": "Chocolate Dome",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "7ad02198-27bd-4a53-b876-cc2f0d4e1748",
+      "orderNumber": 1046,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 500,
+      "tax": 90,
+      "total": 590,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T16",
+      "customerName": "Customer 40",
+      "customerPhone": "99999940",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.880Z",
+      "updatedAt": "2026-06-23T15:44:04.215Z",
+      "items": [
+        {
+          "id": "f4b94772-c2c0-4d69-a4a3-c93499f20331",
+          "menuItemId": "m37",
+          "menuItemName": "Vanilla Blizzard",
+          "quantity": 3,
+          "unitPrice": 100,
+          "totalPrice": 300,
+          "status": "pending"
+        },
+        {
+          "id": "db3ed092-a0fa-4b01-bd2a-42d3fe4372fc",
+          "menuItemId": "m18",
+          "menuItemName": "Chicken Nuggets",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "9f0f1726-e663-45bb-95bc-fcf4f4f0cbe1",
+      "orderNumber": 1045,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 277,
+      "tax": 50,
+      "total": 327,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T7",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.878Z",
+      "updatedAt": "2026-06-23T15:44:04.212Z",
+      "items": [
+        {
+          "id": "caa3b476-371a-406b-8ea4-c46f8a4bea5a",
+          "menuItemId": "m28",
+          "menuItemName": "Wings (3pc)",
+          "quantity": 2,
+          "unitPrice": 109,
+          "totalPrice": 218,
+          "status": "pending"
+        },
+        {
+          "id": "0aacd6bf-421c-4edf-aa41-df2bb9c1cdf8",
+          "menuItemId": "m39",
+          "menuItemName": "Bourbon Softy",
+          "quantity": 1,
+          "unitPrice": 59,
+          "totalPrice": 59,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "be8fc6f8-3372-4a8d-b170-8806448bceff",
+      "orderNumber": 1044,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 307,
+      "tax": 55,
+      "total": 362,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T7",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.876Z",
+      "updatedAt": "2026-06-23T15:44:04.208Z",
+      "items": [
+        {
+          "id": "3145653f-8b56-42af-9c85-b793dd40f9fa",
+          "menuItemId": "m25",
+          "menuItemName": "Strips (6pc)",
+          "quantity": 1,
+          "unitPrice": 229,
+          "totalPrice": 229,
+          "status": "pending"
+        },
+        {
+          "id": "b3e3de74-e4c2-4424-a99e-747a353170e3",
+          "menuItemId": "m53",
+          "menuItemName": "Lemonade",
+          "quantity": 2,
+          "unitPrice": 39,
+          "totalPrice": 78,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "4973d667-910a-4a60-b7da-70d3461733bf",
+      "orderNumber": 1043,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 467,
+      "tax": 84,
+      "total": 551,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T4",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.873Z",
+      "updatedAt": "2026-06-23T15:44:04.203Z",
+      "items": [
+        {
+          "id": "72a1579e-5196-4e7a-9eb5-19185c5c6be3",
+          "menuItemId": "m26",
+          "menuItemName": "Strips (9pc)",
+          "quantity": 1,
+          "unitPrice": 349,
+          "totalPrice": 349,
+          "status": "pending"
+        },
+        {
+          "id": "028d95b6-530d-460e-ba8a-eda4965c302e",
+          "menuItemId": "m39",
+          "menuItemName": "Bourbon Softy",
+          "quantity": 2,
+          "unitPrice": 59,
+          "totalPrice": 118,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "a17f16ed-6a4b-43c2-9314-d011f3569d59",
+      "orderNumber": 1042,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 500,
+      "tax": 90,
+      "total": 590,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T5",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.871Z",
+      "updatedAt": "2026-06-23T15:44:04.199Z",
+      "items": [
+        {
+          "id": "3be0506d-b078-4e25-a596-6b95ec274ef0",
+          "menuItemId": "m14",
+          "menuItemName": "Non-Veg - BBQ Chicken",
+          "quantity": 3,
+          "unitPrice": 100,
+          "totalPrice": 300,
+          "status": "pending"
+        },
+        {
+          "id": "32ba5917-ac5a-422b-b61a-05c06c7e8fd1",
+          "menuItemId": "m1",
+          "menuItemName": "Veg - BBQ Paneer",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "d9d38ef5-bc1a-4914-a163-451cf1732ffd",
+      "orderNumber": 1041,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 465,
+      "tax": 84,
+      "total": 549,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T1",
+      "customerName": "Customer 35",
+      "customerPhone": "99999935",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.869Z",
+      "updatedAt": "2026-06-23T15:44:04.192Z",
+      "items": [
+        {
+          "id": "49e255ac-f313-4c6f-a0d0-67a73cf3855d",
+          "menuItemId": "m44",
+          "menuItemName": "Chocolate Sundae",
+          "quantity": 3,
+          "unitPrice": 69,
+          "totalPrice": 207,
+          "status": "pending"
+        },
+        {
+          "id": "98bec56d-6fbb-4e6f-81dc-5c322db49ecb",
+          "menuItemId": "m21",
+          "menuItemName": "Fried Chicken (2pc)",
+          "quantity": 2,
+          "unitPrice": 129,
+          "totalPrice": 258,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "ab273a84-3435-4c1e-a19c-0f4abe675b48",
+      "orderNumber": 1040,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 200,
+      "tax": 36,
+      "total": 236,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T8",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.865Z",
+      "updatedAt": "2026-06-23T15:44:04.188Z",
+      "items": [
+        {
+          "id": "a5717b94-fe6d-41e2-b407-9cc58ea7de84",
+          "menuItemId": "m9",
+          "menuItemName": "Non-Veg - BBQ Prawn",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "4284b4b7-b2a8-41a7-a634-22b9bb457fb4",
+          "menuItemId": "m38",
+          "menuItemName": "Strawberry Blizzard",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "1e6ed7d6-16e3-4ccb-a89f-70e8c95a8294",
+      "orderNumber": 1039,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 449,
+      "tax": 81,
+      "total": 530,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T7",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.863Z",
+      "updatedAt": "2026-06-23T15:44:04.183Z",
+      "items": [
+        {
+          "id": "a63bd209-9c70-4d94-8018-bb60df79076a",
+          "menuItemId": "m47",
+          "menuItemName": "Tiramissu",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        },
+        {
+          "id": "e268828b-3e03-4f17-a1bc-4bd11f749627",
+          "menuItemId": "m6",
+          "menuItemName": "Non-Veg - Peri Peri Chicken",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "b6bdb7f6-c79f-4f5d-adf5-c7ab117abe9f",
+      "orderNumber": 1038,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 747,
+      "tax": 134,
+      "total": 881,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T6",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.861Z",
+      "updatedAt": "2026-06-23T15:44:04.178Z",
+      "items": [
+        {
+          "id": "371a299f-902e-47fd-a34a-e0c57c88af7f",
+          "menuItemId": "m34",
+          "menuItemName": "Glaze Wings (3pc)",
+          "quantity": 1,
+          "unitPrice": 149,
+          "totalPrice": 149,
+          "status": "pending"
+        },
+        {
+          "id": "ef2b8ff0-23bb-41c4-be1c-5615ccdc1688",
+          "menuItemId": "m35",
+          "menuItemName": "Glaze Wings (6pc)",
+          "quantity": 2,
+          "unitPrice": 299,
+          "totalPrice": 598,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "65ae8534-1b81-4fa4-9d41-202b4334ae82",
+      "orderNumber": 1037,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 398,
+      "tax": 72,
+      "total": 470,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T20",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.859Z",
+      "updatedAt": "2026-06-23T15:44:04.174Z",
+      "items": [
+        {
+          "id": "9dd998d7-a409-4f4b-9945-2d8fa6e2ff02",
+          "menuItemId": "m34",
+          "menuItemName": "Glaze Wings (3pc)",
+          "quantity": 1,
+          "unitPrice": 149,
+          "totalPrice": 149,
+          "status": "pending"
+        },
+        {
+          "id": "d41206ac-2b19-4640-8882-9362f736bd32",
+          "menuItemId": "m50",
+          "menuItemName": "Caramel Hazelnut",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "1a901d7f-6199-4787-9951-8225705b3a35",
+      "orderNumber": 1036,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 996,
+      "tax": 179,
+      "total": 1175,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T3",
+      "customerName": "Customer 30",
+      "customerPhone": "99999930",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.857Z",
+      "updatedAt": "2026-06-23T15:44:04.167Z",
+      "items": [
+        {
+          "id": "4cddccec-ba20-4b4b-827d-b3bca045916b",
+          "menuItemId": "m47",
+          "menuItemName": "Tiramissu",
+          "quantity": 3,
+          "unitPrice": 249,
+          "totalPrice": 747,
+          "status": "pending"
+        },
+        {
+          "id": "5fc4ace6-be2c-42ca-98cb-fcbd918e3ba7",
+          "menuItemId": "m51",
+          "menuItemName": "Chocolate Dome",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "e6237549-cdad-4629-be57-39cc329948a2",
+      "orderNumber": 1035,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 857,
+      "tax": 154,
+      "total": 1011,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T12",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.855Z",
+      "updatedAt": "2026-06-23T15:44:04.161Z",
+      "items": [
+        {
+          "id": "bb8dd0a9-9e47-4cb6-9113-32b0de56a12b",
+          "menuItemId": "m29",
+          "menuItemName": "Wings (6pc)",
+          "quantity": 3,
+          "unitPrice": 219,
+          "totalPrice": 657,
+          "status": "pending"
+        },
+        {
+          "id": "14d800ce-8e14-4fa2-9954-214c75bf18da",
+          "menuItemId": "m17",
+          "menuItemName": "French Fries",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "250d62de-1290-44d4-ae84-e29a8b7aae7e",
+      "orderNumber": 1034,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 199,
+      "tax": 36,
+      "total": 235,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T2",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.853Z",
+      "updatedAt": "2026-06-23T15:44:04.156Z",
+      "items": [
+        {
+          "id": "cef6f975-9d47-4cd3-b857-476abe74d1d2",
+          "menuItemId": "m5",
+          "menuItemName": "Non-Veg - BBQ Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "142143c6-5d20-4c43-98e7-6afdb61a93ee",
+          "menuItemId": "m46",
+          "menuItemName": "Vanila Donuts",
+          "quantity": 1,
+          "unitPrice": 99,
+          "totalPrice": 99,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "850143fc-071e-43f2-803e-808429d9ba86",
+      "orderNumber": 1033,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 300,
+      "tax": 54,
+      "total": 354,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T14",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.851Z",
+      "updatedAt": "2026-06-23T15:44:04.152Z",
+      "items": [
+        {
+          "id": "992ecfdd-5f45-4666-beaa-859de2b45fc4",
+          "menuItemId": "m5",
+          "menuItemName": "Non-Veg - BBQ Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "f2b997b6-fe5b-4188-b0a3-8555201f6b2e",
+          "menuItemId": "m4",
+          "menuItemName": "Non-Veg - Sour Cream Chicken",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "f5fe1eb9-e091-403b-b43b-d879e4cad88d",
+      "orderNumber": 1032,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 599,
+      "tax": 108,
+      "total": 707,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T3",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.849Z",
+      "updatedAt": "2026-06-23T15:44:04.147Z",
+      "items": [
+        {
+          "id": "15e17e74-4ac9-459c-956a-86ba11604845",
+          "menuItemId": "m23",
+          "menuItemName": "Fried Chicken (8pc)",
+          "quantity": 1,
+          "unitPrice": 499,
+          "totalPrice": 499,
+          "status": "pending"
+        },
+        {
+          "id": "5af3b0c4-9000-4788-bedf-1efb952f1b51",
+          "menuItemId": "m36",
+          "menuItemName": "Chocolate Blizzard",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "c2149a37-e758-4360-a7ee-be1a42f11364",
+      "orderNumber": 1031,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 636,
+      "tax": 114,
+      "total": 750,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T19",
+      "customerName": "Customer 25",
+      "customerPhone": "99999925",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.847Z",
+      "updatedAt": "2026-06-23T15:44:04.141Z",
+      "items": [
+        {
+          "id": "2024d32b-c12e-476c-b796-b3a9364d7bc3",
+          "menuItemId": "m22",
+          "menuItemName": "Fried Chicken (4pc)",
+          "quantity": 2,
+          "unitPrice": 249,
+          "totalPrice": 498,
+          "status": "pending"
+        },
+        {
+          "id": "5dafb9ca-f8b9-4102-abac-14f79f5d65bb",
+          "menuItemId": "m44",
+          "menuItemName": "Chocolate Sundae",
+          "quantity": 2,
+          "unitPrice": 69,
+          "totalPrice": 138,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "98e2c016-b708-40e6-a57a-389ee11b0e85",
+      "orderNumber": 1030,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 587,
+      "tax": 106,
+      "total": 693,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T15",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.845Z",
+      "updatedAt": "2026-06-23T15:44:04.137Z",
+      "items": [
+        {
+          "id": "4fc27f7e-d32e-40a5-9e25-e586bf81ff3e",
+          "menuItemId": "m29",
+          "menuItemName": "Wings (6pc)",
+          "quantity": 2,
+          "unitPrice": 219,
+          "totalPrice": 438,
+          "status": "pending"
+        },
+        {
+          "id": "f16c6950-f59b-4cd2-b6c5-068513941bc8",
+          "menuItemId": "m32",
+          "menuItemName": "Glaze Strips (3pc)",
+          "quantity": 1,
+          "unitPrice": 149,
+          "totalPrice": 149,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "9be6df37-6db7-42f0-90f6-733d4806c0c6",
+      "orderNumber": 1029,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 997,
+      "tax": 179,
+      "total": 1176,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T6",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.843Z",
+      "updatedAt": "2026-06-23T15:44:04.132Z",
+      "items": [
+        {
+          "id": "8cade262-49b0-47f1-b7a7-6355ef4f64ba",
+          "menuItemId": "m35",
+          "menuItemName": "Glaze Wings (6pc)",
+          "quantity": 3,
+          "unitPrice": 299,
+          "totalPrice": 897,
+          "status": "pending"
+        },
+        {
+          "id": "3a9b4c3e-32fd-4af5-a0d6-86039e0434d1",
+          "menuItemId": "m2",
+          "menuItemName": "Veg - Beetroot Falafal",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "bc5586ee-e8e2-43c4-a8ea-79e9524ff00c",
+      "orderNumber": 1028,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 1027,
+      "tax": 185,
+      "total": 1212,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T9",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.841Z",
+      "updatedAt": "2026-06-23T15:44:04.128Z",
+      "items": [
+        {
+          "id": "254e91a1-bae5-4d02-80f9-e5187a05b628",
+          "menuItemId": "m27",
+          "menuItemName": "Strips (12pc)",
+          "quantity": 2,
+          "unitPrice": 479,
+          "totalPrice": 958,
+          "status": "pending"
+        },
+        {
+          "id": "20839d91-7afc-4301-ad91-47be5cb0a38e",
+          "menuItemId": "m42",
+          "menuItemName": "Caramel Sundae",
+          "quantity": 1,
+          "unitPrice": 69,
+          "totalPrice": 69,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "9f3f92d7-c77e-489a-b34a-75fef3a7052d",
+      "orderNumber": 1027,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 816,
+      "tax": 147,
+      "total": 963,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T20",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.839Z",
+      "updatedAt": "2026-06-23T15:44:04.124Z",
+      "items": [
+        {
+          "id": "4d4fd00d-6590-4479-9b56-c21dff744eb9",
+          "menuItemId": "m48",
+          "menuItemName": "Redvelvet Cake",
+          "quantity": 3,
+          "unitPrice": 249,
+          "totalPrice": 747,
+          "status": "pending"
+        },
+        {
+          "id": "cf58eaa2-eec7-404a-9031-6c41c564699d",
+          "menuItemId": "m20",
+          "menuItemName": "Fried Chicken (1pc)",
+          "quantity": 1,
+          "unitPrice": 69,
+          "totalPrice": 69,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "2cd2906c-72e4-422f-918b-fd2d3ab38f59",
+      "orderNumber": 1026,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 400,
+      "tax": 72,
+      "total": 472,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T13",
+      "customerName": "Customer 20",
+      "customerPhone": "99999920",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.837Z",
+      "updatedAt": "2026-06-23T15:44:04.117Z",
+      "items": [
+        {
+          "id": "2c694f5e-8977-438c-aa0d-e311154f89ce",
+          "menuItemId": "m10",
+          "menuItemName": "Veg - Spinach (veg meat)",
+          "quantity": 3,
+          "unitPrice": 100,
+          "totalPrice": 300,
+          "status": "pending"
+        },
+        {
+          "id": "61242f90-7cc4-470a-8ee5-75edc174835f",
+          "menuItemId": "m5",
+          "menuItemName": "Non-Veg - BBQ Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "a4838a19-b8d7-4241-a076-44e7478bd373",
+      "orderNumber": 1025,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 397,
+      "tax": 71,
+      "total": 468,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T18",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.835Z",
+      "updatedAt": "2026-06-23T15:44:04.113Z",
+      "items": [
+        {
+          "id": "7cd6551e-0602-4c58-a2dd-fbf29797a382",
+          "menuItemId": "m54",
+          "menuItemName": "Kombhucha",
+          "quantity": 3,
+          "unitPrice": 99,
+          "totalPrice": 297,
+          "status": "pending"
+        },
+        {
+          "id": "48161ca9-85f8-4194-bd52-48f32d77ea49",
+          "menuItemId": "m17",
+          "menuItemName": "French Fries",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "ff42f336-9d05-4613-99fd-c021c520e905",
+      "orderNumber": 1024,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 296,
+      "tax": 53,
+      "total": 349,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T9",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.833Z",
+      "updatedAt": "2026-06-23T15:44:04.108Z",
+      "items": [
+        {
+          "id": "f96f7071-0bf0-4356-b758-7e815c27298d",
+          "menuItemId": "m40",
+          "menuItemName": "Vanila Softy",
+          "quantity": 2,
+          "unitPrice": 49,
+          "totalPrice": 98,
+          "status": "pending"
+        },
+        {
+          "id": "f42c924c-7bca-47c0-b7d8-66f17b28bbf3",
+          "menuItemId": "m54",
+          "menuItemName": "Kombhucha",
+          "quantity": 2,
+          "unitPrice": 99,
+          "totalPrice": 198,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "a7448d4a-7cd8-494f-8fe4-59e6ebfcd037",
+      "orderNumber": 1023,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 947,
+      "tax": 170,
+      "total": 1117,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T2",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.830Z",
+      "updatedAt": "2026-06-23T15:44:04.104Z",
+      "items": [
+        {
+          "id": "51c3b004-52e1-4675-b8b1-be94343e5aec",
+          "menuItemId": "m51",
+          "menuItemName": "Chocolate Dome",
+          "quantity": 3,
+          "unitPrice": 249,
+          "totalPrice": 747,
+          "status": "pending"
+        },
+        {
+          "id": "438d5cb7-c31a-4fdf-9799-903b1b752854",
+          "menuItemId": "m8",
+          "menuItemName": "Non-Veg - Fried Fish",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "134abf0d-2934-41a3-8bb1-eb7e6464a4bc",
+      "orderNumber": 1022,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 649,
+      "tax": 117,
+      "total": 766,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T11",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.829Z",
+      "updatedAt": "2026-06-23T15:44:04.099Z",
+      "items": [
+        {
+          "id": "1de94661-7e16-49aa-bd3b-193441c72563",
+          "menuItemId": "m14",
+          "menuItemName": "Non-Veg - BBQ Chicken",
+          "quantity": 3,
+          "unitPrice": 100,
+          "totalPrice": 300,
+          "status": "pending"
+        },
+        {
+          "id": "f050cdb0-1cd8-4f78-858c-b27e69c2fc4d",
+          "menuItemId": "m26",
+          "menuItemName": "Strips (9pc)",
+          "quantity": 1,
+          "unitPrice": 349,
+          "totalPrice": 349,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "4431fdf4-617b-4549-9c71-6335680e62bc",
+      "orderNumber": 1021,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 307,
+      "tax": 55,
+      "total": 362,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T16",
+      "customerName": "Customer 15",
+      "customerPhone": "99999915",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.827Z",
+      "updatedAt": "2026-06-23T15:44:04.093Z",
+      "items": [
+        {
+          "id": "5caa14d7-6f8b-444b-aec3-dc7977fcc4ed",
+          "menuItemId": "m42",
+          "menuItemName": "Caramel Sundae",
+          "quantity": 3,
+          "unitPrice": 69,
+          "totalPrice": 207,
+          "status": "pending"
+        },
+        {
+          "id": "c3e3bc17-eec9-4a64-9f92-4cec25e73661",
+          "menuItemId": "m4",
+          "menuItemName": "Non-Veg - Sour Cream Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "a9f384da-36f2-4f88-b4f0-449c8398f37b",
+      "orderNumber": 1020,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 300,
+      "tax": 54,
+      "total": 354,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T3",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.825Z",
+      "updatedAt": "2026-06-23T15:44:04.088Z",
+      "items": [
+        {
+          "id": "7e0d05e8-c4fc-42e5-8fcf-6631123abfac",
+          "menuItemId": "m10",
+          "menuItemName": "Veg - Spinach (veg meat)",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "4b64e592-95cc-4321-8533-21fb9174b2ff",
+          "menuItemId": "m16",
+          "menuItemName": "Veg Nuggets",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "4ae122d3-33be-4b66-8a52-8d57b449d76d",
+      "orderNumber": 1019,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 558,
+      "tax": 100,
+      "total": 658,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T1",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.822Z",
+      "updatedAt": "2026-06-23T15:44:04.083Z",
+      "items": [
+        {
+          "id": "2144d097-3319-4a91-b3fd-53a0cecc05d8",
+          "menuItemId": "m1",
+          "menuItemName": "Veg - BBQ Paneer",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "3a6b9692-1278-4f27-8450-cfbc669ce7bb",
+          "menuItemId": "m25",
+          "menuItemName": "Strips (6pc)",
+          "quantity": 2,
+          "unitPrice": 229,
+          "totalPrice": 458,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "4eb8126f-e508-41f2-896a-bf41029939cd",
+      "orderNumber": 1018,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 449,
+      "tax": 81,
+      "total": 530,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T18",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.820Z",
+      "updatedAt": "2026-06-23T15:44:04.078Z",
+      "items": [
+        {
+          "id": "ef7b68bf-5d92-47b9-a742-7b2a9a02bf0e",
+          "menuItemId": "m22",
+          "menuItemName": "Fried Chicken (4pc)",
+          "quantity": 1,
+          "unitPrice": 249,
+          "totalPrice": 249,
+          "status": "pending"
+        },
+        {
+          "id": "9eaa643f-6203-4dd4-aa1d-e5df622b94b8",
+          "menuItemId": "m36",
+          "menuItemName": "Chocolate Blizzard",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "dff41675-ba3e-4126-8aca-842985555c16",
+      "orderNumber": 1017,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 369,
+      "tax": 66,
+      "total": 435,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T17",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.818Z",
+      "updatedAt": "2026-06-23T15:44:04.072Z",
+      "items": [
+        {
+          "id": "896a88cf-a72d-429a-a201-75b4bd138b77",
+          "menuItemId": "m19",
+          "menuItemName": "Fish Finger",
+          "quantity": 3,
+          "unitPrice": 100,
+          "totalPrice": 300,
+          "status": "pending"
+        },
+        {
+          "id": "c45c7179-3db4-449a-bbe6-310842ea3c7e",
+          "menuItemId": "m43",
+          "menuItemName": "Strawberry Sundae",
+          "quantity": 1,
+          "unitPrice": 69,
+          "totalPrice": 69,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "25d424f7-977e-4a8f-b53a-20c202905f17",
+      "orderNumber": 1016,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 176,
+      "tax": 32,
+      "total": 208,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T1",
+      "customerName": "Customer 10",
+      "customerPhone": "99999910",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.816Z",
+      "updatedAt": "2026-06-23T15:44:04.067Z",
+      "items": [
+        {
+          "id": "8a51d58b-faa7-462f-a7a4-f4e04b65220a",
+          "menuItemId": "m53",
+          "menuItemName": "Lemonade",
+          "quantity": 2,
+          "unitPrice": 39,
+          "totalPrice": 78,
+          "status": "pending"
+        },
+        {
+          "id": "532224fe-1868-420c-a66e-4b9e048f759c",
+          "menuItemId": "m40",
+          "menuItemName": "Vanila Softy",
+          "quantity": 2,
+          "unitPrice": 49,
+          "totalPrice": 98,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "03167a3f-43c7-49d3-b2e7-63a662200c19",
+      "orderNumber": 1015,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 500,
+      "tax": 90,
+      "total": 590,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T9",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.814Z",
+      "updatedAt": "2026-06-23T15:44:04.062Z",
+      "items": [
+        {
+          "id": "5a77283a-561a-4448-a788-4978acf9231b",
+          "menuItemId": "m17",
+          "menuItemName": "French Fries",
+          "quantity": 3,
+          "unitPrice": 100,
+          "totalPrice": 300,
+          "status": "pending"
+        },
+        {
+          "id": "6872a8a3-b851-439e-8b11-e7b8524988ff",
+          "menuItemId": "m15",
+          "menuItemName": "Non-Veg - Fish with Egg",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "ea09f78b-4e36-49f0-a3d2-3a03bd1ae7f1",
+      "orderNumber": 1014,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 300,
+      "tax": 54,
+      "total": 354,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T16",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.812Z",
+      "updatedAt": "2026-06-23T15:44:04.057Z",
+      "items": [
+        {
+          "id": "76dfb23b-be02-482a-b39a-d108525d8f41",
+          "menuItemId": "m38",
+          "menuItemName": "Strawberry Blizzard",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "9a6aef9d-2547-4319-b8c8-fac8730ee04d",
+          "menuItemId": "m9",
+          "menuItemName": "Non-Veg - BBQ Prawn",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "eea3f069-25a5-4321-9bd8-1b3847d45ee9",
+      "orderNumber": 1013,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 699,
+      "tax": 126,
+      "total": 825,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T12",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.810Z",
+      "updatedAt": "2026-06-23T15:44:04.051Z",
+      "items": [
+        {
+          "id": "1594b810-ce2d-4fc2-a7ad-1bb6ab476e47",
+          "menuItemId": "m38",
+          "menuItemName": "Strawberry Blizzard",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        },
+        {
+          "id": "3affca65-9134-4bba-b6e0-8e28730a0add",
+          "menuItemId": "m23",
+          "menuItemName": "Fried Chicken (8pc)",
+          "quantity": 1,
+          "unitPrice": 499,
+          "totalPrice": 499,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "8ff7cf3d-6420-4928-b1ae-c13f26971fef",
+      "orderNumber": 1012,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 198,
+      "tax": 36,
+      "total": 234,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T12",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.808Z",
+      "updatedAt": "2026-06-23T15:44:04.047Z",
+      "items": [
+        {
+          "id": "ef4fd259-8bc8-4371-85b4-bf29ee1ca26a",
+          "menuItemId": "m40",
+          "menuItemName": "Vanila Softy",
+          "quantity": 2,
+          "unitPrice": 49,
+          "totalPrice": 98,
+          "status": "pending"
+        },
+        {
+          "id": "5bfcaba6-7924-48e3-af43-7ad1725e91f5",
+          "menuItemId": "m19",
+          "menuItemName": "Fish Finger",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "8ddf6936-7aaf-470a-86e0-c7fb5bfb1b2a",
+      "orderNumber": 1011,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 947,
+      "tax": 170,
+      "total": 1117,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T19",
+      "customerName": "Customer 5",
+      "customerPhone": "9999995",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.806Z",
+      "updatedAt": "2026-06-23T15:44:04.041Z",
+      "items": [
+        {
+          "id": "a9b7d717-0e91-4b99-a343-ad5900286801",
+          "menuItemId": "m51",
+          "menuItemName": "Chocolate Dome",
+          "quantity": 3,
+          "unitPrice": 249,
+          "totalPrice": 747,
+          "status": "pending"
+        },
+        {
+          "id": "e9f4974f-bdb5-4680-9144-4ab6ce114c0c",
+          "menuItemId": "m10",
+          "menuItemName": "Veg - Spinach (veg meat)",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "b3a12405-ef4e-45bc-a7a0-e01f865017e8",
+      "orderNumber": 1010,
+      "type": "delivery",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 200,
+      "tax": 36,
+      "total": 236,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T13",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.804Z",
+      "updatedAt": "2026-06-23T15:44:04.036Z",
+      "items": [
+        {
+          "id": "3dcb0b5a-7d22-4bbe-b345-c10b9ddb2820",
+          "menuItemId": "m13",
+          "menuItemName": "Non-Veg - Sourcream Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "dcef79f0-0619-4cb3-a0b5-fa9d3797e955",
+          "menuItemId": "m13",
+          "menuItemName": "Non-Veg - Sourcream Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "379b65df-8150-41a1-947a-24a170adbfa5",
+      "orderNumber": 1009,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 368,
+      "tax": 66,
+      "total": 434,
+      "paymentMethod": "wallet",
+      "paymentStatus": "paid",
+      "tableNumber": "T10",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.802Z",
+      "updatedAt": "2026-06-23T15:44:04.032Z",
+      "items": [
+        {
+          "id": "4337a247-acea-4393-84dd-bd6e428f79c0",
+          "menuItemId": "m35",
+          "menuItemName": "Glaze Wings (6pc)",
+          "quantity": 1,
+          "unitPrice": 299,
+          "totalPrice": 299,
+          "status": "pending"
+        },
+        {
+          "id": "749ef465-66f2-4cdd-9a24-64f19615891a",
+          "menuItemId": "m43",
+          "menuItemName": "Strawberry Sundae",
+          "quantity": 1,
+          "unitPrice": 69,
+          "totalPrice": 69,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "2cae1564-1793-4ec5-9b5c-e67aa2be5323",
+      "orderNumber": 1008,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 388,
+      "tax": 70,
+      "total": 458,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T19",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.799Z",
+      "updatedAt": "2026-06-23T15:44:04.027Z",
+      "items": [
+        {
+          "id": "1e7a02b7-ac40-4133-95f2-c9c1fd24fa1a",
+          "menuItemId": "m52",
+          "menuItemName": "Coke",
+          "quantity": 1,
+          "unitPrice": 39,
+          "totalPrice": 39,
+          "status": "pending"
+        },
+        {
+          "id": "2cb5d541-dd25-4b3b-9a9f-9b3d085ebe8e",
+          "menuItemId": "m26",
+          "menuItemName": "Strips (9pc)",
+          "quantity": 1,
+          "unitPrice": 349,
+          "totalPrice": 349,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "16c0345e-3bba-458b-a038-853424976e77",
+      "orderNumber": 1007,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 1656,
+      "tax": 298,
+      "total": 1954,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T4",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:03.796Z",
+      "updatedAt": "2026-06-23T15:44:04.022Z",
+      "items": [
+        {
+          "id": "375b5632-711d-4679-9872-3c9978ec7c28",
+          "menuItemId": "m23",
+          "menuItemName": "Fried Chicken (8pc)",
+          "quantity": 2,
+          "unitPrice": 499,
+          "totalPrice": 998,
+          "status": "pending"
+        },
+        {
+          "id": "b636eb8c-6205-48b0-9a9d-ebb89280b8ba",
+          "menuItemId": "m30",
+          "menuItemName": "Wings (9pc)",
+          "quantity": 2,
+          "unitPrice": 329,
+          "totalPrice": 658,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "73e58302-f34a-44c2-b359-4d1a2fe2e26a",
+      "orderNumber": 1006,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 100,
+      "tax": 18,
+      "total": 118,
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "tableNumber": "T13",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-22T10:37:27.377Z",
+      "updatedAt": "2026-06-24T10:01:17.874Z",
+      "items": [
+        {
+          "id": "47adbbf7-fdf5-4622-8c9f-bd3bee34c74c",
+          "menuItemId": "m4",
+          "menuItemName": "Non-Veg - Sour Cream Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "fc895ebf-7081-4fcb-b8d8-706243ba9e2f",
+      "orderNumber": 1005,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 200,
+      "tax": 36,
+      "total": 236,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T7",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-22T10:31:09.305Z",
+      "updatedAt": "2026-06-23T08:09:23.522Z",
+      "items": [
+        {
+          "id": "70ce682b-dd09-45c3-a6f0-1933b74a4599",
+          "menuItemId": "m12",
+          "menuItemName": "Non-Veg - Fried Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "191889f4-515f-4159-aa88-a249b356bf19",
+          "menuItemId": "m11",
+          "menuItemName": "Veg - Beetroot",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "806389e6-1f00-45bb-8f5c-b07bdcddf5d9",
+      "orderNumber": 1004,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 500,
+      "tax": 90,
+      "total": 590,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T8",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-22T10:24:04.469Z",
+      "updatedAt": "2026-06-23T08:09:27.442Z",
+      "items": [
+        {
+          "id": "b09d206d-f352-46f4-965a-00717f474a91",
+          "menuItemId": "m8",
+          "menuItemName": "Non-Veg - Fried Fish",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "6b1a2b0d-89da-42db-a026-3f2cf82cc3dd",
+          "menuItemId": "m12",
+          "menuItemName": "Non-Veg - Fried Chicken",
+          "quantity": 2,
+          "unitPrice": 100,
+          "totalPrice": 200,
+          "status": "pending"
+        },
+        {
+          "id": "1bf12207-38f2-4455-a3b8-4f7c304fccad",
+          "menuItemId": "m7",
+          "menuItemName": "Non-Veg - Crunchy Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "058b0827-0ac9-4cee-ae8a-64a91fe59d3d",
+          "menuItemId": "m4",
+          "menuItemName": "Non-Veg - Sour Cream Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "7e0d87da-e423-45f3-b664-e12261ccfae6",
+      "orderNumber": 1003,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "captain",
+      "subtotal": 400,
+      "tax": 72,
+      "total": 472,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T1",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-22T09:52:23.104Z",
+      "updatedAt": "2026-06-24T10:00:50.361Z",
+      "items": [
+        {
+          "id": "ee2ddde8-2c85-4f86-81a1-7c238e6d988e",
+          "menuItemId": "m1",
+          "menuItemName": "Veg - BBQ Paneer",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "21a5365b-49a7-434b-8b13-5a72f7dac67c",
+          "menuItemId": "m3",
+          "menuItemName": "Veg - Mushroom Falafal",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "27e5dc4e-9a8f-4dc3-898b-a8656aa40594",
+          "menuItemId": "m8",
+          "menuItemName": "Non-Veg - Fried Fish",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "e5d568fe-b14d-4ac3-a381-96d9603b14bb",
+          "menuItemId": "m6",
+          "menuItemName": "Non-Veg - Peri Peri Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "44de814b-0ef6-4e38-92ed-467a329a3fa2",
+      "orderNumber": 1002,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "pos",
+      "subtotal": 400,
+      "tax": 72,
+      "total": 472,
+      "paymentMethod": "card",
+      "paymentStatus": "paid",
+      "tableNumber": "T1",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-22T09:52:08.909Z",
+      "updatedAt": "2026-06-23T08:09:25.492Z",
+      "items": [
+        {
+          "id": "9074adf2-4ced-431f-909d-7e5b66806ffd",
+          "menuItemId": "m1",
+          "menuItemName": "Veg - BBQ Paneer",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "57dea877-35de-404d-a874-4bd99affd72b",
+          "menuItemId": "m3",
+          "menuItemName": "Veg - Mushroom Falafal",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "0cd20634-c331-4259-807a-a4ac9f06c871",
+          "menuItemId": "m8",
+          "menuItemName": "Non-Veg - Fried Fish",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "59a9ea46-3379-47ac-90d7-f333061bf3dd",
+          "menuItemId": "m6",
+          "menuItemName": "Non-Veg - Peri Peri Chicken",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "6a5efc0e-e583-4746-a1a3-247d44f00906",
+      "orderNumber": 1001,
+      "type": "dine-in",
+      "status": "completed",
+      "source": "captain",
+      "subtotal": 200,
+      "tax": 36,
+      "total": 236,
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "tableNumber": "T3",
+      "customerName": "",
+      "customerPhone": "",
+      "notes": "",
+      "createdAt": "2026-06-22T09:42:49.188Z",
+      "updatedAt": "2026-06-22T09:43:17.560Z",
+      "items": [
+        {
+          "id": "c47eec54-17fb-4518-ae2d-4b2635601f8b",
+          "menuItemId": "m1",
+          "menuItemName": "Veg - BBQ Paneer",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        },
+        {
+          "id": "6f49948b-d048-4317-bcc3-8c6b3e9b3951",
+          "menuItemId": "m2",
+          "menuItemName": "Veg - Beetroot Falafal",
+          "quantity": 1,
+          "unitPrice": 100,
+          "totalPrice": 100,
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "transactions": [],
+  "menu": null,
+  "loyaltyUsers": [
+    {
+      "id": "u_admin",
+      "referralCode": "ADMIN01",
+      "name": "Admin",
+      "phone": "0000000000",
+      "email": "admin@tdg.com",
+      "role": "admin",
+      "rubyPoints": 99999,
+      "tier": "Emerald",
+      "referredBy": null,
+      "denId": "401ed351-020c-42b3-93a0-fb1dd107add1",
+      "createdAt": "2026-06-21T01:46:06.119Z"
+    },
+    {
+      "id": "loy_1782019496874",
+      "name": "Customer",
+      "phone": "9999999999",
+      "email": "",
+      "role": "user",
+      "rubyPoints": 0,
+      "tier": "Bronze",
+      "referralCode": "NEW",
+      "referredBy": null,
+      "denId": null,
+      "createdAt": "2026-06-21T05:24:56.874Z"
+    },
+    {
+      "id": "loy_1782019516852",
+      "name": "Customer",
+      "phone": "9876543214",
+      "email": "",
+      "role": "user",
+      "rubyPoints": 0,
+      "tier": "Bronze",
+      "referralCode": "NEW",
+      "referredBy": null,
+      "denId": null,
+      "createdAt": "2026-06-21T05:25:16.852Z"
+    },
+    {
+      "id": "loy_1782019526524",
+      "name": "Customer",
+      "phone": "7904761795",
+      "email": "",
+      "role": "user",
+      "rubyPoints": 0,
+      "tier": "Bronze",
+      "referralCode": "NEW",
+      "referredBy": null,
+      "denId": null,
+      "createdAt": "2026-06-21T05:25:26.524Z"
+    },
+    {
+      "id": "loy_1782019868455",
+      "name": "Customer",
+      "phone": "+91 9876543210",
+      "email": "",
+      "role": "user",
+      "rubyPoints": 0,
+      "tier": "Bronze",
+      "referralCode": "NEW",
+      "referredBy": null,
+      "denId": null,
+      "createdAt": "2026-06-21T05:31:08.455Z"
+    },
+    {
+      "id": "loy_1782019874283",
+      "name": "Customer",
+      "phone": "9876543210",
+      "email": "",
+      "role": "user",
+      "rubyPoints": 0,
+      "tier": "Bronze",
+      "referralCode": "NEW",
+      "referredBy": null,
+      "denId": null,
+      "createdAt": "2026-06-21T05:31:14.283Z"
+    },
+    {
+      "id": "u_1782229443781",
+      "referralCode": "2RGMR8",
+      "name": "Test User",
+      "phone": "9999993688",
+      "email": "test1782229443687@test.com",
+      "role": "user",
+      "rubyPoints": 0,
+      "tier": "Bronze",
+      "referredBy": null,
+      "denId": null,
+      "createdAt": "2026-06-23T15:44:03.781Z"
+    },
+    {
+      "id": "6cf52eba-7c42-45ab-ada3-aef438a660b4",
+      "referralCode": "TXK2LF",
+      "name": "Loyalty Tester",
+      "phone": "8888844688",
+      "email": "loyalty1782229444688@test.com",
+      "role": "user",
+      "rubyPoints": 0,
+      "tier": "Bronze",
+      "referredBy": null,
+      "denId": null,
+      "createdAt": "2026-06-23T15:44:04.688Z"
+    }
+  ],
+  "dens": [
+    {
+      "id": "401ed351-020c-42b3-93a0-fb1dd107add1",
+      "name": "Test Den",
+      "leaderId": "u_admin",
+      "leaderName": "Admin",
+      "leaderPhone": "0000000000",
+      "members": [
+        {
+          "id": "u_admin",
+          "name": "Admin",
+          "phone": "0000000000",
+          "joinedAt": "2026-06-23T15:44:04.695Z"
+        }
+      ],
+      "memberCount": 1,
+      "createdAt": "2026-06-23T15:44:04.695Z",
+      "isPrideLion": false
+    }
+  ],
+  "pointTransactions": [],
+  "inventory": [
+    {
+      "id": "1",
+      "name": "Chicken Breast",
+      "currentStock": 100,
+      "minimumStock": 20
+    },
+    {
+      "id": "2",
+      "name": "Burger Buns",
+      "currentStock": 250,
+      "minimumStock": 50
+    },
+    {
+      "id": "3",
+      "name": "Fries",
+      "currentStock": 80,
+      "minimumStock": 10
+    }
+  ],
+  "orderNumber": 1113,
+  "usedReferralCodes": [
+    "2RGMR8",
+    "TXK2LF"
+  ],
+  "expenses": [
+    {
+      "id": "a1e5008c-aa88-485a-a30c-784e2ccb6180",
+      "category": "Marketing",
+      "amount": 5969,
+      "description": "Test expense 10",
+      "createdAt": "2026-06-23T15:44:04.668Z"
+    },
+    {
+      "id": "309b0ac4-870c-4dfc-8c36-30fafa4706ea",
+      "category": "Salary",
+      "amount": 8363,
+      "description": "Test expense 9",
+      "createdAt": "2026-06-23T15:44:04.665Z"
+    },
+    {
+      "id": "c9b20769-b9dd-4b91-b913-a74a905c66da",
+      "category": "Electricity",
+      "amount": 3558,
+      "description": "Test expense 8",
+      "createdAt": "2026-06-23T15:44:04.662Z"
+    },
+    {
+      "id": "be658fd9-4cb5-4ba2-8480-70a1e9406816",
+      "category": "Rent",
+      "amount": 2408,
+      "description": "Test expense 7",
+      "createdAt": "2026-06-23T15:44:04.660Z"
+    },
+    {
+      "id": "0120a42e-ad41-48d2-896b-4cc7f6d64c2d",
+      "category": "Supplies",
+      "amount": 1959,
+      "description": "Test expense 6",
+      "createdAt": "2026-06-23T15:44:04.657Z"
+    },
+    {
+      "id": "7e1d6ab8-8b49-4d72-9547-856ee9a31787",
+      "category": "Maintenance",
+      "amount": 7430,
+      "description": "Test expense 5",
+      "createdAt": "2026-06-23T15:44:04.654Z"
+    },
+    {
+      "id": "17138a9c-ef4e-4103-bc9c-43cfafe6658e",
+      "category": "Marketing",
+      "amount": 10268,
+      "description": "Test expense 4",
+      "createdAt": "2026-06-23T15:44:04.651Z"
+    },
+    {
+      "id": "d08fcdc3-8bce-4d18-8358-285efd7fc368",
+      "category": "Salary",
+      "amount": 8336,
+      "description": "Test expense 3",
+      "createdAt": "2026-06-23T15:44:04.648Z"
+    },
+    {
+      "id": "401828a7-7f92-4473-b0de-d2c1914cbe4b",
+      "category": "Electricity",
+      "amount": 3098,
+      "description": "Test expense 2",
+      "createdAt": "2026-06-23T15:44:04.645Z"
+    },
+    {
+      "id": "77edeb4d-e0ed-4bfc-adcd-4408a324b0d1",
+      "category": "Rent",
+      "amount": 7250,
+      "description": "Test expense 1",
+      "createdAt": "2026-06-23T15:44:04.643Z"
+    }
+  ],
+  "purchases": [
+    {
+      "id": "d02b3d5b-2eae-49b5-98ba-9e4ebbee0e96",
+      "supplier": "Fresh Poultry Co.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 49,
+          "rate": 174
+        },
+        {
+          "name": "Item B",
+          "quantity": 27,
+          "rate": 217
+        }
+      ],
+      "total": 39265,
+      "createdAt": "2026-06-23T15:44:04.637Z"
+    },
+    {
+      "id": "c0005f16-6eca-4053-8597-a86fc82b0176",
+      "supplier": "Spice World",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 33,
+          "rate": 195
+        },
+        {
+          "name": "Item B",
+          "quantity": 14,
+          "rate": 173
+        }
+      ],
+      "total": 50878,
+      "createdAt": "2026-06-23T15:44:04.634Z"
+    },
+    {
+      "id": "30a7d825-366b-4ca7-ba32-8c98558d0929",
+      "supplier": "BevCo",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 52,
+          "rate": 145
+        },
+        {
+          "name": "Item B",
+          "quantity": 9,
+          "rate": 210
+        }
+      ],
+      "total": 44479,
+      "createdAt": "2026-06-23T15:44:04.630Z"
+    },
+    {
+      "id": "ffe58e96-58b7-448f-8a12-09ab3dc55495",
+      "supplier": "Food Supplies Inc.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 10,
+          "rate": 178
+        },
+        {
+          "name": "Item B",
+          "quantity": 10,
+          "rate": 289
+        }
+      ],
+      "total": 18784,
+      "createdAt": "2026-06-23T15:44:04.627Z"
+    },
+    {
+      "id": "d3fecf6b-c75e-4308-bed1-98020b970dc9",
+      "supplier": "City Bakery",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 57,
+          "rate": 124
+        },
+        {
+          "name": "Item B",
+          "quantity": 9,
+          "rate": 224
+        }
+      ],
+      "total": 38945,
+      "createdAt": "2026-06-23T15:44:04.624Z"
+    },
+    {
+      "id": "0a11246b-824f-40f7-8069-4b6e5c698aa3",
+      "supplier": "Fresh Poultry Co.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 56,
+          "rate": 73
+        },
+        {
+          "name": "Item B",
+          "quantity": 13,
+          "rate": 304
+        }
+      ],
+      "total": 47604,
+      "createdAt": "2026-06-23T15:44:04.622Z"
+    },
+    {
+      "id": "4c34d047-970d-487a-9a85-0788254e7492",
+      "supplier": "Spice World",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 26,
+          "rate": 72
+        },
+        {
+          "name": "Item B",
+          "quantity": 12,
+          "rate": 206
+        }
+      ],
+      "total": 34722,
+      "createdAt": "2026-06-23T15:44:04.619Z"
+    },
+    {
+      "id": "6952c7fc-26f1-49d0-bee9-882562904fdd",
+      "supplier": "BevCo",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 30,
+          "rate": 67
+        },
+        {
+          "name": "Item B",
+          "quantity": 13,
+          "rate": 199
+        }
+      ],
+      "total": 5371,
+      "createdAt": "2026-06-23T15:44:04.616Z"
+    },
+    {
+      "id": "7a7c2e6e-81fe-4b89-b410-cab3c2284576",
+      "supplier": "Food Supplies Inc.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 36,
+          "rate": 159
+        },
+        {
+          "name": "Item B",
+          "quantity": 13,
+          "rate": 353
+        }
+      ],
+      "total": 34529,
+      "createdAt": "2026-06-23T15:44:04.613Z"
+    },
+    {
+      "id": "b2c74707-2ddd-489f-ac7a-aa88810d8ccd",
+      "supplier": "City Bakery",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 29,
+          "rate": 203
+        },
+        {
+          "name": "Item B",
+          "quantity": 12,
+          "rate": 183
+        }
+      ],
+      "total": 35570,
+      "createdAt": "2026-06-23T15:44:04.610Z"
+    },
+    {
+      "id": "d2401a0f-ec9e-4175-9bd2-69cc35d94993",
+      "supplier": "Fresh Poultry Co.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 28,
+          "rate": 108
+        },
+        {
+          "name": "Item B",
+          "quantity": 24,
+          "rate": 376
+        }
+      ],
+      "total": 41520,
+      "createdAt": "2026-06-23T15:44:04.608Z"
+    },
+    {
+      "id": "76929f44-f928-4ae2-a053-6a001f2612d3",
+      "supplier": "Spice World",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 57,
+          "rate": 140
+        },
+        {
+          "name": "Item B",
+          "quantity": 17,
+          "rate": 111
+        }
+      ],
+      "total": 12643,
+      "createdAt": "2026-06-23T15:44:04.605Z"
+    },
+    {
+      "id": "9a8cd12c-43c8-4a8e-a0e0-c895796acbc7",
+      "supplier": "BevCo",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 29,
+          "rate": 192
+        },
+        {
+          "name": "Item B",
+          "quantity": 23,
+          "rate": 127
+        }
+      ],
+      "total": 35894,
+      "createdAt": "2026-06-23T15:44:04.602Z"
+    },
+    {
+      "id": "45863881-44a4-4d7e-9a08-819043b11108",
+      "supplier": "Food Supplies Inc.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 47,
+          "rate": 165
+        },
+        {
+          "name": "Item B",
+          "quantity": 12,
+          "rate": 366
+        }
+      ],
+      "total": 21958,
+      "createdAt": "2026-06-23T15:44:04.599Z"
+    },
+    {
+      "id": "2676f8b5-e684-4754-9f41-bd30eb4edd75",
+      "supplier": "City Bakery",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 17,
+          "rate": 245
+        },
+        {
+          "name": "Item B",
+          "quantity": 24,
+          "rate": 225
+        }
+      ],
+      "total": 29898,
+      "createdAt": "2026-06-23T15:44:04.596Z"
+    },
+    {
+      "id": "8dabe8e9-fe8d-45fe-98df-e661510f0492",
+      "supplier": "Fresh Poultry Co.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 50,
+          "rate": 160
+        },
+        {
+          "name": "Item B",
+          "quantity": 28,
+          "rate": 142
+        }
+      ],
+      "total": 22132,
+      "createdAt": "2026-06-23T15:44:04.594Z"
+    },
+    {
+      "id": "f87c66a2-2784-4ddc-86b5-b79f3b2060e6",
+      "supplier": "Spice World",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 35,
+          "rate": 230
+        },
+        {
+          "name": "Item B",
+          "quantity": 15,
+          "rate": 198
+        }
+      ],
+      "total": 45823,
+      "createdAt": "2026-06-23T15:44:04.590Z"
+    },
+    {
+      "id": "5d459410-e76f-466d-8496-ab05248630dd",
+      "supplier": "BevCo",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 21,
+          "rate": 54
+        },
+        {
+          "name": "Item B",
+          "quantity": 9,
+          "rate": 383
+        }
+      ],
+      "total": 45403,
+      "createdAt": "2026-06-23T15:44:04.587Z"
+    },
+    {
+      "id": "4d2c6d5c-fefa-49fd-8166-2ac45b29b17e",
+      "supplier": "Food Supplies Inc.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 58,
+          "rate": 96
+        },
+        {
+          "name": "Item B",
+          "quantity": 19,
+          "rate": 165
+        }
+      ],
+      "total": 39331,
+      "createdAt": "2026-06-23T15:44:04.584Z"
+    },
+    {
+      "id": "d5f48227-1787-4e92-8d4a-262d84c6b553",
+      "supplier": "City Bakery",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 58,
+          "rate": 138
+        },
+        {
+          "name": "Item B",
+          "quantity": 28,
+          "rate": 299
+        }
+      ],
+      "total": 14538,
+      "createdAt": "2026-06-23T15:44:04.581Z"
+    },
+    {
+      "id": "03d68afb-0fb2-46ba-b551-6ee94ca75bfc",
+      "supplier": "Fresh Poultry Co.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 52,
+          "rate": 201
+        },
+        {
+          "name": "Item B",
+          "quantity": 26,
+          "rate": 198
+        }
+      ],
+      "total": 26420,
+      "createdAt": "2026-06-23T15:44:04.579Z"
+    },
+    {
+      "id": "3f70026f-cad5-4550-b3cd-13316a121ae3",
+      "supplier": "Spice World",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 49,
+          "rate": 95
+        },
+        {
+          "name": "Item B",
+          "quantity": 19,
+          "rate": 335
+        }
+      ],
+      "total": 12234,
+      "createdAt": "2026-06-23T15:44:04.576Z"
+    },
+    {
+      "id": "6afe99a2-e90b-4acb-aecd-f7ee52400c91",
+      "supplier": "BevCo",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 31,
+          "rate": 221
+        },
+        {
+          "name": "Item B",
+          "quantity": 10,
+          "rate": 307
+        }
+      ],
+      "total": 19606,
+      "createdAt": "2026-06-23T15:44:04.573Z"
+    },
+    {
+      "id": "245f76d0-fc63-486a-be3c-e1cf92b609dd",
+      "supplier": "Food Supplies Inc.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 29,
+          "rate": 146
+        },
+        {
+          "name": "Item B",
+          "quantity": 27,
+          "rate": 261
+        }
+      ],
+      "total": 24536,
+      "createdAt": "2026-06-23T15:44:04.570Z"
+    },
+    {
+      "id": "00d4681d-18ae-4f2e-b85e-8e75a158b3eb",
+      "supplier": "City Bakery",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 53,
+          "rate": 128
+        },
+        {
+          "name": "Item B",
+          "quantity": 19,
+          "rate": 289
+        }
+      ],
+      "total": 49509,
+      "createdAt": "2026-06-23T15:44:04.567Z"
+    },
+    {
+      "id": "e35446c1-c7ae-472a-b955-b5947d782cef",
+      "supplier": "Fresh Poultry Co.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 50,
+          "rate": 199
+        },
+        {
+          "name": "Item B",
+          "quantity": 28,
+          "rate": 326
+        }
+      ],
+      "total": 10903,
+      "createdAt": "2026-06-23T15:44:04.565Z"
+    },
+    {
+      "id": "20c961c1-2e0d-402d-b7de-247d4bc8cbfd",
+      "supplier": "Spice World",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 21,
+          "rate": 225
+        },
+        {
+          "name": "Item B",
+          "quantity": 23,
+          "rate": 357
+        }
+      ],
+      "total": 8719,
+      "createdAt": "2026-06-23T15:44:04.562Z"
+    },
+    {
+      "id": "57d5c8f8-fe98-4a9e-849e-a7ca0c12a4f4",
+      "supplier": "BevCo",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 18,
+          "rate": 201
+        },
+        {
+          "name": "Item B",
+          "quantity": 5,
+          "rate": 352
+        }
+      ],
+      "total": 29032,
+      "createdAt": "2026-06-23T15:44:04.560Z"
+    },
+    {
+      "id": "f7a9386d-115e-4336-8e61-b65161c4a4ac",
+      "supplier": "Food Supplies Inc.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 20,
+          "rate": 78
+        },
+        {
+          "name": "Item B",
+          "quantity": 27,
+          "rate": 156
+        }
+      ],
+      "total": 17357,
+      "createdAt": "2026-06-23T15:44:04.557Z"
+    },
+    {
+      "id": "ffbf5981-3aed-453c-9f16-59010a7f7ced",
+      "supplier": "City Bakery",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 27,
+          "rate": 150
+        },
+        {
+          "name": "Item B",
+          "quantity": 13,
+          "rate": 385
+        }
+      ],
+      "total": 17472,
+      "createdAt": "2026-06-23T15:44:04.555Z"
+    },
+    {
+      "id": "c74565ef-0608-490f-beac-5c70e3575179",
+      "supplier": "Fresh Poultry Co.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 45,
+          "rate": 231
+        },
+        {
+          "name": "Item B",
+          "quantity": 12,
+          "rate": 179
+        }
+      ],
+      "total": 50729,
+      "createdAt": "2026-06-23T15:44:04.552Z"
+    },
+    {
+      "id": "b01f3a88-11b8-42d6-90bd-e9af2a556ab9",
+      "supplier": "Spice World",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 57,
+          "rate": 237
+        },
+        {
+          "name": "Item B",
+          "quantity": 31,
+          "rate": 180
+        }
+      ],
+      "total": 4213,
+      "createdAt": "2026-06-23T15:44:04.549Z"
+    },
+    {
+      "id": "9ef69b51-26d7-424c-b3a9-4acff1f6e959",
+      "supplier": "BevCo",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 59,
+          "rate": 145
+        },
+        {
+          "name": "Item B",
+          "quantity": 32,
+          "rate": 335
+        }
+      ],
+      "total": 8501,
+      "createdAt": "2026-06-23T15:44:04.547Z"
+    },
+    {
+      "id": "d6d7b969-5f03-4664-80e9-71b6d55f36c0",
+      "supplier": "Food Supplies Inc.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 28,
+          "rate": 141
+        },
+        {
+          "name": "Item B",
+          "quantity": 25,
+          "rate": 130
+        }
+      ],
+      "total": 31133,
+      "createdAt": "2026-06-23T15:44:04.544Z"
+    },
+    {
+      "id": "5ada825c-688d-47c8-b1d2-517fccd4ad70",
+      "supplier": "City Bakery",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 59,
+          "rate": 96
+        },
+        {
+          "name": "Item B",
+          "quantity": 33,
+          "rate": 118
+        }
+      ],
+      "total": 21481,
+      "createdAt": "2026-06-23T15:44:04.542Z"
+    },
+    {
+      "id": "a4dbb0fb-f63f-4d32-8a11-df3b823ad622",
+      "supplier": "Fresh Poultry Co.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 31,
+          "rate": 184
+        },
+        {
+          "name": "Item B",
+          "quantity": 12,
+          "rate": 231
+        }
+      ],
+      "total": 21170,
+      "createdAt": "2026-06-23T15:44:04.538Z"
+    },
+    {
+      "id": "ebfcb513-632f-4487-aee4-85253fdcd7d9",
+      "supplier": "Spice World",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 48,
+          "rate": 73
+        },
+        {
+          "name": "Item B",
+          "quantity": 29,
+          "rate": 385
+        }
+      ],
+      "total": 24143,
+      "createdAt": "2026-06-23T15:44:04.535Z"
+    },
+    {
+      "id": "88b2f251-a364-4a3b-9439-3312db7595c3",
+      "supplier": "BevCo",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 21,
+          "rate": 177
+        },
+        {
+          "name": "Item B",
+          "quantity": 30,
+          "rate": 267
+        }
+      ],
+      "total": 3006,
+      "createdAt": "2026-06-23T15:44:04.533Z"
+    },
+    {
+      "id": "b6424b58-d382-46b6-ba45-4f334cc6c57f",
+      "supplier": "Food Supplies Inc.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 12,
+          "rate": 228
+        },
+        {
+          "name": "Item B",
+          "quantity": 13,
+          "rate": 224
+        }
+      ],
+      "total": 48222,
+      "createdAt": "2026-06-23T15:44:04.530Z"
+    },
+    {
+      "id": "cb2747e8-b234-42f9-b42c-060cf5ec4729",
+      "supplier": "City Bakery",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 48,
+          "rate": 101
+        },
+        {
+          "name": "Item B",
+          "quantity": 34,
+          "rate": 240
+        }
+      ],
+      "total": 50084,
+      "createdAt": "2026-06-23T15:44:04.528Z"
+    },
+    {
+      "id": "659a2fff-7c24-4cbd-bd73-06822ddde28e",
+      "supplier": "Fresh Poultry Co.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 18,
+          "rate": 50
+        },
+        {
+          "name": "Item B",
+          "quantity": 14,
+          "rate": 331
+        }
+      ],
+      "total": 31507,
+      "createdAt": "2026-06-23T15:44:04.525Z"
+    },
+    {
+      "id": "237c7891-aeb9-484e-bbde-283879b2243e",
+      "supplier": "Spice World",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 53,
+          "rate": 185
+        },
+        {
+          "name": "Item B",
+          "quantity": 16,
+          "rate": 327
+        }
+      ],
+      "total": 48685,
+      "createdAt": "2026-06-23T15:44:04.522Z"
+    },
+    {
+      "id": "eee86e36-d4fe-4eb4-9438-a3896e1f066f",
+      "supplier": "BevCo",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 29,
+          "rate": 71
+        },
+        {
+          "name": "Item B",
+          "quantity": 24,
+          "rate": 251
+        }
+      ],
+      "total": 14742,
+      "createdAt": "2026-06-23T15:44:04.520Z"
+    },
+    {
+      "id": "e2e4f320-f63b-4131-bd5c-9d9337ab2bda",
+      "supplier": "Food Supplies Inc.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 16,
+          "rate": 188
+        },
+        {
+          "name": "Item B",
+          "quantity": 25,
+          "rate": 371
+        }
+      ],
+      "total": 44759,
+      "createdAt": "2026-06-23T15:44:04.517Z"
+    },
+    {
+      "id": "cac2f1ce-6659-4f02-b199-19e2457628d9",
+      "supplier": "City Bakery",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 19,
+          "rate": 110
+        },
+        {
+          "name": "Item B",
+          "quantity": 32,
+          "rate": 325
+        }
+      ],
+      "total": 32001,
+      "createdAt": "2026-06-23T15:44:04.515Z"
+    },
+    {
+      "id": "19610a65-fdd5-496d-ae39-e16fdb84aaa3",
+      "supplier": "Fresh Poultry Co.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 58,
+          "rate": 54
+        },
+        {
+          "name": "Item B",
+          "quantity": 27,
+          "rate": 273
+        }
+      ],
+      "total": 44700,
+      "createdAt": "2026-06-23T15:44:04.513Z"
+    },
+    {
+      "id": "d01a98c0-a560-4c78-83be-d915a0541151",
+      "supplier": "Spice World",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 17,
+          "rate": 164
+        },
+        {
+          "name": "Item B",
+          "quantity": 14,
+          "rate": 140
+        }
+      ],
+      "total": 15611,
+      "createdAt": "2026-06-23T15:44:04.510Z"
+    },
+    {
+      "id": "c0e4e476-20e7-4bfd-a22b-e8588f129bf5",
+      "supplier": "BevCo",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 16,
+          "rate": 214
+        },
+        {
+          "name": "Item B",
+          "quantity": 24,
+          "rate": 263
+        }
+      ],
+      "total": 32081,
+      "createdAt": "2026-06-23T15:44:04.507Z"
+    },
+    {
+      "id": "78922f6a-a50f-4a91-9979-e08ff43cc29a",
+      "supplier": "Food Supplies Inc.",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 33,
+          "rate": 116
+        },
+        {
+          "name": "Item B",
+          "quantity": 5,
+          "rate": 138
+        }
+      ],
+      "total": 13007,
+      "createdAt": "2026-06-23T15:44:04.504Z"
+    },
+    {
+      "id": "a3983c6d-3ec1-4ac3-87b4-8bce16a5cbdd",
+      "supplier": "City Bakery",
+      "items": [
+        {
+          "name": "Item A",
+          "quantity": 46,
+          "rate": 125
+        },
+        {
+          "name": "Item B",
+          "quantity": 18,
+          "rate": 127
+        }
+      ],
+      "total": 20059,
+      "createdAt": "2026-06-23T15:44:04.502Z"
+    }
+  ],
+  "onlineOrders": [
+    {
+      "id": "5ff1849d-875a-4685-a56c-557ac79fa60b",
+      "aggregator": "swiggy",
+      "aggregatorName": "Swiggy",
+      "externalOrderId": "SW4673",
+      "customerName": "Online Customer",
+      "customerPhone": "9999944673",
+      "customerAddress": "",
+      "items": [
+        {
+          "name": "Chicken Burger",
+          "quantity": 2,
+          "price": 129,
+          "total": 258
+        }
+      ],
+      "total": 258,
+      "platformStatus": "ready",
+      "estimatedTime": 25,
+      "internalOrderId": "a5ffcce7-f8ca-45b4-9ab5-aea72de3c6fd",
+      "internalOrder": {
+        "id": "a5ffcce7-f8ca-45b4-9ab5-aea72de3c6fd",
+        "orderNumber": 1107,
+        "type": "delivery",
+        "status": "ready",
+        "source": "online",
+        "subtotal": 258,
+        "tax": 46,
+        "total": 304,
+        "paymentMethod": "online",
+        "paymentStatus": "paid",
+        "tableNumber": "",
+        "customerName": "Online Customer",
+        "customerPhone": "9999944673",
+        "notes": "Online: Swiggy #SW4673",
+        "createdAt": "2026-06-23T15:44:04.677Z",
+        "updatedAt": "2026-06-23T15:44:04.683Z",
+        "items": [
+          {
+            "id": "956d751b-f82f-463c-9bf8-c3a7535a73b8",
+            "menuItemId": null,
+            "menuItemName": "Chicken Burger",
+            "quantity": 2,
+            "unitPrice": 129,
+            "totalPrice": 258,
+            "status": "pending"
+          }
+        ]
+      },
+      "notes": "",
+      "createdAt": "2026-06-23T15:44:04.673Z",
+      "updatedAt": "2026-06-23T15:44:04.681Z"
+    }
+  ],
+  "aggregators": [
+    {
+      "id": "swiggy",
+      "name": "Swiggy",
+      "displayName": "Swiggy",
+      "isActive": true,
+      "defaultPrepTime": 25,
+      "color": "#ff5200"
+    },
+    {
+      "id": "zomato",
+      "name": "Zomato",
+      "displayName": "Zomato",
+      "isActive": true,
+      "defaultPrepTime": 20,
+      "color": "#e23744"
+    },
+    {
+      "id": "zepto",
+      "name": "Zepto",
+      "displayName": "Zepto",
+      "isActive": true,
+      "defaultPrepTime": 15,
+      "color": "#9d2b6b"
+    },
+    {
+      "id": "direct",
+      "name": "Direct",
+      "displayName": "Direct Order",
+      "isActive": true,
+      "defaultPrepTime": 20,
+      "color": "#4895ef"
+    }
+  ],
+  "billingUsers": [
+    {
+      "id": "bu_1782014049870_j7qw",
+      "name": "Admin",
+      "pin": "$2b$10$WY9YKI1FuMKWYrUwrU1//OHRIQAODSCAMLJA.GDYr5Tvf9h4KptW2",
+      "role": "admin",
+      "permissions": {
+        "pos": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "captain": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kitchen": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "billing": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kot": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "purchase": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "inventory": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "menu": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "hr": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "loyalty": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "customers": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "reports": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "dashboard": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "onlineOrders": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "users": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        }
+      },
+      "createdAt": "2026-06-21T03:54:09.871Z"
+    },
+    {
+      "id": "bu_1782014049877_jjxb",
+      "name": "Manager",
+      "pin": "$2b$10$iFlIvq3d/iNmfHyJMq9Wq.oNQX37kU52fNB7n6HI1Gz47VW4DPCFC",
+      "role": "manager",
+      "permissions": {
+        "pos": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "captain": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kitchen": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "billing": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kot": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "purchase": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "inventory": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "menu": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "hr": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "loyalty": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "customers": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "reports": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "dashboard": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "onlineOrders": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "users": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        }
+      },
+      "createdAt": "2026-06-21T03:54:09.877Z"
+    },
+    {
+      "id": "bu_1782014049877_p7h9",
+      "name": "Cashier",
+      "pin": "$2b$10$752g0jDA99FMMpzYdZSwN.cKZWsDVmuoBSYVwEv71Q06gxjU84W7q",
+      "role": "cashier",
+      "permissions": {
+        "pos": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "captain": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "kitchen": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "billing": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "kot": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "purchase": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "inventory": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "menu": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "hr": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "loyalty": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "customers": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "reports": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "dashboard": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "onlineOrders": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "users": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        }
+      },
+      "createdAt": "2026-06-21T03:54:09.877Z"
+    },
+    {
+      "id": "bu_1782014049877_0284",
+      "name": "Kitchen",
+      "pin": "$2b$10$D1rTgMmZQQzaYnS9xKNwOeBdH1P8TsIrr4XQvYecHggetNU4mM5Ge",
+      "role": "kitchen",
+      "permissions": {
+        "pos": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "captain": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "kitchen": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "billing": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "kot": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "purchase": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "inventory": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "menu": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "hr": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "loyalty": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "customers": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "reports": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "dashboard": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "onlineOrders": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "users": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        }
+      },
+      "createdAt": "2026-06-21T03:54:09.877Z"
+    },
+    {
+      "id": "bu_1782014049877_didy",
+      "name": "Kitchen Staff",
+      "pin": "$2b$10$oSGwd2JNoT44brDaBiOlT.ez61T2/8be4klpddq9uMIZuIyUz5FDa",
+      "role": "kitchen",
+      "permissions": {
+        "pos": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "captain": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "kitchen": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "billing": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "kot": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "purchase": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "inventory": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "menu": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "hr": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "loyalty": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "customers": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "reports": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "dashboard": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "onlineOrders": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "users": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        }
+      },
+      "createdAt": "2026-06-21T03:54:09.877Z"
+    },
+    {
+      "id": "bu_superadmin",
+      "name": "Super Admin",
+      "pin": "$2b$10$EPZeyFEmAk5IDdXuy9CTxukXtCIobU.Ov2fbxMGkpsDvuoupiPN9.",
+      "role": "super-admin",
+      "permissions": {
+        "pos": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "captain": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kitchen": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "billing": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kot": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "purchase": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "inventory": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "menu": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "hr": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "loyalty": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "customers": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "reports": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "dashboard": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "onlineOrders": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "users": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "expenses": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        }
+      },
+      "createdAt": "2026-06-24T17:54:30.333Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "c1",
+      "name": "Gyros",
+      "displayOrder": 1,
+      "color": "#e63946"
+    },
+    {
+      "id": "c2",
+      "name": "Burger",
+      "displayOrder": 2,
+      "color": "#f59e0b"
+    },
+    {
+      "id": "c3",
+      "name": "Fried items",
+      "displayOrder": 3,
+      "color": "#10b981"
+    },
+    {
+      "id": "c4",
+      "name": "Golden crunchy chicken",
+      "displayOrder": 4,
+      "color": "#dc2626"
+    },
+    {
+      "id": "c5",
+      "name": "Golden Glaze Chicken",
+      "displayOrder": 5,
+      "color": "#fbbf24"
+    },
+    {
+      "id": "c6",
+      "name": "Thick Shakes",
+      "displayOrder": 6,
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "c7",
+      "name": "Ice Cream",
+      "displayOrder": 7,
+      "color": "#ec4899"
+    },
+    {
+      "id": "c8",
+      "name": "Desserts",
+      "displayOrder": 8,
+      "color": "#f472b6"
+    },
+    {
+      "id": "c9",
+      "name": "Beverages",
+      "displayOrder": 9,
+      "color": "#3b82f6"
+    }
+  ],
+  "menuItems": [
+    {
+      "id": "m1",
+      "categoryId": "c1",
+      "name": "Veg - BBQ Paneer",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m2",
+      "categoryId": "c1",
+      "name": "Veg - Beetroot Falafal",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m3",
+      "categoryId": "c1",
+      "name": "Veg - Mushroom Falafal",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m4",
+      "categoryId": "c1",
+      "name": "Non-Veg - Sour Cream Chicken",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m5",
+      "categoryId": "c1",
+      "name": "Non-Veg - BBQ Chicken",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m6",
+      "categoryId": "c1",
+      "name": "Non-Veg - Peri Peri Chicken",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m7",
+      "categoryId": "c1",
+      "name": "Non-Veg - Crunchy Chicken",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m8",
+      "categoryId": "c1",
+      "name": "Non-Veg - Fried Fish",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m9",
+      "categoryId": "c1",
+      "name": "Non-Veg - BBQ Prawn",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m10",
+      "categoryId": "c2",
+      "name": "Veg - Spinach (veg meat)",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m11",
+      "categoryId": "c2",
+      "name": "Veg - Beetroot",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m12",
+      "categoryId": "c2",
+      "name": "Non-Veg - Fried Chicken",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m13",
+      "categoryId": "c2",
+      "name": "Non-Veg - Sourcream Chicken",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m14",
+      "categoryId": "c2",
+      "name": "Non-Veg - BBQ Chicken",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m15",
+      "categoryId": "c2",
+      "name": "Non-Veg - Fish with Egg",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m16",
+      "categoryId": "c3",
+      "name": "Veg Nuggets",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m17",
+      "categoryId": "c3",
+      "name": "French Fries",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m18",
+      "categoryId": "c3",
+      "name": "Chicken Nuggets",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m19",
+      "categoryId": "c3",
+      "name": "Fish Finger",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m20",
+      "categoryId": "c4",
+      "name": "Fried Chicken (1pc)",
+      "price": 69,
+      "isAvailable": true
+    },
+    {
+      "id": "m21",
+      "categoryId": "c4",
+      "name": "Fried Chicken (2pc)",
+      "price": 129,
+      "isAvailable": true
+    },
+    {
+      "id": "m22",
+      "categoryId": "c4",
+      "name": "Fried Chicken (4pc)",
+      "price": 249,
+      "isAvailable": true
+    },
+    {
+      "id": "m23",
+      "categoryId": "c4",
+      "name": "Fried Chicken (8pc)",
+      "price": 499,
+      "isAvailable": true
+    },
+    {
+      "id": "m24",
+      "categoryId": "c4",
+      "name": "Strips (3pc)",
+      "price": 119,
+      "isAvailable": true
+    },
+    {
+      "id": "m25",
+      "categoryId": "c4",
+      "name": "Strips (6pc)",
+      "price": 229,
+      "isAvailable": true
+    },
+    {
+      "id": "m26",
+      "categoryId": "c4",
+      "name": "Strips (9pc)",
+      "price": 349,
+      "isAvailable": true
+    },
+    {
+      "id": "m27",
+      "categoryId": "c4",
+      "name": "Strips (12pc)",
+      "price": 479,
+      "isAvailable": true
+    },
+    {
+      "id": "m28",
+      "categoryId": "c4",
+      "name": "Wings (3pc)",
+      "price": 109,
+      "isAvailable": true
+    },
+    {
+      "id": "m29",
+      "categoryId": "c4",
+      "name": "Wings (6pc)",
+      "price": 219,
+      "isAvailable": true
+    },
+    {
+      "id": "m30",
+      "categoryId": "c4",
+      "name": "Wings (9pc)",
+      "price": 329,
+      "isAvailable": true
+    },
+    {
+      "id": "m31",
+      "categoryId": "c4",
+      "name": "Wings (12pc)",
+      "price": 429,
+      "isAvailable": true
+    },
+    {
+      "id": "m32",
+      "categoryId": "c5",
+      "name": "Glaze Strips (3pc)",
+      "price": 149,
+      "isAvailable": true
+    },
+    {
+      "id": "m33",
+      "categoryId": "c5",
+      "name": "Glaze Strips (6pc)",
+      "price": 299,
+      "isAvailable": true
+    },
+    {
+      "id": "m34",
+      "categoryId": "c5",
+      "name": "Glaze Wings (3pc)",
+      "price": 149,
+      "isAvailable": true
+    },
+    {
+      "id": "m35",
+      "categoryId": "c5",
+      "name": "Glaze Wings (6pc)",
+      "price": 299,
+      "isAvailable": true
+    },
+    {
+      "id": "m36",
+      "categoryId": "c6",
+      "name": "Chocolate Blizzard",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m37",
+      "categoryId": "c6",
+      "name": "Vanilla Blizzard",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m38",
+      "categoryId": "c6",
+      "name": "Strawberry Blizzard",
+      "price": 100,
+      "isAvailable": true
+    },
+    {
+      "id": "m39",
+      "categoryId": "c7",
+      "name": "Bourbon Softy",
+      "price": 59,
+      "isAvailable": true
+    },
+    {
+      "id": "m40",
+      "categoryId": "c7",
+      "name": "Vanila Softy",
+      "price": 49,
+      "isAvailable": true
+    },
+    {
+      "id": "m41",
+      "categoryId": "c7",
+      "name": "Choco Dip Softy",
+      "price": 89,
+      "isAvailable": true
+    },
+    {
+      "id": "m42",
+      "categoryId": "c7",
+      "name": "Caramel Sundae",
+      "price": 69,
+      "isAvailable": true
+    },
+    {
+      "id": "m43",
+      "categoryId": "c7",
+      "name": "Strawberry Sundae",
+      "price": 69,
+      "isAvailable": true
+    },
+    {
+      "id": "m44",
+      "categoryId": "c7",
+      "name": "Chocolate Sundae",
+      "price": 69,
+      "isAvailable": true
+    },
+    {
+      "id": "m45",
+      "categoryId": "c8",
+      "name": "Chocolate Donuts",
+      "price": 119,
+      "isAvailable": true
+    },
+    {
+      "id": "m46",
+      "categoryId": "c8",
+      "name": "Vanila Donuts",
+      "price": 99,
+      "isAvailable": true
+    },
+    {
+      "id": "m47",
+      "categoryId": "c8",
+      "name": "Tiramissu",
+      "price": 249,
+      "isAvailable": true
+    },
+    {
+      "id": "m48",
+      "categoryId": "c8",
+      "name": "Redvelvet Cake",
+      "price": 249,
+      "isAvailable": true
+    },
+    {
+      "id": "m49",
+      "categoryId": "c8",
+      "name": "Banoffee",
+      "price": 249,
+      "isAvailable": true
+    },
+    {
+      "id": "m50",
+      "categoryId": "c8",
+      "name": "Caramel Hazelnut",
+      "price": 249,
+      "isAvailable": true
+    },
+    {
+      "id": "m51",
+      "categoryId": "c8",
+      "name": "Chocolate Dome",
+      "price": 249,
+      "isAvailable": true
+    },
+    {
+      "id": "m52",
+      "categoryId": "c9",
+      "name": "Coke",
+      "price": 39,
+      "isAvailable": true
+    },
+    {
+      "id": "m53",
+      "categoryId": "c9",
+      "name": "Lemonade",
+      "price": 39,
+      "isAvailable": true
+    },
+    {
+      "id": "m54",
+      "categoryId": "c9",
+      "name": "Kombhucha",
+      "price": 99,
+      "isAvailable": true
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "S1782295480248",
+      "name": "AAA",
+      "category": "Groceries",
+      "contact": "86513503523",
+      "email": "xxxx@xnxx.in",
+      "address": "asd, asdsa",
+      "rating": 0,
+      "defaultInvoiceNo": "",
+      "invoicePrefix": ""
+    },
+    {
+      "id": "S1782298317141",
+      "name": "Anbarasu",
+      "category": "Proteins",
+      "contact": "65416581681",
+      "email": "asd@dmil.com",
+      "address": "sdfdm, sd;fldsl",
+      "rating": 0,
+      "defaultInvoiceNo": "",
+      "invoicePrefix": ""
+    },
+    {
+      "id": "S1782298344588",
+      "name": "Athiyaman",
+      "category": "Beverages",
+      "contact": "68416565346",
+      "email": "xcvc@hi.in",
+      "address": "fghfgb",
+      "rating": 0,
+      "defaultInvoiceNo": "",
+      "invoicePrefix": ""
+    }
+  ],
+  "purchaseOrders": [
+    {
+      "id": "PO001",
+      "supplier": "AAA",
+      "items": 1,
+      "total": 1000,
+      "status": "completed",
+      "date": "2026-06-24",
+      "expectedDate": "2026-06-24"
+    },
+    {
+      "id": "PO002",
+      "supplier": "AAA",
+      "items": 1,
+      "total": 20000,
+      "status": "pending",
+      "date": "2026-07-02",
+      "expectedDate": "2026-07-03"
+    }
+  ],
+  "poItems": [
+    {
+      "id": "PIPO0010",
+      "poId": "PO001",
+      "name": "Fries",
+      "quantity": 1,
+      "unit": "kg",
+      "rate": 1000,
+      "received": 0
+    },
+    {
+      "id": "PIPO0020",
+      "poId": "PO002",
+      "name": "Chicken Breast",
+      "quantity": 4,
+      "unit": "kg",
+      "rate": 5000,
+      "received": 0
+    }
+  ],
+  "grns": [
+    {
+      "id": "GRN001",
+      "poId": "PO001",
+      "supplier": "AAA",
+      "items": 1,
+      "totalValue": 1000,
+      "invoiceNo": "INV-2026-1021",
+      "invoiceImage": null,
+      "date": "2026-06-24",
+      "status": "completed",
+      "receivedBy": "",
+      "remarks": "",
+      "vehicleNo": ""
+    }
+  ],
+  "settings": {
+    "company": {
+      "name": "Ten Den Gyros",
+      "address": "Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram",
+      "phone": "000000000",
+      "email": "",
+      "gst": "",
+      "logo": null
+    },
+    "theme": {
+      "accentPrimary": "#e63946",
+      "accentPrimaryDark": "#c1121f",
+      "bgPrimary": "#f5f5f7"
+    },
+    "printers": [
+      {
+        "id": "default",
+        "name": "Default Printer",
+        "ip": "",
+        "type": "browser",
+        "isDefault": true
+      }
+    ]
+  },
+  "vendorPayments": [
+    {
+      "id": "VP1783009311980",
+      "supplier": "AAA",
+      "poId": "PO001",
+      "grnId": "GRN001",
+      "amount": 100,
+      "paymentMethod": "bank",
+      "reference": "",
+      "paymentDate": "2026-07-02",
+      "notes": "",
+      "createdAt": "2026-07-02T16:21:51.980Z"
+    }
+  ]
+}
