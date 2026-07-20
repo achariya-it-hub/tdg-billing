@@ -18,6 +18,38 @@ class _MenuScreenState extends State<MenuScreen> {
   Map<String, List<Map<String, dynamic>>> _menuItems = {};
   bool _isLoading = false;
 
+  static const Map<String, List<Map<String, dynamic>>> _fallbackMenu = {
+    'Gyros': [
+      {'name': 'Non-Veg - Spicy Chicken Gyro (Regular)', 'desc': 'Fresh pita wrap with spicy chicken, hummus & veggies', 'price': '₹99'},
+      {'name': 'Non-Veg - Spicy Chicken Gyro (Large)', 'desc': 'Double portion spicy chicken gyro with extra dips', 'price': '₹249'},
+      {'name': 'Non-Veg - Cream Chicken Gyro (Regular)', 'desc': 'Creamy garlic chicken in fluffy pita bread', 'price': '₹99'},
+      {'name': 'Veg - Spicy Paneer Gyro (Regular)', 'desc': 'Grilled paneer with spicy mayo & crisp iceberg', 'price': '₹99'},
+    ],
+    'Burger': [
+      {'name': 'Non-Veg - Crispy Chicken Burger', 'desc': 'Crispy chicken patty with lettuce & signature sauce', 'price': '₹99'},
+      {'name': 'Non-Veg - Spicy Egg Burger', 'desc': 'Spiced fried egg with cheese slice in sesame bun', 'price': '₹79'},
+      {'name': 'Veg - Spicy Paneer Burger', 'desc': 'Golden paneer patty with spicy jalapenos', 'price': '₹99'},
+    ],
+    'TDG Crispy Chicken': [
+      {'name': 'Non-Veg - 3 Pc Crispy Wings (1 Dip)', 'desc': '3 pcs hot & spicy crispy fried chicken wings', 'price': '₹90'},
+      {'name': 'Non-Veg - 6 Pc Crispy Wings (2 Dip)', 'desc': '6 pcs crispy wings with choice of 2 dips', 'price': '₹180'},
+      {'name': 'Non-Veg - 3 Pc Crispy Strips (1 Dip)', 'desc': '3 pcs boneless crispy chicken tenders', 'price': '₹120'},
+    ],
+    'Sides': [
+      {'name': 'Veg - Fries (Salted, Peri Peri Or Cajun)', 'desc': 'Golden French fries tossed in your favorite seasoning', 'price': '₹99'},
+      {'name': 'Non-Veg - Loaded Chicken Fries', 'desc': 'Crispy fries topped with chicken bits & cheese sauce', 'price': '₹199'},
+    ],
+    'Thick Shakes': [
+      {'name': 'Veg - Vanilla Shake (Regular)', 'desc': 'Rich creamy vanilla thick shake', 'price': '₹99'},
+      {'name': 'Veg - Biscoff Shake (Regular)', 'desc': 'Lotus biscoff crunch thick shake', 'price': '₹99'},
+      {'name': 'Veg - Dark Chocolate Shake (Regular)', 'desc': 'Indulgent Belgian dark chocolate shake', 'price': '₹99'},
+    ],
+    'Beverages': [
+      {'name': 'Veg - Sprite / Coca-Cola (Regular)', 'desc': 'Chilled 330ml soda with ice & lemon', 'price': '₹59'},
+      {'name': 'Veg - Hot Chocolate', 'desc': 'Warm creamy hot chocolate drink', 'price': '₹149'},
+    ]
+  };
+
   @override
   void initState() {
     super.initState();
@@ -30,31 +62,46 @@ class _MenuScreenState extends State<MenuScreen> {
       final menuData = await ApiService().getMenu();
       final List<dynamic> items = menuData['items'] ?? [];
       
-      final Map<String, List<Map<String, dynamic>>> grouped = {};
-      for (var item in items) {
-        final cat = item['category'] ?? 'Others';
-        if (!grouped.containsKey(cat)) {
-          grouped[cat] = [];
+      if (items.isNotEmpty) {
+        final Map<String, List<Map<String, dynamic>>> grouped = {};
+        for (var item in items) {
+          final cat = item['category'] ?? 'Others';
+          if (!grouped.containsKey(cat)) {
+            grouped[cat] = [];
+          }
+          grouped[cat]!.add({
+            'name': item['name'] ?? '',
+            'desc': item['desc'] ?? '',
+            'price': '₹${item['price']}',
+          });
         }
-        grouped[cat]!.add({
-          'name': item['name'] ?? '',
-          'desc': item['desc'] ?? '',
-          'price': '₹${item['price']}',
-        });
-      }
 
-      setState(() {
-        _categories = List<String>.from(menuData['categories'] ?? _categories);
-        _menuItems = grouped;
-        if (_categories.isNotEmpty && !_categories.contains(_selectedCategory)) {
-          _selectedCategory = _categories.first;
-        }
-      });
+        setState(() {
+          _categories = List<String>.from(menuData['categories'] ?? _categories);
+          _menuItems = grouped;
+          if (_categories.isNotEmpty && !_categories.contains(_selectedCategory)) {
+            _selectedCategory = _categories.first;
+          }
+        });
+      } else {
+        _useFallbackMenu();
+      }
     } catch (e) {
       debugPrint("Error loading menu: $e");
+      _useFallbackMenu();
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  void _useFallbackMenu() {
+    setState(() {
+      _categories = _fallbackMenu.keys.toList();
+      _menuItems = _fallbackMenu;
+      if (!_categories.contains(_selectedCategory)) {
+        _selectedCategory = _categories.first;
+      }
+    });
   }
 
   @override

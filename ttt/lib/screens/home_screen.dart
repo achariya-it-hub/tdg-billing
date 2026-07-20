@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       await ApiService().getProfile();
       await ApiService().getWallet();
+      if (mounted) setState(() {});
       
       final menuData = await ApiService().getMenu();
       final List<dynamic> items = menuData['items'] ?? [];

@@ -159,6 +159,7 @@ function saveState() {
   db.categories = categories
   db.menuItems = menuItems
   db.recipes = recipes
+  db.users = mobileAppUsers
   db.suppliers = suppliers
   db.purchaseOrders = purchaseOrders
   db.poItems = poItems
@@ -197,6 +198,7 @@ function restoreState() {
   if (db.categories?.length) categories = db.categories
   if (db.menuItems?.length) menuItems = db.menuItems
   if (db.recipes?.length) recipes = db.recipes
+  if (db.users?.length) mobileAppUsers = db.users
   if (db.suppliers?.length) suppliers = db.suppliers
   if (db.purchaseOrders?.length) purchaseOrders = db.purchaseOrders
   if (db.poItems?.length) poItems = db.poItems
@@ -229,6 +231,7 @@ if (!existsSync(UPLOADS_DIR)) mkdirSync(UPLOADS_DIR, { recursive: true })
 app.use('/uploads', express.static(UPLOADS_DIR))
 
 // In-memory database
+let mobileAppUsers = []
 let orders = []
 let orderNumber = 1000
 let categories = [
@@ -422,11 +425,10 @@ app.post('/api/auth/signup', async (req, res) => {
     if (!name || !email || !phone || !password) {
       return res.status(400).json({ message: 'All fields are required' })
     }
-    const db = readDb()
-    if (db.users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+    if (mobileAppUsers.find(u => u.email.toLowerCase() === email.toLowerCase())) {
       return res.status(400).json({ message: 'User with this email already exists' })
     }
-    if (db.users.find(u => u.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''))) {
+    if (mobileAppUsers.find(u => u.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''))) {
       return res.status(400).json({ message: 'User with this phone number already exists' })
     }
     const salt = await bcrypt.genSalt(10)
@@ -452,7 +454,7 @@ app.post('/api/auth/signup', async (req, res) => {
 
     // Link to master user if referredBy is provided
     if (referredBy) {
-      const master = db.users.find(u => u.id === referredBy || u.email.toLowerCase() === referredBy.toLowerCase() || u.phone.replace(/[^0-9]/g, '') === referredBy.replace(/[^0-9]/g, ''))
+      const master = mobileAppUsers.find(u => u.id === referredBy || u.email.toLowerCase() === referredBy.toLowerCase() || u.phone.replace(/[^0-9]/g, '') === referredBy.replace(/[^0-9]/g, ''))
       if (master) {
         newUser.referredBy = master.id
         newUser.referredByName = master.name
@@ -491,21 +493,11 @@ app.post('/api/auth/signup', async (req, res) => {
         master.assets = masterAssets
         // Give referrer +50 bonus points
         master.points = (master.points || 0) + 50
-        if (!db.transactions) db.transactions = []
-        db.transactions.push({
-          id: 't_' + Date.now() + '_ref',
-          userId: master.id,
-          type: 'credit',
-          amount: 50,
-          description: `Referral bonus: ${name} joined your den`,
-          createdAt: now
-        })
-        writeDb(db)
       }
     }
 
-    db.users.push(newUser)
-    writeDb(db)
+    mobileAppUsers.push(newUser)
+    saveState()
 
     const token = jwt.sign({ userId: newUser.id }, JWT_SECRET, { expiresIn: '7d' })
     const { password: _, ...userWithoutPassword } = newUser
@@ -523,9 +515,8 @@ app.post('/api/auth/login', async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' })
     }
-    const db = readDb()
     const clean = email.trim().toLowerCase()
-    const user = db.users.find(u => u.email.toLowerCase() === clean || u.phone.replace(/[^0-9]/g, '') === clean.replace(/[^0-9]/g, ''))
+    const user = mobileAppUsers.find(u => u.email.toLowerCase() === clean || u.phone.replace(/[^0-9]/g, '') === clean.replace(/[^0-9]/g, ''))
     if (!user) return res.status(400).json({ message: 'Invalid credentials' })
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' })
@@ -614,13 +605,13 @@ app.put('/api/auth/profile', auth, (req, res) => {
 
 // Get user's assets and points
 app.get('/api/assets', auth, (req, res) => {
-  const db = readDb()
-  const user = db.users.find(u => u.id === req.userId)
+  const user = mobileAppUsers.find(u => u.id === req.userId)
   if (!user) return res.status(404).json({ message: 'User not found' })
   res.json({
     points: user.points || 0,
     assets: user.assets || [],
     totalDistributed: user.totalDistributed || 0,
+    availablePoints: (user.points || 0) - (user.totalDistributed || 0),
     cashbackEarned: user.cashbackEarned || 0,
     assetsDinedCount: user.assetsDinedCount || 0,
     allAssetsActive: user.allAssetsActive || false,
@@ -635,8 +626,7 @@ app.post('/api/assets', auth, (req, res) => {
   const { name, phone } = req.body
   if (!name || !phone) return res.status(400).json({ message: 'Name and phone required' })
 
-  const db = readDb()
-  const user = db.users.find(u => u.id === req.userId)
+  const user = mobileAppUsers.find(u => u.id === req.userId)
   if (!user) return res.status(404).json({ message: 'User not found' })
 
   const assets = user.assets || []
@@ -661,7 +651,7 @@ app.post('/api/assets', auth, (req, res) => {
 
   assets.push(newAsset)
   user.assets = assets
-  writeDb(db)
+  saveState()
   res.json({ success: true, asset: newAsset, assets: user.assets, otp })
 })
 
@@ -1270,20 +1260,20 @@ app.get('/api/menu', (req, res) => {
       id: item.id,
       name: item.name,
       price: item.price,
+      desc: item.description || '',
       category: categories.find(c => c.id === item.categoryId)?.name || 'Other',
       tag: item.isAvailable ? 'Popular' : '',
       image: item.image || null,
-      isAvailable: item.isAvailable
+      isAvailable: item.isAvailable !== false
     }))
   })
 })
 
 // Wallet
 app.get('/api/wallet', auth, (req, res) => {
-  const db = readDb()
-  const user = db.users.find(u => u.id === req.userId)
+  const user = mobileAppUsers.find(u => u.id === req.userId)
   if (!user) return res.status(404).json({ message: 'User not found' })
-  const transactions = db.transactions.filter(t => t.userId === req.userId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  const transactions = (readDb().transactions || []).filter(t => t.userId === req.userId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
   res.json({
     points: user.points || 0,
     cashbackEarned: user.cashbackEarned || 0,

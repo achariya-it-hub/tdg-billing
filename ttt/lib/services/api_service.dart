@@ -236,6 +236,8 @@ class ApiService {
         final data = jsonDecode(response.body);
         if (currentUser != null) {
           currentUser!['points'] = data['points'];
+          currentUser!['availablePoints'] = data['availablePoints'];
+          await _saveSession();
         }
         return data;
       }
