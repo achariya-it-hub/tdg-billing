@@ -130,6 +130,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                 ],
               ),
             ),
+          ),
     );
   }
 

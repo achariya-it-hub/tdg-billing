@@ -98,6 +98,7 @@ class _AssetScreenState extends State<AssetScreen> {
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: Text('Cancel', style: TextStyle(color: TDGColors.greyLight))),
+          TextButton(
             onPressed: () async {
               if (nameCtrl.text.isEmpty || phoneCtrl.text.isEmpty) return;
               final name = nameCtrl.text.trim();
@@ -558,6 +559,7 @@ class _AssetScreenState extends State<AssetScreen> {
                 ],
               ),
             ),
+          ),
     );
   }
 
