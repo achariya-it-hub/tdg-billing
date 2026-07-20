@@ -59,8 +59,10 @@ const sampleRecipeData = [
   { menuItem: 'Veg - Cream Paneer Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Cream Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 108.55, price: 249, margin: '56.4%' },
   { menuItem: 'Veg - BBQ Paneer Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, BBQ Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 70.45, price: 99, margin: '28.8%' },
   { menuItem: 'Veg - BBQ Paneer Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, BBQ Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 107.65, price: 249, margin: '56.8%' },
-  { menuItem: 'Veg - Pesto Paneer Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 75.09, price: 99, margin: '24.2%' },
-  { menuItem: 'Veg - Pesto Paneer Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 118.79, price: 249, margin: '52.3%' }
+  { menuItem: 'Veg - Pesto Paneer Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 75.63, price: 99, margin: '23.6%' },
+  { menuItem: 'Veg - Pesto Paneer Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 119.33, price: 249, margin: '52.1%' },
+  { menuItem: 'Non-Veg - Chicken Salad', ingredients: 'Iceberg, Veggies, Olives, Chicken, Honey Mustard, Burger Sauce, Jalapenos, Dinning Tray, Wooden Spoon, Tissues, Bags, Labour', cost: 69.05, price: 99, margin: '30.3%' },
+  { menuItem: 'Veg - Paneer Salad', ingredients: 'Iceberg, Veggies, Paneer, Olives, Honey Mustard, Burger Sauce, Jalapenos, Dinning Tray, Wooden Spoon, Tissues, Bags, Labour', cost: 76.18, price: 99, margin: '23.1%' }
 ]
 
 const reportTypes = [
