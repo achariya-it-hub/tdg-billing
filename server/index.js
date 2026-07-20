@@ -158,6 +158,7 @@ function saveState() {
   db.billingUsers = billingUsers
   db.categories = categories
   db.menuItems = menuItems
+  db.recipes = recipes
   db.suppliers = suppliers
   db.purchaseOrders = purchaseOrders
   db.poItems = poItems
@@ -195,6 +196,7 @@ function restoreState() {
   if (db.aggregators?.length) aggregators = db.aggregators
   if (db.categories?.length) categories = db.categories
   if (db.menuItems?.length) menuItems = db.menuItems
+  if (db.recipes?.length) recipes = db.recipes
   if (db.suppliers?.length) suppliers = db.suppliers
   if (db.purchaseOrders?.length) purchaseOrders = db.purchaseOrders
   if (db.poItems?.length) poItems = db.poItems
@@ -1582,6 +1584,34 @@ app.put('/api/admin/menu/items/:id/toggle', (req, res) => {
   menuItems[idx].isAvailable = !menuItems[idx].isAvailable
   saveState()
   res.json(menuItems[idx])
+})
+
+// ============ RECIPE MANAGEMENT ============
+let recipes = []
+
+app.get('/api/recipes', (req, res) => {
+  res.json(recipes)
+})
+
+app.post('/api/recipes', (req, res) => {
+  const recipe = req.body
+  if (!recipe || !recipe.menuItemId) return res.status(400).json({ error: 'menuItemId required' })
+  const existingIdx = recipes.findIndex(r => r.menuItemId === recipe.menuItemId)
+  if (existingIdx >= 0) {
+    recipes[existingIdx] = { ...recipes[existingIdx], ...recipe }
+  } else {
+    recipe.id = recipe.id || ('r_' + Date.now())
+    recipes.push(recipe)
+  }
+  saveState()
+  res.status(200).json(recipes)
+})
+
+app.delete('/api/recipes/:menuItemId', (req, res) => {
+  const mId = req.params.menuItemId
+  recipes = recipes.filter(r => r.menuItemId !== mId && r.id !== mId)
+  saveState()
+  res.json({ success: true })
 })
 
 // Category CRUD

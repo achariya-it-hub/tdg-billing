@@ -41,45 +41,4721 @@ const sampleInventory = [
 
 const sampleRecipes = [
   {
-    id: 'r1',
-    menuItemId: 'm1',
-    name: 'Zinger Burger Recipe',
-    description: 'Standard recipe for Zinger Burger',
-    yieldQty: 1,
-    prepTime: 12,
-    ingredients: [
-      { id: 'ri1', inventoryItemId: 'i1', inventoryName: 'Chicken Breast', quantity: 0.15, unit: 'kg', currentStock: 50 },
-      { id: 'ri2', inventoryItemId: 'i2', inventoryName: 'Burger Buns', quantity: 1, unit: 'pcs', currentStock: 200 },
-      { id: 'ri3', inventoryItemId: 'i3', inventoryName: 'Lettuce', quantity: 0.02, unit: 'kg', currentStock: 10 },
-      { id: 'ri4', inventoryItemId: 'i4', inventoryName: 'Tomato Slices', quantity: 0.03, unit: 'kg', currentStock: 8 },
-      { id: 'ri5', inventoryItemId: 'i5', inventoryName: 'Cheese Slices', quantity: 1, unit: 'pcs', currentStock: 100 },
-      { id: 'ri6', inventoryItemId: 'i8', inventoryName: 'Cooking Oil', quantity: 0.05, unit: 'liters', currentStock: 40 },
+    "id": "r_m1",
+    "menuItemId": "m1",
+    "menuItemName": "Non-Veg - Spicy Chicken Gyro (Regular)",
+    "name": "Non-Veg - Spicy Chicken Gyro (Regular) Recipe",
+    "description": "Standard recipe for Non-Veg - Spicy Chicken Gyro (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 63.6,
+    "ingredients": [
+      {
+        "id": "ri_m1_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.89
+      },
+      {
+        "id": "ri_m1_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.89
+      },
+      {
+        "id": "ri_m1_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.89
+      },
+      {
+        "id": "ri_m1_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.89
+      },
+      {
+        "id": "ri_m1_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.89
+      },
+      {
+        "id": "ri_m1_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.89
+      },
+      {
+        "id": "ri_m1_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.89
+      },
+      {
+        "id": "ri_m1_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Spicy Chicken",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.89
+      },
+      {
+        "id": "ri_m1_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.89
+      },
+      {
+        "id": "ri_m1_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.89
+      },
+      {
+        "id": "ri_m1_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.89
+      },
+      {
+        "id": "ri_m1_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.89
+      },
+      {
+        "id": "ri_m1_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.89
+      }
     ]
   },
   {
-    id: 'r2',
-    menuItemId: 'm4',
-    name: 'Hot Wings Recipe',
-    description: 'Standard recipe for Hot Wings (6pc)',
-    yieldQty: 1,
-    prepTime: 15,
-    ingredients: [
-      { id: 'ri7', inventoryItemId: 'i6', inventoryName: 'Chicken Wings', quantity: 0.4, unit: 'kg', currentStock: 25 },
-      { id: 'ri8', inventoryItemId: 'i8', inventoryName: 'Cooking Oil', quantity: 0.2, unit: 'liters', currentStock: 40 },
+    "id": "r_m2",
+    "menuItemId": "m2",
+    "menuItemName": "Non-Veg - Spicy Chicken Gyro (Large)",
+    "name": "Non-Veg - Spicy Chicken Gyro (Large) Recipe",
+    "description": "Standard recipe for Non-Veg - Spicy Chicken Gyro (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 95.8,
+    "ingredients": [
+      {
+        "id": "ri_m2_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.37
+      },
+      {
+        "id": "ri_m2_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.37
+      },
+      {
+        "id": "ri_m2_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.37
+      },
+      {
+        "id": "ri_m2_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.37
+      },
+      {
+        "id": "ri_m2_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.37
+      },
+      {
+        "id": "ri_m2_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.37
+      },
+      {
+        "id": "ri_m2_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.37
+      },
+      {
+        "id": "ri_m2_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Spicy Chicken",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.37
+      },
+      {
+        "id": "ri_m2_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.37
+      },
+      {
+        "id": "ri_m2_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.37
+      },
+      {
+        "id": "ri_m2_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.37
+      },
+      {
+        "id": "ri_m2_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.37
+      },
+      {
+        "id": "ri_m2_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.37
+      }
     ]
   },
   {
-    id: 'r3',
-    menuItemId: 'm9',
-    name: 'Masala Chai Recipe',
-    description: 'Standard recipe for Masala Chai',
-    yieldQty: 1,
-    prepTime: 5,
-    ingredients: [
-      { id: 'ri9', inventoryItemId: 'i10', inventoryName: 'Tea Leaves', quantity: 0.005, unit: 'kg', currentStock: 3 },
-      { id: 'ri10', inventoryItemId: 'i11', inventoryName: 'Milk', quantity: 0.15, unit: 'liters', currentStock: 10 },
+    "id": "r_m3",
+    "menuItemId": "m3",
+    "menuItemName": "Non-Veg - Cream Chicken Gyro (Regular)",
+    "name": "Non-Veg - Cream Chicken Gyro (Regular) Recipe",
+    "description": "Standard recipe for Non-Veg - Cream Chicken Gyro (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 62.21,
+    "ingredients": [
+      {
+        "id": "ri_m3_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.79
+      },
+      {
+        "id": "ri_m3_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.79
+      },
+      {
+        "id": "ri_m3_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.79
+      },
+      {
+        "id": "ri_m3_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.79
+      },
+      {
+        "id": "ri_m3_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.79
+      },
+      {
+        "id": "ri_m3_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.79
+      },
+      {
+        "id": "ri_m3_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.79
+      },
+      {
+        "id": "ri_m3_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Cream Chicken",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.79
+      },
+      {
+        "id": "ri_m3_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.79
+      },
+      {
+        "id": "ri_m3_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.79
+      },
+      {
+        "id": "ri_m3_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.79
+      },
+      {
+        "id": "ri_m3_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.79
+      },
+      {
+        "id": "ri_m3_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.79
+      }
     ]
   },
+  {
+    "id": "r_m4",
+    "menuItemId": "m4",
+    "menuItemName": "Non-Veg - Cream Chicken Gyro (Large)",
+    "name": "Non-Veg - Cream Chicken Gyro (Large) Recipe",
+    "description": "Standard recipe for Non-Veg - Cream Chicken Gyro (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 93.01,
+    "ingredients": [
+      {
+        "id": "ri_m4_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.15
+      },
+      {
+        "id": "ri_m4_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.15
+      },
+      {
+        "id": "ri_m4_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.15
+      },
+      {
+        "id": "ri_m4_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.15
+      },
+      {
+        "id": "ri_m4_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.15
+      },
+      {
+        "id": "ri_m4_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.15
+      },
+      {
+        "id": "ri_m4_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.15
+      },
+      {
+        "id": "ri_m4_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Cream Chicken",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.15
+      },
+      {
+        "id": "ri_m4_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.15
+      },
+      {
+        "id": "ri_m4_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.15
+      },
+      {
+        "id": "ri_m4_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.15
+      },
+      {
+        "id": "ri_m4_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.15
+      },
+      {
+        "id": "ri_m4_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.15
+      }
+    ]
+  },
+  {
+    "id": "r_m5",
+    "menuItemId": "m5",
+    "menuItemName": "Non-Veg - BBQ Chicken Gyro (Regular)",
+    "name": "Non-Veg - BBQ Chicken Gyro (Regular) Recipe",
+    "description": "Standard recipe for Non-Veg - BBQ Chicken Gyro (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 62.95,
+    "ingredients": [
+      {
+        "id": "ri_m5_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.84
+      },
+      {
+        "id": "ri_m5_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.84
+      },
+      {
+        "id": "ri_m5_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.84
+      },
+      {
+        "id": "ri_m5_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.84
+      },
+      {
+        "id": "ri_m5_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.84
+      },
+      {
+        "id": "ri_m5_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.84
+      },
+      {
+        "id": "ri_m5_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.84
+      },
+      {
+        "id": "ri_m5_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "BBQ Chicken",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.84
+      },
+      {
+        "id": "ri_m5_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.84
+      },
+      {
+        "id": "ri_m5_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.84
+      },
+      {
+        "id": "ri_m5_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.84
+      },
+      {
+        "id": "ri_m5_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.84
+      },
+      {
+        "id": "ri_m5_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.84
+      }
+    ]
+  },
+  {
+    "id": "r_m6",
+    "menuItemId": "m6",
+    "menuItemName": "Non-Veg - BBQ Chicken Gyro (Large)",
+    "name": "Non-Veg - BBQ Chicken Gyro (Large) Recipe",
+    "description": "Standard recipe for Non-Veg - BBQ Chicken Gyro (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 92.65,
+    "ingredients": [
+      {
+        "id": "ri_m6_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.13
+      },
+      {
+        "id": "ri_m6_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.13
+      },
+      {
+        "id": "ri_m6_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.13
+      },
+      {
+        "id": "ri_m6_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.13
+      },
+      {
+        "id": "ri_m6_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.13
+      },
+      {
+        "id": "ri_m6_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.13
+      },
+      {
+        "id": "ri_m6_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.13
+      },
+      {
+        "id": "ri_m6_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "BBQ Chicken",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.13
+      },
+      {
+        "id": "ri_m6_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.13
+      },
+      {
+        "id": "ri_m6_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.13
+      },
+      {
+        "id": "ri_m6_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.13
+      },
+      {
+        "id": "ri_m6_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.13
+      },
+      {
+        "id": "ri_m6_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.13
+      }
+    ]
+  },
+  {
+    "id": "r_m7",
+    "menuItemId": "m7",
+    "menuItemName": "Non-Veg - Pesto Chicken Gyro (Regular)",
+    "name": "Non-Veg - Pesto Chicken Gyro (Regular) Recipe",
+    "description": "Standard recipe for Non-Veg - Pesto Chicken Gyro (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 67.59,
+    "ingredients": [
+      {
+        "id": "ri_m7_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.2
+      },
+      {
+        "id": "ri_m7_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.2
+      },
+      {
+        "id": "ri_m7_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.2
+      },
+      {
+        "id": "ri_m7_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.2
+      },
+      {
+        "id": "ri_m7_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.2
+      },
+      {
+        "id": "ri_m7_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.2
+      },
+      {
+        "id": "ri_m7_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.2
+      },
+      {
+        "id": "ri_m7_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Pesto Chicken",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.2
+      },
+      {
+        "id": "ri_m7_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.2
+      },
+      {
+        "id": "ri_m7_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.2
+      },
+      {
+        "id": "ri_m7_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.2
+      },
+      {
+        "id": "ri_m7_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.2
+      },
+      {
+        "id": "ri_m7_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.2
+      }
+    ]
+  },
+  {
+    "id": "r_m8",
+    "menuItemId": "m8",
+    "menuItemName": "Non-Veg - Pesto Chicken Gyro (Large)",
+    "name": "Non-Veg - Pesto Chicken Gyro (Large) Recipe",
+    "description": "Standard recipe for Non-Veg - Pesto Chicken Gyro (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 103.79,
+    "ingredients": [
+      {
+        "id": "ri_m8_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.98
+      },
+      {
+        "id": "ri_m8_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.98
+      },
+      {
+        "id": "ri_m8_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.98
+      },
+      {
+        "id": "ri_m8_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.98
+      },
+      {
+        "id": "ri_m8_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.98
+      },
+      {
+        "id": "ri_m8_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.98
+      },
+      {
+        "id": "ri_m8_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.98
+      },
+      {
+        "id": "ri_m8_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Pesto Chicken",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.98
+      },
+      {
+        "id": "ri_m8_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.98
+      },
+      {
+        "id": "ri_m8_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.98
+      },
+      {
+        "id": "ri_m8_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.98
+      },
+      {
+        "id": "ri_m8_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.98
+      },
+      {
+        "id": "ri_m8_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.98
+      }
+    ]
+  },
+  {
+    "id": "r_m9",
+    "menuItemId": "m9",
+    "menuItemName": "Veg - Spicy Paneer Gyro (Regular)",
+    "name": "Veg - Spicy Paneer Gyro (Regular) Recipe",
+    "description": "Standard recipe for Veg - Spicy Paneer Gyro (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 71.64,
+    "ingredients": [
+      {
+        "id": "ri_m9_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.51
+      },
+      {
+        "id": "ri_m9_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.51
+      },
+      {
+        "id": "ri_m9_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.51
+      },
+      {
+        "id": "ri_m9_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.51
+      },
+      {
+        "id": "ri_m9_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.51
+      },
+      {
+        "id": "ri_m9_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.51
+      },
+      {
+        "id": "ri_m9_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.51
+      },
+      {
+        "id": "ri_m9_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Spicy Paneer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.51
+      },
+      {
+        "id": "ri_m9_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.51
+      },
+      {
+        "id": "ri_m9_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.51
+      },
+      {
+        "id": "ri_m9_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.51
+      },
+      {
+        "id": "ri_m9_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.51
+      },
+      {
+        "id": "ri_m9_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.51
+      }
+    ]
+  },
+  {
+    "id": "r_m10",
+    "menuItemId": "m10",
+    "menuItemName": "Veg - Spicy Paneer Gyro (Large)",
+    "name": "Veg - Spicy Paneer Gyro (Large) Recipe",
+    "description": "Standard recipe for Veg - Spicy Paneer Gyro (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 111.34,
+    "ingredients": [
+      {
+        "id": "ri_m10_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.56
+      },
+      {
+        "id": "ri_m10_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.56
+      },
+      {
+        "id": "ri_m10_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.56
+      },
+      {
+        "id": "ri_m10_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.56
+      },
+      {
+        "id": "ri_m10_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.56
+      },
+      {
+        "id": "ri_m10_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.56
+      },
+      {
+        "id": "ri_m10_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.56
+      },
+      {
+        "id": "ri_m10_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Spicy Paneer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.56
+      },
+      {
+        "id": "ri_m10_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.56
+      },
+      {
+        "id": "ri_m10_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.56
+      },
+      {
+        "id": "ri_m10_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.56
+      },
+      {
+        "id": "ri_m10_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.56
+      },
+      {
+        "id": "ri_m10_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.56
+      }
+    ]
+  },
+  {
+    "id": "r_m11",
+    "menuItemId": "m11",
+    "menuItemName": "Veg - Cream Paneer Gyro (Regular)",
+    "name": "Veg - Cream Paneer Gyro (Regular) Recipe",
+    "description": "Standard recipe for Veg - Cream Paneer Gyro (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 70.25,
+    "ingredients": [
+      {
+        "id": "ri_m11_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.4
+      },
+      {
+        "id": "ri_m11_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.4
+      },
+      {
+        "id": "ri_m11_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.4
+      },
+      {
+        "id": "ri_m11_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.4
+      },
+      {
+        "id": "ri_m11_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.4
+      },
+      {
+        "id": "ri_m11_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.4
+      },
+      {
+        "id": "ri_m11_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.4
+      },
+      {
+        "id": "ri_m11_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Cream Paneer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.4
+      },
+      {
+        "id": "ri_m11_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.4
+      },
+      {
+        "id": "ri_m11_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.4
+      },
+      {
+        "id": "ri_m11_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.4
+      },
+      {
+        "id": "ri_m11_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.4
+      },
+      {
+        "id": "ri_m11_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.4
+      }
+    ]
+  },
+  {
+    "id": "r_m12",
+    "menuItemId": "m12",
+    "menuItemName": "Veg - Cream Paneer Gyro (Large)",
+    "name": "Veg - Cream Paneer Gyro (Large) Recipe",
+    "description": "Standard recipe for Veg - Cream Paneer Gyro (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 108.55,
+    "ingredients": [
+      {
+        "id": "ri_m12_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.35
+      },
+      {
+        "id": "ri_m12_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.35
+      },
+      {
+        "id": "ri_m12_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.35
+      },
+      {
+        "id": "ri_m12_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.35
+      },
+      {
+        "id": "ri_m12_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.35
+      },
+      {
+        "id": "ri_m12_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.35
+      },
+      {
+        "id": "ri_m12_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.35
+      },
+      {
+        "id": "ri_m12_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Cream Paneer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.35
+      },
+      {
+        "id": "ri_m12_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.35
+      },
+      {
+        "id": "ri_m12_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.35
+      },
+      {
+        "id": "ri_m12_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.35
+      },
+      {
+        "id": "ri_m12_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.35
+      },
+      {
+        "id": "ri_m12_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.35
+      }
+    ]
+  },
+  {
+    "id": "r_m13",
+    "menuItemId": "m13",
+    "menuItemName": "Veg - BBQ Paneer Gyro (Regular)",
+    "name": "Veg - BBQ Paneer Gyro (Regular) Recipe",
+    "description": "Standard recipe for Veg - BBQ Paneer Gyro (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 70.45,
+    "ingredients": [
+      {
+        "id": "ri_m13_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.42
+      },
+      {
+        "id": "ri_m13_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.42
+      },
+      {
+        "id": "ri_m13_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.42
+      },
+      {
+        "id": "ri_m13_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.42
+      },
+      {
+        "id": "ri_m13_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.42
+      },
+      {
+        "id": "ri_m13_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.42
+      },
+      {
+        "id": "ri_m13_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.42
+      },
+      {
+        "id": "ri_m13_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "BBQ Paneer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.42
+      },
+      {
+        "id": "ri_m13_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.42
+      },
+      {
+        "id": "ri_m13_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.42
+      },
+      {
+        "id": "ri_m13_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.42
+      },
+      {
+        "id": "ri_m13_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.42
+      },
+      {
+        "id": "ri_m13_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.42
+      }
+    ]
+  },
+  {
+    "id": "r_m14",
+    "menuItemId": "m14",
+    "menuItemName": "Veg - BBQ Paneer Gyro (Large)",
+    "name": "Veg - BBQ Paneer Gyro (Large) Recipe",
+    "description": "Standard recipe for Veg - BBQ Paneer Gyro (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 107.65,
+    "ingredients": [
+      {
+        "id": "ri_m14_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.28
+      },
+      {
+        "id": "ri_m14_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.28
+      },
+      {
+        "id": "ri_m14_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.28
+      },
+      {
+        "id": "ri_m14_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.28
+      },
+      {
+        "id": "ri_m14_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.28
+      },
+      {
+        "id": "ri_m14_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.28
+      },
+      {
+        "id": "ri_m14_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.28
+      },
+      {
+        "id": "ri_m14_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "BBQ Paneer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.28
+      },
+      {
+        "id": "ri_m14_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.28
+      },
+      {
+        "id": "ri_m14_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.28
+      },
+      {
+        "id": "ri_m14_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.28
+      },
+      {
+        "id": "ri_m14_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.28
+      },
+      {
+        "id": "ri_m14_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.28
+      }
+    ]
+  },
+  {
+    "id": "r_m15",
+    "menuItemId": "m15",
+    "menuItemName": "Veg - Pesto Paneer Gyro (Regular)",
+    "name": "Veg - Pesto Paneer Gyro (Regular) Recipe",
+    "description": "Standard recipe for Veg - Pesto Paneer Gyro (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 75.63,
+    "ingredients": [
+      {
+        "id": "ri_m15_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.82
+      },
+      {
+        "id": "ri_m15_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.82
+      },
+      {
+        "id": "ri_m15_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.82
+      },
+      {
+        "id": "ri_m15_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.82
+      },
+      {
+        "id": "ri_m15_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.82
+      },
+      {
+        "id": "ri_m15_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.82
+      },
+      {
+        "id": "ri_m15_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.82
+      },
+      {
+        "id": "ri_m15_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Pesto Paneer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.82
+      },
+      {
+        "id": "ri_m15_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.82
+      },
+      {
+        "id": "ri_m15_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.82
+      },
+      {
+        "id": "ri_m15_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.82
+      },
+      {
+        "id": "ri_m15_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.82
+      },
+      {
+        "id": "ri_m15_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.82
+      }
+    ]
+  },
+  {
+    "id": "r_m16",
+    "menuItemId": "m16",
+    "menuItemName": "Veg - Pesto Paneer Gyro (Large)",
+    "name": "Veg - Pesto Paneer Gyro (Large) Recipe",
+    "description": "Standard recipe for Veg - Pesto Paneer Gyro (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 119.33,
+    "ingredients": [
+      {
+        "id": "ri_m16_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.18
+      },
+      {
+        "id": "ri_m16_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Yeast",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.18
+      },
+      {
+        "id": "ri_m16_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.18
+      },
+      {
+        "id": "ri_m16_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.18
+      },
+      {
+        "id": "ri_m16_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.18
+      },
+      {
+        "id": "ri_m16_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.18
+      },
+      {
+        "id": "ri_m16_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.18
+      },
+      {
+        "id": "ri_m16_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Pesto Paneer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.18
+      },
+      {
+        "id": "ri_m16_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Hummus",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.18
+      },
+      {
+        "id": "ri_m16_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Peri Peri",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.18
+      },
+      {
+        "id": "ri_m16_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.18
+      },
+      {
+        "id": "ri_m16_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.18
+      },
+      {
+        "id": "ri_m16_13",
+        "inventoryItemId": "i_gen_13",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.18
+      }
+    ]
+  },
+  {
+    "id": "r_m17",
+    "menuItemId": "m17",
+    "menuItemName": "Non-Veg - Spicy Egg Burger",
+    "name": "Non-Veg - Spicy Egg Burger Recipe",
+    "description": "Standard recipe for Non-Veg - Spicy Egg Burger",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 57.03,
+    "ingredients": [
+      {
+        "id": "ri_m17_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Burger Bun",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.15
+      },
+      {
+        "id": "ri_m17_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.15
+      },
+      {
+        "id": "ri_m17_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Patty x1",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.15
+      },
+      {
+        "id": "ri_m17_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Cheese",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.15
+      },
+      {
+        "id": "ri_m17_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Burger Sauce",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.15
+      },
+      {
+        "id": "ri_m17_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.15
+      },
+      {
+        "id": "ri_m17_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.15
+      }
+    ]
+  },
+  {
+    "id": "r_m18",
+    "menuItemId": "m18",
+    "menuItemName": "Non-Veg - Crispy Chicken Burger",
+    "name": "Non-Veg - Crispy Chicken Burger Recipe",
+    "description": "Standard recipe for Non-Veg - Crispy Chicken Burger",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 77.43,
+    "ingredients": [
+      {
+        "id": "ri_m18_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Burger Bun",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.06
+      },
+      {
+        "id": "ri_m18_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.06
+      },
+      {
+        "id": "ri_m18_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Patty x2",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.06
+      },
+      {
+        "id": "ri_m18_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Cheese",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.06
+      },
+      {
+        "id": "ri_m18_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Burger Sauce",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.06
+      },
+      {
+        "id": "ri_m18_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.06
+      },
+      {
+        "id": "ri_m18_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.06
+      }
+    ]
+  },
+  {
+    "id": "r_m19",
+    "menuItemId": "m19",
+    "menuItemName": "Veg - Spicy Paneer Burger",
+    "name": "Veg - Spicy Paneer Burger Recipe",
+    "description": "Standard recipe for Veg - Spicy Paneer Burger",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 87.31,
+    "ingredients": [
+      {
+        "id": "ri_m19_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Burger Bun",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 12.47
+      },
+      {
+        "id": "ri_m19_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 12.47
+      },
+      {
+        "id": "ri_m19_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Patty x1",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 12.47
+      },
+      {
+        "id": "ri_m19_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Cheese",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 12.47
+      },
+      {
+        "id": "ri_m19_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Burger Sauce",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 12.47
+      },
+      {
+        "id": "ri_m19_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 12.47
+      },
+      {
+        "id": "ri_m19_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 12.47
+      }
+    ]
+  },
+  {
+    "id": "r_m20",
+    "menuItemId": "m20",
+    "menuItemName": "Non-Veg - Chicken Salad",
+    "name": "Non-Veg - Chicken Salad Recipe",
+    "description": "Standard recipe for Non-Veg - Chicken Salad",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 69.05,
+    "ingredients": [
+      {
+        "id": "ri_m20_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.75
+      },
+      {
+        "id": "ri_m20_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.75
+      },
+      {
+        "id": "ri_m20_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.75
+      },
+      {
+        "id": "ri_m20_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Chicken",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.75
+      },
+      {
+        "id": "ri_m20_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.75
+      },
+      {
+        "id": "ri_m20_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Burger Sauce",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.75
+      },
+      {
+        "id": "ri_m20_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.75
+      },
+      {
+        "id": "ri_m20_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Dinning Tray",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.75
+      },
+      {
+        "id": "ri_m20_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Wooden Spoon",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.75
+      },
+      {
+        "id": "ri_m20_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.75
+      },
+      {
+        "id": "ri_m20_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.75
+      },
+      {
+        "id": "ri_m20_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.75
+      }
+    ]
+  },
+  {
+    "id": "r_m21",
+    "menuItemId": "m21",
+    "menuItemName": "Veg - Paneer Salad",
+    "name": "Veg - Paneer Salad Recipe",
+    "description": "Standard recipe for Veg - Paneer Salad",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 76.18,
+    "ingredients": [
+      {
+        "id": "ri_m21_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Iceberg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.35
+      },
+      {
+        "id": "ri_m21_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Veggies",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.35
+      },
+      {
+        "id": "ri_m21_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Paneer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.35
+      },
+      {
+        "id": "ri_m21_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Olives",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.35
+      },
+      {
+        "id": "ri_m21_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Honey Mustard",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.35
+      },
+      {
+        "id": "ri_m21_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Burger Sauce",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.35
+      },
+      {
+        "id": "ri_m21_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Jalapenos",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.35
+      },
+      {
+        "id": "ri_m21_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Dinning Tray",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.35
+      },
+      {
+        "id": "ri_m21_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Wooden Spoon",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.35
+      },
+      {
+        "id": "ri_m21_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.35
+      },
+      {
+        "id": "ri_m21_11",
+        "inventoryItemId": "i_gen_11",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.35
+      },
+      {
+        "id": "ri_m21_12",
+        "inventoryItemId": "i_gen_12",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.35
+      }
+    ]
+  },
+  {
+    "id": "r_m22",
+    "menuItemId": "m22",
+    "menuItemName": "Non-Veg - Loaded Chicken Fries",
+    "name": "Non-Veg - Loaded Chicken Fries Recipe",
+    "description": "Standard recipe for Non-Veg - Loaded Chicken Fries",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 98.5,
+    "ingredients": [
+      {
+        "id": "ri_m22_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Potato",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.07
+      },
+      {
+        "id": "ri_m22_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.07
+      },
+      {
+        "id": "ri_m22_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Chicken Bits",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.07
+      },
+      {
+        "id": "ri_m22_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Cheese Sauce",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.07
+      },
+      {
+        "id": "ri_m22_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.07
+      },
+      {
+        "id": "ri_m22_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.07
+      },
+      {
+        "id": "ri_m22_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.07
+      }
+    ]
+  },
+  {
+    "id": "r_m23",
+    "menuItemId": "m23",
+    "menuItemName": "Veg - Fries (Salted, Peri Peri Or Cajun)",
+    "name": "Veg - Fries (Salted, Peri Peri Or Cajun) Recipe",
+    "description": "Standard recipe for Veg - Fries (Salted, Peri Peri Or Cajun)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 47.53,
+    "ingredients": [
+      {
+        "id": "ri_m23_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Potato",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.94
+      },
+      {
+        "id": "ri_m23_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.94
+      },
+      {
+        "id": "ri_m23_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Peri Peri Masala",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.94
+      },
+      {
+        "id": "ri_m23_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Cup",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.94
+      },
+      {
+        "id": "ri_m23_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Paper Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.94
+      },
+      {
+        "id": "ri_m23_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.94
+      },
+      {
+        "id": "ri_m23_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.94
+      },
+      {
+        "id": "ri_m23_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.94
+      }
+    ]
+  },
+  {
+    "id": "r_m24",
+    "menuItemId": "m24",
+    "menuItemName": "Veg - Loaded Paneer Fries",
+    "name": "Veg - Loaded Paneer Fries Recipe",
+    "description": "Standard recipe for Veg - Loaded Paneer Fries",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 105.2,
+    "ingredients": [
+      {
+        "id": "ri_m24_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Potato",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 15.03
+      },
+      {
+        "id": "ri_m24_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 15.03
+      },
+      {
+        "id": "ri_m24_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Paneer Bits",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 15.03
+      },
+      {
+        "id": "ri_m24_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Cheese Sauce",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 15.03
+      },
+      {
+        "id": "ri_m24_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 15.03
+      },
+      {
+        "id": "ri_m24_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 15.03
+      },
+      {
+        "id": "ri_m24_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 15.03
+      }
+    ]
+  },
+  {
+    "id": "r_m25",
+    "menuItemId": "m25",
+    "menuItemName": "Veg - 6 pcs Halloumi Strips",
+    "name": "Veg - 6 pcs Halloumi Strips Recipe",
+    "description": "Standard recipe for Veg - 6 pcs Halloumi Strips",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 78.9,
+    "ingredients": [
+      {
+        "id": "ri_m25_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Halloumi Cheese x6",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.27
+      },
+      {
+        "id": "ri_m25_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Breading Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.27
+      },
+      {
+        "id": "ri_m25_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.27
+      },
+      {
+        "id": "ri_m25_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Tray",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.27
+      },
+      {
+        "id": "ri_m25_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.27
+      },
+      {
+        "id": "ri_m25_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.27
+      },
+      {
+        "id": "ri_m25_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.27
+      }
+    ]
+  },
+  {
+    "id": "r_m26",
+    "menuItemId": "m26",
+    "menuItemName": "Non-Veg - 1 Pc Crispy Chicken (1 Dip)",
+    "name": "Non-Veg - 1 Pc Crispy Chicken (1 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 1 Pc Crispy Chicken (1 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 38.5,
+    "ingredients": [
+      {
+        "id": "ri_m26_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Leg/Thigh x1",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.42
+      },
+      {
+        "id": "ri_m26_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Breading Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.42
+      },
+      {
+        "id": "ri_m26_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.42
+      },
+      {
+        "id": "ri_m26_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Dip x1",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.42
+      },
+      {
+        "id": "ri_m26_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Box",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.42
+      },
+      {
+        "id": "ri_m26_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.42
+      }
+    ]
+  },
+  {
+    "id": "r_m27",
+    "menuItemId": "m27",
+    "menuItemName": "Non-Veg - 2 Pc Crispy Chicken (1 Dip)",
+    "name": "Non-Veg - 2 Pc Crispy Chicken (1 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 2 Pc Crispy Chicken (1 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 72.1,
+    "ingredients": [
+      {
+        "id": "ri_m27_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Leg/Thigh x2",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 12.02
+      },
+      {
+        "id": "ri_m27_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Breading Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 12.02
+      },
+      {
+        "id": "ri_m27_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 12.02
+      },
+      {
+        "id": "ri_m27_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Dip x1",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 12.02
+      },
+      {
+        "id": "ri_m27_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Box",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 12.02
+      },
+      {
+        "id": "ri_m27_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 12.02
+      }
+    ]
+  },
+  {
+    "id": "r_m28",
+    "menuItemId": "m28",
+    "menuItemName": "Non-Veg - 4 Pc Crispy Chicken (2 Dip)",
+    "name": "Non-Veg - 4 Pc Crispy Chicken (2 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 4 Pc Crispy Chicken (2 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 138.5,
+    "ingredients": [
+      {
+        "id": "ri_m28_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Leg/Thigh x4",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.08
+      },
+      {
+        "id": "ri_m28_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Breading Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.08
+      },
+      {
+        "id": "ri_m28_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.08
+      },
+      {
+        "id": "ri_m28_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Dip x2",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.08
+      },
+      {
+        "id": "ri_m28_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Box",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.08
+      },
+      {
+        "id": "ri_m28_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.08
+      }
+    ]
+  },
+  {
+    "id": "r_m29",
+    "menuItemId": "m29",
+    "menuItemName": "Non-Veg - 8 Pc Crispy Chicken (4 Dip)",
+    "name": "Non-Veg - 8 Pc Crispy Chicken (4 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 8 Pc Crispy Chicken (4 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 268.9,
+    "ingredients": [
+      {
+        "id": "ri_m29_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Leg/Thigh x8",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 44.82
+      },
+      {
+        "id": "ri_m29_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Breading Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 44.82
+      },
+      {
+        "id": "ri_m29_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 44.82
+      },
+      {
+        "id": "ri_m29_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Dip x4",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 44.82
+      },
+      {
+        "id": "ri_m29_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Box",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 44.82
+      },
+      {
+        "id": "ri_m29_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 44.82
+      }
+    ]
+  },
+  {
+    "id": "r_m30",
+    "menuItemId": "m30",
+    "menuItemName": "Non-Veg - 12 Pc Crispy Chicken (6 Dip)",
+    "name": "Non-Veg - 12 Pc Crispy Chicken (6 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 12 Pc Crispy Chicken (6 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 395.2,
+    "ingredients": [
+      {
+        "id": "ri_m30_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Leg/Thigh x12",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 65.87
+      },
+      {
+        "id": "ri_m30_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Breading Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 65.87
+      },
+      {
+        "id": "ri_m30_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 65.87
+      },
+      {
+        "id": "ri_m30_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Dip x6",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 65.87
+      },
+      {
+        "id": "ri_m30_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Box",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 65.87
+      },
+      {
+        "id": "ri_m30_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 65.87
+      }
+    ]
+  },
+  {
+    "id": "r_m31",
+    "menuItemId": "m31",
+    "menuItemName": "Non-Veg - 3 Pc Crispy Wings (1 Dip)",
+    "name": "Non-Veg - 3 Pc Crispy Wings (1 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 3 Pc Crispy Wings (1 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 54.71,
+    "ingredients": [
+      {
+        "id": "ri_m31_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Wings x3",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.84
+      },
+      {
+        "id": "ri_m31_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Fried Chicken Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.84
+      },
+      {
+        "id": "ri_m31_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Extra Hot & Spicy",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.84
+      },
+      {
+        "id": "ri_m31_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.84
+      },
+      {
+        "id": "ri_m31_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Wings Box",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.84
+      },
+      {
+        "id": "ri_m31_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.84
+      },
+      {
+        "id": "ri_m31_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.84
+      },
+      {
+        "id": "ri_m31_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 6.84
+      }
+    ]
+  },
+  {
+    "id": "r_m32",
+    "menuItemId": "m32",
+    "menuItemName": "Non-Veg - 6 Pc Crispy Wings (2 Dip)",
+    "name": "Non-Veg - 6 Pc Crispy Wings (2 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 6 Pc Crispy Wings (2 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 73.61,
+    "ingredients": [
+      {
+        "id": "ri_m32_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Wings x6",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.2
+      },
+      {
+        "id": "ri_m32_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Fried Chicken Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.2
+      },
+      {
+        "id": "ri_m32_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Extra Hot & Spicy",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.2
+      },
+      {
+        "id": "ri_m32_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.2
+      },
+      {
+        "id": "ri_m32_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Wings Box",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.2
+      },
+      {
+        "id": "ri_m32_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.2
+      },
+      {
+        "id": "ri_m32_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.2
+      },
+      {
+        "id": "ri_m32_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.2
+      }
+    ]
+  },
+  {
+    "id": "r_m33",
+    "menuItemId": "m33",
+    "menuItemName": "Non-Veg - 9 Pc Crispy Wings (3 Dip)",
+    "name": "Non-Veg - 9 Pc Crispy Wings (3 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 9 Pc Crispy Wings (3 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 92.51,
+    "ingredients": [
+      {
+        "id": "ri_m33_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Wings x9",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.56
+      },
+      {
+        "id": "ri_m33_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Fried Chicken Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.56
+      },
+      {
+        "id": "ri_m33_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Extra Hot & Spicy",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.56
+      },
+      {
+        "id": "ri_m33_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.56
+      },
+      {
+        "id": "ri_m33_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Wings Box",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.56
+      },
+      {
+        "id": "ri_m33_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.56
+      },
+      {
+        "id": "ri_m33_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.56
+      },
+      {
+        "id": "ri_m33_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.56
+      }
+    ]
+  },
+  {
+    "id": "r_m34",
+    "menuItemId": "m34",
+    "menuItemName": "Non-Veg - 20 Pc Crispy Wings (6 Dip)",
+    "name": "Non-Veg - 20 Pc Crispy Wings (6 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 20 Pc Crispy Wings (6 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 186.55,
+    "ingredients": [
+      {
+        "id": "ri_m34_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Wings x20",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.32
+      },
+      {
+        "id": "ri_m34_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Fried Chicken Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.32
+      },
+      {
+        "id": "ri_m34_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Extra Hot & Spicy",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.32
+      },
+      {
+        "id": "ri_m34_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.32
+      },
+      {
+        "id": "ri_m34_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Wings Box",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.32
+      },
+      {
+        "id": "ri_m34_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.32
+      },
+      {
+        "id": "ri_m34_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.32
+      },
+      {
+        "id": "ri_m34_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 23.32
+      }
+    ]
+  },
+  {
+    "id": "r_m35",
+    "menuItemId": "m35",
+    "menuItemName": "Non-Veg - 60 Pc Crispy Wings (12 Dip)",
+    "name": "Non-Veg - 60 Pc Crispy Wings (12 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 60 Pc Crispy Wings (12 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 398.55,
+    "ingredients": [
+      {
+        "id": "ri_m35_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Wings x60",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 49.82
+      },
+      {
+        "id": "ri_m35_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Fried Chicken Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 49.82
+      },
+      {
+        "id": "ri_m35_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Extra Hot & Spicy",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 49.82
+      },
+      {
+        "id": "ri_m35_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 49.82
+      },
+      {
+        "id": "ri_m35_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Wings Box",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 49.82
+      },
+      {
+        "id": "ri_m35_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 49.82
+      },
+      {
+        "id": "ri_m35_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 49.82
+      },
+      {
+        "id": "ri_m35_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 49.82
+      }
+    ]
+  },
+  {
+    "id": "r_m36",
+    "menuItemId": "m36",
+    "menuItemName": "Non-Veg - 3 Pc Crispy Strips (1 Dip)",
+    "name": "Non-Veg - 3 Pc Crispy Strips (1 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 3 Pc Crispy Strips (1 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 61.96,
+    "ingredients": [
+      {
+        "id": "ri_m36_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Strips x3",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.75
+      },
+      {
+        "id": "ri_m36_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Fried Chicken Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.75
+      },
+      {
+        "id": "ri_m36_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Extra Hot & Spicy",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.75
+      },
+      {
+        "id": "ri_m36_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.75
+      },
+      {
+        "id": "ri_m36_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Dinning Tray",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.75
+      },
+      {
+        "id": "ri_m36_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.75
+      },
+      {
+        "id": "ri_m36_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.75
+      },
+      {
+        "id": "ri_m36_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 7.75
+      }
+    ]
+  },
+  {
+    "id": "r_m37",
+    "menuItemId": "m37",
+    "menuItemName": "Non-Veg - 6 Pc Crispy Strips (2 Dip)",
+    "name": "Non-Veg - 6 Pc Crispy Strips (2 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 6 Pc Crispy Strips (2 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 90.46,
+    "ingredients": [
+      {
+        "id": "ri_m37_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Strips x6",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.31
+      },
+      {
+        "id": "ri_m37_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Fried Chicken Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.31
+      },
+      {
+        "id": "ri_m37_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Extra Hot & Spicy",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.31
+      },
+      {
+        "id": "ri_m37_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.31
+      },
+      {
+        "id": "ri_m37_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Dinning Tray",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.31
+      },
+      {
+        "id": "ri_m37_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.31
+      },
+      {
+        "id": "ri_m37_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.31
+      },
+      {
+        "id": "ri_m37_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.31
+      }
+    ]
+  },
+  {
+    "id": "r_m38",
+    "menuItemId": "m38",
+    "menuItemName": "Non-Veg - 9 Pc Crispy Strips (3 Dip)",
+    "name": "Non-Veg - 9 Pc Crispy Strips (3 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 9 Pc Crispy Strips (3 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 119.86,
+    "ingredients": [
+      {
+        "id": "ri_m38_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Strips x9",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.98
+      },
+      {
+        "id": "ri_m38_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Fried Chicken Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.98
+      },
+      {
+        "id": "ri_m38_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Extra Hot & Spicy",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.98
+      },
+      {
+        "id": "ri_m38_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.98
+      },
+      {
+        "id": "ri_m38_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Dinning Tray",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.98
+      },
+      {
+        "id": "ri_m38_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.98
+      },
+      {
+        "id": "ri_m38_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.98
+      },
+      {
+        "id": "ri_m38_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.98
+      }
+    ]
+  },
+  {
+    "id": "r_m39",
+    "menuItemId": "m39",
+    "menuItemName": "Non-Veg - 20 Pc Crispy Strips (6 Dip)",
+    "name": "Non-Veg - 20 Pc Crispy Strips (6 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 20 Pc Crispy Strips (6 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 247.65,
+    "ingredients": [
+      {
+        "id": "ri_m39_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Strips x20",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 30.96
+      },
+      {
+        "id": "ri_m39_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Fried Chicken Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 30.96
+      },
+      {
+        "id": "ri_m39_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Extra Hot & Spicy",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 30.96
+      },
+      {
+        "id": "ri_m39_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 30.96
+      },
+      {
+        "id": "ri_m39_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Dinning Tray",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 30.96
+      },
+      {
+        "id": "ri_m39_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 30.96
+      },
+      {
+        "id": "ri_m39_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 30.96
+      },
+      {
+        "id": "ri_m39_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 30.96
+      }
+    ]
+  },
+  {
+    "id": "r_m40",
+    "menuItemId": "m40",
+    "menuItemName": "Non-Veg - 60 Pc Crispy Strips (12 Dip)",
+    "name": "Non-Veg - 60 Pc Crispy Strips (12 Dip) Recipe",
+    "description": "Standard recipe for Non-Veg - 60 Pc Crispy Strips (12 Dip)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 703.9,
+    "ingredients": [
+      {
+        "id": "ri_m40_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Chicken Strips x60",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 87.99
+      },
+      {
+        "id": "ri_m40_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Fried Chicken Mixer",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 87.99
+      },
+      {
+        "id": "ri_m40_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Extra Hot & Spicy",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 87.99
+      },
+      {
+        "id": "ri_m40_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Refined Oil",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 87.99
+      },
+      {
+        "id": "ri_m40_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Dinning Tray",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 87.99
+      },
+      {
+        "id": "ri_m40_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Tissues",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 87.99
+      },
+      {
+        "id": "ri_m40_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Bags",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 87.99
+      },
+      {
+        "id": "ri_m40_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 87.99
+      }
+    ]
+  },
+  {
+    "id": "r_m41",
+    "menuItemId": "m41",
+    "menuItemName": "Veg - Vanilla Shake (Regular)",
+    "name": "Veg - Vanilla Shake (Regular) Recipe",
+    "description": "Standard recipe for Veg - Vanilla Shake (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 66.27,
+    "ingredients": [
+      {
+        "id": "ri_m41_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Milk Base",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 13.25
+      },
+      {
+        "id": "ri_m41_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Vanilla Crush",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 13.25
+      },
+      {
+        "id": "ri_m41_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Beverages Cup 330ml with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 13.25
+      },
+      {
+        "id": "ri_m41_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Paper Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 13.25
+      },
+      {
+        "id": "ri_m41_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 13.25
+      }
+    ]
+  },
+  {
+    "id": "r_m42",
+    "menuItemId": "m42",
+    "menuItemName": "Veg - Vanilla Shake (Large)",
+    "name": "Veg - Vanilla Shake (Large) Recipe",
+    "description": "Standard recipe for Veg - Vanilla Shake (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 125.95,
+    "ingredients": [
+      {
+        "id": "ri_m42_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Milk Base",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 25.19
+      },
+      {
+        "id": "ri_m42_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Vanilla Crush",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 25.19
+      },
+      {
+        "id": "ri_m42_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Beverages Cup 650ml with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 25.19
+      },
+      {
+        "id": "ri_m42_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Paper Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 25.19
+      },
+      {
+        "id": "ri_m42_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 25.19
+      }
+    ]
+  },
+  {
+    "id": "r_m43",
+    "menuItemId": "m43",
+    "menuItemName": "Veg - Strawberry Shake (Regular)",
+    "name": "Veg - Strawberry Shake (Regular) Recipe",
+    "description": "Standard recipe for Veg - Strawberry Shake (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 93.27,
+    "ingredients": [
+      {
+        "id": "ri_m43_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Milk Base",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 18.65
+      },
+      {
+        "id": "ri_m43_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Strawberry Crush",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 18.65
+      },
+      {
+        "id": "ri_m43_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Beverages Cup 330ml with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 18.65
+      },
+      {
+        "id": "ri_m43_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Paper Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 18.65
+      },
+      {
+        "id": "ri_m43_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 18.65
+      }
+    ]
+  },
+  {
+    "id": "r_m44",
+    "menuItemId": "m44",
+    "menuItemName": "Veg - Strawberry Shake (Large)",
+    "name": "Veg - Strawberry Shake (Large) Recipe",
+    "description": "Standard recipe for Veg - Strawberry Shake (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 179.95,
+    "ingredients": [
+      {
+        "id": "ri_m44_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Milk Base",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 35.99
+      },
+      {
+        "id": "ri_m44_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Strawberry Crush",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 35.99
+      },
+      {
+        "id": "ri_m44_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Beverages Cup 650ml with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 35.99
+      },
+      {
+        "id": "ri_m44_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Paper Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 35.99
+      },
+      {
+        "id": "ri_m44_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 35.99
+      }
+    ]
+  },
+  {
+    "id": "r_m45",
+    "menuItemId": "m45",
+    "menuItemName": "Veg - Biscoff Shake (Regular)",
+    "name": "Veg - Biscoff Shake (Regular) Recipe",
+    "description": "Standard recipe for Veg - Biscoff Shake (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 72.27,
+    "ingredients": [
+      {
+        "id": "ri_m45_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Milk Base",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.45
+      },
+      {
+        "id": "ri_m45_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Biscoff Crush",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.45
+      },
+      {
+        "id": "ri_m45_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Beverages Cup 330ml with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.45
+      },
+      {
+        "id": "ri_m45_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Paper Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.45
+      },
+      {
+        "id": "ri_m45_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 14.45
+      }
+    ]
+  },
+  {
+    "id": "r_m46",
+    "menuItemId": "m46",
+    "menuItemName": "Veg - Biscoff Shake (Large)",
+    "name": "Veg - Biscoff Shake (Large) Recipe",
+    "description": "Standard recipe for Veg - Biscoff Shake (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 137.95,
+    "ingredients": [
+      {
+        "id": "ri_m46_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Milk Base",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 27.59
+      },
+      {
+        "id": "ri_m46_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Biscoff Crush",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 27.59
+      },
+      {
+        "id": "ri_m46_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Beverages Cup 650ml with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 27.59
+      },
+      {
+        "id": "ri_m46_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Paper Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 27.59
+      },
+      {
+        "id": "ri_m46_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 27.59
+      }
+    ]
+  },
+  {
+    "id": "r_m47",
+    "menuItemId": "m47",
+    "menuItemName": "Veg - Dark Chocolate Shake (Regular)",
+    "name": "Veg - Dark Chocolate Shake (Regular) Recipe",
+    "description": "Standard recipe for Veg - Dark Chocolate Shake (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 85.27,
+    "ingredients": [
+      {
+        "id": "ri_m47_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Milk Base",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 17.05
+      },
+      {
+        "id": "ri_m47_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Caboury Hot Chocolate",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 17.05
+      },
+      {
+        "id": "ri_m47_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Beverages Cup 330ml with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 17.05
+      },
+      {
+        "id": "ri_m47_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Paper Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 17.05
+      },
+      {
+        "id": "ri_m47_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 17.05
+      }
+    ]
+  },
+  {
+    "id": "r_m48",
+    "menuItemId": "m48",
+    "menuItemName": "Veg - Dark Chocolate Shake (Large)",
+    "name": "Veg - Dark Chocolate Shake (Large) Recipe",
+    "description": "Standard recipe for Veg - Dark Chocolate Shake (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 172.14,
+    "ingredients": [
+      {
+        "id": "ri_m48_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Milk Base",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 28.69
+      },
+      {
+        "id": "ri_m48_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Caboury Hot Chocolate",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 28.69
+      },
+      {
+        "id": "ri_m48_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Beverages Cup 650ml with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 28.69
+      },
+      {
+        "id": "ri_m48_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Paper Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 28.69
+      },
+      {
+        "id": "ri_m48_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Wastage",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 28.69
+      },
+      {
+        "id": "ri_m48_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 28.69
+      }
+    ]
+  },
+  {
+    "id": "r_m49",
+    "menuItemId": "m49",
+    "menuItemName": "Veg - Kunafa Pistachio Shake (Regular)",
+    "name": "Veg - Kunafa Pistachio Shake (Regular) Recipe",
+    "description": "Standard recipe for Veg - Kunafa Pistachio Shake (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 96.27,
+    "ingredients": [
+      {
+        "id": "ri_m49_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Milk Base",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 19.25
+      },
+      {
+        "id": "ri_m49_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Pistachio Crush",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 19.25
+      },
+      {
+        "id": "ri_m49_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Beverages Cup 330ml with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 19.25
+      },
+      {
+        "id": "ri_m49_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Paper Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 19.25
+      },
+      {
+        "id": "ri_m49_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 19.25
+      }
+    ]
+  },
+  {
+    "id": "r_m50",
+    "menuItemId": "m50",
+    "menuItemName": "Veg - Kunafa Pistachio Shake (Large)",
+    "name": "Veg - Kunafa Pistachio Shake (Large) Recipe",
+    "description": "Standard recipe for Veg - Kunafa Pistachio Shake (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 195.24,
+    "ingredients": [
+      {
+        "id": "ri_m50_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Milk Base",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 32.54
+      },
+      {
+        "id": "ri_m50_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Pistachio Crush",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 32.54
+      },
+      {
+        "id": "ri_m50_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Beverages Cup 650ml with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 32.54
+      },
+      {
+        "id": "ri_m50_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Paper Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 32.54
+      },
+      {
+        "id": "ri_m50_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Wastage",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 32.54
+      },
+      {
+        "id": "ri_m50_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 32.54
+      }
+    ]
+  },
+  {
+    "id": "r_m51",
+    "menuItemId": "m51",
+    "menuItemName": "Veg - Vanilla Softy",
+    "name": "Veg - Vanilla Softy Recipe",
+    "description": "Standard recipe for Veg - Vanilla Softy",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 15.8,
+    "ingredients": [
+      {
+        "id": "ri_m51_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Softy Premix",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 3.95
+      },
+      {
+        "id": "ri_m51_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Milk",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 3.95
+      },
+      {
+        "id": "ri_m51_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Waffle Cone",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 3.95
+      },
+      {
+        "id": "ri_m51_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 3.95
+      }
+    ]
+  },
+  {
+    "id": "r_m52",
+    "menuItemId": "m52",
+    "menuItemName": "Veg - Chocolate Brownie",
+    "name": "Veg - Chocolate Brownie Recipe",
+    "description": "Standard recipe for Veg - Chocolate Brownie",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 44.8,
+    "ingredients": [
+      {
+        "id": "ri_m52_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Butter",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.48
+      },
+      {
+        "id": "ri_m52_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Dark Compound",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.48
+      },
+      {
+        "id": "ri_m52_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Egg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.48
+      },
+      {
+        "id": "ri_m52_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Vanilla",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.48
+      },
+      {
+        "id": "ri_m52_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "White Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.48
+      },
+      {
+        "id": "ri_m52_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.48
+      },
+      {
+        "id": "ri_m52_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Brown Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.48
+      },
+      {
+        "id": "ri_m52_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Milk Compound",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.48
+      },
+      {
+        "id": "ri_m52_9",
+        "inventoryItemId": "i_gen_9",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.48
+      },
+      {
+        "id": "ri_m52_10",
+        "inventoryItemId": "i_gen_10",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.48
+      }
+    ]
+  },
+  {
+    "id": "r_m53",
+    "menuItemId": "m53",
+    "menuItemName": "Veg - Blondy Cake",
+    "name": "Veg - Blondy Cake Recipe",
+    "description": "Standard recipe for Veg - Blondy Cake",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 43.6,
+    "ingredients": [
+      {
+        "id": "ri_m53_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Butter",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.45
+      },
+      {
+        "id": "ri_m53_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "White Compound",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.45
+      },
+      {
+        "id": "ri_m53_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Egg",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.45
+      },
+      {
+        "id": "ri_m53_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Vanilla",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.45
+      },
+      {
+        "id": "ri_m53_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "White Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.45
+      },
+      {
+        "id": "ri_m53_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Maida",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.45
+      },
+      {
+        "id": "ri_m53_7",
+        "inventoryItemId": "i_gen_7",
+        "inventoryName": "Packaging",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.45
+      },
+      {
+        "id": "ri_m53_8",
+        "inventoryItemId": "i_gen_8",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.45
+      }
+    ]
+  },
+  {
+    "id": "r_m54",
+    "menuItemId": "m54",
+    "menuItemName": "Veg - Sprite / Coca-Cola (Regular)",
+    "name": "Veg - Sprite / Coca-Cola (Regular) Recipe",
+    "description": "Standard recipe for Veg - Sprite / Coca-Cola (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 33.15,
+    "ingredients": [
+      {
+        "id": "ri_m54_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Cola/Sprite 330ml",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.52
+      },
+      {
+        "id": "ri_m54_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Ice Cube",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.52
+      },
+      {
+        "id": "ri_m54_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Lime/Peach",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.52
+      },
+      {
+        "id": "ri_m54_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Cup with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.52
+      },
+      {
+        "id": "ri_m54_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.52
+      },
+      {
+        "id": "ri_m54_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 5.52
+      }
+    ]
+  },
+  {
+    "id": "r_m55",
+    "menuItemId": "m55",
+    "menuItemName": "Veg - Sprite / Coca-Cola (Large)",
+    "name": "Veg - Sprite / Coca-Cola (Large) Recipe",
+    "description": "Standard recipe for Veg - Sprite / Coca-Cola (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 59.7,
+    "ingredients": [
+      {
+        "id": "ri_m55_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Cola/Sprite 650ml",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.95
+      },
+      {
+        "id": "ri_m55_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Ice Cube",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.95
+      },
+      {
+        "id": "ri_m55_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Lime/Peach",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.95
+      },
+      {
+        "id": "ri_m55_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Cup with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.95
+      },
+      {
+        "id": "ri_m55_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.95
+      },
+      {
+        "id": "ri_m55_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 9.95
+      }
+    ]
+  },
+  {
+    "id": "r_m56",
+    "menuItemId": "m56",
+    "menuItemName": "Veg - Ice Tea (Peach / Lime) (Regular)",
+    "name": "Veg - Ice Tea (Peach / Lime) (Regular) Recipe",
+    "description": "Standard recipe for Veg - Ice Tea (Peach / Lime) (Regular)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 28.5,
+    "ingredients": [
+      {
+        "id": "ri_m56_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Ice Tea Premix",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.75
+      },
+      {
+        "id": "ri_m56_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Water",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.75
+      },
+      {
+        "id": "ri_m56_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Ice Cube",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.75
+      },
+      {
+        "id": "ri_m56_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Cup with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.75
+      },
+      {
+        "id": "ri_m56_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.75
+      },
+      {
+        "id": "ri_m56_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 4.75
+      }
+    ]
+  },
+  {
+    "id": "r_m57",
+    "menuItemId": "m57",
+    "menuItemName": "Veg - Ice Tea (Peach / Lime) (Large)",
+    "name": "Veg - Ice Tea (Peach / Lime) (Large) Recipe",
+    "description": "Standard recipe for Veg - Ice Tea (Peach / Lime) (Large)",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 48.2,
+    "ingredients": [
+      {
+        "id": "ri_m57_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Ice Tea Premix",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.03
+      },
+      {
+        "id": "ri_m57_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Water",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.03
+      },
+      {
+        "id": "ri_m57_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Ice Cube",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.03
+      },
+      {
+        "id": "ri_m57_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Cup with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.03
+      },
+      {
+        "id": "ri_m57_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.03
+      },
+      {
+        "id": "ri_m57_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 8.03
+      }
+    ]
+  },
+  {
+    "id": "r_m58",
+    "menuItemId": "m58",
+    "menuItemName": "Veg - Hot Chocolate",
+    "name": "Veg - Hot Chocolate Recipe",
+    "description": "Standard recipe for Veg - Hot Chocolate",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 59.29,
+    "ingredients": [
+      {
+        "id": "ri_m58_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Milk",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.86
+      },
+      {
+        "id": "ri_m58_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Caboury Hot Chocolate",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.86
+      },
+      {
+        "id": "ri_m58_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Beverages Cup 330ml with Lid",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.86
+      },
+      {
+        "id": "ri_m58_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Paper Straw",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.86
+      },
+      {
+        "id": "ri_m58_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 11.86
+      }
+    ]
+  },
+  {
+    "id": "r_m59",
+    "menuItemId": "m59",
+    "menuItemName": "Veg - Signature Tea",
+    "name": "Veg - Signature Tea Recipe",
+    "description": "Standard recipe for Veg - Signature Tea",
+    "yieldQty": 1,
+    "prepTime": 10,
+    "calculatedCost": 18.5,
+    "ingredients": [
+      {
+        "id": "ri_m59_1",
+        "inventoryItemId": "i_gen_1",
+        "inventoryName": "Tea Leaves",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 3.08
+      },
+      {
+        "id": "ri_m59_2",
+        "inventoryItemId": "i_gen_2",
+        "inventoryName": "Milk",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 3.08
+      },
+      {
+        "id": "ri_m59_3",
+        "inventoryItemId": "i_gen_3",
+        "inventoryName": "Cardamom",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 3.08
+      },
+      {
+        "id": "ri_m59_4",
+        "inventoryItemId": "i_gen_4",
+        "inventoryName": "Sugar",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 3.08
+      },
+      {
+        "id": "ri_m59_5",
+        "inventoryItemId": "i_gen_5",
+        "inventoryName": "Cup",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 3.08
+      },
+      {
+        "id": "ri_m59_6",
+        "inventoryItemId": "i_gen_6",
+        "inventoryName": "Labour",
+        "quantity": 1,
+        "unit": "unit",
+        "cost": 3.08
+      }
+    ]
+  }
 ]
 
 const API = () => window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
@@ -149,13 +4825,18 @@ export default function MenuManagement() {
   })
 
   const getRecipeForItem = (menuItemId) => {
-    return recipes.find(r => r.menuItemId === menuItemId)
+    const item = menuItems.find(m => m.id === menuItemId)
+    return recipes.find(r => r.menuItemId === menuItemId || (item && (r.menuItemName === item.name || r.name === `${item.name} Recipe` || r.name.startsWith(item.name))))
   }
 
   const getItemCost = (menuItemId) => {
     const recipe = getRecipeForItem(menuItemId)
     if (!recipe) return null
-    return recipe.ingredients.reduce((sum, ing) => sum + (ing.quantity * inventory.find(i => i.id === ing.inventoryItemId)?.costPerUnit || 0), 0)
+    if (recipe.calculatedCost) return recipe.calculatedCost
+    return recipe.ingredients.reduce((sum, ing) => {
+      if (ing.cost) return sum + ing.cost
+      return sum + (ing.quantity * (inventory.find(i => i.id === ing.inventoryItemId)?.costPerUnit || 0))
+    }, 0)
   }
 
   const getItemProfit = (menuItemId) => {
@@ -198,6 +4879,18 @@ export default function MenuManagement() {
     fetch(`${API()}/api/admin/menu/categories`).then(r => r.json()).then(d => { if (d?.length) setCategories(d) }).catch(() => setCategories(sampleCategories))
     fetch(`${API()}/api/admin/menu/items`).then(r => r.json()).then(d => { if (d?.length) setMenuItems(d) }).catch(() => setMenuItems(sampleMenuItems))
     fetch(`${API()}/api/inventory`).then(r => r.json()).then(d => { if (d?.length) setInventory(d) }).catch(() => setInventory(sampleInventory))
+    fetch(`${API()}/api/recipes`).then(r => r.json()).then(d => {
+      if (d?.length) {
+        setRecipes(d)
+        try { localStorage.setItem('tdg_recipes', JSON.stringify(d)) } catch (e) {}
+      } else {
+        const saved = localStorage.getItem('tdg_recipes')
+        if (saved) { try { setRecipes(JSON.parse(saved)) } catch (e) {} }
+      }
+    }).catch(() => {
+      const saved = localStorage.getItem('tdg_recipes')
+      if (saved) { try { setRecipes(JSON.parse(saved)) } catch (e) {} }
+    })
   }, [])
 
   const saveItem = async () => {
@@ -342,41 +5035,60 @@ export default function MenuManagement() {
     setRecipeIngredients(recipeIngredients.filter(i => i.id !== id))
   }
 
-  const saveRecipe = () => {
+  const saveRecipe = async () => {
     if (recipeIngredients.length === 0) {
       toast.error('Add at least one ingredient')
       return
     }
     
-    const existingIndex = recipes.findIndex(r => r.menuItemId === selectedMenuItem.id)
+    const existingIndex = recipes.findIndex(r => r.menuItemId === selectedMenuItem.id || r.menuItemName === selectedMenuItem.name)
     const newRecipe = {
       id: existingIndex >= 0 ? recipes[existingIndex].id : 'r_' + Date.now(),
       menuItemId: selectedMenuItem.id,
+      menuItemName: selectedMenuItem.name,
       name: `${selectedMenuItem.name} Recipe`,
-      description: '',
+      description: `Standard recipe for ${selectedMenuItem.name}`,
       yieldQty: 1,
-      prepTime: selectedMenuItem.prepTime,
+      prepTime: selectedMenuItem.prepTime || 10,
       ingredients: recipeIngredients.map(i => ({
         inventoryItemId: i.inventoryItemId,
+        inventoryName: i.inventoryName || i.name,
         quantity: i.quantity,
-        unit: i.unit
+        unit: i.unit,
+        cost: i.cost || i.costPerUnit || 0
       }))
     }
 
+    let updated = [...recipes]
     if (existingIndex >= 0) {
-      const updated = [...recipes]
       updated[existingIndex] = newRecipe
-      setRecipes(updated)
     } else {
-      setRecipes([...recipes, newRecipe])
+      updated.push(newRecipe)
     }
+    setRecipes(updated)
+    try { localStorage.setItem('tdg_recipes', JSON.stringify(updated)) } catch (e) {}
+
+    try {
+      await fetch(`${API()}/api/recipes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newRecipe)
+      })
+    } catch (e) { /* silent fallback */ }
 
     toast.success('Recipe saved successfully')
     setShowRecipeModal(false)
   }
 
-  const deleteRecipe = (menuItemId) => {
-    setRecipes(recipes.filter(r => r.menuItemId !== menuItemId))
+  const deleteRecipe = async (menuItemId) => {
+    const updated = recipes.filter(r => r.menuItemId !== menuItemId && r.id !== menuItemId)
+    setRecipes(updated)
+    try { localStorage.setItem('tdg_recipes', JSON.stringify(updated)) } catch (e) {}
+
+    try {
+      await fetch(`${API()}/api/recipes/${menuItemId}`, { method: 'DELETE' })
+    } catch (e) { /* silent fallback */ }
+
     toast.success('Recipe deleted')
   }
 
