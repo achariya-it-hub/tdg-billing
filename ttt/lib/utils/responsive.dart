@@ -70,12 +70,18 @@ class ResponsiveWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: alignment,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: maxWidth),
-        child: child,
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double? h = constraints.maxHeight.isFinite ? constraints.maxHeight : null;
+        return Align(
+          alignment: alignment,
+          child: SizedBox(
+            width: constraints.maxWidth > maxWidth ? maxWidth : constraints.maxWidth,
+            height: h,
+            child: child,
+          ),
+        );
+      },
     );
   }
 }
