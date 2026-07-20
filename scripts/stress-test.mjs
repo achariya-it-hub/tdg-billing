@@ -92,7 +92,7 @@ async function runAll() {
     const p1 = menuItemPrices[idx1] || 100
     const p2 = menuItemPrices[idx2] || 100
     const sub = (p1 * qty1) + (p2 * qty2)
-    const tax = Math.round(sub * 0.18)
+    const tax = Math.round(sub * 0.05)
     const total = sub + tax
     const tableNum = `T${Math.floor(Math.random() * 20) + 1}`
     const custName = i % 5 === 0 ? `Customer ${i}` : ''

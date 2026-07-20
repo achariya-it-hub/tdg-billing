@@ -270,30 +270,30 @@ let menuItems = [
   { id: 'm21', categoryId: 'c3', name: 'Veg - Paneer Salad', price: 99, isAvailable: true },
 
   // Sides (c4)
-  { id: 'm22', categoryId: 'c4', name: 'Non-Veg - Loaded Chicken Fries', price: 199, isAvailable: true },
-  { id: 'm23', categoryId: 'c4', name: 'Veg - Fries (Salted, Peri Peri Or Cajun)', price: 99, isAvailable: true },
-  { id: 'm24', categoryId: 'c4', name: 'Veg - Loaded Paneer Fries', price: 199, isAvailable: true },
+  { id: 'm22', categoryId: 'c4', name: 'Non-Veg - Loaded Chicken Fries', price: 149, isAvailable: true },
+  { id: 'm23', categoryId: 'c4', name: 'Non-Veg - Fries', price: 99, isAvailable: true },
+  { id: 'm24', categoryId: 'c4', name: 'Veg - Loaded Paneer Fries', price: 149, isAvailable: true },
   { id: 'm25', categoryId: 'c4', name: 'Veg - 6 pcs Halloumi Strips', price: 149, isAvailable: true },
 
   // TDG Crispy Chicken (c5)
   // Leg & Thigh
-  { id: 'm26', categoryId: 'c5', name: 'Non-Veg - 1 Pc Crispy Chicken (1 Dip)', price: 70, isAvailable: true },
-  { id: 'm27', categoryId: 'c5', name: 'Non-Veg - 2 Pc Crispy Chicken (1 Dip)', price: 140, isAvailable: true },
-  { id: 'm28', categoryId: 'c5', name: 'Non-Veg - 4 Pc Crispy Chicken (2 Dip)', price: 280, isAvailable: true },
-  { id: 'm29', categoryId: 'c5', name: 'Non-Veg - 8 Pc Crispy Chicken (4 Dip)', price: 560, isAvailable: true },
-  { id: 'm30', categoryId: 'c5', name: 'Non-Veg - 12 Pc Crispy Chicken (6 Dip)', price: 840, isAvailable: true },
+  { id: 'm26', categoryId: 'c5', name: 'Non-Veg - 1 pcs Crispy Chicken (1 Dip)', price: 70, isAvailable: true },
+  { id: 'm27', categoryId: 'c5', name: 'Non-Veg - 2 Pcs Crispy Chicken (1 Dip)', price: 140, isAvailable: true },
+  { id: 'm28', categoryId: 'c5', name: 'Non-Veg - 4 pcs Crispy Chicken (2 Dip)', price: 280, isAvailable: true },
+  { id: 'm29', categoryId: 'c5', name: 'Non-Veg - 8 pcs Crispy Chicken (4 Dip)', price: 560, isAvailable: true },
+  { id: 'm30', categoryId: 'c5', name: 'Non-Veg - 12 pcs Crispy Chicken (6 Dip)', price: 840, isAvailable: true },
   // Wings
-  { id: 'm31', categoryId: 'c5', name: 'Non-Veg - 3 Pc Crispy Wings (1 Dip)', price: 90, isAvailable: true },
-  { id: 'm32', categoryId: 'c5', name: 'Non-Veg - 6 Pc Crispy Wings (2 Dip)', price: 180, isAvailable: true },
-  { id: 'm33', categoryId: 'c5', name: 'Non-Veg - 9 Pc Crispy Wings (3 Dip)', price: 270, isAvailable: true },
-  { id: 'm34', categoryId: 'c5', name: 'Non-Veg - 20 Pc Crispy Wings (6 Dip)', price: 600, isAvailable: true },
-  { id: 'm35', categoryId: 'c5', name: 'Non-Veg - 60 Pc Crispy Wings (12 Dip)', price: 1500, isAvailable: true },
+  { id: 'm31', categoryId: 'c5', name: 'Non-Veg - 3 pcs Crispy Wings (1 Dip)', price: 90, isAvailable: true },
+  { id: 'm32', categoryId: 'c5', name: 'Non-Veg - 6 pcs Crispy Wings (2 Dip)', price: 180, isAvailable: true },
+  { id: 'm33', categoryId: 'c5', name: 'Non-Veg - 9 pcs Crispy Wings (3 Dip)', price: 270, isAvailable: true },
+  { id: 'm34', categoryId: 'c5', name: 'Non-Veg - 20 pcs Crispy Wings (6 Dip)', price: 600, isAvailable: true },
+  { id: 'm35', categoryId: 'c5', name: 'Non-Veg - 60 pcs Crispy Wings (12 Dip)', price: 1500, isAvailable: true },
   // Strips
-  { id: 'm36', categoryId: 'c5', name: 'Non-Veg - 3 Pc Crispy Strips (1 Dip)', price: 120, isAvailable: true },
-  { id: 'm37', categoryId: 'c5', name: 'Non-Veg - 6 Pc Crispy Strips (2 Dip)', price: 240, isAvailable: true },
-  { id: 'm38', categoryId: 'c5', name: 'Non-Veg - 9 Pc Crispy Strips (3 Dip)', price: 360, isAvailable: true },
-  { id: 'm39', categoryId: 'c5', name: 'Non-Veg - 20 Pc Crispy Strips (6 Dip)', price: 800, isAvailable: true },
-  { id: 'm40', categoryId: 'c5', name: 'Non-Veg - 60 Pc Crispy Strips (12 Dip)', price: 2400, isAvailable: true },
+  { id: 'm36', categoryId: 'c5', name: 'Non-Veg - 3 Pcs Crispy Strips (1 Dip + Regular Drink)', price: 120, isAvailable: true },
+  { id: 'm37', categoryId: 'c5', name: 'Non-Veg - 6 Pcs Crispy Strips (2 Dip)', price: 240, isAvailable: true },
+  { id: 'm38', categoryId: 'c5', name: 'Non-Veg - 9 Pcs Crispy Strips (3 Dip)', price: 360, isAvailable: true },
+  { id: 'm39', categoryId: 'c5', name: 'Non-Veg - 20 Pcs Crispy Strips (6 Dip)', price: 800, isAvailable: true },
+  { id: 'm40', categoryId: 'c5', name: 'Non-Veg - 60 Pcs Crispy Strips (12 Dip)', price: 2400, isAvailable: true },
 
   // Thick Shakes (c6)
   { id: 'm41', categoryId: 'c6', name: 'Veg - Vanilla Shake (Regular)', price: 79, isAvailable: true },
@@ -315,12 +315,10 @@ let menuItems = [
   { id: 'm53', categoryId: 'c8', name: 'Veg - Blondy Cake', price: 99, isAvailable: true },
 
   // Beverages (c9)
-  { id: 'm54', categoryId: 'c9', name: 'Veg - Sprite / Coca-Cola (Regular)', price: 59, isAvailable: true },
-  { id: 'm55', categoryId: 'c9', name: 'Veg - Sprite / Coca-Cola (Large)', price: 99, isAvailable: true },
-  { id: 'm56', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Regular)', price: 59, isAvailable: true },
-  { id: 'm57', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Large)', price: 99, isAvailable: true },
-  { id: 'm58', categoryId: 'c9', name: 'Veg - Hot Chocolate', price: 99, isAvailable: true },
-  { id: 'm59', categoryId: 'c9', name: 'Veg - Signature Tea', price: 99, isAvailable: true }
+  { id: 'm54', categoryId: 'c9', name: 'Cola (Regular)', price: 59, isAvailable: true },
+  { id: 'm55', categoryId: 'c9', name: 'Cola (Large)', price: 99, isAvailable: true },
+  { id: 'm56', categoryId: 'c9', name: 'Lemonade (Regular)', price: 59, isAvailable: true },
+  { id: 'm57', categoryId: 'c9', name: 'Lemonade (Large)', price: 99, isAvailable: true }
 ]
 
 let inventory = [
@@ -622,9 +620,7 @@ app.get('/api/assets', auth, (req, res) => {
     cashbackEarned: user.cashbackEarned || 0,
     assetsDinedCount: user.assetsDinedCount || 0,
     allAssetsActive: user.allAssetsActive || false,
-    bonusClaimed: user.bonusClaimed || false,
-    referredBy: user.referredBy || null,
-    referredByName: user.referredByName || null
+    bonusClaimed: user.bonusClaimed || false
   })
 })
 
@@ -1261,7 +1257,9 @@ app.put('/api/settings', (req, res) => {
 
 // Menu (mobile format)
 app.get('/api/menu', (req, res) => {
-  // Build from existing categories + menuItems dynamically so POS updates are reflected
+  const db = readDb()
+  if (db.menu) return res.json(db.menu)
+  // Build from existing categories + menuItems
   res.json({
     categories: categories.map(c => c.name),
     items: menuItems.map(item => ({
@@ -1270,7 +1268,7 @@ app.get('/api/menu', (req, res) => {
       price: item.price,
       category: categories.find(c => c.id === item.categoryId)?.name || 'Other',
       tag: item.isAvailable ? 'Popular' : '',
-      image: item.image || null,
+      image: null,
       isAvailable: item.isAvailable
     }))
   })
@@ -1364,8 +1362,6 @@ app.get('/api/den', auth, (req, res) => {
     totalDistributed: user.totalDistributed || 0,
     cashbackEarned: user.cashbackEarned || 0,
     bonusClaimed: user.bonusClaimed || false,
-    referredBy: user.referredBy || null,
-    referredByName: user.referredByName || null,
     assets: assets.map(a => ({
       id: a.id,
       name: a.name,
@@ -2063,17 +2059,8 @@ app.get('/api/loyalty/profile/:phone', (req, res) => {
   const currentTier = TIER_THRESHOLDS.find(t => t.name === getTier(user.rubyPoints))
   const prevThreshold = TIER_THRESHOLDS[TIER_THRESHOLDS.indexOf(currentTier) - 1]?.minPoints || 0
   
-  let referredByName = null
-  if (user.referredBy) {
-    const referrer = loyaltyUsers.find(u => u.referralCode === user.referredBy || u.phone === user.referredBy || u.id === user.referredBy)
-    if (referrer) {
-      referredByName = referrer.name
-    }
-  }
-
   res.json({
     ...user,
-    referredByName,
     tierInfo: currentTier,
     nextTier: user.rubyPoints >= 25000 ? null : nextTier,
     progress: {
@@ -2154,34 +2141,7 @@ app.get('/api/loyalty/den/:phone', (req, res) => {
   if (!user.denId) return res.json({ den: null })
   
   const den = dens.find(d => d.id === user.denId)
-  if (!den) return res.json({ den: null })
-
-  // Map members to include referredBy and referredByName
-  const membersWithReferral = den.members.map(m => {
-    const memberUser = loyaltyUsers.find(u => u.id === m.id)
-    let referredBy = null
-    let referredByName = null
-    if (memberUser && memberUser.referredBy) {
-      referredBy = memberUser.referredBy
-      const referrer = loyaltyUsers.find(u => u.referralCode === memberUser.referredBy || u.phone === memberUser.referredBy || u.id === memberUser.referredBy)
-      if (referrer) {
-        referredByName = referrer.name
-      }
-    }
-    return {
-      ...m,
-      referralCode: memberUser ? memberUser.referralCode : null,
-      referredBy,
-      referredByName
-    }
-  })
-
-  res.json({
-    den: {
-      ...den,
-      members: membersWithReferral
-    }
-  })
+  res.json({ den })
 })
 
 // Points - transfer
@@ -3188,26 +3148,6 @@ seedAdmin()
 
 // Serve built frontend in production
 const distPath = join(__dirname, '..', 'dist')
-const flutterWebPath = join(__dirname, '..', 'ttt', 'build', 'web')
-
-// Serve Flutter Web App for den.tendengyros.com subdomain
-app.use((req, res, next) => {
-  const host = req.headers.host || ''
-  if (host.startsWith('den.') && !req.path.startsWith('/api/')) {
-    try {
-      statSync(flutterWebPath)
-      return express.static(flutterWebPath)(req, res, (err) => {
-        if (err) return next(err)
-        // SPA fallback — serve Flutter web's index.html for non-asset routing
-        res.sendFile(join(flutterWebPath, 'index.html'))
-      })
-    } catch (e) {
-      console.log('Flutter Web App build not found, falling back to default frontend')
-    }
-  }
-  next()
-})
-
 try {
   statSync(distPath)
   app.use(express.static(distPath))

@@ -212,7 +212,7 @@ export default function Captain() {
   }
 
   const subtotal = orderItems.reduce((sum, i) => sum + i.total, 0)
-  const tax = subtotal * 0.18
+  const tax = subtotal * 0.05
   const total = subtotal + tax
 
   return (
@@ -679,9 +679,13 @@ export default function Captain() {
                     <span style={{ color: '#6b7280' }}>Subtotal</span>
                     <span>₹{subtotal.toFixed(0)}</span>
                   </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <span style={{ color: '#6b7280' }}>CGST (2.5%)</span>
+                    <span>₹{(tax / 2).toFixed(0)}</span>
+                  </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ color: '#6b7280' }}>Tax (18%)</span>
-                    <span>₹{tax.toFixed(0)}</span>
+                    <span style={{ color: '#6b7280' }}>SGST (2.5%)</span>
+                    <span>₹{(tax / 2).toFixed(0)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', fontWeight: 700 }}>
                     <span>Total</span>

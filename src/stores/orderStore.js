@@ -134,7 +134,7 @@ export const useOrderStore = create(
   },
   
   getTax: () => {
-    return get().getSubtotal() * 0.18
+    return get().getSubtotal() * 0.05
   },
   
   getTotal: () => {

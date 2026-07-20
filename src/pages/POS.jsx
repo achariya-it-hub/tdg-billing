@@ -235,7 +235,8 @@ export default function POS() {
           </div>
           <div style={{ borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}><span style={{ color: '#6b7280' }}>Subtotal</span><span>₹{getSubtotal().toFixed(2)}</span></div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}><span style={{ color: '#6b7280' }}>Tax (18%)</span><span>₹{getTax().toFixed(2)}</span></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}><span style={{ color: '#6b7280' }}>CGST (2.5%)</span><span>₹{(getTax() / 2).toFixed(2)}</span></div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}><span style={{ color: '#6b7280' }}>SGST (2.5%)</span><span>₹{(getTax() / 2).toFixed(2)}</span></div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '22px', fontWeight: 800, marginBottom: '16px', paddingTop: '8px', borderTop: '2px solid #1a1a2e' }}>
               <span>Total</span><span style={{ color: '#e63946' }}>₹{getTotal().toFixed(2)}</span>
             </div>
@@ -347,7 +348,8 @@ export default function POS() {
         {/* Totals */}
         <div style={{ padding: '16px', borderTop: '1px solid rgba(0,0,0,0.04)', background: 'rgba(248,249,250,0.5)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}><span style={{ color: '#6b7280', fontSize: '13px' }}>Subtotal</span><span style={{ fontSize: '13px' }}>₹{getSubtotal().toFixed(2)}</span></div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}><span style={{ color: '#6b7280', fontSize: '13px' }}>Tax (18%)</span><span style={{ fontSize: '13px' }}>₹{getTax().toFixed(2)}</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}><span style={{ color: '#6b7280', fontSize: '13px' }}>CGST (2.5%)</span><span style={{ fontSize: '13px' }}>₹{(getTax() / 2).toFixed(2)}</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}><span style={{ color: '#6b7280', fontSize: '13px' }}>SGST (2.5%)</span><span style={{ fontSize: '13px' }}>₹{(getTax() / 2).toFixed(2)}</span></div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '20px', fontWeight: 800, marginBottom: '12px', paddingTop: '8px', borderTop: '2px solid #1a1a2e' }}>
             <span>Total</span><span style={{ color: '#e63946' }}>₹{getTotal().toFixed(2)}</span>
           </div>

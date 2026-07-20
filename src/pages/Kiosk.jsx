@@ -68,7 +68,7 @@ export default function Kiosk() {
   }
 
   const getSubtotal = () => cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
-  const getTax = () => getSubtotal() * 0.18
+  const getTax = () => getSubtotal() * 0.05
   const getTotal = () => getSubtotal() + getTax()
 
   const placeOrder = async (paymentMethod) => {
@@ -359,8 +359,12 @@ export default function Kiosk() {
                   <span>₹{getSubtotal().toFixed(2)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <span>Tax (18% GST)</span>
-                  <span>₹{getTax().toFixed(2)}</span>
+                  <span>CGST (2.5%)</span>
+                  <span>₹{(getTax() / 2).toFixed(2)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                  <span>SGST (2.5%)</span>
+                  <span>₹{(getTax() / 2).toFixed(2)}</span>
                 </div>
                 <div style={{ 
                   display: 'flex', 

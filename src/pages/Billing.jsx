@@ -126,7 +126,7 @@ export default function Billing() {
     return kot.items.reduce((sum, item) => sum + (item.totalPrice || item.unitPrice * item.quantity), 0)
   }
 
-  const calculateTax = (total) => total * 0.18
+  const calculateTax = (total) => total * 0.05
 
   const acceptKOT = async (kot) => {
     try {
@@ -298,7 +298,8 @@ export default function Billing() {
         }).join('')}
         <div class="divider"></div>
         <div class="subtotal-row"><span>Subtotal</span><span>₹${total.toFixed(0)}</span></div>
-        <div class="subtotal-row"><span>Tax (5%)</span><span>₹${tax.toFixed(0)}</span></div>
+        <div class="subtotal-row"><span>CGST (2.5%)</span><span>₹${(tax / 2).toFixed(0)}</span></div>
+        <div class="subtotal-row"><span>SGST (2.5%)</span><span>₹${(tax / 2).toFixed(0)}</span></div>
         <div class="divider-thick"></div>
         <div class="total-row"><span>TOTAL</span><span class="total-amount">₹${grandTotal.toFixed(0)}</span></div>
         <div class="payment-info" style="text-align:right;color:#888;font-size:9px">Round Off: ₹0.00</div>
@@ -619,9 +620,13 @@ export default function Billing() {
                   <span>Subtotal</span>
                   <span>₹{calculateTotal(selectedKOT)}</span>
                 </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <span>CGST (2.5%)</span>
+                  <span>₹{(calculateTax(calculateTotal(selectedKOT)) / 2).toFixed(0)}</span>
+                </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span>Tax (18%)</span>
-                  <span>₹{calculateTax(calculateTotal(selectedKOT)).toFixed(0)}</span>
+                  <span>SGST (2.5%)</span>
+                  <span>₹{(calculateTax(calculateTotal(selectedKOT)) / 2).toFixed(0)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '20px', fontWeight: 700 }}>
                   <span>Total</span>
