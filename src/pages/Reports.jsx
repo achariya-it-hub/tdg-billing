@@ -73,8 +73,8 @@ const sampleRecipeData = [
   { menuItem: 'Veg - Dark Chocolate Shake (Regular)', ingredients: 'Milk Base, Caboury Hot Chocolate, Beverages Cup 330ml with Lid, Paper Straw, Labour', cost: 85.27, price: 99, margin: '13.9%' },
   { menuItem: 'Veg - Dark Chocolate Shake (Large)', ingredients: 'Milk Base, Caboury Hot Chocolate, Beverages Cup 650ml with Lid, Paper Straw, Wastage, Labour', cost: 172.14, price: 199, margin: '13.5%' },
   { menuItem: 'Veg - Hot Chocolate (Regular)', ingredients: 'Milk, Caboury Hot Chocolate, Beverages Cup 330ml with Lid, Paper Straw, Labour', cost: 59.29, price: 149, margin: '60.2%' },
-  { menuItem: 'Veg - Kunafa Pistachio Shake (Regular)', ingredients: 'Milk Base, Kunafa Mix, Pistachio Paste, Beverages Cup 330ml with Lid, Paper Straw, Labour', cost: 117.27, price: 199, margin: '41.1%' },
-  { menuItem: 'Veg - Kunafa Pistachio Shake (Large)', ingredients: 'Milk Base, Kunafa Mix, Pistachio Paste, Beverages Cup 650ml with Lid, Paper Straw, Labour', cost: 227.95, price: 299, margin: '23.8%' }
+  { menuItem: 'Veg - Kunafa Pistachio Shake (Regular)', ingredients: 'Milk Base, Pistachio Crush, Beverages Cup 330ml with Lid, Paper Straw, Labour', cost: 96.27, price: 99, margin: '2.8%' },
+  { menuItem: 'Veg - Kunafa Pistachio Shake (Large)', ingredients: 'Milk Base, Pistachio Crush, Beverages Cup 650ml with Lid, Paper Straw, Wastage, Labour', cost: 195.24, price: 199, margin: '1.9%' }
 ]
 
 const reportTypes = [
