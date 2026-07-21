@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken'
 import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
+import XLSX from 'xlsx'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -1679,6 +1680,81 @@ app.get('/api/admin/menu/items', (req, res) => {
 
 app.get('/api/admin/menu/categories', (req, res) => {
   res.json(categories.sort((a, b) => a.displayOrder - b.displayOrder))
+})
+
+// Export Menu to Excel
+app.get('/api/admin/menu/export-excel', (req, res) => {
+  try {
+    const menuRows = menuItems.map(item => {
+      const cat = categories.find(c => c.id === item.categoryId)
+      const recipe = recipes.find(r => r.menuItemId === item.id)
+      let cost = null
+      if (recipe && recipe.ingredients) {
+        cost = recipe.ingredients.reduce((sum, ing) => {
+          const invItem = inventory.find(i => i.id === ing.inventoryItemId)
+          const cpu = ing.costPerUnit || (invItem ? invItem.costPerUnit : 0)
+          return sum + (ing.quantity * cpu)
+        }, 0)
+      }
+      const profit = cost !== null ? item.price - cost : null
+      const margin = (profit !== null && item.price > 0) ? ((profit / item.price) * 100).toFixed(1) : null
+
+      return {
+        'Item ID': item.id,
+        'Item Name': item.name,
+        'Category': cat ? cat.name : 'Uncategorized',
+        'Price (₹)': item.price,
+        'Cost (₹)': cost !== null ? Number(cost.toFixed(2)) : 'N/A',
+        'Profit (₹)': profit !== null ? Number(profit.toFixed(2)) : 'N/A',
+        'Margin (%)': margin !== null ? `${margin}%` : 'N/A',
+        'Available': item.isAvailable !== false ? 'Yes' : 'No',
+        'Recipe Mapped': recipe ? 'Yes' : 'No',
+        'Description': item.description || ''
+      }
+    })
+
+    const catRows = categories.map(cat => {
+      const count = menuItems.filter(i => i.categoryId === cat.id).length
+      return {
+        'Category ID': cat.id,
+        'Category Name': cat.name,
+        'Color': cat.color || '',
+        'Item Count': count
+      }
+    })
+
+    const recipeRows = []
+    recipes.forEach(r => {
+      const mItem = menuItems.find(m => m.id === r.menuItemId)
+      r.ingredients.forEach(ing => {
+        const invItem = inventory.find(i => i.id === ing.inventoryItemId)
+        const cpu = ing.costPerUnit || (invItem ? invItem.costPerUnit : 0)
+        const totalCost = ing.cost || (ing.quantity * cpu)
+        recipeRows.push({
+          'Recipe ID': r.id,
+          'Menu Item Name': mItem ? mItem.name : r.menuItemName || r.name,
+          'Ingredient Name': ing.inventoryName || (invItem ? invItem.name : 'Unknown'),
+          'Quantity': ing.quantity,
+          'Unit': ing.unit || '',
+          'Cost Per Unit (₹)': cpu,
+          'Ingredient Cost (₹)': Number(totalCost.toFixed(2))
+        })
+      })
+    })
+
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(menuRows), 'Menu Items')
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(catRows), 'Categories')
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(recipeRows), 'Recipes & Costing')
+
+    const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' })
+    const dateStr = new Date().toISOString().slice(0, 10)
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    res.setHeader('Content-Disposition', `attachment; filename="TDG_Menu_Export_${dateStr}.xlsx"`)
+    res.send(buf)
+  } catch (e) {
+    res.status(500).json({ error: 'Excel export failed: ' + e.message })
+  }
 })
 
 // POS Orders (no auth)

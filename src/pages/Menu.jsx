@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { UtensilsCrossed, Plus, Search, BookOpen, Package, Edit, Trash2, Check, X, ChevronRight, AlertTriangle, Calculator, ImagePlus } from 'lucide-react'
+import { UtensilsCrossed, Plus, Search, BookOpen, Package, Edit, Trash2, Check, X, ChevronRight, AlertTriangle, Calculator, ImagePlus, Download, FileSpreadsheet } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
@@ -4893,6 +4893,76 @@ export default function MenuManagement() {
     })
   }, [])
 
+  const exportMenuToExcel = async () => {
+    try {
+      const XLSX = await import('xlsx')
+      const menuRows = menuItems.map(item => {
+        const cat = categories.find(c => c.id === item.categoryId)
+        const recipe = getRecipeForItem(item.id)
+        const cost = getItemCost(item.id)
+        const profit = getItemProfit(item.id)
+        const margin = getItemMargin(item.id)
+        return {
+          'Item ID': item.id,
+          'Item Name': item.name,
+          'Category': cat ? cat.name : 'Uncategorized',
+          'Price (₹)': item.price,
+          'Cost (₹)': cost !== null ? Number(cost.toFixed(2)) : 'N/A',
+          'Profit (₹)': profit !== null ? Number(profit.toFixed(2)) : 'N/A',
+          'Margin (%)': margin !== null ? `${margin}%` : 'N/A',
+          'Available': item.isAvailable !== false ? 'Yes' : 'No',
+          'Recipe Mapped': recipe ? 'Yes' : 'No',
+          'Description': item.description || ''
+        }
+      })
+
+      const catRows = categories.map(cat => {
+        const count = menuItems.filter(i => i.categoryId === cat.id).length
+        return {
+          'Category ID': cat.id,
+          'Category Name': cat.name,
+          'Color': cat.color || '',
+          'Item Count': count
+        }
+      })
+
+      const recipeRows = []
+      recipes.forEach(r => {
+        const mItem = menuItems.find(m => m.id === r.menuItemId)
+        r.ingredients.forEach(ing => {
+          const invItem = inventory.find(i => i.id === ing.inventoryItemId)
+          const costPerUnit = ing.costPerUnit || (invItem ? invItem.costPerUnit : 0)
+          const totalCost = ing.cost || (ing.quantity * costPerUnit)
+          recipeRows.push({
+            'Recipe ID': r.id,
+            'Menu Item Name': mItem ? mItem.name : r.menuItemName || r.name,
+            'Ingredient Name': ing.inventoryName || (invItem ? invItem.name : 'Unknown'),
+            'Quantity': ing.quantity,
+            'Unit': ing.unit || '',
+            'Cost Per Unit (₹)': costPerUnit,
+            'Ingredient Cost (₹)': Number(totalCost.toFixed(2))
+          })
+        })
+      })
+
+      const wb = XLSX.utils.book_new()
+      const wsItems = XLSX.utils.json_to_sheet(menuRows)
+      const wsCats = XLSX.utils.json_to_sheet(catRows)
+      const wsRecipes = XLSX.utils.json_to_sheet(recipeRows)
+
+      XLSX.utils.book_append_sheet(wb, wsItems, 'Menu Items')
+      XLSX.utils.book_append_sheet(wb, wsCats, 'Categories')
+      XLSX.utils.book_append_sheet(wb, wsRecipes, 'Recipes & Costing')
+
+      const dateStr = new Date().toISOString().slice(0, 10)
+      XLSX.writeFile(wb, `TDG_Menu_Export_${dateStr}.xlsx`)
+      toast.success('Menu exported to Excel successfully!')
+    } catch (e) {
+      console.error('Excel export error:', e)
+      toast.error('Failed to export Excel')
+    }
+  }
+
   const saveItem = async () => {
     if (!itemForm.name || itemForm.price === '' || itemForm.price === null || itemForm.price === undefined) {
       toast.error('Name and price required')
@@ -5236,6 +5306,10 @@ export default function MenuManagement() {
             <Button variant="ghost" onClick={() => openCategoryModal(null)}>
               <Plus size={18} />
               Add Category
+            </Button>
+            <Button variant="outline" onClick={exportMenuToExcel} style={{ borderColor: '#10b981', color: '#047857', background: '#ecfdf5' }}>
+              <FileSpreadsheet size={18} color="#10b981" />
+              Export Excel
             </Button>
           </div>
 
