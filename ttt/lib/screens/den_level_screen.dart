@@ -123,12 +123,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                 await ApiService().addAsset(name, phone);
                 _fetchDenProgress();
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Asset added to your Den!'),
-                      backgroundColor: Color(0xFF4CAF50),
-                    ),
-                  );
+                  _showVerifyOtpDialog(name, phone);
                 }
               } catch (e) {
                 if (mounted) {
@@ -143,6 +138,62 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
               foregroundColor: Colors.black,
             ),
             child: Text('Add Asset', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showVerifyOtpDialog(String name, String phone) {
+    final otpCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1E24),
+        title: Text('Verify Asset OTP', style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('An SMS OTP message has been sent to $name ($phone).', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+            const SizedBox(height: 8),
+            Text('Enter the 4-digit OTP received by $name to verify and activate:', style: const TextStyle(color: Colors.white70, fontSize: 12)),
+            const SizedBox(height: 12),
+            TextField(
+              controller: otpCtrl,
+              keyboardType: TextInputType.number,
+              maxLength: 4,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 6),
+              decoration: const InputDecoration(hintText: '0000', hintStyle: TextStyle(color: Colors.grey)),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Later', style: TextStyle(color: Colors.grey))),
+          ElevatedButton(
+            onPressed: () async {
+              final otp = otpCtrl.text.trim();
+              if (otp.length != 4) return;
+              Navigator.pop(ctx);
+              try {
+                await ApiService().verifyAssetOtp(phone, otp);
+                _fetchDenProgress();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('$name is now activated!'), backgroundColor: Colors.green),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: TDGColors.gold, foregroundColor: Colors.black),
+            child: Text('Verify OTP', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
           ),
         ],
       ),

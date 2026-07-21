@@ -421,27 +421,28 @@ export default function Customers() {
                     <Button onClick={handleAddAsset} loading={assetLoading}><Plus size={18} /> Add</Button>
                   </div>
 
-                  {assetOtp && (
+                  {verifyPhone && (
                     <div style={{ marginTop: '16px', background: '#fffbeb', border: '2px solid #f59e0b', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
-                      <div style={{ fontSize: '13px', color: '#92400e', marginBottom: '4px', fontWeight: 600 }}>OTP Generated for Asset:</div>
-                      <div style={{ fontSize: '32px', fontWeight: 900, color: '#d97706', letterSpacing: '8px', fontFamily: 'monospace', marginBottom: '12px' }}>{assetOtp}</div>
-                      <div style={{ fontSize: '12px', color: '#78350f', marginBottom: '12px' }}>Enter the 4-digit OTP received by the asset below to verify and activate:</div>
+                      <div style={{ fontSize: '14px', color: '#92400e', marginBottom: '6px', fontWeight: 700 }}>OTP Sent to Asset ({verifyPhone})</div>
+                      <div style={{ fontSize: '13px', color: '#78350f', marginBottom: '16px', lineHeight: 1.4 }}>
+                        An SMS OTP message has been sent to the asset's phone <strong>({verifyPhone})</strong>.<br/>
+                        Enter the 4-digit OTP received by the asset to verify and activate:
+                      </div>
                       <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', maxWidth: '320px', margin: '0 auto' }}>
                         <input
                           type="text"
                           maxLength={4}
-                          placeholder="OTP"
+                          placeholder="0000"
                           value={verifyOtpCode}
                           onChange={(e) => setVerifyOtpCode(e.target.value)}
-                          style={{ ...inputStyle, textAlign: 'center', fontSize: '18px', fontWeight: 700, letterSpacing: '4px', width: '120px' }}
+                          style={{ ...inputStyle, textAlign: 'center', fontSize: '20px', fontWeight: 800, letterSpacing: '6px', width: '130px' }}
                         />
                         <Button size="sm" onClick={() => handleVerifyAssetOtp(verifyPhone, verifyOtpCode)} loading={verifyLoading}>
                           Verify OTP
                         </Button>
                       </div>
                       <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginTop: '12px' }}>
-                        <Button size="sm" variant="secondary" onClick={() => copyOtp(assetOtp)}><Copy size={14} /> Copy OTP</Button>
-                        <Button size="sm" variant="secondary" onClick={() => { setAssetOtp(null); setVerifyOtpCode(''); }}><X size={14} /> Dismiss</Button>
+                        <Button size="sm" variant="secondary" onClick={() => { setVerifyPhone(''); setVerifyOtpCode(''); }}><X size={14} /> Close</Button>
                       </div>
                     </div>
                   )}
