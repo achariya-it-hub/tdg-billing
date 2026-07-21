@@ -1757,6 +1757,97 @@ app.get('/api/admin/menu/export-excel', (req, res) => {
   }
 })
 
+// Import Menu from Excel
+app.post('/api/admin/menu/import-excel', (req, res) => {
+  try {
+    const { items = [], categories: inCats = [] } = req.body
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'No items provided for import' })
+    }
+
+    let created = 0
+    let updated = 0
+
+    // 1. Process categories if provided
+    inCats.forEach(c => {
+      const cName = c['Category Name'] || c.name
+      if (cName) {
+        const exists = categories.find(cat => cat.name.toLowerCase() === String(cName).toLowerCase() || cat.id === c['Category ID'] || cat.id === c.id)
+        if (!exists) {
+          categories.push({
+            id: c['Category ID'] || c.id || ('cat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
+            name: String(cName),
+            color: c['Color'] || c.color || '#6b7280',
+            displayOrder: categories.length + 1
+          })
+        }
+      }
+    })
+
+    // 2. Process items
+    items.forEach(row => {
+      const itemName = row['Item Name'] || row.name || row['Name'] || row['Item']
+      const priceVal = row['Price (₹)'] || row.price || row['Price']
+      if (!itemName || priceVal === undefined || priceVal === null) return
+
+      const categoryName = row['Category'] || row.category || row['Category Name']
+      let catId = null
+      if (categoryName) {
+        let matchedCat = categories.find(c => c.name.toLowerCase() === String(categoryName).toLowerCase())
+        if (!matchedCat) {
+          matchedCat = {
+            id: 'cat_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+            name: String(categoryName),
+            color: '#6b7280',
+            displayOrder: categories.length + 1
+          }
+          categories.push(matchedCat)
+        }
+        catId = matchedCat.id
+      }
+      if (!catId && categories.length > 0) catId = categories[0].id
+
+      const itemId = row['Item ID'] || row.id
+      const desc = row['Description'] || row.description || ''
+      const availVal = row['Available'] !== undefined ? row['Available'] : row.isAvailable
+      const isAvailable = availVal === false || availVal === 'No' || availVal === 'no' || availVal === '0' ? false : true
+
+      const existingIdx = menuItems.findIndex(i => (itemId && i.id === itemId) || i.name.toLowerCase() === String(itemName).toLowerCase())
+
+      if (existingIdx >= 0) {
+        menuItems[existingIdx] = {
+          ...menuItems[existingIdx],
+          name: String(itemName),
+          price: Number(priceVal),
+          categoryId: catId || menuItems[existingIdx].categoryId,
+          description: String(desc),
+          isAvailable
+        }
+        updated++
+      } else {
+        const newItem = {
+          id: itemId || ('m_' + Date.now() + '_' + Math.floor(Math.random() * 1000)),
+          name: String(itemName),
+          price: Number(priceVal),
+          categoryId: catId || 'c1',
+          description: String(desc),
+          isAvailable,
+          image: null
+        }
+        menuItems.push(newItem)
+        created++
+      }
+    })
+
+    saveState()
+    io.emit('menu:updated', { created, updated })
+    res.json({ success: true, created, updated, total: menuItems.length })
+  } catch (e) {
+    console.error('Import error:', e)
+    res.status(500).json({ error: 'Import failed: ' + e.message })
+  }
+})
+
 // POS Orders (no auth)
 app.get('/api/pos/orders', (req, res) => {
   const { status, source } = req.query

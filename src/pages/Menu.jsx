@@ -4783,6 +4783,66 @@ export default function MenuManagement() {
   const [imagePreview, setImagePreview] = useState(null)
   const [imageFile, setImageFile] = useState(null)
   const fileInputRef = useRef(null)
+  const excelInputRef = useRef(null)
+
+  const handleExcelUpload = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    try {
+      const XLSX = await import('xlsx')
+      const buffer = await file.arrayBuffer()
+      const wb = XLSX.read(buffer, { type: 'array' })
+
+      let rawItems = []
+      let rawCats = []
+
+      // Try reading 'Menu Items' sheet or first sheet
+      const itemsSheetName = wb.SheetNames.find(s => s.toLowerCase().includes('item') || s.toLowerCase().includes('menu')) || wb.SheetNames[0]
+      if (itemsSheetName && wb.Sheets[itemsSheetName]) {
+        rawItems = XLSX.utils.sheet_to_json(wb.Sheets[itemsSheetName])
+      }
+
+      // Try reading 'Categories' sheet
+      const catsSheetName = wb.SheetNames.find(s => s.toLowerCase().includes('cat'))
+      if (catsSheetName && wb.Sheets[catsSheetName]) {
+        rawCats = XLSX.utils.sheet_to_json(wb.Sheets[catsSheetName])
+      }
+
+      if (rawItems.length === 0) {
+        toast.error('No menu items found in Excel file')
+        return
+      }
+
+      const body = { items: rawItems, categories: rawCats }
+      const res = await fetch(`${API()}/api/admin/menu/import-excel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Import failed')
+      }
+
+      const result = await res.json()
+      toast.success(`Import successful! (${result.created} created, ${result.updated} updated)`)
+
+      // Refresh state
+      const [catRes, itemRes] = await Promise.all([
+        fetch(`${API()}/api/admin/menu/categories`).then(r => r.json()),
+        fetch(`${API()}/api/admin/menu/items`).then(r => r.json())
+      ])
+      if (catRes?.length) setCategories(catRes)
+      if (itemRes?.length) setMenuItems(itemRes)
+      useMenuStore.getState().fetchMenuItems()
+    } catch (err) {
+      console.error('Excel import error:', err)
+      toast.error('Failed to import Excel: ' + (err.message || 'Invalid format'))
+    } finally {
+      if (e.target) e.target.value = ''
+    }
+  }
 
   const handleImageSelect = (e) => {
     const file = e.target.files?.[0]
@@ -5306,6 +5366,17 @@ export default function MenuManagement() {
             <Button variant="ghost" onClick={() => openCategoryModal(null)}>
               <Plus size={18} />
               Add Category
+            </Button>
+            <input
+              type="file"
+              ref={excelInputRef}
+              accept=".xlsx, .xls, .csv"
+              style={{ display: 'none' }}
+              onChange={handleExcelUpload}
+            />
+            <Button variant="outline" onClick={() => excelInputRef.current?.click()} style={{ borderColor: '#3b82f6', color: '#1d4ed8', background: '#eff6ff' }}>
+              <Download size={18} color="#3b82f6" style={{ transform: 'rotate(180deg)' }} />
+              Upload Excel
             </Button>
             <Button variant="outline" onClick={exportMenuToExcel} style={{ borderColor: '#10b981', color: '#047857', background: '#ecfdf5' }}>
               <FileSpreadsheet size={18} color="#10b981" />
