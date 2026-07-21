@@ -65,6 +65,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'quantity': int.parse(item['qty'].toString()),
       }).toList();
 
+      if (_selectedPayment == 'ccavenue') {
+        await ApiService().initiateCCavenuePayment(
+          amount: _finalTotal.toDouble(),
+          customerName: ApiService().currentUser?['name'],
+          customerPhone: ApiService().currentUser?['phone'],
+        );
+      }
+
       await ApiService().createOrder(
         items: itemsForApi,
         subtotal: (widget.total - 35).toDouble(),
@@ -225,7 +233,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           showGold: true,
         ),
         const SizedBox(height: 8),
-        _paymentOption('upi', Icons.send_rounded, 'UPI', 'Pay using any UPI app'),
+        _paymentOption('ccavenue', Icons.payment_rounded, 'CCAvenue Gateway', 'Credit/Debit Cards, NetBanking, UPI, Wallets'),
+        const SizedBox(height: 8),
+        _paymentOption('upi', Icons.send_rounded, 'UPI Direct', 'Pay using UPI app'),
         const SizedBox(height: 8),
         _paymentOption('card', Icons.credit_card_rounded, 'Credit / Debit Card', 'Visa, Mastercard, Rupay'),
         const SizedBox(height: 8),

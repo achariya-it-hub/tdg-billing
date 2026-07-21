@@ -9,6 +9,7 @@ import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync, readdirSy
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import XLSX from 'xlsx'
+import crypto from 'crypto'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -134,7 +135,16 @@ let onlineOrders = []
 let settings = {
   company: { name: 'Ten Den Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '000000000', email: '', gst: '', logo: null, upiId: '' },
   theme: { accentPrimary: '#e63946', accentPrimaryDark: '#c1121f', bgPrimary: '#f5f5f7' },
-  printers: [{ id: 'default', name: 'Default Printer', ip: '', type: 'browser', isDefault: true }]
+  printers: [{ id: 'default', name: 'Default Printer', ip: '', type: 'browser', isDefault: true }],
+  paymentGateways: {
+    ccavenue: {
+      merchantId: process.env.CCAVENUE_MERCHANT_ID || '',
+      workingKey: process.env.CCAVENUE_WORKING_KEY || '',
+      accessCode: process.env.CCAVENUE_ACCESS_CODE || '',
+      isProduction: false,
+      isEnabled: true
+    }
+  }
 }
 let aggregators = [
   { id: 'swiggy', name: 'Swiggy', displayName: 'Swiggy', isActive: true, defaultPrepTime: 25, color: '#ff5200' },
@@ -1260,8 +1270,214 @@ app.put('/api/settings', (req, res) => {
   if (req.body.company) settings.company = { ...settings.company, ...req.body.company }
   if (req.body.theme) settings.theme = { ...settings.theme, ...req.body.theme }
   if (req.body.printers) settings.printers = req.body.printers
+  if (req.body.paymentGateways) settings.paymentGateways = req.body.paymentGateways
   const db = readDb(); db.settings = settings; writeDb(db)
   res.json({ success: true, settings })
+})
+
+// --- CCAVENUE PAYMENT GATEWAY INTEGRATION ---
+
+function encryptCCAvenue(plainText, workingKey) {
+  if (!workingKey) return ''
+  try {
+    const md5Key = crypto.createHash('md5').update(workingKey).digest()
+    const iv = Buffer.from([0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f])
+    const cipher = crypto.createCipheriv('aes-128-cbc', md5Key, iv)
+    let encoded = cipher.update(plainText, 'utf8', 'hex')
+    encoded += cipher.final('hex')
+    return encoded
+  } catch (e) {
+    console.error('encryptCCAvenue error:', e.message)
+    return ''
+  }
+}
+
+function decryptCCAvenue(encText, workingKey) {
+  if (!workingKey || !encText) return ''
+  try {
+    const md5Key = crypto.createHash('md5').update(workingKey).digest()
+    const iv = Buffer.from([0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f])
+    const decipher = crypto.createDecipheriv('aes-128-cbc', md5Key, iv)
+    let decoded = decipher.update(encText, 'hex', 'utf8')
+    decoded += decipher.final('utf8')
+    return decoded
+  } catch (e) {
+    console.error('decryptCCAvenue error:', e.message)
+    return ''
+  }
+}
+
+// CCAvenue Config Public Info
+app.get('/api/ccavenue/config', (req, res) => {
+  const ccConfig = settings.paymentGateways?.ccavenue || {}
+  const merchantId = process.env.CCAVENUE_MERCHANT_ID || ccConfig.merchantId || ''
+  const accessCode = process.env.CCAVENUE_ACCESS_CODE || ccConfig.accessCode || ''
+  const workingKey = process.env.CCAVENUE_WORKING_KEY || ccConfig.workingKey || ''
+  const isProduction = process.env.CCAVENUE_IS_PRODUCTION === 'true' || ccConfig.isProduction === true
+  const isEnabled = ccConfig.isEnabled !== false
+
+  res.json({
+    enabled: isEnabled && !!(merchantId && workingKey && accessCode),
+    hasCredentials: !!(merchantId && workingKey && accessCode),
+    merchantId,
+    accessCode,
+    isProduction
+  })
+})
+
+// Initiate CCAvenue Payment
+app.post('/api/ccavenue/initiate', (req, res) => {
+  try {
+    const { orderId, amount, currency = 'INR', redirectUrl, cancelUrl, customerPhone, customerEmail, customerName } = req.body
+    if (!amount || Number(amount) <= 0) return res.status(400).json({ error: 'Valid amount required' })
+
+    const ccConfig = settings.paymentGateways?.ccavenue || {}
+    const merchantId = process.env.CCAVENUE_MERCHANT_ID || ccConfig.merchantId || ''
+    const accessCode = process.env.CCAVENUE_ACCESS_CODE || ccConfig.accessCode || ''
+    const workingKey = process.env.CCAVENUE_WORKING_KEY || ccConfig.workingKey || ''
+    const isProduction = process.env.CCAVENUE_IS_PRODUCTION === 'true' || ccConfig.isProduction === true
+
+    if (!merchantId || !accessCode || !workingKey) {
+      return res.status(400).json({ error: 'CCAvenue credentials not configured. Please add Merchant ID, Access Code, and Working Key in Settings.' })
+    }
+
+    const txnOrderId = orderId || ('ORD_' + Date.now())
+    const host = req.protocol + '://' + req.get('host')
+    const finalRedirect = redirectUrl || `${host}/api/ccavenue/response`
+    const finalCancel = cancelUrl || `${host}/api/ccavenue/response`
+
+    const params = [
+      `merchant_id=${encodeURIComponent(merchantId)}`,
+      `order_id=${encodeURIComponent(txnOrderId)}`,
+      `currency=${encodeURIComponent(currency)}`,
+      `amount=${encodeURIComponent(Number(amount).toFixed(2))}`,
+      `redirect_url=${encodeURIComponent(finalRedirect)}`,
+      `cancel_url=${encodeURIComponent(finalCancel)}`,
+      `language=EN`,
+      `billing_name=${encodeURIComponent(customerName || 'Customer')}`,
+      `billing_tel=${encodeURIComponent(customerPhone || '')}`,
+      `billing_email=${encodeURIComponent(customerEmail || '')}`
+    ].join('&')
+
+    const encRequest = encryptCCAvenue(params, workingKey)
+    const ccavenueUrl = isProduction
+      ? 'https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction'
+      : 'https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction'
+
+    res.json({
+      success: true,
+      orderId: txnOrderId,
+      encRequest,
+      accessCode,
+      ccavenueUrl,
+      formFields: {
+        encRequest,
+        access_code: accessCode
+      }
+    })
+  } catch (e) {
+    console.error('CCAvenue Initiate Error:', e)
+    res.status(500).json({ error: 'Failed to initiate CCAvenue payment: ' + e.message })
+  }
+})
+
+// Handle CCAvenue Response Callback
+app.post('/api/ccavenue/response', express.urlencoded({ extended: true }), (req, res) => {
+  try {
+    const encResp = req.body.encResp
+    const ccConfig = settings.paymentGateways?.ccavenue || {}
+    const workingKey = process.env.CCAVENUE_WORKING_KEY || ccConfig.workingKey || ''
+
+    if (!encResp || !workingKey) {
+      return res.status(400).send('Invalid CCAvenue response or missing Working Key')
+    }
+
+    const decrypted = decryptCCAvenue(encResp, workingKey)
+    const parsed = {}
+    decrypted.split('&').forEach(pair => {
+      const parts = pair.split('=')
+      if (parts.length === 2) {
+        parsed[parts[0]] = decodeURIComponent(parts[1])
+      }
+    })
+
+    const orderId = parsed.order_id
+    const orderStatus = parsed.order_status // 'Success', 'Aborted', 'Failure'
+    const trackingId = parsed.tracking_id || ''
+    const failureMessage = parsed.failure_message || parsed.status_message || ''
+    const isSuccess = orderStatus === 'Success'
+
+    // Update internal order if matched
+    const targetOrder = orders.find(o => String(o.id) === String(orderId) || String(o.orderNumber) === String(orderId))
+    if (targetOrder) {
+      if (isSuccess) {
+        targetOrder.paymentStatus = 'paid'
+        targetOrder.paymentMethod = 'ccavenue'
+        targetOrder.ccavenueTrackingId = trackingId
+      } else {
+        targetOrder.paymentStatus = 'failed'
+        targetOrder.paymentFailureReason = failureMessage
+      }
+      saveState()
+      io.emit('order:updated', targetOrder)
+    }
+
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Payment ${isSuccess ? 'Successful' : 'Failed'}</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #0f172a; color: #fff; text-align: center; padding: 20px; }
+            .card { background: #1e293b; padding: 32px; border-radius: 20px; border: 1px solid #334155; max-width: 400px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+            .icon { font-size: 56px; margin-bottom: 16px; }
+            h2 { margin: 0 0 8px 0; color: ${isSuccess ? '#10b981' : '#ef4444'}; font-size: 24px; }
+            p { color: #94a3b8; font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+            .btn { display: inline-block; background: linear-gradient(135deg, #e63946, #c1121f); color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 15px; border: none; cursor: pointer; width: 100%; box-sizing: border-box; }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <div class="icon">${isSuccess ? '🎉' : '❌'}</div>
+            <h2>Payment ${isSuccess ? 'Successful!' : 'Failed'}</h2>
+            <p>${isSuccess ? `Order #${orderId} paid successfully.<br>Ref: ${trackingId}` : failureMessage || 'Payment could not be completed.'}</p>
+            <button class="btn" onclick="finishPayment()">Return to App</button>
+          </div>
+          <script>
+            function finishPayment() {
+              if (window.opener) {
+                window.opener.postMessage({ type: 'CCAVENUE_PAYMENT_RESULT', success: ${isSuccess}, orderId: '${orderId}', trackingId: '${trackingId}' }, '*');
+                window.close();
+              } else if (navigator.userAgent.includes('Mobile') || window.FlutterWebView) {
+                window.location.href = 'tdgapp://payment-result?success=${isSuccess}&orderId=${orderId}';
+              } else {
+                window.location.href = '/';
+              }
+            }
+          </script>
+        </body>
+      </html>
+    `)
+  } catch (e) {
+    console.error('CCAvenue Response Error:', e)
+    res.status(500).send('Error processing CCAvenue payment response: ' + e.message)
+  }
+})
+
+// Update Payment Gateways in Settings
+app.put('/api/settings/payment-gateways', (req, res) => {
+  const auth = verifySuperAdmin(req.body.pin)
+  if (!auth.ok) return res.status(403).json({ error: auth.error })
+  if (req.body.ccavenue) {
+    if (!settings.paymentGateways) settings.paymentGateways = {}
+    settings.paymentGateways.ccavenue = {
+      ...settings.paymentGateways.ccavenue,
+      ...req.body.ccavenue
+    }
+    saveState()
+  }
+  res.json({ success: true, paymentGateways: settings.paymentGateways })
 })
 
 // Menu (mobile format)

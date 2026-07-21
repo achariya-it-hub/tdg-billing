@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import { Building2, Database, Printer, Palette, Save, Upload, Download, RotateCcw, X, Plus, Trash2 } from 'lucide-react'
+import { Building2, Database, Printer, Palette, CreditCard, Save, Upload, Download, RotateCcw, X, Plus, Trash2, Key, ShieldCheck } from 'lucide-react'
 import API_BASE from '../lib/apiConfig'
 import { useSettings } from '../lib/settingsContext'
 import { clearSettingsCache } from '../lib/getCompanyInfo'
 
 const TABS = [
   { id: 'company', label: 'Company Info', icon: Building2 },
+  { id: 'payment', label: 'Payment Gateways', icon: CreditCard },
   { id: 'data', label: 'Data Management', icon: Database },
   { id: 'printers', label: 'Printers', icon: Printer },
   { id: 'theme', label: 'Theme', icon: Palette },
@@ -83,9 +84,124 @@ export default function Settings() {
       </div>
 
       {activeTab === 'company' && <CompanyTab pin={pin} settings={settings} onSaved={reloadSettings} />}
+      {activeTab === 'payment' && <PaymentGatewaysTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'data' && <DataTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'printers' && <PrintersTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'theme' && <ThemeTab pin={pin} settings={settings} onSaved={reloadSettings} />}
+    </div>
+  )
+}
+
+function PaymentGatewaysTab({ pin, settings, onSaved }) {
+  const ccConfig = settings?.paymentGateways?.ccavenue || {}
+  const [form, setForm] = useState({
+    merchantId: ccConfig.merchantId || '',
+    workingKey: ccConfig.workingKey || '',
+    accessCode: ccConfig.accessCode || '',
+    isProduction: ccConfig.isProduction || false,
+    isEnabled: ccConfig.isEnabled !== false
+  })
+  const [saving, setSaving] = useState(false)
+  const [msg, setMsg] = useState('')
+
+  const handleSave = async () => {
+    setSaving(true); setMsg('')
+    try {
+      const res = await fetch(`${API_BASE}/api/settings/payment-gateways`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin, ccavenue: form })
+      })
+      const data = await res.json()
+      if (data.success) {
+        setMsg('CCAvenue Gateway Settings Saved!')
+        clearSettingsCache()
+        onSaved()
+      } else {
+        setMsg(data.error || 'Failed to save settings')
+      }
+    } catch (e) {
+      setMsg('Network error')
+    }
+    setSaving(false)
+  }
+
+  return (
+    <div style={glassCard}>
+      <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <CreditCard size={22} color="#e63946" /> CCAvenue Payment Gateway
+      </h3>
+      <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '20px' }}>
+        Configure CCAvenue Merchant credentials to enable Credit Card, Debit Card, Net Banking, and UPI payments for both Web App & Mobile App.
+      </p>
+
+      {msg && (
+        <div style={{
+          background: msg.includes('Saved') ? 'rgba(22,163,74,0.08)' : 'rgba(220,38,38,0.08)',
+          color: msg.includes('Saved') ? '#16a34a' : '#dc2626',
+          padding: '12px 16px', borderRadius: '10px', fontSize: '14px', marginBottom: '20px', fontWeight: 600
+        }}>
+          {msg}
+        </div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+        <div>
+          <label style={labelStyle}>Merchant ID (Merchant Code)</label>
+          <input
+            style={inputStyle}
+            placeholder="e.g. 2389401"
+            value={form.merchantId}
+            onChange={e => setForm({ ...form, merchantId: e.target.value })}
+          />
+        </div>
+        <div>
+          <label style={labelStyle}>Access Code</label>
+          <input
+            style={inputStyle}
+            placeholder="e.g. AVXX00XX00XX"
+            value={form.accessCode}
+            onChange={e => setForm({ ...form, accessCode: e.target.value })}
+          />
+        </div>
+      </div>
+
+      <div style={{ marginBottom: '20px' }}>
+        <label style={labelStyle}>Working Key (Encryption Key)</label>
+        <input
+          type="password"
+          style={inputStyle}
+          placeholder="e.g. 32-character working key"
+          value={form.workingKey}
+          onChange={e => setForm({ ...form, workingKey: e.target.value })}
+        />
+      </div>
+
+      <div style={{ display: 'flex', gap: '24px', alignItems: 'center', marginBottom: '24px', padding: '16px', background: 'rgba(0,0,0,0.02)', borderRadius: '12px' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
+          <input
+            type="checkbox"
+            checked={form.isEnabled}
+            onChange={e => setForm({ ...form, isEnabled: e.target.checked })}
+            style={{ width: '18px', height: '18px', accentColor: '#e63946' }}
+          />
+          Enable CCAvenue Gateway
+        </label>
+
+        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
+          <input
+            type="checkbox"
+            checked={form.isProduction}
+            onChange={e => setForm({ ...form, isProduction: e.target.checked })}
+            style={{ width: '18px', height: '18px', accentColor: '#e63946' }}
+          />
+          Production Mode (Live URL)
+        </label>
+      </div>
+
+      <button onClick={handleSave} disabled={saving} style={btnPrimary}>
+        {saving ? 'Saving...' : <><Save size={16} /> Save Gateway Settings</>}
+      </button>
     </div>
   )
 }

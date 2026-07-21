@@ -215,6 +215,34 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> initiateCCavenuePayment({
+    required double amount,
+    String? orderId,
+    String? customerName,
+    String? customerPhone,
+    String? customerEmail,
+  }) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/ccavenue/initiate');
+    try {
+      final response = await http.post(
+        url,
+        headers: _getHeaders(),
+        body: jsonEncode({
+          'amount': amount,
+          'orderId': orderId,
+          'customerName': customerName ?? currentUser?['name'],
+          'customerPhone': customerPhone ?? currentUser?['phone'],
+          'customerEmail': customerEmail ?? currentUser?['email'],
+        }),
+      );
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200 && data['success'] == true) return data;
+      throw Exception(data['error'] ?? 'Failed to initiate CCAvenue payment');
+    } catch (e) {
+      _handleError(e);
+    }
+  }
+
   Future<List<dynamic>> getOrders() async {
     final url = Uri.parse('${AppConfig.baseUrl}/orders');
     try {
