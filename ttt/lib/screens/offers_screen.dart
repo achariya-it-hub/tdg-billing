@@ -75,7 +75,8 @@ class _OffersScreenState extends State<OffersScreen> {
         ],
       ),
     ),
-  );
+    );
+  }
 
   Widget _tab(String label, bool isActive) {
     final selected = _showAll == (label == 'All Offers');

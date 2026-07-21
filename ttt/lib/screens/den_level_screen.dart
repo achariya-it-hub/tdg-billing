@@ -27,6 +27,8 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
   Future<void> _fetchDenProgress() async {
     if (mounted) setState(() => _isLoading = true);
     try {
+      await ApiService().getProfile();
+      await ApiService().getWallet();
       final progress = await ApiService().getDenProgress();
       if (mounted) {
         setState(() {
@@ -245,6 +247,8 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                 child: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   children: [
+                    _buildPointsWalletCard(),
+                    const SizedBox(height: 16),
                     _buildLevelCard(context, currentLevel),
                   const SizedBox(height: 20),
                   _buildPrideProgressCard(context),
@@ -295,6 +299,75 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
               ),
             ),
           ),
+    );
+  }
+
+  Widget _buildPointsWalletCard() {
+    final points = ApiService().currentUser?['points'] ?? _denProgress?['points'] ?? 0;
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF1F1A0A), Color(0xFF141416)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: TDGColors.gold.withOpacity(0.4), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: TDGColors.gold.withOpacity(0.1),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'YOUR POINTS BALANCE',
+                style: GoogleFonts.outfit(
+                  color: TDGColors.grey,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Text(
+                    '$points',
+                    style: GoogleFonts.outfit(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.diamond_rounded, color: Colors.amber, size: 24),
+                ],
+              ),
+            ],
+          ),
+          ElevatedButton.icon(
+            onPressed: _showAddAssetDialog,
+            icon: const Icon(Icons.person_add_rounded, size: 16, color: Colors.black),
+            label: Text('ADD ASSET', style: GoogleFonts.outfit(color: Colors.black, fontSize: 13, fontWeight: FontWeight.w800)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: TDGColors.gold,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 4,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
