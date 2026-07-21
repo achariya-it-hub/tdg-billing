@@ -6,22 +6,77 @@ import Modal from '../components/ui/Modal'
 import { useToast } from '../components/ui/Toaster'
 
 const sampleCategories = [
-  { id: 'cat_1', name: 'Burgers', color: '#e63946', displayOrder: 1 },
-  { id: 'cat_2', name: 'Chicken', color: '#f59e0b', displayOrder: 2 },
-  { id: 'cat_3', name: 'Sides', color: '#10b981', displayOrder: 3 },
-  { id: 'cat_4', name: 'Beverages', color: '#3b82f6', displayOrder: 4 },
+  { id: 'c1', name: 'Gyros', color: '#e63946', displayOrder: 1 },
+  { id: 'c2', name: 'Burger', color: '#f59e0b', displayOrder: 2 },
+  { id: 'c3', name: 'Salads', color: '#10b981', displayOrder: 3 },
+  { id: 'c4', name: 'Sides', color: '#dc2626', displayOrder: 4 },
+  { id: 'c5', name: 'TDG Crispy Chicken', color: '#fbbf24', displayOrder: 5 },
+  { id: 'c6', name: 'Thick Shakes', color: '#8b5cf6', displayOrder: 6 },
+  { id: 'c7', name: 'Softy', color: '#ec4899', displayOrder: 7 },
+  { id: 'c8', name: 'Desserts', color: '#f472b6', displayOrder: 8 },
+  { id: 'c9', name: 'Beverages', color: '#3b82f6', displayOrder: 9 }
 ]
 
 const sampleMenuItems = [
-  { id: 'm1', categoryId: 'cat_1', name: 'Zinger Burger', price: 249, description: 'Crispy zinger fillet with spicy sauce', prepTime: 12, isAvailable: 1 },
-  { id: 'm2', categoryId: 'cat_1', name: 'Classic Burger', price: 199, description: 'Juicy chicken patty with lettuce', prepTime: 10, isAvailable: 1 },
-  { id: 'm3', categoryId: 'cat_1', name: 'Double Decker', price: 329, description: 'Two patties, double the taste', prepTime: 15, isAvailable: 1 },
-  { id: 'm4', categoryId: 'cat_2', name: 'Hot Wings (6pc)', price: 299, description: 'Crispy fried wings with hot sauce', prepTime: 15, isAvailable: 1 },
-  { id: 'm5', categoryId: 'cat_2', name: 'Crispy Strips (4pc)', price: 249, description: 'Golden crispy chicken strips', prepTime: 12, isAvailable: 1 },
-  { id: 'm6', categoryId: 'cat_3', name: 'French Fries', price: 99, description: 'Golden crispy fries', prepTime: 8, isAvailable: 1 },
-  { id: 'm7', categoryId: 'cat_3', name: 'Coleslaw', price: 79, description: 'Creamy cabbage salad', prepTime: 5, isAvailable: 1 },
-  { id: 'm8', categoryId: 'cat_4', name: 'Pepsi (500ml)', price: 60, description: 'Chilled Pepsi', prepTime: 2, isAvailable: 1 },
-  { id: 'm9', categoryId: 'cat_4', name: 'Masala Chai', price: 40, description: 'Traditional Indian spiced tea', prepTime: 5, isAvailable: 1 },
+  { id: 'm1', categoryId: 'c1', name: 'Non-Veg - Spicy Chicken Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm2', categoryId: 'c1', name: 'Non-Veg - Spicy Chicken Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm3', categoryId: 'c1', name: 'Non-Veg - Cream Chicken Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm4', categoryId: 'c1', name: 'Non-Veg - Cream Chicken Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm5', categoryId: 'c1', name: 'Non-Veg - BBQ Chicken Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm6', categoryId: 'c1', name: 'Non-Veg - BBQ Chicken Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm7', categoryId: 'c1', name: 'Non-Veg - Pesto Chicken Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm8', categoryId: 'c1', name: 'Non-Veg - Pesto Chicken Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm9', categoryId: 'c1', name: 'Veg - Spicy Paneer Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm10', categoryId: 'c1', name: 'Veg - Spicy Paneer Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm11', categoryId: 'c1', name: 'Veg - Cream Paneer Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm12', categoryId: 'c1', name: 'Veg - Cream Paneer Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm13', categoryId: 'c1', name: 'Veg - BBQ Paneer Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm14', categoryId: 'c1', name: 'Veg - BBQ Paneer Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm15', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm16', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm17', categoryId: 'c2', name: 'Non-Veg - Spicy Egg Burger', price: 79, isAvailable: true },
+  { id: 'm18', categoryId: 'c2', name: 'Non-Veg - Crispy Chicken Burger', price: 99, isAvailable: true },
+  { id: 'm19', categoryId: 'c2', name: 'Veg - Spicy Paneer Burger', price: 99, isAvailable: true },
+  { id: 'm20', categoryId: 'c3', name: 'Non-Veg - Chicken Salad', price: 99, isAvailable: true },
+  { id: 'm21', categoryId: 'c3', name: 'Veg - Paneer Salad', price: 99, isAvailable: true },
+  { id: 'm22', categoryId: 'c4', name: 'Non-Veg - Loaded Chicken Fries', price: 199, isAvailable: true },
+  { id: 'm23', categoryId: 'c4', name: 'Veg - Fries (Salted, Peri Peri Or Cajun)', price: 99, isAvailable: true },
+  { id: 'm24', categoryId: 'c4', name: 'Veg - Loaded Paneer Fries', price: 199, isAvailable: true },
+  { id: 'm25', categoryId: 'c4', name: 'Veg - 6 pcs Halloumi Strips', price: 149, isAvailable: true },
+  { id: 'm26', categoryId: 'c5', name: 'Non-Veg - 1 Pc Crispy Chicken (1 Dip)', price: 70, isAvailable: true },
+  { id: 'm27', categoryId: 'c5', name: 'Non-Veg - 2 Pc Crispy Chicken (1 Dip)', price: 140, isAvailable: true },
+  { id: 'm28', categoryId: 'c5', name: 'Non-Veg - 4 Pc Crispy Chicken (2 Dip)', price: 280, isAvailable: true },
+  { id: 'm29', categoryId: 'c5', name: 'Non-Veg - 8 Pc Crispy Chicken (4 Dip)', price: 560, isAvailable: true },
+  { id: 'm30', categoryId: 'c5', name: 'Non-Veg - 12 Pc Crispy Chicken (6 Dip)', price: 840, isAvailable: true },
+  { id: 'm31', categoryId: 'c5', name: 'Non-Veg - 3 Pc Crispy Wings (1 Dip)', price: 90, isAvailable: true },
+  { id: 'm32', categoryId: 'c5', name: 'Non-Veg - 6 Pc Crispy Wings (2 Dip)', price: 180, isAvailable: true },
+  { id: 'm33', categoryId: 'c5', name: 'Non-Veg - 9 Pc Crispy Wings (3 Dip)', price: 270, isAvailable: true },
+  { id: 'm34', categoryId: 'c5', name: 'Non-Veg - 20 Pc Crispy Wings (6 Dip)', price: 600, isAvailable: true },
+  { id: 'm35', categoryId: 'c5', name: 'Non-Veg - 60 Pc Crispy Wings (12 Dip)', price: 1500, isAvailable: true },
+  { id: 'm36', categoryId: 'c5', name: 'Non-Veg - 3 Pc Crispy Strips (1 Dip)', price: 120, isAvailable: true },
+  { id: 'm37', categoryId: 'c5', name: 'Non-Veg - 6 Pc Crispy Strips (2 Dip)', price: 240, isAvailable: true },
+  { id: 'm38', categoryId: 'c5', name: 'Non-Veg - 9 Pc Crispy Strips (3 Dip)', price: 360, isAvailable: true },
+  { id: 'm39', categoryId: 'c5', name: 'Non-Veg - 20 Pc Crispy Strips (6 Dip)', price: 800, isAvailable: true },
+  { id: 'm40', categoryId: 'c5', name: 'Non-Veg - 60 Pc Crispy Strips (12 Dip)', price: 2400, isAvailable: true },
+  { id: 'm41', categoryId: 'c6', name: 'Veg - Vanilla Shake (Regular)', price: 79, isAvailable: true },
+  { id: 'm42', categoryId: 'c6', name: 'Veg - Vanilla Shake (Large)', price: 139, isAvailable: true },
+  { id: 'm43', categoryId: 'c6', name: 'Veg - Strawberry Shake (Regular)', price: 79, isAvailable: true },
+  { id: 'm44', categoryId: 'c6', name: 'Veg - Strawberry Shake (Large)', price: 139, isAvailable: true },
+  { id: 'm45', categoryId: 'c6', name: 'Veg - Biscoff Shake (Regular)', price: 79, isAvailable: true },
+  { id: 'm46', categoryId: 'c6', name: 'Veg - Biscoff Shake (Large)', price: 139, isAvailable: true },
+  { id: 'm47', categoryId: 'c6', name: 'Veg - Oreo Shake (Regular)', price: 79, isAvailable: true },
+  { id: 'm48', categoryId: 'c6', name: 'Veg - Oreo Shake (Large)', price: 139, isAvailable: true },
+  { id: 'm49', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Regular)', price: 79, isAvailable: true },
+  { id: 'm50', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Large)', price: 139, isAvailable: true },
+  { id: 'm51', categoryId: 'c7', name: 'Veg - Vanilla Softy', price: 39, isAvailable: true },
+  { id: 'm52', categoryId: 'c8', name: 'Veg - Chocolate Brownie', price: 99, isAvailable: true },
+  { id: 'm53', categoryId: 'c8', name: 'Veg - Blondy Cake', price: 99, isAvailable: true },
+  { id: 'm54', categoryId: 'c9', name: 'Veg - Sprite / Coca-Cola (Regular)', price: 59, isAvailable: true },
+  { id: 'm55', categoryId: 'c9', name: 'Veg - Sprite / Coca-Cola (Large)', price: 99, isAvailable: true },
+  { id: 'm56', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Regular)', price: 59, isAvailable: true },
+  { id: 'm57', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Large)', price: 99, isAvailable: true },
+  { id: 'm58', categoryId: 'c9', name: 'Veg - Hot Chocolate', price: 99, isAvailable: true },
+  { id: 'm59', categoryId: 'c9', name: 'Veg - Signature Tea', price: 99, isAvailable: true }
 ]
 
 const sampleInventory = [
@@ -4936,11 +4991,20 @@ export default function MenuManagement() {
   }
 
   useEffect(() => {
-    fetch(`${API()}/api/admin/menu/categories`).then(r => r.json()).then(d => { if (d?.length) setCategories(d) }).catch(() => setCategories(sampleCategories))
-    fetch(`${API()}/api/admin/menu/items`).then(r => r.json()).then(d => { if (d?.length) setMenuItems(d) }).catch(() => setMenuItems(sampleMenuItems))
-    fetch(`${API()}/api/inventory`).then(r => r.json()).then(d => { if (d?.length) setInventory(d) }).catch(() => setInventory(sampleInventory))
+    fetch(`${API()}/api/admin/menu/categories`)
+      .then(r => r.json())
+      .then(d => { if (Array.isArray(d)) setCategories(d) })
+      .catch(() => setCategories(sampleCategories))
+    fetch(`${API()}/api/admin/menu/items`)
+      .then(r => r.json())
+      .then(d => { if (Array.isArray(d)) setMenuItems(d) })
+      .catch(() => setMenuItems(sampleMenuItems))
+    fetch(`${API()}/api/inventory`)
+      .then(r => r.json())
+      .then(d => { if (Array.isArray(d)) setInventory(d) })
+      .catch(() => setInventory(sampleInventory))
     fetch(`${API()}/api/recipes`).then(r => r.json()).then(d => {
-      if (d?.length) {
+      if (Array.isArray(d) && d.length > 0) {
         setRecipes(d)
         try { localStorage.setItem('tdg_recipes', JSON.stringify(d)) } catch (e) {}
       } else {
