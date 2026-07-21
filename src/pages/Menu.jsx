@@ -4,6 +4,7 @@ import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import { useToast } from '../components/ui/Toaster'
+import { useMenuStore } from '../stores/menuStore'
 
 const sampleCategories = [
   { id: 'c1', name: 'Gyros', color: '#e63946', displayOrder: 1 },
