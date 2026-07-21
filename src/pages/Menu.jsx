@@ -4894,22 +4894,37 @@ export default function MenuManagement() {
   }, [])
 
   const saveItem = async () => {
-    if (!itemForm.name || !itemForm.price || !itemForm.categoryId) { toast.error('Name, price, and category required'); return }
-    const body = { ...itemForm, price: Number(itemForm.price) }
+    if (!itemForm.name || itemForm.price === '' || itemForm.price === null || itemForm.price === undefined) {
+      toast.error('Name and price required')
+      return
+    }
+    const targetCategoryId = itemForm.categoryId || (categories[0]?.id || 'c1')
+    const body = { ...itemForm, price: Number(itemForm.price), categoryId: targetCategoryId }
     try {
       if (editItemId) {
-        const r = await fetch(`${API()}/api/admin/menu/items/${editItemId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+        const r = await fetch(`${API()}/api/admin/menu/items/${editItemId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        })
         if (!r.ok) throw Error()
         const updated = await r.json()
         setMenuItems(prev => prev.map(i => i.id === editItemId ? updated : i))
+        setRecipes(prev => prev.map(r => r.menuItemId === editItemId ? { ...r, menuItemName: updated.name, name: `${updated.name} Recipe` } : r))
         if (imageFile) await uploadItemImage(editItemId)
+        useMenuStore.getState().fetchMenuItems()
         toast.success('Item updated')
       } else {
-        const r = await fetch(`${API()}/api/admin/menu/items`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+        const r = await fetch(`${API()}/api/admin/menu/items`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        })
         if (!r.ok) throw Error()
         const created = await r.json()
         if (imageFile) await uploadItemImage(created.id)
         setMenuItems(prev => prev.map(i => i.id === created.id ? { ...created, image: imagePreview ? `/uploads/menu/${created.id}.jpg` : null } : [...prev, created]))
+        useMenuStore.getState().fetchMenuItems()
         toast.success('Item added')
       }
       setShowItemModal(false)
@@ -4917,7 +4932,10 @@ export default function MenuManagement() {
       setItemForm({ name: '', price: '', categoryId: '', description: '', isAvailable: true })
       setImageFile(null)
       setImagePreview(null)
-    } catch { toast.error('Failed to save item') }
+    } catch (e) {
+      console.error('saveItem error:', e)
+      toast.error('Failed to save item')
+    }
   }
 
   const deleteItem = async (id) => {
@@ -4975,7 +4993,13 @@ export default function MenuManagement() {
   const openItemModal = (item) => {
     if (item) {
       setEditItemId(item.id)
-      setItemForm({ name: item.name, price: String(item.price), categoryId: item.categoryId || '', description: item.description || '', isAvailable: item.isAvailable !== false })
+      setItemForm({
+        name: item.name || '',
+        price: item.price !== undefined && item.price !== null ? String(item.price) : '',
+        categoryId: item.categoryId || (categories[0]?.id || ''),
+        description: item.description || '',
+        isAvailable: item.isAvailable !== false
+      })
       setImagePreview(item.image ? (item.image.startsWith('http') ? item.image : `${API()}${item.image}`) : null)
       setImageFile(null)
     } else {

@@ -1499,11 +1499,13 @@ app.get('/api/menu/items', (req, res) => {
 // Menu Item CRUD
 app.post('/api/admin/menu/items', (req, res) => {
   const { name, price, categoryId, description, isAvailable, image } = req.body
-  if (!name || !price || !categoryId) return res.status(400).json({ error: 'name, price, and categoryId required' })
+  if (!name || price === undefined || price === null) return res.status(400).json({ error: 'name and price required' })
   const id = 'm_' + Date.now()
-  const item = { id, name, price: Number(price), categoryId, description: description || '', isAvailable: isAvailable !== false, image: image || null }
+  const catId = categoryId || (categories[0]?.id || 'c1')
+  const item = { id, name, price: Number(price), categoryId: catId, description: description || '', isAvailable: isAvailable !== false, image: image || null }
   menuItems.push(item)
   saveState()
+  io.emit('menu:updated', item)
   res.status(201).json(item)
 })
 
@@ -1517,7 +1519,19 @@ app.put('/api/admin/menu/items/:id', (req, res) => {
   if (description !== undefined) menuItems[idx].description = description
   if (isAvailable !== undefined) menuItems[idx].isAvailable = isAvailable
   if (image !== undefined) menuItems[idx].image = image
+
+  // Keep recipe names in sync if name was updated
+  if (name !== undefined) {
+    recipes.forEach(r => {
+      if (r.menuItemId === req.params.id) {
+        r.menuItemName = name
+        r.name = `${name} Recipe`
+      }
+    })
+  }
+
   saveState()
+  io.emit('menu:updated', menuItems[idx])
   res.json(menuItems[idx])
 })
 

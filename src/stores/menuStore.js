@@ -107,7 +107,7 @@ export const useMenuStore = create((set, get) => ({
       
       const res = await fetch(`${apiUrl}/api/menu/categories`)
       const data = await res.json()
-      if (data && data.length > 0) {
+      if (Array.isArray(data) && data.length > 0) {
         set({ categories: data })
         return
       }
@@ -127,7 +127,7 @@ export const useMenuStore = create((set, get) => ({
       const url = categoryId ? `${apiUrl}/api/menu/items?categoryId=${categoryId}` : `${apiUrl}/api/menu/items`
       const res = await fetch(url)
       const data = await res.json()
-      if (data && data.length > 0) {
+      if (Array.isArray(data) && data.length > 0) {
         set({ menuItems: data, loading: false })
         return
       }
