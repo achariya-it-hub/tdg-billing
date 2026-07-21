@@ -973,7 +973,7 @@ app.delete('/api/billing/users/:id', (req, res) => {
 // Get all mobile app customers
 app.get('/api/customers', (req, res) => {
   const db = readDb()
-  const customers = (db.users || []).map(u => ({
+  const customers = (db.users || mobileAppUsers || []).map(u => ({
     id: u.id,
     name: u.name || '',
     phone: u.phone || '',
@@ -985,6 +985,41 @@ app.get('/api/customers', (req, res) => {
     lastVisit: u.lastVisit || u.updatedAt || u.createdAt || ''
   }))
   res.json(customers)
+})
+
+// Delete single customer by ID or phone
+app.delete('/api/customers/:id', (req, res) => {
+  const targetId = req.params.id
+  mobileAppUsers = mobileAppUsers.filter(u => String(u.id) !== String(targetId) && String(u.phone) !== String(targetId))
+  loyaltyUsers = loyaltyUsers.filter(u => String(u.id) !== String(targetId) && String(u.phone) !== String(targetId))
+  dens = dens.filter(d => String(d.leaderId) !== String(targetId) && String(d.leaderPhone) !== String(targetId))
+
+  const db = readDb()
+  db.users = (db.users || []).filter(u => String(u.id) !== String(targetId) && String(u.phone) !== String(targetId))
+  db.loyaltyUsers = (db.loyaltyUsers || []).filter(u => String(u.id) !== String(targetId) && String(u.phone) !== String(targetId))
+  db.dens = (db.dens || []).filter(d => String(d.leaderId) !== String(targetId) && String(d.leaderPhone) !== String(targetId))
+
+  writeDb(db)
+  saveState()
+  res.json({ success: true, message: 'Customer deleted successfully' })
+})
+
+// Clear ALL customers
+app.post('/api/customers/clear-all', (req, res) => {
+  mobileAppUsers = []
+  loyaltyUsers = []
+  dens = []
+  pointTransactions = []
+
+  const db = readDb()
+  db.users = []
+  db.loyaltyUsers = []
+  db.dens = []
+  db.pointTransactions = []
+
+  writeDb(db)
+  saveState()
+  res.json({ success: true, message: 'All customers removed successfully' })
 })
 
 // ============ BILLING CUSTOMER / ASSET MANAGEMENT ============

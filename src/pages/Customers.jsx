@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Users, Search, UserPlus, Gift, Star, Crown, TrendingUp, Users2, Plus, Copy, X, Check } from 'lucide-react'
+import { Users, Search, UserPlus, Gift, Star, Crown, TrendingUp, Users2, Plus, Copy, X, Check, Trash2 } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import API_BASE from '../lib/apiConfig'
@@ -54,6 +54,36 @@ export default function Customers() {
       console.error('Failed to fetch customers:', e)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDeleteCustomer = async (id, name) => {
+    if (!window.confirm(`Are you sure you want to delete customer "${name || 'User'}"?`)) return
+    try {
+      const res = await fetch(`${API_BASE}/api/customers/${encodeURIComponent(id)}`, { method: 'DELETE' })
+      if (res.ok) {
+        setCustomers(prev => prev.filter(c => c.id !== id && c.phone !== id))
+      } else {
+        alert('Failed to delete customer')
+      }
+    } catch {
+      alert('Network error')
+    }
+  }
+
+  const handleClearAllCustomers = async () => {
+    if (!window.confirm('WARNING: Are you sure you want to delete ALL customers? This cannot be undone!')) return
+    if (!window.confirm('FINAL CONFIRMATION: Remove all customer profiles, loyalty points, and den structures?')) return
+    try {
+      const res = await fetch(`${API_BASE}/api/customers/clear-all`, { method: 'POST' })
+      if (res.ok) {
+        setCustomers([])
+        alert('All customers have been deleted.')
+      } else {
+        alert('Failed to clear customers')
+      }
+    } catch {
+      alert('Network error')
     }
   }
 
@@ -231,7 +261,20 @@ export default function Customers() {
               <input type="text" placeholder="Search by name, phone, or email..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ width: '100%', padding: '14px 16px 14px 48px', borderRadius: '12px', border: '1px solid var(--border)', background: 'white', fontSize: '14px' }} />
             </div>
-            <Button onClick={() => window.location.reload()}><Search size={18} /> Refresh</Button>
+            <Button onClick={() => fetchCustomers()}><Search size={18} /> Refresh</Button>
+            {customers.length > 0 && (
+              <button
+                onClick={handleClearAllCustomers}
+                style={{
+                  padding: '12px 18px', borderRadius: '12px', border: '1px solid #fecaca',
+                  background: '#fef2f2', color: '#dc2626', fontWeight: 600, fontSize: '14px',
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px',
+                  transition: 'all 0.2s'
+                }}
+              >
+                <Trash2 size={18} /> Clear All Customers
+              </button>
+            )}
           </div>
 
           {loading ? <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>Loading...</div> :
@@ -248,11 +291,24 @@ export default function Customers() {
                       {initials}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                        <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e' }}>{customer.name || 'Unknown'}</h3>
-                        <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 600, background: tier.bg, color: tier.color, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <TierIcon size={12} /> {tier.label}
-                        </span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e' }}>{customer.name || 'Unknown'}</h3>
+                          <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 600, background: tier.bg, color: tier.color, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <TierIcon size={12} /> {tier.label}
+                          </span>
+                        </div>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleDeleteCustomer(customer.id, customer.name); }}
+                          title="Delete Customer"
+                          style={{
+                            border: 'none', background: 'rgba(239, 68, 68, 0.08)', color: '#dc2626',
+                            padding: '8px', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.2s',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center'
+                          }}
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       </div>
                       <div style={{ fontSize: '13px', color: '#6b7280' }}>{customer.phone || 'No phone'}</div>
                     </div>
