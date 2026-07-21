@@ -44,9 +44,115 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
     }
   }
 
+  String _getLevelFromCount(int count) {
+    if (count >= 10) return 'DIAMOND';
+    if (count >= 6) return 'PLATINUM';
+    if (count >= 4) return 'GOLD';
+    if (count >= 2) return 'SILVER';
+    return 'BRONZE';
+  }
+
+  void _showAddAssetDialog() {
+    final nameCtrl = TextEditingController();
+    final phoneCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1E22),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: TDGColors.gold),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.person_add_rounded, color: TDGColors.gold, size: 22),
+            const SizedBox(width: 10),
+            Text(
+              'ADD ASSET TO DEN',
+              style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: nameCtrl,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                labelText: 'Asset Name',
+                labelStyle: TextStyle(color: TDGColors.grey),
+                filled: true,
+                fillColor: const Color(0xFF111113),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: phoneCtrl,
+              keyboardType: TextInputType.phone,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                labelText: 'Phone Number',
+                labelStyle: TextStyle(color: TDGColors.grey),
+                filled: true,
+                fillColor: const Color(0xFF111113),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '• Start at BRONZE (0-1 assets)\n• 2 assets ➔ SILVER\n• 4 assets ➔ GOLD\n• 6 assets ➔ PLATINUM\n• 10 assets ➔ DIAMOND 💎',
+              style: GoogleFonts.inter(color: TDGColors.grey, fontSize: 11, height: 1.4),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Cancel', style: TextStyle(color: TDGColors.grey)),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (nameCtrl.text.trim().isEmpty || phoneCtrl.text.trim().isEmpty) return;
+              final name = nameCtrl.text.trim();
+              final phone = phoneCtrl.text.trim();
+              Navigator.pop(ctx);
+              try {
+                await ApiService().addAsset(name, phone);
+                _fetchDenProgress();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Asset added to your Den!'),
+                      backgroundColor: Color(0xFF4CAF50),
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: TDGColors.gold,
+              foregroundColor: Colors.black,
+            ),
+            child: Text('Add Asset', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final currentLevel = _denProgress?['denLevel'] ?? _denProgress?['currentLevel'] ?? 'Gold';
+    final count = _assets.length;
+    final currentLevel = _getLevelFromCount(count);
 
     return Scaffold(
       backgroundColor: const Color(0xFF0F0F11), // Deep charcoal background matching mockup
@@ -64,6 +170,13 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
             letterSpacing: 2,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person_add_alt_1_rounded, color: TDGColors.gold),
+            tooltip: 'Add Asset',
+            onPressed: _showAddAssetDialog,
+          ),
+        ],
       ),
 
       body: _isLoading && _denProgress == null
@@ -136,14 +249,29 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
 
   Widget _buildLevelCard(BuildContext context, String currentLevel) {
     final levels = ['BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'DIAMOND'];
+    final count = _assets.length;
     final currentUpper = currentLevel.toUpperCase();
     int currentIndex = levels.indexOf(currentUpper);
     if (currentIndex == -1) {
-      currentIndex = 2; // Default to Gold
+      currentIndex = 0; // Default to Bronze
     }
-    
-    final hasNextLevel = currentIndex < levels.length - 1;
-    final nextLevelName = hasNextLevel ? levels[currentIndex + 1] : '';
+
+    String nextLevelInfo = '';
+    if (count < 2) {
+      final needed = 2 - count;
+      nextLevelInfo = 'NEXT LEVEL: SILVER (Add $needed more asset${needed > 1 ? "s" : ""})';
+    } else if (count < 4) {
+      final needed = 4 - count;
+      nextLevelInfo = 'NEXT LEVEL: GOLD (Add $needed more asset${needed > 1 ? "s" : ""})';
+    } else if (count < 6) {
+      final needed = 6 - count;
+      nextLevelInfo = 'NEXT LEVEL: PLATINUM (Add $needed more asset${needed > 1 ? "s" : ""})';
+    } else if (count < 10) {
+      final needed = 10 - count;
+      nextLevelInfo = 'NEXT LEVEL: DIAMOND (Add $needed more asset${needed > 1 ? "s" : ""})';
+    } else {
+      nextLevelInfo = 'MAX LEVEL REACHED! (10/10 Assets Added 💎)';
+    }
 
     return Container(
       clipBehavior: Clip.antiAlias,
@@ -294,7 +422,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
             ),
           ),
           GestureDetector(
-            onTap: () {},
+            onTap: _showAddAssetDialog,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
               decoration: const BoxDecoration(
@@ -308,20 +436,28 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    hasNextLevel ? 'NEXT LEVEL: $nextLevelName' : 'MAX LEVEL REACHED',
-                    style: GoogleFonts.outfit(
-                      color: Colors.black,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1,
+                  Expanded(
+                    child: Text(
+                      nextLevelInfo,
+                      style: GoogleFonts.outfit(
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ),
-                  if (hasNextLevel)
-                    const Icon(
-                      Icons.chevron_right,
-                      color: Colors.black,
-                      size: 20,
+                  if (count < 10)
+                    Row(
+                      children: [
+                        Text('ADD', style: GoogleFonts.outfit(color: Colors.black, fontSize: 11, fontWeight: FontWeight.w900)),
+                        const SizedBox(width: 4),
+                        const Icon(
+                          Icons.add_circle_outline_rounded,
+                          color: Colors.black,
+                          size: 18,
+                        ),
+                      ],
                     ),
                 ],
               ),
@@ -337,7 +473,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
     final currentUpper = currentLevel.toUpperCase();
     int currentIndex = levels.indexOf(currentUpper);
     if (currentIndex == -1) {
-      currentIndex = 2; // Default to Gold
+      currentIndex = 0; // Default to Bronze
     }
 
     return Stack(
@@ -482,7 +618,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'YOUR ASSETS',
+                      'YOUR ASSETS ($totalAssets/10)',
                       style: GoogleFonts.outfit(
                         color: Colors.white,
                         fontSize: 16,
@@ -492,13 +628,24 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      'Refer 10 friends to complete your Den.',
+                      'Refer 10 friends to unlock Diamond Den.',
                       style: GoogleFonts.inter(
                         color: TDGColors.grey,
                         fontSize: 11,
                       ),
                     ),
                   ],
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: _showAddAssetDialog,
+                icon: const Icon(Icons.add, size: 14, color: Colors.black),
+                label: Text('ADD', style: GoogleFonts.outfit(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w800)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: TDGColors.gold,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  elevation: 0,
                 ),
               ),
             ],
@@ -947,10 +1094,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const AssetScreen()),
-                    );
+                    _showAddAssetDialog();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TDGColors.gold,

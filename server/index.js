@@ -1355,14 +1355,24 @@ app.post('/api/wallet/redeem', auth, (req, res) => {
 
 // Den progress (now Asset system)
 app.get('/api/den', auth, (req, res) => {
-  const db = readDb()
-  const user = db.users.find(u => u.id === req.userId)
+  const user = getMobileUser(req.userId)
   if (!user) return res.status(404).json({ message: 'User not found' })
   const assets = user.assets || []
+  const count = assets.length
+
+  let denLevel = 'BRONZE'
+  if (count >= 10) denLevel = 'DIAMOND'
+  else if (count >= 6) denLevel = 'PLATINUM'
+  else if (count >= 4) denLevel = 'GOLD'
+  else if (count >= 2) denLevel = 'SILVER'
+  else denLevel = 'BRONZE'
+
   res.json({
     points: user.points || 0,
-    assetsCount: assets.length,
+    assetsCount: count,
     maxAssets: 10,
+    denLevel,
+    currentLevel: denLevel,
     assetsDinedCount: user.assetsDinedCount || 0,
     allAssetsActive: user.allAssetsActive || false,
     totalDistributed: user.totalDistributed || 0,
