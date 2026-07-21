@@ -1,0 +1,59 @@
+{
+  "users": [
+    {
+      "id": "u_admin",
+      "name": "Admin",
+      "email": "admin@tdg.com",
+      "phone": "0000000000",
+      "password": "$2b$10$9746KY1ceS.auP0zZi4QPeJl0uM9Edl/8cvpjBwJfUYePGGFOAypy",
+      "role": "admin",
+      "rubyBalance": 99999,
+      "denLevel": "Emerald",
+      "completedDens": 10,
+      "denProgress": 10,
+      "scratchCards": [],
+      "denId": null,
+      "createdAt": "2026-07-21T07:53:16.653Z"
+    }
+  ],
+  "orders": [],
+  "transactions": [],
+  "menuItems": [],
+  "categories": [],
+  "recipes": [],
+  "billingUsers": [],
+  "settings": {
+    "company": {
+      "name": "Ten Den Gyros",
+      "address": "Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram",
+      "phone": "000000000",
+      "email": "",
+      "gst": "",
+      "logo": null,
+      "upiId": ""
+    },
+    "theme": {
+      "accentPrimary": "#e63946",
+      "accentPrimaryDark": "#c1121f",
+      "bgPrimary": "#f5f5f7"
+    },
+    "printers": [
+      {
+        "id": "default",
+        "name": "Default Printer",
+        "ip": "",
+        "type": "browser",
+        "isDefault": true
+      }
+    ],
+    "paymentGateways": {
+      "ccavenue": {
+        "merchantId": "",
+        "workingKey": "",
+        "accessCode": "",
+        "isProduction": false,
+        "isEnabled": true
+      }
+    }
+  }
+}

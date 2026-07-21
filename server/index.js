@@ -669,13 +669,15 @@ app.post('/api/assets', auth, (req, res) => {
     hasDined: false,
     pointsDistributed: 0,
     otp,
+    otpExpiry
+  }
 
-        assets.push(newAsset)
-        user.assets = assets
-        saveState()
-        console.log(`[SMS OTP] Sent 4-digit OTP ${otp} to asset ${name} (${phone})`)
-        res.json({ success: true, asset: newAsset, assets: user.assets, message: `OTP sent to ${phone}` })
-      })
+  assets.push(newAsset)
+  user.assets = assets
+  saveState()
+  console.log(`[SMS OTP] Sent 4-digit OTP ${otp} to asset ${name} (${phone})`)
+  res.json({ success: true, asset: newAsset, assets: user.assets, message: `OTP sent to ${phone}` })
+})
 
 // Replace an asset (if friend hasn't activated)
 app.put('/api/assets/:assetId', auth, (req, res) => {
