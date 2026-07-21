@@ -21,7 +21,38 @@
   "menuItems": [],
   "categories": [],
   "recipes": [],
-  "billingUsers": [],
+  "billingUsers": [
+    {
+      "id": "bu_superadmin",
+      "name": "Super Admin",
+      "pin": "$2b$10$f2oxOBM7db2LBhmgrkBgXeCIyjmcWfL5BoQfxg1n.9Za3Bj4L2RNG",
+      "role": "super-admin"
+    },
+    {
+      "id": "bu_admin",
+      "name": "Admin",
+      "pin": "$2b$10$.NZINaV9iZaMEJ0Sbbjg5eF52n5mfQYg9uGIgN.LFy.JYQvygd2le",
+      "role": "admin"
+    },
+    {
+      "id": "bu_manager",
+      "name": "Manager",
+      "pin": "$2b$10$GLXcFkAInbKEcOZ08tjo2ObSFmiPN3r.Sp0adxRpolinmPHzmeLNi",
+      "role": "manager"
+    },
+    {
+      "id": "bu_cashier",
+      "name": "Cashier",
+      "pin": "$2b$10$P4PpER9FqNUGWJyIKvfydOiyOLk2NmiGLRU0BPB.kHoBPAqFOZAm.",
+      "role": "cashier"
+    },
+    {
+      "id": "bu_kitchen",
+      "name": "Kitchen",
+      "pin": "$2b$10$5bwhYnx.A57T4ISTuaQkw.wWkQxzdb7yFGnOuZCu9bSS06XXDJ6Pq",
+      "role": "kitchen"
+    }
+  ],
   "settings": {
     "company": {
       "name": "Ten Den Gyros",
