@@ -3,6 +3,7 @@ import { Check, Clock, ChefHat, RefreshCw, AlertCircle, CheckCircle } from 'luci
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import { getSocket, connectToKitchen } from '../lib/socket'
+import { playOrderAlertSound } from '../utils/audioAlert'
 
 export default function Kitchen() {
   const [orders, setOrders] = useState([])
@@ -21,6 +22,7 @@ export default function Kitchen() {
     fetchOrders()
 
     socket.on('kot:created', (kot) => {
+      playOrderAlertSound('kot')
       setOrders(prev => [{ ...kot, items: kot.items || [] }, ...prev])
     })
 

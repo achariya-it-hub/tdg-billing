@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Plus, Minus, Trash2, ShoppingBag, X } from 'lucide-react'
+import { Plus, Minus, Trash2, ShoppingBag, X, Volume2, VolumeX } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import { useToast } from '../components/ui/Toaster'
 import { useMenuStore } from '../stores/menuStore'
 import { useOrderStore } from '../stores/orderStore'
+import { getSocket, connectToPOS } from '../lib/socket'
+import { playOrderAlertSound, getSoundEnabled, setSoundEnabled } from '../utils/audioAlert'
 
 const categoryIcons = {
   'Burgers': '🍔',
@@ -94,6 +96,14 @@ export default function POS() {
   const [processing, setProcessing] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [showCart, setShowCart] = useState(false)
+  const [soundOn, setSoundOn] = useState(() => getSoundEnabled())
+
+  const toggleSound = () => {
+    const next = !soundOn
+    setSoundOn(next)
+    setSoundEnabled(next)
+    if (next) playOrderAlertSound('new_order')
+  }
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -103,6 +113,38 @@ export default function POS() {
 
   useEffect(() => { fetchCategories(); fetchMenuItems() }, [])
   useEffect(() => { selectedCategory ? fetchMenuItems(selectedCategory) : fetchMenuItems() }, [selectedCategory])
+
+  // Real-time Order Sound Alert Listener
+  useEffect(() => {
+    const socket = getSocket()
+    connectToPOS()
+
+    const handleNewOrder = (order) => {
+      playOrderAlertSound('new_order')
+      const num = order?.orderNumber || order?.id || ''
+      const src = order?.source ? order.source.toUpperCase() : (order?.type ? order.type.toUpperCase() : 'APP')
+      toast.success(`🔔 New ${src} Order #${num} received!`)
+    }
+
+    const handleOnlineOrder = (order) => {
+      playOrderAlertSound('online_order')
+      toast.success(`🔔 New Online Order Received!`)
+    }
+
+    const handleMenuUpdated = () => {
+      fetchMenuItems(selectedCategory || undefined)
+    }
+
+    socket.on('order:created', handleNewOrder)
+    socket.on('online-order:new', handleOnlineOrder)
+    socket.on('menu:updated', handleMenuUpdated)
+
+    return () => {
+      socket.off('order:created', handleNewOrder)
+      socket.off('online-order:new', handleOnlineOrder)
+      socket.off('menu:updated', handleMenuUpdated)
+    }
+  }, [selectedCategory])
 
   const handlePlaceOrder = async () => {
     if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place order'); return }
@@ -269,6 +311,19 @@ export default function POS() {
     <div style={{ display: 'flex', gap: '20px', height: 'calc(100vh - 104px)' }}>
       {/* Categories Sidebar */}
       <div style={{ width: '170px', display: 'flex', flexDirection: 'column', gap: '6px', overflow: 'auto' }}>
+        <button onClick={toggleSound} style={{
+          padding: '10px 14px', borderRadius: '12px',
+          background: soundOn ? '#ecfdf5' : '#fef2f2',
+          color: soundOn ? '#047857' : '#b91c1c',
+          border: `1px solid ${soundOn ? '#10b98140' : '#ef444440'}`,
+          fontWeight: 600, fontSize: '12px', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: '8px',
+          marginBottom: '4px', transition: 'all 0.2s'
+        }}>
+          {soundOn ? <Volume2 size={16} color="#10b981" /> : <VolumeX size={16} color="#ef4444" />}
+          {soundOn ? 'Alerts ON' : 'Muted'}
+        </button>
+
         <button onClick={() => setSelectedCategory(null)} style={{
           padding: '12px 16px', borderRadius: '12px',
           background: !selectedCategory ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'rgba(255,255,255,0.7)',

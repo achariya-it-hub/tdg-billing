@@ -5,6 +5,7 @@ import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import { useOnlineOrderStore } from '../stores/onlineOrderStore'
 import { getSocket, connectToOnline } from '../lib/socket'
+import { playOrderAlertSound } from '../utils/audioAlert'
 
 const aggregatorColors = {
   swiggy: '#ff5200',
@@ -56,6 +57,7 @@ export default function OnlineOrders() {
     socket.on('disconnect', () => setConnected(false))
 
     socket.on('online-order:new', () => {
+      playOrderAlertSound('online_order')
       fetchOnlineOrders()
     })
 
