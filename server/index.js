@@ -1511,20 +1511,38 @@ app.post('/api/admin/menu/items', (req, res) => {
 })
 
 app.put('/api/admin/menu/items/:id', (req, res) => {
-  const idx = menuItems.findIndex(i => i.id === req.params.id)
-  if (idx === -1) return res.status(404).json({ error: 'Item not found' })
+  const targetId = req.params.id
+  let idx = menuItems.findIndex(i => String(i.id) === String(targetId))
+  if (idx === -1 && req.body.name) {
+    idx = menuItems.findIndex(i => String(i.name).toLowerCase() === String(req.body.name).toLowerCase())
+  }
   const { name, price, categoryId, description, isAvailable, image } = req.body
-  if (name !== undefined) menuItems[idx].name = name
-  if (price !== undefined) menuItems[idx].price = Number(price)
-  if (categoryId !== undefined) menuItems[idx].categoryId = categoryId
-  if (description !== undefined) menuItems[idx].description = description
-  if (isAvailable !== undefined) menuItems[idx].isAvailable = isAvailable
-  if (image !== undefined) menuItems[idx].image = image
+
+  if (idx >= 0) {
+    if (name !== undefined) menuItems[idx].name = name
+    if (price !== undefined) menuItems[idx].price = Number(price)
+    if (categoryId !== undefined) menuItems[idx].categoryId = categoryId
+    if (description !== undefined) menuItems[idx].description = description
+    if (isAvailable !== undefined) menuItems[idx].isAvailable = isAvailable
+    if (image !== undefined) menuItems[idx].image = image
+  } else {
+    const newItem = {
+      id: targetId,
+      name: name || 'Item',
+      price: price !== undefined ? Number(price) : 0,
+      categoryId: categoryId || (categories[0]?.id || 'c1'),
+      description: description || '',
+      isAvailable: isAvailable !== false,
+      image: image || null
+    }
+    menuItems.push(newItem)
+    idx = menuItems.length - 1
+  }
 
   // Keep recipe names in sync if name was updated
   if (name !== undefined) {
     recipes.forEach(r => {
-      if (r.menuItemId === req.params.id) {
+      if (String(r.menuItemId) === String(targetId) || String(r.menuItemId) === String(menuItems[idx].id)) {
         r.menuItemName = name
         r.name = `${name} Recipe`
       }

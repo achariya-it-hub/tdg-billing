@@ -5102,12 +5102,15 @@ export default function MenuManagement() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
         })
-        if (!r.ok) throw Error()
+        if (!r.ok) {
+          const errData = await r.json().catch(() => ({}))
+          throw new Error(errData.error || `HTTP error ${r.status}`)
+        }
         const updated = await r.json()
-        setMenuItems(prev => prev.map(i => i.id === editItemId ? updated : i))
-        setRecipes(prev => prev.map(r => r.menuItemId === editItemId ? { ...r, menuItemName: updated.name, name: `${updated.name} Recipe` } : r))
+        setMenuItems(prev => prev.map(i => String(i.id) === String(editItemId) ? updated : i))
+        setRecipes(prev => prev.map(r => String(r.menuItemId) === String(editItemId) ? { ...r, menuItemName: updated.name, name: `${updated.name} Recipe` } : r))
         if (imageFile) await uploadItemImage(editItemId)
-        useMenuStore.getState().fetchMenuItems()
+        try { useMenuStore.getState().fetchMenuItems() } catch (e) {}
         toast.success('Item updated')
       } else {
         const r = await fetch(`${API()}/api/admin/menu/items`, {
@@ -5115,11 +5118,14 @@ export default function MenuManagement() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
         })
-        if (!r.ok) throw Error()
+        if (!r.ok) {
+          const errData = await r.json().catch(() => ({}))
+          throw new Error(errData.error || `HTTP error ${r.status}`)
+        }
         const created = await r.json()
         if (imageFile) await uploadItemImage(created.id)
-        setMenuItems(prev => prev.map(i => i.id === created.id ? { ...created, image: imagePreview ? `/uploads/menu/${created.id}.jpg` : null } : [...prev, created]))
-        useMenuStore.getState().fetchMenuItems()
+        setMenuItems(prev => prev.map(i => String(i.id) === String(created.id) ? { ...created, image: imagePreview ? `/uploads/menu/${created.id}.jpg` : null } : [...prev, created]))
+        try { useMenuStore.getState().fetchMenuItems() } catch (e) {}
         toast.success('Item added')
       }
       setShowItemModal(false)
@@ -5129,7 +5135,7 @@ export default function MenuManagement() {
       setImagePreview(null)
     } catch (e) {
       console.error('saveItem error:', e)
-      toast.error('Failed to save item')
+      toast.error(`Failed to save item: ${e.message || 'Error'}`)
     }
   }
 
