@@ -701,25 +701,28 @@ app.put('/api/assets/:assetId', auth, (req, res) => {
 })
 
 // Remove an asset
-app.delete('/api/assets/:assetId', auth, (req, res) => {
+const handleRemoveAsset = (req, res) => {
   const { assetId } = req.params
   const db = readDb()
   const user = db.users.find(u => u.id === req.userId)
   if (!user) return res.status(404).json({ message: 'User not found' })
 
   const assets = user.assets || []
-  const idx = assets.findIndex(a => a.id === assetId)
+  const idx = assets.findIndex(a => String(a.id).trim() === String(assetId).trim())
   if (idx === -1) return res.status(404).json({ message: 'Asset not found' })
 
-  // Return undistributed points back
   const undistributedPoints = assets[idx].pointsDistributed || 0
   assets.splice(idx, 1)
   user.assets = assets
   user.totalDistributed = (user.totalDistributed || 0) - undistributedPoints
 
   writeDb(db)
+  saveState()
   res.json({ success: true, assets: user.assets, pointsRefunded: undistributedPoints })
-})
+}
+
+app.delete('/api/assets/:assetId', auth, handleRemoveAsset)
+app.post('/api/assets/:assetId/delete', auth, handleRemoveAsset)
 
 // Distribute points to an asset
 app.post('/api/assets/distribute', auth, (req, res) => {

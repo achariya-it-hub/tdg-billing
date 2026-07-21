@@ -340,7 +340,14 @@ class ApiService {
     try {
       final response = await http.delete(url, headers: _getHeaders());
       if (response.statusCode == 200) return jsonDecode(response.body);
-      throw Exception('Failed to remove asset');
+    } catch (_) {}
+
+    try {
+      final postUrl = Uri.parse('${AppConfig.baseUrl}/assets/$assetId/delete');
+      final response = await http.post(postUrl, headers: _getHeaders());
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) return data;
+      throw Exception(data['message'] ?? 'Failed to remove asset');
     } catch (e) {
       _handleError(e);
     }
