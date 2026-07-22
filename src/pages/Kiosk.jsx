@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { ShoppingCart, Plus, Minus, Trash2, CreditCard, Banknote, Smartphone, Check } from 'lucide-react'
+import { ShoppingCart, Plus, Minus, Trash2, CreditCard, Banknote, Smartphone, Check, ArrowRight } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
@@ -608,6 +608,7 @@ export default function Kiosk() {
 }
 
 function KioskGyroBuilder({ onAddCustomGyro }) {
+  const [step, setStep] = useState(0)
   const [protein, setProtein] = useState('Chicken')
   const [bread, setBread] = useState('Baked')
   const [spread, setSpread] = useState('Tzatziki')
@@ -644,113 +645,264 @@ function KioskGyroBuilder({ onAddCustomGyro }) {
     })
     setShowToast(true)
     setTimeout(() => setShowToast(false), 2000)
+
+    // Reset back to initial state
+    setStep(0)
+    setProtein('Chicken')
+    setBread('Baked')
+    setSpread('Tzatziki')
+    setSelectedSauces(['Garlic Mayo'])
+    setSelectedVeggies(['Lettuce', 'Onion'])
   }
 
-  const optionButtonStyle = (isSelected, activeColor) => ({
-    padding: '12px 20px',
-    borderRadius: '12px',
-    border: isSelected ? `2.5px solid ${activeColor}` : '2px solid var(--border)',
-    background: isSelected ? `${activeColor}1e` : 'var(--bg-elevated)',
-    color: isSelected ? activeColor : 'var(--text-primary)',
-    fontWeight: 'bold',
-    fontSize: '14px',
-    cursor: 'pointer',
-    transform: isSelected ? 'scale(1.05)' : 'scale(1)',
-    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '8px'
-  })
+  const stepTitles = [
+    'Start with your Protein',
+    'Choose Your Bread',
+    'Choose Your Spread',
+    'Choose Your Sauces',
+    'Choose Your Veggies'
+  ]
+
+  const getProteinImage = (p) => p === 'Chicken' ? '/crispy_chicken.png' : '/timeline_2009.png'
+  const getBreadImage = (b) => b === 'Baked' ? '/hero_gyro_wrap.png' : '/hero_greek_gyro.png'
+  const getSpreadImage = (s) => {
+    if (s === 'Hummus') return '/hummus.png'
+    if (s === 'Cheese') return '/cheese.png'
+    if (s === 'Tzatziki') return '/tzatziki.png'
+    return '/ricotta.png'
+  }
+  const getSauceImage = (s) => '/sauces_composite.jpg'
+  const getVeggieImage = (v) => '/veggies_composite.jpg'
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* 0. Protein */}
-      <div>
-        <div style={{ fontWeight: 'bold', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Start with your Protein</div>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+      {/* Step Indicator Header */}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+        {stepTitles.map((title, idx) => (
+          <div key={idx} style={{ display: 'flex', alignItems: 'center' }}>
+            <div 
+              onClick={() => setStep(idx)}
+              style={{
+                width: '32px', height: '32px', borderRadius: '50%',
+                backgroundColor: step === idx ? 'var(--accent-primary)' : idx < step ? '#10b981' : 'var(--bg-elevated)',
+                border: '1px solid var(--border)',
+                color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 'bold', fontSize: '12px', cursor: 'pointer',
+                transition: 'all 0.3s'
+              }}
+            >
+              {idx + 1}
+            </div>
+            {idx < stepTitles.length - 1 && (
+              <div style={{ width: '40px', height: '2px', backgroundColor: idx < step ? '#10b981' : 'var(--border)' }} />
+            )}
+          </div>
+        ))}
+      </div>
+
+      <h4 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--accent-primary)', marginBottom: '8px', textTransform: 'uppercase' }}>
+        {stepTitles[step]}
+      </h4>
+
+      {/* Step 0: Protein */}
+      {step === 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
           {proteins.map(p => (
-            <button
+            <div
               key={p}
               onClick={() => setProtein(p)}
-              style={optionButtonStyle(protein === p, '#e63946')}
+              style={{
+                cursor: 'pointer',
+                border: '2px solid',
+                borderColor: protein === p ? 'var(--accent-primary)' : 'var(--border)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                backgroundColor: 'var(--bg-elevated)',
+                transform: protein === p ? 'scale(1.03)' : 'scale(1)',
+                transition: 'all 0.3s'
+              }}
             >
-              {p === 'Chicken' ? '🍗 Chicken' : '🧀 Paneer'}
-            </button>
+              <div style={{ height: '140px', width: '100%', overflow: 'hidden', background: '#202225' }}>
+                <img src={getProteinImage(p)} alt={p} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '12px' }} />
+              </div>
+              <div style={{ padding: '12px', textAlign: 'center', background: protein === p ? 'var(--accent-primary-light)' : 'transparent' }}>
+                <h5 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)' }}>{p === 'Chicken' ? '🍗 Chicken' : '🧀 Paneer'}</h5>
+              </div>
+            </div>
           ))}
         </div>
-      </div>
+      )}
 
-      {/* 1. Bread */}
-      <div>
-        <div style={{ fontWeight: 'bold', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>1. Choose Your Bread</div>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+      {/* Step 1: Bread */}
+      {step === 1 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
           {breads.map(b => (
-            <button
+            <div
               key={b}
               onClick={() => setBread(b)}
-              style={optionButtonStyle(bread === b, 'var(--accent-primary)')}
+              style={{
+                cursor: 'pointer',
+                border: '2px solid',
+                borderColor: bread === b ? 'var(--accent-primary)' : 'var(--border)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                backgroundColor: 'var(--bg-elevated)',
+                transform: bread === b ? 'scale(1.03)' : 'scale(1)',
+                transition: 'all 0.3s'
+              }}
             >
-              {b} Bread
-            </button>
+              <div style={{ height: '140px', width: '100%', overflow: 'hidden', background: '#202225' }}>
+                <img src={getBreadImage(b)} alt={b} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+              <div style={{ padding: '12px', textAlign: 'center', background: bread === b ? 'var(--accent-primary-light)' : 'transparent' }}>
+                <h5 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)' }}>{b} Bread</h5>
+              </div>
+            </div>
           ))}
         </div>
-      </div>
+      )}
 
-      {/* 2. Spread */}
-      <div>
-        <div style={{ fontWeight: 'bold', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>2. Choose Your Spread</div>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+      {/* Step 2: Spread */}
+      {step === 2 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
           {spreads.map(s => (
-            <button
+            <div
               key={s}
               onClick={() => setSpread(s)}
-              style={optionButtonStyle(spread === s, 'var(--accent-primary)')}
+              style={{
+                cursor: 'pointer',
+                border: '2px solid',
+                borderColor: spread === s ? 'var(--accent-primary)' : 'var(--border)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                backgroundColor: 'var(--bg-elevated)',
+                transform: spread === s ? 'scale(1.03)' : 'scale(1)',
+                transition: 'all 0.3s'
+              }}
             >
-              {s}
-            </button>
+              <div style={{ height: '120px', width: '100%', overflow: 'hidden', background: '#202225' }}>
+                <img src={getSpreadImage(s)} alt={s} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+              <div style={{ padding: '12px', textAlign: 'center', background: spread === s ? 'var(--accent-primary-light)' : 'transparent' }}>
+                <h5 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)' }}>{s}</h5>
+              </div>
+            </div>
           ))}
         </div>
-      </div>
+      )}
 
-      {/* 3. Sauces */}
-      <div>
-        <div style={{ fontWeight: 'bold', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>3. Choose Your Sauces (Select Multiple)</div>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+      {/* Step 3: Sauces */}
+      {step === 3 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px' }}>
           {sauces.map(s => {
             const isSelected = selectedSauces.includes(s)
+            let position = 'center';
+            if (s.toLowerCase().includes('turkish')) position = '0% 0%';
+            if (s.toLowerCase().includes('jalapeno cheese')) position = '50% 0%';
+            if (s.toLowerCase().includes('garlic')) position = '100% 0%';
+            if (s.toLowerCase().includes('spicy')) position = '0% 100%';
+            if (s.toLowerCase().includes('peri')) position = '50% 100%';
+            if (s.toLowerCase().includes('honey')) position = '100% 100%';
+
             return (
-              <button
+              <div
                 key={s}
                 onClick={() => toggleSauce(s)}
-                style={optionButtonStyle(isSelected, '#e63946')}
+                style={{
+                  cursor: 'pointer',
+                  border: '2px solid',
+                  borderColor: isSelected ? '#e63946' : 'var(--border)',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  backgroundColor: 'var(--bg-elevated)',
+                  transform: isSelected ? 'scale(1.03)' : 'scale(1)',
+                  transition: 'all 0.3s'
+                }}
               >
-                {s}
-              </button>
+                <div style={{ height: '100px', width: '100%', overflow: 'hidden', background: '#fff' }}>
+                  <img src={getSauceImage(s)} alt={s} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: position }} />
+                </div>
+                <div style={{ padding: '10px', textAlign: 'center', background: isSelected ? 'rgba(230,57,70,0.1)' : 'transparent' }}>
+                  <h5 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)' }}>{s}</h5>
+                </div>
+              </div>
             )
           })}
         </div>
-      </div>
+      )}
 
-      {/* 4. Veggies */}
-      <div>
-        <div style={{ fontWeight: 'bold', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>4. Choose Your Veggies (Select Multiple)</div>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+      {/* Step 4: Veggies */}
+      {step === 4 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px' }}>
           {veggies.map(v => {
             const isSelected = selectedVeggies.includes(v)
+            let position = 'center';
+            if (v.toLowerCase().includes('lettuce')) position = '0% 0%';
+            if (v.toLowerCase().includes('onion')) position = '33.3% 0%';
+            if (v.toLowerCase().includes('jalapeno')) position = '66.6% 0%';
+            if (v.toLowerCase().includes('olive')) position = '100% 0%';
+            if (v.toLowerCase().includes('capsicum')) position = '0% 100%';
+            if (v.toLowerCase().includes('tomato')) position = '33.3% 100%';
+            if (v.toLowerCase().includes('cucumber')) position = '66.6% 100%';
+            if (v.toLowerCase().includes('bean')) position = '100% 100%';
+
             return (
-              <button
+              <div
                 key={v}
                 onClick={() => toggleVeggie(v)}
-                style={optionButtonStyle(isSelected, '#10b981')}
+                style={{
+                  cursor: 'pointer',
+                  border: '2px solid',
+                  borderColor: isSelected ? '#10b981' : 'var(--border)',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  backgroundColor: 'var(--bg-elevated)',
+                  transform: isSelected ? 'scale(1.03)' : 'scale(1)',
+                  transition: 'all 0.3s'
+                }}
               >
-                {v}
-              </button>
+                <div style={{ height: '90px', width: '100%', overflow: 'hidden', background: '#fff' }}>
+                  <img src={getVeggieImage(v)} alt={v} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: position }} />
+                </div>
+                <div style={{ padding: '10px', textAlign: 'center', background: isSelected ? 'rgba(16,185,129,0.1)' : 'transparent' }}>
+                  <h5 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)' }}>{v}</h5>
+                </div>
+              </div>
             )
           })}
         </div>
+      )}
+
+      {/* Stepper Navigation */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginTop: '12px' }}>
+        <button 
+          onClick={() => setStep(prev => Math.max(0, prev - 1))}
+          disabled={step === 0}
+          style={{
+            padding: '12px 24px', borderRadius: '8px', border: '1px solid var(--border)',
+            backgroundColor: 'transparent', color: step === 0 ? 'var(--text-muted)' : 'var(--text-primary)', fontWeight: 700,
+            cursor: step === 0 ? 'not-allowed' : 'pointer'
+          }}
+        >
+          ← Back
+        </button>
+        
+        {step < stepTitles.length - 1 ? (
+          <button 
+            onClick={() => setStep(prev => prev + 1)}
+            style={{
+              padding: '12px 28px', borderRadius: '8px', border: 'none',
+              backgroundColor: 'var(--accent-primary)', color: '#fff', fontWeight: 800, cursor: 'pointer'
+            }}
+          >
+            Next Stage →
+          </button>
+        ) : (
+          <div />
+        )}
       </div>
 
-      {/* Summary Box */}
+      {/* Summary Box & Add to Cart Action */}
       <div style={{
         marginTop: '12px',
         padding: '18px',
