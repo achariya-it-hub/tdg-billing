@@ -203,7 +203,7 @@ export default function Kiosk() {
                 </button>
               ))}
             </div>
-            <div style={{ textAlign: 'center', marginTop: '24px' }}>
+            <div style={{ textAlign: 'center', marginTop: '24px', marginBottom: '32px' }}>
               <button
                 onClick={() => { fetchMenuItems(); setStep(2) }}
                 style={{
@@ -219,23 +219,18 @@ export default function Kiosk() {
                 View All Items
               </button>
             </div>
-          </div>
-        )}
 
-        {/* Menu Items */}
-        {step === 2 && (
-          <div>
             {/* Custom Choose Your Own Gyros Kiosk builder widget */}
             <div style={{
               background: 'var(--bg-card)',
               border: '2px solid var(--border)',
               borderRadius: '24px',
               padding: '24px',
-              marginBottom: '32px',
+              marginTop: '40px',
               boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
             }}>
               <h3 style={{ fontFamily: 'Bebas Neue', fontSize: '32px', color: 'var(--accent-primary)', marginBottom: '8px' }}>
-                🌯 CHOOSE YOUR OWN GYROS
+                🌯 CREATE YOUR OWN GYROS
               </h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '24px' }}>
                 Build your customized wrap using fresh proteins, signature spreads, and toppings.
@@ -250,7 +245,12 @@ export default function Kiosk() {
                 }]);
               }} />
             </div>
+          </div>
+        )}
 
+        {/* Menu Items */}
+        {step === 2 && (
+          <div>
             <h2 style={{ fontFamily: 'Bebas Neue', fontSize: '48px', marginBottom: '24px', textAlign: 'center' }}>
               Select Other Items
             </h2>
