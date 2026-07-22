@@ -206,8 +206,21 @@ function restoreState() {
   if (db.purchases?.length) purchases = db.purchases
   if (db.onlineOrders?.length) onlineOrders = db.onlineOrders
   if (db.aggregators?.length) aggregators = db.aggregators
-  if (db.categories?.length) categories = db.categories
-  if (db.menuItems?.length) menuItems = db.menuItems
+  if (db.categories && db.categories.length) {
+    categories = db.categories
+  } else {
+    // Keep default categories and save them
+    db.categories = categories
+  }
+  if (db.menuItems && db.menuItems.length) {
+    menuItems = db.menuItems
+  } else {
+    // Keep default menuItems and save them
+    db.menuItems = menuItems
+  }
+  if (!db.categories || !db.categories.length || !db.menuItems || !db.menuItems.length) {
+    writeDb(db)
+  }
   if (db.recipes?.length) recipes = db.recipes
   if (db.users?.length) mobileAppUsers = db.users
   if (db.suppliers?.length) suppliers = db.suppliers
@@ -402,19 +415,22 @@ function auth(req, res, next) {
 
 // ============ MOBILE APP API ROUTES ============
 
-// Verify asset OTP — called by the referred person during signup
+// Verify asset OTP — called by the referred person during signup or after Firebase Phone Auth
 app.post('/api/assets/verify-otp', (req, res) => {
   const { phone, otp } = req.body
   if (!phone || !otp) return res.status(400).json({ message: 'Phone and OTP required' })
 
   const db = readDb()
-  // Find any master user who has this phone as a pending asset with matching OTP
-  for (const master of db.users) {
+  // Find any master user who has this phone as a pending asset
+  for (const master of db.users || mobileAppUsers) {
     const assets = master.assets || []
-    const asset = assets.find(a => a.phone === phone && a.status === 'pending' && a.otp === otp)
+    const asset = assets.find(a => a.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, '') && a.status === 'pending')
     if (asset) {
-      // Check OTP expiry
-      if (asset.otpExpiry && new Date(asset.otpExpiry) < new Date()) {
+      // Check OTP: match exact OTP or 'firebase' bypass code
+      if (otp !== 'firebase' && asset.otp && asset.otp !== otp) {
+        return res.status(400).json({ message: 'Invalid OTP' })
+      }
+      if (asset.otpExpiry && new Date(asset.otpExpiry) < new Date() && otp !== 'firebase') {
         return res.status(400).json({ message: 'OTP expired. Ask your referrer to add you again.' })
       }
       // OTP valid — activate asset
@@ -423,10 +439,11 @@ app.post('/api/assets/verify-otp', (req, res) => {
       asset.otp = null
       asset.otpExpiry = null
       writeDb(db)
+      saveState()
       return res.json({ success: true, message: 'OTP verified', masterName: master.name, masterId: master.id })
     }
   }
-  res.status(400).json({ message: 'Invalid OTP or phone number' })
+  res.status(400).json({ message: 'Pending asset not found for this phone number' })
 })
 
 // Auth - Signup
@@ -640,7 +657,8 @@ app.get('/api/assets', auth, (req, res) => {
     allAssetsActive: user.allAssetsActive || false,
     bonusClaimed: user.bonusClaimed || false,
     referredBy: user.referredBy || null,
-    referredByName: user.referredByName || null
+    referredByName: user.referredByName || null,
+    enableAssetOtp: settings.paymentGateways?.enableAssetOtp !== false
   })
 })
 
@@ -656,16 +674,17 @@ app.post('/api/assets', auth, (req, res) => {
   if (assets.length >= 10) return res.status(400).json({ message: 'Maximum 10 assets allowed' })
   if (assets.find(a => a.phone === phone)) return res.status(400).json({ message: 'Asset with this phone already added' })
 
-  // Generate 4-digit OTP
-  const otp = String(Math.floor(1000 + Math.random() * 9000))
-  const otpExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
+  // Check toggle from database settings
+  const shouldRequireOtp = settings.paymentGateways?.enableAssetOtp !== false
+  const otp = shouldRequireOtp ? String(Math.floor(1000 + Math.random() * 9000)) : ''
+  const otpExpiry = shouldRequireOtp ? new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() : ''
 
   const newAsset = {
     id: 'a_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
     name,
     phone,
-    status: 'pending',
-    activatedAt: null,
+    status: shouldRequireOtp ? 'pending' : 'active',
+    activatedAt: shouldRequireOtp ? null : new Date().toISOString(),
     hasDined: false,
     pointsDistributed: 0,
     otp,
@@ -675,8 +694,26 @@ app.post('/api/assets', auth, (req, res) => {
   assets.push(newAsset)
   user.assets = assets
   saveState()
-  console.log(`[SMS OTP] Sent 4-digit OTP ${otp} to asset ${name} (${phone})`)
-  res.json({ success: true, asset: newAsset, assets: user.assets, message: `OTP sent to ${phone}` })
+
+  if (shouldRequireOtp) {
+    const cleanPhone = phone.replace(/[^0-9]/g, '')
+    const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
+    const message = `Hello ${name}! Your 4-digit WhatsApp verification OTP is: ${otp}. Valid for 24 hours.`
+    const waLink = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`
+    console.log(`[WHATSAPP OTP] Sent OTP ${otp} via WhatsApp to ${name} (${formattedPhone})`)
+    
+    return res.json({
+      success: true,
+      requireOtp: true,
+      asset: newAsset,
+      assets: user.assets,
+      message: `WhatsApp OTP sent to ${phone}`,
+      waLink,
+      otp
+    })
+  }
+
+  res.json({ success: true, requireOtp: false, asset: newAsset, assets: user.assets, message: `Asset added successfully` })
 })
 
 // Replace an asset (if friend hasn't activated)
@@ -706,17 +743,34 @@ app.put('/api/assets/:assetId', auth, (req, res) => {
 const handleRemoveAsset = (req, res) => {
   const { assetId } = req.params
   const db = readDb()
-  const user = db.users.find(u => u.id === req.userId)
+
+  // Find user in db.users or mobileAppUsers
+  let user = (db.users || []).find(u => u.id === req.userId)
+  if (!user) {
+    user = mobileAppUsers.find(u => u.id === req.userId)
+  }
   if (!user) return res.status(404).json({ message: 'User not found' })
 
   const assets = user.assets || []
-  const idx = assets.findIndex(a => String(a.id).trim() === String(assetId).trim())
+  const cleanTarget = String(assetId).trim().toLowerCase()
+  const idx = assets.findIndex(a => 
+    String(a.id).trim().toLowerCase() === cleanTarget || 
+    String(a.phone).replace(/[^0-9]/g, '') === cleanTarget.replace(/[^0-9]/g, '')
+  )
+
   if (idx === -1) return res.status(404).json({ message: 'Asset not found' })
 
   const undistributedPoints = assets[idx].pointsDistributed || 0
   assets.splice(idx, 1)
   user.assets = assets
-  user.totalDistributed = (user.totalDistributed || 0) - undistributedPoints
+  user.totalDistributed = Math.max(0, (user.totalDistributed || 0) - undistributedPoints)
+
+  // Keep in-memory mobileAppUsers updated
+  const memUser = mobileAppUsers.find(u => u.id === req.userId)
+  if (memUser) {
+    memUser.assets = assets
+    memUser.totalDistributed = user.totalDistributed
+  }
 
   writeDb(db)
   saveState()
@@ -1130,8 +1184,14 @@ app.post('/api/billing/assets', async (req, res) => {
   assets.push(newAsset)
   customer.assets = assets
   writeDb(db)
-  console.log(`[SMS OTP] Sent 4-digit OTP ${otp} to asset ${name} (${phone})`)
-  res.json({ success: true, asset: newAsset, assets: customer.assets, message: `OTP sent to ${phone}` })
+
+  const cleanPhone = phone.replace(/[^0-9]/g, '')
+  const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
+  const message = `Hello ${name}! Your 4-digit WhatsApp verification OTP is: ${otp}. Valid for 24 hours.`
+  const waLink = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`
+  console.log(`[WHATSAPP OTP] Sent 4-digit OTP ${otp} via WhatsApp to ${name} (${formattedPhone})`)
+
+  res.json({ success: true, asset: newAsset, assets: customer.assets, message: `WhatsApp OTP sent to ${phone}`, waLink, otp })
 })
 
 // ============ SETTINGS API ============
@@ -1514,6 +1574,9 @@ app.put('/api/settings/payment-gateways', (req, res) => {
     settings.paymentGateways.ccavenue = {
       ...settings.paymentGateways.ccavenue,
       ...req.body.ccavenue
+    }
+    if (req.body.enableAssetOtp !== undefined) {
+      settings.paymentGateways.enableAssetOtp = req.body.enableAssetOtp === true
     }
     saveState()
   }

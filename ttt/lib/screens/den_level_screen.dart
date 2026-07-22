@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
 import 'asset_screen.dart';
@@ -122,10 +123,16 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
               final phone = phoneCtrl.text.trim();
               Navigator.pop(ctx);
               try {
-                await ApiService().addAsset(name, phone);
+                final result = await ApiService().addAsset(name, phone);
                 _fetchDenProgress();
                 if (mounted) {
-                  _showVerifyOtpDialog(name, phone);
+                  if (result['requireOtp'] == true) {
+                    _sendFirebaseOtpAndShowDialog(name, phone);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Asset $name added and verified!'), backgroundColor: Colors.green),
+                    );
+                  }
                 }
               } catch (e) {
                 if (mounted) {
@@ -146,28 +153,69 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
     );
   }
 
-  void _showVerifyOtpDialog(String name, String phone) {
+  Future<void> _sendFirebaseOtpAndShowDialog(String name, String phone) async {
+    final formattedPhone = phone.startsWith('+') ? phone : (phone.length == 10 ? '+91$phone' : '+$phone');
+    if (mounted) setState(() => _isLoading = true);
+    try {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: formattedPhone,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          if (mounted) setState(() => _isLoading = false);
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          if (mounted) {
+            setState(() => _isLoading = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Firebase OTP failed: ${e.message}'), backgroundColor: Colors.red),
+            );
+          }
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          if (mounted) {
+            setState(() => _isLoading = false);
+            _showVerifyOtpDialog(name, phone, verificationId: verificationId);
+          }
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to trigger Firebase OTP: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  void _showVerifyOtpDialog(String name, String phone, {String? verificationId}) {
     final otpCtrl = TextEditingController();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: const Color(0xFF1E1E24),
-        title: Text('Verify Asset OTP', style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Row(
+          children: [
+            const Icon(Icons.mark_chat_read_rounded, color: Color(0xFF25D366), size: 22),
+            const SizedBox(width: 8),
+            Text('Verify Phone OTP', style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+          ],
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('An SMS OTP message has been sent to $name ($phone).', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+            Text('A Firebase SMS OTP message has been sent to $name ($phone).', style: const TextStyle(color: Colors.grey, fontSize: 13)),
             const SizedBox(height: 8),
-            Text('Enter the 4-digit OTP received by $name to verify and activate:', style: const TextStyle(color: Colors.white70, fontSize: 12)),
+            Text('Enter the 6-digit OTP received via SMS by $name to verify and activate:', style: const TextStyle(color: Colors.white70, fontSize: 12)),
             const SizedBox(height: 12),
             TextField(
               controller: otpCtrl,
               keyboardType: TextInputType.number,
-              maxLength: 4,
+              maxLength: 6,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 6),
-              decoration: const InputDecoration(hintText: '0000', hintStyle: TextStyle(color: Colors.grey)),
+              style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 4),
+              decoration: const InputDecoration(hintText: '000000', hintStyle: TextStyle(color: Colors.grey)),
             ),
           ],
         ),
@@ -176,10 +224,19 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
           ElevatedButton(
             onPressed: () async {
               final otp = otpCtrl.text.trim();
-              if (otp.length != 4) return;
+              if (otp.length < 4) return;
               Navigator.pop(ctx);
               try {
-                await ApiService().verifyAssetOtp(phone, otp);
+                if (verificationId != null) {
+                  PhoneAuthCredential credential = PhoneAuthProvider.credential(
+                    verificationId: verificationId,
+                    smsCode: otp,
+                  );
+                  await FirebaseAuth.instance.signInWithCredential(credential);
+                  await ApiService().verifyAssetOtp(phone, 'firebase');
+                } else {
+                  await ApiService().verifyAssetOtp(phone, otp);
+                }
                 _fetchDenProgress();
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -196,6 +253,43 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
             },
             style: ElevatedButton.styleFrom(backgroundColor: TDGColors.gold, foregroundColor: Colors.black),
             child: Text('Verify OTP', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _removeAsset(String assetId, String name) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1E24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: const BorderSide(color: Colors.redAccent)),
+        title: Text('Remove $name?', style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
+        content: Text('This asset will be removed from your Den.', style: GoogleFonts.inter(color: Colors.grey, fontSize: 13)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel', style: TextStyle(color: Colors.grey))),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              try {
+                await ApiService().removeAsset(assetId);
+                _fetchDenProgress();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('$name removed from your Den'), backgroundColor: Colors.redAccent),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
+                  );
+                }
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white),
+            child: Text('Remove', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -1184,7 +1278,6 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                                     ],
                                   ),
                                 ),
-                                const Spacer(),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
@@ -1201,6 +1294,29 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                                       style: GoogleFonts.inter(
                                         color: TDGColors.grey,
                                         fontSize: 9,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                PopupMenuButton<String>(
+                                  icon: Icon(Icons.more_vert, color: TDGColors.grey, size: 18),
+                                  color: const Color(0xFF1E1E24),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  onSelected: (val) async {
+                                    if (val == 'remove') {
+                                      Navigator.pop(context);
+                                      _removeAsset(asset['id'], name);
+                                    }
+                                  },
+                                  itemBuilder: (ctx) => [
+                                    PopupMenuItem(
+                                      value: 'remove',
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 18),
+                                          const SizedBox(width: 8),
+                                          Text('Remove Asset', style: GoogleFonts.outfit(color: Colors.redAccent, fontSize: 13)),
+                                        ],
                                       ),
                                     ),
                                   ],

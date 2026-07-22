@@ -12,6 +12,9 @@ class ApiService {
   Map<String, dynamic>? currentUser;
   bool _initialized = false;
 
+  // Global Cart State
+  final List<Map<String, dynamic>> cart = [];
+
   bool get isAuthenticated => _token != null;
   String get baseUrl => AppConfig.baseUrl;
 
@@ -312,7 +315,7 @@ class ApiService {
         body: jsonEncode({'name': name, 'phone': phone}),
       );
       final data = jsonDecode(response.body);
-      if (response.statusCode == 200) return data;
+      if (response.statusCode == 200 || response.statusCode == 201) return data;
       throw Exception(data['message'] ?? 'Failed to add asset');
     } catch (e) {
       _handleError(e);

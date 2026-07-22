@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/colors.dart';
 import 'wallet_screen.dart';
 import 'asset_screen.dart';
 import 'offers_screen.dart';
 import 'notifications_screen.dart';
+import 'cart_screen.dart';
 import '../widgets/tdg_logo.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
@@ -22,10 +25,44 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> _popularItems = [];
   bool _isLoading = false;
 
+  PageController _carouselController = PageController();
+  int _carouselIndex = 0;
+  Timer? _timer;
+
+  // Custom Gyro selection properties
+  int activeBuilderStep = 0;
+  String? selectedProtein;
+  String? selectedBread;
+  String? selectedSpread;
+  List<String>? selectedSauces;
+  List<String>? selectedVeggies;
+
   @override
   void initState() {
     super.initState();
     _fetchHomeData();
+    _carouselController = PageController(initialPage: 0);
+    _startCarouselTimer();
+  }
+
+  void _startCarouselTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      if (mounted && _carouselController.hasClients) {
+        final nextPage = (_carouselIndex + 1) % 3;
+        _carouselController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOutCubic,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _carouselController.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchHomeData() async {
@@ -133,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
                 SliverToBoxAdapter(child: _buildReferEarnBanner()),
                 SliverToBoxAdapter(child: _buildPopularItems()),
-                SliverToBoxAdapter(child: _buildOrderNowSection()),
+                SliverToBoxAdapter(child: _buildChooseYourOwnGyroSection()),
                 const SliverToBoxAdapter(child: SizedBox(height: 100)),
               ],
             ),
@@ -171,6 +208,48 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (ApiService().cart.isNotEmpty) ...[
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CartScreen(),
+                        ),
+                      );
+                    },
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: TDGColors.cardDark,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: TDGColors.border),
+                          ),
+                          child: Icon(Icons.shopping_cart_outlined, color: TDGColors.gold, size: 18),
+                        ),
+                        Positioned(
+                          top: 4,
+                          right: 4,
+                          child: Container(
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              color: TDGColors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              '${ApiService().cart.length}',
+                              style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -758,7 +837,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildOrderNowSection() {
-    final filtered = _filteredMenuItems;
+    final List<Map<String, String>> carouselSlides = [
+      {
+        'title': 'Spicy Chicken Gyro Feast',
+        'desc': 'Our legendary chicken gyro loaded with signature sauces & fries.',
+        'image': 'assets/images/offer_banner.png'
+      },
+      {
+        'title': 'Loaded Fries Supreme',
+        'desc': 'Indulge in cheesy golden fries topped with fresh veggies & premium spices.',
+        'image': 'assets/images/fries.png'
+      },
+      {
+        'title': 'Classic Double Burger Combo',
+        'desc': 'Enjoy the ultimate grilled juicy double decker burger with direct toppings.',
+        'image': 'assets/images/hero_gyro.png'
+      }
+    ];
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
@@ -766,120 +861,114 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Icon(Icons.local_fire_department_rounded, color: TDGColors.gold, size: 20),
+              const SizedBox(width: 6),
               Text(
-                'ORDER NOW',
-                style: TextStyle(color: TDGColors.white, fontSize: 17, fontWeight: FontWeight.w800, letterSpacing: 0.5),
-              ),
-              Text(
-                '${filtered.length} items',
-                style: TextStyle(color: TDGColors.grey, fontSize: 12),
+                'TDG SPECIAL OFFERS',
+                style: TextStyle(color: TDGColors.white, fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 0.5),
               ),
             ],
           ),
-          Text('Filter by category', style: TextStyle(color: TDGColors.grey, fontSize: 12)),
           const SizedBox(height: 12),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: _categories.map((cat) {
-                final isSelected = _selectedCategory == cat;
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedCategory = cat),
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                    decoration: BoxDecoration(
-                      gradient: isSelected ? TDGColors.embossedRedGradient : null,
-                      color: isSelected ? null : TDGColors.cardDark,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isSelected ? TDGColors.primaryRed.withOpacity(0.5) : TDGColors.border,
-                      ),
-                    ),
-                    child: Text(
-                      cat,
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : TDGColors.greyLight,
-                        fontSize: 13,
-                        fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
+          Container(
+            height: 180,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: TDGColors.gold.withOpacity(0.3), width: 1),
             ),
-          ),
-          const SizedBox(height: 16),
-          filtered.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24),
-                  child: Center(
-                    child: Text('No items found in $_selectedCategory', style: TextStyle(color: TDGColors.grey, fontSize: 13)),
-                  ),
-                )
-              : ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: filtered.length,
-                  itemBuilder: (context, index) {
-                    final item = filtered[index];
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: TDGColors.cardDark,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: TDGColors.border),
-                      ),
-                      child: Row(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Stack(
+                children: [
+                  PageView.builder(
+                    controller: _carouselController,
+                    onPageChanged: (idx) {
+                      setState(() {
+                        _carouselIndex = idx;
+                      });
+                    },
+                    itemCount: carouselSlides.length,
+                    itemBuilder: (context, index) {
+                      final slide = carouselSlides[index];
+                      return Stack(
+                        fit: StackFit.expand,
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.asset(item['image'], width: 70, height: 70, fit: BoxFit.cover),
+                          Image.asset(
+                            slide['image']!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(color: Colors.black54),
                           ),
-                          const SizedBox(width: 14),
-                          Expanded(
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.black.withOpacity(0.9), Colors.black.withOpacity(0.3), Colors.transparent],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            left: 20,
+                            top: 20,
+                            right: 120,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(item['name'], style: TextStyle(color: TDGColors.white, fontSize: 14, fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 2),
-                                Text(item['category'], style: TextStyle(color: TDGColors.gold, fontSize: 11, fontWeight: FontWeight.w600)),
-                                if ((item['desc'] ?? '').toString().isNotEmpty) ...[
-                                  const SizedBox(height: 2),
-                                  Text(item['desc'], style: TextStyle(color: TDGColors.greyLight, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
-                                ],
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: TDGColors.primaryRed,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: const Text(
+                                    'TODAY\'S FEATURED',
+                                    style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  slide['title']!,
+                                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  slide['desc']!,
+                                  style: const TextStyle(color: Colors.white70, fontSize: 11),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ],
                             ),
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(item['formattedPrice'], style: TextStyle(color: TDGColors.white, fontSize: 15, fontWeight: FontWeight.w800)),
-                              const SizedBox(height: 6),
-                              ElevatedButton(
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('${item['name']} added to cart!'), backgroundColor: Colors.green),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: TDGColors.gold,
-                                  foregroundColor: Colors.black,
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                ),
-                                child: const Text('ADD', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
-                              ),
-                            ],
-                          ),
                         ],
-                      ),
-                    );
-                  },
-                ),
+                      );
+                    },
+                  ),
+                  Positioned(
+                    bottom: 12,
+                    left: 20,
+                    child: Row(
+                      children: List.generate(carouselSlides.length, (idx) {
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          width: _carouselIndex == idx ? 16 : 6,
+                          height: 6,
+                          margin: const EdgeInsets.only(right: 4),
+                          decoration: BoxDecoration(
+                            color: _carouselIndex == idx ? TDGColors.gold : Colors.white24,
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -932,6 +1021,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ElevatedButton(
                       onPressed: () {
+                        setState(() {
+                          final cart = ApiService().cart;
+                          final existingIndex = cart.indexWhere((c) => c['name'] == item['name']);
+                          if (existingIndex >= 0) {
+                            cart[existingIndex]['qty'] = (cart[existingIndex]['qty'] ?? 1) + 1;
+                          } else {
+                            cart.add({
+                              'name': item['name'],
+                              'price': item['price'],
+                              'qty': 1,
+                              'icon': Icons.restaurant,
+                            });
+                          }
+                        });
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('${item['name']} added!'), backgroundColor: Colors.green),
                         );
@@ -951,6 +1054,558 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildChooseYourOwnGyroSection() {
+    return StatefulBuilder(
+      builder: (context, setSubState) {
+        // Local selection variables
+        final breads = ['Baked', 'Fried'];
+        final spreads = ['Hummus', 'Cheese', 'Tzatziki', 'Ricota'];
+        final sauces = ['Turkish Chill', 'Jalapeno Cheese', 'Garlic Mayo', 'Spicy Mayo', 'Peri Peri', 'Honey Mustard'];
+        final veggies = ['Lettuce', 'Onion', 'Jalapeno', 'Olive', 'Capsicum', 'Tomato', 'Cucumber', 'Beans'];
+
+        // Static tracking or shared in memory or local closure variables
+        this.selectedProtein ??= 'Chicken';
+        this.selectedBread ??= 'Baked';
+        this.selectedSpread ??= 'Tzatziki';
+        this.selectedSauces ??= ['Garlic Mayo'];
+        this.selectedVeggies ??= ['Lettuce', 'Onion', 'Tomato'];
+
+        final stepTitles = [
+          'Start with your Protein',
+          'Choose Your Bread',
+          'Choose Your Spread',
+          'Choose Your Sauces',
+          'Choose Your Veggies'
+        ];
+
+        return Container(
+          margin: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: TDGColors.cardDark,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: TDGColors.gold.withOpacity(0.2), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header title
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: TDGColors.gold.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.tune, color: TDGColors.gold, size: 20),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'CREATE YOUR OWN GYROS',
+                          style: GoogleFonts.outfit(
+                            color: TDGColors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        Text(
+                          'Stage ${this.activeBuilderStep + 1} of 5: ${stepTitles[this.activeBuilderStep]}',
+                          style: GoogleFonts.outfit(
+                            color: TDGColors.gold,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Step Progress Dots Indicator
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(5, (index) {
+                  final isActive = this.activeBuilderStep == index;
+                  final isDone = this.activeBuilderStep > index;
+                  return Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: isActive 
+                            ? TDGColors.gold 
+                            : isDone ? const Color(0xFF10B981) : TDGColors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 20),
+
+              // Active Stage Content
+              if (this.activeBuilderStep == 0) ...[
+                // Stage 0: Protein options
+                Row(
+                  children: ['Chicken', 'Paneer'].map((p) {
+                    final isSelected = this.selectedProtein == p;
+                    return Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: AnimatedScale(
+                          scale: isSelected ? 1.05 : 1.0,
+                          duration: const Duration(milliseconds: 150),
+                          child: InkWell(
+                            onTap: () {
+                              setSubState(() {
+                                this.selectedProtein = p;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 24),
+                              decoration: BoxDecoration(
+                                color: isSelected ? const Color(0xFFE63946).withOpacity(0.15) : TDGColors.background,
+                                border: Border.all(
+                                  color: isSelected ? const Color(0xFFE63946) : TDGColors.white.withOpacity(0.1),
+                                  width: 2,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    p == 'Chicken' ? '🍗' : '🧀',
+                                    style: const TextStyle(fontSize: 40),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    p == 'Chicken' ? 'Chicken' : 'Paneer (Veg)',
+                                    style: GoogleFonts.outfit(
+                                      color: TDGColors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ] else if (this.activeBuilderStep == 1) ...[
+                // Stage 1: Bread options
+                Row(
+                  children: breads.map((b) {
+                    final isSelected = this.selectedBread == b;
+                    return Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: AnimatedScale(
+                          scale: isSelected ? 1.05 : 1.0,
+                          duration: const Duration(milliseconds: 150),
+                          child: InkWell(
+                            onTap: () {
+                              setSubState(() {
+                                this.selectedBread = b;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 24),
+                              decoration: BoxDecoration(
+                                color: isSelected ? TDGColors.gold.withOpacity(0.15) : TDGColors.background,
+                                border: Border.all(
+                                  color: isSelected ? TDGColors.gold : TDGColors.white.withOpacity(0.1),
+                                  width: 2,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    b == 'Baked' ? '🍞' : '🍳',
+                                    style: const TextStyle(fontSize: 40),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    '$b Bread',
+                                    style: GoogleFonts.outfit(
+                                      color: TDGColors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ] else if (this.activeBuilderStep == 2) ...[
+                // Stage 2: Spreads (Visual Cards)
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 1.1,
+                  children: spreads.map((s) {
+                    final isSelected = this.selectedSpread == s;
+                    // Get matching image
+                    String imgAsset = 'assets/images/favicon.png';
+                    if (s == 'Hummus') imgAsset = 'assets/images/hummus.png';
+                    if (s == 'Cheese') imgAsset = 'assets/images/cheese.png';
+                    if (s == 'Tzatziki') imgAsset = 'assets/images/tzatziki.png';
+                    if (s == 'Ricota') imgAsset = 'assets/images/ricotta.png';
+
+                    return AnimatedScale(
+                      scale: isSelected ? 1.05 : 1.0,
+                      duration: const Duration(milliseconds: 150),
+                      child: InkWell(
+                        onTap: () {
+                          setSubState(() {
+                            this.selectedSpread = s;
+                          });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isSelected ? TDGColors.gold.withOpacity(0.12) : TDGColors.background,
+                            border: Border.all(
+                              color: isSelected ? TDGColors.gold : TDGColors.white.withOpacity(0.1),
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                                  child: Image.asset(
+                                    imgAsset,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (ctx, err, st) => Center(
+                                      child: Text('🥣', style: const TextStyle(fontSize: 32)),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                child: Text(
+                                  s,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.outfit(
+                                    color: TDGColors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ] else if (this.activeBuilderStep == 3) ...[
+                // Stage 3: Sauces (Visual Cards Grid)
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 1.1,
+                  children: sauces.map((s) {
+                    final isSelected = this.selectedSauces!.contains(s);
+                    // Use composite sauces image
+                    final imgAsset = 'assets/images/sauces_composite.jpg';
+                    Alignment alignment = Alignment.center;
+                    if (s.toLowerCase().contains('turkish')) alignment = const Alignment(-1.0, -1.0);
+                    if (s.toLowerCase().contains('cheese')) alignment = const Alignment(0.0, -1.0);
+                    if (s.toLowerCase().contains('garlic')) alignment = const Alignment(1.0, -1.0);
+                    if (s.toLowerCase().contains('spicy')) alignment = const Alignment(-1.0, 1.0);
+                    if (s.toLowerCase().contains('peri')) alignment = const Alignment(0.0, 1.0);
+                    if (s.toLowerCase().contains('honey')) alignment = const Alignment(1.0, 1.0);
+
+                    return AnimatedScale(
+                      scale: isSelected ? 1.05 : 1.0,
+                      duration: const Duration(milliseconds: 150),
+                      child: InkWell(
+                        onTap: () {
+                          setSubState(() {
+                            if (isSelected) {
+                              this.selectedSauces!.remove(s);
+                            } else {
+                              this.selectedSauces!.add(s);
+                            }
+                          });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isSelected ? const Color(0xFFFF4D5A).withOpacity(0.12) : TDGColors.background,
+                            border: Border.all(
+                              color: isSelected ? const Color(0xFFFF4D5A) : TDGColors.white.withOpacity(0.1),
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                                  child: Image.asset(
+                                    imgAsset,
+                                    fit: BoxFit.cover,
+                                    alignment: alignment,
+                                    errorBuilder: (ctx, err, st) => Center(
+                                      child: Text('🌶️', style: const TextStyle(fontSize: 32)),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                child: Text(
+                                  s,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.outfit(
+                                    color: TDGColors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ] else if (this.activeBuilderStep == 4) ...[
+                // Stage 4: Veggies (Visual Cards Grid)
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 1.1,
+                  children: veggies.map((v) {
+                    final isSelected = this.selectedVeggies!.contains(v);
+                    // Use composite veggies image
+                    final imgAsset = 'assets/images/veggies_composite.jpg';
+                    Alignment alignment = Alignment.center;
+                    if (v.toLowerCase().contains('lettuce')) alignment = const Alignment(-1.0, -1.0);
+                    if (v.toLowerCase().contains('onion')) alignment = const Alignment(-0.33, -1.0);
+                    if (v.toLowerCase().contains('jalapeno')) alignment = const Alignment(0.33, -1.0);
+                    if (v.toLowerCase().contains('olive')) alignment = const Alignment(1.0, -1.0);
+                    if (v.toLowerCase().contains('capsicum')) alignment = const Alignment(-1.0, 1.0);
+                    if (v.toLowerCase().contains('tomato')) alignment = const Alignment(-0.33, 1.0);
+                    if (v.toLowerCase().contains('cucumber')) alignment = const Alignment(0.33, 1.0);
+                    if (v.toLowerCase().contains('bean')) alignment = const Alignment(1.0, 1.0);
+
+                    return AnimatedScale(
+                      scale: isSelected ? 1.05 : 1.0,
+                      duration: const Duration(milliseconds: 150),
+                      child: InkWell(
+                        onTap: () {
+                          setSubState(() {
+                            if (isSelected) {
+                              this.selectedVeggies!.remove(v);
+                            } else {
+                              this.selectedVeggies!.add(v);
+                            }
+                          });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isSelected ? const Color(0xFF10B981).withOpacity(0.12) : TDGColors.background,
+                            border: Border.all(
+                              color: isSelected ? const Color(0xFF10B981) : TDGColors.white.withOpacity(0.1),
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                                  child: Image.asset(
+                                    imgAsset,
+                                    fit: BoxFit.cover,
+                                    alignment: alignment,
+                                    errorBuilder: (ctx, err, st) => Center(
+                                      child: Text('🥗', style: const TextStyle(fontSize: 32)),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                child: Text(
+                                  v,
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.outfit(
+                                    color: TDGColors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+              const SizedBox(height: 24),
+
+              // Next and Back Stage Stepper Controls
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: this.activeBuilderStep == 0
+                        ? null
+                        : () {
+                            setSubState(() {
+                              this.activeBuilderStep--;
+                            });
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: TDGColors.white,
+                      side: BorderSide(color: TDGColors.white.withOpacity(0.1)),
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    child: const Text('Back'),
+                  ),
+                  if (this.activeBuilderStep < 4)
+                    ElevatedButton(
+                      onPressed: () {
+                        setSubState(() {
+                          this.activeBuilderStep++;
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFE63946),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      child: const Text('Next Stage →'),
+                    )
+                  else
+                    const SizedBox(),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Summary Box & Add to Cart Action
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: TDGColors.white.withOpacity(0.05)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Custom Gyro Configuration Summary',
+                      style: GoogleFonts.outfit(color: TDGColors.white, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 0.2),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Protein: ${this.selectedProtein}\nBread: ${this.selectedBread}\nSpread: ${this.selectedSpread}\nSauces: ${this.selectedSauces!.isEmpty ? 'None' : this.selectedSauces!.join(', ')}\nVeggies: ${this.selectedVeggies!.isEmpty ? 'None' : this.selectedVeggies!.join(', ')}',
+                      style: TextStyle(color: TDGColors.grey, fontSize: 11, height: 1.4),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          final cart = ApiService().cart;
+                          final customItemName = 'Custom Gyro (${this.selectedProtein}, ${this.selectedBread})';
+                          final existingIdx = cart.indexWhere((c) => c['name'] == customItemName);
+                          if (existingIdx >= 0) {
+                            cart[existingIdx]['qty'] = (cart[existingIdx]['qty'] ?? 1) + 1;
+                          } else {
+                            cart.add({
+                              'name': customItemName,
+                              'price': 199,
+                              'qty': 1,
+                              'icon': Icons.restaurant_menu,
+                            });
+                          }
+                          // Reset builder back to stage 0 protein selection
+                          this.activeBuilderStep = 0;
+                          this.selectedProtein = 'Chicken';
+                          this.selectedBread = 'Baked';
+                          this.selectedSpread = 'Tzatziki';
+                          this.selectedSauces = ['Garlic Mayo'];
+                          this.selectedVeggies = ['Lettuce', 'Onion', 'Tomato'];
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Custom Gyro Wrap added to cart successfully!'), backgroundColor: Colors.green),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: TDGColors.gold,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      icon: const Icon(Icons.check_circle_outline, size: 16),
+                      label: Text(
+                        'ADD TO CART & DONE (₹199)',
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12, letterSpacing: 0.5),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -99,7 +99,8 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
     workingKey: ccConfig.workingKey || '',
     accessCode: ccConfig.accessCode || '',
     isProduction: ccConfig.isProduction || false,
-    isEnabled: ccConfig.isEnabled !== false
+    isEnabled: ccConfig.isEnabled !== false,
+    enableAssetOtp: settings?.paymentGateways?.enableAssetOtp !== false
   })
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
@@ -110,11 +111,11 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
       const res = await fetch(`${API_BASE}/api/settings/payment-gateways`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin, ccavenue: form })
+        body: JSON.stringify({ pin, ccavenue: form, enableAssetOtp: form.enableAssetOtp })
       })
       const data = await res.json()
       if (data.success) {
-        setMsg('CCAvenue Gateway Settings Saved!')
+        setMsg('Settings Saved!')
         clearSettingsCache()
         onSaved()
       } else {
@@ -129,10 +130,10 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
   return (
     <div style={glassCard}>
       <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <CreditCard size={22} color="#e63946" /> CCAvenue Payment Gateway
+        <CreditCard size={22} color="#e63946" /> Payment Gateway & Verification
       </h3>
       <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '20px' }}>
-        Configure CCAvenue Merchant credentials to enable Credit Card, Debit Card, Net Banking, and UPI payments for both Web App & Mobile App.
+        Configure CCAvenue Merchant credentials and toggle phone OTP options.
       </p>
 
       {msg && (
@@ -177,30 +178,47 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
         />
       </div>
 
-      <div style={{ display: 'flex', gap: '24px', alignItems: 'center', marginBottom: '24px', padding: '16px', background: 'rgba(0,0,0,0.02)', borderRadius: '12px' }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
-          <input
-            type="checkbox"
-            checked={form.isEnabled}
-            onChange={e => setForm({ ...form, isEnabled: e.target.checked })}
-            style={{ width: '18px', height: '18px', accentColor: '#e63946' }}
-          />
-          Enable CCAvenue Gateway
-        </label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px', padding: '16px', background: 'rgba(0,0,0,0.02)', borderRadius: '12px' }}>
+        <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
+            <input
+              type="checkbox"
+              checked={form.isEnabled}
+              onChange={e => setForm({ ...form, isEnabled: e.target.checked })}
+              style={{ width: '18px', height: '18px', accentColor: '#e63946' }}
+            />
+            Enable CCAvenue Gateway
+          </label>
 
-        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
-          <input
-            type="checkbox"
-            checked={form.isProduction}
-            onChange={e => setForm({ ...form, isProduction: e.target.checked })}
-            style={{ width: '18px', height: '18px', accentColor: '#e63946' }}
-          />
-          Production Mode (Live URL)
-        </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
+            <input
+              type="checkbox"
+              checked={form.isProduction}
+              onChange={e => setForm({ ...form, isProduction: e.target.checked })}
+              style={{ width: '18px', height: '18px', accentColor: '#e63946' }}
+            />
+            Production Mode (Live URL)
+          </label>
+        </div>
+
+        <div style={{ borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: '12px', marginTop: '4px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '14px', color: '#1a1a2e' }}>
+            <input
+              type="checkbox"
+              checked={form.enableAssetOtp}
+              onChange={e => setForm({ ...form, enableAssetOtp: e.target.checked })}
+              style={{ width: '18px', height: '18px', accentColor: '#e63946' }}
+            />
+            Require Mobile OTP (Firebase SMS) for Adding Assets
+          </label>
+          <span style={{ fontSize: '11px', color: '#6b7280', marginLeft: '28px', display: 'block', marginTop: '2px' }}>
+            If disabled, new assets (referred friends) are verified and activated instantly without sending SMS validation codes.
+          </span>
+        </div>
       </div>
 
       <button onClick={handleSave} disabled={saving} style={btnPrimary}>
-        {saving ? 'Saving...' : <><Save size={16} /> Save Gateway Settings</>}
+        {saving ? 'Saving...' : <><Save size={16} /> Save Settings</>}
       </button>
     </div>
   )

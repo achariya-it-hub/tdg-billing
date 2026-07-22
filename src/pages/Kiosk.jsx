@@ -225,8 +225,34 @@ export default function Kiosk() {
         {/* Menu Items */}
         {step === 2 && (
           <div>
+            {/* Custom Choose Your Own Gyros Kiosk builder widget */}
+            <div style={{
+              background: 'var(--bg-card)',
+              border: '2px solid var(--border)',
+              borderRadius: '24px',
+              padding: '24px',
+              marginBottom: '32px',
+              boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
+            }}>
+              <h3 style={{ fontFamily: 'Bebas Neue', fontSize: '32px', color: 'var(--accent-primary)', marginBottom: '8px' }}>
+                🌯 CHOOSE YOUR OWN GYROS
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '24px' }}>
+                Build your customized wrap using fresh proteins, signature spreads, and toppings.
+              </p>
+
+              <KioskGyroBuilder onAddCustomGyro={(customItem) => {
+                setCart([...cart, {
+                  menuItemId: 'custom_' + Date.now(),
+                  menuItemName: customItem.name,
+                  unitPrice: 199,
+                  quantity: 1
+                }]);
+              }} />
+            </div>
+
             <h2 style={{ fontFamily: 'Bebas Neue', fontSize: '48px', marginBottom: '24px', textAlign: 'center' }}>
-              Select Your Items
+              Select Other Items
             </h2>
             <div
               style={{
@@ -577,6 +603,208 @@ export default function Kiosk() {
           ))}
         </div>
       </Modal>
+    </div>
+  )
+}
+
+function KioskGyroBuilder({ onAddCustomGyro }) {
+  const [protein, setProtein] = useState('Chicken')
+  const [bread, setBread] = useState('Baked')
+  const [spread, setSpread] = useState('Tzatziki')
+  const [selectedSauces, setSelectedSauces] = useState(['Garlic Mayo'])
+  const [selectedVeggies, setSelectedVeggies] = useState(['Lettuce', 'Onion'])
+  const [showToast, setShowToast] = useState(false)
+
+  const proteins = ['Chicken', 'Paneer']
+  const breads = ['Baked', 'Fried']
+  const spreads = ['Hummus', 'Cheese', 'Tzatziki', 'Ricota']
+  const sauces = ['Turkish Chill', 'Jalapeno Cheese', 'Garlic Mayo', 'Spicy Mayo', 'Peri Peri', 'Honey Mustard']
+  const veggies = ['Lettuce', 'Onion', 'Jalapeno', 'Olive', 'Capsicum', 'Tomato', 'Cucumber', 'Beans']
+
+  const toggleSauce = (s) => {
+    if (selectedSauces.includes(s)) {
+      setSelectedSauces(selectedSauces.filter(item => item !== s))
+    } else {
+      setSelectedSauces([...selectedSauces, s])
+    }
+  }
+
+  const toggleVeggie = (v) => {
+    if (selectedVeggies.includes(v)) {
+      setSelectedVeggies(selectedVeggies.filter(item => item !== v))
+    } else {
+      setSelectedVeggies([...selectedVeggies, v])
+    }
+  }
+
+  const handleAdd = () => {
+    onAddCustomGyro({
+      name: `Custom Gyro (${protein}, ${bread})`,
+      config: { protein, bread, spread, sauces: selectedSauces, veggies: selectedVeggies }
+    })
+    setShowToast(true)
+    setTimeout(() => setShowToast(false), 2000)
+  }
+
+  const optionButtonStyle = (isSelected, activeColor) => ({
+    padding: '12px 20px',
+    borderRadius: '12px',
+    border: isSelected ? `2.5px solid ${activeColor}` : '2px solid var(--border)',
+    background: isSelected ? `${activeColor}1e` : 'var(--bg-elevated)',
+    color: isSelected ? activeColor : 'var(--text-primary)',
+    fontWeight: 'bold',
+    fontSize: '14px',
+    cursor: 'pointer',
+    transform: isSelected ? 'scale(1.05)' : 'scale(1)',
+    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '8px'
+  })
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* 0. Protein */}
+      <div>
+        <div style={{ fontWeight: 'bold', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Start with your Protein</div>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          {proteins.map(p => (
+            <button
+              key={p}
+              onClick={() => setProtein(p)}
+              style={optionButtonStyle(protein === p, '#e63946')}
+            >
+              {p === 'Chicken' ? '🍗 Chicken' : '🧀 Paneer'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 1. Bread */}
+      <div>
+        <div style={{ fontWeight: 'bold', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>1. Choose Your Bread</div>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          {breads.map(b => (
+            <button
+              key={b}
+              onClick={() => setBread(b)}
+              style={optionButtonStyle(bread === b, 'var(--accent-primary)')}
+            >
+              {b} Bread
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 2. Spread */}
+      <div>
+        <div style={{ fontWeight: 'bold', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>2. Choose Your Spread</div>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          {spreads.map(s => (
+            <button
+              key={s}
+              onClick={() => setSpread(s)}
+              style={optionButtonStyle(spread === s, 'var(--accent-primary)')}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 3. Sauces */}
+      <div>
+        <div style={{ fontWeight: 'bold', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>3. Choose Your Sauces (Select Multiple)</div>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          {sauces.map(s => {
+            const isSelected = selectedSauces.includes(s)
+            return (
+              <button
+                key={s}
+                onClick={() => toggleSauce(s)}
+                style={optionButtonStyle(isSelected, '#e63946')}
+              >
+                {s}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* 4. Veggies */}
+      <div>
+        <div style={{ fontWeight: 'bold', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>4. Choose Your Veggies (Select Multiple)</div>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          {veggies.map(v => {
+            const isSelected = selectedVeggies.includes(v)
+            return (
+              <button
+                key={v}
+                onClick={() => toggleVeggie(v)}
+                style={optionButtonStyle(isSelected, '#10b981')}
+              >
+                {v}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Summary Box */}
+      <div style={{
+        marginTop: '12px',
+        padding: '18px',
+        background: 'var(--bg-elevated)',
+        borderRadius: '16px',
+        border: '1px solid var(--border)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '16px'
+      }}>
+        <div style={{ flex: 1, minWidth: '240px' }}>
+          <div style={{ fontWeight: 'bold', fontSize: '15px', color: 'var(--text-primary)', marginBottom: '4px' }}>Custom Gyro Wrap (₹199)</div>
+          <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+            {protein} • {bread} Bread • {spread} spread • Sauces: {selectedSauces.join(', ') || 'None'} • Veggies: {selectedVeggies.join(', ') || 'None'}
+          </div>
+        </div>
+
+        <button
+          onClick={handleAdd}
+          style={{
+            padding: '16px 28px',
+            background: 'var(--accent-primary)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            fontSize: '15px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+          }}
+        >
+          Add Custom Gyro to Cart 🛒
+        </button>
+      </div>
+
+      {showToast && (
+        <div style={{
+          position: 'fixed',
+          bottom: '100px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'var(--accent-success)',
+          color: 'white',
+          padding: '12px 24px',
+          borderRadius: '12px',
+          fontWeight: 'bold',
+          zIndex: 9999,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+        }}>
+          Custom Gyro added to order!
+        </div>
+      )}
     </div>
   )
 }

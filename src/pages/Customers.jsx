@@ -34,6 +34,7 @@ export default function Customers() {
   const [verifyPhone, setVerifyPhone] = useState('')
   const [verifyOtpCode, setVerifyOtpCode] = useState('')
   const [verifyLoading, setVerifyLoading] = useState(false)
+  const [waLink, setWaLink] = useState('')
 
   useEffect(() => {
     try {
@@ -150,6 +151,7 @@ export default function Customers() {
     if (!assetForm.name || !assetForm.phone || !denCustomer) return
     setAssetLoading(true)
     setAssetOtp(null)
+    setWaLink('')
     const targetPhone = assetForm.phone
     try {
       const res = await fetch(`${API_BASE}/api/billing/assets`, {
@@ -160,6 +162,7 @@ export default function Customers() {
       const data = await res.json()
       if (res.ok) {
         setAssetOtp(data.otp)
+        setWaLink(data.waLink || '')
         setVerifyPhone(targetPhone)
         setVerifyOtpCode('')
         setAssetForm({ name: '', phone: '' })
@@ -422,13 +425,13 @@ export default function Customers() {
                   </div>
 
                   {verifyPhone && (
-                    <div style={{ marginTop: '16px', background: '#fffbeb', border: '2px solid #f59e0b', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
-                      <div style={{ fontSize: '14px', color: '#92400e', marginBottom: '6px', fontWeight: 700 }}>OTP Sent to Asset ({verifyPhone})</div>
-                      <div style={{ fontSize: '13px', color: '#78350f', marginBottom: '16px', lineHeight: 1.4 }}>
-                        An SMS OTP message has been sent to the asset's phone <strong>({verifyPhone})</strong>.<br/>
-                        Enter the 4-digit OTP received by the asset to verify and activate:
+                    <div style={{ marginTop: '16px', background: '#f0fdf4', border: '2px solid #22c55e', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '14px', color: '#15803d', marginBottom: '6px', fontWeight: 700 }}>WhatsApp OTP Sent to Asset ({verifyPhone})</div>
+                      <div style={{ fontSize: '13px', color: '#166534', marginBottom: '16px', lineHeight: 1.4 }}>
+                        A 4-digit verification code has been sent via <strong>WhatsApp</strong> to <strong>({verifyPhone})</strong>.<br/>
+                        Enter the WhatsApp OTP received by the asset to verify and activate:
                       </div>
-                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', maxWidth: '320px', margin: '0 auto' }}>
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', maxWidth: '380px', margin: '0 auto', flexWrap: 'wrap' }}>
                         <input
                           type="text"
                           maxLength={4}
@@ -440,9 +443,14 @@ export default function Customers() {
                         <Button size="sm" onClick={() => handleVerifyAssetOtp(verifyPhone, verifyOtpCode)} loading={verifyLoading}>
                           Verify OTP
                         </Button>
+                        {waLink && (
+                          <Button size="sm" variant="secondary" onClick={() => window.open(waLink, '_blank')} style={{ background: '#25D366', color: 'white', border: 'none', fontWeight: 700 }}>
+                            Open WhatsApp
+                          </Button>
+                        )}
                       </div>
                       <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginTop: '12px' }}>
-                        <Button size="sm" variant="secondary" onClick={() => { setVerifyPhone(''); setVerifyOtpCode(''); }}><X size={14} /> Close</Button>
+                        <Button size="sm" variant="secondary" onClick={() => { setVerifyPhone(''); setVerifyOtpCode(''); setWaLink(''); }}><X size={14} /> Close</Button>
                       </div>
                     </div>
                   )}

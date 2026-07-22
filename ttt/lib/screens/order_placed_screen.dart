@@ -100,8 +100,8 @@ class OrderPlacedScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Order #TDG123456',
-              style: TextStyle(color: TDGColors.gold, fontSize: 14, fontWeight: FontWeight.w600),
+              'Done thanks for your order',
+              style: TextStyle(color: TDGColors.gold, fontSize: 16, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
             Text(
@@ -109,55 +109,15 @@ class OrderPlacedScreen extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(color: TDGColors.grey, fontSize: 14, height: 1.5),
             ),
-            const SizedBox(height: 28),
-            // Delivery time
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 40),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: TDGColors.cardDark,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: TDGColors.border),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    'Estimated Delivery',
-                    style: TextStyle(color: TDGColors.grey, fontSize: 12),
-                  ),
-                  const SizedBox(height: 6),
-                  ShaderMask(
-                    shaderCallback: (b) => TDGColors.goldGradient.createShader(b),
-                    child: Text(
-                      '25–30 mins',
-                      style: TextStyle(color: TDGColors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
             const Spacer(),
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 30),
               child: TDGButton(
-                text: 'Track Order',
-                onPressed: () {},
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 30),
-              child: TextButton(
+                text: 'Back to Home',
                 onPressed: () => Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (_) => const MainNavScreen()),
                   (_) => false,
-                ),
-                child: Text(
-                  'Back to Home',
-                  style: TextStyle(color: TDGColors.gold, fontSize: 14, fontWeight: FontWeight.w600),
                 ),
               ),
             ),

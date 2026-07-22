@@ -5,6 +5,8 @@ import '../widgets/tdg_button.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
 class CheckoutScreen extends StatefulWidget {
   final int total;
   final List<Map<String, dynamic>> items;
@@ -65,22 +67,46 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'quantity': int.parse(item['qty'].toString()),
       }).toList();
 
-      if (_selectedPayment == 'ccavenue') {
-        await ApiService().initiateCCavenuePayment(
-          amount: _finalTotal.toDouble(),
-          customerName: ApiService().currentUser?['name'],
-          customerPhone: ApiService().currentUser?['phone'],
-        );
+      // Force CCAvenue redirect for all checkouts automatically
+      final ccResponse = await ApiService().initiateCCavenuePayment(
+        amount: _finalTotal.toDouble(),
+        customerName: ApiService().currentUser?['name'],
+        customerPhone: ApiService().currentUser?['phone'],
+        customerEmail: ApiService().currentUser?['email'],
+      );
+
+      if (ccResponse['success'] == true) {
+        final String ccUrl = ccResponse['ccavenueUrl'] ?? '';
+        final String encRequest = ccResponse['encRequest'] ?? '';
+        final String accessCode = ccResponse['accessCode'] ?? '';
+
+        if (ccUrl.isNotEmpty) {
+          // Parse url components properly using Uri object constructor to prevent encoding corruption of encRequest or access_code
+          final baseUri = Uri.parse(ccUrl);
+          final fullUri = Uri(
+            scheme: baseUri.scheme,
+            host: baseUri.host,
+            path: baseUri.path,
+            queryParameters: {
+              'command': 'initiateTransaction',
+              'encRequest': encRequest,
+              'access_code': accessCode,
+            },
+          );
+          if (await canLaunchUrl(fullUri)) {
+            await launchUrl(fullUri, mode: LaunchMode.externalApplication);
+          }
+        }
       }
 
       await ApiService().createOrder(
         items: itemsForApi,
-        subtotal: (widget.total - 35).toDouble(),
+        subtotal: widget.total.toDouble(),
         tax: 0.0,
-        deliveryFee: 25.0,
+        deliveryFee: 0.0,
         total: _finalTotal.toDouble(),
         paymentMethod: _selectedPayment,
-        deliveryAddress: 'Home',
+        deliveryAddress: 'Dine-In / Takeaway',
       );
 
       // Deduct points if redeemed
@@ -127,8 +153,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  _buildDeliveryAddress(),
-                  const SizedBox(height: 16),
                   _buildPaymentMethod(),
                   const SizedBox(height: 16),
                   _buildPointsRedeem(),

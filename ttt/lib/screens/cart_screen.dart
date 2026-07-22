@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import 'checkout_screen.dart';
 import '../widgets/tdg_button.dart';
+import '../services/api_service.dart';
 import '../utils/responsive.dart';
 
 class CartScreen extends StatefulWidget {
@@ -12,18 +13,25 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  final List<Map<String, dynamic>> _cartItems = [
-    {'name': 'The Classic Gyro', 'price': 199, 'qty': 1, 'icon': Icons.restaurant},
-    {'name': 'Loaded Fries', 'price': 149, 'qty': 1, 'icon': Icons.set_meal},
-    {'name': 'Coke Can', 'price': 60, 'qty': 1, 'icon': Icons.local_drink},
-  ];
+  List<Map<String, dynamic>> get _cartItems => ApiService().cart;
 
   final TextEditingController _promoController = TextEditingController();
 
-  int get subtotal => _cartItems.fold(0, (sum, item) => sum + (item['price'] as int) * (item['qty'] as int));
-  int get deliveryFee => 25;
+  int get subtotal => _cartItems.fold(0, (sum, item) => sum + (int.parse(item['price'].toString())) * (int.parse(item['qty'].toString())));
   int get packagingFee => 10;
-  int get total => subtotal + deliveryFee + packagingFee;
+  int get total => subtotal + packagingFee;
+
+  @override
+  void initState() {
+    super.initState();
+    if (ApiService().cart.isEmpty) {
+      ApiService().cart.addAll([
+        {'name': 'The Classic Gyro', 'price': 199, 'qty': 1, 'icon': Icons.restaurant},
+        {'name': 'Loaded Fries', 'price': 149, 'qty': 1, 'icon': Icons.set_meal},
+        {'name': 'Coke Can', 'price': 60, 'qty': 1, 'icon': Icons.local_drink},
+      ]);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -196,8 +204,6 @@ class _CartScreenState extends State<CartScreen> {
       child: Column(
         children: [
           _priceRow('Subtotal', '₹$subtotal'),
-          const SizedBox(height: 8),
-          _priceRow('Delivery Fee', '₹$deliveryFee'),
           const SizedBox(height: 8),
           _priceRow('Packaging Fee', '₹$packagingFee'),
           const SizedBox(height: 12),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
@@ -91,7 +92,7 @@ class _AssetScreenState extends State<AssetScreen> {
             ),
             SizedBox(height: 8),
             Text(
-              'Max 10 assets. Share the OTP with your friend to verify.',
+              'Max 10 assets. An SMS OTP will be sent to verify.',
               style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
             ),
           ],
@@ -105,10 +106,16 @@ class _AssetScreenState extends State<AssetScreen> {
               final phone = phoneCtrl.text.trim();
               Navigator.pop(ctx);
               try {
-                await ApiService().addAsset(name, phone);
+                final result = await ApiService().addAsset(name, phone);
                 _fetchAssets();
                 if (mounted) {
-                  _showVerifyOtpDialog(name, phone);
+                  if (result['requireOtp'] == true) {
+                    _sendFirebaseOtpAndShowDialog(name, phone);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Asset $name added and verified!'), backgroundColor: Colors.green),
+                    );
+                  }
                 }
               } catch (e) {
                 if (mounted) {
@@ -125,54 +132,42 @@ class _AssetScreenState extends State<AssetScreen> {
     );
   }
 
-  void _showOtpDialog(String name, String phone, String otp) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: TDGColors.cardMid,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: TDGColors.gold),
-        ),
-        title: Text('ASSET ADDED', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('$name ($phone) has been added.', style: TextStyle(color: TDGColors.greyLight, fontSize: 13)),
-            SizedBox(height: 16),
-            Text('Share this OTP with them:', style: TextStyle(color: TDGColors.white, fontSize: 12)),
-            SizedBox(height: 8),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-              decoration: BoxDecoration(
-                color: TDGColors.cardDark,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: TDGColors.gold, width: 2),
-              ),
-              child: Text(
-                otp,
-                style: TextStyle(color: TDGColors.gold, fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: 8),
-              ),
-            ),
-            SizedBox(height: 12),
-            Text(
-              'Your friend must enter this OTP when signing up with your referral code.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text('DONE', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
+  Future<void> _sendFirebaseOtpAndShowDialog(String name, String phone) async {
+    final formattedPhone = phone.startsWith('+') ? phone : (phone.length == 10 ? '+91$phone' : '+$phone');
+    if (mounted) setState(() => _isLoading = true);
+    try {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: formattedPhone,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          if (mounted) setState(() => _isLoading = false);
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          if (mounted) {
+            setState(() => _isLoading = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Firebase OTP failed: ${e.message}'), backgroundColor: Colors.red),
+            );
+          }
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          if (mounted) {
+            setState(() => _isLoading = false);
+            _showVerifyOtpDialog(name, phone, verificationId: verificationId);
+          }
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to trigger Firebase OTP: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
-  void _showVerifyOtpDialog(String name, String phone) {
+  void _showVerifyOtpDialog(String name, String phone, {String? verificationId}) {
     final otpCtrl = TextEditingController();
     showDialog(
       context: context,
@@ -182,22 +177,22 @@ class _AssetScreenState extends State<AssetScreen> {
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: Colors.green),
         ),
-        title: Text('VERIFY OTP', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+        title: Text('VERIFY PHONE OTP', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Enter the OTP shared with $name', style: TextStyle(color: TDGColors.greyLight, fontSize: 13)),
+            Text('A Firebase SMS OTP has been sent to $name ($phone)', style: TextStyle(color: TDGColors.greyLight, fontSize: 13)),
             SizedBox(height: 14),
             TextField(
               controller: otpCtrl,
               keyboardType: TextInputType.number,
-              maxLength: 4,
+              maxLength: 6,
               textAlign: TextAlign.center,
-              style: TextStyle(color: TDGColors.white, fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: 8),
+              style: TextStyle(color: TDGColors.white, fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: 6),
               decoration: InputDecoration(
                 counterText: '',
-                hintText: '0000',
-                hintStyle: TextStyle(color: TDGColors.grey, fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: 8),
+                hintText: '000000',
+                hintStyle: TextStyle(color: TDGColors.grey, fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: 6),
                 filled: true,
                 fillColor: TDGColors.cardDark,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: TDGColors.gold)),
@@ -211,10 +206,19 @@ class _AssetScreenState extends State<AssetScreen> {
           TextButton(
             onPressed: () async {
               final otp = otpCtrl.text.trim();
-              if (otp.length != 4) return;
+              if (otp.length < 4) return;
               Navigator.pop(ctx);
               try {
-                await ApiService().verifyAssetOtp(phone, otp);
+                if (verificationId != null) {
+                  PhoneAuthCredential credential = PhoneAuthProvider.credential(
+                    verificationId: verificationId,
+                    smsCode: otp,
+                  );
+                  await FirebaseAuth.instance.signInWithCredential(credential);
+                  await ApiService().verifyAssetOtp(phone, 'firebase');
+                } else {
+                  await ApiService().verifyAssetOtp(phone, otp);
+                }
                 _fetchAssets();
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
