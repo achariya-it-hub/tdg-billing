@@ -67,7 +67,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
   String getSpreadAsset(String s) {
     if (s == 'Hummus') return 'assets/images/hummus.png';
     if (s == 'Cheese') return 'assets/images/cheese.png';
-    if (s == 'Tzatziki') return 'assets/images/Tzatziki.png';
+    if (s == 'Tzatziki') return 'assets/images/tzatziki.png';
     return 'assets/images/ricotta.png';
   }
 

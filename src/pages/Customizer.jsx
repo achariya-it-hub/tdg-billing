@@ -37,7 +37,7 @@ export default function Customizer() {
   const getSpreadImage = (s) => {
     if (s === 'Hummus') return '/hummus.png'
     if (s === 'Cheese') return '/cheese.png'
-    if (s === 'Tzatziki') return '/Tzatziki.png'
+    if (s === 'Tzatziki') return '/tzatziki.png'
     return '/ricotta.png'
   }
   const getSauceImage = (s) => {

@@ -96438,7 +96438,7 @@ a2P(a){if(a==="Baked")return"assets/images/baked.png"
 return"assets/images/fried.png"},
 a3e(a){if(a==="Hummus")return"assets/images/hummus.png"
 if(a==="Cheese")return"assets/images/cheese.png"
-if(a==="Tzatziki")return"assets/images/Tzatziki.png"
+if(a==="Tzatziki")return"assets/images/tzatziki.png"
 return"assets/images/ricotta.png"},
 a3a(a){var s="assets/images/turkish mayo.png"
 if(B.c.p(a.toLowerCase(),"turkish"))return s
