@@ -460,6 +460,70 @@ class _AssetScreenState extends State<AssetScreen> {
                       ],
                     ),
                   ),
+                  // Referral Code & Invite Sharing Card
+                  Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      color: TDGColors.cardDark,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: TDGColors.border),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'INVITE FRIENDS TO YOUR DEN',
+                          style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Share your phone or email to invite friends. When they sign up using your info as their referral, they get added to your den assets list and you both get points!',
+                          style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.4),
+                        ),
+                        const SizedBox(height: 14),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.black38,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: TDGColors.border),
+                                ),
+                                child: Text(
+                                  ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'No referral details',
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                final inviteInfo = ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? '';
+                                if (inviteInfo.isNotEmpty) {
+                                  // Mock copy to clipboard message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Referral invite copied: $inviteInfo'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: TDGColors.gold,
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              ),
+                              child: Text('Invite', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                   SizedBox(height: 20),
 
                   // Progress Bar
