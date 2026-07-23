@@ -312,20 +312,20 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildHeroSection() {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
         gradient: const LinearGradient(
-          colors: [Color(0xFF2E0F05), Color(0xFF190600), Color(0xFF0F0F11)],
+          colors: [Color(0xFF1F1500), Color(0xFF100B00), Colors.black],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        border: Border.all(color: TDGColors.gold.withOpacity(0.4), width: 1.5),
+        border: Border.all(color: TDGColors.gold.withOpacity(0.4), width: 2),
         boxShadow: [
           BoxShadow(
-            color: TDGColors.primaryRed.withOpacity(0.2),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: TDGColors.gold.withOpacity(0.12),
+            blurRadius: 30,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
@@ -336,31 +336,31 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: TDGColors.primaryRed.withOpacity(0.2),
+                    color: TDGColors.gold.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: TDGColors.primaryRed.withOpacity(0.5)),
+                    border: Border.all(color: TDGColors.gold.withOpacity(0.4)),
                   ),
                   child: Text(
-                    'AUTHENTIC MEDITERRANEAN',
-                    style: TextStyle(color: TDGColors.primaryRed, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1),
+                    '🌯 MEDITERRANEAN PRIDE',
+                    style: GoogleFonts.outfit(color: TDGColors.gold, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 ShaderMask(
                   shaderCallback: (b) => TDGColors.goldGradient.createShader(b),
-                  child: const Text(
+                  child: Text(
                     'THE DAILY GYRO',
-                    style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 1),
+                    style: GoogleFonts.outfit(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w900, letterSpacing: 1),
                   ),
                 ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Savor fresh Greek Gyros, Crispy Chicken & Handcrafted Shakes',
-                  style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.3),
+                const SizedBox(height: 6),
+                Text(
+                  'Indulge in fresh handcrafted Greek Gyros, premium golden fries, and thick delicious dessert shakes.',
+                  style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.35),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 18),
                 Row(
                   children: [
                     ElevatedButton(
@@ -370,40 +370,40 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TDGColors.gold,
                         foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      child: const Text('ORDER NOW', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      child: Text('ORDER NOW', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900)),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 10),
                     OutlinedButton(
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (_) => const OffersScreen()));
                       },
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: TDGColors.gold),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        side: BorderSide(color: TDGColors.gold, width: 1.5),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      child: Text('OFFERS', style: TextStyle(color: TDGColors.gold, fontSize: 12, fontWeight: FontWeight.bold)),
+                      child: Text('OFFERS', style: GoogleFonts.outfit(color: TDGColors.gold, fontSize: 12, fontWeight: FontWeight.w900)),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 16),
           Container(
-            width: 100,
-            height: 110,
+            width: 110,
+            height: 120,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(20),
               boxShadow: [
-                BoxShadow(color: TDGColors.gold.withOpacity(0.25), blurRadius: 15),
+                BoxShadow(color: TDGColors.gold.withOpacity(0.3), blurRadius: 20),
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(20),
               child: Image.asset('assets/images/hero_gyro.png', fit: BoxFit.cover),
             ),
           ),
