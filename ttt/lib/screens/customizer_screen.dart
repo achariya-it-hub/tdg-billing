@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
+import 'login_screen.dart';
 
 class CustomizerScreen extends StatefulWidget {
   const CustomizerScreen({super.key});
@@ -11,6 +12,22 @@ class CustomizerScreen extends StatefulWidget {
 }
 
 class _CustomizerScreenState extends State<CustomizerScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!ApiService().isAuthenticated) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please log in to customize your gyro order!'), backgroundColor: Colors.redAccent),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+      }
+    });
+  }
+
   String selectedProtein = 'Chicken';
   String selectedBread = 'Baked';
   String selectedSpread = 'Tzatziki';
@@ -55,22 +72,22 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
   }
 
   String getSauceAsset(String s) {
-    if (s.toLowerCase().includes('turkish')) return 'assets/images/turkish mayo.png';
-    if (s.toLowerCase().includes('jalapeno cheese')) return 'assets/images/jalapeno cheese.png';
-    if (s.toLowerCase().includes('garlic')) return 'assets/images/garlic mayo.png';
-    if (s.toLowerCase().includes('spicy')) return 'assets/images/spicy_mayo.png';
-    if (s.toLowerCase().includes('peri')) return 'assets/images/peri peri.png';
+    if (s.toLowerCase().contains('turkish')) return 'assets/images/turkish mayo.png';
+    if (s.toLowerCase().contains('jalapeno cheese')) return 'assets/images/jalapeno cheese.png';
+    if (s.toLowerCase().contains('garlic')) return 'assets/images/garlic mayo.png';
+    if (s.toLowerCase().contains('spicy')) return 'assets/images/spicy_mayo.png';
+    if (s.toLowerCase().contains('peri')) return 'assets/images/peri peri.png';
     return 'assets/images/honey mustard.png';
   }
 
   String getVeggieAsset(String v) {
-    if (v.toLowerCase().includes('lettuce')) return 'assets/images/lettuce.png';
-    if (v.toLowerCase().includes('onion')) return 'assets/images/onion.png';
-    if (v.toLowerCase().includes('jalapeno')) return 'assets/images/jalapenos.png';
-    if (v.toLowerCase().includes('olive')) return 'assets/images/olives.png';
-    if (v.toLowerCase().includes('capsicum')) return 'assets/images/bell peppers.png';
-    if (v.toLowerCase().includes('tomato')) return 'assets/images/tomatos.png';
-    if (v.toLowerCase().includes('cucumber')) return 'assets/images/cucumber.png';
+    if (v.toLowerCase().contains('lettuce')) return 'assets/images/lettuce.png';
+    if (v.toLowerCase().contains('onion')) return 'assets/images/onion.png';
+    if (v.toLowerCase().contains('jalapeno')) return 'assets/images/jalapenos.png';
+    if (v.toLowerCase().contains('olive')) return 'assets/images/olives.png';
+    if (v.toLowerCase().contains('capsicum')) return 'assets/images/bell peppers.png';
+    if (v.toLowerCase().contains('tomato')) return 'assets/images/tomatos.png';
+    if (v.toLowerCase().contains('cucumber')) return 'assets/images/cucumber.png';
     return 'assets/images/beans.png';
   }
 
@@ -110,7 +127,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
         border: Border.all(color: TDGColors.gold.withOpacity(0.2)),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.between,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             title,

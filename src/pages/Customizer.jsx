@@ -22,6 +22,14 @@ export default function Customizer() {
   const sauces = ['Turkish Chill', 'Jalapeno Cheese', 'Garlic Mayo', 'Spicy Mayo', 'Peri Peri', 'Honey Mustard']
   const veggies = ['Lettuce', 'Onion', 'Jalapeno', 'Olive', 'Capsicum', 'Tomato', 'Cucumber', 'Beans']
 
+  useEffect(() => {
+    const customerToken = localStorage.getItem('customer_token')
+    if (!customerToken) {
+      toast.error('Please sign in or create an account to customize your gyros!')
+      navigate('/login')
+    }
+  }, [navigate])
+
   const getBreadImage = (b) => {
     if (b === 'Baked') return '/baked.png'
     return '/fried.png'
