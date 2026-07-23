@@ -365,7 +365,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        setState(() => _selectedCategory = 'Gyros');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const CustomizerScreen()),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TDGColors.gold,
