@@ -1244,49 +1244,26 @@ function ChooseYourOwnGyroSection({ denUrl }) {
             whileTap={{ scale: 0.98 }}
             style={{ display: 'inline-block' }}
           >
-            {window.location.hostname.includes('den.') ? (
-              <Link 
-                to="/customizer" 
-                style={{
-                  backgroundColor: '#ffd700',
-                  color: '#000',
-                  padding: '16px 36px',
-                  borderRadius: '12px',
-                  fontSize: '15px',
-                  fontWeight: 900,
-                  textDecoration: 'none',
-                  letterSpacing: '0.5px',
-                  boxShadow: '0 8px 25px rgba(255, 215, 0, 0.3)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  transition: 'box-shadow 0.2s'
-                }}
-              >
-                START CUSTOMIZING NOW <ArrowRight size={18} />
-              </Link>
-            ) : (
-              <a 
-                href={denUrl ? `${denUrl}/customizer` : '/customizer'} 
-                style={{
-                  backgroundColor: '#ffd700',
-                  color: '#000',
-                  padding: '16px 36px',
-                  borderRadius: '12px',
-                  fontSize: '15px',
-                  fontWeight: 900,
-                  textDecoration: 'none',
-                  letterSpacing: '0.5px',
-                  boxShadow: '0 8px 25px rgba(255, 215, 0, 0.3)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  transition: 'box-shadow 0.2s'
-                }}
-              >
-                START CUSTOMIZING NOW <ArrowRight size={18} />
-              </a>
-            )}
+            <Link 
+              to="/customizer" 
+              style={{
+                backgroundColor: '#ffd700',
+                color: '#000',
+                padding: '16px 36px',
+                borderRadius: '12px',
+                fontSize: '15px',
+                fontWeight: 900,
+                textDecoration: 'none',
+                letterSpacing: '0.5px',
+                boxShadow: '0 8px 25px rgba(255, 215, 0, 0.3)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '10px',
+                transition: 'box-shadow 0.2s'
+              }}
+            >
+              START CUSTOMIZING NOW <ArrowRight size={18} />
+            </Link>
           </motion.div>
         </motion.div>
       </div>
