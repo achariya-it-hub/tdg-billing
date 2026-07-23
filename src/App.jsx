@@ -127,11 +127,11 @@ export default function App() {
       // Den Subdomain: den.tendengyros.com (Guest Auth & Self Order Kiosk)
       return (
         <Routes>
-          <Route path="/" element={<Navigate to="/kiosk" replace />} />
+          <Route path="/" element={<Navigate to="/customizer" replace />} />
           <Route path="/kiosk" element={<Kiosk />} />
           <Route path="/customizer" element={<Customizer />} />
           <Route path="/login" element={<CustomerAuth />} />
-          <Route path="*" element={<Navigate to="/kiosk" replace />} />
+          <Route path="*" element={<Navigate to="/customizer" replace />} />
         </Routes>
       )
     } else {
