@@ -576,14 +576,43 @@ app.post('/api/auth/forgot-password', (req, res) => {
   res.json({ success: true, message: 'OTP sent successfully' })
 })
 
+// Auth - Forgot Password (send OTP to Email)
+app.post('/api/auth/forgot-password-email', (req, res) => {
+  const { email } = req.body
+  if (!email) return res.status(400).json({ message: 'Email address required' })
+
+  const db = readDb()
+  const cleanEmail = email.trim().toLowerCase()
+  const user = db.users.find(u => u.email.toLowerCase() === cleanEmail)
+  if (!user) return res.status(404).json({ message: 'No account found with this email address' })
+
+  const otp = String(Math.floor(1000 + Math.random() * 9000))
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString() // 10 minutes
+  user.forgotPasswordOtp = otp
+  user.forgotPasswordOtpExpiry = otpExpiry
+  writeDb(db)
+
+  console.log(`[FORGOT PASSWORD EMAIL] OTP for ${email}: ${otp}`)
+  res.json({ success: true, message: 'Verification OTP sent to your email successfully' })
+})
+
 // Auth - Reset Password (verify OTP + set new password)
 app.post('/api/auth/reset-password', async (req, res) => {
-  const { phone, otp, newPassword } = req.body
-  if (!phone || !otp || !newPassword) return res.status(400).json({ message: 'Phone, OTP, and new password required' })
+  const { phone, email, otp, newPassword } = req.body
+  if ((!phone && !email) || !otp || !newPassword) {
+    return res.status(400).json({ message: 'Identifier (phone/email), OTP, and new password required' })
+  }
   if (newPassword.length < 6) return res.status(400).json({ message: 'Password must be at least 6 characters' })
 
   const db = readDb()
-  const user = db.users.find(u => u.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''))
+  let user
+  if (email) {
+    const cleanEmail = email.trim().toLowerCase()
+    user = db.users.find(u => u.email.toLowerCase() === cleanEmail)
+  } else {
+    user = db.users.find(u => u.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''))
+  }
+  
   if (!user) return res.status(404).json({ message: 'User not found' })
 
   if (!user.forgotPasswordOtp || user.forgotPasswordOtp !== otp) {

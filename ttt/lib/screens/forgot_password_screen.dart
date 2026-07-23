@@ -21,7 +21,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _newPasswordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
-  bool _isEmailMode = false;
+  bool _isEmailMode = true;
   int _step = 1; // 1=identifier, 2=otp+new password
   int _otpResendTimer = 60;
   Timer? _timer;
