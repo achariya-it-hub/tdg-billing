@@ -1245,7 +1245,7 @@ function ChooseYourOwnGyroSection({ denUrl }) {
             style={{ display: 'inline-block' }}
           >
             <Link 
-              to="/kiosk" 
+              to="/customizer" 
               style={{
                 backgroundColor: '#ffd700',
                 color: '#000',

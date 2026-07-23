@@ -217,7 +217,14 @@ export default function POS() {
     }}>
       <div style={{ flex: 1 }}>
         <div style={{ fontWeight: 600, fontSize: '13px' }}>{item.menuItemName}</div>
-        <div style={{ color: '#e63946', fontSize: '12px', fontWeight: 500 }}>₹{item.unitPrice}</div>
+        {item.customization && (
+          <div style={{ fontSize: '11px', color: '#e63946', marginTop: '2px', fontWeight: 500, lineHeight: 1.3 }}>
+            {item.customization.protein} • {item.customization.bread} bread • {item.customization.spread} spread
+            {item.customization.sauces?.length > 0 && ` • Sauces: ${item.customization.sauces.join(', ')}`}
+            {item.customization.veggies?.length > 0 && ` • Veggies: ${item.customization.veggies.join(', ')}`}
+          </div>
+        )}
+        <div style={{ color: '#e63946', fontSize: '12px', fontWeight: 500, marginTop: '2px' }}>₹{item.unitPrice}</div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
         <button onClick={() => updateItemQuantity(index, item.quantity - 1)} style={qtyBtn('#f3f4f6')}>

@@ -1668,7 +1668,8 @@ app.post('/api/pos/orders', (req, res) => {
       quantity: item.quantity,
       unitPrice: item.unitPrice,
       totalPrice: item.totalPrice,
-      status: 'pending'
+      status: 'pending',
+      customization: item.customization || undefined
     })) || []
   }
   

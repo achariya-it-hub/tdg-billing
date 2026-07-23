@@ -22,6 +22,7 @@ import Users from './pages/Users'
 import Expenses from './pages/Expenses'
 import Accounts from './pages/Accounts'
 import Settings from './pages/Settings'
+import Customizer from './pages/Customizer'
 import Layout from './components/Layout'
 import { SettingsProvider } from './lib/settingsContext'
 import { useState, useEffect } from 'react'
@@ -128,6 +129,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/kiosk" replace />} />
           <Route path="/kiosk" element={<Kiosk />} />
+          <Route path="/customizer" element={<Customizer />} />
           <Route path="/login" element={<CustomerAuth />} />
           <Route path="*" element={<Navigate to="/kiosk" replace />} />
         </Routes>
@@ -138,6 +140,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/kiosk" element={<Kiosk />} />
+          <Route path="/customizer" element={<Customizer />} />
           <Route path="/login" element={<CustomerAuth />} />
           <Route path="/staff-login" element={<Login />} />
           

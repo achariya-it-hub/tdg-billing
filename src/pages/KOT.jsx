@@ -275,19 +275,41 @@ export default function KOT() {
                   >
                     {item.isCompleted ? '✓' : item.quantity}
                   </div>
-                  <span
+                  <div
                     style={{
                       flex: 1,
                       textAlign: 'left',
-                      fontSize: '20px',
-                      fontWeight: 600,
-                      color: item.isCompleted ? 'white' : '#1a1a2e',
-                      textDecoration: item.isCompleted ? 'line-through' : 'none',
-                      opacity: item.isCompleted ? 0.7 : 1
+                      display: 'flex',
+                      flexDirection: 'column'
                     }}
                   >
-                    {item.menuItemName}
-                  </span>
+                    <span
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: 600,
+                        color: item.isCompleted ? 'white' : '#1a1a2e',
+                        textDecoration: item.isCompleted ? 'line-through' : 'none',
+                        opacity: item.isCompleted ? 0.7 : 1
+                      }}
+                    >
+                      {item.menuItemName}
+                    </span>
+                    {item.customization && (
+                      <span
+                        style={{
+                          fontSize: '13px',
+                          fontWeight: 500,
+                          color: item.isCompleted ? 'rgba(255,255,255,0.7)' : '#e63946',
+                          marginTop: '4px',
+                          lineHeight: 1.3
+                        }}
+                      >
+                        {item.customization.protein} • {item.customization.bread} bread • {item.customization.spread} spread
+                        {item.customization.sauces?.length > 0 && ` • Sauces: ${item.customization.sauces.join(', ')}`}
+                        {item.customization.veggies?.length > 0 && ` • Veggies: ${item.customization.veggies.join(', ')}`}
+                      </span>
+                    )}
+                  </div>
                 </button>
               ))}
             </div>

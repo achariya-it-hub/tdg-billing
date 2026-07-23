@@ -229,7 +229,16 @@ export default function Kitchen() {
                         }}>
                           {item.status === 'ready' ? <Check size={16} /> : item.quantity}
                         </div>
-                        <span style={{ flex: 1, fontWeight: 600, fontSize: '16px' }}>{item.menuItemName}</span>
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ fontWeight: 600, fontSize: '16px' }}>{item.menuItemName}</span>
+                          {item.customization && (
+                            <span style={{ fontSize: '12px', color: '#e63946', marginTop: '2px', fontWeight: 500 }}>
+                              {item.customization.protein} • {item.customization.bread} bread • {item.customization.spread} spread
+                              {item.customization.sauces?.length > 0 && ` • Sauces: ${item.customization.sauces.join(', ')}`}
+                              {item.customization.veggies?.length > 0 && ` • Veggies: ${item.customization.veggies.join(', ')}`}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -366,7 +375,16 @@ export default function Kitchen() {
                       }}>
                         {item.status === 'ready' ? <Check size={14} /> : item.quantity}
                       </span>
-                      <span style={{ flex: 1, fontWeight: 600, fontSize: '14px' }}>{item.menuItemName}</span>
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontWeight: 600, fontSize: '14px' }}>{item.menuItemName}</span>
+                        {item.customization && (
+                          <span style={{ fontSize: '12px', color: '#e63946', marginTop: '2px', fontWeight: 500 }}>
+                            {item.customization.protein} • {item.customization.bread} bread • {item.customization.spread} spread
+                            {item.customization.sauces?.length > 0 && ` • Sauces: ${item.customization.sauces.join(', ')}`}
+                            {item.customization.veggies?.length > 0 && ` • Veggies: ${item.customization.veggies.join(', ')}`}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

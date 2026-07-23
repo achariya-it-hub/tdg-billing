@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { ShoppingCart, Plus, Minus, Trash2, CreditCard, Banknote, Smartphone, Check, ArrowRight } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -225,25 +226,37 @@ export default function Kiosk() {
               background: 'var(--bg-card)',
               border: '2px solid var(--border)',
               borderRadius: '24px',
-              padding: '24px',
+              padding: '32px 24px',
               marginTop: '40px',
-              boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
+              boxShadow: '0 10px 20px rgba(0,0,0,0.1)',
+              textAlign: 'center'
             }}>
-              <h3 style={{ fontFamily: 'Bebas Neue', fontSize: '32px', color: 'var(--accent-primary)', marginBottom: '8px' }}>
+              <h3 style={{ fontFamily: 'Bebas Neue', fontSize: '36px', color: 'var(--accent-primary)', marginBottom: '8px' }}>
                 🌯 CREATE YOUR OWN GYROS
               </h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '24px' }}>
-                Build your customized wrap using fresh proteins, signature spreads, and toppings.
+              <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '24px', maxWidth: '480px', margin: '0 auto 24px auto' }}>
+                Build your customized wrap using fresh proteins, signature spreads, sauces, and toppings.
               </p>
 
-              <KioskGyroBuilder onAddCustomGyro={(customItem) => {
-                setCart([...cart, {
-                  menuItemId: 'custom_' + Date.now(),
-                  menuItemName: customItem.name,
-                  unitPrice: 199,
-                  quantity: 1
-                }]);
-              }} />
+              <Link
+                to="/customizer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '16px 36px',
+                  backgroundColor: 'var(--accent-primary)',
+                  color: 'white',
+                  borderRadius: '12px',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 15px rgba(230, 57, 70, 0.3)',
+                  transition: 'all 0.2s'
+                }}
+              >
+                START CUSTOMIZING NOW <ArrowRight size={20} />
+              </Link>
             </div>
           </div>
         )}
