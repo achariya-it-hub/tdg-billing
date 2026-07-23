@@ -75,7 +75,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
     if (s.toLowerCase().contains('turkish')) return 'assets/images/turkish mayo.png';
     if (s.toLowerCase().contains('jalapeno cheese')) return 'assets/images/jalapeno cheese.png';
     if (s.toLowerCase().contains('garlic')) return 'assets/images/garlic mayo.png';
-    if (s.toLowerCase().contains('spicy')) return 'assets/images/spicy_mayo.png';
+    if (s.toLowerCase().contains('spicy')) return 'assets/images/turkish mayo.png';
     if (s.toLowerCase().contains('peri')) return 'assets/images/peri peri.png';
     return 'assets/images/honey mustard.png';
   }

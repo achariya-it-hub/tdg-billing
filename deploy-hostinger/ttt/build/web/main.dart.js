@@ -96440,10 +96440,11 @@ a3e(a){if(a==="Hummus")return"assets/images/hummus.png"
 if(a==="Cheese")return"assets/images/cheese.png"
 if(a==="Tzatziki")return"assets/images/Tzatziki.png"
 return"assets/images/ricotta.png"},
-a3a(a){if(B.c.p(a.toLowerCase(),"turkish"))return"assets/images/turkish mayo.png"
+a3a(a){var s="assets/images/turkish mayo.png"
+if(B.c.p(a.toLowerCase(),"turkish"))return s
 if(B.c.p(a.toLowerCase(),"jalapeno cheese"))return"assets/images/jalapeno cheese.png"
 if(B.c.p(a.toLowerCase(),"garlic"))return"assets/images/garlic mayo.png"
-if(B.c.p(a.toLowerCase(),"spicy"))return"assets/images/spicy_mayo.png"
+if(B.c.p(a.toLowerCase(),"spicy"))return s
 if(B.c.p(a.toLowerCase(),"peri"))return"assets/images/peri peri.png"
 return"assets/images/honey mustard.png"},
 a3f(a){if(B.c.p(a.toLowerCase(),"lettuce"))return"assets/images/lettuce.png"

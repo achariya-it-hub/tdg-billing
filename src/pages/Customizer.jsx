@@ -44,7 +44,7 @@ export default function Customizer() {
     if (s.toLowerCase().includes('turkish')) return '/turkish mayo.png'
     if (s.toLowerCase().includes('jalapeno cheese')) return '/jalapeno cheese.png'
     if (s.toLowerCase().includes('garlic')) return '/garlic mayo.png'
-    if (s.toLowerCase().includes('spicy')) return '/spicy_mayo.png'
+    if (s.toLowerCase().includes('spicy')) return '/turkish mayo.png'
     if (s.toLowerCase().includes('peri')) return '/peri peri.png'
     return '/honey mustard.png'
   }
