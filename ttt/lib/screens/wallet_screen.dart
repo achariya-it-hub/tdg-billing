@@ -278,28 +278,167 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 
   Widget _buildActionButtons() {
-    return SizedBox(
-      width: double.infinity,
-      child: GestureDetector(
-        onTap: _handleRedeem,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Grid/Row actions identical to home screen
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _walletActionItem(
+              Icons.add_circle_outline, 
+              'Add Points', 
+              _handleRedeem
+            ),
+            _walletActionItem(
+              Icons.send_outlined, 
+              'Distribute', 
+              () => Navigator.pushNamed(context, '/assets')
+            ),
+            _walletActionItem(
+              Icons.group_add_outlined, 
+              'Assets', 
+              () => Navigator.pushNamed(context, '/assets')
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        
+        // Share Referral Invite block
+        Container(
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: TDGColors.cardDark,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: TDGColors.border),
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.redeem_rounded, color: TDGColors.gold, size: 28),
-              const SizedBox(height: 8),
               Text(
-                'Redeem Points',
-                style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w600, fontSize: 13),
+                'INVITE FRIENDS & SHARE REFERRAL CODE',
+                style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Share your referral details below to build your Den! Add up to 10 assets to start distributing points.',
+                style: TextStyle(color: Colors.white70, fontSize: 12),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.black38,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: TDGColors.border),
+                      ),
+                      child: Text(
+                        ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'No referral details',
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      final inviteInfo = ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? '';
+                      if (inviteInfo.isNotEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Referral invite copied: $inviteInfo'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: TDGColors.gold,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: const Text('Invite', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                  ),
+                ],
               ),
             ],
           ),
         ),
+        const SizedBox(height: 20),
+
+        // Point Sharing Rules & Conditions Card
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: TDGColors.cardDark,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: TDGColors.primaryRed.withOpacity(0.2)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.info_outline_rounded, color: TDGColors.primaryRed, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    'POINT SHARING CONDITIONS',
+                    style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 12, letterSpacing: 0.8),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              _ruleBullet('You can share a maximum of 100 points to 1 den member/asset.'),
+              _ruleBullet('You can avail points redemption only after adding a minimum of 5 assets to your den.'),
+              _ruleBullet('Initial 500 sign-up points can be shared across up to 10 den assets.'),
+              _ruleBullet('When all 10 assets finish a meal, another 500 bonus points will be credited back!'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _walletActionItem(IconData icon, String label, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Column(
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: TDGColors.cardDark,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: TDGColors.border),
+            ),
+            child: Icon(icon, color: TDGColors.gold, size: 22),
+          ),
+          const SizedBox(height: 6),
+          Text(label, style: TextStyle(color: TDGColors.greyLight, fontSize: 11, fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+
+  Widget _ruleBullet(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('• ', style: TextStyle(color: TDGColors.gold, fontSize: 14)),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.4),
+            ),
+          ),
+        ],
       ),
     );
   }
