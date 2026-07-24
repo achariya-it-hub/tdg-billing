@@ -1080,7 +1080,7 @@ export default function LandingPage() {
               <a href="#hero" style={{ color: '#9ca3af', textDecoration: 'none' }}>Home</a>
               <a href="#menu" style={{ color: '#9ca3af', textDecoration: 'none' }}>Menu</a>
               <a href="#about" style={{ color: '#9ca3af', textDecoration: 'none' }}>About Us</a>
-              <span onClick={() => setShowPrivacyPolicy(true)} style={{ color: '#9ca3af', textDecoration: 'none', cursor: 'pointer' }}>Privacy Policy</span>
+              <Link to="/privacy-policy" style={{ color: '#9ca3af', textDecoration: 'none' }}>Privacy Policy</Link>
               <a href="/app.apk" download style={{ color: '#ffd700', textDecoration: 'none', fontWeight: 600 }}>Download Android App 📱</a>
             </div>
           </div>
@@ -1162,7 +1162,7 @@ export default function LandingPage() {
         }}>
           <span>© {new Date().getFullYear()} Ten Den Gyros (TDG). All Rights Reserved.</span>
           <div style={{ display: 'flex', gap: '20px' }}>
-            <span style={{ cursor: 'pointer', color: '#ffd700', textDecoration: 'underline' }} onClick={() => setShowPrivacyPolicy(true)}>Privacy Policy</span>
+            <Link to="/privacy-policy" style={{ color: '#ffd700', textDecoration: 'underline' }}>Privacy Policy</Link>
             <span style={{ cursor: 'pointer' }}>Terms & Conditions</span>
           </div>
         </div>
