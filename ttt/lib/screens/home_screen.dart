@@ -8,6 +8,7 @@ import 'offers_screen.dart';
 import 'notifications_screen.dart';
 import 'cart_screen.dart';
 import 'customizer_screen.dart';
+import 'main_nav_screen.dart';
 import '../widgets/tdg_logo.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
