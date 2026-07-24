@@ -75,7 +75,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 width: 140,
                 height: 140,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(24),
                   border: Border.all(color: TDGColors.gold.withOpacity(0.3), width: 3),
                   boxShadow: [
                     BoxShadow(
@@ -86,7 +87,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(70),
+                  borderRadius: BorderRadius.circular(22),
                   child: Image.asset(
                     'assets/images/logo.png',
                     fit: BoxFit.cover,
