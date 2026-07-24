@@ -106,15 +106,10 @@ class _AssetScreenState extends State<AssetScreen> {
               final phone = phoneCtrl.text.trim();
               Navigator.pop(ctx);
               try {
-                final result = await ApiService().addAsset(name, phone);
-                // Temporarily bypass OTP checks and verify using server bypass parameter immediately
-                await ApiService().verifyAssetOtp(phone, 'firebase');
-                _fetchAssets();
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Asset $name added and verified!'), backgroundColor: Colors.green),
-                  );
-                }
+                // Add asset (returns pending state)
+                await ApiService().addAsset(name, phone);
+                // Trigger live Firebase SMS OTP verification flow
+                await _sendFirebaseOtpAndShowDialog(name, phone);
               } catch (e) {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(

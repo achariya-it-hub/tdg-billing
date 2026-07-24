@@ -397,6 +397,10 @@ app.post('/api/assets/verify-otp', (req, res) => {
     const assets = master.assets || []
     const asset = assets.find(a => a.phone === phone && a.status === 'pending' && a.otp === otp)
     if (asset) {
+      // Check OTP: match exact OTP
+      if (asset.otp && asset.otp !== otp) {
+        return res.status(400).json({ message: 'Invalid OTP' })
+      }
       // Check OTP expiry
       if (asset.otpExpiry && new Date(asset.otpExpiry) < new Date()) {
         return res.status(400).json({ message: 'OTP expired. Ask your referrer to add you again.' })

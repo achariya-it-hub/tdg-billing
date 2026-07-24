@@ -426,11 +426,11 @@ app.post('/api/assets/verify-otp', (req, res) => {
     const assets = master.assets || []
     const asset = assets.find(a => a.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, '') && a.status === 'pending')
     if (asset) {
-      // Check OTP: match exact OTP or 'firebase' bypass code
-      if (otp !== 'firebase' && asset.otp && asset.otp !== otp) {
+      // Check OTP: match exact OTP
+      if (asset.otp && asset.otp !== otp) {
         return res.status(400).json({ message: 'Invalid OTP' })
       }
-      if (asset.otpExpiry && new Date(asset.otpExpiry) < new Date() && otp !== 'firebase') {
+      if (asset.otpExpiry && new Date(asset.otpExpiry) < new Date()) {
         return res.status(400).json({ message: 'OTP expired. Ask your referrer to add you again.' })
       }
       // OTP valid — activate asset
