@@ -1080,7 +1080,7 @@ export default function LandingPage() {
               <a href="#hero" style={{ color: '#9ca3af', textDecoration: 'none' }}>Home</a>
               <a href="#menu" style={{ color: '#9ca3af', textDecoration: 'none' }}>Menu</a>
               <a href="#about" style={{ color: '#9ca3af', textDecoration: 'none' }}>About Us</a>
-              <a href="#testimonials" style={{ color: '#9ca3af', textDecoration: 'none' }}>Reviews</a>
+              <span onClick={() => setShowPrivacyPolicy(true)} style={{ color: '#9ca3af', textDecoration: 'none', cursor: 'pointer' }}>Privacy Policy</span>
               <a href="/app.apk" download style={{ color: '#ffd700', textDecoration: 'none', fontWeight: 600 }}>Download Android App 📱</a>
             </div>
           </div>
