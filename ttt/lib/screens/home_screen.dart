@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _startCarouselTimer() {
     _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
       if (mounted && _carouselController.hasClients) {
-        final nextPage = (_carouselIndex + 1) % 3;
+        final nextPage = (_carouselIndex + 1) % 4;
         _carouselController.animateToPage(
           nextPage,
           duration: const Duration(milliseconds: 800),
@@ -310,12 +310,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeroSection() {
-    // Select image based on carousel loop index
+    // Select image based on carousel loop index (loop of 4 items)
     String heroImage = 'assets/images/hero_gyro.png';
     if (_carouselIndex == 1) {
       heroImage = 'assets/images/gyro.png';
     } else if (_carouselIndex == 2) {
       heroImage = 'assets/images/Lebanese rice bowl.png';
+    } else if (_carouselIndex == 3) {
+      heroImage = 'assets/images/fries.png';
     }
 
     return Container(
@@ -373,10 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const CustomizerScreen()),
-                        );
+                        setState(() => _selectedCategory = 'All');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TDGColors.gold,
@@ -729,7 +728,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _walletAction(Icons.add_circle_outline, 'Add Points', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WalletScreen()))),
-                _walletAction(Icons.send_outlined, 'Distribute', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WalletScreen()))),
+                _walletAction(Icons.send_outlined, 'Distribute', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AssetScreen(triggerDistribute: true)))),
                 _walletAction(Icons.history_rounded, 'History', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WalletScreen()))),
                 _walletAction(Icons.group_add_outlined, 'Assets', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AssetScreen()))),
               ],

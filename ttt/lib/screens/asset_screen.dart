@@ -5,7 +5,8 @@ import '../services/api_service.dart';
 import '../utils/responsive.dart';
 
 class AssetScreen extends StatefulWidget {
-  const AssetScreen({super.key});
+  final bool triggerDistribute;
+  const AssetScreen({super.key, this.triggerDistribute = false});
 
   @override
   State<AssetScreen> createState() => _AssetScreenState();
@@ -43,12 +44,74 @@ class _AssetScreenState extends State<AssetScreen> {
           _assets = data['assets'] ?? [];
           _referredByName = data['referredByName'];
         });
+
+        // If triggered from wallet/home distribute points action button, auto open asset selection modal
+        if (widget.triggerDistribute && _assets.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _showSelectAssetForDistribution();
+          });
+        }
       }
     } catch (e) {
       debugPrint("Error fetching assets: $e");
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  void _showSelectAssetForDistribution() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: TDGColors.cardMid,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'SELECT ASSET TO DISTRIBUTE POINTS',
+              style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold, fontSize: 13, letterSpacing: 1),
+            ),
+            const SizedBox(height: 12),
+            if (_assets.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Text('No active den assets found. Add assets first!', style: TextStyle(color: TDGColors.greyLight)),
+              )
+            else
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _assets.length,
+                  itemBuilder: (context, idx) {
+                    final asset = _assets[idx];
+                    final name = asset['name'] ?? '';
+                    final phone = asset['phone'] ?? '';
+                    final isDined = asset['hasDined'] ?? false;
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: CircleAvatar(
+                        backgroundColor: isDined ? TDGColors.gold.withOpacity(0.2) : Colors.black26,
+                        child: Icon(Icons.person_outline, color: isDined ? TDGColors.gold : Colors.white54),
+                      ),
+                      title: Text(name, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      subtitle: Text(phone, style: TextStyle(color: TDGColors.greyLight, fontSize: 12)),
+                      trailing: Icon(Icons.send_rounded, color: TDGColors.gold, size: 18),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _showDistributeDialog(asset['id'], name);
+                      },
+                    );
+                  },
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _showAddAssetDialog() {
@@ -510,7 +573,7 @@ class _AssetScreenState extends State<AssetScreen> {
                                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                               ),
-                              child: Text('Invite', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                              child: Text('Share', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                             ),
                           ],
                         ),

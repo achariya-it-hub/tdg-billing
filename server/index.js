@@ -144,7 +144,12 @@ let settings = {
       isProduction: false,
       isEnabled: true
     }
-  }
+  },
+  offers: [
+    { id: '1', title: 'Golden Gyro Feast (50% OFF)', desc: '1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink', tag: '50% OFF', price: '₹199', origPrice: '₹398', image: '/uploads/menu/m1.jpg' },
+    { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2 Garlic Dips + Fries', tag: 'SAVE ₹151', price: '₹299', origPrice: '₹450', image: '/uploads/menu/m2.jpg' },
+    { id: '3', title: 'BOGO Thick Shake Delight', desc: 'Buy 1 Kunafa Pistachio Shake & get Vanilla Shake Free', tag: 'BUY 1 GET 1', price: '₹149', origPrice: '₹298', image: '/uploads/menu/m3.jpg' }
+  ]
 }
 let aggregators = [
   { id: 'swiggy', name: 'Swiggy', displayName: 'Swiggy', isActive: true, defaultPrepTime: 25, color: '#ff5200' },
@@ -1254,13 +1259,22 @@ function verifySuperAdmin(pin) {
 app.put('/api/settings/company', (req, res) => {
   const auth = verifySuperAdmin(req.body.pin)
   if (!auth.ok) return res.status(403).json({ error: auth.error })
-  const { name, address, phone, email, gst } = req.body
+  const { name, address, phone, email, gst, upiId } = req.body
   if (name !== undefined) settings.company.name = name
   if (address !== undefined) settings.company.address = address
   if (phone !== undefined) settings.company.phone = phone
   if (email !== undefined) settings.company.email = email
   if (gst !== undefined) settings.company.gst = gst
   if (upiId !== undefined) settings.company.upiId = upiId
+  const db = readDb(); db.settings = settings; writeDb(db)
+  res.json({ success: true, settings })
+})
+
+// Update offers settings
+app.put('/api/settings/offers', (req, res) => {
+  const auth = verifySuperAdmin(req.body.pin)
+  if (!auth.ok) return res.status(403).json({ error: auth.error })
+  if (req.body.offers !== undefined) settings.offers = req.body.offers
   const db = readDb(); db.settings = settings; writeDb(db)
   res.json({ success: true, settings })
 })
@@ -1284,6 +1298,43 @@ app.put('/api/settings/printers', (req, res) => {
   if (req.body.printers) settings.printers = req.body.printers
   const db = readDb(); db.settings = settings; writeDb(db)
   res.json({ success: true, settings })
+})
+
+// Upload mobile app carousel slide image
+app.post('/api/settings/upload-mobile-image', (req, res) => {
+  const pin = req.query.pin || req.headers['x-pin']
+  const auth = verifySuperAdmin(pin)
+  if (!auth.ok) return res.status(403).json({ error: auth.error })
+
+  const name = req.query.name || 'hero_gyro'
+  const chunks = []
+  req.on('data', chunk => chunks.push(chunk))
+  req.on('end', () => {
+    try {
+      const buf = Buffer.concat(chunks)
+      const ct = req.headers['content-type'] || ''
+      let ext = 'png'
+      if (ct.includes('jpeg') || ct.includes('jpg')) ext = 'jpg'
+      else if (ct.includes('webp')) ext = 'webp'
+
+      const fs = require('fs')
+      const path = require('path')
+      const targetFilename = `${name}.${ext}`
+      
+      const publicPath = path.join(UPLOADS_DIR, targetFilename)
+      fs.writeFileSync(publicPath, buf)
+
+      const flutterAssetDir = path.join(__dirname, '..', 'ttt', 'assets', 'images')
+      if (fs.existsSync(flutterAssetDir)) {
+        const flutterAssetPath = path.join(flutterAssetDir, `${name}.png`)
+        fs.writeFileSync(flutterAssetPath, buf)
+      }
+
+      res.json({ success: true, path: `/uploads/${targetFilename}` })
+    } catch (e) {
+      res.status(500).json({ error: 'Image upload failed: ' + e.message })
+    }
+  })
 })
 
 // Upload logo

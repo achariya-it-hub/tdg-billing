@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Building2, Database, Printer, Palette, CreditCard, Save, Upload, Download, RotateCcw, X, Plus, Trash2, Key, ShieldCheck } from 'lucide-react'
+import { Building2, Database, Printer, Palette, CreditCard, Save, Upload, Download, RotateCcw, X, Plus, Trash2, Key, ShieldCheck, Tag, Image as ImageIcon } from 'lucide-react'
 import API_BASE from '../lib/apiConfig'
 import { useSettings } from '../lib/settingsContext'
 import { clearSettingsCache } from '../lib/getCompanyInfo'
@@ -7,6 +7,8 @@ import { clearSettingsCache } from '../lib/getCompanyInfo'
 const TABS = [
   { id: 'company', label: 'Company Info', icon: Building2 },
   { id: 'payment', label: 'Payment Gateways', icon: CreditCard },
+  { id: 'offers', label: 'App Offers Manager', icon: Tag },
+  { id: 'images', label: 'App Image Manager', icon: ImageIcon },
   { id: 'data', label: 'Data Management', icon: Database },
   { id: 'printers', label: 'Printers', icon: Printer },
   { id: 'theme', label: 'Theme', icon: Palette },
@@ -85,6 +87,8 @@ export default function Settings() {
 
       {activeTab === 'company' && <CompanyTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'payment' && <PaymentGatewaysTab pin={pin} settings={settings} onSaved={reloadSettings} />}
+      {activeTab === 'offers' && <OffersTab pin={pin} settings={settings} onSaved={reloadSettings} />}
+      {activeTab === 'images' && <ImagesTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'data' && <DataTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'printers' && <PrintersTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'theme' && <ThemeTab pin={pin} settings={settings} onSaved={reloadSettings} />}
@@ -587,4 +591,237 @@ function hexToRgba(hex, alpha) {
   const g = parseInt(hex.slice(3, 5), 16)
   const b = parseInt(hex.slice(5, 7), 16)
   return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
+function OffersTab({ pin, settings, onSaved }) {
+  const [offers, setOffers] = useState(settings?.offers || [])
+  const [saving, setSaving] = useState(false)
+  const [msg, setMsg] = useState('')
+  const [newOffer, setNewOffer] = useState({ title: '', desc: '', tag: '', price: '', origPrice: '', image: '' })
+
+  const handleAdd = () => {
+    if (!newOffer.title || !newOffer.desc) { setMsg('Title and description are required'); return }
+    const item = { ...newOffer, id: Date.now().toString() }
+    const updated = [...offers, item]
+    setOffers(updated)
+    setNewOffer({ title: '', desc: '', tag: '', price: '', origPrice: '', image: '' })
+    setMsg('')
+  }
+
+  const handleDelete = (id) => {
+    const updated = offers.filter(o => o.id !== id)
+    setOffers(updated)
+  }
+
+  const handleSave = async () => {
+    setSaving(true); setMsg('')
+    try {
+      const res = await fetch(`${API_BASE}/api/settings/offers`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin, offers })
+      })
+      const data = await res.json()
+      if (data.success) {
+        setMsg('Offers Saved Successfully!')
+        clearSettingsCache()
+        onSaved()
+      } else {
+        setMsg(data.error || 'Failed to save offers')
+      }
+    } catch (e) {
+      setMsg('Network error')
+    }
+    setSaving(false)
+  }
+
+  return (
+    <div style={glassCard}>
+      <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <Tag size={22} color="#e63946" /> App Offers Management
+      </h3>
+      <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '20px' }}>
+        Manage custom offers displayed inside the mobile app banner slider.
+      </p>
+
+      {msg && (
+        <div style={{
+          background: msg.includes('Saved') ? 'rgba(22,163,74,0.08)' : 'rgba(220,38,38,0.08)',
+          color: msg.includes('Saved') ? '#16a34a' : '#dc2626',
+          padding: '12px 16px', borderRadius: '10px', fontSize: '14px', marginBottom: '20px', fontWeight: 600
+        }}>
+          {msg}
+        </div>
+      )}
+
+      {/* Add New Offer Panel */}
+      <div style={{ background: 'rgba(0,0,0,0.02)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.04)', marginBottom: '24px' }}>
+        <h4 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', color: '#1a1a2e' }}>Create Custom Offer Card</h4>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+          <div>
+            <label style={labelStyle}>Offer Title / Promo Name</label>
+            <input style={inputStyle} value={newOffer.title} onChange={e => setNewOffer({ ...newOffer, title: e.target.value })} placeholder="e.g. BOGO Feast (Buy 1 Get 1)" />
+          </div>
+          <div>
+            <label style={labelStyle}>Featured Sub-Text / Tag</label>
+            <input style={inputStyle} value={newOffer.tag} onChange={e => setNewOffer({ ...newOffer, tag: e.target.value })} placeholder="e.g. 50% OFF / BOGO" />
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '12px' }}>
+          <label style={labelStyle}>Short Description of Offer details</label>
+          <input style={inputStyle} value={newOffer.desc} onChange={e => setNewOffer({ ...newOffer, desc: e.target.value })} placeholder="e.g. Buy 1 Spicy chicken gyro and get second free" />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+          <div>
+            <label style={labelStyle}>Promo Price (₹)</label>
+            <input style={inputStyle} value={newOffer.price} onChange={e => setNewOffer({ ...newOffer, price: e.target.value })} placeholder="e.g. ₹199" />
+          </div>
+          <div>
+            <label style={labelStyle}>Original Price (₹)</label>
+            <input style={inputStyle} value={newOffer.origPrice} onChange={e => setNewOffer({ ...newOffer, origPrice: e.target.value })} placeholder="e.g. ₹398" />
+          </div>
+          <div>
+            <label style={labelStyle}>Predefined Image Path / URL</label>
+            <input style={inputStyle} value={newOffer.image} onChange={e => setNewOffer({ ...newOffer, image: e.target.value })} placeholder="e.g. /uploads/menu/m1.jpg" />
+          </div>
+        </div>
+
+        <button onClick={handleAdd} style={{ padding: '10px 20px', border: '1px solid #dc2626', background: 'transparent', color: '#dc2626', fontWeight: 600, fontSize: '13px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Plus size={16} /> Add Offer to List
+        </button>
+      </div>
+
+      {/* Offer Cards Table List */}
+      <div style={{ marginBottom: '24px' }}>
+        <h4 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', color: '#1a1a2e' }}>Current Active Offers</h4>
+        {offers.length === 0 ? (
+          <p style={{ fontSize: '13px', color: '#6b7280', textAlign: 'center', padding: '20px' }}>No promotional offers configured yet.</p>
+        ) : (
+          <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+              <thead>
+                <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                  <th style={{ padding: '12px' }}>Tag / Badge</th>
+                  <th style={{ padding: '12px' }}>Title & Description</th>
+                  <th style={{ padding: '12px' }}>Price details</th>
+                  <th style={{ padding: '12px', textAlign: 'center' }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {offers.map(o => (
+                  <tr key={o.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                    <td style={{ padding: '12px' }}><span style={{ padding: '3px 8px', background: 'rgba(230,57,70,0.1)', color: '#e63946', borderRadius: '6px', fontWeight: 700, fontSize: '11px' }}>{o.tag || 'PROMO'}</span></td>
+                    <td style={{ padding: '12px' }}>
+                      <div style={{ fontWeight: 600 }}>{o.title}</div>
+                      <div style={{ color: '#6b7280', fontSize: '12px' }}>{o.desc}</div>
+                    </td>
+                    <td style={{ padding: '12px' }}>
+                      <span style={{ fontWeight: 700 }}>{o.price}</span>
+                      {o.origPrice && <span style={{ textDecoration: 'line-through', color: '#9ca3af', marginLeft: '6px', fontSize: '11px' }}>{o.origPrice}</span>}
+                    </td>
+                    <td style={{ padding: '12px', textAlign: 'center' }}>
+                      <button onClick={() => handleDelete(o.id)} style={{ border: 'none', background: 'transparent', color: '#dc2626', cursor: 'pointer', padding: '6px' }}>
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <button onClick={handleSave} disabled={saving} style={btnPrimary}>
+        {saving ? 'Saving...' : <><Save size={16} /> Save and Sync Banners</>}
+      </button>
+    </div>
+  )
+}
+
+function ImagesTab({ pin, settings, onSaved }) {
+  const [msg, setMsg] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef(null)
+  const [selectedSlideName, setSelectedSlideName] = useState('hero_gyro')
+
+  const handleUpload = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 5 * 1024 * 1024) { setMsg('File size must be under 5MB'); return }
+
+    setUploading(true)
+    setMsg('')
+    try {
+      const res = await fetch(`${API_BASE}/api/settings/upload-mobile-image?pin=${pin}&name=${selectedSlideName}`, {
+        method: 'POST',
+        headers: { 'Content-Type': file.type },
+        body: file
+      })
+      const data = await res.json()
+      if (data.success) {
+        setMsg(`Image '${selectedSlideName}' uploaded successfully! Changes will sync to clients.`)
+        if (fileInputRef.current) fileInputRef.current.value = ''
+        onSaved()
+      } else {
+        setMsg(data.error || 'Failed to upload image')
+      }
+    } catch (e) {
+      setMsg('Network upload error')
+    }
+    setUploading(false)
+  }
+
+  return (
+    <div style={glassCard}>
+      <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <ImageIcon size={22} color="#e63946" /> Mobile Carousel Image Uploader
+      </h3>
+      <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '20px' }}>
+        Upload or replace specific looping carousel images rendered in the Mobile Client App home screen.
+      </p>
+
+      {msg && (
+        <div style={{
+          background: msg.includes('successfully') ? 'rgba(22,163,74,0.08)' : 'rgba(220,38,38,0.08)',
+          color: msg.includes('successfully') ? '#16a34a' : '#dc2626',
+          padding: '12px 16px', borderRadius: '10px', fontSize: '14px', marginBottom: '20px', fontWeight: 600
+        }}>
+          {msg}
+        </div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px', alignItems: 'center' }}>
+        <div>
+          <label style={labelStyle}>Target Carousel Slide Placement</label>
+          <select style={{ ...inputStyle, padding: '12px 14px' }} value={selectedSlideName} onChange={e => setSelectedSlideName(e.target.value)}>
+            <option value="hero_gyro">Slide 1 (hero_gyro.png)</option>
+            <option value="gyro">Slide 2 (gyro.png)</option>
+            <option value="Lebanese rice bowl">Slide 3 (Lebanese rice bowl.png)</option>
+            <option value="fries">Slide 4 (fries.png)</option>
+          </select>
+        </div>
+
+        <div>
+          <label style={labelStyle}>Upload New Slide Image File</label>
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleUpload} style={{ display: 'none' }} />
+          <button onClick={() => fileInputRef.current?.click()} disabled={uploading} style={btnPrimary}>
+            {uploading ? 'Uploading...' : <><Upload size={16} /> Choose & Upload Image</>}
+          </button>
+        </div>
+      </div>
+
+      <div style={{ background: 'rgba(0,0,0,0.02)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.04)' }}>
+        <h4 style={{ fontSize: '13px', fontWeight: 700, marginBottom: '8px', color: '#1a1a2e' }}>Important Upload Guidelines</h4>
+        <ul style={{ fontSize: '12px', color: '#6b7280', margin: 0, paddingLeft: '20px', lineHeight: '1.6' }}>
+          <li>Recommended dimensions: Aspect ratio 1:1 or 4:3 (e.g. 800x800 px).</li>
+          <li>Accepted formats: PNG, JPG, JPEG, WEBP files up to 5MB.</li>
+          <li>This action overwrites the existing slide file assets instantly. Mobile apps will reload newer assets upon next launch.</li>
+        </ul>
+      </div>
+    </div>
+  )
 }

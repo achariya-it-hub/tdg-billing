@@ -293,7 +293,10 @@ class _WalletScreenState extends State<WalletScreen> {
             _walletActionItem(
               Icons.send_outlined, 
               'Distribute', 
-              () => Navigator.pushNamed(context, '/assets')
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AssetScreen(triggerDistribute: true)),
+              ),
             ),
             _walletActionItem(
               Icons.group_add_outlined, 
@@ -360,7 +363,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text('Invite', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    child: const Text('Share', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
                 ],
               ),
