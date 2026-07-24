@@ -36,6 +36,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     super.initState();
     _fetchDiscount();
     _userPoints = ApiService().currentUser?['points'] ?? 0;
+    _selectedPayment = _userPoints > 0 ? 'wallet' : 'ccavenue';
   }
 
   Future<void> _fetchDiscount() async {
@@ -223,6 +224,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildPaymentMethod() {
+    final walletDisabled = _userPoints <= 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -236,34 +238,43 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         ),
         const SizedBox(height: 10),
-        _paymentOption(
-          'wallet',
-          Icons.account_balance_wallet_rounded,
-          'Points Wallet',
-          '',
-          subtitleWidget: Row(
-            children: [
-              Text(
-                'Balance: ${ApiService().currentUser?['points'] ?? 0} ',
-                style: TextStyle(color: TDGColors.grey, fontSize: 11),
+        GestureDetector(
+          onTap: walletDisabled
+              ? () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Points Wallet is empty. Please select another payment method.'), backgroundColor: Colors.orange),
+                  );
+                }
+              : () => setState(() => _selectedPayment = 'wallet'),
+          child: Opacity(
+            opacity: walletDisabled ? 0.5 : 1.0,
+            child: AbsorbPointer(
+              absorbing: walletDisabled,
+              child: _paymentOption(
+                'wallet',
+                Icons.account_balance_wallet_rounded,
+                'Points Wallet',
+                '',
+                subtitleWidget: Row(
+                  children: [
+                    Text(
+                      'Balance: $_userPoints ',
+                      style: TextStyle(color: TDGColors.grey, fontSize: 11),
+                    ),
+                    Icon(
+                      Icons.diamond_rounded,
+                      color: TDGColors.gold,
+                      size: 13,
+                    ),
+                  ],
+                ),
+                showGold: true,
               ),
-              Icon(
-                Icons.diamond_rounded,
-                color: TDGColors.gold,
-                size: 13,
-              ),
-            ],
+            ),
           ),
-          showGold: true,
         ),
         const SizedBox(height: 8),
         _paymentOption('ccavenue', Icons.payment_rounded, 'CCAvenue Gateway', 'Credit/Debit Cards, NetBanking, UPI, Wallets'),
-        const SizedBox(height: 8),
-        _paymentOption('upi', Icons.send_rounded, 'UPI Direct', 'Pay using UPI app'),
-        const SizedBox(height: 8),
-        _paymentOption('card', Icons.credit_card_rounded, 'Credit / Debit Card', 'Visa, Mastercard, Rupay'),
-        const SizedBox(height: 8),
-        _paymentOption('netbanking', Icons.account_balance_rounded, 'Net Banking', 'All major banks'),
       ],
     );
   }

@@ -18,8 +18,7 @@ class _CartScreenState extends State<CartScreen> {
   final TextEditingController _promoController = TextEditingController();
 
   int get subtotal => _cartItems.fold(0, (sum, item) => sum + (int.parse(item['price'].toString())) * (int.parse(item['qty'].toString())));
-  int get packagingFee => 10;
-  int get total => subtotal + packagingFee;
+  int get total => subtotal;
 
   @override
   void initState() {
@@ -210,12 +209,6 @@ class _CartScreenState extends State<CartScreen> {
       ),
       child: Column(
         children: [
-          _priceRow('Subtotal', '₹$subtotal'),
-          const SizedBox(height: 8),
-          _priceRow('Packaging Fee', '₹$packagingFee'),
-          const SizedBox(height: 12),
-          Container(height: 1, color: TDGColors.border),
-          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

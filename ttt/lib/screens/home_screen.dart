@@ -219,7 +219,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       MaterialPageRoute(
                         builder: (_) => const CartScreen(),
                       ),
-                    );
+                    ).then((_) {
+                      if (mounted) setState(() {});
+                    });
                   },
                   child: Stack(
                     children: [
@@ -1095,7 +1097,9 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const CustomizerScreen()),
-        );
+        ).then((_) {
+          if (mounted) setState(() {});
+        });
       },
       child: Container(
         margin: const EdgeInsets.fromLTRB(16, 20, 16, 0),
