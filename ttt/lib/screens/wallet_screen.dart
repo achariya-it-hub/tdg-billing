@@ -4,6 +4,7 @@ import '../theme/colors.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
 import 'asset_screen.dart';
+import 'referral_screen.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -387,15 +388,10 @@ class _WalletScreenState extends State<WalletScreen> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        final inviteInfo = ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? '';
-                        if (inviteInfo.isNotEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Referral code copied: $inviteInfo. Send via text, WhatsApp, or mail!'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ReferralScreen()),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TDGColors.gold,

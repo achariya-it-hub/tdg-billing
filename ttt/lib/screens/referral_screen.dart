@@ -1,0 +1,215 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../theme/colors.dart';
+import '../services/api_service.dart';
+
+class ReferralScreen extends StatelessWidget {
+  const ReferralScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final referCode = ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'TDG7890';
+
+    return Scaffold(
+      backgroundColor: const Color(0xFF0F0F12),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0F0F12),
+        elevation: 0,
+        leading: BackButton(color: TDGColors.white),
+        centerTitle: true,
+        title: Text(
+          'REFERRAL CARD',
+          style: GoogleFonts.outfit(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 2,
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        child: Column(
+          children: [
+            // Referral Card Block Container
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF1D1B22), Color(0xFF0F0F12)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: TDGColors.gold.withOpacity(0.3), width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: TDGColors.gold.withOpacity(0.08),
+                    blurRadius: 30,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  // Gold Gradient Inner Referral Card
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF1E1500), Color(0xFF120C00)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: TDGColors.gold.withOpacity(0.4), width: 1),
+                      image: const DecorationImage(
+                        image: AssetImage('assets/images/gold_card.png'),
+                        fit: BoxFit.cover,
+                        opacity: 0.15,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        // TDG Banner Logo
+                        Image.asset(
+                          'assets/images/logo_header.png',
+                          height: 38,
+                          errorBuilder: (_, __, ___) => Text(
+                            'TEN DEN GYROS',
+                            style: GoogleFonts.outfit(color: TDGColors.gold, fontWeight: FontWeight.w900, fontSize: 18),
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        Text(
+                          'YOUR REFERRAL CODE',
+                          style: GoogleFonts.outfit(
+                            color: Colors.white60,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          referCode,
+                          style: GoogleFonts.outfit(
+                            color: TDGColors.gold,
+                            fontSize: 32,
+                            fontWeight: FontWeight.w950,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                        const SizedBox(height: 30),
+                        // Share Code Button
+                        ElevatedButton(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Referral details copied: $referCode. Share with friends!'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: TDGColors.gold,
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                            elevation: 4,
+                          ),
+                          child: Text(
+                            'Share Code',
+                            style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 0.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'How it Works?',
+                      style: GoogleFonts.outfit(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+
+                  // Horizontal Steps Section
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildStepItem(Icons.edit_note_rounded, 'Share', 'your code'),
+                      _buildStepItem(Icons.shopping_bag_outlined, 'Friend Orders', 'using your code'),
+                      _buildStepItem(Icons.workspace_premium_rounded, 'You Earn', 'Exciting Rewards'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Rewards Earned Section
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF16161D),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.white.withOpacity(0.05)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Total Rewards Earned',
+                    style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    '₹2,150',
+                    style: GoogleFonts.outfit(color: TDGColors.gold, fontSize: 18, fontWeight: FontWeight.w900),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStepItem(IconData icon, String title, String subtitle) {
+    return SizedBox(
+      width: 72,
+      child: Column(
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E1E24),
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white.withOpacity(0.08)),
+            ),
+            child: Icon(icon, color: TDGColors.gold, size: 20),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: GoogleFonts.outfit(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            style: GoogleFonts.outfit(color: Colors.grey, fontSize: 8),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}

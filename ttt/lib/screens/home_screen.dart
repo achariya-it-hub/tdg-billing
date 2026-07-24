@@ -9,6 +9,7 @@ import 'notifications_screen.dart';
 import 'cart_screen.dart';
 import 'customizer_screen.dart';
 import 'main_nav_screen.dart';
+import 'referral_screen.dart';
 import '../widgets/tdg_logo.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
@@ -783,7 +784,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildReferEarnBanner() {
     return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AssetScreen())),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReferralScreen())),
       child: Container(
         margin: const EdgeInsets.fromLTRB(16, 14, 16, 0),
         padding: const EdgeInsets.all(16),
