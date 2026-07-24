@@ -97,7 +97,7 @@ class ReferralScreen extends StatelessWidget {
                           style: GoogleFonts.outfit(
                             color: TDGColors.gold,
                             fontSize: 32,
-                            fontWeight: FontWeight.w950,
+                            fontWeight: FontWeight.w900,
                             letterSpacing: 2,
                           ),
                         ),
