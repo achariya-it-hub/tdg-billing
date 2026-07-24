@@ -29,6 +29,7 @@ export default function LandingPage() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false)
 
   useEffect(() => {
     const toggleVisibility = () => {
@@ -1161,11 +1162,104 @@ export default function LandingPage() {
         }}>
           <span>© {new Date().getFullYear()} Ten Den Gyros (TDG). All Rights Reserved.</span>
           <div style={{ display: 'flex', gap: '20px' }}>
-            <span style={{ cursor: 'pointer' }}>Privacy Policy</span>
+            <span style={{ cursor: 'pointer', color: '#ffd700', textDecoration: 'underline' }} onClick={() => setShowPrivacyPolicy(true)}>Privacy Policy</span>
             <span style={{ cursor: 'pointer' }}>Terms & Conditions</span>
           </div>
         </div>
       </footer>
+
+      {/* Privacy Policy Modal */}
+      {showPrivacyPolicy && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(0,0,0,0.85)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '20px'
+        }}>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            style={{
+              backgroundColor: '#1f2225',
+              border: '2px solid rgba(255, 215, 0, 0.2)',
+              borderRadius: '16px',
+              padding: '30px',
+              maxWidth: '680px',
+              width: '100%',
+              maxHeight: '85vh',
+              overflowY: 'auto',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
+              position: 'relative'
+            }}
+          >
+            <button 
+              onClick={() => setShowPrivacyPolicy(false)}
+              style={{
+                position: 'absolute',
+                top: '20px',
+                right: '20px',
+                background: 'rgba(255,255,255,0.05)',
+                border: 'none',
+                color: '#fff',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <X size={16} />
+            </button>
+
+            <h3 style={{ fontSize: '24px', fontWeight: 900, color: '#ffd700', textTransform: 'uppercase', marginBottom: '20px', letterSpacing: '0.5px' }}>
+              PRIVACY POLICY
+            </h3>
+            
+            <div style={{ color: '#d1d5db', fontSize: '13px', lineHeight: '1.7', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <p><strong>Effective Date:</strong> July 24, 2026</p>
+              
+              <p>Welcome to Ten Den Gyros (TDG). We are committed to protecting your personal information and your right to privacy. This Privacy Policy governs the privacy policies and practices of our website, mobile application, and POS billing services.</p>
+              
+              <h4 style={{ color: '#fff', fontWeight: 700, fontSize: '14px', marginTop: '10px' }}>1. INFORMATION WE COLLECT</h4>
+              <p>We collect information you provide directly to us when registering accounts, placing online orders, adding members to your referral Den, or redeeming points balances. This includes your name, mobile phone number, email address, physical delivery addresses, and payment transaction references.</p>
+
+              <h4 style={{ color: '#fff', fontWeight: 700, fontSize: '14px', marginTop: '10px' }}>2. HOW WE USE YOUR INFORMATION</h4>
+              <p>We utilize the collected details to process checkout orders, verify referral accounts using WhatsApp OTP services, manage loyalty and distribution points transactions across your linked Den assets, and improve our services.</p>
+
+              <h4 style={{ color: '#fff', fontWeight: 700, fontSize: '14px', marginTop: '10px' }}>3. DATA PROTECTION & SHARING</h4>
+              <p>Your details are stored securely. We do not sell or trade your data to third-party advertising companies. Transaction information is shared solely with trusted payment aggregators (e.g. CCAvenue) for checkout processing.</p>
+
+              <h4 style={{ color: '#fff', fontWeight: 700, fontSize: '14px', marginTop: '10px' }}>4. YOUR RIGHTS</h4>
+              <p>You have the right to request deletion of your account details or points history records, update verification settings, or opt out of loyalty distribution schemes at any time by contacting our administrator team at info@tendengyros.com.</p>
+            </div>
+            
+            <button 
+              onClick={() => setShowPrivacyPolicy(false)}
+              style={{
+                backgroundColor: '#ffd700',
+                color: '#000',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                fontWeight: 900,
+                fontSize: '13px',
+                cursor: 'pointer',
+                marginTop: '24px',
+                width: '100%'
+              }}
+            >
+              CLOSE PRIVACY POLICY
+            </button>
+          </motion.div>
+        </div>
+      )}
 
       {/* 10. Floating Scroll to Top Button */}
       {showScrollTop && (
