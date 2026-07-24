@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
+import 'asset_screen.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -295,7 +296,7 @@ class _WalletScreenState extends State<WalletScreen> {
               'Distribute', 
               () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const AssetScreen(triggerDistribute: true)),
+                MaterialPageRoute(builder: (_) => AssetScreen(triggerDistribute: true)),
               ),
             ),
             _walletActionItem(

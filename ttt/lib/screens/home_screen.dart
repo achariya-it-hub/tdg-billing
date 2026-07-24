@@ -728,7 +728,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _walletAction(Icons.add_circle_outline, 'Add Points', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WalletScreen()))),
-                _walletAction(Icons.send_outlined, 'Distribute', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AssetScreen(triggerDistribute: true)))),
+                _walletAction(Icons.send_outlined, 'Distribute', () => Navigator.push(context, MaterialPageRoute(builder: (_) => AssetScreen(triggerDistribute: true)))),
                 _walletAction(Icons.history_rounded, 'History', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WalletScreen()))),
                 _walletAction(Icons.group_add_outlined, 'Assets', () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AssetScreen()))),
               ],
