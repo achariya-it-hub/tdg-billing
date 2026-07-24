@@ -27,7 +27,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
       'desc': 'Invite friends using your unique referral code. Earn diamond points every time they dine with us!',
     },
     {
-      'image': 'assets/images/gold_card.png',
+      'image': 'assets/images/pride_lion.png',
       'title': 'DISTRIBUTE & MULTIPLY',
       'desc': 'Share points instantly among your active Den assets to claim collective discounts and BOGO treats.',
     },
@@ -59,12 +59,12 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
             right: 0,
             child: Center(
               child: Container(
-                width: 90,
-                height: 90,
+                width: 125,
+                height: 125,
                 decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: TDGColors.gold.withOpacity(0.35), width: 2),
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(color: TDGColors.gold.withOpacity(0.35), width: 2.5),
                   boxShadow: [
                     BoxShadow(
                       color: TDGColors.gold.withOpacity(0.08),
@@ -74,13 +74,13 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(19),
                   child: Image.asset(
                     'assets/images/logo.png',
                     fit: BoxFit.contain,
                     errorBuilder: (_, __, ___) => Icon(
                       Icons.restaurant_menu_rounded,
-                      size: 40,
+                      size: 50,
                       color: TDGColors.gold,
                     ),
                   ),
@@ -99,7 +99,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
             itemBuilder: (context, index) {
               final slide = _onboardingData[index];
               return Padding(
-                padding: const EdgeInsets.fromLTRB(24, 150, 24, 60),
+                padding: const EdgeInsets.fromLTRB(24, 180, 24, 60),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -120,7 +120,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                         borderRadius: BorderRadius.circular(24),
                         child: Image.asset(
                           slide['image']!,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           errorBuilder: (_, __, ___) => Icon(
                             Icons.restaurant_menu_rounded,
                             size: 120,
