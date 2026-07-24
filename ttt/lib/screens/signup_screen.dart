@@ -388,7 +388,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (_) => const MainNavScreen()),
+                  MaterialPageRoute(builder: (_) => MainNavScreen(key: MainNavScreen.navKey)),
                   (route) => false,
                 );
               },

@@ -284,89 +284,132 @@ class _WalletScreenState extends State<WalletScreen> {
       children: [
         // Grid/Row actions identical to home screen
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _walletActionItem(
-              Icons.add_circle_outline, 
-              'Add Points', 
-              _handleRedeem
-            ),
-            _walletActionItem(
-              Icons.send_outlined, 
-              'Distribute', 
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => AssetScreen(triggerDistribute: true)),
+            Expanded(
+              child: _walletActionItem(
+                Icons.send_outlined, 
+                'Distribute Points', 
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => AssetScreen(triggerDistribute: true)),
+                ),
               ),
             ),
-            _walletActionItem(
-              Icons.group_add_outlined, 
-              'Assets', 
-              () => Navigator.pushNamed(context, '/assets')
+            const SizedBox(width: 16),
+            Expanded(
+              child: _walletActionItem(
+                Icons.group_add_outlined, 
+                'View Den Assets', 
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AssetScreen()),
+                ),
+              ),
             ),
           ],
         ),
         const SizedBox(height: 20),
         
         // Share Referral Invite block
+        // Redesigned Premium Invite Card
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: TDGColors.cardDark,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: TDGColors.border),
+            gradient: LinearGradient(
+              colors: [const Color(0xFF1E1E26), const Color(0xFF121217)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: TDGColors.gold.withOpacity(0.35), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: TDGColors.gold.withOpacity(0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'INVITE FRIENDS & SHARE REFERRAL CODE',
-                style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Share your referral details below to build your Den! Add up to 10 assets to start distributing points.',
-                style: TextStyle(color: Colors.white70, fontSize: 12),
-              ),
-              const SizedBox(height: 12),
               Row(
                 children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.black38,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: TDGColors.border),
-                      ),
-                      child: Text(
-                        ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'No referral details',
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
-                      ),
+                  Icon(Icons.stars_rounded, color: TDGColors.gold, size: 22),
+                  const SizedBox(width: 8),
+                  Text(
+                    'BUILD YOUR DEN PRIDE',
+                    style: GoogleFonts.outfit(
+                      color: TDGColors.gold,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 13,
+                      letterSpacing: 1.5,
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      final inviteInfo = ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? '';
-                      if (inviteInfo.isNotEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Referral code copied: $inviteInfo. Send via text, WhatsApp, or mail!'),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: TDGColors.gold,
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
-                    child: const Text('Share', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
                 ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Share your referral details below to build your Den! Add up to 10 assets to start distributing points.',
+                style: GoogleFonts.outfit(color: Colors.white70, fontSize: 11.5, height: 1.45),
+              ),
+              const SizedBox(height: 18),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.black26,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.white10),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'YOUR UNIQUE CODE',
+                            style: GoogleFonts.outfit(color: Colors.grey, fontSize: 8, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'No referral details',
+                            style: GoogleFonts.outfit(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 16,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        final inviteInfo = ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? '';
+                        if (inviteInfo.isNotEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Referral code copied: $inviteInfo. Send via text, WhatsApp, or mail!'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: TDGColors.gold,
+                        foregroundColor: Colors.black,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: Text(
+                        'Share Now',
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 11),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -410,21 +453,36 @@ class _WalletScreenState extends State<WalletScreen> {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Column(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: TDGColors.cardDark,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: TDGColors.border),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        decoration: BoxDecoration(
+          color: TDGColors.cardDark,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: TDGColors.border, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-            child: Icon(icon, color: TDGColors.gold, size: 22),
-          ),
-          const SizedBox(height: 6),
-          Text(label, style: TextStyle(color: TDGColors.greyLight, fontSize: 11, fontWeight: FontWeight.w600)),
-        ],
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: TDGColors.gold, size: 24),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: GoogleFonts.outfit(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

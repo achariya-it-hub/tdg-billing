@@ -190,10 +190,10 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                 GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 1.1,
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 6,
+                  mainAxisSpacing: 6,
+                  childAspectRatio: 0.75,
                   children: ['Chicken', 'Paneer'].map((p) {
                     final isSel = selectedProtein == p;
                     return GestureDetector(
@@ -208,19 +208,19 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                           children: [
                             Expanded(
                               child: Container(
-                                padding: const EdgeInsets.all(12),
+                                padding: const EdgeInsets.all(8),
                                 width: double.infinity,
                                 color: Colors.black12,
                                 child: Image.asset(
                                   p == 'Chicken' ? 'assets/images/crispy_chicken.png' : 'assets/images/veggies_composite.jpg',
                                   fit: BoxFit.contain,
-                                  errorBuilder: (_, __, ___) => const Icon(Icons.restaurant_menu, color: Colors.white24, size: 40),
+                                  errorBuilder: (_, __, ___) => const Icon(Icons.restaurant_menu, color: Colors.white24, size: 28),
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(p, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text(p, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10)),
                             )
                           ],
                         ),
@@ -234,10 +234,10 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                 GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 1.1,
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 6,
+                  mainAxisSpacing: 6,
+                  childAspectRatio: 0.75,
                   children: breads.map((b) {
                     final isSel = selectedBread == b;
                     return GestureDetector(
@@ -262,8 +262,8 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(b, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text(b, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10)),
                             )
                           ],
                         ),
@@ -277,10 +277,10 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                 GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 1.1,
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 6,
+                  mainAxisSpacing: 6,
+                  childAspectRatio: 0.75,
                   children: spreads.map((s) {
                     final isSel = selectedSpread == s;
                     return GestureDetector(
@@ -305,8 +305,8 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(s, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text(s, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10)),
                             )
                           ],
                         ),
@@ -320,10 +320,10 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                 GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 1.1,
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 6,
+                  mainAxisSpacing: 6,
+                  childAspectRatio: 0.75,
                   children: sauces.map((s) {
                     final isSel = selectedSauces.contains(s);
                     return GestureDetector(
@@ -348,8 +348,8 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(s, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text(s, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 9), maxLines: 1, overflow: TextOverflow.ellipsis),
                             )
                           ],
                         ),
@@ -363,10 +363,10 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                 GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 1.1,
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 6,
+                  mainAxisSpacing: 6,
+                  childAspectRatio: 0.75,
                   children: veggies.map((v) {
                     final isSel = selectedVeggies.contains(v);
                     return GestureDetector(
@@ -391,8 +391,8 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(v, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text(v, style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10)),
                             )
                           ],
                         ),

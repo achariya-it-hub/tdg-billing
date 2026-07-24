@@ -12,12 +12,20 @@ import '../utils/responsive.dart';
 class MainNavScreen extends StatefulWidget {
   const MainNavScreen({super.key});
 
+  static final GlobalKey<_MainNavScreenState> navKey = GlobalKey<_MainNavScreenState>();
+
   @override
   State<MainNavScreen> createState() => _MainNavScreenState();
 }
 
 class _MainNavScreenState extends State<MainNavScreen> {
   int _currentIndex = 0;
+
+  void setTab(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   final List<Widget> _screens = [
     const HomeScreen(),

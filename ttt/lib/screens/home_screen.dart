@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _startCarouselTimer() {
     _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
       if (mounted && _carouselController.hasClients) {
-        final nextPage = (_carouselIndex + 1) % 4;
+        final nextPage = (_carouselIndex + 1) % 6;
         _carouselController.animateToPage(
           nextPage,
           duration: const Duration(milliseconds: 800),
@@ -289,7 +289,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    MainNavScreen.navKey.currentState?.setTab(4);
+                  },
                   child: Container(
                     width: 36,
                     height: 36,
@@ -310,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeroSection() {
-    // Select image based on carousel loop index (loop of 4 items)
+    // Select image based on carousel loop index (loop of 6 items)
     String heroImage = 'assets/images/hero_gyro.png';
     if (_carouselIndex == 1) {
       heroImage = 'assets/images/gyro.png';
@@ -318,6 +320,10 @@ class _HomeScreenState extends State<HomeScreen> {
       heroImage = 'assets/images/Lebanese rice bowl.png';
     } else if (_carouselIndex == 3) {
       heroImage = 'assets/images/fries.png';
+    } else if (_carouselIndex == 4) {
+      heroImage = 'assets/images/drink.png';
+    } else if (_carouselIndex == 5) {
+      heroImage = 'assets/images/logo_header.png';
     }
 
     return Container(
@@ -375,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        setState(() => _selectedCategory = 'All');
+                        MainNavScreen.navKey.currentState?.setTab(2);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TDGColors.gold,
@@ -439,58 +445,69 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: () => _showOfferItemsModal(context),
       child: Container(
         margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-        height: 180,
+        height: 190,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           gradient: const LinearGradient(
-            colors: [Color(0xFF1A1200), Color(0xFF0D0900)],
+            colors: [Color(0xFF231C0C), Color(0xFF0F0B03)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          border: Border.all(color: TDGColors.gold.withOpacity(0.3), width: 1.5),
+          border: Border.all(color: TDGColors.gold.withOpacity(0.35), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: TDGColors.gold.withOpacity(0.15),
-              blurRadius: 15,
+              color: TDGColors.gold.withOpacity(0.08),
+              blurRadius: 20,
               offset: const Offset(0, 8),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           child: Stack(
             children: [
-              Opacity(
-                opacity: 0.25,
-                child: Image.asset(
-                  'assets/images/offer_banner.png',
-                  width: double.infinity,
-                  height: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(color: const Color(0xFF1E1400)),
+              Positioned(
+                right: -20,
+                bottom: -20,
+                child: Opacity(
+                  opacity: 0.18,
+                  child: Image.asset(
+                    'assets/images/offer_banner.png',
+                    width: 160,
+                    height: 160,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => const SizedBox(),
+                  ),
                 ),
               ),
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.black.withOpacity(0.85), Colors.black.withOpacity(0.2), Colors.transparent],
+                    colors: [Colors.black.withOpacity(0.85), Colors.black.withOpacity(0.3), Colors.transparent],
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                   ),
                 ),
               ),
               Positioned(
-                left: 16,
-                top: 16,
+                left: 20,
+                top: 20,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     gradient: TDGColors.embossedRedGradient,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: TDGColors.red.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      )
+                    ],
                   ),
-                  child: const Text(
+                  child: Text(
                     'LIMITED TIME OFFER',
-                    style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1),
+                    style: GoogleFonts.outfit(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1),
                   ),
                 ),
               ),
@@ -508,20 +525,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           ShaderMask(
                             shaderCallback: (bounds) => TDGColors.goldGradient.createShader(bounds),
-                            child: const Text(
+                            child: Text(
                               'OFFER OF THE DAY',
-                              style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                              style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 1.5),
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          const Text(
+                          const SizedBox(height: 6),
+                          Text(
                             'The Golden Gyro Feast (50% OFF)',
-                            style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800),
+                            style: GoogleFonts.outfit(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900),
                           ),
-                          const SizedBox(height: 2),
-                          const Text(
+                          const SizedBox(height: 4),
+                          Text(
                             'Tap to view all daily offer deals & combos',
-                            style: TextStyle(color: Colors.white70, fontSize: 11),
+                            style: GoogleFonts.outfit(color: Colors.white70, fontSize: 10.5),
                           ),
                         ],
                       ),
@@ -532,10 +549,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TDGColors.gold,
                         foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        elevation: 4,
                       ),
-                      child: const Text('VIEW OFFERS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800)),
+                      child: Text('VIEW OFFERS', style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.w900)),
                     ),
                   ],
                 ),
