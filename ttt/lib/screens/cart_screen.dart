@@ -107,6 +107,13 @@ class _CartScreenState extends State<CartScreen> {
                   item['name'],
                   style: TextStyle(color: TDGColors.white, fontSize: 14, fontWeight: FontWeight.w700),
                 ),
+                if (item['customization'] != null) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    '${item['customization']['protein']} • ${item['customization']['bread']}\nSpread: ${item['customization']['spread']}${item['customization']['sauces'] != null && (item['customization']['sauces'] as List).isNotEmpty ? "\nSauce: " + (item['customization']['sauces'] as List).join(", ") : ""}${item['customization']['veggies'] != null && (item['customization']['veggies'] as List).isNotEmpty ? "\nVeg: " + (item['customization']['veggies'] as List).join(", ") : ""}',
+                    style: TextStyle(color: TDGColors.grey, fontSize: 11, height: 1.3),
+                  ),
+                ],
                 const SizedBox(height: 4),
                 Text(
                   '₹${item['price']}',
