@@ -11,11 +11,27 @@ const PrintService = {
       const name = item.menuItemName || item.name || 'Item'
       const qty = item.quantity || item.qty || 1
       const note = item.notes || ''
+      
+      // Extract custom gyros details if present
+      let customDetails = ''
+      if (item.customization) {
+        const c = item.customization
+        customDetails = `<div class="item-custom">• ${c.protein || ''} | ${c.bread || ''} bread | ${c.spread || ''} spread`
+        if (c.sauces && c.sauces.length > 0) {
+          customDetails += `<br/>• Sauces: ${c.sauces.join(', ')}`
+        }
+        if (c.veggies && c.veggies.length > 0) {
+          customDetails += `<br/>• Veggies: ${c.veggies.join(', ')}`
+        }
+        customDetails += `</div>`
+      }
+
       return `
         <div class="item-row">
           <span class="item-qty">${qty}x</span>
           <span class="item-name">${name}</span>
         </div>
+        ${customDetails}
         ${note ? `<div class="item-note">• ${note}</div>` : ''}
       `
     }).join('')
@@ -65,6 +81,7 @@ const PrintService = {
             .item-row .item-qty { width: 30px; }
             .item-row .item-name { flex: 1; font-weight: 900; }
             .item-note { font-size: 10px; font-weight: 900; color: #000; padding-left: 30px; margin-bottom: 2px; }
+            .item-custom { font-size: 10px; font-weight: 900; color: #000; padding-left: 30px; margin-bottom: 4px; line-height: 1.4; text-transform: uppercase; }
             .footer { text-align: center; margin-top: 10px; padding-top: 10px; border-top: 2px dashed #000; }
             .footer-text { font-size: 10px; font-weight: 900; color: #000; }
             @media print {
