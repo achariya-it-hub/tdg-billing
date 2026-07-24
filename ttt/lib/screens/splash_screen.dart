@@ -90,7 +90,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   borderRadius: BorderRadius.circular(22),
                   child: Image.asset(
                     'assets/images/logo.png',
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                     errorBuilder: (_, __, ___) => Icon(
                       Icons.restaurant_menu_rounded,
                       size: 60,
