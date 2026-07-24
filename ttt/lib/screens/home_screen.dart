@@ -182,6 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
+    final cart = ApiService().cart;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
       child: Stack(
@@ -209,28 +210,28 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (ApiService().cart.isNotEmpty) ...[
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const CartScreen(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const CartScreen(),
+                      ),
+                    );
+                  },
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: TDGColors.cardDark,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: TDGColors.border),
                         ),
-                      );
-                    },
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: TDGColors.cardDark,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: TDGColors.border),
-                          ),
-                          child: Icon(Icons.shopping_cart_outlined, color: TDGColors.gold, size: 18),
-                        ),
+                        child: Icon(Icons.shopping_cart_outlined, color: TDGColors.gold, size: 18),
+                      ),
+                      if (cart.isNotEmpty)
                         Positioned(
                           top: 4,
                           right: 4,
@@ -241,16 +242,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               shape: BoxShape.circle,
                             ),
                             child: Text(
-                              '${ApiService().cart.length}',
+                              '${cart.length}',
                               style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                ],
+                ),
+                const SizedBox(width: 8),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -310,6 +310,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeroSection() {
+    // Select image based on carousel loop index
+    String heroImage = 'assets/images/hero_gyro.png';
+    if (_carouselIndex == 1) {
+      heroImage = 'assets/images/gyro.png';
+    } else if (_carouselIndex == 2) {
+      heroImage = 'assets/images/Lebanese rice bowl.png';
+    }
+
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       padding: const EdgeInsets.all(24),
@@ -407,7 +415,19 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.asset('assets/images/hero_gyro.png', fit: BoxFit.cover),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 600),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+                child: Image.asset(
+                  heroImage,
+                  key: ValueKey<String>(heroImage),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+              ),
             ),
           ),
         ],
