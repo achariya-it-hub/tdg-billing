@@ -193,7 +193,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                   crossAxisCount: 3,
                   crossAxisSpacing: 6,
                   mainAxisSpacing: 6,
-                  childAspectRatio: 0.75,
+                  childAspectRatio: 1.0,
                   children: ['Chicken', 'Paneer'].map((p) {
                     final isSel = selectedProtein == p;
                     return GestureDetector(
@@ -212,7 +212,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                                 width: double.infinity,
                                 color: Colors.black12,
                                 child: Image.asset(
-                                  p == 'Chicken' ? 'assets/images/crispy_chicken.png' : 'assets/images/veggies_composite.jpg',
+                                  p == 'Chicken' ? 'assets/images/chicken.png' : 'assets/images/paneer.png',
                                   fit: BoxFit.contain,
                                   errorBuilder: (_, __, ___) => const Icon(Icons.restaurant_menu, color: Colors.white24, size: 28),
                                 ),
@@ -237,7 +237,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                   crossAxisCount: 3,
                   crossAxisSpacing: 6,
                   mainAxisSpacing: 6,
-                  childAspectRatio: 0.75,
+                  childAspectRatio: 1.0,
                   children: breads.map((b) {
                     final isSel = selectedBread == b;
                     return GestureDetector(
@@ -256,7 +256,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                                 child: Image.asset(
                                   getBreadAsset(b),
                                   width: double.infinity,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                   errorBuilder: (_, __, ___) => const Icon(Icons.restaurant, color: Colors.white24),
                                 ),
                               ),
@@ -280,7 +280,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                   crossAxisCount: 3,
                   crossAxisSpacing: 6,
                   mainAxisSpacing: 6,
-                  childAspectRatio: 0.75,
+                  childAspectRatio: 1.0,
                   children: spreads.map((s) {
                     final isSel = selectedSpread == s;
                     return GestureDetector(
@@ -299,7 +299,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                                 child: Image.asset(
                                   getSpreadAsset(s),
                                   width: double.infinity,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                   errorBuilder: (_, __, ___) => const Icon(Icons.restaurant, color: Colors.white24),
                                 ),
                               ),
@@ -323,7 +323,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                   crossAxisCount: 3,
                   crossAxisSpacing: 6,
                   mainAxisSpacing: 6,
-                  childAspectRatio: 0.75,
+                  childAspectRatio: 1.0,
                   children: sauces.map((s) {
                     final isSel = selectedSauces.contains(s);
                     return GestureDetector(
@@ -342,7 +342,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                                 child: Image.asset(
                                   getSauceAsset(s),
                                   width: double.infinity,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                   errorBuilder: (_, __, ___) => const Icon(Icons.restaurant, color: Colors.white24),
                                 ),
                               ),
@@ -366,7 +366,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                   crossAxisCount: 3,
                   crossAxisSpacing: 6,
                   mainAxisSpacing: 6,
-                  childAspectRatio: 0.75,
+                  childAspectRatio: 1.0,
                   children: veggies.map((v) {
                     final isSel = selectedVeggies.contains(v);
                     return GestureDetector(
@@ -385,7 +385,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
                                 child: Image.asset(
                                   getVeggieAsset(v),
                                   width: double.infinity,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.contain,
                                   errorBuilder: (_, __, ___) => const Icon(Icons.restaurant, color: Colors.white24),
                                 ),
                               ),
