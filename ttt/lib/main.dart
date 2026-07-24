@@ -6,7 +6,7 @@ import 'firebase_options.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_nav_screen.dart';
 import 'theme/colors.dart';
-import 'screens/get_started_screen.dart';
+import 'screens/splash_screen.dart';
 import 'services/api_service.dart';
 
 void main() async {
@@ -80,7 +80,7 @@ class TDGApp extends StatelessWidget {
               surface: TDGColors.cardDark,
             ),
           ),
-          home: const GetStartedScreen(),
+          home: const SplashScreen(),
         );
       },
     );
