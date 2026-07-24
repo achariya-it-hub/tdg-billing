@@ -227,7 +227,32 @@ function restoreState() {
     writeDb(db)
   }
   if (db.recipes?.length) recipes = db.recipes
-  if (db.users?.length) mobileAppUsers = db.users
+  if (db.users?.length) {
+    mobileAppUsers = db.users
+  } else {
+    mobileAppUsers = []
+  }
+
+  // Seed demo login credentials
+  const demoEmail = 'demo'
+  const hasDemo = mobileAppUsers.some(u => u.email.toLowerCase() === demoEmail)
+  if (!hasDemo) {
+    const hashed = bcrypt.hashSync('demo123', 10)
+    const demoUser = {
+      id: 'demo_user',
+      name: 'Demo User',
+      email: 'demo',
+      phone: '9999999999',
+      password: hashed,
+      points: 500,
+      referCode: 'DEMO77',
+      assets: []
+    }
+    mobileAppUsers.push(demoUser)
+    db.users = mobileAppUsers
+    writeDb(db)
+  }
+
   if (db.suppliers?.length) suppliers = db.suppliers
   if (db.purchaseOrders?.length) purchaseOrders = db.purchaseOrders
   if (db.poItems?.length) poItems = db.poItems
