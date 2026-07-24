@@ -431,12 +431,17 @@ app.post('/api/auth/signup', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt)
     const userId = 'u_' + Date.now()
     const now = new Date().toISOString()
+    
+    // Generate unique referral code for sharing
+    const referCode = generateReferralCode()
+    
     const newUser = {
       id: userId,
       name, email, phone,
       password: hashedPassword,
       role: 'user',
       points: 500,
+      referCode: referCode,
       assets: [],
       totalDistributed: 0,
       cashbackEarned: 0,
@@ -450,7 +455,13 @@ app.post('/api/auth/signup', async (req, res) => {
 
     // Link to master user if referredBy is provided
     if (referredBy) {
-      const master = db.users.find(u => u.id === referredBy || u.email.toLowerCase() === referredBy.toLowerCase() || u.phone.replace(/[^0-9]/g, '') === referredBy.replace(/[^0-9]/g, ''))
+      const cleanRef = referredBy.trim().toUpperCase()
+      const master = db.users.find(u => 
+        u.id === referredBy || 
+        (u.referCode && u.referCode.toUpperCase() === cleanRef) ||
+        u.email.toLowerCase() === referredBy.toLowerCase() || 
+        u.phone.replace(/[^0-9]/g, '') === referredBy.replace(/[^0-9]/g, '')
+      )
       if (master) {
         newUser.referredBy = master.id
         newUser.referredByName = master.name

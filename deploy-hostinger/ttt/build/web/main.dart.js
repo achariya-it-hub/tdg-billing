@@ -95832,8 +95832,9 @@ m=A.W(10)
 a=A.aS(e.a?B.M:B.N,1)
 l=$.bY()
 k=l.b
-k=k==null?f:k.h(0,"phone")
-if(k==null){l=l.b
+k=k==null?f:k.h(0,"referCode")
+if(k==null){k=l.b
+k=k==null?f:k.h(0,"phone")}if(k==null){l=l.b
 l=l==null?f:l.h(0,"email")}else l=k
 if(l==null)l="No referral details"
 m=A.bt(A.a_(f,A.m(l,f,f,f,A.T(f,f,B.f,f,f,f,f,f,f,f,f,14,f,f,B.w,f,f,!0,f,f,f,f,f,f,f,f),f,f),B.i,f,new A.X(B.ig,f,a,m,f,f,B.q),f,f,B.qn,f),1)
@@ -96156,12 +96157,13 @@ $1(a){return B.b5.lO(a)},
 $S:35}
 A.aoJ.prototype={
 $0(){var s,r=null,q=$.bY(),p=q.b
-p=p==null?r:p.h(0,"phone")
-if(p==null){q=q.b
+p=p==null?r:p.h(0,"referCode")
+if(p==null){p=q.b
+p=p==null?r:p.h(0,"phone")}if(p==null){q=q.b
 q=q==null?r:q.h(0,"email")
 s=q}else s=p
 if(s==null)s=""
-if(J.lv(s))this.a.X(t.q).f.bY(A.cZ(r,r,r,B.a8,r,B.u,r,A.m("Referral invite copied: "+A.j(s),r,r,r,r,r,r),r,B.a4,r,r,r,r,r,r,r,r,r,r))},
+if(J.lv(s))this.a.X(t.q).f.bY(A.cZ(r,r,r,B.a8,r,B.u,r,A.m("Referral code copied: "+A.j(s)+". Send via text, WhatsApp, or mail!",r,r,r,r,r,r),r,B.a4,r,r,r,r,r,r,r,r,r,r))},
 $S:0}
 A.aoK.prototype={
 $1(a){return this.a.aai(a)},
@@ -98888,8 +98890,9 @@ aah(){var s,r,q=this,p=null,o=t.p,n=A.ao(A.b([q.Jm(B.mf,"Add Points",q.gah1()),q
 l=A.aS(m.a?B.M:B.N,1)
 s=$.bY()
 r=s.b
-r=r==null?p:r.h(0,"phone")
-if(r==null){s=s.b
+r=r==null?p:r.h(0,"referCode")
+if(r==null){r=s.b
+r=r==null?p:r.h(0,"phone")}if(r==null){s=s.b
 s=s==null?p:s.h(0,"email")}else s=r
 l=A.a_(p,A.ap(A.b([h,B.ca,g,B.ak,A.ao(A.b([A.bt(A.a_(p,A.m(s==null?"No referral details":s,p,p,p,B.Du,p,p),B.i,p,new A.X(B.ig,p,l,f,p,p,B.q),p,p,B.qn,p),1),B.fa,A.ks(B.a2M,new A.aC8(q),A.iz(p,p,B.d,p,p,p,p,p,p,B.m,p,p,B.lr,p,new A.bO(A.W(8),B.v),p,p,p,p,p))],o),B.o,B.k,B.j,0)],o),B.z,B.k,B.j),B.i,p,new A.X(k,p,i,j,p,p,B.q),p,p,B.b4,p)
 k=m.a?B.J:B.f
@@ -98979,12 +98982,13 @@ return A.aLo(s,"/assets",t.X)},
 $S:0}
 A.aC8.prototype={
 $0(){var s,r=null,q=$.bY(),p=q.b
-p=p==null?r:p.h(0,"phone")
-if(p==null){q=q.b
+p=p==null?r:p.h(0,"referCode")
+if(p==null){p=q.b
+p=p==null?r:p.h(0,"phone")}if(p==null){q=q.b
 q=q==null?r:q.h(0,"email")
 s=q}else s=p
 if(s==null)s=""
-if(J.lv(s))this.a.c.X(t.q).f.bY(A.cZ(r,r,r,B.a8,r,B.u,r,A.m("Referral invite copied: "+A.j(s),r,r,r,r,r,r),r,B.a4,r,r,r,r,r,r,r,r,r,r))},
+if(J.lv(s))this.a.c.X(t.q).f.bY(A.cZ(r,r,r,B.a8,r,B.u,r,A.m("Referral code copied: "+A.j(s)+". Send via text, WhatsApp, or mail!",r,r,r,r,r,r),r,B.a4,r,r,r,r,r,r,r,r,r,r))},
 $S:0}
 A.a2C.prototype={
 Cr(){var s=0,r=A.D(t.H),q,p=this,o,n

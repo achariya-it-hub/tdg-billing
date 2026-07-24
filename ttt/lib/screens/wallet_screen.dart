@@ -336,7 +336,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         border: Border.all(color: TDGColors.border),
                       ),
                       child: Text(
-                        ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'No referral details',
+                        ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'No referral details',
                         style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                       ),
                     ),
@@ -344,11 +344,11 @@ class _WalletScreenState extends State<WalletScreen> {
                   const SizedBox(width: 10),
                   ElevatedButton(
                     onPressed: () {
-                      final inviteInfo = ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? '';
+                      final inviteInfo = ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? '';
                       if (inviteInfo.isNotEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Referral invite copied: $inviteInfo'),
+                            content: Text('Referral code copied: $inviteInfo. Send via text, WhatsApp, or mail!'),
                             backgroundColor: Colors.green,
                           ),
                         );

@@ -490,7 +490,7 @@ class _AssetScreenState extends State<AssetScreen> {
                                   border: Border.all(color: TDGColors.border),
                                 ),
                                 child: Text(
-                                  ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'No referral details',
+                                  ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'No referral details',
                                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                                 ),
                               ),
@@ -498,12 +498,12 @@ class _AssetScreenState extends State<AssetScreen> {
                             const SizedBox(width: 10),
                             ElevatedButton(
                               onPressed: () {
-                                final inviteInfo = ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? '';
+                                final inviteInfo = ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? '';
                                 if (inviteInfo.isNotEmpty) {
                                   // Mock copy to clipboard message
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('Referral invite copied: $inviteInfo'),
+                                      content: Text('Referral code copied: $inviteInfo. Send via text, WhatsApp, or mail!'),
                                       backgroundColor: Colors.green,
                                     ),
                                   );
