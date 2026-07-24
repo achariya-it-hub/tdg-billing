@@ -596,6 +596,8 @@ class _WalletScreenState extends State<WalletScreen> {
         ],
       ),
     );
+  }
+
   Widget _buildReferStepItem(IconData icon, String title, String subtitle) {
     return SizedBox(
       width: 72,
