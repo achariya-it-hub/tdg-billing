@@ -4,7 +4,7 @@ import '../theme/colors.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
 import 'asset_screen.dart';
-import 'referral_screen.dart';
+import 'package:share_plus/share_plus.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -314,16 +314,17 @@ class _WalletScreenState extends State<WalletScreen> {
         
         // Share Referral Invite block
         // Redesigned Premium Invite Card
+        // Embedded Premium Referral Card Section
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [const Color(0xFF1E1E26), const Color(0xFF121217)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1D1B22), Color(0xFF0F0F12)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: TDGColors.gold.withOpacity(0.35), width: 1.5),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: TDGColors.gold.withOpacity(0.3), width: 1.5),
             boxShadow: [
               BoxShadow(
                 color: TDGColors.gold.withOpacity(0.08),
@@ -333,80 +334,121 @@ class _WalletScreenState extends State<WalletScreen> {
             ],
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Icon(Icons.stars_rounded, color: TDGColors.gold, size: 22),
-                  const SizedBox(width: 8),
-                  Text(
-                    'BUILD YOUR DEN PRIDE',
-                    style: GoogleFonts.outfit(
-                      color: TDGColors.gold,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 13,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Share your referral details below to build your Den! Add up to 10 assets to start distributing points.',
-                style: GoogleFonts.outfit(color: Colors.white70, fontSize: 11.5, height: 1.45),
-              ),
-              const SizedBox(height: 18),
+              // Gold Inner Card
               Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.black26,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white10),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF1E1500), Color(0xFF120C00)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: TDGColors.gold.withOpacity(0.4), width: 1),
+                  image: const DecorationImage(
+                    image: AssetImage('assets/images/gold_card.png'),
+                    fit: BoxFit.cover,
+                    opacity: 0.12,
+                  ),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                child: Row(
+                child: Column(
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'YOUR UNIQUE CODE',
-                            style: GoogleFonts.outfit(color: Colors.grey, fontSize: 8, fontWeight: FontWeight.bold, letterSpacing: 0.5),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'No referral details',
-                            style: GoogleFonts.outfit(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 16,
-                              letterSpacing: 1.5,
-                            ),
-                          ),
-                        ],
+                    Image.asset(
+                      'assets/images/logo_header.png',
+                      height: 32,
+                      errorBuilder: (_, __, ___) => Text(
+                        'TEN DEN GYROS',
+                        style: GoogleFonts.outfit(color: TDGColors.gold, fontWeight: FontWeight.w900, fontSize: 15),
                       ),
                     ),
-                    ElevatedButton(
+                    const SizedBox(height: 20),
+                    Text(
+                      'YOUR REFERRAL CODE',
+                      style: GoogleFonts.outfit(
+                        color: Colors.white60,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'TDG7890',
+                      style: GoogleFonts.outfit(
+                        color: TDGColors.gold,
+                        fontSize: 26,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const ReferralScreen()),
+                        final code = ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'TDG7890';
+                        Share.share(
+                          'Join me at Ten Den Gyros! Use my referral code: $code to get 500 bonus points on signup! Download the app and start earning details: https://tendengyros.com',
+                          subject: 'Ten Den Gyros Referral Invite',
                         );
                       },
+                      icon: const Icon(Icons.share_rounded, size: 14, color: Colors.black),
+                      label: Text(
+                        'Share Code',
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 12),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TDGColors.gold,
                         foregroundColor: Colors.black,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      ),
-                      child: Text(
-                        'Share Now',
-                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 11),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        elevation: 2,
                       ),
                     ),
                   ],
                 ),
+              ),
+              const SizedBox(height: 20),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'How it Works?',
+                  style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildReferStepItem(Icons.edit_note_rounded, 'Share', 'your code'),
+                  _buildReferStepItem(Icons.shopping_bag_outlined, 'Friend Orders', 'using code'),
+                  _buildReferStepItem(Icons.workspace_premium_rounded, 'You Earn', 'Rewards'),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Rewards Section Card
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          decoration: BoxDecoration(
+            color: const Color(0xFF16161D),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.white.withOpacity(0.05)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Total Rewards Earned',
+                style: GoogleFonts.outfit(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+              Text(
+                '₹2,150',
+                style: GoogleFonts.outfit(color: TDGColors.gold, fontSize: 16, fontWeight: FontWeight.w900),
               ),
             ],
           ),
@@ -550,6 +592,36 @@ class _WalletScreenState extends State<WalletScreen> {
               fontWeight: FontWeight.w700,
               fontSize: 14,
             ),
+          ),
+        ],
+      ),
+    );
+  Widget _buildReferStepItem(IconData icon, String title, String subtitle) {
+    return SizedBox(
+      width: 72,
+      child: Column(
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E1E24),
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white.withOpacity(0.08)),
+            ),
+            child: Icon(icon, color: TDGColors.gold, size: 20),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: GoogleFonts.outfit(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            style: GoogleFonts.outfit(color: Colors.grey, fontSize: 8),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
