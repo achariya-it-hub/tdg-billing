@@ -381,36 +381,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.35),
                 ),
                 const SizedBox(height: 18),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          MainNavScreen.navKey.currentState?.setTab(2);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: TDGColors.gold,
-                          foregroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: Text('ORDER NOW', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900)),
-                      ),
-                      const SizedBox(width: 10),
-                      OutlinedButton(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => const OffersScreen()));
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: TDGColors.gold, width: 1.5),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: Text('OFFERS', style: GoogleFonts.outfit(color: TDGColors.gold, fontSize: 12, fontWeight: FontWeight.w900)),
-                      ),
-                    ],
+                ElevatedButton(
+                  onPressed: () {
+                    MainNavScreen.navKey.currentState?.setTab(2);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TDGColors.gold,
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
+                  child: Text('ORDER NOW', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900)),
                 ),
               ],
             ),
