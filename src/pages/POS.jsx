@@ -8,6 +8,7 @@ import { useOrderStore } from '../stores/orderStore'
 import { getSocket, connectToPOS } from '../lib/socket'
 import { playOrderAlertSound, getSoundEnabled, setSoundEnabled } from '../utils/audioAlert'
 import PrintService from '../lib/printService'
+import API_BASE from '../lib/apiConfig'
 
 const categoryIcons = {
   'Burgers': '🍔',
