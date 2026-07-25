@@ -109,7 +109,7 @@ export default function POS() {
   const [deliveryEnabled, setDeliveryEnabled] = useState(true)
 
   useEffect(() => {
-    fetch(`${API()}/api/settings`)
+    fetch(`${API_BASE}/api/settings`)
       .then(r => r.json())
       .then(data => {
         if (data?.company?.deliveryEnabled !== undefined) {
