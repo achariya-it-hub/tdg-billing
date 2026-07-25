@@ -667,9 +667,12 @@ class _AssetScreenState extends State<AssetScreen> {
                 ),
               ),
               if (!isDined && status == 'pending')
-                TextButton(
-                  onPressed: () => _showVerifyOtpDialog(asset['name'] ?? '', asset['phone'] ?? ''),
-                  child: Text('Verify', style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.w600)),
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    'Awaiting acceptance',
+                    style: TextStyle(color: Colors.orange.shade400, fontSize: 11, fontStyle: FontStyle.italic),
+                  ),
                 ),
               PopupMenuButton(
             icon: Icon(Icons.more_vert, color: TDGColors.greyLight),
