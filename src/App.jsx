@@ -28,16 +28,89 @@ import MobilePreview from './pages/MobilePreview'
 import DenWebApp from './pages/DenWebApp'
 import Layout from './components/Layout'
 import { SettingsProvider } from './lib/settingsContext'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Component } from 'react'
+
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false, error: null }
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error }
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('App ErrorBoundary caught an error:', error, errorInfo)
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          minHeight: '100vh',
+          background: '#0f0f1a',
+          color: 'white',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px',
+          fontFamily: 'Inter, sans-serif'
+        }}>
+          <h2 style={{ fontSize: '24px', color: '#e63946', marginBottom: '12px' }}>
+            Session Reset Required
+          </h2>
+          <p style={{ color: '#9ca3af', marginBottom: '24px', textAlign: 'center', maxWidth: '400px' }}>
+            A temporary browser session error occurred. Click below to reset session and login cleanly.
+          </p>
+          <button
+            onClick={() => {
+              localStorage.clear()
+              window.location.href = '/staff-login'
+            }}
+            style={{
+              padding: '14px 28px',
+              background: 'linear-gradient(135deg, #e63946, #c1121f)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '12px',
+              fontWeight: 700,
+              fontSize: '15px',
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(230,57,70,0.4)'
+            }}
+          >
+            Reset Session & Login
+          </button>
+        </div>
+      )
+    }
+
+    return this.props.children
+  }
+}
 
 function ProtectedRoute() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const user = localStorage.getItem('user')
-    if (user) {
-      setIsAuthenticated(true)
+    try {
+      const userStr = localStorage.getItem('user')
+      if (userStr && userStr !== 'undefined' && userStr !== 'null') {
+        const parsed = JSON.parse(userStr)
+        if (parsed && typeof parsed === 'object' && (parsed.role || parsed.id || parsed.name)) {
+          setIsAuthenticated(true)
+        } else {
+          localStorage.removeItem('user')
+        }
+      } else {
+        localStorage.removeItem('user')
+      }
+    } catch (e) {
+      console.error('ProtectedRoute user parse error:', e)
+      localStorage.removeItem('user')
     }
     setLoading(false)
   }, [])
@@ -49,12 +122,12 @@ function ProtectedRoute() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'white'
+        background: '#0f0f1a'
       }}>
         <div style={{
           width: '40px',
           height: '40px',
-          border: '3px solid #f3f4f6',
+          border: '3px solid rgba(255,255,255,0.1)',
           borderTopColor: '#e63946',
           borderRadius: '50%',
           animation: 'spin 1s linear infinite'
@@ -75,9 +148,17 @@ function AppLayout() {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    const userData = localStorage.getItem('user')
-    if (userData) {
-      setUser(JSON.parse(userData))
+    try {
+      const userData = localStorage.getItem('user')
+      if (userData && userData !== 'undefined' && userData !== 'null') {
+        const parsed = JSON.parse(userData)
+        if (parsed && typeof parsed === 'object') {
+          setUser(parsed)
+        }
+      }
+    } catch (e) {
+      console.error('AppLayout user parse error:', e)
+      localStorage.removeItem('user')
     }
   }, [])
 
@@ -93,10 +174,11 @@ function AppLayout() {
 
 export default function App() {
   const hostname = window.location.hostname;
+  const path = window.location.pathname;
 
   const getRoutes = () => {
-    if (hostname.includes('pos.')) {
-      // POS Subdomain: pos.tendengyros.com
+    if (hostname.includes('pos.') || path.startsWith('/pos') || path.startsWith('/staff-login')) {
+      // POS Subdomain: pos.tendengyros.com or staff routes
       return (
         <Routes>
           <Route path="/" element={<Navigate to="/pos" replace />} />
@@ -179,13 +261,15 @@ export default function App() {
   }
 
   return (
-    <BrowserRouter>
-      <SettingsProvider>
-        <ToastProvider>
-          <OfflineIndicator />
-          {getRoutes()}
-        </ToastProvider>
-      </SettingsProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <SettingsProvider>
+          <ToastProvider>
+            <OfflineIndicator />
+            {getRoutes()}
+          </ToastProvider>
+        </SettingsProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   )
 }
