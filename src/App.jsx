@@ -99,7 +99,7 @@ export default function App() {
       // POS Subdomain: pos.tendengyros.com
       return (
         <Routes>
-          <Route path="/" element={<Navigate to="/staff-login" replace />} />
+          <Route path="/" element={<Navigate to="/pos" replace />} />
           <Route path="/staff-login" element={<Login />} />
           <Route path="/login" element={<Navigate to="/staff-login" replace />} />
           <Route element={<ProtectedRoute />}>
