@@ -215,6 +215,56 @@ function saveState() {
   })
 }
 
+function findLatestValidBackup() {
+  const backupDirs = [BACKUP_DIR, DAILY_BACKUP_DIR]
+
+  // 1. First check db-latest.json
+  const latestPath = join(BACKUP_DIR, 'db-latest.json')
+  if (existsSync(latestPath)) {
+    try {
+      const content = readFileSync(latestPath, 'utf-8').trim()
+      if (content) {
+        const parsed = JSON.parse(content)
+        if ((parsed.orders && parsed.orders.length) || (parsed.users && parsed.users.length) || (parsed.menuItems && parsed.menuItems.length) || (parsed.categories && parsed.categories.length)) {
+          console.log('[DATA SAFETY] Found db-latest.json backup')
+          return parsed
+        }
+      }
+    } catch (e) {}
+  }
+
+  // 2. Otherwise sort all backup files strictly by modification timestamp (mtimeMs)
+  for (const bDir of backupDirs) {
+    if (existsSync(bDir)) {
+      let files = readdirSync(bDir).filter(f => f.endsWith('.json'))
+      const regularFiles = files.filter(f => !f.includes('pre-restore') && !f.includes('pre-reset') && f !== 'db-latest.json')
+      if (regularFiles.length > 0) files = regularFiles
+
+      files.sort((a, b) => {
+        try {
+          return statSync(join(bDir, b)).mtimeMs - statSync(join(bDir, a)).mtimeMs
+        } catch (e) {
+          return 0
+        }
+      })
+
+      for (const file of files) {
+        try {
+          const content = readFileSync(join(bDir, file), 'utf-8').trim()
+          if (!content) continue
+          const parsed = JSON.parse(content)
+          if ((parsed.orders && parsed.orders.length) || (parsed.users && parsed.users.length) || (parsed.menuItems && parsed.menuItems.length) || (parsed.categories && parsed.categories.length)) {
+            console.log(`[DATA SAFETY] Found newest timestamped backup: ${file}`)
+            return parsed
+          }
+        } catch (e) { /* ignore corrupt backup */ }
+      }
+    }
+  }
+
+  return null
+}
+
 // Restore in-memory state from db.json on startup
 function restoreState() {
   let db = readDb()
@@ -226,33 +276,13 @@ function restoreState() {
 
   if (isDbEmptyOrMissing) {
     console.log('[DATA SAFETY] db.json is missing or empty. Searching for persistent backups...')
-    const backupDirs = [BACKUP_DIR, DAILY_BACKUP_DIR]
-    let foundBackup = null
-
-    for (const bDir of backupDirs) {
-      if (existsSync(bDir)) {
-        const files = readdirSync(bDir).filter(f => f.endsWith('.json')).sort().reverse()
-        for (const file of files) {
-          try {
-            const content = readFileSync(join(bDir, file), 'utf-8').trim()
-            if (!content) continue
-            const parsed = JSON.parse(content)
-            if ((parsed.orders && parsed.orders.length) || (parsed.users && parsed.users.length) || (parsed.menuItems && parsed.menuItems.length)) {
-              foundBackup = parsed
-              console.log(`[DATA SAFETY] Found valid backup: ${file}`)
-              break
-            }
-          } catch (e) { /* ignore corrupt backup */ }
-        }
-      }
-      if (foundBackup) break
-    }
+    const foundBackup = findLatestValidBackup()
 
     if (foundBackup) {
       db = foundBackup
       try {
         writeFileSync(DB_PATH, JSON.stringify(foundBackup, null, 2))
-        console.log('[DATA SAFETY] Auto-restored business database from backup successfully!')
+        console.log('[DATA SAFETY] Auto-restored business database from latest backup successfully!')
       } catch (e) {
         console.error('[DATA SAFETY] Failed to write restored backup:', e.message)
       }

@@ -210,17 +210,61 @@ function saveState() {
   })
 }
 
+function findLatestValidBackup() {
+  if (!existsSync(BACKUP_DIR)) return null
+
+  // 1. First check db-latest.json
+  const latestPath = join(BACKUP_DIR, 'db-latest.json')
+  if (existsSync(latestPath)) {
+    try {
+      const content = readFileSync(latestPath, 'utf-8').trim()
+      if (content) {
+        const parsed = JSON.parse(content)
+        if ((parsed.orders && parsed.orders.length) || (parsed.users && parsed.users.length) || (parsed.menuItems && parsed.menuItems.length) || (parsed.categories && parsed.categories.length)) {
+          console.log('[DATA SAFETY] Found db-latest.json backup')
+          return parsed
+        }
+      }
+    } catch (e) {}
+  }
+
+  // 2. Otherwise sort all backup files strictly by modification timestamp (mtimeMs)
+  let files = readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json'))
+  const regularFiles = files.filter(f => !f.includes('pre-restore') && !f.includes('pre-reset') && f !== 'db-latest.json')
+  if (regularFiles.length > 0) files = regularFiles
+
+  files.sort((a, b) => {
+    try {
+      return statSync(join(BACKUP_DIR, b)).mtimeMs - statSync(join(BACKUP_DIR, a)).mtimeMs
+    } catch (e) {
+      return 0
+    }
+  })
+
+  for (const file of files) {
+    try {
+      const content = readFileSync(join(BACKUP_DIR, file), 'utf-8').trim()
+      if (!content) continue
+      const parsed = JSON.parse(content)
+      if ((parsed.orders && parsed.orders.length) || (parsed.users && parsed.users.length) || (parsed.menuItems && parsed.menuItems.length) || (parsed.categories && parsed.categories.length)) {
+        console.log(`[DATA SAFETY] Found newest timestamped backup: ${file}`)
+        return parsed
+      }
+    } catch (e) { /* ignore corrupt backup */ }
+  }
+
+  return null
+}
+
 // Restore in-memory state from db.json on startup
 function restoreState() {
   // Safety: if db.json was wiped by deploy, restore latest backup
-  if (!existsSync(DB_PATH) && existsSync(BACKUP_DIR)) {
-    const backups = readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json')).sort().reverse()
-    if (backups.length > 0) {
-      const latest = join(BACKUP_DIR, backups[0])
+  if (!existsSync(DB_PATH)) {
+    const foundBackup = findLatestValidBackup()
+    if (foundBackup) {
       try {
-        const data = readFileSync(latest, 'utf-8')
-        writeFileSync(DB_PATH, data)
-        console.log('Auto-restored db.json from backup:', backups[0])
+        writeFileSync(DB_PATH, JSON.stringify(foundBackup, null, 2))
+        console.log('[DATA SAFETY] Auto-restored db.json from latest backup!')
       } catch (e) { console.error('Backup restore failed:', e.message) }
     }
   }
