@@ -234,6 +234,9 @@ export default function POS() {
     }
   }, [selectedCategory])
 
+  const [lastPlacedOrder, setLastPlacedOrder] = useState(null)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+
   const handlePlaceOrder = async () => {
     if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place order'); return }
     setProcessing(true)
@@ -242,6 +245,8 @@ export default function POS() {
       toast.success('Order placed & Bill generated!')
       setShowCart(false)
       if (newOrder) {
+        setLastPlacedOrder(newOrder)
+        setShowSuccessModal(true)
         PrintService.printKOTAndBill(newOrder)
       }
     }
@@ -682,6 +687,94 @@ export default function POS() {
 
         </div>
       </Modal>
+
+      {/* Order Success & Manual Re-print Modal */}
+      <Modal isOpen={showSuccessModal} onClose={() => setShowSuccessModal(false)} title="🎉 Order Placed Successfully" size="md">
+        <div style={{ textAlign: 'center', padding: '10px 0' }}>
+          <div style={{ fontSize: '20px', fontWeight: 800, color: '#10b981', marginBottom: '4px' }}>
+            Order #{lastPlacedOrder?.orderNumber || lastPlacedOrder?.id}
+          </div>
+          <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '20px' }}>
+            Order sent to kitchen. Choose print option below if you need manual printouts:
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <button
+              onClick={() => PrintService.printKOTAndBill(lastPlacedOrder)}
+              style={{
+                padding: '14px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #e63946, #c1121f)',
+                color: 'white',
+                fontWeight: 700,
+                fontSize: '15px',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 4px 14px rgba(230,57,70,0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              🖨️ Print KOT & Bill (Both)
+            </button>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                onClick={() => PrintService.printKOT(lastPlacedOrder)}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  borderRadius: '10px',
+                  background: '#f3f4f6',
+                  color: '#1f2937',
+                  fontWeight: 600,
+                  fontSize: '13px',
+                  border: '1px solid #d1d5db',
+                  cursor: 'pointer'
+                }}
+              >
+                📄 Print KOT Only
+              </button>
+
+              <button
+                onClick={() => PrintService.printBill(lastPlacedOrder)}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  borderRadius: '10px',
+                  background: '#f3f4f6',
+                  color: '#1f2937',
+                  fontWeight: 600,
+                  fontSize: '13px',
+                  border: '1px solid #d1d5db',
+                  cursor: 'pointer'
+                }}
+              >
+                🧾 Print Bill Only
+              </button>
+            </div>
+
+            <button
+              onClick={() => setShowSuccessModal(false)}
+              style={{
+                marginTop: '10px',
+                padding: '10px',
+                background: 'transparent',
+                color: '#6b7280',
+                fontSize: '13px',
+                border: 'none',
+                cursor: 'pointer',
+                fontWeight: 600
+              }}
+            >
+              Done / New Order
+            </button>
+          </div>
+        </div>
+      </Modal>
+
     </div>
   )
 }
