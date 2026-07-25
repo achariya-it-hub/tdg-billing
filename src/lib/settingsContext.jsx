@@ -44,18 +44,32 @@ export function SettingsProvider({ children }) {
 }
 
 function hexToRgba(hex, alpha) {
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+  if (!hex || typeof hex !== 'string' || !hex.startsWith('#') || hex.length < 7) {
+    return `rgba(230, 57, 70, ${alpha})`
+  }
+  try {
+    const r = parseInt(hex.slice(1, 3), 16) || 230
+    const g = parseInt(hex.slice(3, 5), 16) || 57
+    const b = parseInt(hex.slice(5, 7), 16) || 70
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`
+  } catch (e) {
+    return `rgba(230, 57, 70, ${alpha})`
+  }
 }
 
 function adjustBrightness(hex, amount) {
-  let r = parseInt(hex.slice(1, 3), 16)
-  let g = parseInt(hex.slice(3, 5), 16)
-  let b = parseInt(hex.slice(5, 7), 16)
-  r = Math.min(255, r + amount)
-  g = Math.min(255, g + amount)
-  b = Math.min(255, b + amount)
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+  if (!hex || typeof hex !== 'string' || !hex.startsWith('#') || hex.length < 7) {
+    return '#e63946'
+  }
+  try {
+    let r = parseInt(hex.slice(1, 3), 16) || 230
+    let g = parseInt(hex.slice(3, 5), 16) || 57
+    let b = parseInt(hex.slice(5, 7), 16) || 70
+    r = Math.min(255, r + amount)
+    g = Math.min(255, g + amount)
+    b = Math.min(255, b + amount)
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+  } catch (e) {
+    return '#e63946'
+  }
 }

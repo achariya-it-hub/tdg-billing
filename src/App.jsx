@@ -61,12 +61,34 @@ class ErrorBoundary extends Component {
           <h2 style={{ fontSize: '24px', color: '#e63946', marginBottom: '12px' }}>
             Session Reset Required
           </h2>
-          <p style={{ color: '#9ca3af', marginBottom: '24px', textAlign: 'center', maxWidth: '400px' }}>
+          <p style={{ color: '#9ca3af', marginBottom: '20px', textAlign: 'center', maxWidth: '450px' }}>
             A temporary browser session error occurred. Click below to reset session and login cleanly.
           </p>
+          {this.state.error?.message && (
+            <div style={{
+              background: 'rgba(230,57,70,0.1)',
+              border: '1px solid rgba(230,57,70,0.2)',
+              borderRadius: '8px',
+              padding: '8px 14px',
+              fontSize: '12px',
+              color: '#f87171',
+              marginBottom: '20px',
+              fontFamily: 'monospace',
+              maxWidth: '500px',
+              wordBreak: 'break-word',
+              textAlign: 'center'
+            }}>
+              {this.state.error.message}
+            </div>
+          )}
           <button
             onClick={() => {
-              localStorage.clear()
+              try {
+                localStorage.clear()
+                sessionStorage.clear()
+              } catch (e) {
+                console.error(e)
+              }
               window.location.href = '/staff-login'
             }}
             style={{
