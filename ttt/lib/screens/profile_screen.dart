@@ -8,6 +8,7 @@ import 'login_screen.dart';
 import 'help_support_screen.dart';
 import 'admin_dashboard_screen.dart';
 import 'asset_screen.dart';
+import 'main_nav_screen.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
 
@@ -49,6 +50,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _showAddressDialog() {
+    final user = ApiService().currentUser;
+    final addressController = TextEditingController(text: user?['address'] ?? '');
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: TDGColors.cardDark,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: TDGColors.gold.withOpacity(0.4)),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.location_on_outlined, color: TDGColors.gold),
+            const SizedBox(width: 10),
+            Text('DELIVERY ADDRESS', style: TextStyle(color: TDGColors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Enter your delivery address for orders:', style: TextStyle(color: TDGColors.grey, fontSize: 12)),
+            const SizedBox(height: 12),
+            TextField(
+              controller: addressController,
+              maxLines: 3,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+              decoration: InputDecoration(
+                hintText: 'Flat / House No., Street, Area, City, Pincode',
+                hintStyle: TextStyle(color: TDGColors.grey, fontSize: 12),
+                filled: true,
+                fillColor: Colors.black26,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: TDGColors.border)),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: TDGColors.gold)),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('CANCEL', style: TextStyle(color: TDGColors.grey)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: TDGColors.gold, foregroundColor: Colors.black),
+            onPressed: () async {
+              final newAddr = addressController.text.trim();
+              if (ApiService().currentUser != null) {
+                ApiService().currentUser!['address'] = newAddr;
+              }
+              Navigator.pop(ctx);
+              if (mounted) setState(() {});
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Delivery address saved successfully!'), backgroundColor: Colors.green),
+              );
+            },
+            child: const Text('SAVE ADDRESS', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = ApiService().currentUser;
@@ -61,7 +127,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: TDGColors.background,
         elevation: 0,
-        leading: BackButton(color: TDGColors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              MainNavScreen.navKey.currentState?.setTab(0);
+            }
+          },
+        ),
         centerTitle: true,
         title: Text(
           'PROFILE',
@@ -143,7 +218,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   _buildMenuItem(context, Icons.person_outline_rounded, 'Personal Information', () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfileScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfileScreen())).then((_) {
+                      if (mounted) setState(() {});
+                    });
                   }),
                   _buildMenuItem(context, Icons.receipt_long_rounded, 'My Orders', () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const OrdersScreen()));
@@ -156,11 +233,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _buildMenuItem(context, Icons.dashboard_rounded, 'Admin Dashboard', () {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminDashboardScreen()));
                     }),
-                  _buildMenuItem(context, Icons.location_on_outlined, 'Addresses', () {}),
+                  _buildMenuItem(context, Icons.location_on_outlined, 'Addresses', _showAddressDialog),
                   _buildMenuItem(context, Icons.credit_card_rounded, 'Payment Methods', () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const PaymentMethodsScreen()));
                   }),
-                  _buildThemeToggleItem(context),
                   _buildMenuItem(context, Icons.description_outlined, 'Terms & Conditions', () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const TermsConditionsScreen()));
                   }),
@@ -222,46 +298,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildThemeToggleItem(BuildContext context) {
-    final isDark = ThemeManager().isDarkMode;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: TDGColors.cardDark,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: TDGColors.border),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-            color: TDGColors.greyLight,
-            size: 22,
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Text(
-              'Dark Mode',
-              style: TextStyle(
-                color: TDGColors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Switch.adaptive(
-            value: isDark,
-            activeColor: TDGColors.gold,
-            onChanged: (val) {
-              ThemeManager().toggleTheme();
-            },
-          ),
-        ],
       ),
     );
   }

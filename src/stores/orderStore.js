@@ -20,7 +20,9 @@ export const useOrderStore = create(
   addItem: (item) => {
     set(state => {
       const existingIndex = state.currentOrder.items.findIndex(
-        i => i.menuItemId === item.menuItemId && i.variantId === item.variantId
+        i => i.menuItemId === item.menuItemId &&
+             i.variantId === item.variantId &&
+             JSON.stringify(i.customization || null) === JSON.stringify(item.customization || null)
       )
       
       if (existingIndex >= 0) {

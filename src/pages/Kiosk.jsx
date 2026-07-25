@@ -589,6 +589,7 @@ export default function Kiosk() {
       >
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
           {[
+            { method: 'counter', icon: Banknote, label: 'Pay at Counter' },
             { method: 'upi', icon: Smartphone, label: 'UPI' },
             { method: 'card', icon: CreditCard, label: 'Card' },
             { method: 'cash', icon: Banknote, label: 'Cash' },

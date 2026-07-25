@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Building2, Database, Printer, Palette, CreditCard, Save, Upload, Download, RotateCcw, X, Plus, Trash2, Key, ShieldCheck, Tag, Image as ImageIcon } from 'lucide-react'
+import { Building2, Database, Printer, Palette, CreditCard, Save, Upload, Download, RotateCcw, X, Plus, Trash2, Key, ShieldCheck, Tag, Image as ImageIcon, Truck } from 'lucide-react'
 import API_BASE from '../lib/apiConfig'
 import { useSettings } from '../lib/settingsContext'
 import { clearSettingsCache } from '../lib/getCompanyInfo'
@@ -288,7 +288,7 @@ function CompanyTab({ pin, settings, onSaved }) {
           <input style={inputStyle} value={form.upiId || ''} onChange={e => setForm({ ...form, upiId: e.target.value })} placeholder="e.g. merchant@upi" />
         </div>
         <div style={{ marginBottom: '20px' }}>
-          <label style={labelStyle}>Logo</label>
+        <label style={labelStyle}>Logo</label>
         {form.logo && <img src={form.logo} alt="Logo" style={{ height: '60px', marginBottom: '12px', borderRadius: '8px', border: '1px solid #e5e7eb' }} />}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <label style={{ ...btnPrimary, fontSize: '13px', padding: '8px 16px', cursor: 'pointer' }}>
@@ -304,9 +304,36 @@ function CompanyTab({ pin, settings, onSaved }) {
               if (data.success) { setForm({ ...form, logo: data.logo }); clearSettingsCache(); onSaved() }
             }} />
           </label>
-          {form.logo && <button onClick={() => setForm({ ...form, logo: null })} style={{ padding: '8px', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '8px', background: 'white', cursor: 'pointer' }}><Trash2 size={16} color="#dc2626" /></button>}
+          {form.logo && <button type="button" onClick={() => setForm({ ...form, logo: null })} style={{ padding: '8px', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '8px', background: 'white', cursor: 'pointer' }}><Trash2 size={16} color="#dc2626" /></button>}
         </div>
       </div>
+      {/* Store Delivery Mode Toggle Switch */}
+      <div style={{
+        padding: '18px 20px',
+        background: form.deliveryEnabled !== false ? 'rgba(22,163,74,0.06)' : 'rgba(220,38,38,0.06)',
+        border: `1.5px solid ${form.deliveryEnabled !== false ? 'rgba(22,163,74,0.2)' : 'rgba(220,38,38,0.2)'}`,
+        borderRadius: '16px',
+        marginBottom: '24px',
+        transition: 'all 0.2s'
+      }}>
+        <div style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a2e', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Truck size={20} color={form.deliveryEnabled !== false ? '#16a34a' : '#dc2626'} />
+          Store Delivery Service Status
+        </div>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', fontWeight: 700, fontSize: '14px', color: form.deliveryEnabled !== false ? '#16a34a' : '#dc2626' }}>
+          <input
+            type="checkbox"
+            checked={form.deliveryEnabled !== false}
+            onChange={e => setForm({ ...form, deliveryEnabled: e.target.checked })}
+            style={{ width: '22px', height: '22px', accentColor: '#e63946', cursor: 'pointer' }}
+          />
+          {form.deliveryEnabled !== false ? '🟢 Delivery Orders Enabled (Store Accepting Delivery)' : '🔴 Delivery Orders Turned OFF (Takeaway & Dine-In Only)'}
+        </label>
+        <span style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginTop: '6px', marginLeft: '34px' }}>
+          When toggled OFF, delivery options across POS, Kiosk, and Mobile/Web checkout screens are disabled.
+        </span>
+      </div>
+
       <button onClick={handleSave} disabled={saving} style={btnPrimary}>{saving ? 'Saving...' : <><Save size={16} /> Save Company Info</>}</button>
     </div>
   )

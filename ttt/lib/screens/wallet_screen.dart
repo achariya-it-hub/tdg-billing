@@ -447,7 +447,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 style: GoogleFonts.outfit(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
               ),
               Text(
-                '₹2,150',
+                '${_cashbackEarned > 0 ? '₹$_cashbackEarned' : '$_points Pts'}',
                 style: GoogleFonts.outfit(color: TDGColors.gold, fontSize: 16, fontWeight: FontWeight.w900),
               ),
             ],

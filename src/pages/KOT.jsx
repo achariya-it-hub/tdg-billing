@@ -27,8 +27,8 @@ export default function KOT() {
         items: (kot.items || []).map(i => ({ ...i, isCompleted: false }))
       }, ...prev])
       
-      // Auto-print new KOT
-      PrintService.printKOT(kot)
+      // Auto-print KOT ticket & generated Bill automatically without user intervention
+      PrintService.printKOTAndBill(kot)
     })
 
     socket.on('kot:updated', (kot) => {

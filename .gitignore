@@ -7,10 +7,18 @@ dist/
 .vercel/
 android/
 capacitor/
-server/db.json
-server/billing.db
-server/backups/
+
+# Database & Persistent Data files (Never push to Git)
+db.json
+*.db
+*.json.tmp
+**/db.json
+**/db.json.tmp
+**/billing.db
+**/backups/
+**/daily-backups/
 server/db.pre-deploy-backup.json
+
 server-update/
 *.zip
 deploy.zip

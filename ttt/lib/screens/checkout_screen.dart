@@ -68,37 +68,43 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'quantity': int.parse(item['qty'].toString()),
       }).toList();
 
-      // Force CCAvenue redirect for all checkouts automatically
-      final ccResponse = await ApiService().initiateCCavenuePayment(
-        amount: _finalTotal.toDouble(),
-        customerName: ApiService().currentUser?['name'],
-        customerPhone: ApiService().currentUser?['phone'],
-        customerEmail: ApiService().currentUser?['email'],
-      );
+      // Initiate CCAvenue redirect only if selected
+      if (_selectedPayment == 'ccavenue') {
+        final ccResponse = await ApiService().initiateCCavenuePayment(
+          amount: _finalTotal.toDouble(),
+          customerName: ApiService().currentUser?['name'],
+          customerPhone: ApiService().currentUser?['phone'],
+          customerEmail: ApiService().currentUser?['email'],
+        );
 
-      if (ccResponse['success'] == true) {
-        final String ccUrl = ccResponse['ccavenueUrl'] ?? '';
-        final String encRequest = ccResponse['encRequest'] ?? '';
-        final String accessCode = ccResponse['accessCode'] ?? '';
+        if (ccResponse['success'] == true) {
+          final String ccUrl = ccResponse['ccavenueUrl'] ?? '';
+          final String encRequest = ccResponse['encRequest'] ?? '';
+          final String accessCode = ccResponse['accessCode'] ?? '';
 
-        if (ccUrl.isNotEmpty) {
-          // Parse url components properly using Uri object constructor to prevent encoding corruption of encRequest or access_code
-          final baseUri = Uri.parse(ccUrl);
-          final fullUri = Uri(
-            scheme: baseUri.scheme,
-            host: baseUri.host,
-            path: baseUri.path,
-            queryParameters: {
-              'command': 'initiateTransaction',
-              'encRequest': encRequest,
-              'access_code': accessCode,
-            },
-          );
-          if (await canLaunchUrl(fullUri)) {
-            await launchUrl(fullUri, mode: LaunchMode.externalApplication);
+          if (ccUrl.isNotEmpty) {
+            // Parse url components properly using Uri object constructor to prevent encoding corruption of encRequest or access_code
+            final baseUri = Uri.parse(ccUrl);
+            final fullUri = Uri(
+              scheme: baseUri.scheme,
+              host: baseUri.host,
+              path: baseUri.path,
+              queryParameters: {
+                'command': 'initiateTransaction',
+                'encRequest': encRequest,
+                'access_code': accessCode,
+              },
+            );
+            if (await canLaunchUrl(fullUri)) {
+              await launchUrl(fullUri, mode: LaunchMode.externalApplication);
+            }
           }
         }
       }
+
+      final String paymentMethodName = _selectedPayment == 'counter'
+          ? 'Pay at Counter'
+          : (_selectedPayment == 'wallet' ? 'Points Wallet' : 'CCAvenue Gateway');
 
       await ApiService().createOrder(
         items: itemsForApi,
@@ -106,7 +112,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         tax: 0.0,
         deliveryFee: 0.0,
         total: _finalTotal.toDouble(),
-        paymentMethod: _selectedPayment,
+        paymentMethod: paymentMethodName,
         deliveryAddress: 'Dine-In / Takeaway',
       );
 
@@ -273,6 +279,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ),
         ),
+        const SizedBox(height: 8),
+        _paymentOption('counter', Icons.storefront_rounded, 'Pay at Counter', 'Pay with Cash, Card, or UPI at the Billing Counter'),
         const SizedBox(height: 8),
         _paymentOption('ccavenue', Icons.payment_rounded, 'CCAvenue Gateway', 'Credit/Debit Cards, NetBanking, UPI, Wallets'),
       ],
@@ -521,10 +529,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
           const SizedBox(height: 12),
           TDGButton(
-            text: _finalTotal <= 0 ? 'Place Order (Free!)' : 'Pay Now ₹$_finalTotal',
+            text: _selectedPayment == 'counter'
+                ? 'Confirm Order (Pay at Counter)'
+                : (_finalTotal <= 0 ? 'Place Order (Free!)' : 'Pay Now ₹$_finalTotal'),
             isLoading: _isPaying,
             onPressed: _handlePayment,
-            icon: Icon(Icons.lock_outline, size: 16, color: TDGColors.white),
+            icon: Icon(
+              _selectedPayment == 'counter' ? Icons.storefront_rounded : Icons.lock_outline,
+              size: 16,
+              color: TDGColors.white,
+            ),
           ),
           SizedBox(height: 8),
           Row(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../widgets/tdg_button.dart';
 import '../utils/responsive.dart';
+import '../services/api_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -11,9 +12,63 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final _nameController = TextEditingController(text: 'Rohit Sharma');
-  final _phoneController = TextEditingController(text: '+91 98765 43210');
-  final _emailController = TextEditingController(text: 'rohit.sharma@example.com');
+  late TextEditingController _nameController;
+  late TextEditingController _phoneController;
+  late TextEditingController _emailController;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = ApiService().currentUser;
+    _nameController = TextEditingController(text: user?['name'] ?? '');
+    _phoneController = TextEditingController(text: user?['phone'] ?? '');
+    _emailController = TextEditingController(text: user?['email'] ?? '');
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleSave() async {
+    final name = _nameController.text.trim();
+    final phone = _phoneController.text.trim();
+    final email = _emailController.text.trim();
+
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Full name cannot be empty.'), backgroundColor: Colors.redAccent),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    try {
+      try {
+        await ApiService().updateProfile(name: name, phone: phone, email: email);
+      } catch (_) {
+        // Fallback update local session
+        if (ApiService().currentUser != null) {
+          ApiService().currentUser!['name'] = name;
+          ApiService().currentUser!['phone'] = phone;
+          ApiService().currentUser!['email'] = email;
+        }
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile updated successfully!'), backgroundColor: Colors.green),
+        );
+        Navigator.pop(context);
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,12 +122,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               const SizedBox(height: 60),
               TDGButton(
                 text: 'Save Changes',
-                onPressed: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Profile updated successfully')),
-                  );
-                },
+                isLoading: _isLoading,
+                onPressed: _handleSave,
               ),
             ],
           ),

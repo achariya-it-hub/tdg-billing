@@ -24,6 +24,8 @@ import Accounts from './pages/Accounts'
 import Settings from './pages/Settings'
 import Customizer from './pages/Customizer'
 import PrivacyPolicy from './pages/PrivacyPolicy'
+import MobilePreview from './pages/MobilePreview'
+import DenWebApp from './pages/DenWebApp'
 import Layout from './components/Layout'
 import { SettingsProvider } from './lib/settingsContext'
 import { useState, useEffect } from 'react'
@@ -125,14 +127,14 @@ export default function App() {
         </Routes>
       )
     } else if (hostname.includes('den.')) {
-      // Den Subdomain: den.tendengyros.com (Guest Auth & Self Order Kiosk)
+      // Den Subdomain: den.tendengyros.com (Renders the exact Flutter Mobile Web App)
       return (
         <Routes>
-          <Route path="/" element={<Navigate to="/customizer" replace />} />
+          <Route path="/" element={<DenWebApp />} />
           <Route path="/kiosk" element={<Kiosk />} />
-          <Route path="/customizer" element={<Customizer />} />
-          <Route path="/login" element={<CustomerAuth />} />
-          <Route path="*" element={<Navigate to="/customizer" replace />} />
+          <Route path="/customizer" element={<DenWebApp />} />
+          <Route path="/login" element={<DenWebApp />} />
+          <Route path="*" element={<DenWebApp />} />
         </Routes>
       )
     } else {
@@ -140,6 +142,10 @@ export default function App() {
       return (
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/den" element={<DenWebApp />} />
+          <Route path="/den-app" element={<DenWebApp />} />
+          <Route path="/mobile" element={<MobilePreview />} />
+          <Route path="/app-preview" element={<MobilePreview />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/kiosk" element={<Kiosk />} />
           <Route path="/customizer" element={<Customizer />} />

@@ -5,7 +5,7 @@ import { Server } from 'socket.io'
 import { v4 as uuid } from 'uuid'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync, renameSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import XLSX from 'xlsx'
@@ -15,12 +15,14 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 const JWT_SECRET = process.env.JWT_SECRET || 'tdg_secret_key_123'
-const DB_PATH = join(__dirname, 'db.json')
+const DATA_DIR = process.env.DATA_DIR || __dirname
+const DB_PATH = join(DATA_DIR, 'db.json')
 
 function readDb() {
   try {
     if (existsSync(DB_PATH)) {
-      return JSON.parse(readFileSync(DB_PATH, 'utf-8'))
+      const content = readFileSync(DB_PATH, 'utf-8').trim()
+      if (content) return JSON.parse(content)
     }
   } catch (e) {
     console.error('Error reading db.json:', e.message)
@@ -28,8 +30,8 @@ function readDb() {
   return { users: [], orders: [], transactions: [], menu: null }
 }
 
-const BACKUP_DIR = join(__dirname, 'backups')
-const DAILY_BACKUP_DIR = join(__dirname, 'daily-backups')
+const BACKUP_DIR = join(DATA_DIR, 'backups')
+const DAILY_BACKUP_DIR = join(DATA_DIR, 'daily-backups')
 
 let lastDailyBackupDate = ''
 
@@ -57,15 +59,43 @@ function performDailyBackup() {
   }
 }
 
-function writeDb(data) {
+function writeDb(data = {}) {
   try {
-    writeFileSync(DB_PATH, JSON.stringify(data, null, 2))
-    // Auto-backup on every write (keeps last 2 copies)
+    const completeData = {
+      ...data,
+      orders: typeof orders !== 'undefined' && orders !== undefined ? orders : (data.orders || []),
+      loyaltyUsers: typeof loyaltyUsers !== 'undefined' && loyaltyUsers !== undefined ? loyaltyUsers : (data.loyaltyUsers || []),
+      dens: typeof dens !== 'undefined' && dens !== undefined ? dens : (data.dens || []),
+      pointTransactions: typeof pointTransactions !== 'undefined' && pointTransactions !== undefined ? pointTransactions : (data.pointTransactions || []),
+      inventory: typeof inventory !== 'undefined' && inventory !== undefined ? inventory : (data.inventory || []),
+      orderNumber: typeof orderNumber !== 'undefined' && orderNumber !== undefined ? orderNumber : (data.orderNumber || 1000),
+      usedReferralCodes: typeof usedReferralCodes !== 'undefined' && usedReferralCodes !== undefined ? [...usedReferralCodes] : (data.usedReferralCodes || []),
+      expenses: typeof expenses !== 'undefined' && expenses !== undefined ? expenses : (data.expenses || []),
+      purchases: typeof purchases !== 'undefined' && purchases !== undefined ? purchases : (data.purchases || []),
+      onlineOrders: typeof onlineOrders !== 'undefined' && onlineOrders !== undefined ? onlineOrders : (data.onlineOrders || []),
+      aggregators: typeof aggregators !== 'undefined' && aggregators !== undefined ? aggregators : (data.aggregators || []),
+      billingUsers: typeof billingUsers !== 'undefined' && billingUsers !== undefined ? billingUsers : (data.billingUsers || []),
+      categories: typeof categories !== 'undefined' && categories !== undefined ? categories : (data.categories || []),
+      menuItems: typeof menuItems !== 'undefined' && menuItems !== undefined ? menuItems : (data.menuItems || []),
+      recipes: typeof recipes !== 'undefined' && recipes !== undefined ? recipes : (data.recipes || []),
+      users: typeof mobileAppUsers !== 'undefined' && mobileAppUsers !== undefined ? mobileAppUsers : (data.users || []),
+      suppliers: typeof suppliers !== 'undefined' && suppliers !== undefined ? suppliers : (data.suppliers || []),
+      purchaseOrders: typeof purchaseOrders !== 'undefined' && purchaseOrders !== undefined ? purchaseOrders : (data.purchaseOrders || []),
+      poItems: typeof poItems !== 'undefined' && poItems !== undefined ? poItems : (data.poItems || []),
+      grns: typeof grns !== 'undefined' && grns !== undefined ? grns : (data.grns || []),
+      vendorPayments: typeof vendorPayments !== 'undefined' && vendorPayments !== undefined ? vendorPayments : (data.vendorPayments || []),
+      settings: typeof settings !== 'undefined' && settings !== undefined ? settings : (data.settings || {})
+    }
+
+    const tempPath = `${DB_PATH}.tmp`
+    writeFileSync(tempPath, JSON.stringify(completeData, null, 2))
+    renameSync(tempPath, DB_PATH)
+
+    // Auto-backup on every write (keeps last 20 copies)
     try {
       if (!existsSync(BACKUP_DIR)) mkdirSync(BACKUP_DIR, { recursive: true })
       const ts = new Date().toISOString().replace(/[:.]/g, '-')
-      writeFileSync(join(BACKUP_DIR, `db-${ts}.json`), JSON.stringify(data, null, 2))
-      // Keep only last 20 backups
+      writeFileSync(join(BACKUP_DIR, `db-${ts}.json`), JSON.stringify(completeData, null, 2))
       const files = readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json')).sort().reverse()
       for (const old of files.slice(20)) rmSync(join(BACKUP_DIR, old))
     } catch (be) {
@@ -133,7 +163,7 @@ let grns = []
 let vendorPayments = []
 let onlineOrders = []
 let settings = {
-  company: { name: 'Ten Den Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '000000000', email: '', gst: '', logo: null, upiId: '' },
+  company: { name: 'Ten Den Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '000000000', email: '', gst: '', logo: null, upiId: '', deliveryEnabled: true },
   theme: { accentPrimary: '#e63946', accentPrimaryDark: '#c1121f', bgPrimary: '#f5f5f7' },
   printers: [{ id: 'default', name: 'Default Printer', ip: '', type: 'browser', isDefault: true }],
   paymentGateways: {
@@ -159,79 +189,91 @@ let aggregators = [
 ]
 
 function saveState() {
-  const db = readDb()
-  db.orders = orders
-  db.loyaltyUsers = loyaltyUsers
-  db.dens = dens
-  db.pointTransactions = pointTransactions
-  db.inventory = inventory
-  db.orderNumber = orderNumber
-  db.usedReferralCodes = [...usedReferralCodes]
-  db.expenses = expenses
-  db.purchases = purchases
-  db.onlineOrders = onlineOrders
-  db.aggregators = aggregators
-  db.billingUsers = billingUsers
-  db.categories = categories
-  db.menuItems = menuItems
-  db.recipes = recipes
-  db.users = mobileAppUsers
-  db.suppliers = suppliers
-  db.purchaseOrders = purchaseOrders
-  db.poItems = poItems
-  db.grns = grns
-  db.vendorPayments = vendorPayments
-  db.settings = settings
-  writeDb(db)
+  writeDb({
+    orders,
+    loyaltyUsers,
+    dens,
+    pointTransactions,
+    inventory,
+    orderNumber,
+    usedReferralCodes: [...usedReferralCodes],
+    expenses,
+    purchases,
+    onlineOrders,
+    aggregators,
+    billingUsers,
+    categories,
+    menuItems,
+    recipes,
+    users: mobileAppUsers,
+    suppliers,
+    purchaseOrders,
+    poItems,
+    grns,
+    vendorPayments,
+    settings
+  })
 }
 
 // Restore in-memory state from db.json on startup
 function restoreState() {
-  // Safety: if db.json was wiped by deploy, restore latest backup
-  if (!existsSync(DB_PATH) && existsSync(BACKUP_DIR)) {
-    const backups = readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json')).sort().reverse()
-    if (backups.length > 0) {
-      const latest = join(BACKUP_DIR, backups[0])
+  let db = readDb()
+
+  // Safety: if db.json is missing or lacks business data (e.g. wiped by new git deploy), auto-restore from latest backup
+  const isDbEmptyOrMissing = !existsSync(DB_PATH) || 
+    !db || 
+    ((!db.orders || !db.orders.length) && (!db.users || !db.users.length) && (!db.categories || !db.categories.length))
+
+  if (isDbEmptyOrMissing) {
+    console.log('[DATA SAFETY] db.json is missing or empty. Searching for persistent backups...')
+    const backupDirs = [BACKUP_DIR, DAILY_BACKUP_DIR]
+    let foundBackup = null
+
+    for (const bDir of backupDirs) {
+      if (existsSync(bDir)) {
+        const files = readdirSync(bDir).filter(f => f.endsWith('.json')).sort().reverse()
+        for (const file of files) {
+          try {
+            const content = readFileSync(join(bDir, file), 'utf-8').trim()
+            if (!content) continue
+            const parsed = JSON.parse(content)
+            if ((parsed.orders && parsed.orders.length) || (parsed.users && parsed.users.length) || (parsed.menuItems && parsed.menuItems.length)) {
+              foundBackup = parsed
+              console.log(`[DATA SAFETY] Found valid backup: ${file}`)
+              break
+            }
+          } catch (e) { /* ignore corrupt backup */ }
+        }
+      }
+      if (foundBackup) break
+    }
+
+    if (foundBackup) {
+      db = foundBackup
       try {
-        const data = readFileSync(latest, 'utf-8')
-        writeFileSync(DB_PATH, data)
-        console.log('Auto-restored db.json from backup:', backups[0])
-      } catch (e) { console.error('Backup restore failed:', e.message) }
+        writeFileSync(DB_PATH, JSON.stringify(foundBackup, null, 2))
+        console.log('[DATA SAFETY] Auto-restored business database from backup successfully!')
+      } catch (e) {
+        console.error('[DATA SAFETY] Failed to write restored backup:', e.message)
+      }
     }
   }
-  const db = readDb()
-  if (db.orders?.length) orders = db.orders
-  if (db.loyaltyUsers?.length) loyaltyUsers = db.loyaltyUsers
-  if (db.dens?.length) dens = db.dens
-  if (db.pointTransactions?.length) pointTransactions = db.pointTransactions
-  if (db.inventory?.length) inventory = db.inventory
+
+  if (db.orders && Array.isArray(db.orders)) orders = db.orders
+  if (db.loyaltyUsers && Array.isArray(db.loyaltyUsers)) loyaltyUsers = db.loyaltyUsers
+  if (db.dens && Array.isArray(db.dens)) dens = db.dens
+  if (db.pointTransactions && Array.isArray(db.pointTransactions)) pointTransactions = db.pointTransactions
+  if (db.inventory && Array.isArray(db.inventory)) inventory = db.inventory
   if (db.orderNumber) orderNumber = db.orderNumber
-  if (db.usedReferralCodes?.length) usedReferralCodes = new Set(db.usedReferralCodes)
-  if (db.expenses?.length) expenses = db.expenses
-  if (db.purchases?.length) purchases = db.purchases
-  if (db.onlineOrders?.length) onlineOrders = db.onlineOrders
-  if (db.aggregators?.length) aggregators = db.aggregators
-  if (db.categories && db.categories.length) {
-    categories = db.categories
-  } else {
-    // Keep default categories and save them
-    db.categories = categories
-  }
-  if (db.menuItems && db.menuItems.length) {
-    menuItems = db.menuItems
-  } else {
-    // Keep default menuItems and save them
-    db.menuItems = menuItems
-  }
-  if (!db.categories || !db.categories.length || !db.menuItems || !db.menuItems.length) {
-    writeDb(db)
-  }
-  if (db.recipes?.length) recipes = db.recipes
-  if (db.users?.length) {
-    mobileAppUsers = db.users
-  } else {
-    mobileAppUsers = []
-  }
+  if (db.usedReferralCodes && Array.isArray(db.usedReferralCodes)) usedReferralCodes = new Set(db.usedReferralCodes)
+  if (db.expenses && Array.isArray(db.expenses)) expenses = db.expenses
+  if (db.purchases && Array.isArray(db.purchases)) purchases = db.purchases
+  if (db.onlineOrders && Array.isArray(db.onlineOrders)) onlineOrders = db.onlineOrders
+  if (db.aggregators && Array.isArray(db.aggregators)) aggregators = db.aggregators
+  if (db.categories && Array.isArray(db.categories)) categories = db.categories
+  if (db.menuItems && Array.isArray(db.menuItems)) menuItems = db.menuItems
+  if (db.recipes && Array.isArray(db.recipes)) recipes = db.recipes
+  if (db.users && Array.isArray(db.users)) mobileAppUsers = db.users
 
   // Seed demo login credentials
   const demoEmail = 'demo'
@@ -1360,13 +1402,14 @@ function verifySuperAdmin(pin) {
 app.put('/api/settings/company', (req, res) => {
   const auth = verifySuperAdmin(req.body.pin)
   if (!auth.ok) return res.status(403).json({ error: auth.error })
-  const { name, address, phone, email, gst, upiId } = req.body
+  const { name, address, phone, email, gst, upiId, deliveryEnabled } = req.body
   if (name !== undefined) settings.company.name = name
   if (address !== undefined) settings.company.address = address
   if (phone !== undefined) settings.company.phone = phone
   if (email !== undefined) settings.company.email = email
   if (gst !== undefined) settings.company.gst = gst
   if (upiId !== undefined) settings.company.upiId = upiId
+  if (deliveryEnabled !== undefined) settings.company.deliveryEnabled = deliveryEnabled
   const db = readDb(); db.settings = settings; writeDb(db)
   res.json({ success: true, settings })
 })

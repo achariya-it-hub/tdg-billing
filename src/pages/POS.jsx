@@ -7,6 +7,7 @@ import { useMenuStore } from '../stores/menuStore'
 import { useOrderStore } from '../stores/orderStore'
 import { getSocket, connectToPOS } from '../lib/socket'
 import { playOrderAlertSound, getSoundEnabled, setSoundEnabled } from '../utils/audioAlert'
+import PrintService from '../lib/printService'
 
 const categoryIcons = {
   'Burgers': '🍔',
@@ -98,6 +99,92 @@ export default function POS() {
   const [showCart, setShowCart] = useState(false)
   const [soundOn, setSoundOn] = useState(() => getSoundEnabled())
 
+  // Gyro Customizer State
+  const [customizingItem, setCustomizingItem] = useState(null)
+  const [selectedBread, setSelectedBread] = useState('Baked')
+  const [selectedSpread, setSelectedSpread] = useState('Tzatziki')
+  const [selectedSauces, setSelectedSauces] = useState(['Garlic Mayo'])
+  const [selectedVeggies, setSelectedVeggies] = useState(['Lettuce', 'Onion'])
+  const [gyroNotes, setGyroNotes] = useState('')
+  const [deliveryEnabled, setDeliveryEnabled] = useState(true)
+
+  useEffect(() => {
+    fetch(`${API()}/api/settings`)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.company?.deliveryEnabled !== undefined) {
+          setDeliveryEnabled(data.company.deliveryEnabled !== false)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  const handleSelectOrderType = (type) => {
+    if (type === 'delivery' && !deliveryEnabled) {
+      toast.error('Delivery service is currently turned OFF by store settings')
+      return
+    }
+    setOrderType(type)
+  }
+
+  const isGyro = (item) => {
+    if (!item) return false
+    const cat = categories.find(c => c.id === item.categoryId)
+    const catName = cat ? cat.name.toLowerCase() : ''
+    const itemName = item.name.toLowerCase()
+    return catName.includes('gyro') || itemName.includes('gyro')
+  }
+
+  const handleItemClick = (item) => {
+    if (!item.isAvailable) return
+    if (isGyro(item)) {
+      setCustomizingItem(item)
+      setSelectedBread('Baked')
+      setSelectedSpread('Tzatziki')
+      setSelectedSauces(['Garlic Mayo'])
+      setSelectedVeggies(['Lettuce', 'Onion'])
+      setGyroNotes('')
+    } else {
+      addItem({
+        menuItemId: item.id,
+        menuItemName: item.name,
+        unitPrice: item.price,
+        totalPrice: item.price
+      })
+    }
+  }
+
+  const handleAddGyroWithCustomization = () => {
+    if (!customizingItem) return
+    const customization = {
+      bread: selectedBread,
+      spread: selectedSpread,
+      sauces: selectedSauces,
+      veggies: selectedVeggies,
+      notes: gyroNotes
+    }
+    addItem({
+      menuItemId: customizingItem.id,
+      menuItemName: customizingItem.name,
+      unitPrice: customizingItem.price,
+      totalPrice: customizingItem.price,
+      customization
+    })
+    setCustomizingItem(null)
+    toast.success(`Added customized ${customizingItem.name} to order`)
+  }
+
+  const handleAddStandardGyro = () => {
+    if (!customizingItem) return
+    addItem({
+      menuItemId: customizingItem.id,
+      menuItemName: customizingItem.name,
+      unitPrice: customizingItem.price,
+      totalPrice: customizingItem.price
+    })
+    setCustomizingItem(null)
+  }
+
   const toggleSound = () => {
     const next = !soundOn
     setSoundOn(next)
@@ -149,7 +236,14 @@ export default function POS() {
   const handlePlaceOrder = async () => {
     if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place order'); return }
     setProcessing(true)
-    try { await placeOrder(); toast.success('Order placed successfully!'); setShowCart(false) }
+    try {
+      const newOrder = await placeOrder()
+      toast.success('Order placed & Bill generated!')
+      setShowCart(false)
+      if (newOrder) {
+        PrintService.printKOTAndBill(newOrder)
+      }
+    }
     catch (err) { console.error('Order error:', err); toast.error('Failed: ' + err.message) }
     setProcessing(false)
   }
@@ -183,17 +277,29 @@ export default function POS() {
 
   const MenuItemCard = ({ item }) => {
     const cat = categories.find(c => c.id === item.categoryId)
+    const isGyroItem = isGyro(item)
     return (
       <div
-        onClick={() => item.isAvailable && addItem({ menuItemId: item.id, menuItemName: item.name, unitPrice: item.price, totalPrice: item.price })}
+        onClick={() => handleItemClick(item)}
         style={{
           ...menuItemCard,
           opacity: item.isAvailable ? 1 : 0.5,
-          cursor: item.isAvailable ? 'pointer' : 'not-allowed'
+          cursor: item.isAvailable ? 'pointer' : 'not-allowed',
+          position: 'relative'
         }}
         onMouseEnter={(e) => { if (item.isAvailable) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)' } }}
         onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)' }}
       >
+        {isGyroItem && item.isAvailable && (
+          <span style={{
+            position: 'absolute', top: '6px', right: '6px',
+            background: 'linear-gradient(135deg, #e63946, #c1121f)',
+            color: 'white', fontSize: '9px', fontWeight: 700,
+            padding: '2px 6px', borderRadius: '6px', boxShadow: '0 2px 4px rgba(0,0,0,0.15)'
+          }}>
+            CUSTOMIZABLE
+          </span>
+        )}
         <div style={{
           height: isMobile ? '60px' : '90px',
           background: `linear-gradient(135deg, ${cat?.color || '#333'}22, ${cat?.color || '#333'}08)`,
@@ -219,9 +325,10 @@ export default function POS() {
         <div style={{ fontWeight: 600, fontSize: '13px' }}>{item.menuItemName}</div>
         {item.customization && (
           <div style={{ fontSize: '11px', color: '#e63946', marginTop: '2px', fontWeight: 500, lineHeight: 1.3 }}>
-            {item.customization.protein} • {item.customization.bread} bread • {item.customization.spread} spread
+            {item.customization.bread} bread • {item.customization.spread} spread
             {item.customization.sauces?.length > 0 && ` • Sauces: ${item.customization.sauces.join(', ')}`}
             {item.customization.veggies?.length > 0 && ` • Veggies: ${item.customization.veggies.join(', ')}`}
+            {item.customization.notes && ` • Note: ${item.customization.notes}`}
           </div>
         )}
         <div style={{ color: '#e63946', fontSize: '12px', fontWeight: 500, marginTop: '2px' }}>₹{item.unitPrice}</div>
@@ -270,11 +377,18 @@ export default function POS() {
         {/* Mobile Cart Modal */}
         <Modal isOpen={showCart} onClose={() => setShowCart(false)} title="Your Order" size="full">
           <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-            {['dine-in', 'takeaway', 'delivery'].map(type => (
-              <button key={type} onClick={() => setOrderType(type)} style={orderTypeBtn(currentOrder.type === type)}>
-                {type === 'dine-in' ? 'Dine In' : type}
-              </button>
-            ))}
+            {['dine-in', 'takeaway', 'delivery'].map(type => {
+              const isDisabled = type === 'delivery' && !deliveryEnabled
+              return (
+                <button key={type} onClick={() => handleSelectOrderType(type)} style={{
+                  ...orderTypeBtn(currentOrder.type === type),
+                  opacity: isDisabled ? 0.45 : 1,
+                  cursor: isDisabled ? 'not-allowed' : 'pointer'
+                }}>
+                  {type === 'dine-in' ? 'Dine In' : type === 'delivery' && !deliveryEnabled ? 'Delivery (OFF)' : type}
+                </button>
+              )
+            })}
           </div>
           <input type="tel" placeholder="Customer Phone" value={currentOrder.customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} style={{ ...inputStyle, marginBottom: '12px' }} />
           <div style={{ maxHeight: '300px', overflow: 'auto', marginBottom: '16px' }}>
@@ -366,11 +480,18 @@ export default function POS() {
       <div style={orderPanel}>
         {/* Order Type Tabs */}
         <div style={{ display: 'flex', gap: '6px', padding: '12px', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-          {['dine-in', 'takeaway', 'delivery'].map(type => (
-            <button key={type} onClick={() => setOrderType(type)} style={orderTypeBtn(currentOrder.type === type)}>
-              {type === 'dine-in' ? 'Dine In' : type}
-            </button>
-          ))}
+          {['dine-in', 'takeaway', 'delivery'].map(type => {
+            const isDisabled = type === 'delivery' && !deliveryEnabled
+            return (
+              <button key={type} onClick={() => handleSelectOrderType(type)} style={{
+                ...orderTypeBtn(currentOrder.type === type),
+                opacity: isDisabled ? 0.45 : 1,
+                cursor: isDisabled ? 'not-allowed' : 'pointer'
+              }}>
+                {type === 'dine-in' ? 'Dine In' : type === 'delivery' && !deliveryEnabled ? 'Delivery (OFF)' : type}
+              </button>
+            )
+          })}
         </div>
 
         {(currentOrder.type === 'dine-in' || currentOrder.type === 'takeaway' || currentOrder.type === 'delivery') && (
@@ -437,6 +558,129 @@ export default function POS() {
           </Button>
         </div>
       </div>
+
+      {/* Gyro Options Customizer Modal */}
+      <Modal isOpen={!!customizingItem} onClose={() => setCustomizingItem(null)} title={`🌯 Customize ${customizingItem?.name || 'Gyro'}`} size="lg">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '75vh', overflowY: 'auto', paddingRight: '4px' }}>
+          
+          {/* Pita Bread Section */}
+          <div>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              1. Pita Bread Type
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {['Baked', 'Fried'].map(b => (
+                <button key={b} type="button" onClick={() => setSelectedBread(b)} style={{
+                  flex: 1, padding: '10px 14px', borderRadius: '10px',
+                  border: selectedBread === b ? '2px solid #e63946' : '1px solid #e5e7eb',
+                  background: selectedBread === b ? '#fff5f5' : '#f9fafb',
+                  color: selectedBread === b ? '#e63946' : '#374151',
+                  fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.15s'
+                }}>
+                  {b === 'Baked' ? '🫓 Baked Pita' : '🥙 Fried Pita'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Base Spread Section */}
+          <div>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              2. Base Spread
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+              {['Tzatziki', 'Hummus', 'Cheese', 'Ricotta'].map(s => (
+                <button key={s} type="button" onClick={() => setSelectedSpread(s)} style={{
+                  padding: '10px', borderRadius: '10px',
+                  border: selectedSpread === s ? '2px solid #e63946' : '1px solid #e5e7eb',
+                  background: selectedSpread === s ? '#fff5f5' : '#f9fafb',
+                  color: selectedSpread === s ? '#e63946' : '#374151',
+                  fontWeight: 600, fontSize: '13px', cursor: 'pointer', textAlign: 'center', transition: 'all 0.15s'
+                }}>
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Sauces Section */}
+          <div>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              3. Sauces (Select Multiple)
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+              {['Garlic Mayo', 'Turkish Chili', 'Jalapeno Cheese', 'Spicy Mayo', 'Peri Peri', 'Honey Mustard'].map(sauce => {
+                const isSelected = selectedSauces.includes(sauce)
+                return (
+                  <button key={sauce} type="button" onClick={() => {
+                    if (isSelected) setSelectedSauces(selectedSauces.filter(x => x !== sauce))
+                    else setSelectedSauces([...selectedSauces, sauce])
+                  }} style={{
+                    padding: '8px 10px', borderRadius: '10px',
+                    border: isSelected ? '2px solid #e63946' : '1px solid #e5e7eb',
+                    background: isSelected ? '#e63946' : '#f9fafb',
+                    color: isSelected ? 'white' : '#374151',
+                    fontWeight: 600, fontSize: '12px', cursor: 'pointer', transition: 'all 0.15s'
+                  }}>
+                    {isSelected ? '✓ ' : ''}{sauce}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Veggies Section */}
+          <div>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              4. Fresh Veggies & Toppings
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+              {['Lettuce', 'Onion', 'Jalapeno', 'Olive', 'Capsicum', 'Tomato', 'Cucumber', 'Beans'].map(veg => {
+                const isSelected = selectedVeggies.includes(veg)
+                return (
+                  <button key={veg} type="button" onClick={() => {
+                    if (isSelected) setSelectedVeggies(selectedVeggies.filter(x => x !== veg))
+                    else setSelectedVeggies([...selectedVeggies, veg])
+                  }} style={{
+                    padding: '8px 6px', borderRadius: '10px',
+                    border: isSelected ? '2px solid #10b981' : '1px solid #e5e7eb',
+                    background: isSelected ? '#10b981' : '#f9fafb',
+                    color: isSelected ? 'white' : '#374151',
+                    fontWeight: 600, fontSize: '12px', cursor: 'pointer', transition: 'all 0.15s'
+                  }}>
+                    {isSelected ? '✓ ' : ''}{veg}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Custom Remarks */}
+          <div>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>
+              Special Request / Kitchen Note
+            </div>
+            <input
+              type="text"
+              placeholder="e.g. Extra Spicy, No Onion, Less Mayo..."
+              value={gyroNotes}
+              onChange={e => setGyroNotes(e.target.value)}
+              style={inputStyle}
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+            <Button variant="secondary" onClick={handleAddStandardGyro} style={{ flex: 1, borderRadius: '12px' }}>
+              Standard Gyro
+            </Button>
+            <Button variant="primary" onClick={handleAddGyroWithCustomization} style={{ flex: 2, borderRadius: '12px', background: 'linear-gradient(135deg, #e63946, #c1121f)' }}>
+              Add Custom Gyro • ₹{customizingItem?.price}
+            </Button>
+          </div>
+
+        </div>
+      </Modal>
     </div>
   )
 }

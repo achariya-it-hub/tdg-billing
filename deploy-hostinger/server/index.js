@@ -5,7 +5,7 @@ import { Server } from 'socket.io'
 import { v4 as uuid } from 'uuid'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync } from 'fs'
+import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync, renameSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 
@@ -18,7 +18,8 @@ const DB_PATH = join(__dirname, 'db.json')
 function readDb() {
   try {
     if (existsSync(DB_PATH)) {
-      return JSON.parse(readFileSync(DB_PATH, 'utf-8'))
+      const content = readFileSync(DB_PATH, 'utf-8').trim()
+      if (content) return JSON.parse(content)
     }
   } catch (e) {
     console.error('Error reading db.json:', e.message)
@@ -55,15 +56,43 @@ function performDailyBackup() {
   }
 }
 
-function writeDb(data) {
+function writeDb(data = {}) {
   try {
-    writeFileSync(DB_PATH, JSON.stringify(data, null, 2))
-    // Auto-backup on every write (keeps last 2 copies)
+    const completeData = {
+      ...data,
+      orders: orders !== undefined ? orders : (data.orders || []),
+      loyaltyUsers: loyaltyUsers !== undefined ? loyaltyUsers : (data.loyaltyUsers || []),
+      dens: dens !== undefined ? dens : (data.dens || []),
+      pointTransactions: pointTransactions !== undefined ? pointTransactions : (data.pointTransactions || []),
+      inventory: inventory !== undefined ? inventory : (data.inventory || []),
+      orderNumber: orderNumber !== undefined ? orderNumber : (data.orderNumber || 1000),
+      usedReferralCodes: usedReferralCodes !== undefined ? [...usedReferralCodes] : (data.usedReferralCodes || []),
+      expenses: expenses !== undefined ? expenses : (data.expenses || []),
+      purchases: purchases !== undefined ? purchases : (data.purchases || []),
+      onlineOrders: onlineOrders !== undefined ? onlineOrders : (data.onlineOrders || []),
+      aggregators: aggregators !== undefined ? aggregators : (data.aggregators || []),
+      billingUsers: billingUsers !== undefined ? billingUsers : (data.billingUsers || []),
+      categories: categories !== undefined ? categories : (data.categories || []),
+      menuItems: menuItems !== undefined ? menuItems : (data.menuItems || []),
+      recipes: typeof recipes !== 'undefined' && recipes !== undefined ? recipes : (data.recipes || []),
+      users: typeof mobileAppUsers !== 'undefined' && mobileAppUsers !== undefined ? mobileAppUsers : (data.users || []),
+      suppliers: suppliers !== undefined ? suppliers : (data.suppliers || []),
+      purchaseOrders: purchaseOrders !== undefined ? purchaseOrders : (data.purchaseOrders || []),
+      poItems: poItems !== undefined ? poItems : (data.poItems || []),
+      grns: grns !== undefined ? grns : (data.grns || []),
+      vendorPayments: vendorPayments !== undefined ? vendorPayments : (data.vendorPayments || []),
+      settings: settings !== undefined ? settings : (data.settings || {})
+    }
+
+    const tempPath = `${DB_PATH}.tmp`
+    writeFileSync(tempPath, JSON.stringify(completeData, null, 2))
+    renameSync(tempPath, DB_PATH)
+
+    // Auto-backup on every write (keeps last 20 copies)
     try {
       if (!existsSync(BACKUP_DIR)) mkdirSync(BACKUP_DIR, { recursive: true })
       const ts = new Date().toISOString().replace(/[:.]/g, '-')
-      writeFileSync(join(BACKUP_DIR, `db-${ts}.json`), JSON.stringify(data, null, 2))
-      // Keep only last 20 backups
+      writeFileSync(join(BACKUP_DIR, `db-${ts}.json`), JSON.stringify(completeData, null, 2))
       const files = readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json')).sort().reverse()
       for (const old of files.slice(20)) rmSync(join(BACKUP_DIR, old))
     } catch (be) {
@@ -131,7 +160,7 @@ let grns = []
 let vendorPayments = []
 let onlineOrders = []
 let settings = {
-  company: { name: 'Ten Den Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '000000000', email: '', gst: '', logo: null, upiId: '' },
+  company: { name: 'Ten Den Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '000000000', email: '', gst: '', logo: null, upiId: '', deliveryEnabled: true },
   theme: { accentPrimary: '#e63946', accentPrimaryDark: '#c1121f', bgPrimary: '#f5f5f7' },
   printers: [{ id: 'default', name: 'Default Printer', ip: '', type: 'browser', isDefault: true }],
   paymentGateways: {
@@ -157,28 +186,28 @@ let aggregators = [
 ]
 
 function saveState() {
-  const db = readDb()
-  db.orders = orders
-  db.loyaltyUsers = loyaltyUsers
-  db.dens = dens
-  db.pointTransactions = pointTransactions
-  db.inventory = inventory
-  db.orderNumber = orderNumber
-  db.usedReferralCodes = [...usedReferralCodes]
-  db.expenses = expenses
-  db.purchases = purchases
-  db.onlineOrders = onlineOrders
-  db.aggregators = aggregators
-  db.billingUsers = billingUsers
-  db.categories = categories
-  db.menuItems = menuItems
-  db.suppliers = suppliers
-  db.purchaseOrders = purchaseOrders
-  db.poItems = poItems
-  db.grns = grns
-  db.vendorPayments = vendorPayments
-  db.settings = settings
-  writeDb(db)
+  writeDb({
+    orders,
+    loyaltyUsers,
+    dens,
+    pointTransactions,
+    inventory,
+    orderNumber,
+    usedReferralCodes: [...usedReferralCodes],
+    expenses,
+    purchases,
+    onlineOrders,
+    aggregators,
+    billingUsers,
+    categories,
+    menuItems,
+    suppliers,
+    purchaseOrders,
+    poItems,
+    grns,
+    vendorPayments,
+    settings
+  })
 }
 
 // Restore in-memory state from db.json on startup
@@ -196,24 +225,27 @@ function restoreState() {
     }
   }
   const db = readDb()
-  if (db.orders?.length) orders = db.orders
-  if (db.loyaltyUsers?.length) loyaltyUsers = db.loyaltyUsers
-  if (db.dens?.length) dens = db.dens
-  if (db.pointTransactions?.length) pointTransactions = db.pointTransactions
-  if (db.inventory?.length) inventory = db.inventory
+  if (db.orders && Array.isArray(db.orders)) orders = db.orders
+  if (db.loyaltyUsers && Array.isArray(db.loyaltyUsers)) loyaltyUsers = db.loyaltyUsers
+  if (db.dens && Array.isArray(db.dens)) dens = db.dens
+  if (db.pointTransactions && Array.isArray(db.pointTransactions)) pointTransactions = db.pointTransactions
+  if (db.inventory && Array.isArray(db.inventory)) inventory = db.inventory
   if (db.orderNumber) orderNumber = db.orderNumber
-  if (db.usedReferralCodes?.length) usedReferralCodes = new Set(db.usedReferralCodes)
-  if (db.expenses?.length) expenses = db.expenses
-  if (db.purchases?.length) purchases = db.purchases
-  if (db.onlineOrders?.length) onlineOrders = db.onlineOrders
-  if (db.aggregators?.length) aggregators = db.aggregators
-  if (db.categories?.length) categories = db.categories
-  if (db.menuItems?.length) menuItems = db.menuItems
-  if (db.users?.length) {
-    mobileAppUsers = db.users
-  } else {
-    mobileAppUsers = []
-  }
+  if (db.usedReferralCodes && Array.isArray(db.usedReferralCodes)) usedReferralCodes = new Set(db.usedReferralCodes)
+  if (db.expenses && Array.isArray(db.expenses)) expenses = db.expenses
+  if (db.purchases && Array.isArray(db.purchases)) purchases = db.purchases
+  if (db.onlineOrders && Array.isArray(db.onlineOrders)) onlineOrders = db.onlineOrders
+  if (db.aggregators && Array.isArray(db.aggregators)) aggregators = db.aggregators
+  if (db.categories && Array.isArray(db.categories)) categories = db.categories
+  if (db.menuItems && Array.isArray(db.menuItems)) menuItems = db.menuItems
+  if (db.users && Array.isArray(db.users)) mobileAppUsers = db.users
+  if (db.suppliers && Array.isArray(db.suppliers)) suppliers = db.suppliers
+  if (db.purchaseOrders && Array.isArray(db.purchaseOrders)) purchaseOrders = db.purchaseOrders
+  if (db.poItems && Array.isArray(db.poItems)) poItems = db.poItems
+  if (db.grns && Array.isArray(db.grns)) grns = db.grns
+  if (db.vendorPayments && Array.isArray(db.vendorPayments)) vendorPayments = db.vendorPayments
+  if (db.settings) settings = { ...settings, ...db.settings }
+  if (db.billingUsers && Array.isArray(db.billingUsers)) billingUsers = db.billingUsers
 
   // Seed demo login credentials
   const demoEmail = 'demo'
@@ -1183,13 +1215,14 @@ function verifySuperAdmin(pin) {
 app.put('/api/settings/company', (req, res) => {
   const auth = verifySuperAdmin(req.body.pin)
   if (!auth.ok) return res.status(403).json({ error: auth.error })
-  const { name, address, phone, email, gst, upiId } = req.body
+  const { name, address, phone, email, gst, upiId, deliveryEnabled } = req.body
   if (name !== undefined) settings.company.name = name
   if (address !== undefined) settings.company.address = address
   if (phone !== undefined) settings.company.phone = phone
   if (email !== undefined) settings.company.email = email
   if (gst !== undefined) settings.company.gst = gst
   if (upiId !== undefined) settings.company.upiId = upiId
+  if (deliveryEnabled !== undefined) settings.company.deliveryEnabled = deliveryEnabled
   const db = readDb(); db.settings = settings; writeDb(db)
   res.json({ success: true, settings })
 })

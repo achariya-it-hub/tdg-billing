@@ -180,7 +180,7 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 180),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -408,53 +408,59 @@ class _CustomizerScreenState extends State<CustomizerScreen> {
           // Bottom float summaries bar
           Positioned(
             bottom: 0, left: 0, right: 0,
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0F0F12),
-                border: Border(top: BorderSide(color: TDGColors.gold.withOpacity(0.3), width: 1.5)),
-                boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 15, offset: Offset(0, -4))],
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Custom Gyro Wrap',
-                          style: GoogleFonts.outfit(color: TDGColors.gold, fontWeight: FontWeight.w900, fontSize: 14),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '$selectedProtein • $selectedBread • $selectedSpread spread',
-                          style: GoogleFonts.outfit(color: Colors.grey, fontSize: 10),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        )
-                      ],
+            child: SafeArea(
+              top: false,
+              bottom: true,
+              child: Container(
+                margin: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F0F12),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: TDGColors.gold.withOpacity(0.3), width: 1.5),
+                  boxShadow: const [BoxShadow(color: Colors.black87, blurRadius: 20, offset: Offset(0, -4))],
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Custom Gyro Wrap',
+                            style: GoogleFonts.outfit(color: TDGColors.gold, fontWeight: FontWeight.w900, fontSize: 14),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '$selectedProtein • $selectedBread • $selectedSpread spread',
+                            style: GoogleFonts.outfit(color: Colors.grey, fontSize: 10),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: addToCartAndDone,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: TDGColors.gold,
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      elevation: 5,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('ADD TO CART (₹199)', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 12)),
-                        const SizedBox(width: 6),
-                        const Icon(Icons.shopping_bag_outlined, size: 16),
-                      ],
-                    ),
-                  )
-                ],
+                    ElevatedButton(
+                      onPressed: addToCartAndDone,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: TDGColors.gold,
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        elevation: 5,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('ADD TO CART (₹199)', style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 11)),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.shopping_bag_outlined, size: 15),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           )
