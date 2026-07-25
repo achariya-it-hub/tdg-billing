@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/colors.dart';
 import '../widgets/tdg_button.dart';
 import '../widgets/tdg_logo.dart';
+import '../widgets/asset_request_dialog.dart';
 import 'main_nav_screen.dart';
 import 'signup_screen.dart';
 import 'forgot_password_screen.dart';
@@ -39,12 +40,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       await ApiService().login(email: credentials, password: password);
+      // Fetch latest profile to populate pendingAssetRequests
+      await ApiService().getProfile();
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => MainNavScreen(key: MainNavScreen.navKey)),
           (route) => false,
         );
+        // Show asset request dialog after navigation settles
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          AssetRequestDialog.showIfNeeded(context);
+        });
       }
     } catch (e) {
       if (mounted) {

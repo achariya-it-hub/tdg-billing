@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
 import 'asset_screen.dart';
@@ -126,13 +125,12 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                 final result = await ApiService().addAsset(name, phone);
                 _fetchDenProgress();
                 if (mounted) {
-                  if (result['requireOtp'] == true) {
-                    _sendFirebaseOtpAndShowDialog(name, phone);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Asset $name added and verified!'), backgroundColor: Colors.green),
-                    );
-                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(result['message'] ?? '$name added — awaiting their acceptance.'),
+                      backgroundColor: Colors.orange.shade700,
+                    ),
+                  );
                 }
               } catch (e) {
                 if (mounted) {
@@ -153,111 +151,7 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
     );
   }
 
-  Future<void> _sendFirebaseOtpAndShowDialog(String name, String phone) async {
-    final formattedPhone = phone.startsWith('+') ? phone : (phone.length == 10 ? '+91$phone' : '+$phone');
-    if (mounted) setState(() => _isLoading = true);
-    try {
-      await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: formattedPhone,
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          if (mounted) setState(() => _isLoading = false);
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          if (mounted) {
-            setState(() => _isLoading = false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Firebase OTP failed: ${e.message}'), backgroundColor: Colors.red),
-            );
-          }
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          if (mounted) {
-            setState(() => _isLoading = false);
-            _showVerifyOtpDialog(name, phone, verificationId: verificationId);
-          }
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {},
-      );
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to trigger Firebase OTP: $e'), backgroundColor: Colors.red),
-        );
-      }
-    }
-  }
-
-  void _showVerifyOtpDialog(String name, String phone, {String? verificationId}) {
-    final otpCtrl = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1E1E24),
-        title: Row(
-          children: [
-            const Icon(Icons.mark_chat_read_rounded, color: Color(0xFF25D366), size: 22),
-            const SizedBox(width: 8),
-            Text('Verify Phone OTP', style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('A Firebase SMS OTP message has been sent to $name ($phone).', style: const TextStyle(color: Colors.grey, fontSize: 13)),
-            const SizedBox(height: 8),
-            Text('Enter the 6-digit OTP received via SMS by $name to verify and activate:', style: const TextStyle(color: Colors.white70, fontSize: 12)),
-            const SizedBox(height: 12),
-            TextField(
-              controller: otpCtrl,
-              keyboardType: TextInputType.number,
-              maxLength: 6,
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 4),
-              decoration: const InputDecoration(hintText: '000000', hintStyle: TextStyle(color: Colors.grey)),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Later', style: TextStyle(color: Colors.grey))),
-          ElevatedButton(
-            onPressed: () async {
-              final otp = otpCtrl.text.trim();
-              if (otp.length < 4) return;
-              Navigator.pop(ctx);
-              try {
-                if (verificationId != null) {
-                  PhoneAuthCredential credential = PhoneAuthProvider.credential(
-                    verificationId: verificationId,
-                    smsCode: otp,
-                  );
-                  await FirebaseAuth.instance.signInWithCredential(credential);
-                  await ApiService().verifyAssetOtp(phone, 'firebase');
-                } else {
-                  await ApiService().verifyAssetOtp(phone, otp);
-                }
-                _fetchDenProgress();
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('$name is now activated!'), backgroundColor: Colors.green),
-                  );
-                }
-              } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
-                  );
-                }
-              }
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: TDGColors.gold, foregroundColor: Colors.black),
-            child: Text('Verify OTP', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
+  // OTP dialog removed — assets now use accept/reject flow on login
 
   void _removeAsset(String assetId, String name) {
     showDialog(
@@ -1216,7 +1110,9 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                                         width: 12,
                                         height: 12,
                                         decoration: BoxDecoration(
-                                          color: isActive ? const Color(0xFF4CAF50) : const Color(0xFFFFB300),
+                                          color: (status == 'verified' || status == 'active' || hasDined)
+                                            ? const Color(0xFF4CAF50)
+                                            : const Color(0xFFFFB300),
                                           shape: BoxShape.circle,
                                           border: Border.all(color: TDGColors.cardDark, width: 2),
                                         ),
@@ -1244,20 +1140,32 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
                                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                             decoration: BoxDecoration(
                                               color: hasDined
-                                                  ? const Color(0xFF4CAF50).withOpacity(0.1)
-                                                  : TDGColors.gold.withOpacity(0.1),
+                                                ? const Color(0xFF4CAF50).withOpacity(0.1)
+                                                : (status == 'verified' || status == 'active')
+                                                    ? const Color(0xFF4CAF50).withOpacity(0.1)
+                                                    : const Color(0xFFFFB300).withOpacity(0.1),
                                               borderRadius: BorderRadius.circular(4),
                                               border: Border.all(
                                                 color: hasDined
                                                     ? const Color(0xFF4CAF50).withOpacity(0.3)
-                                                    : TDGColors.gold.withOpacity(0.3),
+                                                    : (status == 'verified' || status == 'active')
+                                                        ? const Color(0xFF4CAF50).withOpacity(0.3)
+                                                        : const Color(0xFFFFB300).withOpacity(0.3),
                                                 width: 0.5,
                                               ),
                                             ),
                                             child: Text(
-                                              hasDined ? 'Dined' : status.toUpperCase(),
+                                              hasDined
+                                                  ? 'Dined'
+                                                  : (status == 'verified' || status == 'active')
+                                                      ? 'VERIFIED'
+                                                      : 'PENDING',
                                               style: GoogleFonts.inter(
-                                                color: hasDined ? const Color(0xFF4CAF50) : TDGColors.gold,
+                                                color: hasDined
+                                                    ? const Color(0xFF4CAF50)
+                                                    : (status == 'verified' || status == 'active')
+                                                        ? const Color(0xFF4CAF50)
+                                                        : const Color(0xFFFFB300),
                                                 fontSize: 9,
                                                 fontWeight: FontWeight.w600,
                                               ),

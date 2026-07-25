@@ -169,10 +169,16 @@ class _AssetScreenState extends State<AssetScreen> {
               final phone = phoneCtrl.text.trim();
               Navigator.pop(ctx);
               try {
-                // Add asset (returns pending state)
-                await ApiService().addAsset(name, phone);
-                // Trigger live Firebase SMS OTP verification flow
-                await _sendFirebaseOtpAndShowDialog(name, phone);
+                final result = await ApiService().addAsset(name, phone);
+                _fetchAssets();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(result['message'] ?? '$name added — awaiting their acceptance.'),
+                      backgroundColor: Colors.orange.shade700,
+                    ),
+                  );
+                }
               } catch (e) {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -188,113 +194,8 @@ class _AssetScreenState extends State<AssetScreen> {
     );
   }
 
-  Future<void> _sendFirebaseOtpAndShowDialog(String name, String phone) async {
-    final formattedPhone = phone.startsWith('+') ? phone : (phone.length == 10 ? '+91$phone' : '+$phone');
-    if (mounted) setState(() => _isLoading = true);
-    try {
-      await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: formattedPhone,
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          if (mounted) setState(() => _isLoading = false);
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          if (mounted) {
-            setState(() => _isLoading = false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Firebase OTP failed: ${e.message}'), backgroundColor: Colors.red),
-            );
-          }
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          if (mounted) {
-            setState(() => _isLoading = false);
-            _showVerifyOtpDialog(name, phone, verificationId: verificationId);
-          }
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {},
-      );
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to trigger Firebase OTP: $e'), backgroundColor: Colors.red),
-        );
-      }
-    }
-  }
+  // OTP methods removed — assets now use accept/reject flow on login
 
-  void _showVerifyOtpDialog(String name, String phone, {String? verificationId}) {
-    final otpCtrl = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: TDGColors.cardMid,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: Colors.green),
-        ),
-        title: Text('VERIFY PHONE OTP', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('A Firebase SMS OTP has been sent to $name ($phone)', style: TextStyle(color: TDGColors.greyLight, fontSize: 13)),
-            SizedBox(height: 14),
-            TextField(
-              controller: otpCtrl,
-              keyboardType: TextInputType.number,
-              maxLength: 6,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: TDGColors.white, fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: 6),
-              decoration: InputDecoration(
-                counterText: '',
-                hintText: '000000',
-                hintStyle: TextStyle(color: TDGColors.grey, fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: 6),
-                filled: true,
-                fillColor: TDGColors.cardDark,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: TDGColors.gold)),
-                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: TDGColors.gold, width: 2)),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text('Cancel', style: TextStyle(color: TDGColors.greyLight))),
-          TextButton(
-            onPressed: () async {
-              final otp = otpCtrl.text.trim();
-              if (otp.length < 4) return;
-              Navigator.pop(ctx);
-              try {
-                if (verificationId != null) {
-                  PhoneAuthCredential credential = PhoneAuthProvider.credential(
-                    verificationId: verificationId,
-                    smsCode: otp,
-                  );
-                  await FirebaseAuth.instance.signInWithCredential(credential);
-                  await ApiService().verifyAssetOtp(phone, 'firebase');
-                } else {
-                  await ApiService().verifyAssetOtp(phone, otp);
-                }
-                _fetchAssets();
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('OTP verified! Asset activated.'), backgroundColor: Colors.green),
-                  );
-                }
-              } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-                  );
-                }
-              }
-            },
-            child: Text('VERIFY', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _showDistributeDialog(String assetId, String assetName) {
     final ctrl = TextEditingController();

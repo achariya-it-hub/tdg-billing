@@ -417,10 +417,11 @@ const MAX_FREE_REGISTRATIONS = 1000
 const MAX_DEN_MEMBERS = 10
 
 function generateReferralCode() {
+  // 8-char alphanumeric: letters + digits, unambiguous chars only
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
   while (true) {
     let code = ''
-    for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)]
+    for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)]
     if (!usedReferralCodes.has(code)) {
       usedReferralCodes.add(code)
       return code
@@ -690,8 +691,27 @@ function getMobileUser(userId) {
 app.get('/api/auth/profile', auth, (req, res) => {
   const user = getMobileUser(req.userId)
   if (!user) return res.status(404).json({ message: 'User not found' })
+
+  // Find any pending asset requests for this user (others who added their phone)
+  const cleanPhone = (user.phone || '').replace(/[^0-9]/g, '')
+  const pendingAssetRequests = []
+  for (const master of mobileAppUsers) {
+    if (master.id === req.userId) continue
+    const pending = (master.assets || []).filter(a =>
+      a.status === 'pending' &&
+      a.phone.replace(/[^0-9]/g, '') === cleanPhone
+    )
+    for (const a of pending) {
+      pendingAssetRequests.push({
+        assetId: a.id,
+        masterId: master.id,
+        masterName: master.name
+      })
+    }
+  }
+
   const { password: _, ...userWithoutPassword } = user
-  res.json(userWithoutPassword)
+  res.json({ ...userWithoutPassword, pendingAssetRequests })
 })
 
 // Auth - Update Profile
@@ -732,7 +752,7 @@ app.get('/api/assets', auth, (req, res) => {
   })
 })
 
-// Add an asset (friend)
+// Add an asset (friend) — always pending, asset user must accept/reject on login
 app.post('/api/assets', auth, (req, res) => {
   const { name, phone } = req.body
   if (!name || !phone) return res.status(400).json({ message: 'Name and phone required' })
@@ -742,48 +762,35 @@ app.post('/api/assets', auth, (req, res) => {
 
   const assets = user.assets || []
   if (assets.length >= 10) return res.status(400).json({ message: 'Maximum 10 assets allowed' })
-  if (assets.find(a => a.phone === phone)) return res.status(400).json({ message: 'Asset with this phone already added' })
-
-  // Check toggle from database settings
-  const shouldRequireOtp = settings.paymentGateways?.enableAssetOtp !== false
-  const otp = shouldRequireOtp ? String(Math.floor(1000 + Math.random() * 9000)) : ''
-  const otpExpiry = shouldRequireOtp ? new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() : ''
+  const cleanPhone = phone.replace(/[^0-9]/g, '')
+  if (assets.find(a => a.phone.replace(/[^0-9]/g, '') === cleanPhone)) {
+    return res.status(400).json({ message: 'Asset with this phone already added' })
+  }
 
   const newAsset = {
     id: 'a_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
     name,
     phone,
-    status: shouldRequireOtp ? 'pending' : 'active',
-    activatedAt: shouldRequireOtp ? null : new Date().toISOString(),
+    status: 'pending',
+    activatedAt: null,
     hasDined: false,
     pointsDistributed: 0,
-    otp,
-    otpExpiry
+    addedById: user.id,
+    addedByName: user.name
   }
 
   assets.push(newAsset)
   user.assets = assets
   saveState()
+  console.log(`[ASSET ADDED] ${user.name} added ${name} (${phone}) — pending their acceptance`)
 
-  if (shouldRequireOtp) {
-    const cleanPhone = phone.replace(/[^0-9]/g, '')
-    const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
-    const message = `Hello ${name}! Your 4-digit WhatsApp verification OTP is: ${otp}. Valid for 24 hours.`
-    const waLink = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`
-    console.log(`[WHATSAPP OTP] Sent OTP ${otp} via WhatsApp to ${name} (${formattedPhone})`)
-    
-    return res.json({
-      success: true,
-      requireOtp: true,
-      asset: newAsset,
-      assets: user.assets,
-      message: `WhatsApp OTP sent to ${phone}`,
-      waLink,
-      otp
-    })
-  }
-
-  res.json({ success: true, requireOtp: false, asset: newAsset, assets: user.assets, message: `Asset added successfully` })
+  res.json({
+    success: true,
+    requireOtp: false,
+    asset: newAsset,
+    assets: user.assets,
+    message: `${name} has been added. They will see a request to accept when they log in.`
+  })
 })
 
 // Replace an asset (if friend hasn't activated)
@@ -849,6 +856,75 @@ const handleRemoveAsset = (req, res) => {
 
 app.delete('/api/assets/:assetId', auth, handleRemoveAsset)
 app.post('/api/assets/:assetId/delete', auth, handleRemoveAsset)
+
+// Respond to an asset request (accept or reject) — called by the ASSET user on login
+app.post('/api/assets/respond', auth, (req, res) => {
+  const { masterId, assetId, action } = req.body
+  if (!masterId || !assetId || !action) {
+    return res.status(400).json({ message: 'masterId, assetId and action required' })
+  }
+  if (!['accept', 'reject'].includes(action)) {
+    return res.status(400).json({ message: 'action must be accept or reject' })
+  }
+
+  const db = readDb()
+  const master = (db.users || []).find(u => u.id === masterId)
+  if (!master) return res.status(404).json({ message: 'Master user not found' })
+
+  const assets = master.assets || []
+  const idx = assets.findIndex(a => a.id === assetId)
+  if (idx === -1) return res.status(404).json({ message: 'Asset request not found' })
+
+  const asset = assets[idx]
+  const currentUser = (db.users || []).find(u => u.id === req.userId)
+  if (!currentUser) return res.status(404).json({ message: 'Current user not found' })
+
+  if (action === 'accept') {
+    // Mark asset as verified in master's list
+    assets[idx].status = 'verified'
+    assets[idx].activatedAt = new Date().toISOString()
+    master.assets = assets
+
+    // Link current user back to master
+    currentUser.referredBy = master.id
+    currentUser.referredByName = master.name
+
+    // Give master +50 bonus points for accepted referral
+    master.points = (master.points || 0) + 50
+    if (!db.transactions) db.transactions = []
+    db.transactions.push({
+      id: 't_' + Date.now(),
+      userId: master.id,
+      type: 'credit',
+      amount: 50,
+      description: `${currentUser.name} accepted your Den request`,
+      createdAt: new Date().toISOString()
+    })
+
+    // Update in-memory as well
+    const memMaster = mobileAppUsers.find(u => u.id === master.id)
+    if (memMaster) { memMaster.assets = assets; memMaster.points = master.points }
+    const memUser = mobileAppUsers.find(u => u.id === req.userId)
+    if (memUser) { memUser.referredBy = master.id; memUser.referredByName = master.name }
+
+    writeDb(db)
+    saveState()
+    console.log(`[ASSET ACCEPTED] ${currentUser.name} accepted request from ${master.name}`)
+    return res.json({ success: true, action: 'accept', message: 'You are now part of their Den!' })
+  }
+
+  if (action === 'reject') {
+    // Remove the asset entry entirely
+    assets.splice(idx, 1)
+    master.assets = assets
+    const memMaster = mobileAppUsers.find(u => u.id === master.id)
+    if (memMaster) memMaster.assets = assets
+    writeDb(db)
+    saveState()
+    console.log(`[ASSET REJECTED] ${currentUser.name} rejected request from ${master.name}`)
+    return res.json({ success: true, action: 'reject', message: 'Request declined.' })
+  }
+})
 
 // Distribute points to an asset
 app.post('/api/assets/distribute', auth, (req, res) => {

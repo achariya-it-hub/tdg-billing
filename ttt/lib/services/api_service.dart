@@ -367,15 +367,30 @@ class ApiService {
     return jsonDecode(response.body);
   }
 
-  Future<Map<String, dynamic>> verifyAssetOtp(String phone, String otp) async {
-    final url = Uri.parse('${AppConfig.baseUrl}/assets/verify-otp');
+
+  /// Accept or reject a pending asset request.
+  /// [action] must be 'accept' or 'reject'.
+  Future<Map<String, dynamic>> respondToAssetRequest({
+    required String masterId,
+    required String assetId,
+    required String action,
+  }) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/assets/respond');
     final response = await http.post(
       url,
       headers: _getHeaders(),
-      body: jsonEncode({'phone': phone, 'otp': otp}),
+      body: jsonEncode({'masterId': masterId, 'assetId': assetId, 'action': action}),
     );
-    if (response.statusCode != 200) throw Exception(jsonDecode(response.body)['message'] ?? 'OTP verification failed');
-    return jsonDecode(response.body);
+    final data = jsonDecode(response.body);
+    if (response.statusCode == 200) return data;
+    throw Exception(data['message'] ?? 'Failed to respond to request');
+  }
+
+  /// Returns pending asset requests from the last loaded profile.
+  List<Map<String, dynamic>> get pendingAssetRequests {
+    final raw = currentUser?['pendingAssetRequests'];
+    if (raw is List) return raw.cast<Map<String, dynamic>>();
+    return [];
   }
 
   // --- DEN/ASSET PROGRESS ---
