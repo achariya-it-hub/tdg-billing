@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { UtensilsCrossed, Plus, Search, BookOpen, Package, Edit, Trash2, Check, X, ChevronRight, AlertTriangle, Calculator, ImagePlus, Download, FileSpreadsheet } from 'lucide-react'
+import { UtensilsCrossed, Plus, Search, BookOpen, Package, Edit, Copy, Trash2, Check, X, ChevronRight, AlertTriangle, Calculator, ImagePlus, Download, FileSpreadsheet } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
@@ -5212,6 +5212,21 @@ export default function MenuManagement() {
     setShowItemModal(true)
   }
 
+  const cloneItem = (item) => {
+    setEditItemId(null)
+    setItemForm({
+      name: `${item.name} (Copy)`,
+      price: item.price !== undefined && item.price !== null ? String(item.price) : '',
+      categoryId: item.categoryId || (categories[0]?.id || ''),
+      description: item.description || '',
+      isAvailable: item.isAvailable !== false
+    })
+    setImagePreview(item.image ? (item.image.startsWith('http') ? item.image : `${API()}${item.image}`) : null)
+    setImageFile(null)
+    setShowItemModal(true)
+    toast.info(`Cloning "${item.name}". Modify the name and click Add Item to save.`)
+  }
+
   const openCategoryModal = (cat) => {
     if (cat) {
       setEditCategoryId(cat.id)
@@ -5561,8 +5576,12 @@ export default function MenuManagement() {
                       <BookOpen size={14} />
                       {recipe ? 'Edit Recipe' : 'Map Recipe'}
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => openItemModal(item)}>
+                    <Button variant="ghost" size="sm" title="Edit Item" onClick={() => openItemModal(item)}>
                       <Edit size={14} />
+                    </Button>
+                    <Button variant="ghost" size="sm" title="Clone / Duplicate Item" onClick={() => cloneItem(item)} style={{ background: '#f0f9ff', color: '#0284c7' }}>
+                      <Copy size={14} />
+                      <span style={{ fontSize: '11px', fontWeight: 600, marginLeft: '2px' }}>Clone</span>
                     </Button>
                     <Button variant="ghost" size="sm" onClick={() => toggleAvailable(item.id)}>
                       {item.isAvailable === false ? <Check size={14} color="#10b981" /> : <X size={14} color="#ef4444" />}
