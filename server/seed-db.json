@@ -43,7 +43,9 @@
     { "id": "m24", "categoryId": "c4", "name": "20 Pc Strips (6 Dips)", "price": 800, "description": "20 Pcs Boneless Crispy Strips + 6 Dips", "isAvailable": true },
     { "id": "m25", "categoryId": "c4", "name": "60 Pc Strips (12 Dips)", "price": 2400, "description": "60 Pcs Party Bucket Boneless Strips + 12 Dips", "isAvailable": true },
 
-    { "id": "m26", "categoryId": "c5", "name": "Fries (Salted, Peri Peri or Cajun)", "price": 99, "description": "Crispy golden French fries with choice of seasoning", "isAvailable": true },
+    { "id": "m26a", "categoryId": "c5", "name": "Salted Fries", "price": 99, "description": "Crispy golden salted French fries", "isAvailable": true },
+    { "id": "m26b", "categoryId": "c5", "name": "Peri Peri Fries", "price": 99, "description": "Crispy golden French fries tossed in peri peri seasoning", "isAvailable": true },
+    { "id": "m26c", "categoryId": "c5", "name": "Cajun Fries", "price": 99, "description": "Crispy golden French fries tossed in cajun seasoning", "isAvailable": true },
     { "id": "m27", "categoryId": "c5", "name": "Loaded Fries (Chicken / Paneer)", "price": 199, "description": "Loaded fries topped with melted cheese & choice of protein", "isAvailable": true },
 
     { "id": "m28", "categoryId": "c6", "name": "Lebanese Rice Bowl (Chicken / Paneer)", "price": 199, "description": "Flavored Mediterranean Lebanese rice with choice of protein", "isAvailable": true },
