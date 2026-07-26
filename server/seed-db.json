@@ -3,86 +3,62 @@
     {
       "id": "c1",
       "name": "Gyros",
-      "displayOrder": 1,
-      "color": "#e63946",
-      "image": "/images/menu/gyro.png"
+      "icon": "🌯"
     },
     {
       "id": "c2",
-      "name": "Leg & Thigh",
-      "displayOrder": 2,
-      "color": "#f59e0b",
-      "image": "/images/menu/Leg& Thigh.png"
+      "name": "Combos",
+      "icon": "🍱"
     },
     {
       "id": "c3",
-      "name": "Wings",
-      "displayOrder": 3,
-      "color": "#fbbf24",
-      "image": "/images/menu/wings.png"
+      "name": "Salads",
+      "icon": "🥗"
     },
     {
       "id": "c4",
-      "name": "Strips",
-      "displayOrder": 4,
-      "color": "#dc2626",
-      "image": "/images/menu/strips.png"
+      "name": "Choice of Dips",
+      "icon": "🥫"
     },
     {
       "id": "c5",
-      "name": "Fries",
-      "displayOrder": 5,
-      "color": "#10b981",
-      "image": "/images/menu/fries.png"
+      "name": "TDG Crispy Chicken",
+      "icon": "🍗"
     },
     {
       "id": "c6",
-      "name": "Rice & Salads",
-      "displayOrder": 6,
-      "color": "#8b5cf6",
-      "image": "/images/menu/lebanese rice bowl.png"
+      "name": "Sides",
+      "icon": "🍟"
     },
     {
       "id": "c7",
-      "name": "Meals & Combos",
-      "displayOrder": 7,
-      "color": "#ec4899",
-      "image": "/images/menu/express meal.png"
+      "name": "Shakes",
+      "icon": "🥤"
     },
     {
       "id": "c8",
-      "name": "Protein Max",
-      "displayOrder": 8,
-      "color": "#3b82f6",
-      "image": "/images/menu/protein max.png"
+      "name": "Softy",
+      "icon": "🍦"
     },
     {
       "id": "c9",
-      "name": "Shakes & Softy",
-      "displayOrder": 9,
-      "color": "#f472b6",
-      "image": "/images/menu/vanilla shake.png"
+      "name": "Desserts",
+      "icon": "🍰"
     },
     {
       "id": "c10",
-      "name": "Beverages & Kombucha",
-      "displayOrder": 10,
-      "color": "#06b6d4",
-      "image": "/images/menu/kombucha.png"
+      "name": "Beverages",
+      "icon": "🍹"
     },
     {
       "id": "c11",
-      "name": "Desserts",
-      "displayOrder": 11,
-      "color": "#a855f7",
-      "image": "/images/menu/blondie cake.png"
+      "name": "Protein Max",
+      "icon": "💪"
     },
     {
       "id": "c12",
-      "name": "Dips & Add-Ons",
-      "displayOrder": 12,
-      "color": "#64748b",
-      "image": "/images/menu/logo.png"
+      "name": "Extras",
+      "icon": "🧀"
     }
   ],
   "menuItems": [
@@ -268,7 +244,7 @@
     },
     {
       "id": "m11",
-      "categoryId": "c2",
+      "categoryId": "c5",
       "name": "1 Pc Leg & Thigh (1 Dip)",
       "price": 70,
       "description": "1 Pc Crispy Fried Chicken Leg & Thigh + 1 Dip",
@@ -277,7 +253,7 @@
     },
     {
       "id": "m12",
-      "categoryId": "c2",
+      "categoryId": "c5",
       "name": "2 Pc Leg & Thigh (1 Dip)",
       "price": 140,
       "description": "2 Pc Crispy Fried Chicken Leg & Thigh + 1 Dip",
@@ -286,7 +262,7 @@
     },
     {
       "id": "m13",
-      "categoryId": "c2",
+      "categoryId": "c5",
       "name": "4 Pc Leg & Thigh (2 Dips)",
       "price": 280,
       "description": "4 Pc Crispy Fried Chicken Leg & Thigh + 2 Dips",
@@ -295,7 +271,7 @@
     },
     {
       "id": "m14",
-      "categoryId": "c2",
+      "categoryId": "c5",
       "name": "8 Pc Leg & Thigh (4 Dips)",
       "price": 560,
       "description": "8 Pc Crispy Fried Chicken Leg & Thigh + 4 Dips",
@@ -304,7 +280,7 @@
     },
     {
       "id": "m15",
-      "categoryId": "c2",
+      "categoryId": "c5",
       "name": "12 Pc Leg & Thigh (6 Dips)",
       "price": 840,
       "description": "12 Pc Crispy Fried Chicken Leg & Thigh + 6 Dips",
@@ -313,7 +289,7 @@
     },
     {
       "id": "m16",
-      "categoryId": "c3",
+      "categoryId": "c5",
       "name": "3 Pc Wings (1 Dip)",
       "price": 90,
       "description": "3 Pcs Crispy Fried Wings + 1 Dip",
@@ -322,7 +298,7 @@
     },
     {
       "id": "m17",
-      "categoryId": "c3",
+      "categoryId": "c5",
       "name": "6 Pc Wings (2 Dips)",
       "price": 180,
       "description": "6 Pcs Crispy Fried Wings + 2 Dips",
@@ -331,7 +307,7 @@
     },
     {
       "id": "m18",
-      "categoryId": "c3",
+      "categoryId": "c5",
       "name": "9 Pc Wings (3 Dips)",
       "price": 270,
       "description": "9 Pcs Crispy Fried Wings + 3 Dips",
@@ -340,7 +316,7 @@
     },
     {
       "id": "m19",
-      "categoryId": "c3",
+      "categoryId": "c5",
       "name": "20 Pc Wings (6 Dips)",
       "price": 600,
       "description": "20 Pcs Crispy Fried Wings + 6 Dips",
@@ -349,7 +325,7 @@
     },
     {
       "id": "m20",
-      "categoryId": "c3",
+      "categoryId": "c5",
       "name": "60 Pc Wings (12 Dips)",
       "price": 1500,
       "description": "60 Pcs Party Bucket Crispy Wings + 12 Dips",
@@ -358,7 +334,7 @@
     },
     {
       "id": "m21",
-      "categoryId": "c4",
+      "categoryId": "c5",
       "name": "3 Pc Strips (1 Dip)",
       "price": 120,
       "description": "3 Pcs Boneless Crispy Strips + 1 Dip",
@@ -367,7 +343,7 @@
     },
     {
       "id": "m22",
-      "categoryId": "c4",
+      "categoryId": "c5",
       "name": "6 Pc Strips (2 Dips)",
       "price": 240,
       "description": "6 Pcs Boneless Crispy Strips + 2 Dips",
@@ -376,7 +352,7 @@
     },
     {
       "id": "m23",
-      "categoryId": "c4",
+      "categoryId": "c5",
       "name": "9 Pc Strips (3 Dips)",
       "price": 360,
       "description": "9 Pcs Boneless Crispy Strips + 3 Dips",
@@ -385,7 +361,7 @@
     },
     {
       "id": "m24",
-      "categoryId": "c4",
+      "categoryId": "c5",
       "name": "20 Pc Strips (6 Dips)",
       "price": 800,
       "description": "20 Pcs Boneless Crispy Strips + 6 Dips",
@@ -394,7 +370,7 @@
     },
     {
       "id": "m25",
-      "categoryId": "c4",
+      "categoryId": "c5",
       "name": "60 Pc Strips (12 Dips)",
       "price": 2400,
       "description": "60 Pcs Party Bucket Boneless Strips + 12 Dips",
@@ -403,7 +379,7 @@
     },
     {
       "id": "m26a",
-      "categoryId": "c5",
+      "categoryId": "c6",
       "name": "Salted Fries",
       "price": 99,
       "description": "Crispy golden salted French fries",
@@ -412,7 +388,7 @@
     },
     {
       "id": "m26b",
-      "categoryId": "c5",
+      "categoryId": "c6",
       "name": "Peri Peri Fries",
       "price": 99,
       "description": "Crispy golden French fries tossed in peri peri seasoning",
@@ -421,7 +397,7 @@
     },
     {
       "id": "m26c",
-      "categoryId": "c5",
+      "categoryId": "c6",
       "name": "Cajun Fries",
       "price": 99,
       "description": "Crispy golden French fries tossed in cajun seasoning",
@@ -430,7 +406,7 @@
     },
     {
       "id": "m27a",
-      "categoryId": "c5",
+      "categoryId": "c6",
       "name": "Loaded Chicken Fries",
       "price": 199,
       "description": "Loaded fries topped with melted cheese & crispy chicken",
@@ -439,7 +415,7 @@
     },
     {
       "id": "m27b",
-      "categoryId": "c5",
+      "categoryId": "c6",
       "name": "Loaded Paneer Fries",
       "price": 199,
       "description": "Loaded fries topped with melted cheese & grilled paneer",
@@ -448,7 +424,7 @@
     },
     {
       "id": "m28a",
-      "categoryId": "c6",
+      "categoryId": "c3",
       "name": "Lebanese Rice Bowl (Chicken)",
       "price": 199,
       "description": "Flavored Mediterranean Lebanese rice topped with grilled chicken",
@@ -457,7 +433,7 @@
     },
     {
       "id": "m28b",
-      "categoryId": "c6",
+      "categoryId": "c3",
       "name": "Lebanese Rice Bowl (Paneer)",
       "price": 199,
       "description": "Flavored Mediterranean Lebanese rice topped with grilled paneer",
@@ -466,7 +442,7 @@
     },
     {
       "id": "m29a",
-      "categoryId": "c6",
+      "categoryId": "c3",
       "name": "Signature Salad (Chicken)",
       "price": 149,
       "description": "Fresh garden salad with olives, dressing & grilled chicken",
@@ -475,7 +451,7 @@
     },
     {
       "id": "m29b",
-      "categoryId": "c6",
+      "categoryId": "c3",
       "name": "Signature Salad (Paneer)",
       "price": 149,
       "description": "Fresh garden salad with olives, dressing & grilled paneer",
@@ -484,7 +460,7 @@
     },
     {
       "id": "m30",
-      "categoryId": "c7",
+      "categoryId": "c2",
       "name": "Express Meal",
       "price": 149,
       "description": "Mini Gyro & Regular Drink",
@@ -493,7 +469,7 @@
     },
     {
       "id": "m31",
-      "categoryId": "c7",
+      "categoryId": "c2",
       "name": "Classic Gyro Meal",
       "price": 249,
       "description": "Mini Gyro, 2 Wings, Fries, Regular Drink, 1 Dip",
@@ -502,7 +478,7 @@
     },
     {
       "id": "m32",
-      "categoryId": "c7",
+      "categoryId": "c2",
       "name": "Signature Gyro Meal",
       "price": 299,
       "description": "Signature Gyro, Fries, Regular Drink",
@@ -511,7 +487,7 @@
     },
     {
       "id": "m33",
-      "categoryId": "c7",
+      "categoryId": "c2",
       "name": "Lebanese Rice Box",
       "price": 299,
       "description": "Lebanese rice, Fries, Regular Drink",
@@ -520,7 +496,7 @@
     },
     {
       "id": "m34",
-      "categoryId": "c7",
+      "categoryId": "c2",
       "name": "Duo Gyro Feast",
       "price": 349,
       "description": "2 Mini Gyros, Fries, 2 Regular Drinks",
@@ -529,7 +505,7 @@
     },
     {
       "id": "m35",
-      "categoryId": "c7",
+      "categoryId": "c2",
       "name": "Double Crunch Box",
       "price": 499,
       "description": "2 Mini Gyros, 6 Wings, Fries, 2 Regular Drinks",
@@ -538,7 +514,7 @@
     },
     {
       "id": "m36",
-      "categoryId": "c7",
+      "categoryId": "c2",
       "name": "Mega Feast Meal",
       "price": 649,
       "description": "2 Mini Gyros, 2 Leg & Thighs, 2 Wings, 2 Strips, Fries, 2 Regular Drinks, 3 Dips",
@@ -547,7 +523,7 @@
     },
     {
       "id": "m37",
-      "categoryId": "c7",
+      "categoryId": "c2",
       "name": "Den's Party Meal",
       "price": 899,
       "description": "2 Signature Gyros, 6 Wings, 4 Leg & Thighs, 2 Fries, 3 Regular Drinks",
@@ -556,7 +532,7 @@
     },
     {
       "id": "m38",
-      "categoryId": "c7",
+      "categoryId": "c2",
       "name": "Super 5 Bucket",
       "price": 1299,
       "description": "5 Leg & Thighs, 10 Wings, 10 Strips, 5 Regular Drinks",
@@ -565,7 +541,7 @@
     },
     {
       "id": "m39a",
-      "categoryId": "c8",
+      "categoryId": "c11",
       "name": "Gyro - Protein Max (Chicken)",
       "price": 299,
       "description": "Extra high protein Gyro wrap with grilled chicken",
@@ -574,7 +550,7 @@
     },
     {
       "id": "m39b",
-      "categoryId": "c8",
+      "categoryId": "c11",
       "name": "Gyro - Protein Max (Paneer)",
       "price": 299,
       "description": "Extra high protein Gyro wrap with grilled paneer",
@@ -583,7 +559,7 @@
     },
     {
       "id": "m40a",
-      "categoryId": "c8",
+      "categoryId": "c11",
       "name": "Lebanese Rice - Protein Max (Chicken)",
       "price": 299,
       "description": "Extra high protein Lebanese Rice bowl with grilled chicken",
@@ -592,7 +568,7 @@
     },
     {
       "id": "m40b",
-      "categoryId": "c8",
+      "categoryId": "c11",
       "name": "Lebanese Rice - Protein Max (Paneer)",
       "price": 299,
       "description": "Extra high protein Lebanese Rice bowl with grilled paneer",
@@ -601,7 +577,7 @@
     },
     {
       "id": "m41a",
-      "categoryId": "c8",
+      "categoryId": "c11",
       "name": "Salad - Protein Max (Chicken)",
       "price": 299,
       "description": "Extra high protein Salad bowl with grilled chicken",
@@ -610,7 +586,7 @@
     },
     {
       "id": "m41b",
-      "categoryId": "c8",
+      "categoryId": "c11",
       "name": "Salad - Protein Max (Paneer)",
       "price": 299,
       "description": "Extra high protein Salad bowl with grilled paneer",
@@ -619,7 +595,7 @@
     },
     {
       "id": "m42",
-      "categoryId": "c9",
+      "categoryId": "c7",
       "name": "Vanilla Shake (Regular)",
       "price": 120,
       "description": "Creamy thick vanilla shake",
@@ -628,7 +604,7 @@
     },
     {
       "id": "m43",
-      "categoryId": "c9",
+      "categoryId": "c7",
       "name": "Vanilla Shake (Large)",
       "price": 199,
       "description": "Large creamy thick vanilla shake",
@@ -637,7 +613,7 @@
     },
     {
       "id": "m44",
-      "categoryId": "c9",
+      "categoryId": "c7",
       "name": "Strawberry Shake (Regular)",
       "price": 120,
       "description": "Thick strawberry shake",
@@ -646,7 +622,7 @@
     },
     {
       "id": "m45",
-      "categoryId": "c9",
+      "categoryId": "c7",
       "name": "Strawberry Shake (Large)",
       "price": 199,
       "isAvailable": true,
@@ -654,7 +630,7 @@
     },
     {
       "id": "m46",
-      "categoryId": "c9",
+      "categoryId": "c7",
       "name": "Biscoff Shake (Regular)",
       "price": 120,
       "description": "Lotus biscoff thick shake",
@@ -663,7 +639,7 @@
     },
     {
       "id": "m47",
-      "categoryId": "c9",
+      "categoryId": "c7",
       "name": "Biscoff Shake (Large)",
       "price": 199,
       "isAvailable": true,
@@ -671,7 +647,7 @@
     },
     {
       "id": "m48",
-      "categoryId": "c9",
+      "categoryId": "c7",
       "name": "Chocolate Shake (Regular)",
       "price": 120,
       "description": "Rich Belgian chocolate thick shake",
@@ -680,7 +656,7 @@
     },
     {
       "id": "m49",
-      "categoryId": "c9",
+      "categoryId": "c7",
       "name": "Chocolate Shake (Large)",
       "price": 199,
       "isAvailable": true,
@@ -688,7 +664,7 @@
     },
     {
       "id": "m50",
-      "categoryId": "c9",
+      "categoryId": "c7",
       "name": "Kunafa Pistachio Shake (Regular)",
       "price": 120,
       "description": "Special Kunafa Pistachio thick shake",
@@ -697,7 +673,7 @@
     },
     {
       "id": "m51",
-      "categoryId": "c9",
+      "categoryId": "c7",
       "name": "Kunafa Pistachio Shake (Large)",
       "price": 199,
       "isAvailable": true,
@@ -705,7 +681,7 @@
     },
     {
       "id": "m52",
-      "categoryId": "c9",
+      "categoryId": "c8",
       "name": "Vanilla Softy",
       "price": 39,
       "description": "Classic soft serve ice cream cone",
@@ -776,7 +752,7 @@
     },
     {
       "id": "m60",
-      "categoryId": "c11",
+      "categoryId": "c9",
       "name": "Chocolate Brownie",
       "price": 99,
       "description": "Warm fudgy chocolate brownie",
@@ -785,7 +761,7 @@
     },
     {
       "id": "m61",
-      "categoryId": "c11",
+      "categoryId": "c9",
       "name": "Blondie Cake",
       "price": 99,
       "description": "Delicious vanilla butter blondie slice",
@@ -794,7 +770,7 @@
     },
     {
       "id": "m62a",
-      "categoryId": "c12",
+      "categoryId": "c4",
       "name": "Turkish Chilli Dip",
       "price": 15,
       "description": "Spicy authentic Turkish chilli dip",
@@ -803,7 +779,7 @@
     },
     {
       "id": "m62b",
-      "categoryId": "c12",
+      "categoryId": "c4",
       "name": "Jalapeno Cheese Dip",
       "price": 15,
       "description": "Rich creamy jalapeno cheese dip",
@@ -812,7 +788,7 @@
     },
     {
       "id": "m62c",
-      "categoryId": "c12",
+      "categoryId": "c4",
       "name": "Garlic Mayo Dip",
       "price": 15,
       "description": "Classic creamy garlic mayonnaise dip",
@@ -821,7 +797,7 @@
     },
     {
       "id": "m62d",
-      "categoryId": "c12",
+      "categoryId": "c4",
       "name": "Spicy Mayo Dip",
       "price": 15,
       "description": "Zesty spicy mayonnaise dip",
@@ -830,7 +806,7 @@
     },
     {
       "id": "m62e",
-      "categoryId": "c12",
+      "categoryId": "c4",
       "name": "Peri Peri Dip",
       "price": 15,
       "description": "Fiery peri peri dipping sauce",
@@ -839,7 +815,7 @@
     },
     {
       "id": "m62f",
-      "categoryId": "c12",
+      "categoryId": "c4",
       "name": "Honey Mustard Dip",
       "price": 15,
       "description": "Sweet and tangy honey mustard dip",
