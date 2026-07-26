@@ -265,18 +265,30 @@ function findLatestValidBackup() {
   return null
 }
 
-// Restore in-memory state from db.json on startup
+// Safe Data Protection & State Restoration
 function restoreState() {
   let db = readDb()
+  const SEED_PATH = join(__dirname, 'seed-db.json')
+
+  // Create an automatic Data Shield Backup on every server launch
+  if (db && (db.orders?.length || db.purchases?.length || db.grns?.length || db.users?.length)) {
+    try {
+      if (!existsSync(BACKUP_DIR)) mkdirSync(BACKUP_DIR, { recursive: true })
+      const ts = new Date().toISOString().replace(/[:.]/g, '-')
+      writeFileSync(join(BACKUP_DIR, `db-shield-${ts}.json`), JSON.stringify(db, null, 2))
+      console.log(`[DATA PROTECTION] Safety shield backup created: db-shield-${ts}.json`)
+    } catch (e) {
+      console.error('[DATA PROTECTION] Shield backup error:', e.message)
+    }
+  }
 
   // Safety: if db.json is missing or lacks business data, seed from master seed-db.json or latest backup
-  const SEED_PATH = join(__dirname, 'seed-db.json')
   const isDbEmptyOrMissing = !existsSync(DB_PATH) || 
     !db || 
     ((!db.orders || !db.orders.length) && (!db.users || !db.users.length) && (!db.categories || !db.categories.length))
 
   if (isDbEmptyOrMissing) {
-    console.log('[DATA SAFETY] db.json is missing or empty. Initializing from seed-db.json...')
+    console.log('[DATA PROTECTION] db.json missing or empty. Initializing from seed-db.json...')
     let foundBackup = null
     if (existsSync(SEED_PATH)) {
       try {
@@ -290,13 +302,32 @@ function restoreState() {
       db = foundBackup
       try {
         writeFileSync(DB_PATH, JSON.stringify(foundBackup, null, 2))
-        console.log('[DATA SAFETY] Auto-restored business database successfully!')
+        console.log('[DATA PROTECTION] Auto-restored business database successfully!')
       } catch (e) {
-        console.error('[DATA SAFETY] Failed to write restored database:', e.message)
+        console.error('[DATA PROTECTION] Failed to write restored database:', e.message)
       }
     }
   }
 
+  // Master Menu Sync: Always sync latest categories & menuItems from seed-db.json if available
+  if (existsSync(SEED_PATH)) {
+    try {
+      const seedContent = readFileSync(SEED_PATH, 'utf-8').trim()
+      if (seedContent) {
+        const seedData = JSON.parse(seedContent)
+        if (seedData.categories && Array.isArray(seedData.categories)) {
+          db.categories = seedData.categories
+        }
+        if (seedData.menuItems && Array.isArray(seedData.menuItems)) {
+          db.menuItems = seedData.menuItems
+        }
+      }
+    } catch (se) {
+      console.error('[DATA PROTECTION] Menu sync error:', se.message)
+    }
+  }
+
+  // Preserve 100% of operational business data (NEVER overwrite)
   if (db.orders && Array.isArray(db.orders)) orders = db.orders
   if (db.loyaltyUsers && Array.isArray(db.loyaltyUsers)) loyaltyUsers = db.loyaltyUsers
   if (db.dens && Array.isArray(db.dens)) dens = db.dens
@@ -312,8 +343,22 @@ function restoreState() {
   if (db.menuItems && Array.isArray(db.menuItems)) menuItems = db.menuItems
   if (db.recipes && Array.isArray(db.recipes)) recipes = db.recipes
   if (db.users && Array.isArray(db.users)) mobileAppUsers = db.users
+  if (db.suppliers && Array.isArray(db.suppliers)) suppliers = db.suppliers
+  if (db.purchaseOrders && Array.isArray(db.purchaseOrders)) purchaseOrders = db.purchaseOrders
+  if (db.poItems && Array.isArray(db.poItems)) poItems = db.poItems
+  if (db.grns && Array.isArray(db.grns)) grns = db.grns
+  if (db.vendorPayments && Array.isArray(db.vendorPayments)) vendorPayments = db.vendorPayments
+  if (db.settings) settings = { ...settings, ...db.settings }
+  if (db.billingUsers && Array.isArray(db.billingUsers)) {
+    billingUsers = db.billingUsers
+    billingUsers.forEach(u => {
+      if (u.pin && u.pin.length === 4 && /^\d{4}$/.test(u.pin)) {
+        u.pin = bcrypt.hashSync(u.pin, 10)
+      }
+    })
+  }
 
-  // Seed demo login credentials
+  // Seed demo login credentials if missing
   const demoEmail = 'demo'
   const hasDemo = mobileAppUsers.some(u => u.email.toLowerCase() === demoEmail)
   if (!hasDemo) {
@@ -330,33 +375,18 @@ function restoreState() {
     }
     mobileAppUsers.push(demoUser)
     db.users = mobileAppUsers
-    writeDb(db)
   }
 
-  if (db.suppliers?.length) suppliers = db.suppliers
-  if (db.purchaseOrders?.length) purchaseOrders = db.purchaseOrders
-  if (db.poItems?.length) poItems = db.poItems
-  if (db.grns?.length) grns = db.grns
-  if (db.vendorPayments?.length) vendorPayments = db.vendorPayments
-  if (db.settings) settings = { ...settings, ...db.settings }
-  if (db.billingUsers?.length) {
-    billingUsers = db.billingUsers
-    // Migrate plaintext PINs to bcrypt hashes (existing data from before hashing was implemented)
-    billingUsers.forEach(u => {
-      if (u.pin && u.pin.length === 4 && /^\d{4}$/.test(u.pin)) {
-        u.pin = bcrypt.hashSync(u.pin, 10)
-      }
-    })
-  }
-
-  // Remove Burger category & items
+  // Clean up legacy Burger category
   categories = categories.filter(c => c.name !== 'Burger' && c.name !== 'Burgers' && c.id !== 'c2')
   menuItems = menuItems.filter(i => i.categoryId !== 'c2' && !i.name.toLowerCase().includes('burger'))
   recipes = recipes.filter(r => !r.menuItemName?.toLowerCase().includes('burger'))
-  if (db.categories) db.categories = categories
-  if (db.menuItems) db.menuItems = menuItems
-  if (db.recipes) db.recipes = recipes
+  db.categories = categories
+  db.menuItems = menuItems
+  db.recipes = recipes
+
   writeDb(db)
+  console.log('[DATA PROTECTION] Database initialized. All operational data (invoices, KOTs, POs, GRNs, MRNs, customers) strictly preserved!')
 }
 
 const app = express()
