@@ -4935,14 +4935,21 @@ export default function MenuManagement() {
   }
 
   const filteredMenuItems = menuItems.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    if (!item) return false
+    const nameStr = (item.name || '').toLowerCase()
+    const searchStr = (searchTerm || '').toLowerCase()
+    const matchesSearch = nameStr.includes(searchStr)
     const matchesCategory = selectedCategory === 'all' || item.categoryId === selectedCategory
     return matchesSearch && matchesCategory
   })
 
   const getRecipeForItem = (menuItemId) => {
     const item = menuItems.find(m => m.id === menuItemId)
-    return recipes.find(r => r.menuItemId === menuItemId || (item && (r.menuItemName === item.name || r.name === `${item.name} Recipe` || r.name.startsWith(item.name))))
+    const itemName = item?.name || ''
+    return recipes.find(r => r && (
+      r.menuItemId === menuItemId || 
+      (itemName && (r.menuItemName === itemName || r.name === `${itemName} Recipe` || (r.name && r.name.startsWith(itemName))))
+    ))
   }
 
   const getItemCost = (menuItemId) => {

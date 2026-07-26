@@ -134,8 +134,8 @@ export default function POS() {
   const isCustomizable = (item) => {
     if (!item) return false
     const cat = categories.find(c => c.id === item.categoryId)
-    const catName = cat ? cat.name.toLowerCase() : ''
-    const itemName = item.name.toLowerCase()
+    const catName = (cat?.name || '').toLowerCase()
+    const itemName = (item?.name || '').toLowerCase()
     return (
       catName.includes('gyro') || itemName.includes('gyro') ||
       catName.includes('meal') || catName.includes('combo') ||
@@ -148,7 +148,7 @@ export default function POS() {
   const isGyro = isCustomizable
 
   const handleItemClick = (item) => {
-    if (!item.isAvailable) return
+    if (!item || !item.isAvailable) return
     if (isCustomizable(item)) {
       setCustomizingItem(item)
       setSelectedBread('Baked')
@@ -161,9 +161,9 @@ export default function POS() {
     } else {
       addItem({
         menuItemId: item.id,
-        menuItemName: item.name,
-        unitPrice: item.price,
-        totalPrice: item.price
+        menuItemName: item.name || 'Unnamed Item',
+        unitPrice: item.price || 0,
+        totalPrice: item.price || 0
       })
     }
   }
@@ -171,8 +171,8 @@ export default function POS() {
   const handleAddGyroWithCustomization = () => {
     if (!customizingItem) return
     const cat = categories.find(c => c.id === customizingItem.categoryId)
-    const catName = cat ? cat.name.toLowerCase() : ''
-    const itemName = customizingItem.name.toLowerCase()
+    const catName = (cat?.name || '').toLowerCase()
+    const itemName = (customizingItem?.name || '').toLowerCase()
 
     const hasGyro = catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('box') || itemName.includes('meal')
     const hasRice = itemName.includes('rice')
@@ -648,87 +648,87 @@ export default function POS() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '75vh', overflowY: 'auto', paddingRight: '4px' }}>
           
           {/* Protein Choice Section (Chicken / Paneer) */}
-          {(customizingItem?.name?.toLowerCase().includes('gyro') || 
-            customizingItem?.name?.toLowerCase().includes('rice') || 
-            customizingItem?.name?.toLowerCase().includes('meal') || 
-            customizingItem?.name?.toLowerCase().includes('feast') || 
-            customizingItem?.name?.toLowerCase().includes('box') || 
-            categories.find(c => c.id === customizingItem?.categoryId)?.name?.toLowerCase().includes('gyro') ||
-            categories.find(c => c.id === customizingItem?.categoryId)?.name?.toLowerCase().includes('rice') ||
-            categories.find(c => c.id === customizingItem?.categoryId)?.name?.toLowerCase().includes('protein')) && (
-            <div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                🍗 / 🧀 Choose Protein
-              </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                {['Chicken', 'Paneer'].map(p => (
-                  <button key={p} type="button" onClick={() => setSelectedProtein(p)} style={{
-                    flex: 1, padding: '12px 14px', borderRadius: '10px',
-                    border: selectedProtein === p ? '2px solid #e63946' : '1px solid #e5e7eb',
-                    background: selectedProtein === p ? '#fff5f5' : '#f9fafb',
-                    color: selectedProtein === p ? '#e63946' : '#374151',
-                    fontWeight: 700, fontSize: '14px', cursor: 'pointer', transition: 'all 0.15s'
-                  }}>
-                    {p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Drink Choice Section (Coca-Cola / Sprite / Fanta / Ice Tea) */}
-          {(customizingItem?.name?.toLowerCase().includes('meal') || 
-            customizingItem?.name?.toLowerCase().includes('box') || 
-            customizingItem?.name?.toLowerCase().includes('feast') || 
-            customizingItem?.name?.toLowerCase().includes('bucket') || 
-            customizingItem?.name?.toLowerCase().includes('drink') || 
-            categories.find(c => c.id === customizingItem?.categoryId)?.name?.toLowerCase().includes('meal') ||
-            categories.find(c => c.id === customizingItem?.categoryId)?.name?.toLowerCase().includes('beverage')) && (
-            <div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                🥤 Choose Drink / Beverage
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea'].map(d => (
-                  <button key={d} type="button" onClick={() => setSelectedDrink(d)} style={{
-                    padding: '10px', borderRadius: '10px',
-                    border: selectedDrink === d ? '2px solid #06b6d4' : '1px solid #e5e7eb',
-                    background: selectedDrink === d ? '#ecfeff' : '#f9fafb',
-                    color: selectedDrink === d ? '#0891b2' : '#374151',
-                    fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'center', transition: 'all 0.15s'
-                  }}>
-                    {selectedDrink === d ? '✓ ' : ''}{d}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Gyro Pita Bread Section */}
-          {(customizingItem?.name?.toLowerCase().includes('gyro') || 
-            customizingItem?.name?.toLowerCase().includes('meal') || 
-            customizingItem?.name?.toLowerCase().includes('feast') || 
-            customizingItem?.name?.toLowerCase().includes('box') || 
-            categories.find(c => c.id === customizingItem?.categoryId)?.name?.toLowerCase().includes('gyro')) && (
-            <>
+          {(() => {
+            const cItemName = (customizingItem?.name || '').toLowerCase()
+            const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
+            const hasProteinChoice = cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein')
+            if (!hasProteinChoice) return null
+            return (
               <div>
                 <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  🥙 Pita Bread Type
+                  🍗 / 🧀 Choose Protein
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  {['Baked', 'Fried'].map(b => (
-                    <button key={b} type="button" onClick={() => setSelectedBread(b)} style={{
-                      flex: 1, padding: '10px 14px', borderRadius: '10px',
-                      border: selectedBread === b ? '2px solid #e63946' : '1px solid #e5e7eb',
-                      background: selectedBread === b ? '#fff5f5' : '#f9fafb',
-                      color: selectedBread === b ? '#e63946' : '#374151',
-                      fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.15s'
+                  {['Chicken', 'Paneer'].map(p => (
+                    <button key={p} type="button" onClick={() => setSelectedProtein(p)} style={{
+                      flex: 1, padding: '12px 14px', borderRadius: '10px',
+                      border: selectedProtein === p ? '2px solid #e63946' : '1px solid #e5e7eb',
+                      background: selectedProtein === p ? '#fff5f5' : '#f9fafb',
+                      color: selectedProtein === p ? '#e63946' : '#374151',
+                      fontWeight: 700, fontSize: '14px', cursor: 'pointer', transition: 'all 0.15s'
                     }}>
-                      {b === 'Baked' ? '🫓 Baked Pita' : '🥙 Fried Pita'}
+                      {p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}
                     </button>
                   ))}
                 </div>
               </div>
+            )
+          })()}
+
+          {/* Drink Choice Section (Coca-Cola / Sprite / Fanta / Ice Tea) */}
+          {(() => {
+            const cItemName = (customizingItem?.name || '').toLowerCase()
+            const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
+            const hasDrinkChoice = cItemName.includes('meal') || cItemName.includes('box') || cItemName.includes('feast') || cItemName.includes('bucket') || cItemName.includes('drink') || cCatName.includes('meal') || cCatName.includes('beverage')
+            if (!hasDrinkChoice) return null
+            return (
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  🥤 Choose Drink / Beverage
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                  {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea'].map(d => (
+                    <button key={d} type="button" onClick={() => setSelectedDrink(d)} style={{
+                      padding: '10px', borderRadius: '10px',
+                      border: selectedDrink === d ? '2px solid #06b6d4' : '1px solid #e5e7eb',
+                      background: selectedDrink === d ? '#ecfeff' : '#f9fafb',
+                      color: selectedDrink === d ? '#0891b2' : '#374151',
+                      fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'center', transition: 'all 0.15s'
+                    }}>
+                      {selectedDrink === d ? '✓ ' : ''}{d}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )
+          })()}
+
+          {/* Gyro Pita Bread Section */}
+          {(() => {
+            const cItemName = (customizingItem?.name || '').toLowerCase()
+            const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
+            const hasGyroChoice = cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cCatName.includes('gyro')
+            if (!hasGyroChoice) return null
+            return (
+              <>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    🥙 Pita Bread Type
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {['Baked', 'Fried'].map(b => (
+                      <button key={b} type="button" onClick={() => setSelectedBread(b)} style={{
+                        flex: 1, padding: '10px 14px', borderRadius: '10px',
+                        border: selectedBread === b ? '2px solid #e63946' : '1px solid #e5e7eb',
+                        background: selectedBread === b ? '#fff5f5' : '#f9fafb',
+                        color: selectedBread === b ? '#e63946' : '#374151',
+                        fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.15s'
+                      }}>
+                        {b === 'Baked' ? '🫓 Baked Pita' : '🥙 Fried Pita'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
               {/* Base Spread Section */}
               <div>
@@ -802,7 +802,8 @@ export default function POS() {
                 </div>
               </div>
             </>
-          )}
+          )
+        })()}
 
           {/* Custom Remarks */}
           <div>
