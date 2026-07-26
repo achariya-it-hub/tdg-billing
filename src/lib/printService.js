@@ -257,7 +257,7 @@ const PrintService = {
 
         <div class="footer">
           <div><strong>Thank You for Dining at Ten Dens Gyros!</strong></div>
-          <div>Visit Us Again • pos.tendengyros.com</div>
+          <div>Visit Us Again • www.tendengyros.com</div>
         </div>
       </body>
       </html>
