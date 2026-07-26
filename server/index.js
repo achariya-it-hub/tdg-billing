@@ -269,22 +269,30 @@ function findLatestValidBackup() {
 function restoreState() {
   let db = readDb()
 
-  // Safety: if db.json is missing or lacks business data (e.g. wiped by new git deploy), auto-restore from latest backup
+  // Safety: if db.json is missing or lacks business data, seed from master seed-db.json or latest backup
+  const SEED_PATH = join(__dirname, 'seed-db.json')
   const isDbEmptyOrMissing = !existsSync(DB_PATH) || 
     !db || 
     ((!db.orders || !db.orders.length) && (!db.users || !db.users.length) && (!db.categories || !db.categories.length))
 
   if (isDbEmptyOrMissing) {
-    console.log('[DATA SAFETY] db.json is missing or empty. Searching for persistent backups...')
-    const foundBackup = findLatestValidBackup()
+    console.log('[DATA SAFETY] db.json is missing or empty. Initializing from seed-db.json...')
+    let foundBackup = null
+    if (existsSync(SEED_PATH)) {
+      try {
+        const seedContent = readFileSync(SEED_PATH, 'utf-8').trim()
+        if (seedContent) foundBackup = JSON.parse(seedContent)
+      } catch (e) { console.error('Error reading seed-db.json:', e.message) }
+    }
+    if (!foundBackup) foundBackup = findLatestValidBackup()
 
     if (foundBackup) {
       db = foundBackup
       try {
         writeFileSync(DB_PATH, JSON.stringify(foundBackup, null, 2))
-        console.log('[DATA SAFETY] Auto-restored business database from latest backup successfully!')
+        console.log('[DATA SAFETY] Auto-restored business database successfully!')
       } catch (e) {
-        console.error('[DATA SAFETY] Failed to write restored backup:', e.message)
+        console.error('[DATA SAFETY] Failed to write restored database:', e.message)
       }
     }
   }

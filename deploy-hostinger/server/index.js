@@ -258,13 +258,22 @@ function findLatestValidBackup() {
 
 // Restore in-memory state from db.json on startup
 function restoreState() {
-  // Safety: if db.json was wiped by deploy, restore latest backup
+  // Safety: if db.json was wiped by deploy, restore seed-db.json or latest backup
+  const SEED_PATH = join(__dirname, 'seed-db.json')
   if (!existsSync(DB_PATH)) {
-    const foundBackup = findLatestValidBackup()
+    let foundBackup = null
+    if (existsSync(SEED_PATH)) {
+      try {
+        const seedContent = readFileSync(SEED_PATH, 'utf-8').trim()
+        if (seedContent) foundBackup = JSON.parse(seedContent)
+      } catch (e) {}
+    }
+    if (!foundBackup) foundBackup = findLatestValidBackup()
+
     if (foundBackup) {
       try {
         writeFileSync(DB_PATH, JSON.stringify(foundBackup, null, 2))
-        console.log('[DATA SAFETY] Auto-restored db.json from latest backup!')
+        console.log('[DATA SAFETY] Auto-restored db.json from seed master!')
       } catch (e) { console.error('Backup restore failed:', e.message) }
     }
   }
