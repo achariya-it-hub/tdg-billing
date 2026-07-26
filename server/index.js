@@ -260,41 +260,60 @@ function findLatestValidBackup() {
 function restoreState() {
   let db = readDb()
 
-  // Data Safety: Check if db.json lacks orders/users/categories; if so, search backups
-  const hasOrders = db && Array.isArray(db.orders) && db.orders.length > 0
+  // 1. If db.json is missing categories/menu, recover from backup or seed-db.json
   const hasCategories = db && Array.isArray(db.categories) && db.categories.length > 0
   const SEED_PATH = join(__dirname, 'seed-db.json')
 
-  if (!hasOrders || !hasCategories) {
-    console.log('[DATA SAFETY] db.json incomplete. Searching backups to recover business data...')
+  if (!hasCategories) {
+    console.log('[DATA SAFETY] db.json missing categories. Searching backups or seed-db.json...')
     const backup = findLatestValidBackup()
-    if (backup) {
-      console.log(`[DATA SAFETY] Restored from backup containing ${backup.orders?.length || 0} orders!`)
+    if (backup && backup.categories && backup.categories.length) {
+      console.log('[DATA SAFETY] Restored menu categories & items from backup!')
       db = { ...backup, ...db }
-      if (backup.orders && backup.orders.length) db.orders = backup.orders
-      if (backup.categories && backup.categories.length) db.categories = backup.categories
-      if (backup.menuItems && backup.menuItems.length) db.menuItems = backup.menuItems
-    } else {
-      console.log('[DATA SAFETY] Initializing from master seed-db.json...')
-      if (existsSync(SEED_PATH)) {
-        try {
-          const seedContent = readFileSync(SEED_PATH, 'utf-8').trim()
-          if (seedContent) {
-            const seedData = JSON.parse(seedContent)
-            db = { ...seedData, orders: db.orders || [] }
-          }
-        } catch (e) {}
-      }
+    } else if (existsSync(SEED_PATH)) {
+      try {
+        const seedContent = readFileSync(SEED_PATH, 'utf-8').trim()
+        if (seedContent) {
+          const seedData = JSON.parse(seedContent)
+          db = { ...seedData, ...db }
+        }
+      } catch (e) {}
     }
     writeDb(db)
   }
 
+  // 2. If db.json has 0 orders, check if a backup has existing orders to recover
+  if (!db.orders || !Array.isArray(db.orders) || db.orders.length === 0) {
+    const backup = findLatestValidBackup()
+    if (backup && backup.orders && Array.isArray(backup.orders) && backup.orders.length > 0) {
+      console.log(`[DATA SAFETY] Recovered ${backup.orders.length} orders from backup!`)
+      db.orders = backup.orders
+      writeDb(db)
+    }
+  }
+
   if (db.orders && Array.isArray(db.orders)) orders = db.orders
+  if (db.categories && Array.isArray(db.categories)) categories = db.categories
+  if (db.menuItems && Array.isArray(db.menuItems)) menuItems = db.menuItems
+  if (db.recipes && Array.isArray(db.recipes)) recipes = db.recipes
+  if (db.users && Array.isArray(db.users)) mobileAppUsers = db.users
   if (db.loyaltyUsers && Array.isArray(db.loyaltyUsers)) loyaltyUsers = db.loyaltyUsers
   if (db.dens && Array.isArray(db.dens)) dens = db.dens
   if (db.pointTransactions && Array.isArray(db.pointTransactions)) pointTransactions = db.pointTransactions
   if (db.inventory && Array.isArray(db.inventory)) inventory = db.inventory
-  
+  if (db.expenses && Array.isArray(db.expenses)) expenses = db.expenses
+  if (db.purchases && Array.isArray(db.purchases)) purchases = db.purchases
+  if (db.suppliers && Array.isArray(db.suppliers)) suppliers = db.suppliers
+  if (db.purchaseOrders && Array.isArray(db.purchaseOrders)) purchaseOrders = db.purchaseOrders
+  if (db.poItems && Array.isArray(db.poItems)) poItems = db.poItems
+  if (db.grns && Array.isArray(db.grns)) grns = db.grns
+  if (db.mrns && Array.isArray(db.mrns)) mrns = db.mrns
+  if (db.vendorPayments && Array.isArray(db.vendorPayments)) vendorPayments = db.vendorPayments
+  if (db.onlineOrders && Array.isArray(db.onlineOrders)) onlineOrders = db.onlineOrders
+  if (db.aggregators && Array.isArray(db.aggregators)) aggregators = db.aggregators
+  if (db.settings) settings = { ...settings, ...db.settings }
+  if (db.billingUsers && Array.isArray(db.billingUsers)) billingUsers = db.billingUsers
+
   // Calculate highest order number dynamically so numbering never resets to 1000
   let maxNum = 1000
   if (orders.length > 0) {
@@ -304,16 +323,6 @@ function restoreState() {
     })
   }
   orderNumber = db.orderNumber ? Math.max(db.orderNumber, maxNum) : maxNum
-
-  if (db.usedReferralCodes && Array.isArray(db.usedReferralCodes)) usedReferralCodes = new Set(db.usedReferralCodes)
-  if (db.expenses && Array.isArray(db.expenses)) expenses = db.expenses
-  if (db.purchases && Array.isArray(db.purchases)) purchases = db.purchases
-  if (db.onlineOrders && Array.isArray(db.onlineOrders)) onlineOrders = db.onlineOrders
-  if (db.aggregators && Array.isArray(db.aggregators)) aggregators = db.aggregators
-  if (db.categories && Array.isArray(db.categories)) categories = db.categories
-  if (db.menuItems && Array.isArray(db.menuItems)) menuItems = db.menuItems
-  if (db.recipes && Array.isArray(db.recipes)) recipes = db.recipes
-  if (db.users && Array.isArray(db.users)) mobileAppUsers = db.users
 
   // Seed demo login credentials
   const demoEmail = 'demo'
@@ -335,30 +344,10 @@ function restoreState() {
     writeDb(db)
   }
 
-  if (db.suppliers && Array.isArray(db.suppliers)) suppliers = db.suppliers
-  if (db.purchaseOrders && Array.isArray(db.purchaseOrders)) purchaseOrders = db.purchaseOrders
-  if (db.poItems && Array.isArray(db.poItems)) poItems = db.poItems
-  if (db.grns && Array.isArray(db.grns)) grns = db.grns
-  if (db.mrns && Array.isArray(db.mrns)) mrns = db.mrns
-  if (db.vendorPayments && Array.isArray(db.vendorPayments)) vendorPayments = db.vendorPayments
-  if (db.settings) settings = { ...settings, ...db.settings }
-  if (db.billingUsers?.length) {
-    billingUsers = db.billingUsers
-    billingUsers.forEach(u => {
-      if (u.pin && u.pin.length === 4 && /^\d{4}$/.test(u.pin)) {
-        u.pin = bcrypt.hashSync(u.pin, 10)
-      }
-    })
-  }
-
   // Remove Burger category & items
   categories = categories.filter(c => c.name !== 'Burger' && c.name !== 'Burgers' && c.id !== 'c2')
   menuItems = menuItems.filter(i => i.categoryId !== 'c2' && !i.name.toLowerCase().includes('burger'))
   recipes = recipes.filter(r => !r.menuItemName?.toLowerCase().includes('burger'))
-  if (db.categories) db.categories = categories
-  if (db.menuItems) db.menuItems = menuItems
-  if (db.recipes) db.recipes = recipes
-  writeDb(db)
 }
 
 // INVOKE restoreState IMMEDIATELY AT STARTUP
