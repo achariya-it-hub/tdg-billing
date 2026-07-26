@@ -83,7 +83,6 @@ function writeDb(data = {}) {
       purchaseOrders: typeof purchaseOrders !== 'undefined' && purchaseOrders !== undefined ? purchaseOrders : (data.purchaseOrders || []),
       poItems: typeof poItems !== 'undefined' && poItems !== undefined ? poItems : (data.poItems || []),
       grns: typeof grns !== 'undefined' && grns !== undefined ? grns : (data.grns || []),
-      mrns: typeof mrns !== 'undefined' && mrns !== undefined ? mrns : (data.mrns || []),
       vendorPayments: typeof vendorPayments !== 'undefined' && vendorPayments !== undefined ? vendorPayments : (data.vendorPayments || []),
       settings: typeof settings !== 'undefined' && settings !== undefined ? settings : (data.settings || {})
     }
@@ -108,28 +107,61 @@ function writeDb(data = {}) {
 }
 
 // Persist ALL in-memory state to db.json (single source of truth)
-// In-memory database variables
-let mobileAppUsers = []
-let orders = []
-let orderNumber = 1000
-let categories = []
-let menuItems = []
-let recipes = []
+// Billing system users (PIN-based login for billing staff)
 let billingUsers = []
+const BILLING_MODULES = [
+  'pos', 'captain', 'kitchen', 'billing', 'kot', 'purchase',
+  'inventory', 'menu', 'hr', 'loyalty', 'customers', 'reports',
+  'dashboard', 'onlineOrders', 'users', 'expenses'
+]
+
+function makePermissions(all) {
+  const perms = {}
+  for (const mod of BILLING_MODULES) {
+    perms[mod] = { view: all, create: all, update: all, delete: all }
+  }
+  return perms
+}
+
+const CASHIER_MODULES = ['pos', 'billing', 'customers']
+const KITCHEN_MODULES = ['kitchen', 'kot']
+const MANAGER_RESTRICT = ['users']
+
+function getDefaultPermissions(role) {
+  if (role === 'admin' || role === 'super-admin') return makePermissions(true)
+  const perms = makePermissions(false)
+  if (role === 'manager') {
+    for (const mod of BILLING_MODULES) {
+      if (!MANAGER_RESTRICT.includes(mod)) {
+        perms[mod] = { view: true, create: true, update: true, delete: true }
+      }
+    }
+    return perms
+  }
+  if (role === 'cashier') {
+    for (const mod of CASHIER_MODULES) {
+      perms[mod] = { view: true, create: true, update: true, delete: false }
+    }
+    return perms
+  }
+  if (role === 'kitchen') {
+    for (const mod of KITCHEN_MODULES) {
+      perms[mod] = { view: true, create: true, update: true, delete: false }
+    }
+    return perms
+  }
+  return perms
+}
+
+// Daily expense tracking
 let expenses = []
 let purchases = []
 let suppliers = []
 let purchaseOrders = []
 let poItems = []
 let grns = []
-let mrns = []
 let vendorPayments = []
 let onlineOrders = []
-let loyaltyUsers = []
-let dens = []
-let pointTransactions = []
-let inventory = []
-let usedReferralCodes = new Set()
 let settings = {
   company: { name: 'Ten Den Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '000000000', email: '', gst: '', logo: null, upiId: '', deliveryEnabled: true },
   theme: { accentPrimary: '#e63946', accentPrimaryDark: '#c1121f', bgPrimary: '#f5f5f7' },
@@ -145,7 +177,8 @@ let settings = {
   },
   offers: [
     { id: '1', title: 'Golden Gyro Feast (50% OFF)', desc: '1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink', tag: '50% OFF', price: '₹199', origPrice: '₹398', image: '/uploads/menu/m1.jpg' },
-    { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2 Garlic Dips + Fries', tag: 'SAVE ₹151', price: '₹299', origPrice: '₹450', image: '/uploads/menu/m3.jpg' }
+    { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2 Garlic Dips + Fries', tag: 'SAVE ₹151', price: '₹299', origPrice: '₹450', image: '/uploads/menu/m2.jpg' },
+    { id: '3', title: 'BOGO Thick Shake Delight', desc: 'Buy 1 Kunafa Pistachio Shake & get Vanilla Shake Free', tag: 'BUY 1 GET 1', price: '₹149', origPrice: '₹298', image: '/uploads/menu/m3.jpg' }
   ]
 }
 let aggregators = [
@@ -177,7 +210,6 @@ function saveState() {
     purchaseOrders,
     poItems,
     grns,
-    mrns,
     vendorPayments,
     settings
   })
@@ -186,34 +218,7 @@ function saveState() {
 function findLatestValidBackup() {
   const backupDirs = [BACKUP_DIR, DAILY_BACKUP_DIR]
 
-  // 1. First search for newest backup containing orders > 0
-  for (const bDir of backupDirs) {
-    if (existsSync(bDir)) {
-      let files = readdirSync(bDir).filter(f => f.endsWith('.json'))
-      const regularFiles = files.filter(f => !f.includes('pre-restore') && !f.includes('pre-reset') && f !== 'db-latest.json')
-      if (regularFiles.length > 0) files = regularFiles
-
-      files.sort((a, b) => {
-        try {
-          return statSync(join(bDir, b)).mtimeMs - statSync(join(bDir, a)).mtimeMs
-        } catch (e) { return 0 }
-      })
-
-      for (const file of files) {
-        try {
-          const content = readFileSync(join(bDir, file), 'utf-8').trim()
-          if (!content) continue
-          const parsed = JSON.parse(content)
-          if (parsed.orders && Array.isArray(parsed.orders) && parsed.orders.length > 0) {
-            console.log(`[DATA SAFETY] Found timestamped backup with ${parsed.orders.length} orders: ${file}`)
-            return parsed
-          }
-        } catch (e) {}
-      }
-    }
-  }
-
-  // 2. Fallback: check db-latest.json or newest timestamped backup
+  // 1. First check db-latest.json
   const latestPath = join(BACKUP_DIR, 'db-latest.json')
   if (existsSync(latestPath)) {
     try {
@@ -228,6 +233,7 @@ function findLatestValidBackup() {
     } catch (e) {}
   }
 
+  // 2. Otherwise sort all backup files strictly by modification timestamp (mtimeMs)
   for (const bDir of backupDirs) {
     if (existsSync(bDir)) {
       let files = readdirSync(bDir).filter(f => f.endsWith('.json'))
@@ -237,7 +243,9 @@ function findLatestValidBackup() {
       files.sort((a, b) => {
         try {
           return statSync(join(bDir, b)).mtimeMs - statSync(join(bDir, a)).mtimeMs
-        } catch (e) { return 0 }
+        } catch (e) {
+          return 0
+        }
       })
 
       for (const file of files) {
@@ -249,10 +257,11 @@ function findLatestValidBackup() {
             console.log(`[DATA SAFETY] Found newest timestamped backup: ${file}`)
             return parsed
           }
-        } catch (e) {}
+        } catch (e) { /* ignore corrupt backup */ }
       }
     }
   }
+
   return null
 }
 
@@ -260,69 +269,49 @@ function findLatestValidBackup() {
 function restoreState() {
   let db = readDb()
 
-  // 1. If db.json is missing categories/menu, recover from backup or seed-db.json
-  const hasCategories = db && Array.isArray(db.categories) && db.categories.length > 0
+  // Safety: if db.json is missing or lacks business data, seed from master seed-db.json or latest backup
   const SEED_PATH = join(__dirname, 'seed-db.json')
+  const isDbEmptyOrMissing = !existsSync(DB_PATH) || 
+    !db || 
+    ((!db.orders || !db.orders.length) && (!db.users || !db.users.length) && (!db.categories || !db.categories.length))
 
-  if (!hasCategories) {
-    console.log('[DATA SAFETY] db.json missing categories. Searching backups or seed-db.json...')
-    const backup = findLatestValidBackup()
-    if (backup && backup.categories && backup.categories.length) {
-      console.log('[DATA SAFETY] Restored menu categories & items from backup!')
-      db = { ...backup, ...db }
-    } else if (existsSync(SEED_PATH)) {
+  if (isDbEmptyOrMissing) {
+    console.log('[DATA SAFETY] db.json is missing or empty. Initializing from seed-db.json...')
+    let foundBackup = null
+    if (existsSync(SEED_PATH)) {
       try {
         const seedContent = readFileSync(SEED_PATH, 'utf-8').trim()
-        if (seedContent) {
-          const seedData = JSON.parse(seedContent)
-          db = { ...seedData, ...db }
-        }
-      } catch (e) {}
+        if (seedContent) foundBackup = JSON.parse(seedContent)
+      } catch (e) { console.error('Error reading seed-db.json:', e.message) }
     }
-    writeDb(db)
-  }
+    if (!foundBackup) foundBackup = findLatestValidBackup()
 
-  // 2. If db.json has 0 orders, check if a backup has existing orders to recover
-  if (!db.orders || !Array.isArray(db.orders) || db.orders.length === 0) {
-    const backup = findLatestValidBackup()
-    if (backup && backup.orders && Array.isArray(backup.orders) && backup.orders.length > 0) {
-      console.log(`[DATA SAFETY] Recovered ${backup.orders.length} orders from backup!`)
-      db.orders = backup.orders
-      writeDb(db)
+    if (foundBackup) {
+      db = foundBackup
+      try {
+        writeFileSync(DB_PATH, JSON.stringify(foundBackup, null, 2))
+        console.log('[DATA SAFETY] Auto-restored business database successfully!')
+      } catch (e) {
+        console.error('[DATA SAFETY] Failed to write restored database:', e.message)
+      }
     }
   }
 
   if (db.orders && Array.isArray(db.orders)) orders = db.orders
-  if (db.categories && Array.isArray(db.categories)) categories = db.categories
-  if (db.menuItems && Array.isArray(db.menuItems)) menuItems = db.menuItems
-  if (db.recipes && Array.isArray(db.recipes)) recipes = db.recipes
-  if (db.users && Array.isArray(db.users)) mobileAppUsers = db.users
   if (db.loyaltyUsers && Array.isArray(db.loyaltyUsers)) loyaltyUsers = db.loyaltyUsers
   if (db.dens && Array.isArray(db.dens)) dens = db.dens
   if (db.pointTransactions && Array.isArray(db.pointTransactions)) pointTransactions = db.pointTransactions
   if (db.inventory && Array.isArray(db.inventory)) inventory = db.inventory
+  if (db.orderNumber) orderNumber = db.orderNumber
+  if (db.usedReferralCodes && Array.isArray(db.usedReferralCodes)) usedReferralCodes = new Set(db.usedReferralCodes)
   if (db.expenses && Array.isArray(db.expenses)) expenses = db.expenses
   if (db.purchases && Array.isArray(db.purchases)) purchases = db.purchases
-  if (db.suppliers && Array.isArray(db.suppliers)) suppliers = db.suppliers
-  if (db.purchaseOrders && Array.isArray(db.purchaseOrders)) purchaseOrders = db.purchaseOrders
-  if (db.poItems && Array.isArray(db.poItems)) poItems = db.poItems
-  if (db.grns && Array.isArray(db.grns)) grns = db.grns
-  if (db.mrns && Array.isArray(db.mrns)) mrns = db.mrns
-  if (db.vendorPayments && Array.isArray(db.vendorPayments)) vendorPayments = db.vendorPayments
   if (db.onlineOrders && Array.isArray(db.onlineOrders)) onlineOrders = db.onlineOrders
   if (db.aggregators && Array.isArray(db.aggregators)) aggregators = db.aggregators
-  if (db.settings) settings = { ...settings, ...db.settings }
-  if (db.billingUsers && Array.isArray(db.billingUsers)) billingUsers = db.billingUsers
-
-  // Calculate highest order number dynamically so numbering never resets to 1000
-  let maxNum = 1000
-  if (orders.length > 0) {
-    orders.forEach(o => {
-      const num = Number(o.orderNumber) || 0
-      if (num > maxNum) maxNum = num
-    })
-  }
-  orderNumber = db.orderNumber ? Math.max(db.orderNumber, maxNum) : maxNum
+  if (db.categories && Array.isArray(db.categories)) categories = db.categories
+  if (db.menuItems && Array.isArray(db.menuItems)) menuItems = db.menuItems
+  if (db.recipes && Array.isArray(db.recipes)) recipes = db.recipes
+  if (db.users && Array.isArray(db.users)) mobileAppUsers = db.users
 
   // Seed demo login credentials
   const demoEmail = 'demo'
@@ -344,14 +333,31 @@ function restoreState() {
     writeDb(db)
   }
 
+  if (db.suppliers?.length) suppliers = db.suppliers
+  if (db.purchaseOrders?.length) purchaseOrders = db.purchaseOrders
+  if (db.poItems?.length) poItems = db.poItems
+  if (db.grns?.length) grns = db.grns
+  if (db.vendorPayments?.length) vendorPayments = db.vendorPayments
+  if (db.settings) settings = { ...settings, ...db.settings }
+  if (db.billingUsers?.length) {
+    billingUsers = db.billingUsers
+    // Migrate plaintext PINs to bcrypt hashes (existing data from before hashing was implemented)
+    billingUsers.forEach(u => {
+      if (u.pin && u.pin.length === 4 && /^\d{4}$/.test(u.pin)) {
+        u.pin = bcrypt.hashSync(u.pin, 10)
+      }
+    })
+  }
+
   // Remove Burger category & items
   categories = categories.filter(c => c.name !== 'Burger' && c.name !== 'Burgers' && c.id !== 'c2')
   menuItems = menuItems.filter(i => i.categoryId !== 'c2' && !i.name.toLowerCase().includes('burger'))
   recipes = recipes.filter(r => !r.menuItemName?.toLowerCase().includes('burger'))
+  if (db.categories) db.categories = categories
+  if (db.menuItems) db.menuItems = menuItems
+  if (db.recipes) db.recipes = recipes
+  writeDb(db)
 }
-
-// INVOKE restoreState IMMEDIATELY AT STARTUP
-restoreState()
 
 const app = express()
 const httpServer = createServer(app)
@@ -366,6 +372,104 @@ app.use(express.json({ limit: '10mb' }))
 const UPLOADS_DIR = join(__dirname, 'uploads')
 if (!existsSync(UPLOADS_DIR)) mkdirSync(UPLOADS_DIR, { recursive: true })
 app.use('/uploads', express.static(UPLOADS_DIR))
+
+// In-memory database
+let mobileAppUsers = []
+let orders = []
+let orderNumber = 1000
+let categories = [
+  { id: 'c1', name: 'Gyros', displayOrder: 1, color: '#e63946' },
+  { id: 'c3', name: 'Salads', displayOrder: 2, color: '#10b981' },
+  { id: 'c4', name: 'Sides', displayOrder: 3, color: '#dc2626' },
+  { id: 'c5', name: 'TDG Crispy Chicken', displayOrder: 4, color: '#fbbf24' },
+  { id: 'c6', name: 'Thick Shakes', displayOrder: 5, color: '#8b5cf6' },
+  { id: 'c7', name: 'Softy', displayOrder: 6, color: '#ec4899' },
+  { id: 'c8', name: 'Desserts', displayOrder: 7, color: '#f472b6' },
+  { id: 'c9', name: 'Beverages', displayOrder: 8, color: '#3b82f6' }
+]
+
+let menuItems = [
+  // Gyros (c1)
+  { id: 'm1', categoryId: 'c1', name: 'Non-Veg - Spicy Chicken Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm2', categoryId: 'c1', name: 'Non-Veg - Spicy Chicken Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm3', categoryId: 'c1', name: 'Non-Veg - Cream Chicken Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm4', categoryId: 'c1', name: 'Non-Veg - Cream Chicken Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm5', categoryId: 'c1', name: 'Non-Veg - BBQ Chicken Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm6', categoryId: 'c1', name: 'Non-Veg - BBQ Chicken Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm7', categoryId: 'c1', name: 'Non-Veg - Pesto Chicken Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm8', categoryId: 'c1', name: 'Non-Veg - Pesto Chicken Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm9', categoryId: 'c1', name: 'Veg - Spicy Paneer Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm10', categoryId: 'c1', name: 'Veg - Spicy Paneer Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm11', categoryId: 'c1', name: 'Veg - Cream Paneer Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm12', categoryId: 'c1', name: 'Veg - Cream Paneer Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm13', categoryId: 'c1', name: 'Veg - BBQ Paneer Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm14', categoryId: 'c1', name: 'Veg - BBQ Paneer Gyro (Large)', price: 249, isAvailable: true },
+  { id: 'm15', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Regular)', price: 99, isAvailable: true },
+  { id: 'm16', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Large)', price: 249, isAvailable: true },
+
+  // Salads (c3)
+  { id: 'm20', categoryId: 'c3', name: 'Non-Veg - Chicken Salad', price: 99, isAvailable: true },
+  { id: 'm21', categoryId: 'c3', name: 'Veg - Paneer Salad', price: 99, isAvailable: true },
+
+  // Sides (c4)
+  { id: 'm22', categoryId: 'c4', name: 'Non-Veg - Loaded Chicken Fries', price: 199, isAvailable: true },
+  { id: 'm23', categoryId: 'c4', name: 'Veg - Fries (Salted, Peri Peri Or Cajun)', price: 99, isAvailable: true },
+  { id: 'm24', categoryId: 'c4', name: 'Veg - Loaded Paneer Fries', price: 199, isAvailable: true },
+  { id: 'm25', categoryId: 'c4', name: 'Veg - 6 pcs Halloumi Strips', price: 149, isAvailable: true },
+
+  // TDG Crispy Chicken (c5)
+  // Leg & Thigh
+  { id: 'm26', categoryId: 'c5', name: 'Non-Veg - 1 Pc Crispy Chicken (1 Dip)', price: 70, isAvailable: true },
+  { id: 'm27', categoryId: 'c5', name: 'Non-Veg - 2 Pc Crispy Chicken (1 Dip)', price: 140, isAvailable: true },
+  { id: 'm28', categoryId: 'c5', name: 'Non-Veg - 4 Pc Crispy Chicken (2 Dip)', price: 280, isAvailable: true },
+  { id: 'm29', categoryId: 'c5', name: 'Non-Veg - 8 Pc Crispy Chicken (4 Dip)', price: 560, isAvailable: true },
+  { id: 'm30', categoryId: 'c5', name: 'Non-Veg - 12 Pc Crispy Chicken (6 Dip)', price: 840, isAvailable: true },
+  // Wings
+  { id: 'm31', categoryId: 'c5', name: 'Non-Veg - 3 Pc Crispy Wings (1 Dip)', price: 90, isAvailable: true },
+  { id: 'm32', categoryId: 'c5', name: 'Non-Veg - 6 Pc Crispy Wings (2 Dip)', price: 180, isAvailable: true },
+  { id: 'm33', categoryId: 'c5', name: 'Non-Veg - 9 Pc Crispy Wings (3 Dip)', price: 270, isAvailable: true },
+  { id: 'm34', categoryId: 'c5', name: 'Non-Veg - 20 Pc Crispy Wings (6 Dip)', price: 600, isAvailable: true },
+  { id: 'm35', categoryId: 'c5', name: 'Non-Veg - 60 Pc Crispy Wings (12 Dip)', price: 1500, isAvailable: true },
+  // Strips
+  { id: 'm36', categoryId: 'c5', name: 'Non-Veg - 3 Pc Crispy Strips (1 Dip)', price: 120, isAvailable: true },
+  { id: 'm37', categoryId: 'c5', name: 'Non-Veg - 6 Pc Crispy Strips (2 Dip)', price: 240, isAvailable: true },
+  { id: 'm38', categoryId: 'c5', name: 'Non-Veg - 9 Pc Crispy Strips (3 Dip)', price: 360, isAvailable: true },
+  { id: 'm39', categoryId: 'c5', name: 'Non-Veg - 20 Pc Crispy Strips (6 Dip)', price: 800, isAvailable: true },
+  { id: 'm40', categoryId: 'c5', name: 'Non-Veg - 60 Pc Crispy Strips (12 Dip)', price: 2400, isAvailable: true },
+
+  // Thick Shakes (c6)
+  { id: 'm41', categoryId: 'c6', name: 'Veg - Vanilla Shake (Regular)', price: 99, isAvailable: true },
+  { id: 'm42', categoryId: 'c6', name: 'Veg - Vanilla Shake (Large)', price: 199, isAvailable: true },
+  { id: 'm43', categoryId: 'c6', name: 'Veg - Strawberry Shake (Regular)', price: 99, isAvailable: true },
+  { id: 'm44', categoryId: 'c6', name: 'Veg - Strawberry Shake (Large)', price: 199, isAvailable: true },
+  { id: 'm45', categoryId: 'c6', name: 'Veg - Biscoff Shake (Regular)', price: 99, isAvailable: true },
+  { id: 'm46', categoryId: 'c6', name: 'Veg - Biscoff Shake (Large)', price: 199, isAvailable: true },
+  { id: 'm47', categoryId: 'c6', name: 'Veg - Dark Chocolate Shake (Regular)', price: 99, isAvailable: true },
+  { id: 'm48', categoryId: 'c6', name: 'Veg - Dark Chocolate Shake (Large)', price: 199, isAvailable: true },
+  { id: 'm49', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Regular)', price: 99, isAvailable: true },
+  { id: 'm50', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Large)', price: 199, isAvailable: true },
+
+  // Softy (c7)
+  { id: 'm51', categoryId: 'c7', name: 'Veg - Vanilla Softy', price: 39, isAvailable: true },
+
+  // Desserts (c8)
+  { id: 'm52', categoryId: 'c8', name: 'Veg - Chocolate Brownie', price: 99, isAvailable: true },
+  { id: 'm53', categoryId: 'c8', name: 'Veg - Blondy Cake', price: 99, isAvailable: true },
+
+  // Beverages (c9)
+  { id: 'm54', categoryId: 'c9', name: 'Veg - Sprite / Coca-Cola (Regular)', price: 59, isAvailable: true },
+  { id: 'm55', categoryId: 'c9', name: 'Veg - Sprite / Coca-Cola (Large)', price: 99, isAvailable: true },
+  { id: 'm56', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Regular)', price: 59, isAvailable: true },
+  { id: 'm57', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Large)', price: 99, isAvailable: true },
+  { id: 'm58', categoryId: 'c9', name: 'Veg - Hot Chocolate', price: 149, isAvailable: true },
+  { id: 'm59', categoryId: 'c9', name: 'Veg - Signature Tea', price: 99, isAvailable: true }
+]
+
+let inventory = [
+  { id: '1', name: 'Chicken Breast', currentStock: 50, minimumStock: 20 },
+  { id: '2', name: 'Burger Buns', currentStock: 200, minimumStock: 50 },
+  { id: '3', name: 'Fries', currentStock: 30, minimumStock: 10 }
+]
 
 // ============ LOYALTY SYSTEM ============
 // Tiers: Bronze(0) < Silver(1k) < Gold(3k) < Platinum(6k) < Diamond(15k) < Emerald(25k)
@@ -386,6 +490,11 @@ function getTier(points) {
   }
   return tier
 }
+
+let loyaltyUsers = []
+let dens = []
+let pointTransactions = []
+let usedReferralCodes = new Set()
 let registrationCount = 0
 const MAX_FREE_REGISTRATIONS = 1000
 const MAX_DEN_MEMBERS = 10
@@ -2118,6 +2227,7 @@ app.put('/api/admin/menu/items/:id/toggle', (req, res) => {
 })
 
 // ============ RECIPE MANAGEMENT ============
+let recipes = []
 
 app.get('/api/recipes', (req, res) => {
   res.json(recipes)
@@ -3132,79 +3242,6 @@ app.post('/api/admin/grns', (req, res) => {
   grns.push(grn)
   saveState()
   res.status(201).json(grn)
-})
-
-app.delete('/api/admin/grns/:id', (req, res) => {
-  const idx = grns.findIndex(g => g.id === req.params.id)
-  if (idx === -1) return res.status(404).json({ error: 'GRN not found' })
-  grns.splice(idx, 1)
-  saveState()
-  res.json({ success: true })
-})
-
-// ============ MRN CRUD ============
-app.get('/api/admin/mrns', (req, res) => {
-  res.json(mrns.sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt)))
-})
-
-app.post('/api/admin/mrns', (req, res) => {
-  const { type, item, quantity, supplier, reason, date, status } = req.body
-  const id = 'MRN' + String(mrns.length + 1).padStart(3, '0')
-  const mrn = {
-    id,
-    type: type || 'return',
-    item: item || '',
-    quantity: Number(quantity) || 1,
-    supplier: supplier || '',
-    reason: reason || '',
-    status: status || 'completed',
-    date: date || new Date().toISOString().split('T')[0],
-    createdAt: new Date().toISOString()
-  }
-  mrns.unshift(mrn)
-  saveState()
-  res.status(201).json(mrn)
-})
-
-app.delete('/api/admin/mrns/:id', (req, res) => {
-  const idx = mrns.findIndex(m => m.id === req.params.id)
-  if (idx === -1) return res.status(404).json({ error: 'MRN not found' })
-  mrns.splice(idx, 1)
-  saveState()
-  res.json({ success: true })
-})
-
-// ============ PURCHASES (PURCHASE BILLS) CRUD ============
-app.get('/api/admin/purchases', (req, res) => {
-  res.json(purchases.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)))
-})
-
-app.post('/api/admin/purchases', (req, res) => {
-  const { supplier, billNo, items, total, date, status, notes } = req.body
-  if (!supplier) return res.status(400).json({ error: 'Supplier required' })
-  const id = 'PB' + Date.now()
-  const purchase = {
-    id,
-    supplier,
-    billNo: billNo || '',
-    items: items || [],
-    total: Number(total) || 0,
-    status: status || 'completed',
-    date: date || new Date().toISOString().split('T')[0],
-    notes: notes || '',
-    createdAt: new Date().toISOString()
-  }
-  purchases.unshift(purchase)
-  saveState()
-  res.status(201).json(purchase)
-})
-
-app.delete('/api/admin/purchases/:id', (req, res) => {
-  const idx = purchases.findIndex(p => p.id === req.params.id)
-  if (idx === -1) return res.status(404).json({ error: 'Purchase bill not found' })
-  purchases.splice(idx, 1)
-  saveState()
-  res.json({ success: true })
 })
 
 // ============ VENDOR PAYMENTS ============
