@@ -231,13 +231,30 @@ export default function POS() {
     const handleNewOrder = (order) => {
       playOrderAlertSound('new_order')
       const num = order?.orderNumber || order?.id || ''
-      const src = order?.source ? order.source.toUpperCase() : (order?.type ? order.type.toUpperCase() : 'APP')
-      toast.success(`🔔 New ${src} Order #${num} received!`)
+      const src = order?.source ? order.source.toUpperCase() : (order?.type ? order.type.toUpperCase() : 'WAITER')
+      toast.success(`🔔 New ${src} Order #${num} received! Printing KOT...`)
+
+      // Auto-trigger thermal KOT printout on the Billing POS Terminal
+      if (order) {
+        try {
+          PrintService.printKOTAndBill(order)
+        } catch (pe) {
+          console.error('Remote order auto-print failed:', pe)
+        }
+      }
     }
 
     const handleOnlineOrder = (order) => {
       playOrderAlertSound('online_order')
-      toast.success(`🔔 New Online Order Received!`)
+      const num = order?.orderNumber || order?.id || ''
+      toast.success(`🔔 New Online Order #${num} Received! Printing KOT...`)
+      if (order) {
+        try {
+          PrintService.printKOTAndBill(order)
+        } catch (pe) {
+          console.error('Online order auto-print failed:', pe)
+        }
+      }
     }
 
     const handleMenuUpdated = () => {
