@@ -2,7 +2,6 @@ import { create } from 'zustand'
 
 const sampleCategories = [
   { id: 'c1', name: 'Gyros', color: '#e63946' },
-  { id: 'c2', name: 'Burger', color: '#f59e0b' },
   { id: 'c3', name: 'Salads', color: '#10b981' },
   { id: 'c4', name: 'Sides', color: '#dc2626' },
   { id: 'c5', name: 'TDG Crispy Chicken', color: '#fbbf24' },
@@ -30,11 +29,6 @@ const sampleMenuItems = [
   { id: 'm14', categoryId: 'c1', name: 'Veg - BBQ Paneer Gyro (Large)', price: 249, isAvailable: 1 },
   { id: 'm15', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Regular)', price: 99, isAvailable: 1 },
   { id: 'm16', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Large)', price: 249, isAvailable: 1 },
-
-  // Burgers (c2)
-  { id: 'm17', categoryId: 'c2', name: 'Non-Veg - Spicy Egg Burger', price: 79, isAvailable: 1 },
-  { id: 'm18', categoryId: 'c2', name: 'Non-Veg - Crispy Chicken Burger', price: 99, isAvailable: 1 },
-  { id: 'm19', categoryId: 'c2', name: 'Veg - Spicy Paneer Burger', price: 99, isAvailable: 1 },
 
   // Salads (c3)
   { id: 'm20', categoryId: 'c3', name: 'Non-Veg - Chicken Salad', price: 99, isAvailable: 1 },

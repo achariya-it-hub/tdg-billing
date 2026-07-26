@@ -25,11 +25,6 @@ class _MenuScreenState extends State<MenuScreen> {
       {'name': 'Non-Veg - Cream Chicken Gyro (Regular)', 'desc': 'Creamy garlic chicken in fluffy pita bread', 'price': '₹99'},
       {'name': 'Veg - Spicy Paneer Gyro (Regular)', 'desc': 'Grilled paneer with spicy mayo & crisp iceberg', 'price': '₹99'},
     ],
-    'Burger': [
-      {'name': 'Non-Veg - Crispy Chicken Burger', 'desc': 'Crispy chicken patty with lettuce & signature sauce', 'price': '₹99'},
-      {'name': 'Non-Veg - Spicy Egg Burger', 'desc': 'Spiced fried egg with cheese slice in sesame bun', 'price': '₹79'},
-      {'name': 'Veg - Spicy Paneer Burger', 'desc': 'Golden paneer patty with spicy jalapenos', 'price': '₹99'},
-    ],
     'TDG Crispy Chicken': [
       {'name': 'Non-Veg - 3 Pc Crispy Wings (1 Dip)', 'desc': '3 pcs hot & spicy crispy fried chicken wings', 'price': '₹90'},
       {'name': 'Non-Veg - 6 Pc Crispy Wings (2 Dip)', 'desc': '6 pcs crispy wings with choice of 2 dips', 'price': '₹180'},

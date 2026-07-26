@@ -340,6 +340,15 @@ function restoreState() {
       }
     })
   }
+
+  // Remove Burger category & items
+  categories = categories.filter(c => c.name !== 'Burger' && c.name !== 'Burgers' && c.id !== 'c2')
+  menuItems = menuItems.filter(i => i.categoryId !== 'c2' && !i.name.toLowerCase().includes('burger'))
+  recipes = recipes.filter(r => !r.menuItemName?.toLowerCase().includes('burger'))
+  if (db.categories) db.categories = categories
+  if (db.menuItems) db.menuItems = menuItems
+  if (db.recipes) db.recipes = recipes
+  writeDb(db)
 }
 
 const app = express()
@@ -362,14 +371,13 @@ let orders = []
 let orderNumber = 1000
 let categories = [
   { id: 'c1', name: 'Gyros', displayOrder: 1, color: '#e63946' },
-  { id: 'c2', name: 'Burger', displayOrder: 2, color: '#f59e0b' },
-  { id: 'c3', name: 'Salads', displayOrder: 3, color: '#10b981' },
-  { id: 'c4', name: 'Sides', displayOrder: 4, color: '#dc2626' },
-  { id: 'c5', name: 'TDG Crispy Chicken', displayOrder: 5, color: '#fbbf24' },
-  { id: 'c6', name: 'Thick Shakes', displayOrder: 6, color: '#8b5cf6' },
-  { id: 'c7', name: 'Softy', displayOrder: 7, color: '#ec4899' },
-  { id: 'c8', name: 'Desserts', displayOrder: 8, color: '#f472b6' },
-  { id: 'c9', name: 'Beverages', displayOrder: 9, color: '#3b82f6' }
+  { id: 'c3', name: 'Salads', displayOrder: 2, color: '#10b981' },
+  { id: 'c4', name: 'Sides', displayOrder: 3, color: '#dc2626' },
+  { id: 'c5', name: 'TDG Crispy Chicken', displayOrder: 4, color: '#fbbf24' },
+  { id: 'c6', name: 'Thick Shakes', displayOrder: 5, color: '#8b5cf6' },
+  { id: 'c7', name: 'Softy', displayOrder: 6, color: '#ec4899' },
+  { id: 'c8', name: 'Desserts', displayOrder: 7, color: '#f472b6' },
+  { id: 'c9', name: 'Beverages', displayOrder: 8, color: '#3b82f6' }
 ]
 
 let menuItems = [
@@ -390,11 +398,6 @@ let menuItems = [
   { id: 'm14', categoryId: 'c1', name: 'Veg - BBQ Paneer Gyro (Large)', price: 249, isAvailable: true },
   { id: 'm15', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Regular)', price: 99, isAvailable: true },
   { id: 'm16', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Large)', price: 249, isAvailable: true },
-
-  // Burgers (c2)
-  { id: 'm17', categoryId: 'c2', name: 'Non-Veg - Spicy Egg Burger', price: 79, isAvailable: true },
-  { id: 'm18', categoryId: 'c2', name: 'Non-Veg - Crispy Chicken Burger', price: 99, isAvailable: true },
-  { id: 'm19', categoryId: 'c2', name: 'Veg - Spicy Paneer Burger', price: 99, isAvailable: true },
 
   // Salads (c3)
   { id: 'm20', categoryId: 'c3', name: 'Non-Veg - Chicken Salad', price: 99, isAvailable: true },

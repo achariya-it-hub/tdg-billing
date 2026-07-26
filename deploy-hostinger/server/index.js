@@ -326,6 +326,13 @@ function restoreState() {
       }
     })
   }
+
+  // Remove Burger category & items
+  categories = categories.filter(c => c.name !== 'Burger' && c.name !== 'Burgers' && c.id !== 'c2')
+  menuItems = menuItems.filter(i => i.categoryId !== 'c2' && !i.name.toLowerCase().includes('burger'))
+  if (db.categories) db.categories = categories
+  if (db.menuItems) db.menuItems = menuItems
+  writeDb(db)
 }
 
 const app = express()
@@ -347,14 +354,13 @@ let orders = []
 let orderNumber = 1000
 let categories = [
   { id: 'c1', name: 'Gyros', displayOrder: 1, color: '#e63946' },
-  { id: 'c2', name: 'Burger', displayOrder: 2, color: '#f59e0b' },
-  { id: 'c3', name: 'Salads', displayOrder: 3, color: '#10b981' },
-  { id: 'c4', name: 'Sides', displayOrder: 4, color: '#dc2626' },
-  { id: 'c5', name: 'TDG Crispy Chicken', displayOrder: 5, color: '#fbbf24' },
-  { id: 'c6', name: 'Thick Shakes', displayOrder: 6, color: '#8b5cf6' },
-  { id: 'c7', name: 'Softy', displayOrder: 7, color: '#ec4899' },
-  { id: 'c8', name: 'Desserts', displayOrder: 8, color: '#f472b6' },
-  { id: 'c9', name: 'Beverages', displayOrder: 9, color: '#3b82f6' }
+  { id: 'c3', name: 'Salads', displayOrder: 2, color: '#10b981' },
+  { id: 'c4', name: 'Sides', displayOrder: 3, color: '#dc2626' },
+  { id: 'c5', name: 'TDG Crispy Chicken', displayOrder: 4, color: '#fbbf24' },
+  { id: 'c6', name: 'Thick Shakes', displayOrder: 5, color: '#8b5cf6' },
+  { id: 'c7', name: 'Softy', displayOrder: 6, color: '#ec4899' },
+  { id: 'c8', name: 'Desserts', displayOrder: 7, color: '#f472b6' },
+  { id: 'c9', name: 'Beverages', displayOrder: 8, color: '#3b82f6' }
 ]
 
 let menuItems = [
