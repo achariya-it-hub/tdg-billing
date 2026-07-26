@@ -185,6 +185,35 @@ function saveState() {
 
 function findLatestValidBackup() {
   const backupDirs = [BACKUP_DIR, DAILY_BACKUP_DIR]
+
+  // 1. First search for newest backup containing orders > 0
+  for (const bDir of backupDirs) {
+    if (existsSync(bDir)) {
+      let files = readdirSync(bDir).filter(f => f.endsWith('.json'))
+      const regularFiles = files.filter(f => !f.includes('pre-restore') && !f.includes('pre-reset') && f !== 'db-latest.json')
+      if (regularFiles.length > 0) files = regularFiles
+
+      files.sort((a, b) => {
+        try {
+          return statSync(join(bDir, b)).mtimeMs - statSync(join(bDir, a)).mtimeMs
+        } catch (e) { return 0 }
+      })
+
+      for (const file of files) {
+        try {
+          const content = readFileSync(join(bDir, file), 'utf-8').trim()
+          if (!content) continue
+          const parsed = JSON.parse(content)
+          if (parsed.orders && Array.isArray(parsed.orders) && parsed.orders.length > 0) {
+            console.log(`[DATA SAFETY] Found timestamped backup with ${parsed.orders.length} orders: ${file}`)
+            return parsed
+          }
+        } catch (e) {}
+      }
+    }
+  }
+
+  // 2. Fallback: check db-latest.json or newest timestamped backup
   const latestPath = join(BACKUP_DIR, 'db-latest.json')
   if (existsSync(latestPath)) {
     try {
@@ -2100,7 +2129,6 @@ app.put('/api/admin/menu/items/:id/toggle', (req, res) => {
 })
 
 // ============ RECIPE MANAGEMENT ============
-let recipes = []
 
 app.get('/api/recipes', (req, res) => {
   res.json(recipes)
