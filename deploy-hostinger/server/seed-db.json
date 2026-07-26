@@ -14,16 +14,30 @@
     { "id": "c12", "name": "Dips & Add-Ons", "displayOrder": 12, "color": "#64748b" }
   ],
   "menuItems": [
-    { "id": "m1", "categoryId": "c1", "name": "Spicy Gyro (Mini)", "price": 99, "description": "Chicken or Paneer pita wrap with spicy sauce", "isAvailable": true },
-    { "id": "m2", "categoryId": "c1", "name": "Spicy Gyro (Signature)", "price": 249, "description": "Signature large chicken or paneer pita wrap with spicy sauce", "isAvailable": true },
-    { "id": "m3", "categoryId": "c1", "name": "Creamy Gyro (Mini)", "price": 99, "description": "Chicken or Paneer pita wrap with creamy garlic spread", "isAvailable": true },
-    { "id": "m4", "categoryId": "c1", "name": "Creamy Gyro (Signature)", "price": 249, "description": "Signature large chicken or paneer pita wrap with creamy spread", "isAvailable": true },
-    { "id": "m5", "categoryId": "c1", "name": "BBQ Gyro (Mini)", "price": 99, "description": "Chicken or Paneer pita wrap with smoky BBQ sauce", "isAvailable": true },
-    { "id": "m6", "categoryId": "c1", "name": "BBQ Gyro (Signature)", "price": 249, "description": "Signature large chicken or paneer pita wrap with BBQ sauce", "isAvailable": true },
-    { "id": "m7", "categoryId": "c1", "name": "Peri Peri Gyro (Mini)", "price": 99, "description": "Chicken or Paneer pita wrap with zesty peri peri sauce", "isAvailable": true },
-    { "id": "m8", "categoryId": "c1", "name": "Peri Peri Gyro (Signature)", "price": 249, "description": "Signature large chicken or paneer pita wrap with peri peri sauce", "isAvailable": true },
-    { "id": "m9", "categoryId": "c1", "name": "Signature Gyro (Mini)", "price": 99, "description": "Classic Ten Dens special gyro wrap", "isAvailable": true },
-    { "id": "m10", "categoryId": "c1", "name": "Signature Gyro (Signature)", "price": 249, "description": "Classic Ten Dens special signature gyro wrap", "isAvailable": true },
+    { "id": "m1a", "categoryId": "c1", "name": "Spicy Gyro - Chicken (Mini)", "price": 99, "description": "Fresh pita wrap with spicy chicken, hummus & veggies", "isAvailable": true },
+    { "id": "m1b", "categoryId": "c1", "name": "Spicy Gyro - Paneer (Mini)", "price": 99, "description": "Fresh pita wrap with spicy paneer, hummus & veggies", "isAvailable": true },
+    { "id": "m2a", "categoryId": "c1", "name": "Spicy Gyro - Chicken (Signature)", "price": 249, "description": "Signature large pita wrap with spicy chicken", "isAvailable": true },
+    { "id": "m2b", "categoryId": "c1", "name": "Spicy Gyro - Paneer (Signature)", "price": 249, "description": "Signature large pita wrap with spicy paneer", "isAvailable": true },
+
+    { "id": "m3a", "categoryId": "c1", "name": "Creamy Gyro - Chicken (Mini)", "price": 99, "description": "Creamy garlic chicken pita wrap", "isAvailable": true },
+    { "id": "m3b", "categoryId": "c1", "name": "Creamy Gyro - Paneer (Mini)", "price": 99, "description": "Creamy garlic paneer pita wrap", "isAvailable": true },
+    { "id": "m4a", "categoryId": "c1", "name": "Creamy Gyro - Chicken (Signature)", "price": 249, "description": "Signature large creamy garlic chicken pita wrap", "isAvailable": true },
+    { "id": "m4b", "categoryId": "c1", "name": "Creamy Gyro - Paneer (Signature)", "price": 249, "description": "Signature large creamy garlic paneer pita wrap", "isAvailable": true },
+
+    { "id": "m5a", "categoryId": "c1", "name": "BBQ Gyro - Chicken (Mini)", "price": 99, "description": "Smoky BBQ chicken pita wrap", "isAvailable": true },
+    { "id": "m5b", "categoryId": "c1", "name": "BBQ Gyro - Paneer (Mini)", "price": 99, "description": "Smoky BBQ paneer pita wrap", "isAvailable": true },
+    { "id": "m6a", "categoryId": "c1", "name": "BBQ Gyro - Chicken (Signature)", "price": 249, "description": "Signature large smoky BBQ chicken pita wrap", "isAvailable": true },
+    { "id": "m6b", "categoryId": "c1", "name": "BBQ Gyro - Paneer (Signature)", "price": 249, "description": "Signature large smoky BBQ paneer pita wrap", "isAvailable": true },
+
+    { "id": "m7a", "categoryId": "c1", "name": "Peri Peri Gyro - Chicken (Mini)", "price": 99, "description": "Zesty peri peri chicken pita wrap", "isAvailable": true },
+    { "id": "m7b", "categoryId": "c1", "name": "Peri Peri Gyro - Paneer (Mini)", "price": 99, "description": "Zesty peri peri paneer pita wrap", "isAvailable": true },
+    { "id": "m8a", "categoryId": "c1", "name": "Peri Peri Gyro - Chicken (Signature)", "price": 249, "description": "Signature large zesty peri peri chicken pita wrap", "isAvailable": true },
+    { "id": "m8b", "categoryId": "c1", "name": "Peri Peri Gyro - Paneer (Signature)", "price": 249, "description": "Signature large zesty peri peri paneer pita wrap", "isAvailable": true },
+
+    { "id": "m9a", "categoryId": "c1", "name": "Signature Gyro - Chicken (Mini)", "price": 99, "description": "Ten Dens special chicken gyro wrap", "isAvailable": true },
+    { "id": "m9b", "categoryId": "c1", "name": "Signature Gyro - Paneer (Mini)", "price": 99, "description": "Ten Dens special paneer gyro wrap", "isAvailable": true },
+    { "id": "m10a", "categoryId": "c1", "name": "Signature Gyro - Chicken (Signature)", "price": 249, "description": "Ten Dens special signature chicken gyro wrap", "isAvailable": true },
+    { "id": "m10b", "categoryId": "c1", "name": "Signature Gyro - Paneer (Signature)", "price": 249, "description": "Ten Dens special signature paneer gyro wrap", "isAvailable": true },
 
     { "id": "m11", "categoryId": "c2", "name": "1 Pc Leg & Thigh (1 Dip)", "price": 70, "description": "1 Pc Crispy Fried Chicken Leg & Thigh + 1 Dip", "isAvailable": true },
     { "id": "m12", "categoryId": "c2", "name": "2 Pc Leg & Thigh (1 Dip)", "price": 140, "description": "2 Pc Crispy Fried Chicken Leg & Thigh + 1 Dip", "isAvailable": true },
@@ -46,10 +60,13 @@
     { "id": "m26a", "categoryId": "c5", "name": "Salted Fries", "price": 99, "description": "Crispy golden salted French fries", "isAvailable": true },
     { "id": "m26b", "categoryId": "c5", "name": "Peri Peri Fries", "price": 99, "description": "Crispy golden French fries tossed in peri peri seasoning", "isAvailable": true },
     { "id": "m26c", "categoryId": "c5", "name": "Cajun Fries", "price": 99, "description": "Crispy golden French fries tossed in cajun seasoning", "isAvailable": true },
-    { "id": "m27", "categoryId": "c5", "name": "Loaded Fries (Chicken / Paneer)", "price": 199, "description": "Loaded fries topped with melted cheese & choice of protein", "isAvailable": true },
+    { "id": "m27a", "categoryId": "c5", "name": "Loaded Chicken Fries", "price": 199, "description": "Loaded fries topped with melted cheese & crispy chicken", "isAvailable": true },
+    { "id": "m27b", "categoryId": "c5", "name": "Loaded Paneer Fries", "price": 199, "description": "Loaded fries topped with melted cheese & grilled paneer", "isAvailable": true },
 
-    { "id": "m28", "categoryId": "c6", "name": "Lebanese Rice Bowl (Chicken / Paneer)", "price": 199, "description": "Flavored Mediterranean Lebanese rice with choice of protein", "isAvailable": true },
-    { "id": "m29", "categoryId": "c6", "name": "Signature Salad (Chicken / Paneer)", "price": 149, "description": "Fresh garden salad with olives, dressing & choice of protein", "isAvailable": true },
+    { "id": "m28a", "categoryId": "c6", "name": "Lebanese Rice Bowl (Chicken)", "price": 199, "description": "Flavored Mediterranean Lebanese rice topped with grilled chicken", "isAvailable": true },
+    { "id": "m28b", "categoryId": "c6", "name": "Lebanese Rice Bowl (Paneer)", "price": 199, "description": "Flavored Mediterranean Lebanese rice topped with grilled paneer", "isAvailable": true },
+    { "id": "m29a", "categoryId": "c6", "name": "Signature Salad (Chicken)", "price": 149, "description": "Fresh garden salad with olives, dressing & grilled chicken", "isAvailable": true },
+    { "id": "m29b", "categoryId": "c6", "name": "Signature Salad (Paneer)", "price": 149, "description": "Fresh garden salad with olives, dressing & grilled paneer", "isAvailable": true },
 
     { "id": "m30", "categoryId": "c7", "name": "Express Meal", "price": 149, "description": "Mini Gyro & Regular Drink", "isAvailable": true },
     { "id": "m31", "categoryId": "c7", "name": "Classic Gyro Meal", "price": 249, "description": "Mini Gyro, 2 Wings, Fries, Regular Drink, 1 Dip", "isAvailable": true },
@@ -61,9 +78,12 @@
     { "id": "m37", "categoryId": "c7", "name": "Den's Party Meal", "price": 899, "description": "2 Signature Gyros, 6 Wings, 4 Leg & Thighs, 2 Fries, 3 Regular Drinks", "isAvailable": true },
     { "id": "m38", "categoryId": "c7", "name": "Super 5 Bucket", "price": 1299, "description": "5 Leg & Thighs, 10 Wings, 10 Strips, 5 Regular Drinks", "isAvailable": true },
 
-    { "id": "m39", "categoryId": "c8", "name": "Gyro (Protein Max)", "price": 299, "description": "Extra high protein Gyro wrap (Chicken / Paneer)", "isAvailable": true },
-    { "id": "m40", "categoryId": "c8", "name": "Lebanese Rice (Protein Max)", "price": 299, "description": "Extra high protein Lebanese Rice bowl (Chicken / Paneer)", "isAvailable": true },
-    { "id": "m41", "categoryId": "c8", "name": "Salad (Protein Max)", "price": 299, "description": "Extra high protein Salad bowl (Chicken / Paneer)", "isAvailable": true },
+    { "id": "m39a", "categoryId": "c8", "name": "Gyro - Protein Max (Chicken)", "price": 299, "description": "Extra high protein Gyro wrap with grilled chicken", "isAvailable": true },
+    { "id": "m39b", "categoryId": "c8", "name": "Gyro - Protein Max (Paneer)", "price": 299, "description": "Extra high protein Gyro wrap with grilled paneer", "isAvailable": true },
+    { "id": "m40a", "categoryId": "c8", "name": "Lebanese Rice - Protein Max (Chicken)", "price": 299, "description": "Extra high protein Lebanese Rice bowl with grilled chicken", "isAvailable": true },
+    { "id": "m40b", "categoryId": "c8", "name": "Lebanese Rice - Protein Max (Paneer)", "price": 299, "description": "Extra high protein Lebanese Rice bowl with grilled paneer", "isAvailable": true },
+    { "id": "m41a", "categoryId": "c8", "name": "Salad - Protein Max (Chicken)", "price": 299, "description": "Extra high protein Salad bowl with grilled chicken", "isAvailable": true },
+    { "id": "m41b", "categoryId": "c8", "name": "Salad - Protein Max (Paneer)", "price": 299, "description": "Extra high protein Salad bowl with grilled paneer", "isAvailable": true },
 
     { "id": "m42", "categoryId": "c9", "name": "Vanilla Shake (Regular)", "price": 120, "description": "Creamy thick vanilla shake", "isAvailable": true },
     { "id": "m43", "categoryId": "c9", "name": "Vanilla Shake (Large)", "price": 199, "description": "Large creamy thick vanilla shake", "isAvailable": true },
