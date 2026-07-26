@@ -130,9 +130,27 @@ export const useOrderStore = create(
       heldOrders: state.heldOrders.filter((_, i) => i !== index)
     }))
   },
+
+  setInaugurationOffer: (enabled) => {
+    set(state => ({
+      currentOrder: {
+        ...state.currentOrder,
+        inaugurationOffer: !!enabled
+      }
+    }))
+  },
+
+  getRawSubtotal: () => {
+    return get().currentOrder.items.reduce((sum, item) => sum + item.totalPrice, 0)
+  },
+
+  getDiscount: () => {
+    const raw = get().getRawSubtotal()
+    return get().currentOrder.inaugurationOffer ? raw * 0.5 : 0
+  },
   
   getSubtotal: () => {
-    return get().currentOrder.items.reduce((sum, item) => sum + item.totalPrice, 0)
+    return get().getRawSubtotal() - get().getDiscount()
   },
   
   getTax: () => {
@@ -152,6 +170,8 @@ export const useOrderStore = create(
         throw new Error('No items in order')
       }
       
+      const rawSubtotal = get().getRawSubtotal()
+      const discount = get().getDiscount()
       const subtotal = get().getSubtotal()
       const tax = get().getTax()
       const total = get().getTotal()
@@ -169,9 +189,12 @@ export const useOrderStore = create(
           body: JSON.stringify({
             ...order,
             items,
+            rawSubtotal,
+            discount,
             subtotal,
             tax,
             total,
+            inaugurationOffer: order.inaugurationOffer || false,
             paymentMethod: paymentMethod || undefined,
             customerPhone: order.customerPhone || ''
           })

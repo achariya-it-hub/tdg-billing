@@ -91,6 +91,7 @@ export default function POS() {
   const {
     currentOrder, addItem, updateItemQuantity, removeItem,
     setOrderType, setTableNumber, setCustomerName, setCustomerPhone, setComplimentary, setSpecialRemarks, clearOrder,
+    setInaugurationOffer, getDiscount,
     holdOrder, recallOrder, heldOrders, getSubtotal, getTax, getTotal, placeOrder
   } = useOrderStore()
 
@@ -536,12 +537,45 @@ export default function POS() {
 
         {/* Totals */}
         <div style={{ padding: '16px', borderTop: '1px solid rgba(0,0,0,0.04)', background: 'rgba(248,249,250,0.5)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}><span style={{ color: '#6b7280', fontSize: '13px' }}>Subtotal</span><span style={{ fontSize: '13px' }}>₹{getSubtotal().toFixed(2)}</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}><span style={{ color: '#6b7280', fontSize: '13px' }}>Subtotal</span><span style={{ fontSize: '13px' }}>₹{useOrderStore.getState().getRawSubtotal().toFixed(2)}</span></div>
+          {currentOrder.inaugurationOffer && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', color: '#10b981', fontWeight: 700 }}>
+              <span style={{ fontSize: '13px' }}>🎉 Inauguration Offer (50% OFF)</span>
+              <span style={{ fontSize: '13px' }}>-₹{getDiscount().toFixed(2)}</span>
+            </div>
+          )}
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}><span style={{ color: '#6b7280', fontSize: '13px' }}>CGST (2.5%)</span><span style={{ fontSize: '13px' }}>₹{(getTax() / 2).toFixed(2)}</span></div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}><span style={{ color: '#6b7280', fontSize: '13px' }}>SGST (2.5%)</span><span style={{ fontSize: '13px' }}>₹{(getTax() / 2).toFixed(2)}</span></div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '20px', fontWeight: 800, marginBottom: '12px', paddingTop: '8px', borderTop: '2px solid #1a1a2e' }}>
             <span>Total</span><span style={{ color: '#e63946' }}>₹{getTotal().toFixed(2)}</span>
           </div>
+
+          {/* 1-Click Inauguration Offer Button */}
+          <button
+            type="button"
+            onClick={() => setInaugurationOffer(!currentOrder.inaugurationOffer)}
+            style={{
+              width: '100%',
+              padding: '10px 12px',
+              borderRadius: '10px',
+              border: currentOrder.inaugurationOffer ? '2px solid #10b981' : '1px solid #d1d5db',
+              background: currentOrder.inaugurationOffer ? 'linear-gradient(135deg, #10b981, #059669)' : '#fff',
+              color: currentOrder.inaugurationOffer ? '#fff' : '#374151',
+              fontWeight: 800,
+              fontSize: '13px',
+              cursor: 'pointer',
+              marginBottom: '10px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              boxShadow: currentOrder.inaugurationOffer ? '0 3px 10px rgba(16,185,129,0.3)' : 'none',
+              transition: 'all 0.2s'
+            }}
+          >
+            <span>🎉</span> {currentOrder.inaugurationOffer ? '50% OFF Inauguration Offer (ACTIVE)' : 'Apply 50% OFF Inauguration Offer'}
+          </button>
+
           <input placeholder="Special remarks..." value={currentOrder.specialRemarks || ''} onChange={e => setSpecialRemarks(e.target.value)} style={{ ...inputStyle, fontSize: '12px', padding: '8px 10px', marginBottom: '10px' }} />
           <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '12px' }}>
             {['', 'MD', 'Chairman', 'Internal Corporate', 'VIP'].map(type => (

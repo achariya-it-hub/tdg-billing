@@ -239,7 +239,12 @@ const PrintService = {
         }).join('')}
 
         <div class="totals-section">
-          <div class="total-row-sub"><span>Subtotal:</span><span>₹${subtotal.toFixed(0)}</span></div>
+          ${bill.discount > 0 || bill.inaugurationOffer ? `
+            <div class="total-row-sub"><span>Subtotal:</span><span>₹${(bill.rawSubtotal || (subtotal + (bill.discount || 0))).toFixed(0)}</span></div>
+            <div class="total-row-sub" style="font-weight:900"><span>Inauguration Offer (50% OFF):</span><span>-₹${(bill.discount || 0).toFixed(0)}</span></div>
+          ` : `
+            <div class="total-row-sub"><span>Subtotal:</span><span>₹${subtotal.toFixed(0)}</span></div>
+          `}
           <div class="total-row-sub"><span>CGST (2.5%):</span><span>₹${(tax / 2).toFixed(0)}</span></div>
           <div class="total-row-sub"><span>SGST (2.5%):</span><span>₹${(tax / 2).toFixed(0)}</span></div>
         </div>
