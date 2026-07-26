@@ -83,6 +83,7 @@ function writeDb(data = {}) {
       purchaseOrders: typeof purchaseOrders !== 'undefined' && purchaseOrders !== undefined ? purchaseOrders : (data.purchaseOrders || []),
       poItems: typeof poItems !== 'undefined' && poItems !== undefined ? poItems : (data.poItems || []),
       grns: typeof grns !== 'undefined' && grns !== undefined ? grns : (data.grns || []),
+      mrns: typeof mrns !== 'undefined' && mrns !== undefined ? mrns : (data.mrns || []),
       vendorPayments: typeof vendorPayments !== 'undefined' && vendorPayments !== undefined ? vendorPayments : (data.vendorPayments || []),
       settings: typeof settings !== 'undefined' && settings !== undefined ? settings : (data.settings || {})
     }
@@ -121,6 +122,7 @@ let suppliers = []
 let purchaseOrders = []
 let poItems = []
 let grns = []
+let mrns = []
 let vendorPayments = []
 let onlineOrders = []
 let loyaltyUsers = []
@@ -152,6 +154,34 @@ let aggregators = [
   { id: 'zepto', name: 'Zepto', displayName: 'Zepto', isActive: true, defaultPrepTime: 15, color: '#9d2b6b' },
   { id: 'direct', name: 'Direct', displayName: 'Direct Order', isActive: true, defaultPrepTime: 20, color: '#4895ef' }
 ]
+
+function saveState() {
+  writeDb({
+    orders,
+    loyaltyUsers,
+    dens,
+    pointTransactions,
+    inventory,
+    orderNumber,
+    usedReferralCodes: [...usedReferralCodes],
+    expenses,
+    purchases,
+    onlineOrders,
+    aggregators,
+    billingUsers,
+    categories,
+    menuItems,
+    recipes,
+    users: mobileAppUsers,
+    suppliers,
+    purchaseOrders,
+    poItems,
+    grns,
+    mrns,
+    vendorPayments,
+    settings
+  })
+}
 
 function findLatestValidBackup() {
   const backupDirs = [BACKUP_DIR, DAILY_BACKUP_DIR]
@@ -276,11 +306,12 @@ function restoreState() {
     writeDb(db)
   }
 
-  if (db.suppliers?.length) suppliers = db.suppliers
-  if (db.purchaseOrders?.length) purchaseOrders = db.purchaseOrders
-  if (db.poItems?.length) poItems = db.poItems
-  if (db.grns?.length) grns = db.grns
-  if (db.vendorPayments?.length) vendorPayments = db.vendorPayments
+  if (db.suppliers && Array.isArray(db.suppliers)) suppliers = db.suppliers
+  if (db.purchaseOrders && Array.isArray(db.purchaseOrders)) purchaseOrders = db.purchaseOrders
+  if (db.poItems && Array.isArray(db.poItems)) poItems = db.poItems
+  if (db.grns && Array.isArray(db.grns)) grns = db.grns
+  if (db.mrns && Array.isArray(db.mrns)) mrns = db.mrns
+  if (db.vendorPayments && Array.isArray(db.vendorPayments)) vendorPayments = db.vendorPayments
   if (db.settings) settings = { ...settings, ...db.settings }
   if (db.billingUsers?.length) {
     billingUsers = db.billingUsers
@@ -3084,6 +3115,79 @@ app.post('/api/admin/grns', (req, res) => {
   grns.push(grn)
   saveState()
   res.status(201).json(grn)
+})
+
+app.delete('/api/admin/grns/:id', (req, res) => {
+  const idx = grns.findIndex(g => g.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'GRN not found' })
+  grns.splice(idx, 1)
+  saveState()
+  res.json({ success: true })
+})
+
+// ============ MRN CRUD ============
+app.get('/api/admin/mrns', (req, res) => {
+  res.json(mrns.sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt)))
+})
+
+app.post('/api/admin/mrns', (req, res) => {
+  const { type, item, quantity, supplier, reason, date, status } = req.body
+  const id = 'MRN' + String(mrns.length + 1).padStart(3, '0')
+  const mrn = {
+    id,
+    type: type || 'return',
+    item: item || '',
+    quantity: Number(quantity) || 1,
+    supplier: supplier || '',
+    reason: reason || '',
+    status: status || 'completed',
+    date: date || new Date().toISOString().split('T')[0],
+    createdAt: new Date().toISOString()
+  }
+  mrns.unshift(mrn)
+  saveState()
+  res.status(201).json(mrn)
+})
+
+app.delete('/api/admin/mrns/:id', (req, res) => {
+  const idx = mrns.findIndex(m => m.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'MRN not found' })
+  mrns.splice(idx, 1)
+  saveState()
+  res.json({ success: true })
+})
+
+// ============ PURCHASES (PURCHASE BILLS) CRUD ============
+app.get('/api/admin/purchases', (req, res) => {
+  res.json(purchases.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)))
+})
+
+app.post('/api/admin/purchases', (req, res) => {
+  const { supplier, billNo, items, total, date, status, notes } = req.body
+  if (!supplier) return res.status(400).json({ error: 'Supplier required' })
+  const id = 'PB' + Date.now()
+  const purchase = {
+    id,
+    supplier,
+    billNo: billNo || '',
+    items: items || [],
+    total: Number(total) || 0,
+    status: status || 'completed',
+    date: date || new Date().toISOString().split('T')[0],
+    notes: notes || '',
+    createdAt: new Date().toISOString()
+  }
+  purchases.unshift(purchase)
+  saveState()
+  res.status(201).json(purchase)
+})
+
+app.delete('/api/admin/purchases/:id', (req, res) => {
+  const idx = purchases.findIndex(p => p.id === req.params.id)
+  if (idx === -1) return res.status(404).json({ error: 'Purchase bill not found' })
+  purchases.splice(idx, 1)
+  saveState()
+  res.json({ success: true })
 })
 
 // ============ VENDOR PAYMENTS ============
