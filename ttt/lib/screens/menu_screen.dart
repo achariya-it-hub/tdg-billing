@@ -239,10 +239,45 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
+  String _getAssetImagePath(String itemName, String category) {
+    final name = itemName.toLowerCase();
+    final cat = category.toLowerCase();
+
+    if (name.contains('leg') || cat.contains('leg')) return 'assets/images/menu/Leg& Thigh.png';
+    if (name.contains('wing') || cat.contains('wing')) return 'assets/images/menu/wings.png';
+    if (name.contains('strip') || cat.contains('strip')) return 'assets/images/menu/strips.png';
+    if (name.contains('loaded fries')) return 'assets/images/menu/loaded fries.png';
+    if (name.contains('fries') || cat.contains('fries')) return 'assets/images/menu/fries.png';
+    if (name.contains('salad') || cat.contains('salad')) return 'assets/images/menu/signature salad.png';
+    if (name.contains('rice') || cat.contains('rice')) return 'assets/images/menu/lebanese rice bowl.png';
+    if (name.contains('express meal')) return 'assets/images/menu/express meal.png';
+    if (name.contains('classic gyro meal')) return 'assets/images/menu/classic gyro meal.png';
+    if (name.contains('signature gyro meal')) return 'assets/images/menu/signature gyro meal.png';
+    if (name.contains('lebanese rice box')) return 'assets/images/menu/lebanese rice box.png';
+    if (name.contains('duo gyro feast')) return 'assets/images/menu/duo gyro feast.png';
+    if (name.contains('double crunch box')) return 'assets/images/menu/double crunch box.png';
+    if (name.contains('mega feast meal')) return 'assets/images/menu/mega feast meal.png';
+    if (name.contains('den\'s party meal')) return 'assets/images/menu/den\'s party meal.png';
+    if (name.contains('super 5 bucket')) return 'assets/images/menu/super 5 bucket.png';
+    if (cat.contains('protein max')) return 'assets/images/menu/protein max.png';
+    if (name.contains('vanilla shake')) return 'assets/images/menu/vanilla shake.png';
+    if (name.contains('strawberry shake')) return 'assets/images/menu/strawberry shake.png';
+    if (name.contains('biscoff shake')) return 'assets/images/menu/biscoff shake.png';
+    if (name.contains('chocolate shake')) return 'assets/images/menu/chocolate shake.png';
+    if (name.contains('kunafa pistachio shake')) return 'assets/images/menu/kunafa pistachio shake.png';
+    if (name.contains('softy')) return 'assets/images/menu/vanilla softy.png';
+    if (name.contains('hot chocolate')) return 'assets/images/menu/Hot Chocolate.png';
+    if (name.contains('signature tea')) return 'assets/images/menu/Signature tea.png';
+    if (name.contains('kombucha')) return 'assets/images/menu/kombucha.png';
+    if (name.contains('brownie')) return 'assets/images/menu/chcolate brownie.png';
+    if (name.contains('blondie')) return 'assets/images/menu/blondie cake.png';
+    if (cat.contains('gyro') || name.contains('gyro')) return 'assets/images/menu/gyro.png';
+
+    return 'assets/images/menu/logo.png';
+  }
+
   Widget _buildMenuItem(Map<String, dynamic> item) {
-    String imagePath = 'assets/images/gyro.png';
-    if (_selectedCategory == 'Fries') imagePath = 'assets/images/fries.png';
-    if (_selectedCategory == 'Drinks') imagePath = 'assets/images/drink.png';
+    final String imagePath = _getAssetImagePath(item['name'] ?? '', _selectedCategory);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),

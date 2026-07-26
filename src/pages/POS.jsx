@@ -308,12 +308,19 @@ export default function POS() {
           </span>
         )}
         <div style={{
-          height: isMobile ? '60px' : '90px',
+          height: isMobile ? '70px' : '100px',
           background: `linear-gradient(135deg, ${cat?.color || '#333'}22, ${cat?.color || '#333'}08)`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? '28px' : '40px'
+          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? '28px' : '40px',
+          overflow: 'hidden', padding: '6px'
         }}>
           {!item.isAvailable && <span style={{ background: '#e63946', color: 'white', fontSize: '9px', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>UNAVAILABLE</span>}
-          {item.isAvailable && (categoryIcons[cat?.name] || '🍽️')}
+          {item.isAvailable && (
+            item.image ? (
+              <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            ) : (
+              (categoryIcons[cat?.name] || '🍽️')
+            )
+          )}
         </div>
         <div style={{ padding: isMobile ? '8px 10px' : '12px' }}>
           <div style={{ fontSize: isMobile ? '12px' : '13px', fontWeight: 600, marginBottom: '2px', lineHeight: 1.2 }}>{item.name}</div>
