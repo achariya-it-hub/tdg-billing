@@ -17,6 +17,7 @@ const PrintService = {
         const c = item.customization
         const parts = []
         if (c.protein) parts.push(`Protein: ${c.protein}`)
+        if (c.drink) parts.push(`Drink: ${c.drink}`)
         if (c.bread) parts.push(`Bread: ${c.bread}`)
         if (c.spread) parts.push(`Spread: ${c.spread}`)
         if (c.sauces && c.sauces.length > 0) parts.push(`Sauces: ${c.sauces.join(', ')}`)
