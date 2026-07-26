@@ -108,7 +108,12 @@
     { "id": "m60", "categoryId": "c11", "name": "Chocolate Brownie", "price": 99, "description": "Warm fudgy chocolate brownie", "isAvailable": true, "image": "/images/menu/chcolate brownie.png" },
     { "id": "m61", "categoryId": "c11", "name": "Blondie Cake", "price": 99, "description": "Delicious vanilla butter blondie slice", "isAvailable": true, "image": "/images/menu/blondie cake.png" },
 
-    { "id": "m62", "categoryId": "c12", "name": "Choice of Dip", "price": 15, "description": "Turkish Chilli / Jalapeno Cheese / Garlic Mayo / Spicy Mayo / Peri Peri / Honey Mustard", "isAvailable": true, "image": "/images/menu/logo.png" }
+    { "id": "m62a", "categoryId": "c12", "name": "Turkish Chilli Dip", "price": 15, "description": "Spicy authentic Turkish chilli dip", "isAvailable": true, "image": "/images/menu/logo.png" },
+    { "id": "m62b", "categoryId": "c12", "name": "Jalapeno Cheese Dip", "price": 15, "description": "Rich creamy jalapeno cheese dip", "isAvailable": true, "image": "/images/menu/logo.png" },
+    { "id": "m62c", "categoryId": "c12", "name": "Garlic Mayo Dip", "price": 15, "description": "Classic creamy garlic mayonnaise dip", "isAvailable": true, "image": "/images/menu/logo.png" },
+    { "id": "m62d", "categoryId": "c12", "name": "Spicy Mayo Dip", "price": 15, "description": "Zesty spicy mayonnaise dip", "isAvailable": true, "image": "/images/menu/logo.png" },
+    { "id": "m62e", "categoryId": "c12", "name": "Peri Peri Dip", "price": 15, "description": "Fiery peri peri dipping sauce", "isAvailable": true, "image": "/images/menu/logo.png" },
+    { "id": "m62f", "categoryId": "c12", "name": "Honey Mustard Dip", "price": 15, "description": "Sweet and tangy honey mustard dip", "isAvailable": true, "image": "/images/menu/logo.png" }
   ],
   "orders": [],
   "users": [],
