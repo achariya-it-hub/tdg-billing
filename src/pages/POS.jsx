@@ -103,6 +103,7 @@ export default function POS() {
 
   // Gyro Customizer State
   const [customizingItem, setCustomizingItem] = useState(null)
+  const [selectedProtein, setSelectedProtein] = useState('Chicken')
   const [selectedBread, setSelectedBread] = useState('Baked')
   const [selectedSpread, setSelectedSpread] = useState('Tzatziki')
   const [selectedSauces, setSelectedSauces] = useState(['Garlic Mayo'])
@@ -134,13 +135,24 @@ export default function POS() {
     const cat = categories.find(c => c.id === item.categoryId)
     const catName = cat ? cat.name.toLowerCase() : ''
     const itemName = item.name.toLowerCase()
-    return catName.includes('gyro') || itemName.includes('gyro')
+    return catName.includes('gyro') ||
+           catName.includes('rice') ||
+           catName.includes('meals') ||
+           catName.includes('protein max') ||
+           itemName.includes('gyro') ||
+           itemName.includes('rice') ||
+           itemName.includes('meal') ||
+           itemName.includes('box') ||
+           itemName.includes('feast') ||
+           itemName.includes('combo')
   }
 
   const handleItemClick = (item) => {
     if (!item.isAvailable) return
     if (isGyro(item)) {
       setCustomizingItem(item)
+      // Default protein to paneer if name explicitly says paneer, otherwise chicken
+      setSelectedProtein(item.name.toLowerCase().includes('paneer') ? 'Paneer' : 'Chicken')
       setSelectedBread('Baked')
       setSelectedSpread('Tzatziki')
       setSelectedSauces(['Garlic Mayo'])
@@ -159,30 +171,43 @@ export default function POS() {
   const handleAddGyroWithCustomization = () => {
     if (!customizingItem) return
     const customization = {
+      protein: selectedProtein,
       bread: selectedBread,
       spread: selectedSpread,
       sauces: selectedSauces,
       veggies: selectedVeggies,
       notes: gyroNotes
     }
+
+    // Append protein choice to item display name if not already included
+    let displayName = customizingItem.name
+    if (!displayName.toLowerCase().includes('chicken') && !displayName.toLowerCase().includes('paneer')) {
+      displayName = `${displayName} (${selectedProtein})`
+    }
+
     addItem({
       menuItemId: customizingItem.id,
-      menuItemName: customizingItem.name,
+      menuItemName: displayName,
       unitPrice: customizingItem.price,
       totalPrice: customizingItem.price,
       customization
     })
     setCustomizingItem(null)
-    toast.success(`Added customized ${customizingItem.name} to order`)
+    toast.success(`Added ${displayName} to order`)
   }
 
   const handleAddStandardGyro = () => {
     if (!customizingItem) return
+    let displayName = customizingItem.name
+    if (!displayName.toLowerCase().includes('chicken') && !displayName.toLowerCase().includes('paneer')) {
+      displayName = `${displayName} (${selectedProtein})`
+    }
     addItem({
       menuItemId: customizingItem.id,
-      menuItemName: customizingItem.name,
+      menuItemName: displayName,
       unitPrice: customizingItem.price,
-      totalPrice: customizingItem.price
+      totalPrice: customizingItem.price,
+      customization: { protein: selectedProtein }
     })
     setCustomizingItem(null)
   }
@@ -606,14 +631,34 @@ export default function POS() {
         </div>
       </div>
 
-      {/* Gyro Options Customizer Modal */}
-      <Modal isOpen={!!customizingItem} onClose={() => setCustomizingItem(null)} title={`🌯 Customize ${customizingItem?.name || 'Gyro'}`} size="lg">
+      {/* Gyro & Combo Options Customizer Modal */}
+      <Modal isOpen={!!customizingItem} onClose={() => setCustomizingItem(null)} title={`🌯 Customize ${customizingItem?.name || 'Item'}`} size="lg">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '75vh', overflowY: 'auto', paddingRight: '4px' }}>
           
+          {/* Protein Choice Section */}
+          <div>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              1. Choose Protein Choice
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {['Chicken', 'Paneer'].map(p => (
+                <button key={p} type="button" onClick={() => setSelectedProtein(p)} style={{
+                  flex: 1, padding: '10px 14px', borderRadius: '10px',
+                  border: selectedProtein === p ? '2px solid #e63946' : '1px solid #e5e7eb',
+                  background: selectedProtein === p ? '#fff5f5' : '#f9fafb',
+                  color: selectedProtein === p ? '#e63946' : '#374151',
+                  fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.15s'
+                }}>
+                  {p === 'Chicken' ? '🍗 Chicken' : '🧀 Paneer'}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Pita Bread Section */}
           <div>
             <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              1. Pita Bread Type
+              2. Pita Bread Type
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
               {['Baked', 'Fried'].map(b => (
@@ -633,7 +678,7 @@ export default function POS() {
           {/* Base Spread Section */}
           <div>
             <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              2. Base Spread
+              3. Base Spread
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
               {['Tzatziki', 'Hummus', 'Cheese', 'Ricotta'].map(s => (
@@ -653,7 +698,7 @@ export default function POS() {
           {/* Sauces Section */}
           <div>
             <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              3. Sauces (Select Multiple)
+              4. Sauces (Select Multiple)
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
               {['Garlic Mayo', 'Turkish Chili', 'Jalapeno Cheese', 'Spicy Mayo', 'Peri Peri', 'Honey Mustard'].map(sauce => {
