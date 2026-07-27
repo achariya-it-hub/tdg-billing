@@ -18,60 +18,43 @@ const isAlreadyPrintedJob = (type, order) => {
 
 // Print service for generating and printing KOT tickets
 const PrintService = {
-  // Print runner that reliably opens the native OS Print Dialog window
+  // Unblockable print runner that opens the native OS Print Dialog window 100% of the time
   executePrintHTML: (html, title = 'Print Ticket') => {
     return new Promise((resolve) => {
       try {
-        // Try opening a dedicated print window so native Print Dialog opens 100% reliably
-        const printWin = window.open('', '_blank', 'width=480,height=650,scrollbars=yes,resizable=yes')
-        if (printWin) {
-          printWin.document.open()
-          printWin.document.write(html)
-          printWin.document.close()
-          printWin.focus()
-          setTimeout(() => {
-            try {
-              printWin.print()
-            } catch (e) {
-              console.error('Print window error:', e)
-            }
-          }, 350)
-          resolve()
-          return
+        let printDiv = document.getElementById('pos_active_print_area')
+        if (!printDiv) {
+          printDiv = document.createElement('div')
+          printDiv.id = 'pos_active_print_area'
+          document.body.appendChild(printDiv)
         }
 
-        // Fallback iframe trigger if popup blocker is active
-        const iframe = document.createElement('iframe')
-        iframe.id = 'pos_print_iframe_' + Date.now()
-        iframe.style.position = 'fixed'
-        iframe.style.left = '0px'
-        iframe.style.top = '0px'
-        iframe.style.width = '100%'
-        iframe.style.height = '100%'
-        iframe.style.border = 'none'
-        iframe.style.background = 'white'
-        iframe.style.zIndex = '999999'
-        document.body.appendChild(iframe)
-
-        const win = iframe.contentWindow
-        const doc = iframe.contentDocument || win.document
-
-        doc.open()
-        doc.write(html)
-        doc.close()
+        printDiv.innerHTML = `
+          <style>
+            @media screen {
+              #pos_active_print_area { display: none !important; }
+            }
+            @media print {
+              body > *:not(#pos_active_print_area) { display: none !important; }
+              #pos_active_print_area { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+              .page-break { page-break-before: always; break-before: page; margin-top: 20px; }
+            }
+          </style>
+          <div>${html}</div>
+        `
 
         setTimeout(() => {
           try {
-            win.focus()
-            win.print()
-          } catch (err) {
-            console.error('Iframe print error:', err)
+            window.focus()
+            window.print()
+          } catch (e) {
+            console.error('window.print error:', e)
           }
           setTimeout(() => {
-            if (iframe.parentNode) iframe.parentNode.removeChild(iframe)
+            if (printDiv) printDiv.innerHTML = ''
             resolve()
-          }, 4000)
-        }, 350)
+          }, 1000)
+        }, 150)
       } catch (e) {
         console.error('Print container error:', e)
         resolve()
@@ -329,14 +312,23 @@ const PrintService = {
     }
   },
 
-  // Automatically print BOTH KOT ticket and Bill ticket
+  // Automatically print BOTH KOT ticket and Bill ticket in 1 print dialog window with page break
   printKOTAndBill: async (order, force = false) => {
     if (!order) return
+    if (!force && isAlreadyPrintedJob('kot_and_bill', order)) return
     console.log('Printing KOT + Bill for Order:', order)
-    await PrintService.printKOT(order, force)
-    setTimeout(async () => {
-      await PrintService.printBill(order, force)
-    }, 600)
+    try {
+      const kotHtml = await PrintService.generateKOTHTML(order)
+      const billHtml = await PrintService.generateBillHTML(order)
+      const combinedHtml = `
+        ${kotHtml}
+        <div class="page-break"></div>
+        ${billHtml}
+      `
+      await PrintService.executePrintHTML(combinedHtml, `Order #${order.orderNumber || order.id || ''}`)
+    } catch (err) {
+      console.error('KOT + Bill combined print error:', err)
+    }
   },
 
   // Print directly to POS printer (if available)
