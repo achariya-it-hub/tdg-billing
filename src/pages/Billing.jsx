@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Receipt, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet, RefreshCw, QrCode } from 'lucide-react'
+import { Receipt, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet, RefreshCw, QrCode, Calendar } from 'lucide-react'
 import { getSocket } from '../lib/socket'
 import { useSettings } from '../lib/settingsContext'
 
@@ -22,6 +22,40 @@ export default function Billing() {
   const [showPayment, setShowPayment] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState('cash')
   const [processing, setProcessing] = useState(false)
+  const [dateFilter, setDateFilter] = useState('today') // 'today' | 'yesterday' | 'all'
+
+  const isSameDay = (d1, d2) => {
+    return d1.getFullYear() === d2.getFullYear() &&
+           d1.getMonth() === d2.getMonth() &&
+           d1.getDate() === d2.getDate()
+  }
+
+  const isToday = (dateStr) => {
+    if (!dateStr) return false
+    return isSameDay(new Date(dateStr), new Date())
+  }
+
+  const isYesterday = (dateStr) => {
+    if (!dateStr) return false
+    const y = new Date()
+    y.setDate(y.getDate() - 1)
+    return isSameDay(new Date(dateStr), y)
+  }
+
+  const filterByDate = (list) => {
+    if (!Array.isArray(list)) return []
+    return list.filter(o => {
+      const dateVal = o.createdAt || o.date
+      if (dateFilter === 'today') return isToday(dateVal)
+      if (dateFilter === 'yesterday') return isYesterday(dateVal)
+      return true
+    })
+  }
+
+  const visibleNewKOTs = filterByDate(newKOTs)
+  const visiblePendingKOTs = filterByDate(pendingKOTs)
+  const visibleComplimentary = filterByDate(complimentaryOrders)
+  const visiblePaidBills = filterByDate(paidBills)
 
   const getApiUrl = () => {
     return window.location.hostname === 'localhost'
@@ -352,11 +386,21 @@ export default function Billing() {
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px', marginBottom: '24px' }}>
         {[
-          { value: newKOTs.length, label: 'Pending KOTs', color: '#f59e0b', bg: '#fffbeb' },
-          { value: pendingKOTs.length, label: 'Ready for Billing', color: '#e63946', bg: '#fef2f2' },
-          { value: complimentaryOrders.length, label: 'Complimentary', color: '#8b5cf6', bg: '#f5f3ff' },
-          { value: paidBills.length, label: 'Bills Today', color: '#10b981', bg: '#ecfdf5' },
-          { value: `₹${paidBills.reduce((s, b) => s + calculateTotal(b), 0)}`, label: 'Total Collected', color: '#2563eb', bg: '#eff6ff' }
+          { value: visibleNewKOTs.length, label: 'Pending KOTs', color: '#f59e0b', bg: '#fffbeb' },
+          { value: visiblePendingKOTs.length, label: 'Ready for Billing', color: '#e63946', bg: '#fef2f2' },
+          { value: visibleComplimentary.length, label: 'Complimentary', color: '#8b5cf6', bg: '#f5f3ff' },
+          { 
+            value: visiblePaidBills.length, 
+            label: dateFilter === 'today' ? 'Bills Today' : (dateFilter === 'yesterday' ? 'Bills Yesterday' : 'All Bills'), 
+            color: '#10b981', 
+            bg: '#ecfdf5' 
+          },
+          { 
+            value: `₹${visiblePaidBills.reduce((s, b) => s + calculateTotal(b), 0)}`, 
+            label: 'Total Collected', 
+            color: '#2563eb', 
+            bg: '#eff6ff' 
+          }
         ].map((stat, i) => (
           <div key={i} style={{
             background: stat.bg,
@@ -371,7 +415,8 @@ export default function Billing() {
         ))}
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
+      {/* Date Filter & Refresh Toolbar */}
+      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap' }}>
         <button onClick={fetchOrders} style={{
           padding: '10px 20px', borderRadius: '12px',
           background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)',
@@ -382,13 +427,36 @@ export default function Billing() {
           <RefreshCw size={16} />
           Refresh
         </button>
+
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '8px',
+          background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)',
+          padding: '8px 16px', borderRadius: '12px',
+          border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+        }}>
+          <Calendar size={16} color="#e63946" />
+          <span style={{ fontSize: '13px', fontWeight: 600, color: '#374151' }}>Date View:</span>
+          <select
+            value={dateFilter}
+            onChange={e => setDateFilter(e.target.value)}
+            style={{
+              padding: '6px 12px', borderRadius: '8px', border: '1px solid #d1d5db',
+              fontSize: '13px', fontWeight: 700, color: '#1a1a2e', background: 'white',
+              cursor: 'pointer', outline: 'none'
+            }}
+          >
+            <option value="today">📅 Today (Current Date)</option>
+            <option value="yesterday">🕒 Yesterday</option>
+            <option value="all">🗓️ All Time</option>
+          </select>
+        </div>
       </div>
 
       {/* New KOTs (Pending) */}
       <div style={{ marginBottom: '24px' }}>
         <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>New KOTs (Pending)</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
-          {newKOTs.map(kot => (
+          {visibleNewKOTs.map(kot => (
             <div key={kot.id} style={{
               ...glassCard,
               padding: '16px',
@@ -427,7 +495,7 @@ export default function Billing() {
               </div>
             </div>
           ))}
-          {newKOTs.length === 0 && (
+          {visibleNewKOTs.length === 0 && (
             <div style={{ ...glassCard, padding: '32px', textAlign: 'center', color: '#9ca3af' }}>
               No pending KOTs
             </div>
@@ -436,11 +504,11 @@ export default function Billing() {
       </div>
 
       {/* Complimentary Orders */}
-      {complimentaryOrders.length > 0 && (
+      {visibleComplimentary.length > 0 && (
         <div style={{ marginBottom: '24px' }}>
           <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>Complimentary Orders</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
-            {complimentaryOrders.map(order => (
+            {visibleComplimentary.map(order => (
               <div key={order.id} style={{
                 ...glassCard,
                 padding: '16px',
@@ -489,7 +557,7 @@ export default function Billing() {
         <div>
           <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>Ready for Billing</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {pendingKOTs.map(kot => (
+            {visiblePendingKOTs.map(kot => (
               <div key={kot.id} style={{
                 ...glassCard,
                 padding: '16px',
@@ -528,7 +596,7 @@ export default function Billing() {
                 </div>
               </div>
             ))}
-            {pendingKOTs.length === 0 && (
+            {visiblePendingKOTs.length === 0 && (
               <div style={{ ...glassCard, padding: '32px', textAlign: 'center', color: '#9ca3af' }}>
                 No KOTs ready for billing
               </div>
@@ -536,11 +604,13 @@ export default function Billing() {
           </div>
         </div>
 
-        {/* Today's Bills */}
+        {/* Today's / Yesterday's / All Bills */}
         <div>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>Today's Bills</h3>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>
+            {dateFilter === 'today' ? "Today's Bills" : (dateFilter === 'yesterday' ? "Yesterday's Bills" : "All Past Bills")}
+          </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {paidBills.map(bill => (
+            {visiblePaidBills.map(bill => (
               <div key={bill.id} style={{
                 ...glassCard,
                 padding: '16px',
@@ -569,6 +639,11 @@ export default function Billing() {
                 </div>
               </div>
             ))}
+            {visiblePaidBills.length === 0 && (
+              <div style={{ ...glassCard, padding: '32px', textAlign: 'center', color: '#9ca3af' }}>
+                {dateFilter === 'today' ? "No bills generated today yet" : (dateFilter === 'yesterday' ? "No bills generated yesterday" : "No past bills found")}
+              </div>
+            )}
           </div>
         </div>
       </div>
