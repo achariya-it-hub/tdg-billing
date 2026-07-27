@@ -390,9 +390,9 @@ function restoreState() {
     db.users = mobileAppUsers
   }
 
-  // Clean up legacy Burger category
-  categories = categories.filter(c => c.name !== 'Burger' && c.name !== 'Burgers' && c.id !== 'c2')
-  menuItems = menuItems.filter(i => i.categoryId !== 'c2' && !i.name.toLowerCase().includes('burger'))
+  // Clean up legacy Burger items if any remain
+  categories = categories.filter(c => c.name !== 'Burger' && c.name !== 'Burgers')
+  menuItems = menuItems.filter(i => !i.name.toLowerCase().includes('burger'))
   recipes = recipes.filter(r => !r.menuItemName?.toLowerCase().includes('burger'))
   db.categories = categories
   db.menuItems = menuItems
