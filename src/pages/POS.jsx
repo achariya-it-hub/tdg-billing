@@ -223,37 +223,52 @@ export default function POS() {
   useEffect(() => { fetchCategories(); fetchMenuItems() }, [])
   useEffect(() => { selectedCategory ? fetchMenuItems(selectedCategory) : fetchMenuItems() }, [selectedCategory])
 
+  // Track printed orders to prevent duplicate printouts (local vs socket event)
+  const printedOrderIdsRef = useRef(new Set())
+
   // Real-time Order Sound Alert Listener
   useEffect(() => {
     const socket = getSocket()
     connectToPOS()
 
     const handleNewOrder = (order) => {
+      if (!order) return
+      const orderIdKey = String(order.id || order.orderNumber || '')
+      if (printedOrderIdsRef.current.has(orderIdKey) || (order.id && printedOrderIdsRef.current.has(String(order.id)))) {
+        console.log('[PRINT DEDUPLICATION] Order already printed locally, skipping duplicate socket print:', orderIdKey)
+        return
+      }
+      printedOrderIdsRef.current.add(orderIdKey)
+      if (order.id) printedOrderIdsRef.current.add(String(order.id))
+
       playOrderAlertSound('new_order')
       const num = order?.orderNumber || order?.id || ''
       const src = order?.source ? order.source.toUpperCase() : (order?.type ? order.type.toUpperCase() : 'WAITER')
       toast.success(`🔔 New ${src} Order #${num} received! Printing KOT...`)
 
-      // Auto-trigger thermal KOT printout on the Billing POS Terminal
-      if (order) {
-        try {
-          PrintService.printKOTAndBill(order)
-        } catch (pe) {
-          console.error('Remote order auto-print failed:', pe)
-        }
+      try {
+        PrintService.printKOTAndBill(order)
+      } catch (pe) {
+        console.error('Remote order auto-print failed:', pe)
       }
     }
 
     const handleOnlineOrder = (order) => {
+      if (!order) return
+      const orderIdKey = String(order.id || order.orderNumber || '')
+      if (printedOrderIdsRef.current.has(orderIdKey) || (order.id && printedOrderIdsRef.current.has(String(order.id)))) {
+        return
+      }
+      printedOrderIdsRef.current.add(orderIdKey)
+      if (order.id) printedOrderIdsRef.current.add(String(order.id))
+
       playOrderAlertSound('online_order')
       const num = order?.orderNumber || order?.id || ''
       toast.success(`🔔 New Online Order #${num} Received! Printing KOT...`)
-      if (order) {
-        try {
-          PrintService.printKOTAndBill(order)
-        } catch (pe) {
-          console.error('Online order auto-print failed:', pe)
-        }
+      try {
+        PrintService.printKOTAndBill(order)
+      } catch (pe) {
+        console.error('Online order auto-print failed:', pe)
       }
     }
 
@@ -285,6 +300,8 @@ export default function POS() {
       if (newOrder) {
         setLastPlacedOrder(newOrder)
         setShowSuccessModal(true)
+        if (newOrder.id) printedOrderIdsRef.current.add(String(newOrder.id))
+        if (newOrder.orderNumber) printedOrderIdsRef.current.add(String(newOrder.orderNumber))
         PrintService.printKOTAndBill(newOrder)
       }
     }
