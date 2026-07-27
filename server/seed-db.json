@@ -713,39 +713,112 @@
       "image": "/images/menu/vanilla softy.png"
     },
     {
-      "id": "m53",
+      "id": "m53a",
       "categoryId": "c10",
-      "name": "Sprite / Coca-Cola (Regular)",
+      "name": "Coca-Cola (Regular)",
       "price": 59,
-      "description": "Chilled 330ml soda",
+      "description": "Chilled 330ml Coca-Cola soda",
       "isAvailable": true,
       "image": "/images/menu/logo.png"
     },
     {
-      "id": "m54",
+      "id": "m53b",
       "categoryId": "c10",
-      "name": "Sprite / Coca-Cola (Large)",
+      "name": "Coca-Cola (Large)",
       "price": 99,
-      "description": "Large chilled soda",
+      "description": "Large chilled Coca-Cola soda",
       "isAvailable": true,
       "image": "/images/menu/logo.png"
     },
     {
-      "id": "m55",
+      "id": "m54a",
       "categoryId": "c10",
-      "name": "Ice Tea (Peach or Lime - Regular)",
+      "name": "Sprite (Regular)",
       "price": 59,
-      "description": "Refreshing iced tea",
+      "description": "Chilled 330ml Sprite soda",
       "isAvailable": true,
       "image": "/images/menu/logo.png"
     },
     {
-      "id": "m56",
+      "id": "m54b",
       "categoryId": "c10",
-      "name": "Ice Tea (Peach or Lime - Large)",
+      "name": "Sprite (Large)",
       "price": 99,
+      "description": "Large chilled Sprite soda",
       "isAvailable": true,
       "image": "/images/menu/logo.png"
+    },
+    {
+      "id": "m55a",
+      "categoryId": "c10",
+      "name": "Peach Ice Tea (Regular)",
+      "price": 59,
+      "description": "Refreshing peach iced tea",
+      "isAvailable": true,
+      "image": "/images/menu/logo.png"
+    },
+    {
+      "id": "m55b",
+      "categoryId": "c10",
+      "name": "Peach Ice Tea (Large)",
+      "price": 99,
+      "description": "Large refreshing peach iced tea",
+      "isAvailable": true,
+      "image": "/images/menu/logo.png"
+    },
+    {
+      "id": "m56a",
+      "categoryId": "c10",
+      "name": "Lime Ice Tea (Regular)",
+      "price": 59,
+      "description": "Refreshing lime iced tea",
+      "isAvailable": true,
+      "image": "/images/menu/ice tea - lime.png"
+    },
+    {
+      "id": "m56b",
+      "categoryId": "c10",
+      "name": "Lime Ice Tea (Large)",
+      "price": 99,
+      "description": "Large refreshing lime iced tea",
+      "isAvailable": true,
+      "image": "/images/menu/ice tea - lime.png"
+    },
+    {
+      "id": "m59a",
+      "categoryId": "c10",
+      "name": "Mint Kombucha",
+      "price": 120,
+      "description": "Organic sparkling mint probiotic Kombucha drink",
+      "isAvailable": true,
+      "image": "/images/menu/mint-kombucha.png"
+    },
+    {
+      "id": "m59b",
+      "categoryId": "c10",
+      "name": "Hibiscus Kombucha",
+      "price": 120,
+      "description": "Organic sparkling hibiscus probiotic Kombucha drink",
+      "isAvailable": true,
+      "image": "/images/menu/kombucha-hibiscus.png"
+    },
+    {
+      "id": "m59c",
+      "categoryId": "c10",
+      "name": "Ginger Kombucha",
+      "price": 120,
+      "description": "Organic sparkling ginger probiotic Kombucha drink",
+      "isAvailable": true,
+      "image": "/images/menu/ginger - kombucha.png"
+    },
+    {
+      "id": "m59d",
+      "categoryId": "c10",
+      "name": "Butterfly Pea Kombucha",
+      "price": 120,
+      "description": "Organic sparkling butterfly pea probiotic Kombucha drink",
+      "isAvailable": true,
+      "image": "/images/menu/butterfly pea - kombucha.png"
     },
     {
       "id": "m57",
@@ -764,15 +837,6 @@
       "description": "TDG Special aromatic brewed tea",
       "isAvailable": true,
       "image": "/images/menu/Signature tea.png"
-    },
-    {
-      "id": "m59",
-      "categoryId": "c10",
-      "name": "Kombucha (Mint / Hibiscus / Ginger / Butterfly Pea)",
-      "price": 120,
-      "description": "Organic sparkling probiotic Kombucha drink",
-      "isAvailable": true,
-      "image": "/images/menu/kombucha.png"
     },
     {
       "id": "m60",
