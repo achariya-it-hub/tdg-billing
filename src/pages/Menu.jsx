@@ -5477,134 +5477,233 @@ export default function MenuManagement() {
             </Button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '16px' }}>
-            {filteredMenuItems.map(item => {
-              const category = categories.find(c => c.id === item.categoryId)
-              const recipe = getRecipeForItem(item.id)
-              const cost = getItemCost(item.id)
-              const profit = getItemProfit(item.id)
-              const margin = getItemMargin(item.id)
-              const { canMake, reasons } = canMakeItem(item.id)
-
+          {/* Category Filter Pills */}
+          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '12px', marginBottom: '20px' }}>
+            <button
+              onClick={() => setSelectedCategory('all')}
+              style={{
+                padding: '10px 18px',
+                borderRadius: '12px',
+                background: selectedCategory === 'all' ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'white',
+                color: selectedCategory === 'all' ? 'white' : '#4b5563',
+                fontWeight: 700,
+                fontSize: '13px',
+                border: selectedCategory === 'all' ? 'none' : '1px solid #e5e7eb',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                boxShadow: selectedCategory === 'all' ? '0 3px 10px rgba(230,57,70,0.3)' : '0 1px 2px rgba(0,0,0,0.04)',
+                transition: 'all 0.15s'
+              }}
+            >
+              🍽️ All ({filteredMenuItems.length})
+            </button>
+            {categories.map(cat => {
+              const count = menuItems.filter(i => i.categoryId === cat.id).length
+              const isSel = selectedCategory === cat.id
               return (
-                <Card key={item.id} hover>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      {item.image ? (
-                        <img
-                          src={item.image.startsWith('http') ? item.image : `${API()}${item.image}`}
-                          alt={item.name}
-                          style={{
-                            width: '48px',
-                            height: '48px',
-                            borderRadius: '12px',
-                            objectFit: 'cover',
-                            opacity: item.isAvailable === false ? 0.4 : 1
-                          }}
-                        />
-                      ) : (
-                        <div style={{
-                          width: '48px',
-                          height: '48px',
-                          borderRadius: '12px',
-                          background: category?.color || '#6b7280',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          opacity: item.isAvailable === false ? 0.4 : 1
-                        }}>
-                          <UtensilsCrossed size={24} color="white" />
-                        </div>
-                      )}
-                      <div>
-                        <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e', textDecoration: item.isAvailable === false ? 'line-through' : 'none', opacity: item.isAvailable === false ? 0.5 : 1 }}>{item.name}</h3>
-                        <span style={{ fontSize: '12px', color: '#6b7280' }}>{category?.name}</span>
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '20px', fontWeight: 700, color: '#10b981' }}>₹{item.price}</span>
-                    </div>
-                  </div>
-
-                  <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>{item.description}</p>
-
-                  {recipe ? (
-                    <div style={{ background: '#f0fdf4', borderRadius: '12px', padding: '12px', marginBottom: '16px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Check size={16} color="#10b981" />
-                          <span style={{ fontWeight: 600, color: '#166534' }}>Recipe Mapped</span>
-                        </div>
-                        <span style={{ fontSize: '12px', color: '#6b7280' }}>{recipe.ingredients.length} ingredients</span>
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
-                        <div style={{ textAlign: 'center' }}>
-                          <div style={{ fontSize: '11px', color: '#6b7280' }}>Cost</div>
-                          <div style={{ fontSize: '14px', fontWeight: 600 }}>₹{cost?.toFixed(0)}</div>
-                        </div>
-                        <div style={{ textAlign: 'center' }}>
-                          <div style={{ fontSize: '11px', color: '#6b7280' }}>Profit</div>
-                          <div style={{ fontSize: '14px', fontWeight: 600, color: '#10b981' }}>₹{profit?.toFixed(0)}</div>
-                        </div>
-                        <div style={{ textAlign: 'center' }}>
-                          <div style={{ fontSize: '11px', color: '#6b7280' }}>Margin</div>
-                          <div style={{ fontSize: '14px', fontWeight: 600 }}>{margin}%</div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div style={{ background: '#fef3c7', borderRadius: '12px', padding: '12px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <AlertTriangle size={16} color="#ca8a04" />
-                      <span style={{ fontSize: '13px', color: '#92400e' }}>No recipe mapped - inventory won't auto-deduct</span>
-                    </div>
-                  )}
-
-                  {canMake === false && (
-                    <div style={{ background: '#fef2f2', borderRadius: '12px', padding: '12px', marginBottom: '16px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                        <X size={14} color="#dc2626" />
-                        <span style={{ fontSize: '12px', fontWeight: 600, color: '#991b1b' }}>Cannot make item</span>
-                      </div>
-                      {reasons.map((r, i) => (
-                        <div key={i} style={{ fontSize: '11px', color: '#dc2626', marginLeft: '22px' }}>{r}</div>
-                      ))}
-                    </div>
-                  )}
-
-                  {canMake === true && recipe && (
-                    <div style={{ background: '#f0fdf4', borderRadius: '12px', padding: '8px 12px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Check size={14} color="#10b981" />
-                      <span style={{ fontSize: '12px', color: '#166534' }}>All ingredients in stock</span>
-                    </div>
-                  )}
-
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <Button variant={recipe ? 'secondary' : 'primary'} size="sm" style={{ flex: 1 }} onClick={() => openRecipeModal(item)}>
-                      <BookOpen size={14} />
-                      {recipe ? 'Edit Recipe' : 'Map Recipe'}
-                    </Button>
-                    <Button variant="ghost" size="sm" title="Edit Item" onClick={() => openItemModal(item)}>
-                      <Edit size={14} />
-                    </Button>
-                    <Button variant="ghost" size="sm" title="Clone / Duplicate Item" onClick={() => cloneItem(item)} style={{ background: '#f0f9ff', color: '#0284c7' }}>
-                      <Copy size={14} />
-                      <span style={{ fontSize: '11px', fontWeight: 600, marginLeft: '2px' }}>Clone</span>
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => toggleAvailable(item.id)}>
-                      {item.isAvailable === false ? <Check size={14} color="#10b981" /> : <X size={14} color="#ef4444" />}
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => deleteItem(item.id)}>
-                      <Trash2 size={14} color="#ef4444" />
-                    </Button>
-                    {recipe && (
-                      <Button variant="ghost" size="sm" onClick={() => deleteRecipe(item.id)}>
-                        <Trash2 size={14} color="#ef4444" />
-                      </Button>
-                    )}
-                  </div>
-                </Card>
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  style={{
+                    padding: '10px 18px',
+                    borderRadius: '12px',
+                    background: isSel ? (cat.color || '#e63946') : 'white',
+                    color: isSel ? 'white' : '#1a1a2e',
+                    fontWeight: 700,
+                    fontSize: '13px',
+                    border: isSel ? 'none' : '1px solid #e5e7eb',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: isSel ? `0 3px 10px ${cat.color || '#e63946'}40` : '0 1px 2px rgba(0,0,0,0.04)',
+                    transition: 'all 0.15s'
+                  }}
+                >
+                  <span>{cat.icon || '📌'}</span>
+                  <span>{cat.name} ({count})</span>
+                </button>
               )
             })}
+          </div>
+
+          {/* Category Grouped Cards Grid */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            {categories
+              .filter(cat => selectedCategory === 'all' || cat.id === selectedCategory)
+              .map(cat => {
+                const catItems = filteredMenuItems.filter(i => i.categoryId === cat.id)
+                if (catItems.length === 0) return null
+
+                return (
+                  <div key={cat.id}>
+                    {/* Category Header Banner */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '14px 20px',
+                      background: 'linear-gradient(135deg, #ffffff, #f8fafc)',
+                      borderRadius: '16px',
+                      borderLeft: `6px solid ${cat.color || '#e63946'}`,
+                      border: '1px solid rgba(0,0,0,0.07)',
+                      marginBottom: '16px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '22px' }}>{cat.icon || '🍽️'}</span>
+                        <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#1a1a2e', margin: 0 }}>
+                          {cat.name}
+                        </h3>
+                        <span style={{
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          background: '#f1f5f9',
+                          color: '#475569',
+                          padding: '4px 12px',
+                          borderRadius: '20px'
+                        }}>
+                          {catItems.length} items
+                        </span>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={() => openCategoryModal(cat)}>
+                        <Edit size={14} /> Edit Category
+                      </Button>
+                    </div>
+
+                    {/* Cards Grid */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '16px' }}>
+                      {catItems.map(item => {
+                        const recipe = getRecipeForItem(item.id)
+                        const cost = getItemCost(item.id)
+                        const profit = getItemProfit(item.id)
+                        const margin = getItemMargin(item.id)
+                        const { canMake, reasons } = canMakeItem(item.id)
+
+                        return (
+                          <Card key={item.id} hover>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                {item.image ? (
+                                  <img
+                                    src={item.image.startsWith('http') ? item.image : `${API()}${item.image}`}
+                                    alt={item.name}
+                                    style={{
+                                      width: '48px',
+                                      height: '48px',
+                                      borderRadius: '12px',
+                                      objectFit: 'cover',
+                                      opacity: item.isAvailable === false ? 0.4 : 1
+                                    }}
+                                  />
+                                ) : (
+                                  <div style={{
+                                    width: '48px',
+                                    height: '48px',
+                                    borderRadius: '12px',
+                                    background: cat?.color || '#6b7280',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    opacity: item.isAvailable === false ? 0.4 : 1
+                                  }}>
+                                    <UtensilsCrossed size={24} color="white" />
+                                  </div>
+                                )}
+                                <div>
+                                  <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e', textDecoration: item.isAvailable === false ? 'line-through' : 'none', opacity: item.isAvailable === false ? 0.5 : 1 }}>{item.name}</h3>
+                                  <span style={{ fontSize: '12px', color: '#6b7280' }}>{cat?.name}</span>
+                                </div>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontSize: '20px', fontWeight: 700, color: '#10b981' }}>₹{item.price}</span>
+                              </div>
+                            </div>
+
+                            <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>{item.description}</p>
+
+                            {recipe ? (
+                              <div style={{ background: '#f0fdf4', borderRadius: '12px', padding: '12px', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <Check size={16} color="#10b981" />
+                                    <span style={{ fontWeight: 600, color: '#166534' }}>Recipe Mapped</span>
+                                  </div>
+                                  <span style={{ fontSize: '12px', color: '#6b7280' }}>{recipe.ingredients.length} ingredients</span>
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+                                  <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '11px', color: '#6b7280' }}>Cost</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 600 }}>₹{cost?.toFixed(0)}</div>
+                                  </div>
+                                  <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '11px', color: '#6b7280' }}>Profit</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#10b981' }}>₹{profit?.toFixed(0)}</div>
+                                  </div>
+                                  <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '11px', color: '#6b7280' }}>Margin</div>
+                                    <div style={{ fontSize: '14px', fontWeight: 600 }}>{margin}%</div>
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div style={{ background: '#fef3c7', borderRadius: '12px', padding: '12px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <AlertTriangle size={16} color="#ca8a04" />
+                                <span style={{ fontSize: '13px', color: '#92400e' }}>No recipe mapped - inventory won't auto-deduct</span>
+                              </div>
+                            )}
+
+                            {canMake === false && (
+                              <div style={{ background: '#fef2f2', borderRadius: '12px', padding: '12px', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                  <X size={14} color="#dc2626" />
+                                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#991b1b' }}>Cannot make item</span>
+                                </div>
+                                {reasons.map((r, i) => (
+                                  <div key={i} style={{ fontSize: '11px', color: '#dc2626', marginLeft: '22px' }}>{r}</div>
+                                ))}
+                              </div>
+                            )}
+
+                            {canMake === true && recipe && (
+                              <div style={{ background: '#f0fdf4', borderRadius: '12px', padding: '8px 12px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Check size={14} color="#10b981" />
+                                <span style={{ fontSize: '12px', color: '#166534' }}>All ingredients in stock</span>
+                              </div>
+                            )}
+
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <Button variant={recipe ? 'secondary' : 'primary'} size="sm" style={{ flex: 1 }} onClick={() => openRecipeModal(item)}>
+                                <BookOpen size={14} />
+                                {recipe ? 'Edit Recipe' : 'Map Recipe'}
+                              </Button>
+                              <Button variant="ghost" size="sm" title="Edit Item" onClick={() => openItemModal(item)}>
+                                <Edit size={14} />
+                              </Button>
+                              <Button variant="ghost" size="sm" title="Clone / Duplicate Item" onClick={() => cloneItem(item)} style={{ background: '#f0f9ff', color: '#0284c7' }}>
+                                <Copy size={14} />
+                                <span style={{ fontSize: '11px', fontWeight: 600, marginLeft: '2px' }}>Clone</span>
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={() => toggleAvailable(item.id)}>
+                                {item.isAvailable === false ? <Check size={14} color="#10b981" /> : <X size={14} color="#ef4444" />}
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={() => deleteItem(item.id)}>
+                                <Trash2 size={14} color="#ef4444" />
+                              </Button>
+                              {recipe && (
+                                <Button variant="ghost" size="sm" onClick={() => deleteRecipe(item.id)}>
+                                  <Trash2 size={14} color="#ef4444" />
+                                </Button>
+                              )}
+                            </div>
+                          </Card>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })}
           </div>
         </>
       )}
