@@ -24,22 +24,26 @@ export default function Billing() {
   const [processing, setProcessing] = useState(false)
   const [dateFilter, setDateFilter] = useState('today') // 'today' | 'yesterday' | 'all'
 
-  const isSameDay = (d1, d2) => {
-    return d1.getFullYear() === d2.getFullYear() &&
-           d1.getMonth() === d2.getMonth() &&
-           d1.getDate() === d2.getDate()
+  const getLocalDateString = (d) => {
+    if (!d) return ''
+    const dateObj = typeof d === 'string' || typeof d === 'number' ? new Date(d) : d
+    if (isNaN(dateObj.getTime())) return ''
+    const year = dateObj.getFullYear()
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+    const day = String(dateObj.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
   }
 
   const isToday = (dateStr) => {
     if (!dateStr) return false
-    return isSameDay(new Date(dateStr), new Date())
+    return getLocalDateString(dateStr) === getLocalDateString(new Date())
   }
 
   const isYesterday = (dateStr) => {
     if (!dateStr) return false
     const y = new Date()
     y.setDate(y.getDate() - 1)
-    return isSameDay(new Date(dateStr), y)
+    return getLocalDateString(dateStr) === getLocalDateString(y)
   }
 
   const filterByDate = (list) => {
@@ -69,21 +73,24 @@ export default function Billing() {
         fetch(`${getApiUrl()}/api/pos/orders`),
         fetch(`${getApiUrl()}/api/pos/orders?status=completed`)
       ])
-      if (allRes.ok) {
+      if (allRes.ok && paidRes.ok) {
         const all = await allRes.json()
-        const filtered = all.filter(o => o.type !== 'delivery' && o.source !== 'online')
+        const paid = await paidRes.json()
+
+        const orderMap = new Map()
+        if (Array.isArray(all)) all.forEach(o => orderMap.set(o.id, o))
+        if (Array.isArray(paid)) paid.forEach(o => orderMap.set(o.id, o))
+        const combined = Array.from(orderMap.values())
+
+        const filtered = combined.filter(o => o.type !== 'delivery' && o.source !== 'online')
+        
         const comp = filtered.filter(o => o.complimentary)
         setComplimentaryOrders(comp)
+
         const nonComp = filtered.filter(o => !o.complimentary)
         setNewKOTs(nonComp.filter(o => o.status === 'pending'))
         setPendingKOTs(nonComp.filter(o => o.status === 'ready'))
-      }
-      if (paidRes.ok) {
-        const paid = await paidRes.json()
-        const paidComp = paid.filter(o => o.complimentary)
-        const paidRegular = paid.filter(o => !o.complimentary)
-        setPaidBills(paidRegular)
-        if (paidComp.length) setComplimentaryOrders(prev => [...prev, ...paidComp])
+        setPaidBills(nonComp.filter(o => o.status === 'completed'))
       }
     } catch (err) {
       console.error('Failed to fetch orders:', err)
