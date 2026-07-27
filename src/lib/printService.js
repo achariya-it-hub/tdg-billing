@@ -18,17 +18,37 @@ const isAlreadyPrintedJob = (type, order) => {
 
 // Print service for generating and printing KOT tickets
 const PrintService = {
-  // Reliable print runner that works on ALL thermal & default Windows printers
+  // Reliable print runner that works on ALL thermal & default Windows printers + Mobile App/WebViews
   executePrintHTML: (html, title = 'Print Ticket') => {
     return new Promise((resolve) => {
       try {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+
+        if (isMobile) {
+          try {
+            const printWin = window.open('', '_blank')
+            if (printWin) {
+              printWin.document.write(html)
+              printWin.document.close()
+              printWin.focus()
+              setTimeout(() => {
+                try { printWin.print() } catch (e) { console.error('Mobile print error:', e) }
+              }, 300)
+              resolve()
+              return
+            }
+          } catch (e) {
+            console.error('Mobile window open print failed, falling back to iframe:', e)
+          }
+        }
+
         const iframe = document.createElement('iframe')
         iframe.id = 'pos_print_iframe_' + Date.now()
         iframe.style.position = 'fixed'
         iframe.style.right = '0px'
         iframe.style.bottom = '0px'
         iframe.style.width = '80mm'
-        iframe.style.height = '1px'
+        iframe.style.height = '100px'
         iframe.style.border = 'none'
         iframe.style.opacity = '0.01'
         iframe.style.zIndex = '999999'
@@ -41,7 +61,7 @@ const PrintService = {
         doc.write(html)
         doc.close()
 
-        setTimeout(() => {
+        const trigger = () => {
           try {
             win.focus()
             win.print()
@@ -52,7 +72,9 @@ const PrintService = {
             if (iframe.parentNode) iframe.parentNode.removeChild(iframe)
             resolve()
           }, 4000)
-        }, 300)
+        }
+
+        setTimeout(trigger, 250)
       } catch (e) {
         console.error('Print container error:', e)
         resolve()
