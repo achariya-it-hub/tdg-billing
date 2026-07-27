@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Receipt, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet, RefreshCw, QrCode, Calendar } from 'lucide-react'
+import { Receipt, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet, RefreshCw, QrCode, Calendar, Download, FileSpreadsheet } from 'lucide-react'
 import { getSocket } from '../lib/socket'
 import { useSettings } from '../lib/settingsContext'
 import PrintService from '../lib/printService'
@@ -245,6 +245,78 @@ export default function Billing() {
     PrintService.printBill(bill, true)
   }
 
+  const exportBillsSummary = async () => {
+    if (!visiblePaidBills || visiblePaidBills.length === 0) {
+      alert('No bill records found for the selected filter.')
+      return
+    }
+
+    try {
+      const XLSX = await import('xlsx')
+      const rows = visiblePaidBills.map((bill, index) => {
+        const total = calculateTotal(bill)
+        const tax = calculateTax(total)
+        const netTotal = bill.total || (total + tax)
+        const dateObj = bill.createdAt ? new Date(bill.createdAt) : new Date()
+        const dateStr = dateObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+        const timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
+
+        const billNo = bill.orderNumber ? `#${String(bill.orderNumber).padStart(6, '0')}` : `#${bill.id}`
+        const kotNo = bill.kotNumber || (bill.orderNumber ? `KOT-${bill.orderNumber}` : `KOT-${bill.id}`)
+
+        return {
+          'S.No': index + 1,
+          'Bill No': billNo,
+          'Related KOT No': kotNo,
+          'Date': dateStr,
+          'Time': timeStr,
+          'Order Type': (bill.type || 'DINE-IN').toUpperCase(),
+          'Payment Mode': (bill.paymentMethod || 'CASH').toUpperCase(),
+          'Subtotal (₹)': Math.round(total),
+          'GST Tax (5% ₹)': Math.round(tax),
+          'Total Amount (₹)': Math.round(netTotal)
+        }
+      })
+
+      const grandTotal = rows.reduce((s, r) => s + r['Total Amount (₹)'], 0)
+      rows.push({
+        'S.No': '',
+        'Bill No': 'TOTAL',
+        'Related KOT No': `${rows.length} Bills`,
+        'Date': '',
+        'Time': '',
+        'Order Type': '',
+        'Payment Mode': '',
+        'Subtotal (₹)': '',
+        'GST Tax (5% ₹)': '',
+        'Total Amount (₹)': grandTotal
+      })
+
+      const wb = XLSX.utils.book_new()
+      const ws = XLSX.utils.json_to_sheet(rows)
+
+      ws['!cols'] = [
+        { wch: 6 },
+        { wch: 14 },
+        { wch: 16 },
+        { wch: 14 },
+        { wch: 12 },
+        { wch: 14 },
+        { wch: 16 },
+        { wch: 14 },
+        { wch: 14 },
+        { wch: 18 }
+      ]
+
+      XLSX.utils.book_append_sheet(wb, ws, 'Bills Summary')
+      const todayStr = new Date().toISOString().split('T')[0]
+      XLSX.writeFile(wb, `TDG_Bills_Summary_${dateFilter}_${todayStr}.xlsx`)
+    } catch (err) {
+      console.error('Export failed:', err)
+      alert('Failed to export Excel file. Please try again.')
+    }
+  }
+
   const buildInvoiceHTML = (bill, items, total, tax, grandTotal, dateStr, timeStr, company, calcTotal, calcTax) => {
     const paymentMethod = (bill.paymentMethod || 'cash').toLowerCase()
     const upiId = company?.upiId || ''
@@ -436,6 +508,17 @@ export default function Billing() {
             <option value="all">🗓️ All Time</option>
           </select>
         </div>
+
+        <button onClick={exportBillsSummary} style={{
+          padding: '10px 20px', borderRadius: '12px',
+          background: 'linear-gradient(135deg, #10b981, #059669)',
+          color: 'white', fontWeight: 700, fontSize: '13.5px',
+          border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px',
+          boxShadow: '0 4px 14px rgba(16,185,129,0.3)', transition: 'all 0.2s'
+        }}>
+          <FileSpreadsheet size={18} />
+          📊 Export Bills Summary (Excel)
+        </button>
       </div>
 
       {/* New KOTs (Pending) */}

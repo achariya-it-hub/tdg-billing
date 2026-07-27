@@ -103,6 +103,7 @@ export default function Reports() {
   const [grnReport, setGrnReport] = useState(null)
   const [customerReport, setCustomerReport] = useState(null)
   const [expenseReport, setExpenseReport] = useState(null)
+  const [ordersReport, setOrdersReport] = useState([])
   const [loading, setLoading] = useState(false)
   const [showExportMenu, setShowExportMenu] = useState(false)
 
@@ -147,6 +148,9 @@ export default function Reports() {
         } else if (activeReport === 'expense-report') {
           const r = await fetch(`/api/reports/expenses?from=${getDateFrom()}&to=${getDateString()}`)
           setExpenseReport(await r.json())
+        } else if (activeReport === 'bill' || activeReport === 'kot') {
+          const r = await fetch(`/api/pos/orders`)
+          if (r.ok) setOrdersReport(await r.json())
         }
       } catch { /* ignore */ }
       setLoading(false)
@@ -1096,9 +1100,31 @@ export default function Reports() {
         rows: sampleKOTData.map(k => [k.id, k.table, k.items.join(', '), k.time, `₹${k.total}`, k.status])
       }
       case 'bill': return {
-        title: 'Bill Report',
-        headers: ['Bill #', 'KOT Ref', 'Amount', 'Payment', 'Status'],
-        rows: sampleBillData.map(b => [b.billNo, b.kotId, `₹${b.amount}`, b.payment, b.status])
+        title: 'Bill Summary Report',
+        headers: ['Bill No', 'Related KOT No', 'Date', 'Time', 'Order Type', 'Payment Mode', 'Total Amount (₹)'],
+        rows: (ordersReport && ordersReport.length > 0 ? ordersReport : sampleBillData).map(b => {
+          const items = b.items || []
+          const subtotal = b.subtotal || items.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
+          const tax = b.tax !== undefined ? b.tax : subtotal * 0.05
+          const netTotal = b.total || (subtotal + tax || b.amount || 0)
+
+          const dateObj = b.createdAt ? new Date(b.createdAt) : new Date()
+          const dateStr = dateObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+          const timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
+
+          const billNo = b.orderNumber ? `#${String(b.orderNumber).padStart(6, '0')}` : (b.billNo || `#${b.id}`)
+          const kotNo = b.kotNumber || (b.orderNumber ? `KOT-${b.orderNumber}` : (b.kotId || `KOT-${b.id}`))
+
+          return [
+            billNo,
+            kotNo,
+            dateStr,
+            timeStr,
+            (b.type || 'DINE-IN').toUpperCase(),
+            (b.paymentMethod || b.payment || 'CASH').toUpperCase(),
+            `₹${Math.round(netTotal)}`
+          ]
+        })
       }
       case 'food-cost': return {
         title: 'Food Costing Report',
