@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Receipt, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet, RefreshCw, QrCode, Calendar } from 'lucide-react'
 import { getSocket } from '../lib/socket'
 import { useSettings } from '../lib/settingsContext'
+import PrintService from '../lib/printService'
 
 const paymentMethods = [
   { id: 'cash', name: 'Cash', icon: Banknote },
@@ -241,29 +242,7 @@ export default function Billing() {
   }
 
   const printInvoice = (bill) => {
-    const items = bill.items || []
-    const total = calculateTotal(bill)
-    const tax = calculateTax(total)
-    const grandTotal = total + tax
-    const now = new Date()
-    const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
-    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
-    const html = buildInvoiceHTML(bill, items, total, tax, grandTotal, dateStr, timeStr, company, calculateTotal, calculateTax)
-    const iframe = document.createElement('iframe')
-    iframe.style.position = 'fixed'
-    iframe.style.right = '-9999px'
-    iframe.style.bottom = '-9999px'
-    iframe.style.width = '80mm'
-    iframe.style.height = '0'
-    iframe.style.border = 'none'
-    document.body.appendChild(iframe)
-    iframe.contentDocument.open()
-    iframe.contentDocument.write(html)
-    iframe.contentDocument.close()
-    setTimeout(() => {
-      iframe.contentWindow.focus()
-      iframe.contentWindow.print()
-    }, 300)
+    PrintService.printBill(bill, true)
   }
 
   const buildInvoiceHTML = (bill, items, total, tax, grandTotal, dateStr, timeStr, company, calcTotal, calcTax) => {
