@@ -372,10 +372,13 @@ export default function Billing() {
           <div class="brand-tagline">Restaurant Management System</div>
           <div class="brand-details">
             ${company.address ? company.address.replace(/,\s*/g, ',<br/>') + '<br/>' : ''}
-            Ph: ${company.phone || '000000000'}
+            Ph: ${company.phone || '000000000'}<br/>
+            GSTIN: <strong>${company.gstNo || company.gst || company.gstin || '33ABCDE1234F1Z5'}</strong><br/>
+            Email: <strong>${company.email || company.mailId || 'hello@thedonutgarages.com'}</strong>
           </div>
         </div>
-        <div class="info-row bill-number"><span class="info-label">Bill No:</span><span class="info-value">${String(bill.orderNumber || bill.id).padStart(6, '0')}</span></div>
+        <div class="info-row bill-number"><span class="info-label">Bill No:</span><span class="info-value">#${String(bill.orderNumber || bill.id).padStart(6, '0')}</span></div>
+        <div class="info-row"><span class="info-label">KOT No:</span><span class="info-value">${bill.kotNumber || (bill.orderNumber ? `KOT-${bill.orderNumber}` : `KOT-${bill.id}`)}</span></div>
         <div class="info-row"><span class="info-label">Date:</span><span class="info-value">${dateStr}</span></div>
         <div class="info-row"><span class="info-label">Time:</span><span class="info-value">${timeStr}</span></div>
         <div class="info-row"><span class="info-label">Payment:</span><span class="info-value" style="text-transform:capitalize">${bill.paymentMethod || 'cash'}</span></div>

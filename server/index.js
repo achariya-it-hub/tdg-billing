@@ -188,10 +188,48 @@ let aggregators = [
   { id: 'direct', name: 'Direct', displayName: 'Direct Order', isActive: true, defaultPrepTime: 20, color: '#4895ef' }
 ]
 
+const VAULT_PATH = join(__dirname, 'sales_vault_LOCK.json')
+
+function syncSalesVault(currentOrders) {
+  try {
+    let vaultOrders = []
+    if (existsSync(VAULT_PATH)) {
+      const content = readFileSync(VAULT_PATH, 'utf-8').trim()
+      if (content) {
+        const parsed = JSON.parse(content)
+        vaultOrders = parsed.orders || (Array.isArray(parsed) ? parsed : [])
+      }
+    }
+
+    const orderMap = new Map()
+    // Load vault orders
+    vaultOrders.forEach(o => {
+      if (o && (o.id || o.orderNumber)) {
+        orderMap.set(o.id || String(o.orderNumber), o)
+      }
+    })
+    // Merge active orders
+    (currentOrders || []).forEach(o => {
+      if (o && (o.id || o.orderNumber)) {
+        orderMap.set(o.id || String(o.orderNumber), o)
+      }
+    })
+
+    const mergedOrders = Array.from(orderMap.values())
+    // Save back to vault
+    writeFileSync(VAULT_PATH, JSON.stringify({ orders: mergedOrders, count: mergedOrders.length }, null, 2))
+    return mergedOrders
+  } catch (e) {
+    console.error('[SALES VAULT] Error syncing vault:', e.message)
+    return currentOrders || []
+  }
+}
+
 function saveState() {
+  orders = syncSalesVault(orders)
   const currentDb = readDb() || {}
   writeDb({
-    orders: orders && orders.length ? orders : (currentDb.orders || []),
+    orders: orders,
     loyaltyUsers: loyaltyUsers && loyaltyUsers.length ? loyaltyUsers : (currentDb.loyaltyUsers || []),
     dens: dens && dens.length ? dens : (currentDb.dens || []),
     pointTransactions: pointTransactions && pointTransactions.length ? pointTransactions : (currentDb.pointTransactions || []),
@@ -341,8 +379,9 @@ function restoreState() {
     }
   }
 
-  // Preserve 100% of operational business data (NEVER overwrite)
+  // Preserve 100% of operational business data (NEVER overwrite or lose sales data)
   if (db.orders && Array.isArray(db.orders)) orders = db.orders
+  orders = syncSalesVault(orders)
   if (db.loyaltyUsers && Array.isArray(db.loyaltyUsers)) loyaltyUsers = db.loyaltyUsers
   if (db.dens && Array.isArray(db.dens)) dens = db.dens
   if (db.pointTransactions && Array.isArray(db.pointTransactions)) pointTransactions = db.pointTransactions
@@ -4017,9 +4056,8 @@ app.post('/api/reset', async (req, res) => {
     const backupPath = join(BACKUP_DIR, `db-pre-reset-${ts}.json`)
     writeFileSync(backupPath, JSON.stringify(db, null, 2))
 
-    // Clear operational data
-    orders = []
-    orderNumber = 1000
+    // Clear non-sales operational data (keep sales data, bill details, KOT details permanently protected)
+    orders = syncSalesVault(orders)
     purchaseOrders = []
     poItems = []
     grns = []

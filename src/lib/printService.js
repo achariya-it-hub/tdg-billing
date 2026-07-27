@@ -247,15 +247,18 @@ const PrintService = {
           <div class="brand-name">${company.name || 'Ten Dens Gyros'}</div>
           <div class="brand-address">
             ${company.address ? company.address.replace(/,\s*/g, ',<br/>') : 'Shop 1 & 2, Kottakuppam, Viluppuram'}<br/>
-            ${company.phone ? `Ph: ${company.phone}` : ''} ${company.gst ? `| GSTIN: ${company.gst}` : ''}
+            ${company.phone ? `Ph: ${company.phone}` : ''}<br/>
+            GSTIN: <strong>${company.gstNo || company.gst || company.gstin || '33ABCDE1234F1Z5'}</strong><br/>
+            Email: <strong>${company.email || company.mailId || 'hello@thedonutgarages.com'}</strong>
           </div>
           <div><span class="invoice-badge">Tax Invoice</span></div>
         </div>
 
         <div class="meta-section">
-          <div class="meta-row"><span>Bill No: <strong>#${String(orderNum).padStart(6, '0')}</strong></span><span>Date: ${dateStr}</span></div>
-          <div class="meta-row"><span>Time: ${timeStr}</span><span>Mode: <strong>${(bill.type || 'DINE-IN').toUpperCase()}</strong></span></div>
-          <div class="meta-row"><span>Payment: <strong>${paymentMethod}</strong></span>${bill.customerPhone ? `<span>Mob: ${bill.customerPhone}</span>` : ''}</div>
+          <div class="meta-row"><span>Bill No: <strong>#${String(orderNum).padStart(6, '0')}</strong></span><span>KOT No: <strong>${bill.kotNumber || (bill.orderNumber ? `KOT-${bill.orderNumber}` : `KOT-${orderNum}`)}</strong></span></div>
+          <div class="meta-row"><span>Date: ${dateStr}</span><span>Time: ${timeStr}</span></div>
+          <div class="meta-row"><span>Mode: <strong>${(bill.type || 'DINE-IN').toUpperCase()}</strong></span><span>Payment: <strong>${paymentMethod}</strong></span></div>
+          ${bill.customerPhone ? `<div class="meta-row"><span>Mob: ${bill.customerPhone}</span></div>` : ''}
         </div>
 
         <div class="col-header">
