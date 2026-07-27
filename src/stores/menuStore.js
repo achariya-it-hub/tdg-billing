@@ -1,15 +1,17 @@
 import { create } from 'zustand'
 
 const sampleCategories = [
-  { id: 'c1', name: 'Gyros', color: '#e63946' },
-  { id: 'c2', name: 'Meals & Combos', color: '#f59e0b' },
-  { id: 'c3', name: 'Salads', color: '#10b981' },
-  { id: 'c4', name: 'Choice of Dips', color: '#dc2626' },
-  { id: 'c5', name: 'TDG Crispy Chicken', color: '#fbbf24' },
-  { id: 'c6', name: 'Sides', color: '#8b5cf6' },
-  { id: 'c7', name: 'Thick Shakes', color: '#ec4899' },
-  { id: 'c8', name: 'Softy', color: '#f472b6' },
-  { id: 'c9', name: 'Desserts', color: '#3b82f6' }
+  { id: 'c10', name: 'Beverages & Kombucha', color: '#0284c7' },
+  { id: 'c9', name: 'Desserts', color: '#ec4899' },
+  { id: 'c4', name: 'Dips & Add-Ons', color: '#e63946' },
+  { id: 'c6', name: 'Fries', color: '#f59e0b' },
+  { id: 'c1', name: 'Gyros', color: '#d97706' },
+  { id: 'c2', name: 'Meals & Combos', color: '#8b5cf6' },
+  { id: 'c11', name: 'Protein Max', color: '#10b981' },
+  { id: 'c3', name: 'Rice & Salads', color: '#059669' },
+  { id: 'c7', name: 'Shakes & Softy', color: '#db2777' },
+  { id: 'c5_strips', name: 'Strips', color: '#ca8a04' },
+  { id: 'c5_wings', name: 'Wings', color: '#b45309' }
 ]
 
 const sampleMenuItems = [

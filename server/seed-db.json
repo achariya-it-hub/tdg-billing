@@ -1,64 +1,70 @@
 {
   "categories": [
     {
-      "id": "c1",
-      "name": "Gyros",
-      "icon": "\ud83c\udf2f"
-    },
-    {
-      "id": "c2",
-      "name": "Meals & Combos",
-      "icon": "\ud83c\udf71"
-    },
-    {
-      "id": "c3",
-      "name": "Salads",
-      "icon": "\ud83e\udd57"
-    },
-    {
-      "id": "c4",
-      "name": "Choice of Dips",
-      "icon": "\ud83e\udd6b"
-    },
-    {
-      "id": "c5",
-      "name": "TDG Crispy Chicken",
-      "icon": "\ud83c\udf57"
-    },
-    {
-      "id": "c6",
-      "name": "Sides",
-      "icon": "\ud83c\udf5f"
-    },
-    {
-      "id": "c7",
-      "name": "Shakes",
-      "icon": "\ud83e\udd64"
-    },
-    {
-      "id": "c8",
-      "name": "Softy",
-      "icon": "\ud83c\udf66"
+      "id": "c10",
+      "name": "Beverages & Kombucha",
+      "icon": "\ud83c\udf79",
+      "color": "#0284c7"
     },
     {
       "id": "c9",
       "name": "Desserts",
-      "icon": "\ud83c\udf70"
+      "icon": "\ud83c\udf70",
+      "color": "#ec4899"
     },
     {
-      "id": "c10",
-      "name": "Beverages",
-      "icon": "\ud83c\udf79"
+      "id": "c4",
+      "name": "Dips & Add-Ons",
+      "icon": "\ud83e\udd63",
+      "color": "#e63946"
+    },
+    {
+      "id": "c6",
+      "name": "Fries",
+      "icon": "\ud83c\udf5f",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "c1",
+      "name": "Gyros",
+      "icon": "\ud83e\udd59",
+      "color": "#d97706"
+    },
+    {
+      "id": "c2",
+      "name": "Meals & Combos",
+      "icon": "\ud83c\udf71",
+      "color": "#8b5cf6"
     },
     {
       "id": "c11",
       "name": "Protein Max",
-      "icon": "\ud83d\udcaa"
+      "icon": "\ud83d\udcaa",
+      "color": "#10b981"
     },
     {
-      "id": "c12",
-      "name": "Extras",
-      "icon": "\ud83e\uddc0"
+      "id": "c3",
+      "name": "Rice & Salads",
+      "icon": "\ud83e\udd57",
+      "color": "#059669"
+    },
+    {
+      "id": "c7",
+      "name": "Shakes & Softy",
+      "icon": "\ud83e\udd64",
+      "color": "#db2777"
+    },
+    {
+      "id": "c5_strips",
+      "name": "Strips",
+      "icon": "\ud83c\udf57",
+      "color": "#ca8a04"
+    },
+    {
+      "id": "c5_wings",
+      "name": "Wings",
+      "icon": "\ud83c\udf57",
+      "color": "#b45309"
     }
   ],
   "menuItems": [
@@ -244,7 +250,7 @@
     },
     {
       "id": "m11",
-      "categoryId": "c5",
+      "categoryId": "c5_wings",
       "name": "1 Pc Leg & Thigh (1 Dip)",
       "price": 70,
       "description": "1 Pc Crispy Fried Chicken Leg & Thigh + 1 Dip",
@@ -253,7 +259,7 @@
     },
     {
       "id": "m12",
-      "categoryId": "c5",
+      "categoryId": "c5_wings",
       "name": "2 Pc Leg & Thigh (1 Dip)",
       "price": 140,
       "description": "2 Pc Crispy Fried Chicken Leg & Thigh + 1 Dip",
@@ -262,7 +268,7 @@
     },
     {
       "id": "m13",
-      "categoryId": "c5",
+      "categoryId": "c5_wings",
       "name": "4 Pc Leg & Thigh (2 Dips)",
       "price": 280,
       "description": "4 Pc Crispy Fried Chicken Leg & Thigh + 2 Dips",
@@ -271,7 +277,7 @@
     },
     {
       "id": "m14",
-      "categoryId": "c5",
+      "categoryId": "c5_wings",
       "name": "8 Pc Leg & Thigh (4 Dips)",
       "price": 560,
       "description": "8 Pc Crispy Fried Chicken Leg & Thigh + 4 Dips",
@@ -280,7 +286,7 @@
     },
     {
       "id": "m15",
-      "categoryId": "c5",
+      "categoryId": "c5_wings",
       "name": "12 Pc Leg & Thigh (6 Dips)",
       "price": 840,
       "description": "12 Pc Crispy Fried Chicken Leg & Thigh + 6 Dips",
@@ -289,7 +295,7 @@
     },
     {
       "id": "m16",
-      "categoryId": "c5",
+      "categoryId": "c5_wings",
       "name": "3 Pc Wings (1 Dip)",
       "price": 90,
       "description": "3 Pcs Crispy Fried Wings + 1 Dip",
@@ -298,7 +304,7 @@
     },
     {
       "id": "m17",
-      "categoryId": "c5",
+      "categoryId": "c5_wings",
       "name": "6 Pc Wings (2 Dips)",
       "price": 180,
       "description": "6 Pcs Crispy Fried Wings + 2 Dips",
@@ -307,7 +313,7 @@
     },
     {
       "id": "m18",
-      "categoryId": "c5",
+      "categoryId": "c5_wings",
       "name": "9 Pc Wings (3 Dips)",
       "price": 270,
       "description": "9 Pcs Crispy Fried Wings + 3 Dips",
@@ -316,7 +322,7 @@
     },
     {
       "id": "m19",
-      "categoryId": "c5",
+      "categoryId": "c5_wings",
       "name": "20 Pc Wings (6 Dips)",
       "price": 600,
       "description": "20 Pcs Crispy Fried Wings + 6 Dips",
@@ -325,7 +331,7 @@
     },
     {
       "id": "m20",
-      "categoryId": "c5",
+      "categoryId": "c5_wings",
       "name": "60 Pc Wings (12 Dips)",
       "price": 1500,
       "description": "60 Pcs Party Bucket Crispy Wings + 12 Dips",
@@ -334,7 +340,7 @@
     },
     {
       "id": "m21",
-      "categoryId": "c5",
+      "categoryId": "c5_strips",
       "name": "3 Pc Strips (1 Dip)",
       "price": 120,
       "description": "3 Pcs Boneless Crispy Strips + 1 Dip",
@@ -343,7 +349,7 @@
     },
     {
       "id": "m22",
-      "categoryId": "c5",
+      "categoryId": "c5_strips",
       "name": "6 Pc Strips (2 Dips)",
       "price": 240,
       "description": "6 Pcs Boneless Crispy Strips + 2 Dips",
@@ -352,7 +358,7 @@
     },
     {
       "id": "m23",
-      "categoryId": "c5",
+      "categoryId": "c5_strips",
       "name": "9 Pc Strips (3 Dips)",
       "price": 360,
       "description": "9 Pcs Boneless Crispy Strips + 3 Dips",
@@ -361,7 +367,7 @@
     },
     {
       "id": "m24",
-      "categoryId": "c5",
+      "categoryId": "c5_strips",
       "name": "20 Pc Strips (6 Dips)",
       "price": 800,
       "description": "20 Pcs Boneless Crispy Strips + 6 Dips",
@@ -370,7 +376,7 @@
     },
     {
       "id": "m25",
-      "categoryId": "c5",
+      "categoryId": "c5_strips",
       "name": "60 Pc Strips (12 Dips)",
       "price": 2400,
       "description": "60 Pcs Party Bucket Boneless Strips + 12 Dips",
@@ -681,7 +687,7 @@
     },
     {
       "id": "m52",
-      "categoryId": "c8",
+      "categoryId": "c7",
       "name": "Vanilla Softy",
       "price": 39,
       "description": "Classic soft serve ice cream cone",
