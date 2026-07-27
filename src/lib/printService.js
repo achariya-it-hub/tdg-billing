@@ -1,3 +1,5 @@
+import { getCompanyInfoSync } from './getCompanyInfo'
+
 // Global Print Deduplication Lock Guard (15s TTL)
 const printedJobsSet = new Set()
 
@@ -18,62 +20,56 @@ const isAlreadyPrintedJob = (type, order) => {
 
 // Print service for generating and printing KOT tickets
 const PrintService = {
-  // Print runner that preserves full CSS thermal styling and triggers print dialog window
+  // Synchronous print runner that triggers native print dialog in user gesture context
   executePrintHTML: (html, title = 'Print Ticket') => {
-    return new Promise((resolve) => {
-      try {
-        const oldFrame = document.getElementById('pos_active_print_frame')
-        if (oldFrame && oldFrame.parentNode) {
-          oldFrame.parentNode.removeChild(oldFrame)
-        }
-
-        const iframe = document.createElement('iframe')
-        iframe.id = 'pos_active_print_frame'
-        iframe.style.position = 'fixed'
-        iframe.style.left = '0px'
-        iframe.style.top = '0px'
-        iframe.style.width = '100%'
-        iframe.style.height = '100%'
-        iframe.style.border = 'none'
-        iframe.style.background = '#ffffff'
-        iframe.style.zIndex = '9999999'
-        document.body.appendChild(iframe)
-
-        const win = iframe.contentWindow
-        const doc = iframe.contentDocument || win.document
-
-        doc.open()
-        doc.write(html)
-        doc.close()
-
-        const triggerPrint = () => {
-          try {
-            win.focus()
-            win.print()
-          } catch (err) {
-            console.error('Iframe print error:', err)
-            try {
-              window.focus()
-              window.print()
-            } catch (e2) {}
-          }
-          setTimeout(() => {
-            if (iframe.parentNode) iframe.parentNode.removeChild(iframe)
-            resolve()
-          }, 4000)
-        }
-
-        setTimeout(triggerPrint, 250)
-      } catch (e) {
-        console.error('Print execution error:', e)
-        resolve()
+    try {
+      const oldFrame = document.getElementById('pos_active_print_frame')
+      if (oldFrame && oldFrame.parentNode) {
+        oldFrame.parentNode.removeChild(oldFrame)
       }
-    })
+
+      const iframe = document.createElement('iframe')
+      iframe.id = 'pos_active_print_frame'
+      iframe.style.position = 'fixed'
+      iframe.style.right = '-9999px'
+      iframe.style.bottom = '-9999px'
+      iframe.style.width = '80mm'
+      iframe.style.height = '0px'
+      iframe.style.border = 'none'
+      document.body.appendChild(iframe)
+
+      const win = iframe.contentWindow
+      const doc = iframe.contentDocument || win.document
+
+      doc.open()
+      doc.write(html)
+      doc.close()
+
+      const doPrint = () => {
+        try {
+          win.focus()
+          win.print()
+        } catch (err) {
+          console.error('Iframe print error:', err)
+          try {
+            window.focus()
+            window.print()
+          } catch (e2) {}
+        }
+        setTimeout(() => {
+          if (iframe.parentNode) iframe.parentNode.removeChild(iframe)
+        }, 3000)
+      }
+
+      setTimeout(doPrint, 100)
+    } catch (e) {
+      console.error('Print execution error:', e)
+    }
   },
 
-  // Generate KOT ticket content as HTML
-  generateKOTHTML: async (kot) => {
-    const company = await getCompanyInfo()
+  // Generate KOT ticket content as HTML (Synchronous)
+  generateKOTHTML: (kot) => {
+    const company = getCompanyInfoSync()
     const items = kot.items || []
     const itemsHtml = items.map((item) => {
       const name = item.menuItemName || item.name || 'Item'
@@ -179,20 +175,20 @@ const PrintService = {
   },
 
   // Print KOT ticket
-  printKOT: async (kot, force = false) => {
+  printKOT: (kot, force = false) => {
     if (!force && isAlreadyPrintedJob('kot', kot)) return
     console.log('Printing KOT:', kot)
     try {
-      const html = await PrintService.generateKOTHTML(kot)
-      await PrintService.executePrintHTML(html, `KOT #${kot.orderNumber || kot.id || ''}`)
+      const html = PrintService.generateKOTHTML(kot)
+      PrintService.executePrintHTML(html, `KOT #${kot.orderNumber || kot.id || ''}`)
     } catch (err) {
       console.error('KOT print error:', err)
     }
   },
 
-  // Generate Bill / Invoice Receipt Content as HTML
-  generateBillHTML: async (bill) => {
-    const company = await getCompanyInfo()
+  // Generate Bill / Invoice Receipt Content as HTML (Synchronous)
+  generateBillHTML: (bill) => {
+    const company = getCompanyInfoSync()
     const items = bill.items || []
     const subtotal = bill.subtotal || items.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
     const tax = bill.tax !== undefined ? bill.tax : subtotal * 0.05
@@ -310,39 +306,39 @@ const PrintService = {
   },
 
   // Print Bill ticket
-  printBill: async (bill, force = false) => {
+  printBill: (bill, force = false) => {
     if (!force && isAlreadyPrintedJob('bill', bill)) return
     console.log('Printing Bill:', bill)
     try {
-      const html = await PrintService.generateBillHTML(bill)
-      await PrintService.executePrintHTML(html, `Invoice #${bill.orderNumber || bill.id || ''}`)
+      const html = PrintService.generateBillHTML(bill)
+      PrintService.executePrintHTML(html, `Invoice #${bill.orderNumber || bill.id || ''}`)
     } catch (err) {
       console.error('Bill print error:', err)
     }
   },
 
-  // Automatically print BOTH KOT ticket and Bill ticket in 1 print dialog window with page break
-  printKOTAndBill: async (order, force = false) => {
+  // Automatically print BOTH KOT ticket and Bill ticket
+  printKOTAndBill: (order, force = false) => {
     if (!order) return
     if (!force && isAlreadyPrintedJob('kot_and_bill', order)) return
     console.log('Printing KOT + Bill for Order:', order)
     try {
-      const kotHtml = await PrintService.generateKOTHTML(order)
-      const billHtml = await PrintService.generateBillHTML(order)
+      const kotHtml = PrintService.generateKOTHTML(order)
+      const billHtml = PrintService.generateBillHTML(order)
       const combinedHtml = `
         ${kotHtml}
-        <div class="page-break"></div>
+        <div style="page-break-before: always; break-before: page; margin-top: 20px;"></div>
         ${billHtml}
       `
-      await PrintService.executePrintHTML(combinedHtml, `Order #${order.orderNumber || order.id || ''}`)
+      PrintService.executePrintHTML(combinedHtml, `Order #${order.orderNumber || order.id || ''}`)
     } catch (err) {
       console.error('KOT + Bill combined print error:', err)
     }
   },
 
-  // Print directly to POS printer (if available)
-  printToPOSPrinter: async (kot, force = false) => {
-    return await PrintService.printKOTAndBill(kot, force);
+  // Print directly to POS printer
+  printToPOSPrinter: (kot, force = false) => {
+    return PrintService.printKOTAndBill(kot, force);
   }
 };
 
