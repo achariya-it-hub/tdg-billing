@@ -1,5 +1,20 @@
-import { useEffect } from 'react'
-import { getCompanyInfo } from './getCompanyInfo'
+// Global Print Deduplication Lock Guard (15s TTL)
+const printedJobsSet = new Set()
+
+const isAlreadyPrintedJob = (type, order) => {
+  if (!order) return true
+  const orderId = String(order.id || order.orderNumber || order._id || '')
+  const itemsHash = (order.items || []).map(i => `${i.menuItemId || i.id || i.name}_${i.quantity || i.qty || 1}`).join(',')
+  const jobKey = `${type}_${orderId}_${itemsHash}`
+
+  if (printedJobsSet.has(jobKey)) {
+    console.log(`[PRINT DEDUPLICATION] Blocked duplicate ${type} print job for:`, orderId)
+    return true
+  }
+  printedJobsSet.add(jobKey)
+  setTimeout(() => printedJobsSet.delete(jobKey), 15000)
+  return false
+}
 
 // Print service for generating and printing KOT tickets
 const PrintService = {
@@ -112,6 +127,7 @@ const PrintService = {
 
   // Print KOT ticket using hidden background iframe (zero user input required)
   printKOT: async (kot) => {
+    if (isAlreadyPrintedJob('kot', kot)) return
     console.log('Auto-printing KOT:', kot)
     try {
       const html = await PrintService.generateKOTHTML(kot)
@@ -129,7 +145,7 @@ const PrintService = {
       doc.write(html)
       doc.close()
 
-      setTimeout(() => {
+      const triggerPrint = () => {
         try {
           iframe.contentWindow.focus()
           iframe.contentWindow.print()
@@ -138,8 +154,11 @@ const PrintService = {
         }
         setTimeout(() => {
           if (iframe.parentNode) iframe.parentNode.removeChild(iframe)
-        }, 3000)
-      }, 300)
+        }, 5000)
+      }
+
+      iframe.onload = triggerPrint
+      setTimeout(triggerPrint, 250)
     } catch (err) {
       console.error('KOT print error:', err)
     }
@@ -266,6 +285,7 @@ const PrintService = {
 
   // Print Bill ticket using hidden background iframe (zero user input required)
   printBill: async (bill) => {
+    if (isAlreadyPrintedJob('bill', bill)) return
     console.log('Auto-printing Bill:', bill)
     try {
       const html = await PrintService.generateBillHTML(bill)
@@ -283,7 +303,7 @@ const PrintService = {
       doc.write(html)
       doc.close()
 
-      setTimeout(() => {
+      const triggerPrint = () => {
         try {
           iframe.contentWindow.focus()
           iframe.contentWindow.print()
@@ -292,8 +312,11 @@ const PrintService = {
         }
         setTimeout(() => {
           if (iframe.parentNode) iframe.parentNode.removeChild(iframe)
-        }, 3000)
-      }, 300)
+        }, 5000)
+      }
+
+      iframe.onload = triggerPrint
+      setTimeout(triggerPrint, 250)
     } catch (err) {
       console.error('Bill print error:', err)
     }
