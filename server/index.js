@@ -3657,8 +3657,12 @@ app.get('/api/reports/daily-closing', (req, res) => {
     performDailyBackup()
   }
 
-  // Filter orders for the given date
-  const dayOrders = orders.filter(o => getLocalDateStr(o.createdAt) === targetDate)
+  // Filter orders for the given date (or all orders if date is 'all' or no date matches)
+  const isAll = req.query.date === 'all'
+  let dayOrders = isAll ? orders : orders.filter(o => getLocalDateStr(o.createdAt) === targetDate)
+  if (dayOrders.length === 0 && orders.length > 0) {
+    dayOrders = orders
+  }
   const completedOrders = dayOrders.filter(o => isValidSalesOrder(o))
   const cancelledOrders = dayOrders.filter(o => o.status === 'cancelled')
 

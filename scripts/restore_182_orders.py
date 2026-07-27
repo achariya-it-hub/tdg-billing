@@ -34,17 +34,17 @@ print(f"Avg Basket Value: Rs {round(sum(base_amounts) / len(base_amounts))}")
 # Date range: July 1 to July 27, 2026
 payment_methods = ['cash', 'upi', 'card', 'wallet']
 
+# Set created_at for all 182 orders to today (2026-07-27)
 orders = []
 for i in range(num_orders):
     amt = base_amounts[i]
     order_num = 1001 + i
     
-    # Distribute dates evenly across July
-    day = 1 + (i % 27)
-    hour = 11 + (i % 11)
+    # All 182 orders belong to today 2026-07-27
+    hour = 8 + (i // 10) % 15  # spread from 8 AM to 11 PM
     minute = (i * 7) % 60
     second = (i * 13) % 60
-    created_at = f"2026-07-{day:02d}T{hour:02d}:{minute:02d}:{second:02d}.000Z"
+    created_at = f"2026-07-27T{hour:02d}:{minute:02d}:{second:02d}.000Z"
 
     # Create dummy line items that roughly match the amount
     subtotal = round(amt / 1.05)
