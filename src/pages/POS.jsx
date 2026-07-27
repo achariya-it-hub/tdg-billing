@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Plus, Minus, Trash2, ShoppingBag, X, Volume2, VolumeX } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
