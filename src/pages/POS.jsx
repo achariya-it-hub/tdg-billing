@@ -247,7 +247,7 @@ export default function POS() {
       toast.success(`🔔 New ${src} Order #${num} received! Printing KOT...`)
 
       try {
-        PrintService.printKOTAndBill(order)
+        PrintService.printKOTAndBill(order, true)
       } catch (pe) {
         console.error('Remote order auto-print failed:', pe)
       }
@@ -302,7 +302,7 @@ export default function POS() {
         setShowSuccessModal(true)
         if (newOrder.id) printedOrderIdsRef.current.add(String(newOrder.id))
         if (newOrder.orderNumber) printedOrderIdsRef.current.add(String(newOrder.orderNumber))
-        PrintService.printKOTAndBill(newOrder)
+        PrintService.printKOTAndBill(newOrder, true)
       }
     }
     catch (err) { console.error('Order error:', err); toast.error('Failed: ' + err.message) }

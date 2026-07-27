@@ -18,45 +18,54 @@ const isAlreadyPrintedJob = (type, order) => {
 
 // Print service for generating and printing KOT tickets
 const PrintService = {
-  // Unblockable print runner that opens the native OS Print Dialog window 100% of the time
+  // Print runner that preserves full CSS thermal styling and triggers print dialog window
   executePrintHTML: (html, title = 'Print Ticket') => {
     return new Promise((resolve) => {
       try {
-        let printDiv = document.getElementById('pos_active_print_area')
-        if (!printDiv) {
-          printDiv = document.createElement('div')
-          printDiv.id = 'pos_active_print_area'
-          document.body.appendChild(printDiv)
+        const oldFrame = document.getElementById('pos_active_print_frame')
+        if (oldFrame && oldFrame.parentNode) {
+          oldFrame.parentNode.removeChild(oldFrame)
         }
 
-        printDiv.innerHTML = `
-          <style>
-            @media screen {
-              #pos_active_print_area { display: none !important; }
-            }
-            @media print {
-              body > *:not(#pos_active_print_area) { display: none !important; }
-              #pos_active_print_area { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
-              .page-break { page-break-before: always; break-before: page; margin-top: 20px; }
-            }
-          </style>
-          <div>${html}</div>
-        `
+        const iframe = document.createElement('iframe')
+        iframe.id = 'pos_active_print_frame'
+        iframe.style.position = 'fixed'
+        iframe.style.left = '0px'
+        iframe.style.top = '0px'
+        iframe.style.width = '100%'
+        iframe.style.height = '100%'
+        iframe.style.border = 'none'
+        iframe.style.background = '#ffffff'
+        iframe.style.zIndex = '9999999'
+        document.body.appendChild(iframe)
 
-        setTimeout(() => {
+        const win = iframe.contentWindow
+        const doc = iframe.contentDocument || win.document
+
+        doc.open()
+        doc.write(html)
+        doc.close()
+
+        const triggerPrint = () => {
           try {
-            window.focus()
-            window.print()
-          } catch (e) {
-            console.error('window.print error:', e)
+            win.focus()
+            win.print()
+          } catch (err) {
+            console.error('Iframe print error:', err)
+            try {
+              window.focus()
+              window.print()
+            } catch (e2) {}
           }
           setTimeout(() => {
-            if (printDiv) printDiv.innerHTML = ''
+            if (iframe.parentNode) iframe.parentNode.removeChild(iframe)
             resolve()
-          }, 1000)
-        }, 150)
+          }, 4000)
+        }
+
+        setTimeout(triggerPrint, 250)
       } catch (e) {
-        console.error('Print container error:', e)
+        console.error('Print execution error:', e)
         resolve()
       }
     })
