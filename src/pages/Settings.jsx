@@ -241,6 +241,12 @@ function CompanyTab({ pin, settings, onSaved }) {
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
 
+  useEffect(() => {
+    if (settings?.company) {
+      setForm(settings.company)
+    }
+  }, [settings])
+
   const handleSave = async () => {
     setSaving(true); setMsg('')
     try {

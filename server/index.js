@@ -348,7 +348,20 @@ function restoreState() {
   if (db.poItems && Array.isArray(db.poItems)) poItems = db.poItems
   if (db.grns && Array.isArray(db.grns)) grns = db.grns
   if (db.vendorPayments && Array.isArray(db.vendorPayments)) vendorPayments = db.vendorPayments
-  if (db.settings) settings = { ...settings, ...db.settings }
+  if (db.settings) {
+    settings = {
+      ...settings,
+      ...db.settings,
+      company: {
+        ...settings.company,
+        ...(db.settings.company || {})
+      },
+      theme: {
+        ...settings.theme,
+        ...(db.settings.theme || {})
+      }
+    }
+  }
   if (db.billingUsers && Array.isArray(db.billingUsers)) {
     billingUsers = db.billingUsers
     billingUsers.forEach(u => {
@@ -1473,7 +1486,7 @@ function verifySuperAdmin(pin) {
 app.put('/api/settings/company', (req, res) => {
   const auth = verifySuperAdmin(req.body.pin)
   if (!auth.ok) return res.status(403).json({ error: auth.error })
-  const { name, address, phone, email, gst, upiId, deliveryEnabled } = req.body
+  const { name, address, phone, email, gst, upiId, deliveryEnabled, logo } = req.body
   if (name !== undefined) settings.company.name = name
   if (address !== undefined) settings.company.address = address
   if (phone !== undefined) settings.company.phone = phone
@@ -1481,7 +1494,21 @@ app.put('/api/settings/company', (req, res) => {
   if (gst !== undefined) settings.company.gst = gst
   if (upiId !== undefined) settings.company.upiId = upiId
   if (deliveryEnabled !== undefined) settings.company.deliveryEnabled = deliveryEnabled
-  const db = readDb(); db.settings = settings; writeDb(db)
+  if (logo !== undefined) settings.company.logo = logo
+
+  saveState()
+
+  try {
+    const seedPath = join(__dirname, 'seed-db.json')
+    if (existsSync(seedPath)) {
+      const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
+      seedData.settings = settings
+      writeFileSync(seedPath, JSON.stringify(seedData, null, 2))
+    }
+  } catch (se) {
+    console.error('Failed to sync seed settings:', se.message)
+  }
+
   res.json({ success: true, settings })
 })
 
