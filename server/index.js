@@ -3599,50 +3599,81 @@ app.post('/api/purchases', (req, res) => {
   res.status(201).json(purchase)
 })
 
+// Helper for timezone-safe local date string (YYYY-MM-DD)
+const getLocalDateStr = (val) => {
+  if (!val) return ''
+  try {
+    const d = new Date(val)
+    if (!isNaN(d.getTime())) {
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+  } catch (e) {}
+  return String(val).slice(0, 10)
+}
+
+// Helper to compute order total amount safely
+const getOrderAmount = (o) => {
+  if (o.total !== undefined && o.total !== null && Number(o.total) > 0) {
+    return Number(o.total)
+  }
+  const items = o.items || []
+  const subtotal = items.reduce((sum, i) => sum + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
+  const tax = o.tax !== undefined ? o.tax : subtotal * 0.05
+  return Math.round(subtotal + tax)
+}
+
+const isValidSalesOrder = (o) => {
+  if (!o) return false
+  if (o.status === 'cancelled' || o.status === 'void') return false
+  return true
+}
+
 // ============ DAILY CLOSING REPORT ============
 app.get('/api/reports/daily-closing', (req, res) => {
-  const date = req.query.date || new Date().toISOString().split('T')[0]
+  const targetDate = req.query.date || getLocalDateStr(new Date())
 
   // Trigger daily backup when today's closing is viewed
-  if (date === new Date().toISOString().split('T')[0]) {
+  if (targetDate === getLocalDateStr(new Date())) {
     performDailyBackup()
   }
 
   // Filter orders for the given date
-  const dayOrders = orders.filter(o => o.createdAt && o.createdAt.startsWith(date))
-  const completedOrders = dayOrders.filter(o => o.status === 'completed' || o.status === 'served' || o.status === 'delivered')
+  const dayOrders = orders.filter(o => getLocalDateStr(o.createdAt) === targetDate)
+  const completedOrders = dayOrders.filter(o => isValidSalesOrder(o))
   const cancelledOrders = dayOrders.filter(o => o.status === 'cancelled')
 
-  // Total invoices (completed/served/delivered)
+  // Total invoices
   const totalInvoices = completedOrders.length
 
   // Total sale value
-  const totalSales = completedOrders.reduce((sum, o) => sum + (o.total || 0), 0)
+  const totalSales = completedOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
 
   // By payment method
   const byPaymentMethod = {}
   completedOrders.forEach(o => {
-    const method = o.paymentMethod || 'cash'
-    byPaymentMethod[method] = (byPaymentMethod[method] || 0) + (o.total || 0)
+    const method = (o.paymentMethod || 'cash').toLowerCase()
+    byPaymentMethod[method] = (byPaymentMethod[method] || 0) + getOrderAmount(o)
   })
 
   // By source (POS, mobile, kiosk, etc.)
   const bySource = {}
   completedOrders.forEach(o => {
-    const src = o.source || 'pos'
-    bySource[src] = (bySource[src] || 0)
-    bySource[src]++
+    const src = (o.source || o.type || 'pos').toLowerCase()
+    bySource[src] = (bySource[src] || 0) + 1
   })
 
   // Average basket value
   const avgBasketValue = totalInvoices > 0 ? Math.round(totalSales / totalInvoices) : 0
 
   // Expenses for the day
-  const dayExpenses = expenses.filter(e => e.createdAt.startsWith(date))
+  const dayExpenses = expenses.filter(e => getLocalDateStr(e.createdAt) === targetDate)
   const totalExpenses = dayExpenses.reduce((sum, e) => sum + (e.amount || 0), 0)
 
   // Purchases for the day
-  const dayPurchases = purchases.filter(p => p.createdAt.startsWith(date))
+  const dayPurchases = purchases.filter(p => getLocalDateStr(p.createdAt) === targetDate)
   const totalPurchases = dayPurchases.reduce((sum, p) => sum + (p.total || 0), 0)
 
   // Gross profit = totalSales - totalPurchases - totalExpenses
@@ -3656,7 +3687,7 @@ app.get('/api/reports/daily-closing', (req, res) => {
   })
 
   res.json({
-    date,
+    date: targetDate,
     totalInvoices,
     totalSales: Math.round(totalSales),
     totalPurchases: Math.round(totalPurchases),
@@ -3674,46 +3705,48 @@ app.get('/api/reports/daily-closing', (req, res) => {
 
 // P&L (Profit & Loss) Report
 app.get('/api/reports/pnl', (req, res) => {
-  const date = req.query.date || new Date().toISOString().split('T')[0]
-  const period = req.query.period || 'day' // day, week, month
+  const date = req.query.date || getLocalDateStr(new Date())
+  const period = req.query.period || 'day'
 
-  let fromDate, toDate
+  let fromStr, toStr
   if (period === 'week') {
     const d = new Date(date)
     const dayOfWeek = d.getDay()
-    fromDate = new Date(d); fromDate.setDate(d.getDate() - dayOfWeek)
-    toDate = new Date(fromDate); toDate.setDate(toDate.getDate() + 6)
+    const fromDate = new Date(d); fromDate.setDate(d.getDate() - dayOfWeek)
+    const toDate = new Date(fromDate); toDate.setDate(toDate.getDate() + 6)
+    fromStr = getLocalDateStr(fromDate)
+    toStr = getLocalDateStr(toDate)
   } else if (period === 'month') {
     const d = new Date(date)
-    fromDate = new Date(d.getFullYear(), d.getMonth(), 1)
-    toDate = new Date(d.getFullYear(), d.getMonth() + 1, 0)
+    const fromDate = new Date(d.getFullYear(), d.getMonth(), 1)
+    const toDate = new Date(d.getFullYear(), d.getMonth() + 1, 0)
+    fromStr = getLocalDateStr(fromDate)
+    toStr = getLocalDateStr(toDate)
   } else {
-    fromDate = new Date(date)
-    toDate = new Date(date)
+    fromStr = date
+    toStr = date
   }
 
-  const fromStr = fromDate.toISOString().split('T')[0]
-  const toStr = toDate.toISOString().split('T')[0]
-
-  // Revenue: completed/served/delivered orders
-  const periodOrders = orders.filter(o =>
-    o.createdAt && o.createdAt.slice(0, 10) >= fromStr && o.createdAt.slice(0, 10) <= toStr &&
-    (o.status === 'completed' || o.status === 'served' || o.status === 'delivered')
-  )
-  const totalRevenue = periodOrders.reduce((sum, o) => sum + (o.total || 0), 0)
+  // Revenue: valid sales orders
+  const periodOrders = orders.filter(o => {
+    const dStr = getLocalDateStr(o.createdAt)
+    return dStr >= fromStr && dStr <= toStr && isValidSalesOrder(o)
+  })
+  const totalRevenue = periodOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
   const orderCount = periodOrders.length
 
   // Revenue by payment method
   const revenueByMethod = {}
   periodOrders.forEach(o => {
-    const m = o.paymentMethod || 'cash'
-    revenueByMethod[m] = (revenueByMethod[m] || 0) + (o.total || 0)
+    const m = (o.paymentMethod || 'cash').toLowerCase()
+    revenueByMethod[m] = (revenueByMethod[m] || 0) + getOrderAmount(o)
   })
 
   // COGS: purchases in period
-  const periodPurchases = purchases.filter(p =>
-    p.createdAt && p.createdAt.slice(0, 10) >= fromStr && p.createdAt.slice(0, 10) <= toStr
-  )
+  const periodPurchases = purchases.filter(p => {
+    const dStr = getLocalDateStr(p.createdAt)
+    return dStr >= fromStr && dStr <= toStr
+  })
   const totalCogs = periodPurchases.reduce((sum, p) => sum + (p.total || 0), 0)
 
   // Gross Profit

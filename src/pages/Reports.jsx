@@ -107,10 +107,17 @@ export default function Reports() {
   const [loading, setLoading] = useState(false)
   const [showExportMenu, setShowExportMenu] = useState(false)
 
+  const formatLocalYYYYMMDD = (d) => {
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
   const getDateString = () => {
     const d = new Date()
     if (dateRange === 'yesterday') d.setDate(d.getDate() - 1)
-    return d.toISOString().split('T')[0]
+    return formatLocalYYYYMMDD(d)
   }
 
   const getPnlPeriod = () => {
@@ -120,9 +127,9 @@ export default function Reports() {
 
   const getDateFrom = () => {
     if (dateRange === 'today') return getDateString()
-    if (dateRange === 'yesterday') { const d = new Date(); d.setDate(d.getDate() - 1); return d.toISOString().split('T')[0] }
-    if (dateRange === 'week') { const d = new Date(); d.setDate(d.getDate() - 7); return d.toISOString().split('T')[0] }
-    if (dateRange === 'month') { const d = new Date(); d.setMonth(d.getMonth() - 1); return d.toISOString().split('T')[0] }
+    if (dateRange === 'yesterday') { const d = new Date(); d.setDate(d.getDate() - 1); return formatLocalYYYYMMDD(d) }
+    if (dateRange === 'week') { const d = new Date(); d.setDate(d.getDate() - 7); return formatLocalYYYYMMDD(d) }
+    if (dateRange === 'month') { const d = new Date(); d.setMonth(d.getMonth() - 1); return formatLocalYYYYMMDD(d) }
     return getDateString()
   }
 
