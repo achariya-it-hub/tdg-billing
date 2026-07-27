@@ -8,7 +8,7 @@ const isAlreadyPrintedJob = (type, order) => {
   const jobKey = `${type}_${orderId}_${itemsHash}`
 
   if (printedJobsSet.has(jobKey)) {
-    console.log(`[PRINT DEDUPLICATION] Blocked duplicate ${type} print job for:`, orderId)
+    console.log(`[PRINT DEDUPLICATION] Blocked duplicate auto ${type} print job for:`, orderId)
     return true
   }
   printedJobsSet.add(jobKey)
@@ -18,6 +18,48 @@ const isAlreadyPrintedJob = (type, order) => {
 
 // Print service for generating and printing KOT tickets
 const PrintService = {
+  // Reliable print runner that works on ALL thermal & default Windows printers
+  executePrintHTML: (html, title = 'Print Ticket') => {
+    return new Promise((resolve) => {
+      try {
+        const iframe = document.createElement('iframe')
+        iframe.id = 'pos_print_iframe_' + Date.now()
+        iframe.style.position = 'fixed'
+        iframe.style.right = '0px'
+        iframe.style.bottom = '0px'
+        iframe.style.width = '80mm'
+        iframe.style.height = '1px'
+        iframe.style.border = 'none'
+        iframe.style.opacity = '0.01'
+        iframe.style.zIndex = '999999'
+        document.body.appendChild(iframe)
+
+        const win = iframe.contentWindow
+        const doc = iframe.contentDocument || win.document
+
+        doc.open()
+        doc.write(html)
+        doc.close()
+
+        setTimeout(() => {
+          try {
+            win.focus()
+            win.print()
+          } catch (err) {
+            console.error('Iframe print error:', err)
+          }
+          setTimeout(() => {
+            if (iframe.parentNode) iframe.parentNode.removeChild(iframe)
+            resolve()
+          }, 4000)
+        }, 300)
+      } catch (e) {
+        console.error('Print container error:', e)
+        resolve()
+      }
+    })
+  },
+
   // Generate KOT ticket content as HTML
   generateKOTHTML: async (kot) => {
     const company = await getCompanyInfo()
@@ -125,40 +167,13 @@ const PrintService = {
     `
   },
 
-  // Print KOT ticket using hidden background iframe (zero user input required)
-  printKOT: async (kot) => {
-    if (isAlreadyPrintedJob('kot', kot)) return
-    console.log('Auto-printing KOT:', kot)
+  // Print KOT ticket
+  printKOT: async (kot, force = false) => {
+    if (!force && isAlreadyPrintedJob('kot', kot)) return
+    console.log('Printing KOT:', kot)
     try {
       const html = await PrintService.generateKOTHTML(kot)
-      const iframe = document.createElement('iframe')
-      iframe.style.position = 'fixed'
-      iframe.style.right = '-9999px'
-      iframe.style.bottom = '-9999px'
-      iframe.style.width = '80mm'
-      iframe.style.height = '0px'
-      iframe.style.border = 'none'
-      document.body.appendChild(iframe)
-
-      const doc = iframe.contentDocument || iframe.contentWindow.document
-      doc.open()
-      doc.write(html)
-      doc.close()
-
-      const triggerPrint = () => {
-        try {
-          iframe.contentWindow.focus()
-          iframe.contentWindow.print()
-        } catch (e) {
-          console.error('KOT print execution failed:', e)
-        }
-        setTimeout(() => {
-          if (iframe.parentNode) iframe.parentNode.removeChild(iframe)
-        }, 5000)
-      }
-
-      iframe.onload = triggerPrint
-      setTimeout(triggerPrint, 250)
+      await PrintService.executePrintHTML(html, `KOT #${kot.orderNumber || kot.id || ''}`)
     } catch (err) {
       console.error('KOT print error:', err)
     }
@@ -283,58 +298,31 @@ const PrintService = {
     `
   },
 
-  // Print Bill ticket using hidden background iframe (zero user input required)
-  printBill: async (bill) => {
-    if (isAlreadyPrintedJob('bill', bill)) return
-    console.log('Auto-printing Bill:', bill)
+  // Print Bill ticket
+  printBill: async (bill, force = false) => {
+    if (!force && isAlreadyPrintedJob('bill', bill)) return
+    console.log('Printing Bill:', bill)
     try {
       const html = await PrintService.generateBillHTML(bill)
-      const iframe = document.createElement('iframe')
-      iframe.style.position = 'fixed'
-      iframe.style.right = '-9999px'
-      iframe.style.bottom = '-9999px'
-      iframe.style.width = '80mm'
-      iframe.style.height = '0px'
-      iframe.style.border = 'none'
-      document.body.appendChild(iframe)
-
-      const doc = iframe.contentDocument || iframe.contentWindow.document
-      doc.open()
-      doc.write(html)
-      doc.close()
-
-      const triggerPrint = () => {
-        try {
-          iframe.contentWindow.focus()
-          iframe.contentWindow.print()
-        } catch (e) {
-          console.error('Bill print execution failed:', e)
-        }
-        setTimeout(() => {
-          if (iframe.parentNode) iframe.parentNode.removeChild(iframe)
-        }, 5000)
-      }
-
-      iframe.onload = triggerPrint
-      setTimeout(triggerPrint, 250)
+      await PrintService.executePrintHTML(html, `Invoice #${bill.orderNumber || bill.id || ''}`)
     } catch (err) {
       console.error('Bill print error:', err)
     }
   },
 
-  // Automatically print BOTH KOT ticket and Bill ticket without user input or popups
-  printKOTAndBill: async (order) => {
+  // Automatically print BOTH KOT ticket and Bill ticket
+  printKOTAndBill: async (order, force = false) => {
     if (!order) return
-    console.log('Zero-input auto-printing KOT + Bill for Order:', order)
-    await PrintService.printKOT(order)
+    console.log('Printing KOT + Bill for Order:', order)
+    await PrintService.printKOT(order, force)
     setTimeout(async () => {
-      await PrintService.printBill(order)
+      await PrintService.printBill(order, force)
     }, 600)
   },
 
   // Print directly to POS printer (if available)
-  printToPOSPrinter: async (kot) => {
-    return await PrintService.printKOTAndBill(kot);
+  printToPOSPrinter: async (kot, force = false) => {
+    return await PrintService.printKOTAndBill(kot, force);
   }
 };
 

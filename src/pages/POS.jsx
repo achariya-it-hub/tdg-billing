@@ -861,7 +861,7 @@ export default function POS() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <button
-              onClick={() => PrintService.printKOTAndBill(lastPlacedOrder)}
+              onClick={() => PrintService.printKOTAndBill(lastPlacedOrder, true)}
               style={{
                 padding: '14px',
                 borderRadius: '12px',
@@ -883,7 +883,7 @@ export default function POS() {
 
             <div style={{ display: 'flex', gap: '10px' }}>
               <button
-                onClick={() => PrintService.printKOT(lastPlacedOrder)}
+                onClick={() => PrintService.printKOT(lastPlacedOrder, true)}
                 style={{
                   flex: 1,
                   padding: '12px',
@@ -900,7 +900,7 @@ export default function POS() {
               </button>
 
               <button
-                onClick={() => PrintService.printBill(lastPlacedOrder)}
+                onClick={() => PrintService.printBill(lastPlacedOrder, true)}
                 style={{
                   flex: 1,
                   padding: '12px',
