@@ -189,29 +189,30 @@ let aggregators = [
 ]
 
 function saveState() {
+  const currentDb = readDb() || {}
   writeDb({
-    orders,
-    loyaltyUsers,
-    dens,
-    pointTransactions,
-    inventory,
-    orderNumber,
+    orders: orders && orders.length ? orders : (currentDb.orders || []),
+    loyaltyUsers: loyaltyUsers && loyaltyUsers.length ? loyaltyUsers : (currentDb.loyaltyUsers || []),
+    dens: dens && dens.length ? dens : (currentDb.dens || []),
+    pointTransactions: pointTransactions && pointTransactions.length ? pointTransactions : (currentDb.pointTransactions || []),
+    inventory: inventory && inventory.length ? inventory : (currentDb.inventory || []),
+    orderNumber: Math.max(orderNumber || 0, currentDb.orderNumber || 0),
     usedReferralCodes: [...usedReferralCodes],
-    expenses,
-    purchases,
-    onlineOrders,
-    aggregators,
-    billingUsers,
-    categories,
-    menuItems,
-    recipes,
-    users: mobileAppUsers,
-    suppliers,
-    purchaseOrders,
-    poItems,
-    grns,
-    vendorPayments,
-    settings
+    expenses: expenses && expenses.length ? expenses : (currentDb.expenses || []),
+    purchases: purchases && purchases.length ? purchases : (currentDb.purchases || []),
+    onlineOrders: onlineOrders && onlineOrders.length ? onlineOrders : (currentDb.onlineOrders || []),
+    aggregators: aggregators && aggregators.length ? aggregators : (currentDb.aggregators || []),
+    billingUsers: billingUsers && billingUsers.length ? billingUsers : (currentDb.billingUsers || []),
+    categories: categories && categories.length ? categories : (currentDb.categories || []),
+    menuItems: menuItems && menuItems.length ? menuItems : (currentDb.menuItems || []),
+    recipes: recipes && recipes.length ? recipes : (currentDb.recipes || []),
+    users: mobileAppUsers && mobileAppUsers.length ? mobileAppUsers : (currentDb.users || []),
+    suppliers: suppliers && suppliers.length ? suppliers : (currentDb.suppliers || []),
+    purchaseOrders: purchaseOrders && purchaseOrders.length ? purchaseOrders : (currentDb.purchaseOrders || []),
+    poItems: poItems && poItems.length ? poItems : (currentDb.poItems || []),
+    grns: grns && grns.length ? grns : (currentDb.grns || []),
+    vendorPayments: vendorPayments && vendorPayments.length ? vendorPayments : (currentDb.vendorPayments || []),
+    settings: settings || currentDb.settings || {}
   })
 }
 
@@ -309,17 +310,30 @@ function restoreState() {
     }
   }
 
-  // Master Menu Sync: Always sync latest categories & menuItems from seed-db.json if available
+  // Master Menu Sync & Lock Guard: Ensure all 11 categories and 92 menu items are preserved
+  const LOCK_PATH = join(__dirname, 'menu_backup_LOCK.json')
+  let lockData = null
+  if (existsSync(LOCK_PATH)) {
+    try {
+      const lockContent = readFileSync(LOCK_PATH, 'utf-8').trim()
+      if (lockContent) lockData = JSON.parse(lockContent)
+    } catch (e) {}
+  }
+
   if (existsSync(SEED_PATH)) {
     try {
       const seedContent = readFileSync(SEED_PATH, 'utf-8').trim()
       if (seedContent) {
         const seedData = JSON.parse(seedContent)
-        if (seedData.categories && Array.isArray(seedData.categories)) {
+        if (seedData.categories && Array.isArray(seedData.categories) && seedData.categories.length >= 11) {
           db.categories = seedData.categories
+        } else if (lockData?.categories) {
+          db.categories = lockData.categories
         }
-        if (seedData.menuItems && Array.isArray(seedData.menuItems)) {
+        if (seedData.menuItems && Array.isArray(seedData.menuItems) && seedData.menuItems.length >= 92) {
           db.menuItems = seedData.menuItems
+        } else if (lockData?.menuItems) {
+          db.menuItems = lockData.menuItems
         }
       }
     } catch (se) {
