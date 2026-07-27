@@ -96,7 +96,7 @@ const reportTypes = [
 
 export default function Reports() {
   const [activeReport, setActiveReport] = useState('daily-closing')
-  const [dateRange, setDateRange] = useState('today')
+  const [dateRange, setDateRange] = useState('latest')
   const [closing, setClosing] = useState(null)
   const [pnlData, setPnlData] = useState(null)
   const [poReport, setPoReport] = useState(null)
@@ -115,21 +115,22 @@ export default function Reports() {
   }
 
   const getDateString = () => {
+    if (dateRange === 'latest') return 'latest'
     const d = new Date()
     if (dateRange === 'yesterday') d.setDate(d.getDate() - 1)
     return formatLocalYYYYMMDD(d)
   }
 
   const getPnlPeriod = () => {
-    if (dateRange === 'today' || dateRange === 'yesterday') return 'day'
+    if (dateRange === 'today' || dateRange === 'yesterday' || dateRange === 'latest') return 'day'
     return dateRange
   }
 
   const getDateFrom = () => {
-    if (dateRange === 'today') return getDateString()
+    if (dateRange === 'latest' || dateRange === 'today') return getDateString()
     if (dateRange === 'yesterday') { const d = new Date(); d.setDate(d.getDate() - 1); return formatLocalYYYYMMDD(d) }
     if (dateRange === 'week') { const d = new Date(); d.setDate(d.getDate() - 7); return formatLocalYYYYMMDD(d) }
-    if (dateRange === 'month') { const d = new Date(); d.setMonth(d.getMonth() - 1); return formatLocalYYYYMMDD(d) }
+    if (dateRange === 'month') { const d = new Date(); d.setDate(d.getDate() - 30); return formatLocalYYYYMMDD(d) }
     return getDateString()
   }
 
@@ -198,6 +199,19 @@ export default function Reports() {
               </div>
             ) : (
               <>
+                {/* Date Badge */}
+                {closing.date && (
+                  <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{
+                      background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0',
+                      padding: '6px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 700,
+                      display: 'inline-flex', alignItems: 'center', gap: '6px'
+                    }}>
+                      📅 Daily Closing Date: {closing.date}
+                    </span>
+                  </div>
+                )}
+
                 {/* KPI Cards */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '20px' }}>
                   <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px', textAlign: 'center' }}>
