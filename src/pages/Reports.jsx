@@ -1296,13 +1296,15 @@ export default function Reports() {
               borderRadius: '8px',
               border: '1px solid #e5e7eb',
               fontSize: '14px',
-              fontWeight: 500
+              fontWeight: 600,
+              cursor: 'pointer'
             }}
           >
-            <option value="today">Today</option>
-            <option value="yesterday">Yesterday</option>
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
+            <option value="latest">⭐ Most Recent Sales Date</option>
+            <option value="today">📅 Today</option>
+            <option value="yesterday">🕒 Yesterday</option>
+            <option value="week">🗓️ This Week</option>
+            <option value="month">📅 This Month</option>
           </select>
           
           <div style={{ position: 'relative' }}>

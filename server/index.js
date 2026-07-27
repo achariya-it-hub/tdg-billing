@@ -3633,10 +3633,27 @@ const isValidSalesOrder = (o) => {
 
 // ============ DAILY CLOSING REPORT ============
 app.get('/api/reports/daily-closing', (req, res) => {
-  const targetDate = req.query.date || getLocalDateStr(new Date())
+  let targetDate = req.query.date || getLocalDateStr(new Date())
+
+  // Auto-fallback to most recent active sales date if 'latest' requested or if today has 0 orders
+  const datesWithOrders = orders
+    .filter(o => isValidSalesOrder(o) && o.createdAt)
+    .map(o => getLocalDateStr(o.createdAt))
+    .filter(Boolean)
+    .sort()
+
+  const todayStr = getLocalDateStr(new Date())
+  let isLatestFallback = false
+
+  if (req.query.date === 'latest' || (!req.query.date && datesWithOrders.length > 0 && !datesWithOrders.includes(todayStr))) {
+    if (datesWithOrders.length > 0) {
+      targetDate = datesWithOrders[datesWithOrders.length - 1]
+      isLatestFallback = true
+    }
+  }
 
   // Trigger daily backup when today's closing is viewed
-  if (targetDate === getLocalDateStr(new Date())) {
+  if (targetDate === todayStr) {
     performDailyBackup()
   }
 
