@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Minus, Trash2, ShoppingBag, X, Volume2, VolumeX } from 'lucide-react'
+import { Plus, Minus, Trash2, ShoppingBag, X, Volume2, VolumeX, Search } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import { useToast } from '../components/ui/Toaster'
@@ -96,10 +96,21 @@ export default function POS() {
   } = useOrderStore()
 
   const [selectedCategory, setSelectedCategory] = useState(null)
+  const [itemSearchTerm, setItemSearchTerm] = useState('')
   const [processing, setProcessing] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [showCart, setShowCart] = useState(false)
   const [soundOn, setSoundOn] = useState(() => getSoundEnabled())
+
+  const filteredMenuItems = menuItems.filter(item => {
+    if (!itemSearchTerm || !itemSearchTerm.trim()) return true
+    const term = itemSearchTerm.toLowerCase().trim()
+    const name = (item.name || '').toLowerCase()
+    const price = String(item.price || '')
+    const cat = categories.find(c => c.id === item.categoryId)
+    const catName = (cat?.name || '').toLowerCase()
+    return name.includes(term) || catName.includes(term) || price.includes(term)
+  })
 
   // Gyro & Combo Customizer State
   const [customizingItem, setCustomizingItem] = useState(null)
@@ -422,10 +433,45 @@ export default function POS() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 160px)' }}>
         <CategoryPills />
+        {/* Mobile Item Search Bar */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '8px',
+          margin: '6px 0 10px 0',
+          background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)',
+          padding: '8px 14px', borderRadius: '12px',
+          border: '1.5px solid rgba(230,57,70,0.3)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+        }}>
+          <Search size={16} color="#e63946" />
+          <input
+            type="text"
+            value={itemSearchTerm}
+            onChange={e => setItemSearchTerm(e.target.value)}
+            placeholder="Search items by name..."
+            style={{
+              width: '100%', border: 'none', background: 'transparent',
+              fontSize: '13px', fontWeight: 600, color: '#1f2937', outline: 'none'
+            }}
+          />
+          {itemSearchTerm && (
+            <button
+              onClick={() => setItemSearchTerm('')}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', display: 'flex', alignItems: 'center' }}
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
         <div style={{ flex: 1, overflow: 'auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '10px' }}>
-            {menuItems.map(item => <MenuItemCard key={item.id} item={item} />)}
-          </div>
+          {filteredMenuItems.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px 20px', color: '#9ca3af' }}>
+              <div style={{ fontSize: '24px', marginBottom: '6px' }}>🔍</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#4b5563' }}>No items match "{itemSearchTerm}"</div>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '10px' }}>
+              {filteredMenuItems.map(item => <MenuItemCard key={item.id} item={item} />)}
+            </div>
+          )}
         </div>
         {/* Mobile Cart Button */}
         <div onClick={() => setShowCart(true)} style={{
@@ -538,9 +584,48 @@ export default function POS() {
       </div>
 
       {/* Menu Items Grid */}
-      <div style={{ flex: 1, overflow: 'auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(155px, 1fr))', gap: '12px' }}>
-          {menuItems.map(item => <MenuItemCard key={item.id} item={item} />)}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        {/* Live Item Search Bar */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '10px',
+          marginBottom: '12px',
+          background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)',
+          padding: '10px 16px', borderRadius: '14px',
+          border: '1.5px solid rgba(230,57,70,0.3)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+        }}>
+          <Search size={18} color="#e63946" />
+          <input
+            type="text"
+            value={itemSearchTerm}
+            onChange={e => setItemSearchTerm(e.target.value)}
+            placeholder="Type item name to search (e.g. Gyro, Burger, Kunafa, Fries, Drink)..."
+            style={{
+              width: '100%', border: 'none', background: 'transparent',
+              fontSize: '14px', fontWeight: 600, color: '#1f2937', outline: 'none'
+            }}
+          />
+          {itemSearchTerm && (
+            <button
+              onClick={() => setItemSearchTerm('')}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', display: 'flex', alignItems: 'center' }}
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
+
+        <div style={{ flex: 1, overflow: 'auto', paddingRight: '2px' }}>
+          {filteredMenuItems.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#9ca3af' }}>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}>🔍</div>
+              <div style={{ fontSize: '15px', fontWeight: 600, color: '#4b5563' }}>No items match "{itemSearchTerm}"</div>
+              <div style={{ fontSize: '13px', marginTop: '4px' }}>Try searching another dish name or clear search</div>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(155px, 1fr))', gap: '12px' }}>
+              {filteredMenuItems.map(item => <MenuItemCard key={item.id} item={item} />)}
+            </div>
+          )}
         </div>
       </div>
 
