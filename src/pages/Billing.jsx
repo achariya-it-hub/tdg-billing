@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Receipt, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet, RefreshCw, QrCode, Calendar, Download, FileSpreadsheet } from 'lucide-react'
+import { Receipt, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet, RefreshCw, QrCode, Calendar, Download, FileSpreadsheet, Search } from 'lucide-react'
 import { getSocket } from '../lib/socket'
 import { useSettings } from '../lib/settingsContext'
 import PrintService from '../lib/printService'
@@ -47,13 +47,41 @@ export default function Billing() {
     return getLocalDateString(dateStr) === getLocalDateString(y)
   }
 
+  const matchesSearch = (o) => {
+    if (!searchTerm || !searchTerm.trim()) return true
+    const term = searchTerm.toLowerCase().trim()
+
+    const orderNo = String(o.orderNumber || o.id || '').toLowerCase()
+    if (orderNo.includes(term)) return true
+
+    const tableNo = String(o.tableNumber || '').toLowerCase()
+    if (tableNo.includes(term) || `table ${tableNo}`.includes(term)) return true
+
+    const custName = String(o.customerName || o.customer || '').toLowerCase()
+    const custPhone = String(o.customerPhone || o.phone || '').toLowerCase()
+    if (custName.includes(term) || custPhone.includes(term)) return true
+
+    const payMethod = String(o.paymentMethod || '').toLowerCase()
+    if (payMethod.includes(term)) return true
+
+    const items = o.items || []
+    const itemMatch = items.some(item => {
+      const name = String(item.menuItemName || item.name || '').toLowerCase()
+      return name.includes(term)
+    })
+    if (itemMatch) return true
+
+    return false
+  }
+
   const filterByDate = (list) => {
     if (!Array.isArray(list)) return []
     return list.filter(o => {
       const dateVal = o.createdAt || o.date
-      if (dateFilter === 'today') return isToday(dateVal)
-      if (dateFilter === 'yesterday') return isYesterday(dateVal)
-      return true
+      let dateMatch = true
+      if (dateFilter === 'today') dateMatch = isToday(dateVal)
+      else if (dateFilter === 'yesterday') dateMatch = isYesterday(dateVal)
+      return dateMatch && matchesSearch(o)
     })
   }
 
@@ -476,7 +504,7 @@ export default function Billing() {
         ))}
       </div>
 
-      {/* Date Filter & Refresh Toolbar */}
+      {/* Date Filter, Search Bar & Refresh Toolbar */}
       <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap' }}>
         <button onClick={fetchOrders} style={{
           padding: '10px 20px', borderRadius: '12px',
@@ -510,6 +538,35 @@ export default function Billing() {
             <option value="yesterday">🕒 Yesterday</option>
             <option value="all">🗓️ All Time</option>
           </select>
+        </div>
+
+        {/* Live Instant Search Bar */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '10px',
+          flex: 1, minWidth: '280px',
+          background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)',
+          padding: '8px 16px', borderRadius: '12px',
+          border: '1.5px solid rgba(230,57,70,0.3)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+        }}>
+          <Search size={18} color="#e63946" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            placeholder="Type & search by Order #, KOT #, Table, Customer Name/Phone, Item, or Payment..."
+            style={{
+              width: '100%', border: 'none', background: 'transparent',
+              fontSize: '13.5px', fontWeight: 600, color: '#1f2937', outline: 'none'
+            }}
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', display: 'flex', alignItems: 'center' }}
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
 
         <button onClick={exportBillsSummary} style={{
