@@ -197,9 +197,14 @@ function syncSalesVault(currentOrders) {
       const content = readFileSync(VAULT_PATH, 'utf-8').trim()
       if (content) {
         const parsed = JSON.parse(content)
-        vaultOrders = parsed.orders || (Array.isArray(parsed) ? parsed : [])
+        if (Array.isArray(parsed)) {
+          vaultOrders = parsed
+        } else if (parsed && Array.isArray(parsed.orders)) {
+          vaultOrders = parsed.orders
+        }
       }
     }
+    if (!Array.isArray(vaultOrders)) vaultOrders = []
 
     const orderMap = new Map()
     // Load vault orders
@@ -3821,10 +3826,6 @@ app.get('/api/reports/daily-closing', (req, res) => {
     cancelledCount: cancelledOrders.length
   })
 })
-    expenses: dayExpenses,
-    purchases: dayPurchases
-  })
-})
 
 // P&L (Profit & Loss) Report
 app.get('/api/reports/pnl', (req, res) => {
@@ -3966,35 +3967,6 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
   const periodOrders = getFilteredOrdersForPeriod(req.query)
 
   const catMap = {}
-  let totalQtySum = 0
-  let totalRevenueSum = 0
-
-  periodOrders.forEach(o => {
-    const items = o.items || []
-    items.forEach(i => {
-      const category = i.category || 'General'
-      const qty = Number(i.quantity || i.qty || 1)
-      const unitPrice = Number(i.unitPrice || i.price || 0)
-      const totalPrice = Number(i.totalPrice || unitPrice * qty)
-
-      totalQtySum += qty
-      totalRevenueSum += totalPrice
-
-      if (!catMap[category]) {
-        catMap[category] = {
-          category,
-          itemsSet: new Set(),
-          totalQty: 0,
-          totalRevenue: 0,
-          orderCount: 0
-        }
-      }
-      catMap[category].itemsSet.add(i.name || i.menuItemName || 'Item')
-      catMap[category].totalQty += qty
-      catMap[category].totalRevenue += totalPrice
-      catMap[category].orderCount += 1
-    })
-  })
   let totalQtySum = 0
   let totalRevenueSum = 0
 
