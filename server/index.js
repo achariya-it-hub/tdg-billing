@@ -196,15 +196,19 @@ function syncSalesVault(currentOrders) {
     if (existsSync(VAULT_PATH)) {
       const content = readFileSync(VAULT_PATH, 'utf-8').trim()
       if (content) {
-        const parsed = JSON.parse(content)
-        if (Array.isArray(parsed)) {
-          vaultOrders = parsed
-        } else if (parsed && Array.isArray(parsed.orders)) {
-          vaultOrders = parsed.orders
-        }
+        try {
+          const parsed = JSON.parse(content)
+          if (Array.isArray(parsed)) {
+            vaultOrders = parsed
+          } else if (parsed && Array.isArray(parsed.orders)) {
+            vaultOrders = parsed.orders
+          }
+        } catch (err) {}
       }
     }
-    if (!Array.isArray(vaultOrders)) vaultOrders = []
+    if (!Array.isArray(vaultOrders)) {
+      vaultOrders = []
+    }
 
     const orderMap = new Map()
     // Load vault orders
@@ -214,11 +218,13 @@ function syncSalesVault(currentOrders) {
       }
     })
     // Merge active orders
-    (currentOrders || []).forEach(o => {
-      if (o && (o.id || o.orderNumber)) {
-        orderMap.set(o.id || String(o.orderNumber), o)
-      }
-    })
+    if (Array.isArray(currentOrders)) {
+      currentOrders.forEach(o => {
+        if (o && (o.id || o.orderNumber)) {
+          orderMap.set(o.id || String(o.orderNumber), o)
+        }
+      })
+    }
 
     const mergedOrders = Array.from(orderMap.values())
     // Save back to vault
@@ -226,7 +232,7 @@ function syncSalesVault(currentOrders) {
     return mergedOrders
   } catch (e) {
     console.error('[SALES VAULT] Error syncing vault:', e.message)
-    return currentOrders || []
+    return Array.isArray(currentOrders) ? currentOrders : []
   }
 }
 
