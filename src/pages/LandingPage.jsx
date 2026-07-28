@@ -321,13 +321,6 @@ export default function LandingPage() {
             REVIEWS
           </motion.a>
           <motion.a 
-            href="/mobile" 
-            whileHover={{ y: -2, textShadow: '0 0 10px rgba(255, 215, 0, 0.85)', color: '#ffd700' }}
-            style={{ color: '#ffd700', textDecoration: 'none', fontSize: '15px', fontWeight: 800, letterSpacing: '1.5px', transition: 'color 0.2s', display: 'flex', alignItems: 'center', gap: '4px' }}
-          >
-            APP PREVIEW 📱
-          </motion.a>
-          <motion.a 
             href="#contact" 
             whileHover={{ y: -2, textShadow: '0 0 10px rgba(255, 215, 0, 0.85)', color: '#ffd700' }}
             style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1.5px', transition: 'color 0.2s' }}
@@ -571,24 +564,6 @@ export default function LandingPage() {
               }}>
                 VIEW MENU <ArrowRight size={16} />
               </a>
-
-              <Link to="/mobile" style={{
-                backgroundColor: 'rgba(255, 215, 0, 0.15)',
-                color: '#ffd700',
-                border: '1.5px solid #ffd700',
-                padding: '14px 32px',
-                fontSize: '13px',
-                fontWeight: 800,
-                textDecoration: 'none',
-                letterSpacing: '1px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                borderRadius: '4px',
-                boxShadow: '0 0 15px rgba(255, 215, 0, 0.2)'
-              }}>
-                APP PREVIEW 📱
-              </Link>
 
               <a href="/app.apk" download style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
