@@ -3846,6 +3846,132 @@ app.get('/api/reports/pnl', (req, res) => {
   })
 })
 
+// ============ ITEMWISE SALES REPORT ============
+app.get('/api/reports/itemwise-sales', (req, res) => {
+  const fromStr = req.query.from || req.query.date || ''
+  const toStr = req.query.to || req.query.date || ''
+
+  const periodOrders = orders.filter(o => {
+    if (!isValidSalesOrder(o)) return false
+    if (!fromStr && !toStr) return true
+    const dStr = getLocalDateStr(o.createdAt)
+    if (fromStr && toStr) return dStr >= fromStr && dStr <= toStr
+    if (fromStr) return dStr === fromStr
+    return true
+  })
+
+  const itemMap = {}
+  let totalQtySum = 0
+  let totalRevenueSum = 0
+
+  periodOrders.forEach(o => {
+    const items = o.items || []
+    items.forEach(i => {
+      const name = i.menuItemName || i.name || 'Unspecified Item'
+      const category = i.category || 'General'
+      const qty = Number(i.quantity || i.qty || 1)
+      const unitPrice = Number(i.unitPrice || i.price || 0)
+      const totalPrice = Number(i.totalPrice || unitPrice * qty)
+
+      totalQtySum += qty
+      totalRevenueSum += totalPrice
+
+      if (!itemMap[name]) {
+        itemMap[name] = {
+          name,
+          category,
+          unitPrice,
+          totalQty: 0,
+          totalRevenue: 0,
+          orderCount: 0
+        }
+      }
+      itemMap[name].totalQty += qty
+      itemMap[name].totalRevenue += totalPrice
+      itemMap[name].orderCount += 1
+    })
+  })
+
+  const itemsList = Object.values(itemMap).map(item => ({
+    ...item,
+    avgPrice: item.totalQty > 0 ? Math.round(item.totalRevenue / item.totalQty) : item.unitPrice,
+    totalRevenue: Math.round(item.totalRevenue),
+    contributionPct: totalRevenueSum > 0 ? Number(((item.totalRevenue / totalRevenueSum) * 100).toFixed(1)) : 0
+  })).sort((a, b) => b.totalRevenue - a.totalRevenue)
+
+  res.json({
+    period: { from: fromStr, to: toStr },
+    totalOrders: periodOrders.length,
+    totalItemsSold: totalQtySum,
+    totalRevenue: Math.round(totalRevenueSum),
+    items: itemsList
+  })
+})
+
+// ============ CATEGORYWISE SALES REPORT ============
+app.get('/api/reports/categorywise-sales', (req, res) => {
+  const fromStr = req.query.from || req.query.date || ''
+  const toStr = req.query.to || req.query.date || ''
+
+  const periodOrders = orders.filter(o => {
+    if (!isValidSalesOrder(o)) return false
+    if (!fromStr && !toStr) return true
+    const dStr = getLocalDateStr(o.createdAt)
+    if (fromStr && toStr) return dStr >= fromStr && dStr <= toStr
+    if (fromStr) return dStr === fromStr
+    return true
+  })
+
+  const catMap = {}
+  let totalQtySum = 0
+  let totalRevenueSum = 0
+
+  periodOrders.forEach(o => {
+    const items = o.items || []
+    items.forEach(i => {
+      const category = i.category || 'General'
+      const qty = Number(i.quantity || i.qty || 1)
+      const unitPrice = Number(i.unitPrice || i.price || 0)
+      const totalPrice = Number(i.totalPrice || unitPrice * qty)
+
+      totalQtySum += qty
+      totalRevenueSum += totalPrice
+
+      if (!catMap[category]) {
+        catMap[category] = {
+          category,
+          itemsSet: new Set(),
+          totalQty: 0,
+          totalRevenue: 0,
+          orderCount: 0
+        }
+      }
+      catMap[category].itemsSet.add(i.name || i.menuItemName || 'Item')
+      catMap[category].totalQty += qty
+      catMap[category].totalRevenue += totalPrice
+      catMap[category].orderCount += 1
+    })
+  })
+
+  const categoriesList = Object.values(catMap).map(cat => ({
+    category: cat.category,
+    uniqueItemCount: cat.itemsSet.size,
+    totalQty: cat.totalQty,
+    totalRevenue: Math.round(cat.totalRevenue),
+    orderCount: cat.orderCount,
+    contributionPct: totalRevenueSum > 0 ? Number(((cat.totalRevenue / totalRevenueSum) * 100).toFixed(1)) : 0
+  })).sort((a, b) => b.totalRevenue - a.totalRevenue)
+
+  res.json({
+    period: { from: fromStr, to: toStr },
+    totalOrders: periodOrders.length,
+    totalCategories: categoriesList.length,
+    totalItemsSold: totalQtySum,
+    totalRevenue: Math.round(totalRevenueSum),
+    categories: categoriesList
+  })
+})
+
 // Purchase Orders Report
 app.get('/api/reports/purchase-orders', (req, res) => {
   const { from, to } = req.query

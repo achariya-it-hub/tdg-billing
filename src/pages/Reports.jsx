@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BarChart3, FileText, Package, Utensils, Receipt, XCircle, TrendingDown, TrendingUp, Download, Sun, DollarSign, ShoppingCart, TrendingUp as TrendingUpIcon, ReceiptText, BarChart, ClipboardList, ClipboardCheck, Users, Wallet, Truck } from 'lucide-react'
+import { BarChart3, FileText, Package, Utensils, Receipt, XCircle, TrendingDown, TrendingUp, Download, Sun, DollarSign, ShoppingCart, TrendingUp as TrendingUpIcon, ReceiptText, BarChart, ClipboardList, ClipboardCheck, Users, Wallet, Truck, Tag, PieChart, Layers } from 'lucide-react'
 
 
 const sampleKOTData = [
@@ -79,6 +79,8 @@ const sampleRecipeData = [
 
 const reportTypes = [
   { id: 'daily-closing', name: 'Daily Closing', icon: Sun, desc: 'Day Summary & Profit' },
+  { id: 'itemwise-sales', name: 'Itemwise Sales', icon: Tag, desc: 'Sales & Quantity by Item' },
+  { id: 'categorywise-sales', name: 'Categorywise Sales', icon: PieChart, desc: 'Sales Share by Category' },
   { id: 'pnl', name: 'P&L Statement', icon: BarChart, desc: 'Profit & Loss Statement' },
   { id: 'po', name: 'PO Report', icon: ShoppingCart, desc: 'Purchase Orders' },
   { id: 'grn', name: 'GRN Report', icon: ClipboardCheck, desc: 'Goods Receipt Notes' },
@@ -103,6 +105,8 @@ export default function Reports() {
   const [grnReport, setGrnReport] = useState(null)
   const [customerReport, setCustomerReport] = useState(null)
   const [expenseReport, setExpenseReport] = useState(null)
+  const [itemwiseReport, setItemwiseReport] = useState(null)
+  const [categorywiseReport, setCategorywiseReport] = useState(null)
   const [ordersReport, setOrdersReport] = useState([])
   const [loading, setLoading] = useState(false)
   const [showExportMenu, setShowExportMenu] = useState(false)
@@ -141,6 +145,12 @@ export default function Reports() {
         if (activeReport === 'daily-closing') {
           const r = await fetch(`/api/reports/daily-closing?date=${getDateString()}`)
           setClosing(await r.json())
+        } else if (activeReport === 'itemwise-sales') {
+          const r = await fetch(`/api/reports/itemwise-sales?from=${getDateFrom()}&to=${getDateString()}`)
+          if (r.ok) setItemwiseReport(await r.json())
+        } else if (activeReport === 'categorywise-sales') {
+          const r = await fetch(`/api/reports/categorywise-sales?from=${getDateFrom()}&to=${getDateString()}`)
+          if (r.ok) setCategorywiseReport(await r.json())
         } else if (activeReport === 'pnl') {
           const r = await fetch(`/api/reports/pnl?date=${getDateString()}&period=${getPnlPeriod()}`)
           setPnlData(await r.json())
@@ -169,6 +179,8 @@ export default function Reports() {
   const getReportTitle = () => {
     switch (activeReport) {
       case 'daily-closing': return 'Daily Closing Report'
+      case 'itemwise-sales': return 'Itemwise Sales Report'
+      case 'categorywise-sales': return 'Categorywise Sales Report'
       case 'pnl': return 'Profit & Loss Statement'
       case 'po': return 'Purchase Orders Report'
       case 'grn': return 'Goods Receipt Notes Report'
@@ -188,6 +200,148 @@ export default function Reports() {
 
   const renderReport = () => {
     switch (activeReport) {
+      case 'itemwise-sales':
+        return (
+          <div>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '60px 0', color: '#6b7280' }}>Loading...</div>
+            ) : !itemwiseReport || !itemwiseReport.items || itemwiseReport.items.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '60px 0', color: '#6b7280' }}>
+                No sales data available for this date range.
+              </div>
+            ) : (
+              <>
+                {/* KPI Summary Cards */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '20px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', padding: '20px', textAlign: 'center' }}>
+                    <Tag size={22} color="#2563eb" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '28px', fontWeight: 700, color: '#2563eb' }}>{itemwiseReport.items.length}</div>
+                    <div style={{ fontSize: '12px', color: '#1e40af' }}>Distinct Items Sold</div>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', padding: '20px', textAlign: 'center' }}>
+                    <Package size={22} color="#f59e0b" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '28px', fontWeight: 700, color: '#f59e0b' }}>{itemwiseReport.totalItemsSold.toLocaleString()} Pcs</div>
+                    <div style={{ fontSize: '12px', color: '#92400e' }}>Total Quantity Sold</div>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', padding: '20px', textAlign: 'center' }}>
+                    <DollarSign size={22} color="#10b981" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '28px', fontWeight: 700, color: '#10b981' }}>₹{itemwiseReport.totalRevenue.toLocaleString()}</div>
+                    <div style={{ fontSize: '12px', color: '#166534' }}>Total Item Sales Revenue</div>
+                  </div>
+                </div>
+
+                {/* Itemwise Sales Table */}
+                <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', overflow: 'hidden' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
+                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280', width: '50px' }}>#</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Menu Item Name</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Category</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Qty Sold</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Avg Price</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Total Sales (₹)</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280', width: '140px' }}>Sales Share</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {itemwiseReport.items.map((item, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                          <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 600, color: '#9ca3af', fontSize: '13px' }}>{idx + 1}</td>
+                          <td style={{ padding: '12px 16px', fontWeight: 700, color: '#1a1a2e', fontSize: '13.5px' }}>{item.name}</td>
+                          <td style={{ padding: '12px 16px', fontSize: '12.5px', color: '#4b5563' }}>
+                            <span style={{ background: '#f3f4f6', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>{item.category}</span>
+                          </td>
+                          <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 700, color: '#2563eb', fontSize: '14px' }}>{item.totalQty}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 600, color: '#4b5563', fontSize: '13px' }}>₹{item.avgPrice}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 800, color: '#10b981', fontSize: '14px' }}>₹{item.totalRevenue.toLocaleString()}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <div style={{ flex: 1, height: '6px', background: '#f3f4f6', borderRadius: '3px', overflow: 'hidden' }}>
+                                <div style={{ height: '100%', width: `${Math.min(item.contributionPct, 100)}%`, background: '#10b981', borderRadius: '3px' }} />
+                              </div>
+                              <span style={{ fontSize: '11px', fontWeight: 700, color: '#374151', minWidth: '36px' }}>{item.contributionPct}%</span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
+          </div>
+        )
+
+      case 'categorywise-sales':
+        return (
+          <div>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '60px 0', color: '#6b7280' }}>Loading...</div>
+            ) : !categorywiseReport || !categorywiseReport.categories || categorywiseReport.categories.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '60px 0', color: '#6b7280' }}>
+                No category sales data available for this date range.
+              </div>
+            ) : (
+              <>
+                {/* KPI Summary Cards */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '20px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', padding: '20px', textAlign: 'center' }}>
+                    <PieChart size={22} color="#8b5cf6" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '28px', fontWeight: 700, color: '#8b5cf6' }}>{categorywiseReport.totalCategories}</div>
+                    <div style={{ fontSize: '12px', color: '#5b21b6' }}>Total Active Categories</div>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', padding: '20px', textAlign: 'center' }}>
+                    <Package size={22} color="#2563eb" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '28px', fontWeight: 700, color: '#2563eb' }}>{categorywiseReport.totalItemsSold.toLocaleString()} Pcs</div>
+                    <div style={{ fontSize: '12px', color: '#1e40af' }}>Total Quantity Sold</div>
+                  </div>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', padding: '20px', textAlign: 'center' }}>
+                    <DollarSign size={22} color="#10b981" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '28px', fontWeight: 700, color: '#10b981' }}>₹{categorywiseReport.totalRevenue.toLocaleString()}</div>
+                    <div style={{ fontSize: '12px', color: '#166534' }}>Total Category Sales Revenue</div>
+                  </div>
+                </div>
+
+                {/* Categorywise Sales Table */}
+                <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', overflow: 'hidden' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
+                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280', width: '50px' }}>#</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Category Name</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Distinct Items</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Qty Sold</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Total Sales (₹)</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280', width: '160px' }}>Category Share</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {categorywiseReport.categories.map((cat, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                          <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 600, color: '#9ca3af', fontSize: '13px' }}>{idx + 1}</td>
+                          <td style={{ padding: '12px 16px', fontWeight: 700, color: '#1a1a2e', fontSize: '14px' }}>{cat.category}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 600, color: '#4b5563', fontSize: '13px' }}>{cat.uniqueItemCount} items</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 700, color: '#2563eb', fontSize: '14px' }}>{cat.totalQty} Pcs</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 800, color: '#10b981', fontSize: '14.5px' }}>₹{cat.totalRevenue.toLocaleString()}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <div style={{ flex: 1, height: '8px', background: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
+                                <div style={{ height: '100%', width: `${Math.min(cat.contributionPct, 100)}%`, background: '#8b5cf6', borderRadius: '4px' }} />
+                              </div>
+                              <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#374151', minWidth: '40px' }}>{cat.contributionPct}%</span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
+          </div>
+        )
+
       case 'daily-closing':
         return (
           <div>
@@ -1073,6 +1227,16 @@ export default function Reports() {
 
   const getReportData = () => {
     switch (activeReport) {
+      case 'itemwise-sales': return itemwiseReport && itemwiseReport.items ? {
+        title: 'Itemwise Sales Report',
+        headers: ['Item Name', 'Category', 'Qty Sold', 'Avg Price (₹)', 'Total Sales (₹)', 'Sales Share (%)'],
+        rows: itemwiseReport.items.map(i => [i.name, i.category, i.totalQty, `₹${i.avgPrice}`, `₹${i.totalRevenue.toLocaleString()}`, `${i.contributionPct}%`])
+      } : null
+      case 'categorywise-sales': return categorywiseReport && categorywiseReport.categories ? {
+        title: 'Categorywise Sales Report',
+        headers: ['Category Name', 'Distinct Items', 'Qty Sold', 'Total Sales (₹)', 'Category Share (%)'],
+        rows: categorywiseReport.categories.map(c => [c.category, c.uniqueItemCount, c.totalQty, `₹${c.totalRevenue.toLocaleString()}`, `${c.contributionPct}%`])
+      } : null
       case 'daily-closing': return closing ? {
         title: 'Daily Closing Report',
         headers: ['Parameter', 'Value'],
