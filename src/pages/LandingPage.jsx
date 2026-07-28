@@ -99,10 +99,10 @@ export default function LandingPage() {
 
   // Fallback signature items if database is empty
   const defaultSignatures = [
-    { id: 'sig1', name: 'Chicken Gyro', price: 99, description: 'Juicy marinated chicken, fresh veggies, tzatziki sauce.', image: '/hero_gyro_wrap.png' },
-    { id: 'sig2', name: 'Beef Gyro', price: 120, description: 'Tender beef slices, onions, tomatoes & our special sauce.', image: '/hero_greek_gyro.png' },
-    { id: 'sig3', name: 'Lamb Gyro', price: 140, description: 'Premium lamb, grilled to perfection with herbs.', image: '/hero_gyro_wrap.png' },
-    { id: 'sig4', name: 'Falafel Gyro', price: 99, description: 'Crispy falafel, hummus, lettuce, tomatoes & tahini.', image: '/crispy_chicken.png' }
+    { id: 'sig1', name: 'Spicy Gyro', price: 99, description: 'Flame-grilled protein with Turkish chilli spread & crisp veggies.', image: '/hero_gyro_wrap.png' },
+    { id: 'sig2', name: 'Creamy Gyro', price: 99, description: 'Tender protein with cool tzatziki & gourmet cheese spread.', image: '/hero_greek_gyro.png' },
+    { id: 'sig3', name: 'BBQ Gyro', price: 99, description: 'Smoky BBQ seared wrap with onions, tomatoes & lettuce.', image: '/hero_gyro_wrap.png' },
+    { id: 'sig4', name: 'Peri Peri Gyro', price: 99, description: 'Fiery peri-peri marinated wrap with jalapenos & garlic mayo.', image: '/crispy_chicken.png' }
   ]
 
   const displaySignatures = signatureGyros.length > 0 ? signatureGyros : defaultSignatures
