@@ -457,7 +457,7 @@ export default function Billing() {
             bg: '#ecfdf5' 
           },
           { 
-            value: `₹${visiblePaidBills.reduce((s, b) => s + calculateTotal(b), 0)}`, 
+            value: `₹${Math.round(visiblePaidBills.reduce((s, b) => s + (b.total !== undefined && b.total !== null ? Number(b.total) : calculateTotal(b) + calculateTax(calculateTotal(b))), 0))}`, 
             label: 'Total Collected', 
             color: '#2563eb', 
             bg: '#eff6ff' 

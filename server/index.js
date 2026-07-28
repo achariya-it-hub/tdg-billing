@@ -3742,7 +3742,12 @@ const getOrderAmount = (o) => {
 
 const isValidSalesOrder = (o) => {
   if (!o) return false
-  if (o.status === 'cancelled' || o.status === 'void') return false
+  const s = (o.status || '').toLowerCase()
+  if (s === 'cancelled' || s === 'void') return false
+  // Exclude unbilled pending/ready KOTs from completed sales count unless marked completed/paid
+  if (s === 'pending' || s === 'ready') {
+    if (!o.paidAt && !o.paymentMethod && !o.paymentStatus) return false
+  }
   return true
 }
 
