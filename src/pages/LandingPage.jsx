@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { 
   Flame, 
@@ -19,7 +19,12 @@ import {
   Menu as MenuIcon,
   User,
   ArrowUp,
-  X
+  X,
+  FileText,
+  Download,
+  Eye,
+  Maximize2,
+  Layers
 } from 'lucide-react'
 import { useMenuStore } from '../stores/menuStore'
 
@@ -30,6 +35,9 @@ export default function LandingPage() {
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false)
+  const [showMenuModal, setShowMenuModal] = useState(false)
+  const [activeMenuPage, setActiveMenuPage] = useState(1)
+  const [isZoomed, setIsZoomed] = useState(false)
 
   useEffect(() => {
     const toggleVisibility = () => {
@@ -299,13 +307,13 @@ export default function LandingPage() {
           >
             HOME
           </motion.a>
-          <motion.a 
-            href="#menu" 
+          <motion.button 
+            onClick={() => setShowMenuModal(true)}
             whileHover={{ y: -2, textShadow: '0 0 10px rgba(255, 215, 0, 0.85)', color: '#ffd700' }}
-            style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1.5px', transition: 'color 0.2s' }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#fff', fontSize: '15px', fontWeight: 700, letterSpacing: '1.5px', transition: 'color 0.2s', padding: 0 }}
           >
             MENU
-          </motion.a>
+          </motion.button>
           <motion.a 
             href="#about" 
             whileHover={{ y: -2, textShadow: '0 0 10px rgba(255, 215, 0, 0.85)', color: '#ffd700' }}
@@ -404,7 +412,7 @@ export default function LandingPage() {
             zIndex: 99
           }}>
             <a href="#hero" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#ffd700', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>HOME</a>
-            <a href="#menu" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>MENU</a>
+            <button onClick={() => { setIsMobileMenuOpen(false); setShowMenuModal(true) }} style={{ background: 'none', border: 'none', textAlign: 'left', padding: 0, cursor: 'pointer', color: '#fff', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>MENU</button>
             <a href="#about" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>ABOUT</a>
             <a href="#testimonials" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>REVIEWS</a>
             <a href="#contact" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontSize: '15px', fontWeight: 700, letterSpacing: '1px' }}>CONTACT</a>
@@ -547,23 +555,26 @@ export default function LandingPage() {
                 ORDER NOW <ArrowRight size={16} />
               </a>
 
-              <a href="#menu" style={{
-                backgroundColor: 'rgba(41, 44, 48, 0.6)',
-                backdropFilter: 'blur(8px)',
-                color: '#fff',
-                border: '1.5px solid rgba(255, 255, 255, 0.2)',
-                padding: '14px 32px',
-                fontSize: '13px',
-                fontWeight: 800,
-                textDecoration: 'none',
-                letterSpacing: '1px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                borderRadius: '4px'
-              }}>
+              <button 
+                onClick={() => setShowMenuModal(true)}
+                style={{
+                  backgroundColor: 'rgba(41, 44, 48, 0.6)',
+                  backdropFilter: 'blur(8px)',
+                  color: '#fff',
+                  border: '1.5px solid rgba(255, 255, 255, 0.2)',
+                  padding: '14px 32px',
+                  fontSize: '13px',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  letterSpacing: '1px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  borderRadius: '4px'
+                }}
+              >
                 VIEW MENU <ArrowRight size={16} />
-              </a>
+              </button>
 
               <a href="/app.apk" download style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
@@ -1289,6 +1300,302 @@ export default function LandingPage() {
           <ArrowUp size={20} strokeWidth={2.5} />
         </motion.button>
       )}
+
+      {/* Interactive Animated Digital Menu Card Modal */}
+      <AnimatePresence>
+        {showMenuModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 9999,
+              backgroundColor: 'rgba(15, 17, 21, 0.92)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '20px'
+            }}
+            onClick={() => setShowMenuModal(false)}
+          >
+            {/* Modal Container */}
+            <motion.div
+              initial={{ scale: 0.88, y: 30, opacity: 0, rotateX: -10 }}
+              animate={{ scale: 1, y: 0, opacity: 1, rotateX: 0 }}
+              exit={{ scale: 0.88, y: 30, opacity: 0, rotateX: 10 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 280 }}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                width: '100%',
+                maxWidth: isZoomed ? '98vw' : '1100px',
+                maxHeight: '94vh',
+                backgroundColor: '#1f2124',
+                border: '1px solid rgba(255, 215, 0, 0.3)',
+                borderRadius: '16px',
+                boxShadow: 'inset 1px 1px 0px rgba(255,255,255,0.1), 0 24px 60px rgba(0,0,0,0.9)',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                transition: 'max-width 0.3s ease-in-out'
+              }}
+            >
+              {/* Modal Header */}
+              <div style={{
+                padding: '16px 24px',
+                background: 'linear-gradient(135deg, #292c30, #1f2124)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '12px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '50%',
+                    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid rgba(255, 215, 0, 0.3)'
+                  }}>
+                    <FileText size={20} color="#ffd700" />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#fff', letterSpacing: '1px', textTransform: 'uppercase', margin: 0 }}>
+                      TDG TEN DENS GYROS MENU
+                    </h3>
+                    <p style={{ fontSize: '11px', color: '#9ca3af', margin: 0 }}>Official Restaurant Menu Card & Pricing</p>
+                  </div>
+                </div>
+
+                {/* Page Switcher Tabs */}
+                <div style={{ display: 'flex', gap: '6px', background: 'rgba(0,0,0,0.3)', padding: '4px', borderRadius: '30px', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <button
+                    onClick={() => setActiveMenuPage(1)}
+                    style={{
+                      padding: '8px 18px',
+                      borderRadius: '20px',
+                      border: 'none',
+                      background: activeMenuPage === 1 ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'transparent',
+                      color: activeMenuPage === 1 ? '#fff' : '#9ca3af',
+                      fontWeight: 800,
+                      fontSize: '12px',
+                      letterSpacing: '0.5px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      boxShadow: activeMenuPage === 1 ? '0 2px 10px rgba(230,57,70,0.4)' : 'none'
+                    }}
+                  >
+                    PAGE 1: GYROS & INGREDIENTS
+                  </button>
+                  <button
+                    onClick={() => setActiveMenuPage(2)}
+                    style={{
+                      padding: '8px 18px',
+                      borderRadius: '20px',
+                      border: 'none',
+                      background: activeMenuPage === 2 ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'transparent',
+                      color: activeMenuPage === 2 ? '#fff' : '#9ca3af',
+                      fontWeight: 800,
+                      fontSize: '12px',
+                      letterSpacing: '0.5px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      boxShadow: activeMenuPage === 2 ? '0 2px 10px rgba(230,57,70,0.4)' : 'none'
+                    }}
+                  >
+                    PAGE 2: MEALS, COMBOS & SHAKES
+                  </button>
+                </div>
+
+                {/* Action Controls */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <button
+                    onClick={() => setIsZoomed(!isZoomed)}
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      background: 'rgba(255,255,255,0.05)',
+                      color: '#ffd700',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    <Maximize2 size={14} /> {isZoomed ? 'Fit Screen' : 'Expand'}
+                  </button>
+
+                  <a
+                    href={activeMenuPage === 1 ? '/menu_card_page1.jpg' : '/menu_card_page2.jpg'}
+                    download={`TDG_Menu_Page_${activeMenuPage}.jpg`}
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255,215,0,0.3)',
+                      background: 'rgba(255,215,0,0.1)',
+                      color: '#ffd700',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    <Download size={14} /> Download
+                  </a>
+
+                  <button
+                    onClick={() => setShowMenuModal(false)}
+                    style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      background: 'rgba(255,255,255,0.05)',
+                      color: '#fff',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Menu Card Display Canvas */}
+              <div style={{
+                flex: 1,
+                overflowY: 'auto',
+                padding: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+                background: '#15171a'
+              }}>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeMenuPage}
+                    initial={{ opacity: 0, rotateY: 90, scale: 0.9 }}
+                    animate={{ opacity: 1, rotateY: 0, scale: 1 }}
+                    exit={{ opacity: 0, rotateY: -90, scale: 0.9 }}
+                    transition={{ duration: 0.4, ease: 'easeInOut' }}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      perspective: '1000px'
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: 'relative',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        border: '2px solid rgba(255, 215, 0, 0.4)',
+                        boxShadow: '0 20px 50px rgba(0,0,0,0.9), 0 0 30px rgba(255,215,0,0.15)',
+                        maxWidth: '100%',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => setActiveMenuPage(activeMenuPage === 1 ? 2 : 1)}
+                    >
+                      <img
+                        src={activeMenuPage === 1 ? '/menu_card_page1.jpg' : '/menu_card_page2.jpg'}
+                        alt={`TDG Menu Card Page ${activeMenuPage}`}
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                          maxHeight: isZoomed ? '82vh' : '70vh',
+                          objectFit: 'contain',
+                          display: 'block'
+                        }}
+                      />
+                      
+                      {/* Interactive Flip Badge */}
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '16px',
+                        right: '16px',
+                        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                        backdropFilter: 'blur(8px)',
+                        border: '1px solid #ffd700',
+                        color: '#ffd700',
+                        padding: '8px 16px',
+                        borderRadius: '20px',
+                        fontSize: '11px',
+                        fontWeight: 800,
+                        letterSpacing: '1px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.5)'
+                      }}>
+                        <Layers size={14} /> CLICK TO FLIP TO PAGE {activeMenuPage === 1 ? '2' : '1'} 🔄
+                      </div>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Bottom Callout Bar */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  maxWidth: '900px',
+                  marginTop: '16px',
+                  padding: '12px 20px',
+                  backgroundColor: '#292c30',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(255,255,255,0.08)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ffd700', fontSize: '13px', fontWeight: 800 }}>
+                    <Flame size={16} /> FRESH & FLAME-GRILLED DAILY AT TEN DENS GYROS
+                  </div>
+
+                  <a
+                    href={`${denUrl}/`}
+                    style={{
+                      backgroundColor: '#e63946',
+                      color: '#fff',
+                      padding: '10px 24px',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      fontWeight: 800,
+                      textDecoration: 'none',
+                      letterSpacing: '1px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      boxShadow: '0 4px 12px rgba(230,57,70,0.3)'
+                    }}
+                  >
+                    ORDER ONLINE NOW <ArrowRight size={14} />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
