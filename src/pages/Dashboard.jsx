@@ -48,7 +48,13 @@ export default function Dashboard() {
     { name: 'Swiggy', value: 8 },
     { name: 'Zomato', value: 7 }
   ])
-  const [dateRange, setDateRange] = useState('today')
+  const [dateRange, setDateRange] = useState('latest')
+  const [stats, setStats] = useState({ revenue: 0, orders: 0, avgOrder: 0, onlineOrders: 0 })
+  const [loading, setLoading] = useState(false)
+
+  const getApiUrl = () => {
+    return window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
+  }
 
   useEffect(() => {
     try {
@@ -57,12 +63,71 @@ export default function Dashboard() {
     } catch {}
   }, [])
 
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      setLoading(true)
+      try {
+        const API = getApiUrl()
+        const resClosing = await fetch(`${API}/api/reports/daily-closing?date=${dateRange}`)
+        if (resClosing.ok) {
+          const closing = await resClosing.json()
+          const rev = closing.totalSales || 0
+          const ords = closing.totalInvoices || 0
+          const avg = closing.avgBasketValue || (ords > 0 ? Math.round(rev / ords) : 0)
+          
+          let onlineCount = 0
+          if (closing.bySource) {
+            Object.entries(closing.bySource).forEach(([src, count]) => {
+              if (src !== 'pos' && src !== 'dine-in') onlineCount += count
+            })
+          }
+          
+          setStats({
+            revenue: rev,
+            orders: ords,
+            avgOrder: avg,
+            onlineOrders: onlineCount
+          })
+
+          if (closing.bySource && Object.keys(closing.bySource).length > 0) {
+            const formattedSource = Object.entries(closing.bySource).map(([src, val]) => ({
+              source: src.toUpperCase(),
+              revenue: val
+            }))
+            setSourceData(formattedSource)
+          }
+        }
+
+        const resItems = await fetch(`${API}/api/reports/itemwise-sales?date=${dateRange}`)
+        if (resItems.ok) {
+          const itemRes = await resItems.json()
+          if (itemRes.items && itemRes.items.length > 0) {
+            setTopItems(itemRes.items.slice(0, 5))
+          }
+        }
+
+        const resCat = await fetch(`${API}/api/reports/categorywise-sales?date=${dateRange}`)
+        if (resCat.ok) {
+          const catRes = await resCat.json()
+          if (catRes.categories && catRes.categories.length > 0) {
+            setCategoryData(catRes.categories)
+          }
+        }
+      } catch (e) {
+        console.error('Failed to load dashboard data:', e)
+      }
+      setLoading(false)
+    }
+
+    fetchDashboardData()
+  }, [dateRange])
+
   const handleReset = async () => {
     if (resetPin.length !== 4) { setResetError('Enter 4-digit PIN'); return }
     setResetProcessing(true)
     setResetError('')
     try {
-      const API = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
+      const API = getApiUrl()
       const res = await fetch(`${API}/api/reset`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -146,25 +211,29 @@ export default function Dashboard() {
           <p style={{ fontSize: '14px', color: '#6b7280' }}>Overview of your restaurant performance</p>
         </div>
         <div style={{ display: 'flex', gap: '6px', background: 'rgba(0,0,0,0.03)', padding: '4px', borderRadius: '14px' }}>
-          {['today', 'week', 'month'].map(range => (
+          {[
+            { id: 'latest', label: '⭐ Latest / All Time' },
+            { id: 'today', label: '📅 Today' },
+            { id: 'week', label: '🗓️ This Week' },
+            { id: 'month', label: '📅 This Month' }
+          ].map(item => (
             <button
-              key={range}
-              onClick={() => setDateRange(range)}
+              key={item.id}
+              onClick={() => setDateRange(item.id)}
               style={{
-                padding: '10px 20px',
+                padding: '10px 18px',
                 borderRadius: '10px',
-                background: dateRange === range ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'transparent',
-                color: dateRange === range ? 'white' : '#6b7280',
+                background: dateRange === item.id ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'transparent',
+                color: dateRange === item.id ? 'white' : '#6b7280',
                 fontWeight: 600,
                 border: 'none',
                 cursor: 'pointer',
-                textTransform: 'capitalize',
                 fontSize: '13px',
                 transition: 'all 0.2s',
-                boxShadow: dateRange === range ? '0 2px 8px rgba(230,57,70,0.3)' : 'none'
+                boxShadow: dateRange === item.id ? '0 2px 8px rgba(230,57,70,0.3)' : 'none'
               }}
             >
-              {range}
+              {item.label}
             </button>
           ))}
         </div>
@@ -172,10 +241,10 @@ export default function Dashboard() {
 
       {/* Stats Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
-        <StatCard icon={DollarSign} label="Today's Revenue" value={summary?.today?.revenue?.toFixed(0) || 0} prefix="₹" change={summary?.revenueChange} />
-        <StatCard icon={ShoppingBag} label="Total Orders" value={summary?.today?.orders || 0} change={summary?.today?.orders - summary?.yesterday?.orders > 0 ? 5 : -3} />
-        <StatCard icon={BarChart3} label="Avg Order Value" value={summary?.today?.avgOrder?.toFixed(0) || 0} prefix="₹" />
-        <StatCard icon={Users} label="Online Orders" value={summary?.online?.orders || 0} />
+        <StatCard icon={DollarSign} label="Revenue" value={stats.revenue} prefix="₹" />
+        <StatCard icon={ShoppingBag} label="Total Orders" value={stats.orders} />
+        <StatCard icon={BarChart3} label="Avg Order Value" value={stats.avgOrder} prefix="₹" />
+        <StatCard icon={Users} label="Online Orders" value={stats.onlineOrders} />
       </div>
 
       {/* Charts Row */}
