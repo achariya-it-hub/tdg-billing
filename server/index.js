@@ -3706,7 +3706,26 @@ const getLocalDateStr = (val) => {
       return `${year}-${month}-${day}`
     }
   } catch (e) {}
+
+  if (typeof val === 'string') {
+    const clean = val.trim().split('T')[0].split(' ')[0]
+    const parts = clean.split(/[-/]/)
+    if (parts.length === 3) {
+      if (parts[0].length === 4) {
+        return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`
+      } else if (parts[2].length === 4) {
+        return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`
+      }
+    }
+  }
   return String(val).slice(0, 10)
+}
+
+// Helper to safely extract date field from an order (checks createdAt, date, paidAt, completedAt, timestamp)
+const getOrderDate = (o) => {
+  if (!o) return ''
+  const val = o.createdAt || o.date || o.paidAt || o.completedAt || o.timestamp
+  return getLocalDateStr(val)
 }
 
 // Helper to compute order total amount safely
@@ -3730,32 +3749,36 @@ function getFilteredOrdersForPeriod(reqQuery) {
   const { date, from, to } = reqQuery || {}
   const todayStr = getLocalDateStr(new Date())
 
-  const datesWithOrders = orders
-    .filter(o => isValidSalesOrder(o) && o.createdAt)
-    .map(o => getLocalDateStr(o.createdAt))
-    .filter(Boolean)
-    .sort()
+  const validOrders = orders.filter(isValidSalesOrder)
 
   if (date === 'all') {
-    return orders
+    return validOrders
   }
   if (from && to) {
-    return orders.filter(o => {
-      const dStr = getLocalDateStr(o.createdAt)
+    return validOrders.filter(o => {
+      const dStr = getOrderDate(o)
       return dStr >= from && dStr <= to
     })
   }
   if (from) {
-    return orders.filter(o => getLocalDateStr(o.createdAt) >= from)
+    return validOrders.filter(o => getOrderDate(o) >= from)
   }
   if (date === 'latest') {
+    const datesWithOrders = validOrders
+      .map(o => getOrderDate(o))
+      .filter(Boolean)
+      .sort()
+
     const latestDate = datesWithOrders.length > 0 ? datesWithOrders[datesWithOrders.length - 1] : todayStr
-    return orders.filter(o => getLocalDateStr(o.createdAt) === latestDate)
+    return validOrders.filter(o => getOrderDate(o) === latestDate)
   }
-  if (date && date !== 'today') {
-    return orders.filter(o => getLocalDateStr(o.createdAt) === date)
+  if (date === 'today') {
+    return validOrders.filter(o => getOrderDate(o) === todayStr)
   }
-  return orders.filter(o => getLocalDateStr(o.createdAt) === todayStr)
+  if (date) {
+    return validOrders.filter(o => getOrderDate(o) === date)
+  }
+  return validOrders.filter(o => getOrderDate(o) === todayStr)
 }
 
 // ============ DAILY CLOSING REPORT ============
