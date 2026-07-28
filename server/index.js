@@ -3694,19 +3694,11 @@ app.post('/api/purchases', (req, res) => {
   res.status(201).json(purchase)
 })
 
-// Helper for timezone-safe local date string (YYYY-MM-DD)
+// Helper for IST timezone-safe local date string (YYYY-MM-DD)
 const getLocalDateStr = (val) => {
   if (!val) return ''
-  try {
-    const d = new Date(val)
-    if (!isNaN(d.getTime())) {
-      const year = d.getFullYear()
-      const month = String(d.getMonth() + 1).padStart(2, '0')
-      const day = String(d.getDate()).padStart(2, '0')
-      return `${year}-${month}-${day}`
-    }
-  } catch (e) {}
-
+  
+  // 1. If val is already a string with date prefix like "YYYY-MM-DD..."
   if (typeof val === 'string') {
     const clean = val.trim().split('T')[0].split(' ')[0]
     const parts = clean.split(/[-/]/)
@@ -3718,6 +3710,15 @@ const getLocalDateStr = (val) => {
       }
     }
   }
+
+  // 2. Parse date object/timestamp using IST (Asia/Kolkata)
+  try {
+    const d = new Date(val)
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
+    }
+  } catch (e) {}
+
   return String(val).slice(0, 10)
 }
 
