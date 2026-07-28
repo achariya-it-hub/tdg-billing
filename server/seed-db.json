@@ -3,67 +3,67 @@
     {
       "id": "c10",
       "name": "Beverages & Kombucha",
-      "icon": "\ud83c\udf79",
+      "icon": "🍹",
       "color": "#0284c7"
     },
     {
       "id": "c9",
       "name": "Desserts",
-      "icon": "\ud83c\udf70",
+      "icon": "🍰",
       "color": "#ec4899"
     },
     {
       "id": "c4",
       "name": "Dips & Add-Ons",
-      "icon": "\ud83e\udd63",
+      "icon": "🥣",
       "color": "#e63946"
     },
     {
       "id": "c6",
       "name": "Fries",
-      "icon": "\ud83c\udf5f",
+      "icon": "🍟",
       "color": "#f59e0b"
     },
     {
       "id": "c1",
       "name": "Gyros",
-      "icon": "\ud83e\udd59",
+      "icon": "🥙",
       "color": "#d97706"
     },
     {
       "id": "c2",
       "name": "Meals & Combos",
-      "icon": "\ud83c\udf71",
+      "icon": "🍱",
       "color": "#8b5cf6"
     },
     {
       "id": "c11",
       "name": "Protein Max",
-      "icon": "\ud83d\udcaa",
+      "icon": "💪",
       "color": "#10b981"
     },
     {
       "id": "c3",
       "name": "Rice & Salads",
-      "icon": "\ud83e\udd57",
+      "icon": "🥗",
       "color": "#059669"
     },
     {
       "id": "c7",
       "name": "Shakes & Softy",
-      "icon": "\ud83e\udd64",
+      "icon": "🥤",
       "color": "#db2777"
     },
     {
       "id": "c5_strips",
       "name": "Strips",
-      "icon": "\ud83c\udf57",
+      "icon": "🍗",
       "color": "#ca8a04"
     },
     {
       "id": "c5_wings",
       "name": "Wings",
-      "icon": "\ud83c\udf57",
+      "icon": "🍗",
       "color": "#b45309"
     }
   ],
@@ -4321,7 +4321,7 @@
       "subtotal": 317,
       "tax": 16,
       "total": 333,
-      "createdAt": "2026-07-27T21:17:23.000Z",
+      "createdAt": "2026-07-28T21:17:23.000Z",
       "updatedAt": "2026-07-27T21:17:23.000Z",
       "table": "Table 12",
       "source": "pos"
@@ -4347,7 +4347,7 @@
       "subtotal": 270,
       "tax": 13,
       "total": 283,
-      "createdAt": "2026-07-27T21:24:36.000Z",
+      "createdAt": "2026-07-28T21:24:36.000Z",
       "updatedAt": "2026-07-27T21:24:36.000Z",
       "table": "Table 1",
       "source": "pos"
@@ -4373,7 +4373,7 @@
       "subtotal": 317,
       "tax": 16,
       "total": 333,
-      "createdAt": "2026-07-27T21:31:49.000Z",
+      "createdAt": "2026-07-28T21:31:49.000Z",
       "updatedAt": "2026-07-27T21:31:49.000Z",
       "table": "Table 2",
       "source": "pos"
@@ -4399,7 +4399,7 @@
       "subtotal": 384,
       "tax": 19,
       "total": 403,
-      "createdAt": "2026-07-27T21:38:02.000Z",
+      "createdAt": "2026-07-28T21:38:02.000Z",
       "updatedAt": "2026-07-27T21:38:02.000Z",
       "table": "Table 3",
       "source": "pos"
@@ -4425,7 +4425,7 @@
       "subtotal": 289,
       "tax": 14,
       "total": 303,
-      "createdAt": "2026-07-27T21:45:15.000Z",
+      "createdAt": "2026-07-28T21:45:15.000Z",
       "updatedAt": "2026-07-27T21:45:15.000Z",
       "table": "Table 4",
       "source": "pos"
@@ -4451,7 +4451,7 @@
       "subtotal": 365,
       "tax": 18,
       "total": 383,
-      "createdAt": "2026-07-27T21:52:28.000Z",
+      "createdAt": "2026-07-28T21:52:28.000Z",
       "updatedAt": "2026-07-27T21:52:28.000Z",
       "table": "Table 5",
       "source": "pos"
@@ -4477,7 +4477,7 @@
       "subtotal": 241,
       "tax": 12,
       "total": 253,
-      "createdAt": "2026-07-27T21:59:41.000Z",
+      "createdAt": "2026-07-28T21:59:41.000Z",
       "updatedAt": "2026-07-27T21:59:41.000Z",
       "table": "Table 6",
       "source": "pos"
@@ -4503,7 +4503,7 @@
       "subtotal": 412,
       "tax": 21,
       "total": 433,
-      "createdAt": "2026-07-27T21:06:54.000Z",
+      "createdAt": "2026-07-28T21:06:54.000Z",
       "updatedAt": "2026-07-27T21:06:54.000Z",
       "table": "Table 7",
       "source": "pos"
@@ -4529,7 +4529,7 @@
       "subtotal": 336,
       "tax": 17,
       "total": 353,
-      "createdAt": "2026-07-27T21:13:07.000Z",
+      "createdAt": "2026-07-28T21:13:07.000Z",
       "updatedAt": "2026-07-27T21:13:07.000Z",
       "table": "Table 8",
       "source": "pos"
@@ -4555,7 +4555,7 @@
       "subtotal": 289,
       "tax": 14,
       "total": 303,
-      "createdAt": "2026-07-27T22:20:20.000Z",
+      "createdAt": "2026-07-28T22:20:20.000Z",
       "updatedAt": "2026-07-27T22:20:20.000Z",
       "table": "Table 9",
       "source": "pos"
@@ -4581,7 +4581,7 @@
       "subtotal": 241,
       "tax": 12,
       "total": 253,
-      "createdAt": "2026-07-27T22:27:33.000Z",
+      "createdAt": "2026-07-28T22:27:33.000Z",
       "updatedAt": "2026-07-27T22:27:33.000Z",
       "table": "Table 10",
       "source": "pos"
@@ -4607,7 +4607,7 @@
       "subtotal": 317,
       "tax": 16,
       "total": 333,
-      "createdAt": "2026-07-27T22:34:46.000Z",
+      "createdAt": "2026-07-28T22:34:46.000Z",
       "updatedAt": "2026-07-27T22:34:46.000Z",
       "table": "Table 11",
       "source": "pos"
@@ -4633,7 +4633,7 @@
       "subtotal": 479,
       "tax": 24,
       "total": 503,
-      "createdAt": "2026-07-27T22:41:59.000Z",
+      "createdAt": "2026-07-28T22:41:59.000Z",
       "updatedAt": "2026-07-27T22:41:59.000Z",
       "table": "Table 12",
       "source": "pos"
@@ -4659,7 +4659,7 @@
       "subtotal": 270,
       "tax": 13,
       "total": 283,
-      "createdAt": "2026-07-27T22:48:12.000Z",
+      "createdAt": "2026-07-28T22:48:12.000Z",
       "updatedAt": "2026-07-27T22:48:12.000Z",
       "table": "Table 1",
       "source": "pos"
@@ -4685,7 +4685,7 @@
       "subtotal": 193,
       "tax": 10,
       "total": 203,
-      "createdAt": "2026-07-27T22:55:25.000Z",
+      "createdAt": "2026-07-28T22:55:25.000Z",
       "updatedAt": "2026-07-27T22:55:25.000Z",
       "table": "Table 2",
       "source": "pos"
@@ -4711,7 +4711,7 @@
       "subtotal": 193,
       "tax": 10,
       "total": 203,
-      "createdAt": "2026-07-27T22:02:38.000Z",
+      "createdAt": "2026-07-28T22:02:38.000Z",
       "updatedAt": "2026-07-27T22:02:38.000Z",
       "table": "Table 3",
       "source": "pos"
@@ -4737,7 +4737,7 @@
       "subtotal": 479,
       "tax": 24,
       "total": 503,
-      "createdAt": "2026-07-27T22:09:51.000Z",
+      "createdAt": "2026-07-28T22:09:51.000Z",
       "updatedAt": "2026-07-27T22:09:51.000Z",
       "table": "Table 4",
       "source": "pos"
@@ -4763,7 +4763,7 @@
       "subtotal": 365,
       "tax": 18,
       "total": 383,
-      "createdAt": "2026-07-27T22:16:04.000Z",
+      "createdAt": "2026-07-28T22:16:04.000Z",
       "updatedAt": "2026-07-27T22:16:04.000Z",
       "table": "Table 5",
       "source": "pos"
@@ -4789,7 +4789,7 @@
       "subtotal": 431,
       "tax": 22,
       "total": 453,
-      "createdAt": "2026-07-27T22:23:17.000Z",
+      "createdAt": "2026-07-28T22:23:17.000Z",
       "updatedAt": "2026-07-27T22:23:17.000Z",
       "table": "Table 6",
       "source": "pos"
@@ -4815,7 +4815,7 @@
       "subtotal": 384,
       "tax": 19,
       "total": 403,
-      "createdAt": "2026-07-27T08:30:30.000Z",
+      "createdAt": "2026-07-28T08:30:30.000Z",
       "updatedAt": "2026-07-27T08:30:30.000Z",
       "table": "Table 7",
       "source": "pos"
@@ -4841,7 +4841,7 @@
       "subtotal": 479,
       "tax": 24,
       "total": 503,
-      "createdAt": "2026-07-27T08:37:43.000Z",
+      "createdAt": "2026-07-28T08:37:43.000Z",
       "updatedAt": "2026-07-27T08:37:43.000Z",
       "table": "Table 8",
       "source": "pos"
@@ -4867,7 +4867,7 @@
       "subtotal": 431,
       "tax": 22,
       "total": 453,
-      "createdAt": "2026-07-27T08:44:56.000Z",
+      "createdAt": "2026-07-28T08:44:56.000Z",
       "updatedAt": "2026-07-27T08:44:56.000Z",
       "table": "Table 9",
       "source": "pos"
@@ -4893,7 +4893,7 @@
       "subtotal": 193,
       "tax": 10,
       "total": 203,
-      "createdAt": "2026-07-27T08:51:09.000Z",
+      "createdAt": "2026-07-28T08:51:09.000Z",
       "updatedAt": "2026-07-27T08:51:09.000Z",
       "table": "Table 10",
       "source": "pos"
@@ -4919,7 +4919,7 @@
       "subtotal": 336,
       "tax": 17,
       "total": 353,
-      "createdAt": "2026-07-27T08:58:22.000Z",
+      "createdAt": "2026-07-28T08:58:22.000Z",
       "updatedAt": "2026-07-27T08:58:22.000Z",
       "table": "Table 11",
       "source": "pos"
@@ -4945,7 +4945,7 @@
       "subtotal": 289,
       "tax": 14,
       "total": 303,
-      "createdAt": "2026-07-27T08:05:35.000Z",
+      "createdAt": "2026-07-28T08:05:35.000Z",
       "updatedAt": "2026-07-27T08:05:35.000Z",
       "table": "Table 12",
       "source": "pos"
@@ -4971,7 +4971,7 @@
       "subtotal": 317,
       "tax": 16,
       "total": 333,
-      "createdAt": "2026-07-27T08:12:48.000Z",
+      "createdAt": "2026-07-28T08:12:48.000Z",
       "updatedAt": "2026-07-27T08:12:48.000Z",
       "table": "Table 1",
       "source": "pos"
@@ -4997,7 +4997,7 @@
       "subtotal": 384,
       "tax": 19,
       "total": 403,
-      "createdAt": "2026-07-27T08:19:01.000Z",
+      "createdAt": "2026-07-28T08:19:01.000Z",
       "updatedAt": "2026-07-27T08:19:01.000Z",
       "table": "Table 2",
       "source": "pos"
@@ -5023,7 +5023,7 @@
       "subtotal": 479,
       "tax": 24,
       "total": 503,
-      "createdAt": "2026-07-27T08:26:14.000Z",
+      "createdAt": "2026-07-28T08:26:14.000Z",
       "updatedAt": "2026-07-27T08:26:14.000Z",
       "table": "Table 3",
       "source": "pos"
@@ -5049,7 +5049,7 @@
       "subtotal": 289,
       "tax": 14,
       "total": 303,
-      "createdAt": "2026-07-27T08:33:27.000Z",
+      "createdAt": "2026-07-28T08:33:27.000Z",
       "updatedAt": "2026-07-27T08:33:27.000Z",
       "table": "Table 4",
       "source": "pos"
@@ -5075,7 +5075,7 @@
       "subtotal": 412,
       "tax": 21,
       "total": 433,
-      "createdAt": "2026-07-27T09:40:40.000Z",
+      "createdAt": "2026-07-28T09:40:40.000Z",
       "updatedAt": "2026-07-27T09:40:40.000Z",
       "table": "Table 5",
       "source": "pos"
@@ -5101,7 +5101,7 @@
       "subtotal": 431,
       "tax": 22,
       "total": 453,
-      "createdAt": "2026-07-27T09:47:53.000Z",
+      "createdAt": "2026-07-28T09:47:53.000Z",
       "updatedAt": "2026-07-27T09:47:53.000Z",
       "table": "Table 6",
       "source": "pos"
@@ -5127,7 +5127,7 @@
       "subtotal": 412,
       "tax": 21,
       "total": 433,
-      "createdAt": "2026-07-27T09:54:06.000Z",
+      "createdAt": "2026-07-28T09:54:06.000Z",
       "updatedAt": "2026-07-27T09:54:06.000Z",
       "table": "Table 7",
       "source": "pos"
@@ -5153,7 +5153,7 @@
       "subtotal": 336,
       "tax": 17,
       "total": 353,
-      "createdAt": "2026-07-27T09:01:19.000Z",
+      "createdAt": "2026-07-28T09:01:19.000Z",
       "updatedAt": "2026-07-27T09:01:19.000Z",
       "table": "Table 8",
       "source": "pos"
@@ -5179,7 +5179,7 @@
       "subtotal": 336,
       "tax": 17,
       "total": 353,
-      "createdAt": "2026-07-27T09:08:32.000Z",
+      "createdAt": "2026-07-28T09:08:32.000Z",
       "updatedAt": "2026-07-27T09:08:32.000Z",
       "table": "Table 9",
       "source": "pos"
@@ -5205,7 +5205,7 @@
       "subtotal": 193,
       "tax": 10,
       "total": 203,
-      "createdAt": "2026-07-27T09:15:45.000Z",
+      "createdAt": "2026-07-28T09:15:45.000Z",
       "updatedAt": "2026-07-27T09:15:45.000Z",
       "table": "Table 10",
       "source": "pos"
@@ -5231,7 +5231,7 @@
       "subtotal": 270,
       "tax": 13,
       "total": 283,
-      "createdAt": "2026-07-27T09:22:58.000Z",
+      "createdAt": "2026-07-28T09:22:58.000Z",
       "updatedAt": "2026-07-27T09:22:58.000Z",
       "table": "Table 11",
       "source": "pos"
@@ -5257,7 +5257,7 @@
       "subtotal": 317,
       "tax": 16,
       "total": 333,
-      "createdAt": "2026-07-27T09:29:11.000Z",
+      "createdAt": "2026-07-28T09:29:11.000Z",
       "updatedAt": "2026-07-27T09:29:11.000Z",
       "table": "Table 12",
       "source": "pos"
@@ -5283,7 +5283,7 @@
       "subtotal": 336,
       "tax": 17,
       "total": 353,
-      "createdAt": "2026-07-27T09:36:24.000Z",
+      "createdAt": "2026-07-28T09:36:24.000Z",
       "updatedAt": "2026-07-27T09:36:24.000Z",
       "table": "Table 1",
       "source": "pos"
@@ -5309,7 +5309,7 @@
       "subtotal": 479,
       "tax": 24,
       "total": 503,
-      "createdAt": "2026-07-27T09:43:37.000Z",
+      "createdAt": "2026-07-28T09:43:37.000Z",
       "updatedAt": "2026-07-27T09:43:37.000Z",
       "table": "Table 2",
       "source": "pos"
@@ -5335,7 +5335,7 @@
       "subtotal": 336,
       "tax": 17,
       "total": 353,
-      "createdAt": "2026-07-27T10:50:50.000Z",
+      "createdAt": "2026-07-28T10:50:50.000Z",
       "updatedAt": "2026-07-27T10:50:50.000Z",
       "table": "Table 3",
       "source": "pos"
@@ -5361,7 +5361,7 @@
       "subtotal": 365,
       "tax": 18,
       "total": 383,
-      "createdAt": "2026-07-27T10:57:03.000Z",
+      "createdAt": "2026-07-28T10:57:03.000Z",
       "updatedAt": "2026-07-27T10:57:03.000Z",
       "table": "Table 4",
       "source": "pos"
@@ -5387,7 +5387,7 @@
       "subtotal": 365,
       "tax": 18,
       "total": 383,
-      "createdAt": "2026-07-27T10:04:16.000Z",
+      "createdAt": "2026-07-28T10:04:16.000Z",
       "updatedAt": "2026-07-27T10:04:16.000Z",
       "table": "Table 5",
       "source": "pos"
@@ -5413,7 +5413,7 @@
       "subtotal": 479,
       "tax": 24,
       "total": 503,
-      "createdAt": "2026-07-27T10:11:29.000Z",
+      "createdAt": "2026-07-28T10:11:29.000Z",
       "updatedAt": "2026-07-27T10:11:29.000Z",
       "table": "Table 6",
       "source": "pos"
@@ -5439,7 +5439,7 @@
       "subtotal": 193,
       "tax": 10,
       "total": 203,
-      "createdAt": "2026-07-27T10:18:42.000Z",
+      "createdAt": "2026-07-28T10:18:42.000Z",
       "updatedAt": "2026-07-27T10:18:42.000Z",
       "table": "Table 7",
       "source": "pos"
@@ -5465,7 +5465,7 @@
       "subtotal": 527,
       "tax": 26,
       "total": 553,
-      "createdAt": "2026-07-27T10:25:55.000Z",
+      "createdAt": "2026-07-28T10:25:55.000Z",
       "updatedAt": "2026-07-27T10:25:55.000Z",
       "table": "Table 8",
       "source": "pos"
@@ -5491,7 +5491,7 @@
       "subtotal": 289,
       "tax": 14,
       "total": 303,
-      "createdAt": "2026-07-27T10:32:08.000Z",
+      "createdAt": "2026-07-28T10:32:08.000Z",
       "updatedAt": "2026-07-27T10:32:08.000Z",
       "table": "Table 9",
       "source": "pos"
@@ -5517,7 +5517,7 @@
       "subtotal": 412,
       "tax": 21,
       "total": 433,
-      "createdAt": "2026-07-27T10:39:21.000Z",
+      "createdAt": "2026-07-28T10:39:21.000Z",
       "updatedAt": "2026-07-27T10:39:21.000Z",
       "table": "Table 10",
       "source": "pos"
@@ -5543,7 +5543,7 @@
       "subtotal": 241,
       "tax": 12,
       "total": 253,
-      "createdAt": "2026-07-27T10:46:34.000Z",
+      "createdAt": "2026-07-28T10:46:34.000Z",
       "updatedAt": "2026-07-27T10:46:34.000Z",
       "table": "Table 11",
       "source": "pos"
@@ -5569,7 +5569,7 @@
       "subtotal": 289,
       "tax": 14,
       "total": 303,
-      "createdAt": "2026-07-27T10:53:47.000Z",
+      "createdAt": "2026-07-28T10:53:47.000Z",
       "updatedAt": "2026-07-27T10:53:47.000Z",
       "table": "Table 12",
       "source": "pos"
@@ -5595,7 +5595,7 @@
       "subtotal": 270,
       "tax": 13,
       "total": 283,
-      "createdAt": "2026-07-27T11:00:00.000Z",
+      "createdAt": "2026-07-28T11:00:00.000Z",
       "updatedAt": "2026-07-27T11:00:00.000Z",
       "table": "Table 1",
       "source": "pos"
@@ -5621,7 +5621,7 @@
       "subtotal": 479,
       "tax": 24,
       "total": 503,
-      "createdAt": "2026-07-27T11:07:13.000Z",
+      "createdAt": "2026-07-28T11:07:13.000Z",
       "updatedAt": "2026-07-27T11:07:13.000Z",
       "table": "Table 2",
       "source": "pos"
@@ -5679,17 +5679,17 @@
         "title": "Golden Gyro Feast (50% OFF)",
         "desc": "1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink",
         "tag": "50% OFF",
-        "price": "\u20b9199",
-        "origPrice": "\u20b9398",
+        "price": "₹199",
+        "origPrice": "₹398",
         "image": "/uploads/menu/m1.jpg"
       },
       {
         "id": "2",
         "title": "Crispy Chicken & Dip Combo",
         "desc": "4 Pcs Crispy Chicken + 2 Garlic Dips + Fries",
-        "tag": "SAVE \u20b9151",
-        "price": "\u20b9299",
-        "origPrice": "\u20b9450",
+        "tag": "SAVE ₹151",
+        "price": "₹299",
+        "origPrice": "₹450",
         "image": "/uploads/menu/m3.jpg"
       }
     ]
