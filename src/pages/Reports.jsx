@@ -111,6 +111,11 @@ export default function Reports() {
   const [loading, setLoading] = useState(false)
   const [showExportMenu, setShowExportMenu] = useState(false)
 
+  const [customDate, setCustomDate] = useState(() => {
+    const today = new Date()
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+  })
+
   const formatLocalYYYYMMDD = (d) => {
     const year = d.getFullYear()
     const month = String(d.getMonth() + 1).padStart(2, '0')
@@ -118,54 +123,66 @@ export default function Reports() {
     return `${year}-${month}-${day}`
   }
 
-  const getDateString = () => {
-    if (dateRange === 'latest') return 'latest'
-    const d = new Date()
-    if (dateRange === 'yesterday') d.setDate(d.getDate() - 1)
-    return formatLocalYYYYMMDD(d)
-  }
-
-  const getPnlPeriod = () => {
-    if (dateRange === 'today' || dateRange === 'yesterday' || dateRange === 'latest') return 'day'
-    return dateRange
-  }
-
-  const getDateFrom = () => {
-    if (dateRange === 'latest' || dateRange === 'today') return getDateString()
-    if (dateRange === 'yesterday') { const d = new Date(); d.setDate(d.getDate() - 1); return formatLocalYYYYMMDD(d) }
-    if (dateRange === 'week') { const d = new Date(); d.setDate(d.getDate() - 7); return formatLocalYYYYMMDD(d) }
-    if (dateRange === 'month') { const d = new Date(); d.setDate(d.getDate() - 30); return formatLocalYYYYMMDD(d) }
-    return getDateString()
+  const getQueryParams = () => {
+    if (dateRange === 'custom') {
+      return `from=${customDate}&to=${customDate}&date=${customDate}`
+    }
+    if (dateRange === 'latest' || dateRange === 'all') {
+      return `date=${dateRange}`
+    }
+    const today = new Date()
+    if (dateRange === 'today') {
+      const d = formatLocalYYYYMMDD(today)
+      return `from=${d}&to=${d}&date=${d}`
+    }
+    if (dateRange === 'yesterday') {
+      const y = new Date(today)
+      y.setDate(y.getDate() - 1)
+      const d = formatLocalYYYYMMDD(y)
+      return `from=${d}&to=${d}&date=${d}`
+    }
+    if (dateRange === 'week') {
+      const w = new Date(today)
+      w.setDate(w.getDate() - 7)
+      return `from=${formatLocalYYYYMMDD(w)}&to=${formatLocalYYYYMMDD(today)}`
+    }
+    if (dateRange === 'month') {
+      const m = new Date(today)
+      m.setDate(m.getDate() - 30)
+      return `from=${formatLocalYYYYMMDD(m)}&to=${formatLocalYYYYMMDD(today)}`
+    }
+    return `date=${dateRange}`
   }
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
       try {
+        const q = getQueryParams()
         if (activeReport === 'daily-closing') {
-          const r = await fetch(`/api/reports/daily-closing?date=${getDateString()}`)
-          setClosing(await r.json())
+          const r = await fetch(`/api/reports/daily-closing?${q}`)
+          if (r.ok) setClosing(await r.json())
         } else if (activeReport === 'itemwise-sales') {
-          const r = await fetch(`/api/reports/itemwise-sales?from=${getDateFrom()}&to=${getDateString()}`)
+          const r = await fetch(`/api/reports/itemwise-sales?${q}`)
           if (r.ok) setItemwiseReport(await r.json())
         } else if (activeReport === 'categorywise-sales') {
-          const r = await fetch(`/api/reports/categorywise-sales?from=${getDateFrom()}&to=${getDateString()}`)
+          const r = await fetch(`/api/reports/categorywise-sales?${q}`)
           if (r.ok) setCategorywiseReport(await r.json())
         } else if (activeReport === 'pnl') {
-          const r = await fetch(`/api/reports/pnl?date=${getDateString()}&period=${getPnlPeriod()}`)
-          setPnlData(await r.json())
+          const r = await fetch(`/api/reports/pnl?${q}`)
+          if (r.ok) setPnlData(await r.json())
         } else if (activeReport === 'po') {
-          const r = await fetch(`/api/reports/purchase-orders?from=${getDateFrom()}&to=${getDateString()}`)
-          setPoReport(await r.json())
+          const r = await fetch(`/api/reports/purchase-orders?${q}`)
+          if (r.ok) setPoReport(await r.json())
         } else if (activeReport === 'grn') {
-          const r = await fetch(`/api/reports/grns?from=${getDateFrom()}&to=${getDateString()}`)
-          setGrnReport(await r.json())
+          const r = await fetch(`/api/reports/grns?${q}`)
+          if (r.ok) setGrnReport(await r.json())
         } else if (activeReport === 'customer') {
-          const r = await fetch(`/api/reports/customers?from=${getDateFrom()}&to=${getDateString()}`)
-          setCustomerReport(await r.json())
+          const r = await fetch(`/api/reports/customers?${q}`)
+          if (r.ok) setCustomerReport(await r.json())
         } else if (activeReport === 'expense-report') {
-          const r = await fetch(`/api/reports/expenses?from=${getDateFrom()}&to=${getDateString()}`)
-          setExpenseReport(await r.json())
+          const r = await fetch(`/api/reports/expenses?${q}`)
+          if (r.ok) setExpenseReport(await r.json())
         } else if (activeReport === 'bill' || activeReport === 'kot') {
           const r = await fetch(`/api/pos/orders`)
           if (r.ok) setOrdersReport(await r.json())
@@ -174,7 +191,7 @@ export default function Reports() {
       setLoading(false)
     }
     fetchData()
-  }, [activeReport, dateRange])
+  }, [activeReport, dateRange, customDate])
 
   const getReportTitle = () => {
     switch (activeReport) {
@@ -1483,7 +1500,27 @@ export default function Reports() {
             <option value="yesterday">🕒 Yesterday</option>
             <option value="week">🗓️ This Week</option>
             <option value="month">📅 This Month</option>
+            <option value="all">🌐 All Time</option>
+            <option value="custom">📅 Select Specific Date...</option>
           </select>
+
+          {dateRange === 'custom' && (
+            <input
+              type="date"
+              value={customDate}
+              onChange={(e) => setCustomDate(e.target.value)}
+              style={{
+                padding: '9px 14px',
+                borderRadius: '8px',
+                border: '1px solid #e63946',
+                fontSize: '14px',
+                fontWeight: 600,
+                outline: 'none',
+                color: '#1a1a2e',
+                background: '#fff'
+              }}
+            />
+          )}
           
           <div style={{ position: 'relative' }}>
             <button onClick={() => setShowExportMenu(!showExportMenu)}

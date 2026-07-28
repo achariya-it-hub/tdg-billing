@@ -225,8 +225,47 @@ function syncSalesVault(currentOrders) {
   }
 }
 
+const SETTINGS_VAULT_PATH = join(__dirname, 'settings_vault_LOCK.json')
+
+function syncSettingsVault(currentSettings) {
+  try {
+    let vaultCompany = {}
+    if (existsSync(SETTINGS_VAULT_PATH)) {
+      const content = readFileSync(SETTINGS_VAULT_PATH, 'utf-8').trim()
+      if (content) {
+        const parsed = JSON.parse(content)
+        vaultCompany = parsed.company || (parsed.settings ? parsed.settings.company : {})
+      }
+    }
+
+    const currentCompany = currentSettings?.company || {}
+    const mergedCompany = {
+      ...vaultCompany,
+      ...currentCompany
+    }
+
+    // Explicitly lock GST, GSTIN, Email, Phone, Address if set in vault or current
+    if (vaultCompany.gst && !currentCompany.gst) mergedCompany.gst = vaultCompany.gst
+    if (vaultCompany.gstNo && !currentCompany.gstNo) mergedCompany.gstNo = vaultCompany.gstNo
+    if (vaultCompany.gstin && !currentCompany.gstin) mergedCompany.gstin = vaultCompany.gstin
+    if (vaultCompany.email && !currentCompany.email) mergedCompany.email = vaultCompany.email
+
+    const finalSettings = {
+      ...(currentSettings || {}),
+      company: mergedCompany
+    }
+
+    writeFileSync(SETTINGS_VAULT_PATH, JSON.stringify(finalSettings, null, 2))
+    return finalSettings
+  } catch (e) {
+    console.error('[SETTINGS VAULT] Error syncing settings vault:', e.message)
+    return currentSettings
+  }
+}
+
 function saveState() {
   orders = syncSalesVault(orders)
+  settings = syncSettingsVault(settings)
   const currentDb = readDb() || {}
   writeDb({
     orders: orders,
@@ -250,7 +289,7 @@ function saveState() {
     poItems: poItems && poItems.length ? poItems : (currentDb.poItems || []),
     grns: grns && grns.length ? grns : (currentDb.grns || []),
     vendorPayments: vendorPayments && vendorPayments.length ? vendorPayments : (currentDb.vendorPayments || []),
-    settings: settings || currentDb.settings || {}
+    settings: settings
   })
 }
 
@@ -415,6 +454,7 @@ function restoreState() {
       }
     }
   }
+  settings = syncSettingsVault(settings)
   if (db.billingUsers && Array.isArray(db.billingUsers)) {
     billingUsers = db.billingUsers
     billingUsers.forEach(u => {
@@ -1544,11 +1584,16 @@ app.put('/api/settings/company', (req, res) => {
   if (address !== undefined) settings.company.address = address
   if (phone !== undefined) settings.company.phone = phone
   if (email !== undefined) settings.company.email = email
-  if (gst !== undefined) settings.company.gst = gst
+  if (gst !== undefined) {
+    settings.company.gst = gst
+    settings.company.gstNo = gst
+    settings.company.gstin = gst
+  }
   if (upiId !== undefined) settings.company.upiId = upiId
   if (deliveryEnabled !== undefined) settings.company.deliveryEnabled = deliveryEnabled
   if (logo !== undefined) settings.company.logo = logo
 
+  settings = syncSettingsVault(settings)
   saveState()
 
   try {
@@ -3670,38 +3715,44 @@ const isValidSalesOrder = (o) => {
   return true
 }
 
-// ============ DAILY CLOSING REPORT ============
-app.get('/api/reports/daily-closing', (req, res) => {
-  let targetDate = req.query.date || getLocalDateStr(new Date())
+function getFilteredOrdersForPeriod(reqQuery) {
+  const { date, from, to } = reqQuery || {}
+  const todayStr = getLocalDateStr(new Date())
 
-  // Auto-fallback to most recent active sales date if 'latest' requested or if today has 0 orders
   const datesWithOrders = orders
     .filter(o => isValidSalesOrder(o) && o.createdAt)
     .map(o => getLocalDateStr(o.createdAt))
     .filter(Boolean)
     .sort()
 
+  if (date === 'all') {
+    return orders
+  }
+  if (from && to) {
+    return orders.filter(o => {
+      const dStr = getLocalDateStr(o.createdAt)
+      return dStr >= from && dStr <= to
+    })
+  }
+  if (from) {
+    return orders.filter(o => getLocalDateStr(o.createdAt) >= from)
+  }
+  if (date === 'latest') {
+    const latestDate = datesWithOrders.length > 0 ? datesWithOrders[datesWithOrders.length - 1] : todayStr
+    return orders.filter(o => getLocalDateStr(o.createdAt) === latestDate)
+  }
+  if (date && date !== 'today') {
+    return orders.filter(o => getLocalDateStr(o.createdAt) === date)
+  }
+  return orders.filter(o => getLocalDateStr(o.createdAt) === todayStr)
+}
+
+// ============ DAILY CLOSING REPORT ============
+app.get('/api/reports/daily-closing', (req, res) => {
   const todayStr = getLocalDateStr(new Date())
-  let isLatestFallback = false
+  const { date, from, to } = req.query
 
-  if (req.query.date === 'latest' || (!req.query.date && datesWithOrders.length > 0 && !datesWithOrders.includes(todayStr))) {
-    if (datesWithOrders.length > 0) {
-      targetDate = datesWithOrders[datesWithOrders.length - 1]
-      isLatestFallback = true
-    }
-  }
-
-  // Trigger daily backup when today's closing is viewed
-  if (targetDate === todayStr) {
-    performDailyBackup()
-  }
-
-  // Filter orders for the given date (or all orders if date is 'all' or no date matches)
-  const isAll = req.query.date === 'all'
-  let dayOrders = isAll ? orders : orders.filter(o => getLocalDateStr(o.createdAt) === targetDate)
-  if (dayOrders.length === 0 && orders.length > 0) {
-    dayOrders = orders
-  }
+  const dayOrders = getFilteredOrdersForPeriod(req.query)
   const completedOrders = dayOrders.filter(o => isValidSalesOrder(o))
   const cancelledOrders = dayOrders.filter(o => o.status === 'cancelled')
 
@@ -3728,12 +3779,22 @@ app.get('/api/reports/daily-closing', (req, res) => {
   // Average basket value
   const avgBasketValue = totalInvoices > 0 ? Math.round(totalSales / totalInvoices) : 0
 
-  // Expenses for the day
-  const dayExpenses = expenses.filter(e => getLocalDateStr(e.createdAt) === targetDate)
+  // Expenses for the period
+  const dayExpenses = expenses.filter(e => {
+    const dStr = getLocalDateStr(e.createdAt)
+    if (from && to) return dStr >= from && dStr <= to
+    if (date && date !== 'all' && date !== 'latest') return dStr === date
+    return true
+  })
   const totalExpenses = dayExpenses.reduce((sum, e) => sum + (e.amount || 0), 0)
 
-  // Purchases for the day
-  const dayPurchases = purchases.filter(p => getLocalDateStr(p.createdAt) === targetDate)
+  // Purchases for the period
+  const dayPurchases = purchases.filter(p => {
+    const dStr = getLocalDateStr(p.createdAt)
+    if (from && to) return dStr >= from && dStr <= to
+    if (date && date !== 'all' && date !== 'latest') return dStr === date
+    return true
+  })
   const totalPurchases = dayPurchases.reduce((sum, p) => sum + (p.total || 0), 0)
 
   // Gross profit = totalSales - totalPurchases - totalExpenses
@@ -3747,7 +3808,7 @@ app.get('/api/reports/daily-closing', (req, res) => {
   })
 
   res.json({
-    date: targetDate,
+    date: date || (from && to ? `${from} to ${to}` : todayStr),
     totalInvoices,
     totalSales: Math.round(totalSales),
     totalPurchases: Math.round(totalPurchases),
@@ -3757,7 +3818,9 @@ app.get('/api/reports/daily-closing', (req, res) => {
     byPaymentMethod,
     bySource,
     statusBreakdown,
-    cancelledCount: cancelledOrders.length,
+    cancelledCount: cancelledOrders.length
+  })
+})
     expenses: dayExpenses,
     purchases: dayPurchases
   })
@@ -3848,17 +3911,7 @@ app.get('/api/reports/pnl', (req, res) => {
 
 // ============ ITEMWISE SALES REPORT ============
 app.get('/api/reports/itemwise-sales', (req, res) => {
-  const fromStr = req.query.from || req.query.date || ''
-  const toStr = req.query.to || req.query.date || ''
-
-  const periodOrders = orders.filter(o => {
-    if (!isValidSalesOrder(o)) return false
-    if (!fromStr && !toStr) return true
-    const dStr = getLocalDateStr(o.createdAt)
-    if (fromStr && toStr) return dStr >= fromStr && dStr <= toStr
-    if (fromStr) return dStr === fromStr
-    return true
-  })
+  const periodOrders = getFilteredOrdersForPeriod(req.query)
 
   const itemMap = {}
   let totalQtySum = 0
@@ -3900,7 +3953,7 @@ app.get('/api/reports/itemwise-sales', (req, res) => {
   })).sort((a, b) => b.totalRevenue - a.totalRevenue)
 
   res.json({
-    period: { from: fromStr, to: toStr },
+    period: req.query,
     totalOrders: periodOrders.length,
     totalItemsSold: totalQtySum,
     totalRevenue: Math.round(totalRevenueSum),
@@ -3910,19 +3963,38 @@ app.get('/api/reports/itemwise-sales', (req, res) => {
 
 // ============ CATEGORYWISE SALES REPORT ============
 app.get('/api/reports/categorywise-sales', (req, res) => {
-  const fromStr = req.query.from || req.query.date || ''
-  const toStr = req.query.to || req.query.date || ''
-
-  const periodOrders = orders.filter(o => {
-    if (!isValidSalesOrder(o)) return false
-    if (!fromStr && !toStr) return true
-    const dStr = getLocalDateStr(o.createdAt)
-    if (fromStr && toStr) return dStr >= fromStr && dStr <= toStr
-    if (fromStr) return dStr === fromStr
-    return true
-  })
+  const periodOrders = getFilteredOrdersForPeriod(req.query)
 
   const catMap = {}
+  let totalQtySum = 0
+  let totalRevenueSum = 0
+
+  periodOrders.forEach(o => {
+    const items = o.items || []
+    items.forEach(i => {
+      const category = i.category || 'General'
+      const qty = Number(i.quantity || i.qty || 1)
+      const unitPrice = Number(i.unitPrice || i.price || 0)
+      const totalPrice = Number(i.totalPrice || unitPrice * qty)
+
+      totalQtySum += qty
+      totalRevenueSum += totalPrice
+
+      if (!catMap[category]) {
+        catMap[category] = {
+          category,
+          itemsSet: new Set(),
+          totalQty: 0,
+          totalRevenue: 0,
+          orderCount: 0
+        }
+      }
+      catMap[category].itemsSet.add(i.name || i.menuItemName || 'Item')
+      catMap[category].totalQty += qty
+      catMap[category].totalRevenue += totalPrice
+      catMap[category].orderCount += 1
+    })
+  })
   let totalQtySum = 0
   let totalRevenueSum = 0
 

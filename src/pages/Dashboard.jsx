@@ -49,11 +49,52 @@ export default function Dashboard() {
     { name: 'Zomato', value: 7 }
   ])
   const [dateRange, setDateRange] = useState('latest')
+  const [customDate, setCustomDate] = useState(() => {
+    const today = new Date()
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+  })
   const [stats, setStats] = useState({ revenue: 0, orders: 0, avgOrder: 0, onlineOrders: 0 })
   const [loading, setLoading] = useState(false)
 
   const getApiUrl = () => {
     return window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
+  }
+
+  const getQueryParams = () => {
+    if (dateRange === 'custom') {
+      return `from=${customDate}&to=${customDate}&date=${customDate}`
+    }
+    if (dateRange === 'latest' || dateRange === 'all') {
+      return `date=${dateRange}`
+    }
+    const today = new Date()
+    const formatLocalYYYYMMDD = (d) => {
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+    if (dateRange === 'today') {
+      const d = formatLocalYYYYMMDD(today)
+      return `from=${d}&to=${d}&date=${d}`
+    }
+    if (dateRange === 'yesterday') {
+      const y = new Date(today)
+      y.setDate(y.getDate() - 1)
+      const d = formatLocalYYYYMMDD(y)
+      return `from=${d}&to=${d}&date=${d}`
+    }
+    if (dateRange === 'week') {
+      const w = new Date(today)
+      w.setDate(w.getDate() - 7)
+      return `from=${formatLocalYYYYMMDD(w)}&to=${formatLocalYYYYMMDD(today)}`
+    }
+    if (dateRange === 'month') {
+      const m = new Date(today)
+      m.setDate(m.getDate() - 30)
+      return `from=${formatLocalYYYYMMDD(m)}&to=${formatLocalYYYYMMDD(today)}`
+    }
+    return `date=${dateRange}`
   }
 
   useEffect(() => {
@@ -68,7 +109,8 @@ export default function Dashboard() {
       setLoading(true)
       try {
         const API = getApiUrl()
-        const resClosing = await fetch(`${API}/api/reports/daily-closing?date=${dateRange}`)
+        const q = getQueryParams()
+        const resClosing = await fetch(`${API}/api/reports/daily-closing?${q}`)
         if (resClosing.ok) {
           const closing = await resClosing.json()
           const rev = closing.totalSales || 0
@@ -98,19 +140,23 @@ export default function Dashboard() {
           }
         }
 
-        const resItems = await fetch(`${API}/api/reports/itemwise-sales?date=${dateRange}`)
+        const resItems = await fetch(`${API}/api/reports/itemwise-sales?${q}`)
         if (resItems.ok) {
           const itemRes = await resItems.json()
           if (itemRes.items && itemRes.items.length > 0) {
             setTopItems(itemRes.items.slice(0, 5))
+          } else {
+            setTopItems([])
           }
         }
 
-        const resCat = await fetch(`${API}/api/reports/categorywise-sales?date=${dateRange}`)
+        const resCat = await fetch(`${API}/api/reports/categorywise-sales?${q}`)
         if (resCat.ok) {
           const catRes = await resCat.json()
           if (catRes.categories && catRes.categories.length > 0) {
             setCategoryData(catRes.categories)
+          } else {
+            setCategoryData([])
           }
         }
       } catch (e) {
@@ -120,7 +166,7 @@ export default function Dashboard() {
     }
 
     fetchDashboardData()
-  }, [dateRange])
+  }, [dateRange, customDate])
 
   const handleReset = async () => {
     if (resetPin.length !== 4) { setResetError('Enter 4-digit PIN'); return }
