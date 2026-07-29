@@ -546,7 +546,7 @@ export default function POS() {
 
   // Desktop POS Layout
   return (
-    <div style={{ display: 'flex', gap: '20px', height: 'calc(100vh - 104px)' }}>
+    <div style={{ display: 'flex', gap: '14px', height: 'calc(100vh - 56px)' }}>
       {/* Categories Sidebar */}
       <div style={{ width: '170px', display: 'flex', flexDirection: 'column', gap: '6px', overflow: 'auto' }}>
         <button onClick={toggleSound} style={{

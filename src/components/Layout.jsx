@@ -26,6 +26,7 @@ const navItems = [
 
 export default function Layout({ user, onLogout }) {
   const location = useLocation()
+  const isPosPage = location.pathname.startsWith('/pos')
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
   const [onlineCount, setOnlineCount] = useState(2)
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -686,7 +687,7 @@ export default function Layout({ user, onLogout }) {
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <header
           style={{
-            height: '64px',
+            height: isPosPage ? '40px' : '64px',
             background: 'rgba(255, 255, 255, 0.75)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
@@ -694,13 +695,13 @@ export default function Layout({ user, onLogout }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0 32px',
+            padding: isPosPage ? '0 16px' : '0 32px',
             position: 'sticky',
             top: 0,
             zIndex: 9
           }}
         >
-          <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1a1a2e', letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: isPosPage ? '17px' : '22px', fontWeight: 700, color: '#1a1a2e', letterSpacing: '-0.02em' }}>
             {getCurrentTitle()}
           </h1>
 
@@ -726,7 +727,7 @@ export default function Layout({ user, onLogout }) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '10px',
-                  padding: '8px 14px',
+                  padding: isPosPage ? '4px 10px' : '8px 14px',
                   background: 'rgba(0,0,0,0.03)',
                   borderRadius: '12px',
                   cursor: 'pointer',
@@ -736,13 +737,13 @@ export default function Layout({ user, onLogout }) {
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.05)' }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.03)' }}
               >
-                <User size={18} color="#6b7280" />
-                <span style={{ fontSize: '14px', fontWeight: 600, color: '#1a1a2e' }}>{user?.name}</span>
+                <User size={16} color="#6b7280" />
+                <span style={{ fontSize: isPosPage ? '13px' : '14px', fontWeight: 600, color: '#1a1a2e' }}>{user?.name}</span>
                 <span style={{
-                  fontSize: '11px',
+                  fontSize: '10px',
                   color: '#6b7280',
                   background: 'rgba(0,0,0,0.04)',
-                  padding: '2px 8px',
+                  padding: '2px 6px',
                   borderRadius: '6px',
                   textTransform: 'capitalize',
                   fontWeight: 500
@@ -813,10 +814,10 @@ export default function Layout({ user, onLogout }) {
             </div>
             <span style={{ 
               fontFamily: 'JetBrains Mono',
-              fontSize: '14px', 
+              fontSize: isPosPage ? '12px' : '14px', 
               color: '#6b7280',
               background: 'rgba(0,0,0,0.03)',
-              padding: '6px 12px',
+              padding: isPosPage ? '4px 8px' : '6px 12px',
               borderRadius: '8px',
               letterSpacing: '0.5px'
             }}>
@@ -825,7 +826,7 @@ export default function Layout({ user, onLogout }) {
           </div>
         </header>
 
-        <div style={{ flex: 1, overflow: 'auto', padding: '24px', background: 'var(--bg-primary)' }}>
+        <div style={{ flex: 1, overflow: 'auto', padding: isPosPage ? '8px 12px' : '24px', background: 'var(--bg-primary)' }}>
           <Outlet />
         </div>
       </main>

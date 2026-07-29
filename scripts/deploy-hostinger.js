@@ -21,7 +21,7 @@ execSync('npm run build', { cwd: root, stdio: 'inherit' })
 
 // 2. Create staging directory
 console.log('2. Packaging files...')
-const stage = mkdtempSync(join(tmpdir(), 'tdg-deploy-'))
+const stage = mkdtempSync(join(root, 'tmp-deploy-'))
 
 try {
   // Copy dist/
