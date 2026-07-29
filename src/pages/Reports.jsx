@@ -532,7 +532,7 @@ export default function Reports() {
           </div>
         )
 
-      case 'kot':
+      case 'kot': {
         return (
           <div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
@@ -545,11 +545,11 @@ export default function Reports() {
                 <div style={{ fontSize: '13px', color: '#166534' }}>Completed</div>
               </div>
               <div style={{ background: '#fef3c7', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
-                <div style={{ fontSize: '32px', fontWeight: 700, color: '#f59e0b' }}>3</div>
-                <div style={{ fontSize: '13px', color: '#92400e' }}>Preparing</div>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#f59e0b' }}>{preparingKots.length}</div>
+                <div style={{ fontSize: '13px', color: '#92400e' }}>Preparing / Active</div>
               </div>
               <div style={{ background: '#fef2f2', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
-                <div style={{ fontSize: '32px', fontWeight: 700, color: '#dc2626' }}>1</div>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#dc2626' }}>{cancelledKots.length}</div>
                 <div style={{ fontSize: '13px', color: '#991b1b' }}>Cancelled</div>
               </div>
             </div>
@@ -558,7 +558,7 @@ export default function Reports() {
                 <thead>
                   <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>KOT #</th>
-                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Table</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Table / Type</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Items</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Time</th>
                     <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Amount</th>
@@ -566,23 +566,31 @@ export default function Reports() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sampleKOTData.map(kot => (
-                    <tr key={kot.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '16px', fontWeight: 600 }}>{kot.id}</td>
-                      <td style={{ padding: '16px' }}>{kot.table}</td>
-                      <td style={{ padding: '16px', fontSize: '13px' }}>{kot.items.join(', ')}</td>
-                      <td style={{ padding: '16px', fontSize: '13px', color: '#6b7280' }}>{kot.time}</td>
-                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 600 }}>₹{kot.total}</td>
+                  {ordersReport.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} style={{ padding: '32px', textAlign: 'center', color: '#9ca3af' }}>No KOT records found for this period</td>
+                    </tr>
+                  ) : ordersReport.map(kot => (
+                    <tr key={kot.id || kot.orderNumber} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                      <td style={{ padding: '16px', fontWeight: 700 }}>#K{kot.orderNumber}</td>
+                      <td style={{ padding: '16px', fontSize: '13px' }}>{kot.tableNumber ? `Table ${kot.tableNumber}` : kot.type || 'POS'}</td>
+                      <td style={{ padding: '16px', fontSize: '13px' }}>
+                        {(kot.items || []).map(i => `${i.menuItemName || i.name} x${i.quantity || 1}`).join(', ') || 'Item details'}
+                      </td>
+                      <td style={{ padding: '16px', fontSize: '12.5px', color: '#6b7280' }}>
+                        {kot.createdAt ? new Date(kot.createdAt).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : '-'}
+                      </td>
+                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 700 }}>₹{(Number(kot.total) || 0).toLocaleString('en-IN')}</td>
                       <td style={{ padding: '16px', textAlign: 'center' }}>
                         <span style={{
                           padding: '4px 12px',
                           borderRadius: '20px',
                           fontSize: '12px',
-                          fontWeight: 600,
-                          background: kot.status === 'completed' ? '#f0fdf4' : kot.status === 'cancelled' ? '#fef2f2' : '#fef3c7',
-                          color: kot.status === 'completed' ? '#166534' : kot.status === 'cancelled' ? '#991b1b' : '#92400e'
+                          fontWeight: 700,
+                          background: kot.status === 'completed' || kot.status === 'served' || kot.status === 'delivered' ? '#f0fdf4' : kot.status === 'cancelled' ? '#fef2f2' : '#fef3c7',
+                          color: kot.status === 'completed' || kot.status === 'served' || kot.status === 'delivered' ? '#166534' : kot.status === 'cancelled' ? '#991b1b' : '#92400e'
                         }}>
-                          {kot.status}
+                          {kot.status || 'completed'}
                         </span>
                       </td>
                     </tr>
@@ -592,52 +600,70 @@ export default function Reports() {
             </div>
           </div>
         )
+      }
 
-      case 'bill':
+      case 'bill': {
+        const paidOrders = ordersReport.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
+        const pendingOrders = ordersReport.filter(o => (o.status || '').toLowerCase() !== 'completed' && (o.paymentStatus || '').toLowerCase() !== 'paid' && !o.paidAt && (o.status || '').toLowerCase() !== 'cancelled')
+        const totalCollected = paidOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0)
+        const pendingTotal = pendingOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0)
+
         return (
           <div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
               <div style={{ background: '#f0fdf4', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
-                <div style={{ fontSize: '32px', fontWeight: 700, color: '#10b981' }}>₹1,054</div>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#10b981' }}>₹{Math.round(totalCollected).toLocaleString('en-IN')}</div>
                 <div style={{ fontSize: '13px', color: '#166534' }}>Total Collected</div>
               </div>
               <div style={{ background: '#eff6ff', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
-                <div style={{ fontSize: '32px', fontWeight: 700, color: '#2563eb' }}>₹0</div>
-                <div style={{ fontSize: '13px', color: '#1e40af' }}>Pending</div>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#2563eb' }}>₹{Math.round(pendingTotal).toLocaleString('en-IN')}</div>
+                <div style={{ fontSize: '13px', color: '#1e40af' }}>Pending Balance</div>
               </div>
               <div style={{ background: '#f5f3ff', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
-                <div style={{ fontSize: '32px', fontWeight: 700, color: '#8b5cf6' }}>2</div>
-                <div style={{ fontSize: '13px', color: '#6b21a8' }}>Transactions</div>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#8b5cf6' }}>{ordersReport.length}</div>
+                <div style={{ fontSize: '13px', color: '#6b21a8' }}>Total Transactions</div>
               </div>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
-                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Bill #</th>
-                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>KOT Ref</th>
-                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Amount</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Bill / Order #</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Type / Table</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Date & Time</th>
+                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Amount (₹)</th>
                     <th style={{ padding: '16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Payment</th>
                     <th style={{ padding: '16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {sampleBillData.map(bill => (
-                    <tr key={bill.billNo} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '16px', fontWeight: 600 }}>{bill.billNo}</td>
-                      <td style={{ padding: '16px', fontSize: '13px' }}>{bill.kotId}</td>
-                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 600 }}>₹{bill.amount}</td>
-                      <td style={{ padding: '16px', textAlign: 'center', textTransform: 'capitalize' }}>{bill.payment}</td>
+                  {ordersReport.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} style={{ padding: '32px', textAlign: 'center', color: '#9ca3af' }}>No bill records found for this period</td>
+                    </tr>
+                  ) : ordersReport.map(order => (
+                    <tr key={order.id || order.orderNumber} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                      <td style={{ padding: '16px', fontWeight: 700, color: '#1a1a2e' }}>#{order.orderNumber || order.id}</td>
+                      <td style={{ padding: '16px', fontSize: '13px', textTransform: 'capitalize' }}>
+                        <span style={{ background: '#f3f4f6', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>
+                          {order.tableNumber ? `Table ${order.tableNumber}` : order.type || 'POS'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '16px', fontSize: '12.5px', color: '#4b5563' }}>
+                        {order.createdAt ? new Date(order.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'short', timeStyle: 'short' }) : order.date}
+                      </td>
+                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 800, color: '#10b981', fontSize: '14px' }}>₹{(Number(order.total) || 0).toLocaleString('en-IN')}</td>
+                      <td style={{ padding: '16px', textAlign: 'center', textTransform: 'uppercase', fontWeight: 700, fontSize: '12px', color: '#4b5563' }}>{order.paymentMethod || 'cash'}</td>
                       <td style={{ padding: '16px', textAlign: 'center' }}>
                         <span style={{
                           padding: '4px 12px',
                           borderRadius: '20px',
                           fontSize: '12px',
-                          fontWeight: 600,
-                          background: bill.status === 'paid' ? '#f0fdf4' : '#fef3c7',
-                          color: bill.status === 'paid' ? '#166534' : '#92400e'
+                          fontWeight: 700,
+                          background: order.status === 'completed' || order.paymentStatus === 'paid' ? '#f0fdf4' : order.status === 'cancelled' ? '#fef2f2' : '#fef3c7',
+                          color: order.status === 'completed' || order.paymentStatus === 'paid' ? '#166534' : order.status === 'cancelled' ? '#991b1b' : '#92400e'
                         }}>
-                          {bill.status}
+                          {order.status || 'completed'}
                         </span>
                       </td>
                     </tr>
@@ -647,24 +673,49 @@ export default function Reports() {
             </div>
           </div>
         )
+      }
 
-      case 'kot-cancelled':
+      case 'kot-cancelled': {
+        const cancelledList = ordersReport.filter(o => o.status === 'cancelled')
+        const lostRevenue = cancelledList.reduce((sum, o) => sum + (Number(o.total) || 0), 0)
+
         return (
           <div>
-            <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center' }}>
-              <XCircle size={64} color="#dc2626" style={{ marginBottom: '16px' }} />
-              <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '8px' }}>Cancelled KOT Report</h3>
-              <p style={{ color: '#6b7280' }}>1 KOT cancelled today</p>
-              <div style={{ marginTop: '24px', background: '#fef2f2', padding: '16px', borderRadius: '12px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span>KOT #K005</span>
-                  <span style={{ fontWeight: 600 }}>₹408</span>
-                </div>
-                <div style={{ fontSize: '13px', color: '#991b1b' }}>Reason: Customer left suddenly</div>
-              </div>
+            <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center', marginBottom: '24px', border: '1px solid rgba(0,0,0,0.06)' }}>
+              <XCircle size={56} color="#dc2626" style={{ marginBottom: '12px' }} />
+              <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '4px', color: '#1a1a2e' }}>Cancelled Orders & KOT Report</h3>
+              <p style={{ color: '#6b7280', fontSize: '14px' }}>{cancelledList.length} orders cancelled in selected period (Total lost revenue: ₹{lostRevenue.toLocaleString('en-IN')})</p>
+            </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Order / KOT #</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Table / Type</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Cancelled Items</th>
+                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cancelledList.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} style={{ padding: '32px', textAlign: 'center', color: '#16a34a', fontWeight: 600 }}>🎉 No cancelled orders in this period!</td>
+                    </tr>
+                  ) : cancelledList.map(item => (
+                    <tr key={item.id || item.orderNumber} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                      <td style={{ padding: '16px', fontWeight: 700, color: '#dc2626' }}>#K{item.orderNumber}</td>
+                      <td style={{ padding: '16px', fontSize: '13px' }}>{item.tableNumber ? `Table ${item.tableNumber}` : item.type || 'POS'}</td>
+                      <td style={{ padding: '16px', fontSize: '13px' }}>{(item.items || []).map(i => `${i.menuItemName || i.name} x${i.quantity || 1}`).join(', ')}</td>
+                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 700, color: '#dc2626' }}>₹{(Number(item.total) || 0).toLocaleString('en-IN')}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )
+      }
 
       case 'food-cost':
         return (
@@ -1298,8 +1349,15 @@ export default function Reports() {
       } : null
       case 'kot': return {
         title: 'KOT Report',
-        headers: ['KOT #', 'Table', 'Items', 'Time', 'Amount', 'Status'],
-        rows: sampleKOTData.map(k => [k.id, k.table, k.items.join(', '), k.time, `₹${k.total}`, k.status])
+        headers: ['KOT #', 'Table / Type', 'Items', 'Time', 'Amount', 'Status'],
+        rows: (ordersReport || []).map(k => [
+          `#K${k.orderNumber || k.id}`,
+          k.tableNumber ? `Table ${k.tableNumber}` : k.type || 'POS',
+          (k.items || []).map(i => `${i.menuItemName || i.name} x${i.quantity || 1}`).join(', '),
+          k.createdAt ? new Date(k.createdAt).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : '-',
+          `₹${(Number(k.total) || 0).toLocaleString('en-IN')}`,
+          k.status || 'completed'
+        ])
       }
       case 'bill': return {
         title: 'Bill Summary Report',
