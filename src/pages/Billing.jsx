@@ -27,23 +27,15 @@ export default function Billing() {
 
   const getLocalDateString = (val) => {
     if (!val) return ''
-    if (typeof val === 'string') {
-      const clean = val.trim().split('T')[0].split(' ')[0]
-      const parts = clean.split(/[-/]/)
-      if (parts.length === 3) {
-        if (parts[0].length === 4) {
-          return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`
-        } else if (parts[2].length === 4) {
-          return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`
-        }
-      }
-    }
     try {
-      const d = new Date(val)
+      const d = typeof val === 'string' || typeof val === 'number' ? new Date(val) : val
       if (!isNaN(d.getTime())) {
         return d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
       }
     } catch (e) {}
+    if (typeof val === 'string' && val.length >= 10) {
+      return val.slice(0, 10)
+    }
     return String(val).slice(0, 10)
   }
 
