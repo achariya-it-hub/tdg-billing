@@ -1,6 +1,16 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
+const isSpecial20Active = () => {
+  try {
+    const now = new Date()
+    const endDate = new Date('2026-08-02T23:59:59+05:30')
+    return now <= endDate
+  } catch (e) {
+    return true
+  }
+}
+
 export const useOrderStore = create(
   persist(
     (set, get) => ({
@@ -12,11 +22,13 @@ export const useOrderStore = create(
     customerPhone: '',
     notes: '',
     complimentary: false,
-    complimentaryType: ''
+    complimentaryType: '',
+    inaugurationOffer: false,
+    specialOffer20: isSpecial20Active()
   },
   orders: [],
   heldOrders: [],
-  
+
   addItem: (item) => {
     set(state => {
       const existingIndex = state.currentOrder.items.findIndex(
@@ -108,7 +120,9 @@ export const useOrderStore = create(
         notes: '',
         complimentary: false,
         complimentaryType: '',
-        specialRemarks: ''
+        specialRemarks: '',
+        inaugurationOffer: false,
+        specialOffer20: isSpecial20Active()
       }
     })
   },
@@ -135,7 +149,18 @@ export const useOrderStore = create(
     set(state => ({
       currentOrder: {
         ...state.currentOrder,
-        inaugurationOffer: !!enabled
+        inaugurationOffer: !!enabled,
+        specialOffer20: enabled ? false : state.currentOrder.specialOffer20
+      }
+    }))
+  },
+
+  setSpecialOffer20: (enabled) => {
+    set(state => ({
+      currentOrder: {
+        ...state.currentOrder,
+        specialOffer20: !!enabled,
+        inaugurationOffer: enabled ? false : state.currentOrder.inaugurationOffer
       }
     }))
   },
@@ -146,7 +171,9 @@ export const useOrderStore = create(
 
   getDiscount: () => {
     const raw = get().getRawSubtotal()
-    return get().currentOrder.inaugurationOffer ? raw * 0.5 : 0
+    if (get().currentOrder.inaugurationOffer) return raw * 0.5
+    if (get().currentOrder.specialOffer20) return raw * 0.2
+    return 0
   },
   
   getSubtotal: () => {
@@ -195,6 +222,7 @@ export const useOrderStore = create(
             tax,
             total,
             inaugurationOffer: order.inaugurationOffer || false,
+            specialOffer20: order.specialOffer20 || false,
             paymentMethod: paymentMethod || undefined,
             customerPhone: order.customerPhone || ''
           })

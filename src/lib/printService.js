@@ -284,9 +284,9 @@ const PrintService = {
         }).join('')}
 
         <div class="totals-section">
-          ${bill.discount > 0 || bill.inaugurationOffer ? `
+          ${bill.discount > 0 || bill.inaugurationOffer || bill.specialOffer20 ? `
             <div class="total-row-sub"><span>Subtotal:</span><span>₹${(bill.rawSubtotal || (subtotal + (bill.discount || 0))).toFixed(0)}</span></div>
-            <div class="total-row-sub" style="font-weight:900"><span>Inauguration Offer (50% OFF):</span><span>-₹${(bill.discount || 0).toFixed(0)}</span></div>
+            <div class="total-row-sub" style="font-weight:900"><span>${bill.inaugurationOffer ? 'Inauguration Offer (50% OFF)' : 'Special Offer (20% OFF)'}:</span><span>-₹${(bill.discount || 0).toFixed(0)}</span></div>
           ` : `
             <div class="total-row-sub"><span>Subtotal:</span><span>₹${subtotal.toFixed(0)}</span></div>
           `}

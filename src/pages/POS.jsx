@@ -91,7 +91,7 @@ export default function POS() {
   const {
     currentOrder, addItem, updateItemQuantity, removeItem,
     setOrderType, setTableNumber, setCustomerName, setCustomerPhone, setComplimentary, setSpecialRemarks, clearOrder,
-    setInaugurationOffer, getDiscount,
+    setInaugurationOffer, setSpecialOffer20, getDiscount,
     holdOrder, recallOrder, heldOrders, getSubtotal, getTax, getTotal, placeOrder
   } = useOrderStore()
 
@@ -673,9 +673,7 @@ export default function POS() {
               {heldOrders.map((order, i) => (
                 <button key={i} onClick={() => recallOrder(i)} style={{
                   padding: '6px 10px', background: 'rgba(0,0,0,0.04)', borderRadius: '8px',
-                  border: 'none', color: '#4b5563', fontSize: '11px', cursor: 'pointer', fontWeight: 600,
-                  whiteSpace: 'nowrap'
-                }}>#{i + 1} ({order.items.length})</button>
+                  border: 'none', color: '#4b5563', fontSize: '11px',                 }}>#{i + 1} ({order.items.length})</button>
               ))}
             </div>
           </div>
@@ -684,6 +682,12 @@ export default function POS() {
         {/* Totals */}
         <div style={{ padding: '16px', borderTop: '1px solid rgba(0,0,0,0.04)', background: 'rgba(248,249,250,0.5)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}><span style={{ color: '#6b7280', fontSize: '13px' }}>Subtotal</span><span style={{ fontSize: '13px' }}>₹{useOrderStore.getState().getRawSubtotal().toFixed(2)}</span></div>
+          {currentOrder.specialOffer20 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', color: '#e63946', fontWeight: 700 }}>
+              <span style={{ fontSize: '13px' }}>🔥 Special Offer (20% OFF)</span>
+              <span style={{ fontSize: '13px' }}>-₹{getDiscount().toFixed(2)}</span>
+            </div>
+          )}
           {currentOrder.inaugurationOffer && (
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', color: '#10b981', fontWeight: 700 }}>
               <span style={{ fontSize: '13px' }}>🎉 Inauguration Offer (50% OFF)</span>
@@ -696,31 +700,56 @@ export default function POS() {
             <span>Total</span><span style={{ color: '#e63946' }}>₹{getTotal().toFixed(2)}</span>
           </div>
 
-          {/* 1-Click Inauguration Offer Button */}
-          <button
-            type="button"
-            onClick={() => setInaugurationOffer(!currentOrder.inaugurationOffer)}
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              borderRadius: '10px',
-              border: currentOrder.inaugurationOffer ? '2px solid #10b981' : '1px solid #d1d5db',
-              background: currentOrder.inaugurationOffer ? 'linear-gradient(135deg, #10b981, #059669)' : '#fff',
-              color: currentOrder.inaugurationOffer ? '#fff' : '#374151',
-              fontWeight: 800,
-              fontSize: '13px',
-              cursor: 'pointer',
-              marginBottom: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              boxShadow: currentOrder.inaugurationOffer ? '0 3px 10px rgba(16,185,129,0.3)' : 'none',
-              transition: 'all 0.2s'
-            }}
-          >
-            <span>🎉</span> {currentOrder.inaugurationOffer ? '50% OFF Inauguration Offer (ACTIVE)' : 'Apply 50% OFF Inauguration Offer'}
-          </button>
+          {/* 1-Click Offer Buttons */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '10px' }}>
+            <button
+              type="button"
+              onClick={() => setSpecialOffer20(!currentOrder.specialOffer20)}
+              style={{
+                width: '100%',
+                padding: '9px 12px',
+                borderRadius: '10px',
+                border: currentOrder.specialOffer20 ? '2px solid #e63946' : '1px solid #d1d5db',
+                background: currentOrder.specialOffer20 ? 'linear-gradient(135deg, #e63946, #c1121f)' : '#fff',
+                color: currentOrder.specialOffer20 ? '#fff' : '#374151',
+                fontWeight: 800,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                boxShadow: currentOrder.specialOffer20 ? '0 3px 10px rgba(230,57,70,0.3)' : 'none',
+                transition: 'all 0.2s'
+              }}
+            >
+              <span>🔥</span> {currentOrder.specialOffer20 ? '20% OFF Special Offer ACTIVE (Till 02.08.2026)' : 'Apply 20% OFF Special Offer (Till 02.08.2026)'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setInaugurationOffer(!currentOrder.inaugurationOffer)}
+              style={{
+                width: '100%',
+                padding: '9px 12px',
+                borderRadius: '10px',
+                border: currentOrder.inaugurationOffer ? '2px solid #10b981' : '1px solid #d1d5db',
+                background: currentOrder.inaugurationOffer ? 'linear-gradient(135deg, #10b981, #059669)' : '#fff',
+                color: currentOrder.inaugurationOffer ? '#fff' : '#374151',
+                fontWeight: 800,
+                fontSize: '12.5px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                boxShadow: currentOrder.inaugurationOffer ? '0 3px 10px rgba(16,185,129,0.3)' : 'none',
+                transition: 'all 0.2s'
+              }}
+            >
+              <span>🎉</span> {currentOrder.inaugurationOffer ? '50% OFF Inauguration Offer (ACTIVE)' : 'Apply 50% OFF Inauguration Offer'}
+            </button>
+          </div>
 
           <input placeholder="Special remarks..." value={currentOrder.specialRemarks || ''} onChange={e => setSpecialRemarks(e.target.value)} style={{ ...inputStyle, fontSize: '12px', padding: '8px 10px', marginBottom: '10px' }} />
           <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '12px' }}>
