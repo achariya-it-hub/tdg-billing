@@ -37,6 +37,8 @@ const menuItemCard = {
 
 const orderPanel = {
   ...glassCard,
+  width: '380px',
+  minWidth: '340px',
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden'
@@ -398,25 +400,26 @@ export default function POS() {
   const OrderItemRow = ({ item, index }) => (
     <div style={{
       display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px',
-      background: 'rgba(0,0,0,0.02)', borderRadius: '12px', marginBottom: '6px'
+      background: '#ffffff', borderRadius: '12px', marginBottom: '8px',
+      border: '1px solid #e2e8f0', boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
     }}>
       <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 600, fontSize: '13px' }}>{item.menuItemName}</div>
+        <div style={{ fontWeight: 700, fontSize: '13.5px', color: '#0f172a' }}>{item.menuItemName}</div>
         {item.customization && (
-          <div style={{ fontSize: '11px', color: '#e63946', marginTop: '2px', fontWeight: 500, lineHeight: 1.3 }}>
+          <div style={{ fontSize: '11px', color: '#dc2626', marginTop: '2px', fontWeight: 600, lineHeight: 1.3 }}>
             {item.customization.bread} bread • {item.customization.spread} spread
             {item.customization.sauces?.length > 0 && ` • Sauces: ${item.customization.sauces.join(', ')}`}
             {item.customization.veggies?.length > 0 && ` • Veggies: ${item.customization.veggies.join(', ')}`}
             {item.customization.notes && ` • Note: ${item.customization.notes}`}
           </div>
         )}
-        <div style={{ color: '#e63946', fontSize: '12px', fontWeight: 500, marginTop: '2px' }}>₹{item.unitPrice}</div>
+        <div style={{ color: '#475569', fontSize: '12px', fontWeight: 600, marginTop: '2px' }}>₹{item.unitPrice} each</div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-        <button onClick={() => updateItemQuantity(index, item.quantity - 1)} style={qtyBtn('#f3f4f6')}>
-          <Minus size={14} color="#4b5563" />
+        <button onClick={() => updateItemQuantity(index, item.quantity - 1)} style={qtyBtn('#e2e8f0')}>
+          <Minus size={14} color="#1e293b" />
         </button>
-        <span style={{ width: '24px', textAlign: 'center', fontWeight: 700, fontSize: '14px' }}>{item.quantity}</span>
+        <span style={{ width: '24px', textAlign: 'center', fontWeight: 800, fontSize: '15px', color: '#0f172a' }}>{item.quantity}</span>
         <button onClick={() => updateItemQuantity(index, item.quantity + 1)} style={qtyBtn('#e63946')}>
           <Plus size={14} />
         </button>
@@ -648,126 +651,143 @@ export default function POS() {
         </div>
 
         {(currentOrder.type === 'dine-in' || currentOrder.type === 'takeaway' || currentOrder.type === 'delivery') && (
-          <div style={{ padding: '12px', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-            <input type="tel" placeholder="Customer Phone" value={currentOrder.customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} style={inputStyle} />
+          <div style={{ padding: '8px 12px', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+            <input type="tel" placeholder="Customer Phone" value={currentOrder.customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} style={{ ...inputStyle, padding: '6px 10px', fontSize: '12px' }} />
           </div>
         )}
+        <div style={{
+          padding: '8px 12px', background: '#f8fafc',
+          borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+        }}>
+          <span style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b' }}>
+            🛒 Bill Items ({currentOrder.items.reduce((s, i) => s + i.quantity, 0)})
+          </span>
+          {currentOrder.items.length > 0 && (
+            <button onClick={clearOrder} style={{
+              fontSize: '11px', fontWeight: 600, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer'
+            }}>
+              Clear All
+            </button>
+          )}
+        </div>
 
-        {/* Order Items */}
-        <div style={{ flex: 1, overflow: 'auto', padding: '12px' }}>
+        {/* Order Items List - EXPANDED & CLEAR VISIBILITY */}
+        <div style={{ flex: 1, minHeight: '220px', overflowY: 'auto', padding: '10px', background: '#f1f5f9' }}>
           {currentOrder.items.length === 0 ? (
-            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', gap: '12px' }}>
-              <div style={{ width: '64px', height: '64px', borderRadius: '20px', background: 'rgba(0,0,0,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ShoppingBag size={28} />
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', gap: '8px', padding: '30px 0' }}>
+              <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ShoppingBag size={24} color="#64748b" />
               </div>
-              <span style={{ fontSize: '14px', fontWeight: 500 }}>Start adding items</span>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: '#64748b' }}>Start adding items to order</span>
             </div>
-          ) : currentOrder.items.map((item, index) => <OrderItemRow key={index} item={item} index={index} />)}
+          ) : (
+            currentOrder.items.map((item, index) => <OrderItemRow key={index} item={item} index={index} />)
+          )}
         </div>
 
         {/* Held Orders */}
         {heldOrders.length > 0 && (
-          <div style={{ padding: '10px 12px', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
-            <div style={{ fontSize: '11px', color: '#9ca3af', marginBottom: '6px', fontWeight: 600 }}>Held ({heldOrders.length})</div>
-            <div style={{ display: 'flex', gap: '6px', overflow: 'auto' }}>
+          <div style={{ padding: '6px 10px', background: '#fff', borderTop: '1px solid #e2e8f0' }}>
+            <div style={{ fontSize: '10px', color: '#64748b', marginBottom: '4px', fontWeight: 700 }}>HELD ORDERS ({heldOrders.length})</div>
+            <div style={{ display: 'flex', gap: '6px', overflowX: 'auto' }}>
               {heldOrders.map((order, i) => (
                 <button key={i} onClick={() => recallOrder(i)} style={{
-                  padding: '6px 10px', background: 'rgba(0,0,0,0.04)', borderRadius: '8px',
-                  border: 'none', color: '#4b5563', fontSize: '11px',                 }}>#{i + 1} ({order.items.length})</button>
+                  padding: '4px 8px', background: '#f1f5f9', borderRadius: '6px',
+                  border: '1px solid #cbd5e1', color: '#334155', fontSize: '11px', cursor: 'pointer', fontWeight: 700,
+                  whiteSpace: 'nowrap'
+                }}>#{i + 1} ({order.items.length})</button>
               ))}
             </div>
           </div>
         )}
 
-        {/* Totals */}
-        <div style={{ padding: '16px', borderTop: '1px solid rgba(0,0,0,0.04)', background: 'rgba(248,249,250,0.5)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}><span style={{ color: '#6b7280', fontSize: '13px' }}>Subtotal</span><span style={{ fontSize: '13px' }}>₹{useOrderStore.getState().getRawSubtotal().toFixed(2)}</span></div>
-          {currentOrder.specialOffer20 && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', color: '#e63946', fontWeight: 700 }}>
-              <span style={{ fontSize: '13px' }}>🔥 Special Offer (20% OFF)</span>
-              <span style={{ fontSize: '13px' }}>-₹{getDiscount().toFixed(2)}</span>
+        {/* Compact Totals & Offers Section */}
+        <div style={{ padding: '10px 12px', borderTop: '2px solid #e2e8f0', background: '#ffffff' }}>
+          {/* Subtotal & Tax */}
+          <div style={{ fontSize: '12px', color: '#475569', display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '6px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Subtotal:</span>
+              <span style={{ fontWeight: 600 }}>₹{useOrderStore.getState().getRawSubtotal().toFixed(2)}</span>
             </div>
-          )}
-          {currentOrder.inaugurationOffer && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', color: '#10b981', fontWeight: 700 }}>
-              <span style={{ fontSize: '13px' }}>🎉 Inauguration Offer (50% OFF)</span>
-              <span style={{ fontSize: '13px' }}>-₹{getDiscount().toFixed(2)}</span>
+            {currentOrder.specialOffer20 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#dc2626', fontWeight: 700 }}>
+                <span>🔥 Special Offer (20% OFF):</span>
+                <span>-₹{getDiscount().toFixed(2)}</span>
+              </div>
+            )}
+            {currentOrder.inaugurationOffer && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#059669', fontWeight: 700 }}>
+                <span>🎉 Inauguration Offer (50% OFF):</span>
+                <span>-₹{getDiscount().toFixed(2)}</span>
+              </div>
+            )}
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>GST (5%):</span>
+              <span>₹{getTax().toFixed(2)}</span>
             </div>
-          )}
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}><span style={{ color: '#6b7280', fontSize: '13px' }}>CGST (2.5%)</span><span style={{ fontSize: '13px' }}>₹{(getTax() / 2).toFixed(2)}</span></div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}><span style={{ color: '#6b7280', fontSize: '13px' }}>SGST (2.5%)</span><span style={{ fontSize: '13px' }}>₹{(getTax() / 2).toFixed(2)}</span></div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '20px', fontWeight: 800, marginBottom: '12px', paddingTop: '8px', borderTop: '2px solid #1a1a2e' }}>
-            <span>Total</span><span style={{ color: '#e63946' }}>₹{getTotal().toFixed(2)}</span>
           </div>
 
-          {/* 1-Click Offer Buttons */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '10px' }}>
+          {/* Total Pay Box */}
+          <div style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            padding: '8px 12px', borderRadius: '10px', background: '#1e293b', color: '#ffffff',
+            marginBottom: '8px'
+          }}>
+            <span style={{ fontSize: '14px', fontWeight: 700 }}>NET TOTAL</span>
+            <span style={{ fontSize: '20px', fontWeight: 900, color: '#f87171' }}>₹{getTotal().toFixed(2)}</span>
+          </div>
+
+          {/* Offer Buttons - Side by Side Compact Flex */}
+          <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
             <button
               type="button"
               onClick={() => setSpecialOffer20(!currentOrder.specialOffer20)}
               style={{
-                width: '100%',
-                padding: '9px 12px',
-                borderRadius: '10px',
-                border: currentOrder.specialOffer20 ? '2px solid #e63946' : '1px solid #d1d5db',
-                background: currentOrder.specialOffer20 ? 'linear-gradient(135deg, #e63946, #c1121f)' : '#fff',
-                color: currentOrder.specialOffer20 ? '#fff' : '#374151',
-                fontWeight: 800,
-                fontSize: '12.5px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                boxShadow: currentOrder.specialOffer20 ? '0 3px 10px rgba(230,57,70,0.3)' : 'none',
-                transition: 'all 0.2s'
+                flex: 1, padding: '6px 4px', borderRadius: '8px',
+                border: currentOrder.specialOffer20 ? '2px solid #dc2626' : '1px solid #cbd5e1',
+                background: currentOrder.specialOffer20 ? '#dc2626' : '#f8fafc',
+                color: currentOrder.specialOffer20 ? '#ffffff' : '#334155',
+                fontWeight: 700, fontSize: '10.5px', cursor: 'pointer', textAlign: 'center'
               }}
             >
-              <span>🔥</span> {currentOrder.specialOffer20 ? '20% OFF Special Offer ACTIVE (Till 02.08.2026)' : 'Apply 20% OFF Special Offer (Till 02.08.2026)'}
+              🔥 {currentOrder.specialOffer20 ? '20% OFF ACTIVE' : '20% OFF Offer'}
             </button>
-
             <button
               type="button"
               onClick={() => setInaugurationOffer(!currentOrder.inaugurationOffer)}
               style={{
-                width: '100%',
-                padding: '9px 12px',
-                borderRadius: '10px',
-                border: currentOrder.inaugurationOffer ? '2px solid #10b981' : '1px solid #d1d5db',
-                background: currentOrder.inaugurationOffer ? 'linear-gradient(135deg, #10b981, #059669)' : '#fff',
-                color: currentOrder.inaugurationOffer ? '#fff' : '#374151',
-                fontWeight: 800,
-                fontSize: '12.5px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                boxShadow: currentOrder.inaugurationOffer ? '0 3px 10px rgba(16,185,129,0.3)' : 'none',
-                transition: 'all 0.2s'
+                flex: 1, padding: '6px 4px', borderRadius: '8px',
+                border: currentOrder.inaugurationOffer ? '2px solid #059669' : '1px solid #cbd5e1',
+                background: currentOrder.inaugurationOffer ? '#059669' : '#f8fafc',
+                color: currentOrder.inaugurationOffer ? '#ffffff' : '#334155',
+                fontWeight: 700, fontSize: '10.5px', cursor: 'pointer', textAlign: 'center'
               }}
             >
-              <span>🎉</span> {currentOrder.inaugurationOffer ? '50% OFF Inauguration Offer (ACTIVE)' : 'Apply 50% OFF Inauguration Offer'}
+              🎉 {currentOrder.inaugurationOffer ? '50% OFF ACTIVE' : '50% OFF Offer'}
             </button>
           </div>
 
-          <input placeholder="Special remarks..." value={currentOrder.specialRemarks || ''} onChange={e => setSpecialRemarks(e.target.value)} style={{ ...inputStyle, fontSize: '12px', padding: '8px 10px', marginBottom: '10px' }} />
-          <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '12px' }}>
-            {['', 'MD', 'Chairman', 'Internal Corporate', 'VIP'].map(type => (
+          {/* Remarks & Complimentary Compact */}
+          <input placeholder="Special remarks for kitchen..." value={currentOrder.specialRemarks || ''} onChange={e => setSpecialRemarks(e.target.value)} style={{ ...inputStyle, fontSize: '11px', padding: '5px 8px', marginBottom: '6px' }} />
+          
+          <div style={{ display: 'flex', gap: '4px', marginBottom: '8px', overflowX: 'auto' }}>
+            {['', 'MD', 'Chairman', 'Corporate', 'VIP'].map(type => (
               <button key={type} onClick={() => setComplimentary(type)} style={{
-                padding: '5px 10px', border: 'none', borderRadius: '6px', fontSize: '10px', fontWeight: 600, cursor: 'pointer',
-                background: currentOrder.complimentaryType === type ? (type ? '#f59e0b' : 'rgba(0,0,0,0.06)') : 'rgba(0,0,0,0.04)',
-                color: currentOrder.complimentaryType === type ? 'white' : '#6b7280', transition: 'all 0.2s'
-              }}>{type || 'Chargeable'}</button>
+                flex: 1, padding: '4px 4px', border: 'none', borderRadius: '6px', fontSize: '9.5px', fontWeight: 700, cursor: 'pointer',
+                background: currentOrder.complimentaryType === type ? (type ? '#d97706' : '#cbd5e1') : '#f1f5f9',
+                color: currentOrder.complimentaryType === type ? '#ffffff' : '#475569', whiteSpace: 'nowrap'
+              }}>{type || 'Billable'}</button>
             ))}
           </div>
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-            <Button variant="secondary" size="sm" onClick={holdOrder} style={{ flex: 1, borderRadius: '10px' }}>Hold</Button>
-            <Button variant="secondary" size="sm" onClick={clearOrder} style={{ flex: 1, borderRadius: '10px' }}>Clear</Button>
+
+          <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
+            <Button variant="secondary" size="sm" onClick={holdOrder} style={{ flex: 1, borderRadius: '8px', padding: '6px', fontSize: '12px' }}>Hold</Button>
+            <Button variant="secondary" size="sm" onClick={clearOrder} style={{ flex: 1, borderRadius: '8px', padding: '6px', fontSize: '12px' }}>Clear</Button>
           </div>
+
           <Button fullWidth size="lg" onClick={handlePlaceOrder} disabled={currentOrder.items.length === 0 || processing}
             variant={currentOrder.complimentary ? 'warning' : 'primary'}
-            style={{ borderRadius: '14px', boxShadow: '0 4px 16px rgba(230,57,70,0.35)' }}
+            style={{ borderRadius: '10px', padding: '12px', fontSize: '15px', fontWeight: 800, boxShadow: '0 4px 14px rgba(230,57,70,0.3)' }}
           >
             {processing ? 'Placing...' : currentOrder.complimentary ? `Place (Free)` : `Place Order • ₹${getTotal().toFixed(0)}`}
           </Button>
