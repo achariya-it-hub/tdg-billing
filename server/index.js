@@ -3780,6 +3780,31 @@ function getFilteredOrdersForPeriod(reqQuery) {
     })
   }
 
+  if (date === 'today') {
+    return validOrders.filter(o => getOrderDate(o) === todayStr)
+  }
+
+  if (date === 'yesterday') {
+    const yDate = new Date()
+    yDate.setDate(yDate.getDate() - 1)
+    const yStr = getLocalDateStr(yDate)
+    return validOrders.filter(o => getOrderDate(o) === yStr)
+  }
+
+  if (date === 'week') {
+    const wDate = new Date()
+    wDate.setDate(wDate.getDate() - 7)
+    const wStr = getLocalDateStr(wDate)
+    return validOrders.filter(o => getOrderDate(o) >= wStr && getOrderDate(o) <= todayStr)
+  }
+
+  if (date === 'month') {
+    const mDate = new Date()
+    mDate.setDate(mDate.getDate() - 30)
+    const mStr = getLocalDateStr(mDate)
+    return validOrders.filter(o => getOrderDate(o) >= mStr && getOrderDate(o) <= todayStr)
+  }
+
   if (from && to) {
     return validOrders.filter(o => {
       const dStr = getOrderDate(o)
@@ -3789,10 +3814,6 @@ function getFilteredOrdersForPeriod(reqQuery) {
 
   if (from) {
     return validOrders.filter(o => getOrderDate(o) >= from)
-  }
-
-  if (date === 'today') {
-    return validOrders.filter(o => getOrderDate(o) === todayStr)
   }
 
   if (date) {
