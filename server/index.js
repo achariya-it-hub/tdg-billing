@@ -250,16 +250,30 @@ function syncSettingsVault(currentSettings) {
     }
 
     const currentCompany = currentSettings?.company || {}
-    const mergedCompany = {
-      ...vaultCompany,
-      ...currentCompany
+
+    // Helper: pick non-empty value, prioritizing currentCompany if non-empty, else vaultCompany
+    const pickBest = (currVal, vaultVal) => {
+      const c = (currVal || '').toString().trim()
+      const v = (vaultVal || '').toString().trim()
+      if (c && c !== '000000000') return c
+      if (v && v !== '000000000') return v
+      return c || v || ''
     }
 
-    // Explicitly lock GST, GSTIN, Email, Phone, Address if set in vault or current
-    if (vaultCompany.gst && !currentCompany.gst) mergedCompany.gst = vaultCompany.gst
-    if (vaultCompany.gstNo && !currentCompany.gstNo) mergedCompany.gstNo = vaultCompany.gstNo
-    if (vaultCompany.gstin && !currentCompany.gstin) mergedCompany.gstin = vaultCompany.gstin
-    if (vaultCompany.email && !currentCompany.email) mergedCompany.email = vaultCompany.email
+    const mergedCompany = {
+      ...vaultCompany,
+      ...currentCompany,
+      name: pickBest(currentCompany.name, vaultCompany.name) || 'Ten Den Gyros',
+      address: pickBest(currentCompany.address, vaultCompany.address) || 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram',
+      phone: pickBest(currentCompany.phone, vaultCompany.phone),
+      email: pickBest(currentCompany.email, vaultCompany.email),
+      gst: pickBest(currentCompany.gst || currentCompany.gstNo || currentCompany.gstin, vaultCompany.gst || vaultCompany.gstNo || vaultCompany.gstin),
+      gstNo: pickBest(currentCompany.gstNo || currentCompany.gst || currentCompany.gstin, vaultCompany.gstNo || vaultCompany.gst || vaultCompany.gstin),
+      gstin: pickBest(currentCompany.gstin || currentCompany.gst || currentCompany.gstNo, vaultCompany.gstin || vaultCompany.gst || vaultCompany.gstNo),
+      upiId: pickBest(currentCompany.upiId, vaultCompany.upiId),
+      logo: currentCompany.logo !== undefined ? currentCompany.logo : vaultCompany.logo,
+      deliveryEnabled: currentCompany.deliveryEnabled !== undefined ? currentCompany.deliveryEnabled : (vaultCompany.deliveryEnabled !== false)
+    }
 
     const finalSettings = {
       ...(currentSettings || {}),
