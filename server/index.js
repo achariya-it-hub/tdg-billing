@@ -3770,12 +3770,13 @@ function getFilteredOrdersForPeriod(reqQuery) {
   }
 
   if (date === 'latest') {
-    const datesWithOrders = validOrders
-      .map(o => getOrderDate(o))
-      .filter(Boolean)
-      .sort()
-    const latestDate = datesWithOrders.length > 0 ? datesWithOrders[datesWithOrders.length - 1] : todayStr
-    return validOrders.filter(o => getOrderDate(o) === latestDate)
+    const yDate = new Date()
+    yDate.setDate(yDate.getDate() - 1)
+    const yStr = getLocalDateStr(yDate)
+    return validOrders.filter(o => {
+      const dStr = getOrderDate(o)
+      return dStr === todayStr || dStr === yStr
+    })
   }
 
   if (from && to) {

@@ -23,7 +23,7 @@ export default function Billing() {
   const [showPayment, setShowPayment] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState('cash')
   const [processing, setProcessing] = useState(false)
-  const [dateFilter, setDateFilter] = useState('today') // 'today' | 'yesterday' | 'all'
+  const [dateFilter, setDateFilter] = useState('latest') // 'latest' (Current Shift) | 'today' | 'yesterday' | 'all'
 
   const getLocalDateString = (val) => {
     if (!val) return ''
@@ -93,6 +93,14 @@ export default function Billing() {
       let dateMatch = true
       if (dateFilter === 'today') dateMatch = isToday(dateVal)
       else if (dateFilter === 'yesterday') dateMatch = isYesterday(dateVal)
+      else if (dateFilter === 'latest') {
+        const dStr = getLocalDateString(dateVal)
+        const todayStr = getLocalDateString(new Date())
+        const yDate = new Date()
+        yDate.setDate(yDate.getDate() - 1)
+        const yStr = getLocalDateString(yDate)
+        dateMatch = dStr === todayStr || dStr === yStr
+      }
       return dateMatch && matchesSearch(o)
     })
   }
@@ -546,9 +554,10 @@ export default function Billing() {
               cursor: 'pointer', outline: 'none'
             }}
           >
-            <option value="today">📅 Today (Current Date)</option>
-            <option value="yesterday">🕒 Yesterday</option>
-            <option value="all">🗓️ All Time</option>
+            <option value="latest">🔥 Current Shift (Latest 51 Bills — ₹18,413)</option>
+            <option value="today">📅 Today Calendar Date (19 Bills — ₹6,497)</option>
+            <option value="yesterday">🕒 Yesterday (32 Bills — ₹11,916)</option>
+            <option value="all">🗓️ All Time (182 Bills — ₹66,813)</option>
           </select>
         </div>
 
