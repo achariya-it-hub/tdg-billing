@@ -3756,9 +3756,7 @@ const isValidSalesOrder = (o) => {
   if (!o) return false
   const s = (o.status || '').toLowerCase()
   if (s === 'cancelled' || s === 'void') return false
-  const ps = (o.paymentStatus || '').toLowerCase()
-  if (s === 'completed' || ps === 'paid' || o.paidAt) return true
-  return false
+  return true
 }
 
 function getFilteredOrdersForPeriod(reqQuery) {
@@ -3809,13 +3807,17 @@ app.get('/api/reports/daily-closing', (req, res) => {
 
   const dayOrders = getFilteredOrdersForPeriod(req.query)
   const completedOrders = dayOrders.filter(o => isValidSalesOrder(o))
-  const cancelledOrders = dayOrders.filter(o => o.status === 'cancelled')
+  const settledOrders = completedOrders.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
+  const pendingOrders = completedOrders.filter(o => !settledOrders.includes(o))
+  const cancelledOrders = dayOrders.filter(o => (o.status || '').toLowerCase() === 'cancelled' || (o.status || '').toLowerCase() === 'void')
 
-  // Total invoices
+  // Total invoices raised
   const totalInvoices = completedOrders.length
 
-  // Total sale value
+  // Total sale value of all bills raised
   const totalSales = completedOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
+  const settledSales = settledOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
+  const pendingSales = pendingOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
 
   // By payment method
   const byPaymentMethod = {}
@@ -3866,6 +3868,8 @@ app.get('/api/reports/daily-closing', (req, res) => {
     date: date || (from && to ? `${from} to ${to}` : todayStr),
     totalInvoices,
     totalSales: Math.round(totalSales),
+    settledSales: Math.round(settledSales),
+    pendingSales: Math.round(pendingSales),
     totalPurchases: Math.round(totalPurchases),
     totalExpenses: Math.round(totalExpenses),
     grossProfit: Math.round(grossProfit),
