@@ -2629,10 +2629,22 @@ app.post('/api/admin/menu/import-excel', (req, res) => {
 
 // POS Orders (no auth)
 app.get('/api/pos/orders', (req, res) => {
-  const { status, source } = req.query
+  const { status, source, date } = req.query
   let inMemory = [...orders]
-  if (status) inMemory = inMemory.filter(o => o.status === status)
+  if (status) {
+    if (status === 'completed') {
+      inMemory = inMemory.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
+    } else {
+      inMemory = inMemory.filter(o => o.status === status)
+    }
+  }
   if (source) inMemory = inMemory.filter(o => o.source === source)
+  if (date) {
+    const targetDate = date === 'today' ? getLocalDateStr(new Date()) : date
+    if (targetDate !== 'all' && targetDate !== 'latest') {
+      inMemory = inMemory.filter(o => getOrderDate(o) === targetDate)
+    }
+  }
   res.json(inMemory.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
 })
 
