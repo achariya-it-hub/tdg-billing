@@ -1730,11 +1730,13 @@ app.post('/api/settings/upload-logo', (req, res) => {
   })
 })
 
-// Upload customers CSV
+// Upload customers CSV (supports 50% exclusive discount tagging)
 app.post('/api/settings/upload-customers', (req, res) => {
   const pin = req.query.pin || req.headers['x-pin']
   const auth = verifySuperAdmin(pin)
   if (!auth.ok) return res.status(403).json({ error: auth.error })
+
+  const is50PctDiscount = req.query.discount === '50' || req.query.isVip50 === 'true'
 
   const chunks = []
   req.on('data', chunk => chunks.push(chunk))
@@ -1746,28 +1748,39 @@ app.post('/api/settings/upload-customers', (req, res) => {
 
       const header = lines[0].toLowerCase().split(',').map(h => h.trim())
       const nameIdx = header.indexOf('name')
-      const phoneIdx = header.indexOf('phone')
+      const phoneIdx = header.indexOf('phone') || header.indexOf('mobile')
       const emailIdx = header.indexOf('email')
+      const discountIdx = header.indexOf('discount')
 
       let imported = 0, skipped = 0, errors = []
       for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(',').map(c => c.trim())
-        const name = nameIdx >= 0 ? cols[nameIdx] : ''
-        const phone = phoneIdx >= 0 ? cols[phoneIdx] : ''
+        const lineStr = lines[i].trim()
+        if (!lineStr) continue
+        const cols = lineStr.split(',').map(c => c.trim().replace(/^["']|["']$/g, ''))
+        const name = nameIdx >= 0 ? cols[nameIdx] : (cols[0] || 'Customer')
+        const phone = (phoneIdx >= 0 ? cols[phoneIdx] : (cols[1] || '')).replace(/\D/g, '')
         const email = emailIdx >= 0 ? cols[emailIdx] : ''
+        const discVal = discountIdx >= 0 ? Number(cols[discountIdx]) || 50 : (is50PctDiscount ? 50 : 0)
 
         if (!phone) { errors.push(`Row ${i + 1}: no phone`); skipped++; continue }
-        if (loyaltyUsers.find(u => u.phone === phone)) { skipped++; continue }
+        
+        let existing = loyaltyUsers.find(u => (u.phone || '').replace(/\D/g, '') === phone)
+        if (existing) {
+          existing.name = name || existing.name
+          existing.discountPct = discVal || existing.discountPct || (is50PctDiscount ? 50 : 0)
+          existing.tier = (discVal === 50 || is50PctDiscount) ? 'VIP 50% OFF' : existing.tier
+          imported++
+          continue
+        }
 
         loyaltyUsers.push({
           id: 'lu_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-          name: name || 'Customer',
+          name: name || 'VIP Customer',
           phone,
           email: email || '',
           rubyPoints: 0,
-          tier: 'Bronze',
-          referredBy: null,
-          denId: null,
+          tier: (discVal === 50 || is50PctDiscount) ? 'VIP 50% OFF' : 'Bronze',
+          discountPct: discVal || (is50PctDiscount ? 50 : 0),
           createdAt: new Date().toISOString()
         })
         imported++
@@ -1778,6 +1791,27 @@ app.post('/api/settings/upload-customers', (req, res) => {
       res.status(500).json({ error: 'CSV parse failed: ' + e.message })
     }
   })
+})
+
+// Lookup customer discount by phone number
+app.get('/api/customers/check-discount', (req, res) => {
+  const rawPhone = (req.query.phone || '').replace(/\D/g, '')
+  if (!rawPhone) return res.json({ hasDiscount: false, discountPct: 0 })
+
+  const user = loyaltyUsers.find(u => (u.phone || '').replace(/\D/g, '') === rawPhone) ||
+               mobileAppUsers.find(u => (u.phone || '').replace(/\D/g, '') === rawPhone)
+
+  if (user && (user.discountPct === 50 || (user.tier && user.tier.includes('50%')) || user.isVip50)) {
+    return res.json({
+      hasDiscount: true,
+      discountPct: 50,
+      customerName: user.name || 'VIP Customer',
+      phone: rawPhone,
+      tier: user.tier || 'VIP 50% OFF'
+    })
+  }
+
+  res.json({ hasDiscount: false, discountPct: 0 })
 })
 
 // Download backup

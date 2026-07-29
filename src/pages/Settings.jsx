@@ -355,17 +355,17 @@ function DataTab({ pin, settings, onSaved }) {
   const fileRef = useRef()
   const restoreRef = useRef()
 
-  const handleUploadCSV = async (e) => {
+  const handleUploadCSV = async (e, isVip50 = false) => {
     const file = e.target.files[0]; if (!file) return
     setImporting(true); setMsg('')
     try {
       const formData = new FormData()
       formData.append('file', file)
-      const res = await fetch(`${API_BASE}/api/settings/upload-customers?pin=${pin}`, {
+      const res = await fetch(`${API_BASE}/api/settings/upload-customers?pin=${pin}&discount=${isVip50 ? '50' : '0'}&isVip50=${isVip50}`, {
         method: 'POST', body: formData
       })
       const data = await res.json()
-      if (data.success) setMsg(`Imported: ${data.imported}, Skipped: ${data.skipped}`)
+      if (data.success) setMsg(`Imported: ${data.imported} ${isVip50 ? 'Exclusive 50% OFF Customers' : 'Customers'}, Skipped: ${data.skipped}`)
       else setMsg(data.error || 'Import failed')
     } catch (e) { setMsg('Network error') }
     setImporting(false)
@@ -417,16 +417,32 @@ function DataTab({ pin, settings, onSaved }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Upload Customers */}
+      {/* Upload 50% Exclusive Discount Customers */}
+      <div style={{ ...glassCard, border: '1.5px solid rgba(245, 158, 11, 0.3)', background: 'linear-gradient(135deg, rgba(254, 243, 199, 0.4), rgba(255, 255, 255, 0.8))' }}>
+        <h3 style={{ fontSize: '17px', fontWeight: 700, marginBottom: '6px', color: '#b45309', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Tag size={22} color="#f59e0b" /> Exclusive 50% Discount Customer List
+        </h3>
+        <p style={{ fontSize: '13px', color: '#4b5563', marginBottom: '16px' }}>
+          Upload a CSV file containing <strong>Name, Phone</strong>. These customers will automatically receive an <strong>Exclusive 50% OFF Discount</strong> on all billing & POS orders!
+        </p>
+        {msg && <div style={{ background: 'rgba(22,163,74,0.08)', color: '#16a34a', padding: '12px', borderRadius: '10px', fontSize: '14px', marginBottom: '16px', fontWeight: 600 }}>{msg}</div>}
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <label style={{ ...btnPrimary, background: 'linear-gradient(135deg, #f59e0b, #d97706)', boxShadow: '0 4px 16px rgba(245,158,11,0.3)', fontSize: '13.5px', padding: '12px 20px', cursor: 'pointer' }}>
+            <Upload size={18} /> {importing ? 'Uploading VIP List...' : '🌟 Upload 50% OFF Customer CSV'}
+            <input type="file" accept=".csv" style={{ display: 'none' }} onChange={(e) => handleUploadCSV(e, true)} disabled={importing} />
+          </label>
+        </div>
+      </div>
+
+      {/* Upload Standard Customers */}
       <div style={glassCard}>
         <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Upload size={20} color="#4895ef" /> Upload Customer List
+          <Upload size={20} color="#4895ef" /> Standard Customer List Import
         </h3>
         <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>CSV format: name, phone, email (header row required)</p>
-        {msg && <div style={{ background: 'rgba(22,163,74,0.08)', color: '#16a34a', padding: '12px', borderRadius: '10px', fontSize: '14px', marginBottom: '16px' }}>{msg}</div>}
         <label style={{ ...btnPrimary, fontSize: '13px', padding: '10px 18px', cursor: 'pointer', display: 'inline-flex' }}>
           <Upload size={16} /> {importing ? 'Importing...' : 'Select CSV File'}
-          <input ref={fileRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={handleUploadCSV} disabled={importing} />
+          <input ref={fileRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={(e) => handleUploadCSV(e, false)} disabled={importing} />
         </label>
       </div>
 
