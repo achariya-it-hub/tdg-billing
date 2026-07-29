@@ -36,11 +36,13 @@ export function getCompanyInfoSync() {
     if (raw) return JSON.parse(raw)
   } catch (e) {}
   return {
-    name: 'Ten Dens Gyros',
-    address: 'Shop 1 & 2, Kottakuppam, Viluppuram',
-    phone: '000000000',
-    email: '',
-    gst: '',
+    name: 'Tendens Gyros',
+    address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram',
+    phone: '8877661150',
+    email: 'info@tendengyros.com',
+    gst: '33FJSPA2544H1Z9',
+    gstNo: '33FJSPA2544H1Z9',
+    gstin: '33FJSPA2544H1Z9',
     logo: null
   }
 }

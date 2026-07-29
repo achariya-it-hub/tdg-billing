@@ -408,13 +408,13 @@ export default function Billing() {
       </head>
       <body>
         <div class="header center">
-          <div class="brand-name">${company.name}</div>
+          <div class="brand-name">${company.name || 'Tendens Gyros'}</div>
           <div class="brand-tagline">Restaurant Management System</div>
           <div class="brand-details">
-            ${company.address ? company.address.replace(/,\s*/g, ',<br/>') + '<br/>' : ''}
-            Ph: ${company.phone || '000000000'}<br/>
-            GSTIN: <strong>${company.gstNo || company.gst || company.gstin || '33ABCDE1234F1Z5'}</strong><br/>
-            Email: <strong>${company.email || company.mailId || 'hello@thedonutgarages.com'}</strong>
+            ${company.address ? company.address.replace(/,\s*/g, ',<br/>') + '<br/>' : 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram<br/>'}
+            Ph: <strong>${company.phone || '8877661150'}</strong><br/>
+            GSTIN: <strong>${company.gstNo || company.gst || company.gstin || '33FJSPA2544H1Z9'}</strong><br/>
+            Email: <strong>${company.email || company.mailId || 'info@tendengyros.com'}</strong>
           </div>
         </div>
         <div class="info-row bill-number"><span class="info-label">Bill No:</span><span class="info-value">#${String(bill.orderNumber || bill.id).padStart(6, '0')}</span></div>

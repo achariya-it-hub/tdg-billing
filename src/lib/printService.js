@@ -244,12 +244,12 @@ const PrintService = {
       </head>
       <body>
         <div class="header">
-          <div class="brand-name">${company.name || 'Ten Dens Gyros'}</div>
+          <div class="brand-name">${company.name || 'Tendens Gyros'}</div>
           <div class="brand-address">
-            ${company.address ? company.address.replace(/,\s*/g, ',<br/>') : 'Shop 1 & 2, Kottakuppam, Viluppuram'}<br/>
-            ${company.phone ? `Ph: ${company.phone}` : ''}<br/>
-            GSTIN: <strong>${company.gstNo || company.gst || company.gstin || '33ABCDE1234F1Z5'}</strong><br/>
-            Email: <strong>${company.email || company.mailId || 'hello@thedonutgarages.com'}</strong>
+            ${company.address ? company.address.replace(/,\s*/g, ',<br/>') : 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram'}<br/>
+            Ph: <strong>${company.phone || '8877661150'}</strong><br/>
+            GSTIN: <strong>${company.gstNo || company.gst || company.gstin || '33FJSPA2544H1Z9'}</strong><br/>
+            Email: <strong>${company.email || company.mailId || 'info@tendengyros.com'}</strong>
           </div>
           <div><span class="invoice-badge">Tax Invoice</span></div>
         </div>
