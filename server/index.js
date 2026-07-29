@@ -3744,11 +3744,9 @@ const isValidSalesOrder = (o) => {
   if (!o) return false
   const s = (o.status || '').toLowerCase()
   if (s === 'cancelled' || s === 'void') return false
-  // Exclude unbilled pending/ready KOTs from completed sales count unless marked completed/paid
-  if (s === 'pending' || s === 'ready') {
-    if (!o.paidAt && !o.paymentMethod && !o.paymentStatus) return false
-  }
-  return true
+  const ps = (o.paymentStatus || '').toLowerCase()
+  if (s === 'completed' || ps === 'paid' || o.paidAt) return true
+  return false
 }
 
 function getFilteredOrdersForPeriod(reqQuery) {

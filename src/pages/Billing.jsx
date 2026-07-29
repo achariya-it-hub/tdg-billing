@@ -25,14 +25,26 @@ export default function Billing() {
   const [processing, setProcessing] = useState(false)
   const [dateFilter, setDateFilter] = useState('today') // 'today' | 'yesterday' | 'all'
 
-  const getLocalDateString = (d) => {
-    if (!d) return ''
-    const dateObj = typeof d === 'string' || typeof d === 'number' ? new Date(d) : d
-    if (isNaN(dateObj.getTime())) return ''
-    const year = dateObj.getFullYear()
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0')
-    const day = String(dateObj.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
+  const getLocalDateString = (val) => {
+    if (!val) return ''
+    if (typeof val === 'string') {
+      const clean = val.trim().split('T')[0].split(' ')[0]
+      const parts = clean.split(/[-/]/)
+      if (parts.length === 3) {
+        if (parts[0].length === 4) {
+          return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`
+        } else if (parts[2].length === 4) {
+          return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`
+        }
+      }
+    }
+    try {
+      const d = new Date(val)
+      if (!isNaN(d.getTime())) {
+        return d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
+      }
+    } catch (e) {}
+    return String(val).slice(0, 10)
   }
 
   const isToday = (dateStr) => {
@@ -77,7 +89,7 @@ export default function Billing() {
   const filterByDate = (list) => {
     if (!Array.isArray(list)) return []
     return list.filter(o => {
-      const dateVal = o.createdAt || o.date
+      const dateVal = o.createdAt || o.date || o.paidAt || o.completedAt
       let dateMatch = true
       if (dateFilter === 'today') dateMatch = isToday(dateVal)
       else if (dateFilter === 'yesterday') dateMatch = isYesterday(dateVal)
@@ -99,8 +111,8 @@ export default function Billing() {
   const fetchOrders = async () => {
     try {
       const [allRes, paidRes] = await Promise.all([
-        fetch(`${getApiUrl()}/api/pos/orders`),
-        fetch(`${getApiUrl()}/api/pos/orders?status=completed`)
+        fetch(`${getApiUrl()}/api/pos/orders?date=${dateFilter}`),
+        fetch(`${getApiUrl()}/api/pos/orders?status=completed&date=${dateFilter}`)
       ])
       if (allRes.ok && paidRes.ok) {
         const all = await allRes.json()
@@ -111,15 +123,16 @@ export default function Billing() {
         if (Array.isArray(paid)) paid.forEach(o => orderMap.set(o.id, o))
         const combined = Array.from(orderMap.values())
 
-        const filtered = combined.filter(o => o.type !== 'delivery' && o.source !== 'online')
+        // Include ALL order types so no bills are missed!
+        const filtered = combined.filter(o => (o.status || '').toLowerCase() !== 'cancelled' && (o.status || '').toLowerCase() !== 'void')
         
         const comp = filtered.filter(o => o.complimentary)
         setComplimentaryOrders(comp)
 
         const nonComp = filtered.filter(o => !o.complimentary)
         setNewKOTs(nonComp.filter(o => o.status === 'pending'))
-        setPendingKOTs(nonComp.filter(o => o.status === 'ready'))
-        setPaidBills(nonComp.filter(o => o.status === 'completed'))
+        setPendingKOTs(nonComp.filter(o => o.status === 'ready' || o.status === 'in-progress' || o.status === 'preparing' || o.status === 'served'))
+        setPaidBills(nonComp.filter(o => o.status === 'completed' || o.paymentStatus === 'paid' || o.paidAt))
       }
     } catch (err) {
       console.error('Failed to fetch orders:', err)
@@ -131,7 +144,6 @@ export default function Billing() {
     const socket = getSocket()
     socket.connect()
     socket.on('order:updated', (order) => {
-      if (order.type === 'delivery' || order.source === 'online') return
       if (order.complimentary) {
         if (order.status === 'ready' || order.status === 'pending') {
           setComplimentaryOrders(prev => {
@@ -149,14 +161,14 @@ export default function Billing() {
         }
         return
       }
-      if (order.status === 'ready') {
+      if (order.status === 'ready' || order.status === 'in-progress' || order.status === 'preparing' || order.status === 'served') {
         setNewKOTs(prev => prev.filter(o => o.id !== order.id))
         setPendingKOTs(prev => {
           if (prev.find(o => o.id === order.id)) return prev
           return [...prev, order]
         })
         setPaidBills(prev => prev.filter(o => o.id !== order.id))
-      } else if (order.status === 'completed') {
+      } else if (order.status === 'completed' || order.paymentStatus === 'paid') {
         setNewKOTs(prev => prev.filter(o => o.id !== order.id))
         setPendingKOTs(prev => prev.filter(o => o.id !== order.id))
         setPaidBills(prev => {
