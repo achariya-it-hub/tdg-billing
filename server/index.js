@@ -3761,28 +3761,20 @@ function getFilteredOrdersForPeriod(reqQuery) {
     return validOrders
   }
 
-  // Get most recent date with sales
-  const datesWithOrders = validOrders
-    .map(o => getOrderDate(o))
-    .filter(Boolean)
-    .sort()
-  const latestDate = datesWithOrders.length > 0 ? datesWithOrders[datesWithOrders.length - 1] : todayStr
-
   if (date === 'latest') {
+    const datesWithOrders = validOrders
+      .map(o => getOrderDate(o))
+      .filter(Boolean)
+      .sort()
+    const latestDate = datesWithOrders.length > 0 ? datesWithOrders[datesWithOrders.length - 1] : todayStr
     return validOrders.filter(o => getOrderDate(o) === latestDate)
   }
 
   if (from && to) {
-    const rangeOrders = validOrders.filter(o => {
+    return validOrders.filter(o => {
       const dStr = getOrderDate(o)
       return dStr >= from && dStr <= to
     })
-    if (rangeOrders.length > 0) return rangeOrders
-    // If range specifies single date with 0 orders, fallback to latest
-    if (from === to && rangeOrders.length === 0) {
-      return validOrders.filter(o => getOrderDate(o) === latestDate)
-    }
-    return rangeOrders
   }
 
   if (from) {
@@ -3790,21 +3782,14 @@ function getFilteredOrdersForPeriod(reqQuery) {
   }
 
   if (date === 'today') {
-    const todayOrders = validOrders.filter(o => getOrderDate(o) === todayStr)
-    if (todayOrders.length > 0) return todayOrders
-    return validOrders.filter(o => getOrderDate(o) === latestDate)
+    return validOrders.filter(o => getOrderDate(o) === todayStr)
   }
 
   if (date) {
-    const exactOrders = validOrders.filter(o => getOrderDate(o) === date)
-    if (exactOrders.length > 0) return exactOrders
-    return validOrders.filter(o => getOrderDate(o) === latestDate)
+    return validOrders.filter(o => getOrderDate(o) === date)
   }
 
-  // Default fallback: today or latest
-  const defaultTodayOrders = validOrders.filter(o => getOrderDate(o) === todayStr)
-  if (defaultTodayOrders.length > 0) return defaultTodayOrders
-  return validOrders.filter(o => getOrderDate(o) === latestDate)
+  return validOrders.filter(o => getOrderDate(o) === todayStr)
 }
 
 // ============ DAILY CLOSING REPORT ============

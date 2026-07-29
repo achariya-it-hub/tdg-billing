@@ -184,7 +184,7 @@ export default function Reports() {
           const r = await fetch(`/api/reports/expenses?${q}`)
           if (r.ok) setExpenseReport(await r.json())
         } else if (activeReport === 'bill' || activeReport === 'kot') {
-          const r = await fetch(`/api/pos/orders`)
+          const r = await fetch(`/api/pos/orders?${q}`)
           if (r.ok) setOrdersReport(await r.json())
         }
       } catch { /* ignore */ }
