@@ -3835,6 +3835,58 @@ function getFilteredOrdersForPeriod(reqQuery) {
   return validOrders.filter(o => getOrderDate(o) === todayStr)
 }
 
+// ============ AUTOMATIC MIDNIGHT 12:00 AM IST DAY CLOSING ENGINE ============
+let lastClosedDateIST = ''
+
+function runMidnightDayClosingCheck() {
+  try {
+    const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
+    const currentHours = nowIST.getHours()
+    const currentMinutes = nowIST.getMinutes()
+    const todayISTStr = getLocalDateStr(nowIST)
+
+    const yDate = new Date(nowIST)
+    yDate.setDate(yDate.getDate() - 1)
+    const yesterdayISTStr = getLocalDateStr(yDate)
+
+    const dailyBackupFolder = join(__dirname, 'daily-backups')
+    if (!existsSync(dailyBackupFolder)) {
+      mkdirSync(dailyBackupFolder, { recursive: true })
+    }
+
+    const backupFile = join(dailyBackupFolder, `daily-${yesterdayISTStr}.json`)
+
+    // Trigger daily closing at 12:00 AM Midnight IST or if yesterday is not yet closed
+    if ((currentHours === 0 && currentMinutes <= 15) || !existsSync(backupFile)) {
+      if (lastClosedDateIST !== yesterdayISTStr) {
+        const db = readDb()
+        const dayOrders = (db.orders || []).filter(o => getOrderDate(o) === yesterdayISTStr && isValidSalesOrder(o))
+        const totalSales = dayOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
+
+        const closingSummary = {
+          date: yesterdayISTStr,
+          closedAt: new Date().toISOString(),
+          closedAtIST: nowIST.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+          totalInvoices: dayOrders.length,
+          totalSales,
+          orders: dayOrders
+        }
+
+        writeFileSync(backupFile, JSON.stringify(closingSummary, null, 2))
+        lastClosedDateIST = yesterdayISTStr
+        console.log(`[12:00 AM IST MIDNIGHT AUTO DAY CLOSING] Successfully closed shift for ${yesterdayISTStr}: ${dayOrders.length} Bills, ₹${totalSales.toLocaleString('en-IN')}`)
+      }
+    }
+  } catch (e) {
+    console.error('[MIDNIGHT AUTO DAY CLOSING ERROR]', e.message)
+  }
+}
+
+// Check every 60 seconds for 12:00 AM IST rollover
+setInterval(runMidnightDayClosingCheck, 60000)
+// Run immediately on server initialization
+runMidnightDayClosingCheck()
+
 // ============ DAILY CLOSING REPORT ============
 app.get('/api/reports/daily-closing', (req, res) => {
   const todayStr = getLocalDateStr(new Date())
