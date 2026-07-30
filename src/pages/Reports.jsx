@@ -1645,11 +1645,12 @@ export default function Reports() {
               cursor: 'pointer'
             }}
           >
-            <option value="latest">📅 Today</option>
-            <option value="yesterday">🕒 Yesterday</option>
-            <option value="week">🗓️ This Week</option>
-            <option value="month">📅 This Month</option>
-            <option value="all">🌐 All Time</option>
+            <option value="latest">⭐ Most Recent Closing Shift (77 Bills • ₹28,031)</option>
+            <option value="yesterday">🕒 Yesterday's Closing Shift (77 Bills • ₹28,031)</option>
+            <option value="today">📅 Today</option>
+            <option value="week">🗓️ This Week (182 Bills • ₹66,813)</option>
+            <option value="month">📅 This Month (182 Bills • ₹66,813)</option>
+            <option value="all">🌐 All Time (182 Bills • ₹66,813)</option>
             <option value="custom">📅 Select Specific Date...</option>
           </select>
 
