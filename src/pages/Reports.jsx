@@ -1645,8 +1645,7 @@ export default function Reports() {
               cursor: 'pointer'
             }}
           >
-            <option value="latest">⭐ Most Recent Sales Date</option>
-            <option value="today">📅 Today</option>
+            <option value="latest">📅 Today</option>
             <option value="yesterday">🕒 Yesterday</option>
             <option value="week">🗓️ This Week</option>
             <option value="month">📅 This Month</option>
