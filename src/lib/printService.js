@@ -80,12 +80,16 @@ const PrintService = {
       if (item.customization) {
         const c = item.customization
         const parts = []
-        if (c.protein) parts.push(`Protein: ${c.protein}`)
+        if (c.gyro1) parts.push(c.gyro1)
+        if (c.gyro2) parts.push(c.gyro2)
         if (c.drink) parts.push(`Drink: ${c.drink}`)
-        if (c.bread) parts.push(`Bread: ${c.bread}`)
-        if (c.spread) parts.push(`Spread: ${c.spread}`)
-        if (c.sauces && c.sauces.length > 0) parts.push(`Sauces: ${c.sauces.join(', ')}`)
-        if (c.veggies && c.veggies.length > 0) parts.push(`Veggies: ${c.veggies.join(', ')}`)
+        if (!c.gyro1) {
+          if (c.protein) parts.push(`Protein: ${c.protein}`)
+          if (c.bread) parts.push(`Bread: ${c.bread}`)
+          if (c.spread) parts.push(`Spread: ${c.spread}`)
+          if (c.sauces && c.sauces.length > 0) parts.push(`Sauces: ${c.sauces.join(', ')}`)
+          if (c.veggies && c.veggies.length > 0) parts.push(`Veggies: ${c.veggies.join(', ')}`)
+        }
         if (parts.length > 0) {
           customDetails = `<div class="item-custom">• ${parts.join('<br/>• ')}</div>`
         }
@@ -273,6 +277,26 @@ const PrintService = {
           const qty = item.quantity || item.qty || 1
           const unitPrice = item.unitPrice || item.price || 0
           const amt = item.totalPrice || unitPrice * qty
+
+          let custDetails = ''
+          if (item.customization) {
+            const c = item.customization
+            const parts = []
+            if (c.gyro1) parts.push(c.gyro1)
+            if (c.gyro2) parts.push(c.gyro2)
+            if (c.drink) parts.push(`Drink: ${c.drink}`)
+            if (!c.gyro1) {
+              if (c.bread) parts.push(`Bread: ${c.bread}`)
+              if (c.protein) parts.push(`Protein: ${c.protein}`)
+              if (c.sauces && c.sauces.length) parts.push(`Sauces: ${c.sauces.join(', ')}`)
+              if (c.veggies && c.veggies.length) parts.push(`Veggies: ${c.veggies.join(', ')}`)
+            }
+            if (c.notes) parts.push(`Note: ${c.notes}`)
+            if (parts.length > 0) {
+              custDetails = `<div style="font-size:10px; font-weight:700; color:#333; margin:2px 0 4px 10px; line-height:1.2;">• ${parts.join('<br/>• ')}</div>`
+            }
+          }
+
           return `
             <div class="item-row">
               <span class="item-name">${name}</span>
@@ -280,6 +304,7 @@ const PrintService = {
               <span class="item-price">${unitPrice.toFixed(0)}</span>
               <span class="item-amt">${amt.toFixed(0)}</span>
             </div>
+            ${custDetails}
           `
         }).join('')}
 
