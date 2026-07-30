@@ -2160,107 +2160,149 @@ const sampleRecipes = [
     "id": "r_m20",
     "menuItemId": "m20",
     "menuItemName": "Non-Veg - Chicken Salad",
-    "name": "Non-Veg - Chicken Salad Recipe",
-    "description": "Standard recipe for Non-Veg - Chicken Salad",
+    "name": "Signature Salad (Chicken) Recipe",
+    "description": "Master Recipe sheet for Non-Veg - Signature Chicken Salad (RM: ₹47.67, PM: ₹11.79, Labour: ₹9.60, Total: ₹69.05)",
     "yieldQty": 1,
     "prepTime": 10,
     "calculatedCost": 69.05,
+    "rmCost": 47.67,
+    "pmCost": 11.79,
+    "labourCost": 9.60,
     "ingredients": [
       {
         "id": "ri_m20_1",
-        "inventoryItemId": "i_gen_1",
-        "inventoryName": "Iceberg",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.75
+        "inventoryItemId": "i_iceberg",
+        "inventoryName": "Iceberg Lettuce",
+        "quantity": 0.040,
+        "unit": "kg",
+        "pricePerKg": 273.0,
+        "cost": 10.92
       },
       {
         "id": "ri_m20_2",
-        "inventoryItemId": "i_gen_2",
-        "inventoryName": "Veggies",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.75
+        "inventoryItemId": "i_onion",
+        "inventoryName": "Onion",
+        "quantity": 0.015,
+        "unit": "kg",
+        "pricePerKg": 33.0,
+        "cost": 0.50
       },
       {
         "id": "ri_m20_3",
-        "inventoryItemId": "i_gen_3",
-        "inventoryName": "Olives",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.75
+        "inventoryItemId": "i_tomato",
+        "inventoryName": "Tomato",
+        "quantity": 0.020,
+        "unit": "kg",
+        "pricePerKg": 73.5,
+        "cost": 1.47
       },
       {
         "id": "ri_m20_4",
-        "inventoryItemId": "i_gen_4",
-        "inventoryName": "Chicken",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.75
+        "inventoryItemId": "i_cucumber",
+        "inventoryName": "Cucumber",
+        "quantity": 0.025,
+        "unit": "kg",
+        "pricePerKg": 84.0,
+        "cost": 2.10
       },
       {
         "id": "ri_m20_5",
-        "inventoryItemId": "i_gen_5",
-        "inventoryName": "Honey Mustard",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.75
+        "inventoryItemId": "i_capsicum",
+        "inventoryName": "Green Capsicum",
+        "quantity": 0.015,
+        "unit": "kg",
+        "pricePerKg": 99.8,
+        "cost": 1.50
       },
       {
         "id": "ri_m20_6",
-        "inventoryItemId": "i_gen_6",
-        "inventoryName": "Burger Sauce",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.75
+        "inventoryItemId": "i_olives",
+        "inventoryName": "Olives",
+        "quantity": 0.005,
+        "unit": "kg",
+        "pricePerKg": 775.0,
+        "cost": 3.88
       },
       {
         "id": "ri_m20_7",
-        "inventoryItemId": "i_gen_7",
-        "inventoryName": "Jalapenos",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.75
+        "inventoryItemId": "i_chicken",
+        "inventoryName": "Chicken",
+        "quantity": 0.065,
+        "unit": "kg",
+        "pricePerKg": 250.0,
+        "cost": 16.25
       },
       {
         "id": "ri_m20_8",
-        "inventoryItemId": "i_gen_8",
-        "inventoryName": "Dinning Tray",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.75
+        "inventoryItemId": "i_honeymustard",
+        "inventoryName": "Honey Mustard Sauce",
+        "quantity": 0.020,
+        "unit": "kg",
+        "pricePerKg": 43.7,
+        "cost": 0.87
       },
       {
         "id": "ri_m20_9",
-        "inventoryItemId": "i_gen_9",
-        "inventoryName": "Wooden Spoon",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.75
+        "inventoryItemId": "i_burgersauce",
+        "inventoryName": "Burger Sauce",
+        "quantity": 0.020,
+        "unit": "kg",
+        "pricePerKg": 426.8,
+        "cost": 8.54
       },
       {
         "id": "ri_m20_10",
-        "inventoryItemId": "i_gen_10",
-        "inventoryName": "Tissues",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.75
+        "inventoryItemId": "i_jalapeno",
+        "inventoryName": "Jalapeño",
+        "quantity": 0.005,
+        "unit": "kg",
+        "pricePerKg": 330.0,
+        "cost": 1.65
       },
       {
         "id": "ri_m20_11",
-        "inventoryItemId": "i_gen_11",
-        "inventoryName": "Bags",
+        "inventoryItemId": "i_pm_dinningtray",
+        "inventoryName": "Dinning Tray 250ml",
         "quantity": 1,
-        "unit": "unit",
-        "cost": 5.75
+        "unit": "pcs",
+        "unitPrice": 2.92,
+        "cost": 2.92
       },
       {
         "id": "ri_m20_12",
-        "inventoryItemId": "i_gen_12",
-        "inventoryName": "Labour",
+        "inventoryItemId": "i_pm_woodenspoon",
+        "inventoryName": "Wooden Spoon",
         "quantity": 1,
-        "unit": "unit",
-        "cost": 5.75
+        "unit": "pcs",
+        "unitPrice": 1.68,
+        "cost": 1.68
+      },
+      {
+        "id": "ri_m20_13",
+        "inventoryItemId": "i_pm_tissue",
+        "inventoryName": "Tissue Paper",
+        "quantity": 2,
+        "unit": "pcs",
+        "unitPrice": 0.27,
+        "cost": 0.54
+      },
+      {
+        "id": "ri_m20_14",
+        "inventoryItemId": "i_pm_takeawaybag",
+        "inventoryName": "Take Away Bags",
+        "quantity": 1,
+        "unit": "pcs",
+        "unitPrice": 6.65,
+        "cost": 6.65
+      },
+      {
+        "id": "ri_m20_15",
+        "inventoryItemId": "i_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1,
+        "unit": "job",
+        "unitPrice": 9.60,
+        "cost": 9.60
       }
     ]
   },

@@ -61,7 +61,7 @@ const sampleRecipeData = [
   { menuItem: 'Veg - BBQ Paneer Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, BBQ Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 107.65, price: 249, margin: '56.8%' },
   { menuItem: 'Veg - Pesto Paneer Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 75.63, price: 99, margin: '23.6%' },
   { menuItem: 'Veg - Pesto Paneer Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 119.33, price: 249, margin: '52.1%' },
-  { menuItem: 'Non-Veg - Chicken Salad', ingredients: 'Iceberg, Veggies, Olives, Chicken, Honey Mustard, Burger Sauce, Jalapenos, Dinning Tray, Wooden Spoon, Tissues, Bags, Labour', cost: 69.05, price: 99, margin: '30.3%' },
+  { menuItem: 'Non-Veg - Chicken Salad', ingredients: 'Iceberg (40g), Onion (15g), Tomato (20g), Cucumber (25g), Capsicum (15g), Olives (5g), Chicken (65g), Honey Mustard (20g), Burger Sauce (20g), Jalapeno (5g), Dining Tray 250ml, Wooden Spoon, Tissue Paper x2, Takeaway Bag, Labour', cost: 69.05, price: 149, margin: '53.7%' },
   { menuItem: 'Veg - Paneer Salad', ingredients: 'Iceberg, Veggies, Paneer, Olives, Honey Mustard, Burger Sauce, Jalapenos, Dinning Tray, Wooden Spoon, Tissues, Bags, Labour', cost: 76.18, price: 99, margin: '23.1%' },
   // Thick Shakes (c6)
   { menuItem: 'Veg - Vanilla Shake (Regular)', ingredients: 'Milk Base, Vanilla Crush, Beverages Cup 330ml with Lid, Paper Straw, Labour', cost: 66.27, price: 99, margin: '33.1%' },
