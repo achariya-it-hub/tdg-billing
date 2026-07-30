@@ -79,6 +79,7 @@ const sampleRecipeData = [
 
 const reportTypes = [
   { id: 'daily-closing', name: 'Daily Closing', icon: Sun, desc: 'Day Summary & Profit' },
+  { id: 'payment-report', name: 'Payment Report', icon: Wallet, desc: 'Bills Settled with Cash/UPI/Card/Wallet' },
   { id: 'offer-sales', name: 'Offer Sales', icon: Tag, desc: 'Bills & Revenue Made on Offers' },
   { id: 'itemwise-sales', name: 'Itemwise Sales', icon: Tag, desc: 'Sales & Quantity by Item' },
   { id: 'categorywise-sales', name: 'Categorywise Sales', icon: PieChart, desc: 'Sales Share by Category' },
@@ -101,6 +102,7 @@ export default function Reports() {
   const [activeReport, setActiveReport] = useState('daily-closing')
   const [dateRange, setDateRange] = useState('latest')
   const [closing, setClosing] = useState(null)
+  const [paymentReport, setPaymentReport] = useState(null)
   const [pnlData, setPnlData] = useState(null)
   const [poReport, setPoReport] = useState(null)
   const [grnReport, setGrnReport] = useState(null)
@@ -140,6 +142,9 @@ export default function Reports() {
         if (activeReport === 'daily-closing') {
           const r = await fetch(`/api/reports/daily-closing?${q}`)
           if (r.ok) setClosing(await r.json())
+        } else if (activeReport === 'payment-report') {
+          const r = await fetch(`/api/reports/payment-report?${q}`)
+          if (r.ok) setPaymentReport(await r.json())
         } else if (activeReport === 'offer-sales') {
           const r = await fetch(`/api/reports/offer-sales?${q}`)
           if (r.ok) setOfferSalesReport(await r.json())
@@ -177,6 +182,7 @@ export default function Reports() {
   const getReportTitle = () => {
     switch (activeReport) {
       case 'daily-closing': return 'Daily Closing Report'
+      case 'payment-report': return 'Payment Breakdown Report'
       case 'itemwise-sales': return 'Itemwise Sales Report'
       case 'categorywise-sales': return 'Categorywise Sales Report'
       case 'pnl': return 'Profit & Loss Statement'
@@ -1509,6 +1515,19 @@ export default function Reports() {
         title: 'Expense Report',
         headers: ['Category', 'Description', 'Amount', 'Date'],
         rows: expenseReport.expenses?.map(e => [e.category, e.description || '-', `₹${(e.amount || 0).toLocaleString()}`, e.createdAt?.slice(0, 10)]) || []
+      } : null
+      case 'payment-report': return paymentReport ? {
+        title: 'Payment Breakdown Report',
+        headers: ['Bill #', 'Customer Name', 'Customer Phone', 'Type', 'Payment Method', 'Date & Time', 'Amount (₹)'],
+        rows: (paymentReport.orders || []).map(o => [
+          `#${o.orderNumber || o.id}`,
+          o.customerName || '-',
+          o.customerPhone || '-',
+          (o.type || 'Dine-In').toUpperCase(),
+          (o.paymentMethod || 'CASH').toUpperCase(),
+          o.createdAt ? new Date(o.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : '-',
+          `₹${(Number(o.total) || 0).toLocaleString('en-IN')}`
+        ])
       } : null
       default: return null
     }

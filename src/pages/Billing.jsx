@@ -25,6 +25,12 @@ export default function Billing() {
   const [processing, setProcessing] = useState(false)
   const [dateFilter, setDateFilter] = useState('latest') // 'latest' (Current Shift) | 'today' | 'yesterday' | 'all'
 
+  // Bill Resettlement State
+  const [resettleBill, setResettleBill] = useState(null)
+  const [resettlePaymentMethod, setResettlePaymentMethod] = useState('cash')
+  const [resettleNotes, setResettleNotes] = useState('')
+  const [resettling, setResettling] = useState(false)
+
   const getLocalDateString = (val) => {
     if (!val) return ''
     try {
@@ -283,6 +289,40 @@ export default function Billing() {
 
   const printInvoice = (bill) => {
     PrintService.printBill(bill, true)
+  }
+
+  const handleOpenResettle = (bill) => {
+    setResettleBill(bill)
+    setResettlePaymentMethod((bill.paymentMethod || 'cash').toLowerCase())
+    setResettleNotes('')
+  }
+
+  const handleConfirmResettle = async () => {
+    if (!resettleBill) return
+    setResettling(true)
+    try {
+      const billId = resettleBill.id || resettleBill.orderNumber
+      const res = await fetch(`${getApiUrl()}/api/pos/orders/${billId}/resettle`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paymentMethod: resettlePaymentMethod,
+          paymentStatus: 'paid',
+          notes: resettleNotes || 'Resettled due to wrong settlement'
+        })
+      })
+      if (res.ok) {
+        setPaidBills(prev => prev.map(b => (String(b.id) === String(billId) || String(b.orderNumber) === String(billId)) ? { ...b, paymentMethod: resettlePaymentMethod } : b))
+        alert(`Bill #${resettleBill.orderNumber || resettleBill.id} resettled to ${resettlePaymentMethod.toUpperCase()} successfully!`)
+      } else {
+        alert('Failed to resettle bill')
+      }
+    } catch (e) {
+      console.error('Resettle error:', e)
+      alert('Error resettling bill: ' + e.message)
+    }
+    setResettling(false)
+    setResettleBill(null)
   }
 
   const exportBillsSummary = async () => {
@@ -753,35 +793,69 @@ export default function Billing() {
             {dateFilter === 'today' ? "Today's Bills" : (dateFilter === 'yesterday' ? "Yesterday's Bills" : "All Past Bills")}
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {visiblePaidBills.map(bill => (
-              <div key={bill.id} style={{
-                ...glassCard,
-                padding: '16px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <div>
-                  <div style={{ fontWeight: 600 }}>K{bill.orderNumber}</div>
-                  <div style={{ fontSize: '13px', color: '#6b7280' }}>{bill.tableNumber ? `Table ${bill.tableNumber}` : bill.type} • {bill.paymentMethod || 'cash'}</div>
-                </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            {visiblePaidBills.map(bill => {
+              const pm = (bill.paymentMethod || 'cash').toLowerCase()
+              let pmBadge = { bg: '#f0fdf4', color: '#15803d', label: 'CASH' }
+              if (pm.includes('upi') || pm.includes('online') || pm.includes('gpay')) pmBadge = { bg: '#eff6ff', color: '#1d4ed8', label: 'UPI' }
+              else if (pm.includes('card')) pmBadge = { bg: '#fef3c7', color: '#b45309', label: 'CARD' }
+              else if (pm.includes('wallet')) pmBadge = { bg: '#f5f3ff', color: '#7e22ce', label: 'WALLET' }
+
+              return (
+                <div key={bill.id || bill.orderNumber} style={{
+                  ...glassCard,
+                  padding: '16px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '15px' }}>#Bill {bill.orderNumber || bill.id} (K{bill.orderNumber || bill.id})</div>
+                    <div style={{ fontSize: '12.5px', color: '#6b7280', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>{bill.tableNumber ? `Table ${bill.tableNumber}` : bill.type || 'POS'}</span>
+                      <span style={{ padding: '2px 8px', borderRadius: '10px', fontSize: '11px', fontWeight: 800, background: pmBadge.bg, color: pmBadge.color }}>
+                        {pmBadge.label}
+                      </span>
+                      <span style={{ fontWeight: 800, color: '#10b981' }}>₹{Math.round(bill.total || calculateTotal(bill))}</span>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button 
+                      onClick={() => handleOpenResettle(bill)}
+                      style={{
+                        background: '#fff7ed',
+                        border: '1px solid #ffedd5',
+                        borderRadius: '8px',
+                        padding: '6px 10px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        color: '#c2410c'
+                      }}
+                      title="Resettle Payment Method"
+                    >
+                      <RefreshCw size={14} color="#c2410c" />
+                      Resettle
+                    </button>
                     <button 
                       onClick={() => printInvoice(bill)}
-                    style={{
-                      background: '#f3f4f6',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '8px',
-                      cursor: 'pointer'
-                    }}
-                    title="Print Invoice"
-                  >
-                    <Printer size={18} color="#6b7280" />
-                  </button>
+                      style={{
+                        background: '#f3f4f6',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '8px',
+                        cursor: 'pointer'
+                      }}
+                      title="Print Invoice"
+                    >
+                      <Printer size={18} color="#6b7280" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
             {visiblePaidBills.length === 0 && (
               <div style={{ ...glassCard, padding: '32px', textAlign: 'center', color: '#9ca3af' }}>
                 {dateFilter === 'today' ? "No bills generated today yet" : (dateFilter === 'yesterday' ? "No bills generated yesterday" : "No past bills found")}
@@ -932,6 +1006,126 @@ export default function Billing() {
                 </>
               )}
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Resettle Payment Modal */}
+      {resettleBill && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.5)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            ...glassCard,
+            width: '440px',
+            maxWidth: '90%',
+            padding: '24px',
+            background: 'white',
+            borderRadius: '20px'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#e63946', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <RefreshCw size={20} /> Resettle Bill #{resettleBill.orderNumber || resettleBill.id}
+              </h3>
+              <button onClick={() => setResettleBill(null)} style={{ border: 'none', background: 'none', cursor: 'pointer' }}>
+                <X size={20} color="#6b7280" />
+              </button>
+            </div>
+
+            <div style={{ background: '#f8fafc', padding: '14px 16px', borderRadius: '12px', marginBottom: '16px', fontSize: '13px', color: '#475569', border: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <span>Current Settlement:</span>
+                <span style={{ fontWeight: 800, textTransform: 'uppercase', color: '#dc2626' }}>{resettleBill.paymentMethod || 'CASH'}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>Bill Total Amount:</span>
+                <span style={{ fontWeight: 800, color: '#10b981', fontSize: '15px' }}>₹{Math.round(resettleBill.total || calculateTotal(resettleBill))}</span>
+              </div>
+            </div>
+
+            <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px' }}>
+              Select Correct Payment Method:
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '16px' }}>
+              {paymentMethods.map(method => {
+                const Icon = method.icon
+                const isSelected = resettlePaymentMethod === method.id
+                return (
+                  <button
+                    key={method.id}
+                    type="button"
+                    onClick={() => setResettlePaymentMethod(method.id)}
+                    style={{
+                      padding: '14px',
+                      borderRadius: '12px',
+                      border: isSelected ? '2px solid #e63946' : '1px solid #e5e7eb',
+                      background: isSelected ? '#fff5f5' : '#f9fafb',
+                      color: isSelected ? '#e63946' : '#374151',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      transition: 'all 0.15s'
+                    }}
+                  >
+                    <Icon size={20} />
+                    {method.name}
+                  </button>
+                )
+              })}
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280', marginBottom: '4px' }}>
+                Reason / Notes (Optional):
+              </div>
+              <input
+                type="text"
+                placeholder="e.g. Cashier selected wrong payment mode..."
+                value={resettleNotes}
+                onChange={e => setResettleNotes(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #cbd5e1',
+                  fontSize: '13px',
+                  boxSizing: 'border-box',
+                  outline: 'none'
+                }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                type="button"
+                onClick={() => setResettleBill(null)}
+                style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', background: '#f1f5f9', fontWeight: 700, cursor: 'pointer', color: '#475569' }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmResettle}
+                disabled={resettling}
+                style={{
+                  flex: 2, padding: '12px', borderRadius: '10px', border: 'none',
+                  background: 'linear-gradient(135deg, #e63946, #c1121f)', color: 'white',
+                  fontWeight: 800, cursor: resettling ? 'not-allowed' : 'pointer', fontSize: '14px',
+                  boxShadow: '0 4px 12px rgba(230,57,70,0.3)'
+                }}
+              >
+                {resettling ? 'Resettling...' : 'Confirm Resettlement'}
+              </button>
+            </div>
           </div>
         </div>
       )}

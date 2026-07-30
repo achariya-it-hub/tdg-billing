@@ -3882,10 +3882,81 @@ function runMidnightDayClosingCheck() {
   }
 }
 
+// ============ BILL RESETTLEMENT ENDPOINT ============
+app.put('/api/pos/orders/:id/resettle', (req, res) => {
+  try {
+    const { id } = req.params
+    const { paymentMethod, paymentStatus, status, notes } = req.body
+
+    const targetOrder = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
+    if (!targetOrder) {
+      return res.status(404).json({ error: 'Order / Bill not found' })
+    }
+
+    if (paymentMethod) targetOrder.paymentMethod = paymentMethod.toLowerCase()
+    if (paymentStatus) targetOrder.paymentStatus = paymentStatus
+    if (status) targetOrder.status = status
+    targetOrder.resettledAt = new Date().toISOString()
+    targetOrder.resettledBy = req.body.resettledBy || 'Admin'
+    if (notes) targetOrder.resettleNotes = notes
+
+    saveState()
+    console.log(`[BILL RESETTLEMENT] Order #${targetOrder.orderNumber || targetOrder.id} resettled to ${(targetOrder.paymentMethod || 'cash').toUpperCase()}`)
+    res.json({ success: true, message: 'Bill resettled successfully', order: targetOrder })
+  } catch (e) {
+    console.error('[BILL RESETTLEMENT ERROR]', e.message)
+    res.status(500).json({ error: 'Failed to resettle bill: ' + e.message })
+  }
+})
+
 // Check every 60 seconds for 12:00 AM IST rollover
 setInterval(runMidnightDayClosingCheck, 60000)
 // Run immediately on server initialization
-runMidnightDayClosingCheck()
+// ============ PAYMENT REPORT ENDPOINT ============
+app.get('/api/reports/payment-report', (req, res) => {
+  try {
+    const dayOrders = getFilteredOrdersForPeriod(req.query)
+    const validOrders = dayOrders.filter(isValidSalesOrder)
+
+    let totalRevenue = 0
+    const byMethod = {
+      cash: { total: 0, count: 0, percentage: 0 },
+      upi: { total: 0, count: 0, percentage: 0 },
+      card: { total: 0, count: 0, percentage: 0 },
+      wallet: { total: 0, count: 0, percentage: 0 },
+      other: { total: 0, count: 0, percentage: 0 }
+    }
+
+    validOrders.forEach(o => {
+      const amt = getOrderAmount(o)
+      totalRevenue += amt
+      let m = (o.paymentMethod || 'cash').toLowerCase()
+      if (m.includes('card') || m.includes('credit') || m.includes('debit')) m = 'card'
+      else if (m.includes('upi') || m.includes('gpay') || m.includes('phonepe') || m.includes('paytm') || m.includes('online')) m = 'upi'
+      else if (m.includes('wallet')) m = 'wallet'
+      else if (m.includes('cash')) m = 'cash'
+      else m = 'other'
+
+      byMethod[m].total += amt
+      byMethod[m].count += 1
+    })
+
+    // Calculate percentages
+    Object.keys(byMethod).forEach(m => {
+      byMethod[m].percentage = totalRevenue > 0 ? Number(((byMethod[m].total / totalRevenue) * 100).toFixed(1)) : 0
+    })
+
+    res.json({
+      totalRevenue,
+      totalBills: validOrders.length,
+      byMethod,
+      orders: validOrders
+    })
+  } catch (err) {
+    console.error('[PAYMENT REPORT API ERROR]', err)
+    res.status(500).json({ error: 'Failed to generate Payment Report' })
+  }
+})
 
 // ============ DAILY CLOSING REPORT ============
 app.get('/api/reports/daily-closing', (req, res) => {
