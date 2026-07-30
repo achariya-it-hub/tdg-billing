@@ -587,10 +587,10 @@ export default function Billing() {
               cursor: 'pointer', outline: 'none'
             }}
           >
-            <option value="latest">🔥 Current Shift (Latest 51 Bills — ₹18,413)</option>
-            <option value="today">📅 Today Calendar Date (19 Bills — ₹6,497)</option>
-            <option value="yesterday">🕒 Yesterday (32 Bills — ₹11,916)</option>
-            <option value="all">🗓️ All Time (182 Bills — ₹66,813)</option>
+            <option value="latest">⭐ Today's Shift (77 Bills • ₹28,031)</option>
+            <option value="today">📅 Today Calendar Date (30.07.2026)</option>
+            <option value="yesterday">🕒 Yesterday's Shift (29.07.2026 — 77 Bills • ₹28,031)</option>
+            <option value="all">🌐 All Time (310 Bills • ₹1,13,344)</option>
           </select>
         </div>
 
