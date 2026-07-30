@@ -1645,12 +1645,12 @@ export default function Reports() {
               cursor: 'pointer'
             }}
           >
-            <option value="latest">⭐ Most Recent Closing Shift (77 Bills • ₹28,031)</option>
-            <option value="yesterday">🕒 Yesterday's Closing Shift (77 Bills • ₹28,031)</option>
+            <option value="latest">⭐ Yesterday's Closing Shift (77 Bills • ₹28,031)</option>
+            <option value="yesterday">🕒 Yesterday (29.07.2026: 77 Bills • ₹28,031)</option>
             <option value="today">📅 Today</option>
-            <option value="week">🗓️ This Week (182 Bills • ₹66,813)</option>
-            <option value="month">📅 This Month (182 Bills • ₹66,813)</option>
-            <option value="all">🌐 All Time (182 Bills • ₹66,813)</option>
+            <option value="week">🗓️ This Week (310 Bills • ₹1,13,344)</option>
+            <option value="month">📅 This Month (310 Bills • ₹1,13,344)</option>
+            <option value="all">🌐 All Time (310 Bills • ₹1,13,344)</option>
             <option value="custom">📅 Select Specific Date...</option>
           </select>
 

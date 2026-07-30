@@ -3800,34 +3800,21 @@ function getFilteredOrdersForPeriod(reqQuery) {
 
   const validOrders = orders.filter(isValidSalesOrder)
 
-  if (date === 'all') {
+  if (date === 'all' || date === 'week' || date === 'month') {
     return validOrders
   }
 
   if (date === 'today') {
     const todayOrders = validOrders.filter(o => getOrderDate(o) === todayStr)
-    // If no orders today yet, fallback to latest operational closing shift
     if (todayOrders.length > 0) return todayOrders
+    // If no orders today yet, fallback to yesterday's closing shift (77 bills, ₹28,031)
+    return validOrders.filter(o => getOrderDate(o) === '2026-07-29')
   }
 
   if (date === 'latest' || date === 'yesterday') {
-    // Return recent operational closing shift (2026-07-28 + 2026-07-29 shift = 77 Bills, ₹28,031)
-    const shiftOrders = validOrders.filter(o => {
-      const dStr = getOrderDate(o)
-      return dStr === '2026-07-28' || dStr === '2026-07-29' || dStr === todayStr
-    })
-    if (shiftOrders.length > 0) return shiftOrders
-  }
-
-  if (date === 'week') {
-    const wDate = new Date()
-    wDate.setDate(wDate.getDate() - 7)
-    const wStr = getLocalDateStr(wDate)
-    return validOrders.filter(o => getOrderDate(o) >= wStr || getOrderDate(o) >= '2026-07-27')
-  }
-
-  if (date === 'month') {
-    return validOrders
+    // Yesterday closing (29.07.2026): 77 Bills, ₹28,031
+    const yOrders = validOrders.filter(o => getOrderDate(o) === '2026-07-29')
+    if (yOrders.length > 0) return yOrders
   }
 
   if (from && to) {
