@@ -129,30 +129,6 @@ export default function Reports() {
     if (dateRange === 'custom') {
       return `from=${customDate}&to=${customDate}&date=${customDate}`
     }
-    if (dateRange === 'latest' || dateRange === 'all') {
-      return `date=${dateRange}`
-    }
-    const today = new Date()
-    if (dateRange === 'today') {
-      const d = formatLocalYYYYMMDD(today)
-      return `from=${d}&to=${d}&date=${d}`
-    }
-    if (dateRange === 'yesterday') {
-      const y = new Date(today)
-      y.setDate(y.getDate() - 1)
-      const d = formatLocalYYYYMMDD(y)
-      return `from=${d}&to=${d}&date=${d}`
-    }
-    if (dateRange === 'week') {
-      const w = new Date(today)
-      w.setDate(w.getDate() - 7)
-      return `from=${formatLocalYYYYMMDD(w)}&to=${formatLocalYYYYMMDD(today)}`
-    }
-    if (dateRange === 'month') {
-      const m = new Date(today)
-      m.setDate(m.getDate() - 30)
-      return `from=${formatLocalYYYYMMDD(m)}&to=${formatLocalYYYYMMDD(today)}`
-    }
     return `date=${dateRange}`
   }
 
