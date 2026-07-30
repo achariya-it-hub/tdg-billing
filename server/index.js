@@ -4021,6 +4021,93 @@ app.get('/api/reports/pnl', (req, res) => {
   })
 })
 
+// ============ OFFER SALES REPORT ============
+app.get('/api/reports/offer-sales', (req, res) => {
+  const periodOrders = getFilteredOrdersForPeriod(req.query)
+
+  const offerOrders = []
+  let totalOriginalSum = 0
+  let totalDiscountSum = 0
+  let totalCollectedSum = 0
+
+  periodOrders.forEach(o => {
+    const rawTotal = getOrderAmount(o)
+    const items = o.items || []
+    const subtotal = o.subtotal || items.reduce((sum, i) => sum + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
+    
+    const isOffer20 = o.specialOffer20 || o.offer20Pct || false
+    const isVip50 = o.discountPct === 50 || o.isVip50 || (o.tier && o.tier.includes('50%'))
+    const isComplimentary = Boolean(o.complimentary)
+    const hasDiscount = Boolean(o.discountAmount > 0 || o.discountPct > 0 || (subtotal > rawTotal && !o.tax))
+
+    let offerName = null
+    let discountGiven = 0
+    let originalAmount = subtotal
+
+    if (isVip50) {
+      offerName = '50% VIP Exclusive Discount'
+      discountGiven = Math.round(subtotal * 0.5)
+      originalAmount = subtotal
+    } else if (isOffer20) {
+      offerName = '20% Special Offer (29.07 - 02.08)'
+      discountGiven = Math.round(subtotal * 0.2)
+      originalAmount = subtotal
+    } else if (isComplimentary) {
+      offerName = `Complimentary (${o.complimentaryType || 'General'})`
+      discountGiven = subtotal
+      originalAmount = subtotal
+    } else if (hasDiscount) {
+      offerName = o.offerName || o.promoName || 'Special Order Discount'
+      discountGiven = o.discountAmount || (subtotal - rawTotal) || 0
+      originalAmount = subtotal
+    } else {
+      const dStr = getOrderDate(o)
+      if (dStr >= '2026-07-29' && dStr <= '2026-08-02') {
+        offerName = '20% Special Offer Campaign'
+        discountGiven = Math.round(subtotal * 0.2)
+        originalAmount = subtotal
+      }
+    }
+
+    if (offerName) {
+      const netCollected = rawTotal
+      totalOriginalSum += originalAmount
+      totalDiscountSum += discountGiven
+      totalCollectedSum += netCollected
+
+      offerOrders.push({
+        id: o.id,
+        orderNumber: o.orderNumber,
+        createdAt: o.createdAt,
+        date: getOrderDate(o),
+        type: o.type || 'pos',
+        tableNumber: o.tableNumber || '',
+        customerName: o.customerName || 'Customer',
+        customerPhone: o.customerPhone || '',
+        paymentMethod: o.paymentMethod || 'cash',
+        offerName,
+        originalAmount: Math.round(originalAmount),
+        discountGiven: Math.round(discountGiven),
+        totalCollected: Math.round(netCollected)
+      })
+    }
+  })
+
+  const totalPeriodSales = periodOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
+  const offerSharePct = totalPeriodSales > 0 ? Number(((totalCollectedSum / totalPeriodSales) * 100).toFixed(1)) : 0
+
+  res.json({
+    period: req.query,
+    totalPeriodOrders: periodOrders.length,
+    totalOfferBills: offerOrders.length,
+    totalOriginalValue: Math.round(totalOriginalSum),
+    totalDiscountGiven: Math.round(totalDiscountSum),
+    totalOfferRevenue: Math.round(totalCollectedSum),
+    offerSharePct,
+    orders: offerOrders
+  })
+})
+
 // ============ ITEMWISE SALES REPORT ============
 app.get('/api/reports/itemwise-sales', (req, res) => {
   const periodOrders = getFilteredOrdersForPeriod(req.query)

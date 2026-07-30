@@ -79,6 +79,7 @@ const sampleRecipeData = [
 
 const reportTypes = [
   { id: 'daily-closing', name: 'Daily Closing', icon: Sun, desc: 'Day Summary & Profit' },
+  { id: 'offer-sales', name: 'Offer Sales', icon: Tag, desc: 'Bills & Revenue Made on Offers' },
   { id: 'itemwise-sales', name: 'Itemwise Sales', icon: Tag, desc: 'Sales & Quantity by Item' },
   { id: 'categorywise-sales', name: 'Categorywise Sales', icon: PieChart, desc: 'Sales Share by Category' },
   { id: 'pnl', name: 'P&L Statement', icon: BarChart, desc: 'Profit & Loss Statement' },
@@ -107,6 +108,7 @@ export default function Reports() {
   const [expenseReport, setExpenseReport] = useState(null)
   const [itemwiseReport, setItemwiseReport] = useState(null)
   const [categorywiseReport, setCategorywiseReport] = useState(null)
+  const [offerSalesReport, setOfferSalesReport] = useState(null)
   const [ordersReport, setOrdersReport] = useState([])
   const [loading, setLoading] = useState(false)
   const [showExportMenu, setShowExportMenu] = useState(false)
@@ -162,6 +164,9 @@ export default function Reports() {
         if (activeReport === 'daily-closing') {
           const r = await fetch(`/api/reports/daily-closing?${q}`)
           if (r.ok) setClosing(await r.json())
+        } else if (activeReport === 'offer-sales') {
+          const r = await fetch(`/api/reports/offer-sales?${q}`)
+          if (r.ok) setOfferSalesReport(await r.json())
         } else if (activeReport === 'itemwise-sales') {
           const r = await fetch(`/api/reports/itemwise-sales?${q}`)
           if (r.ok) setItemwiseReport(await r.json())
@@ -531,6 +536,79 @@ export default function Reports() {
             )}
           </div>
         )
+
+      case 'offer-sales': {
+        if (!offerSalesReport) return <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280' }}>Loading Offer Sales Report...</div>
+        const { totalOfferBills, totalOfferRevenue, totalDiscountGiven, offerSharePct, orders = [] } = offerSalesReport
+
+        return (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
+              <div style={{ background: '#fef3c7', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#d97706' }}>{totalOfferBills}</div>
+                <div style={{ fontSize: '13px', color: '#92400e', fontWeight: 600 }}>Total Offer Bills</div>
+              </div>
+              <div style={{ background: '#f0fdf4', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#10b981' }}>₹{totalOfferRevenue.toLocaleString('en-IN')}</div>
+                <div style={{ fontSize: '13px', color: '#166534', fontWeight: 600 }}>Offer Sales Revenue</div>
+              </div>
+              <div style={{ background: '#eff6ff', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#2563eb' }}>₹{totalDiscountGiven.toLocaleString('en-IN')}</div>
+                <div style={{ fontSize: '13px', color: '#1e40af', fontWeight: 600 }}>Total Discount Savings</div>
+              </div>
+              <div style={{ background: '#faf5ff', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#9333ea' }}>{offerSharePct}%</div>
+                <div style={{ fontSize: '13px', color: '#6b21a8', fontWeight: 600 }}>Offer Share of Total Sales</div>
+              </div>
+            </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Bill #</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Date & Time</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Offer / Promo Name</th>
+                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Original Amount</th>
+                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Discount Saved</th>
+                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Final Paid</th>
+                    <th style={{ padding: '16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Payment Mode</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.length === 0 ? (
+                    <tr>
+                      <td colSpan="7" style={{ padding: '40px', textAlign: 'center', color: '#9ca3af' }}>No offer bills found for selected period</td>
+                    </tr>
+                  ) : (
+                    orders.map(o => (
+                      <tr key={o.id} style={{ borderTop: '1px solid rgba(0,0,0,0.04)' }}>
+                        <td style={{ padding: '16px', fontWeight: 700, color: '#111827' }}>#{String(o.orderNumber || o.id).padStart(6, '0')}</td>
+                        <td style={{ padding: '16px', fontSize: '13px', color: '#4b5563' }}>
+                          {new Date(o.createdAt || o.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}, {new Date(o.createdAt || o.date).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                        </td>
+                        <td style={{ padding: '16px' }}>
+                          <span style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: 700, background: '#fef3c7', color: '#92400e' }}>
+                            🏷️ {o.offerName}
+                          </span>
+                        </td>
+                        <td style={{ padding: '16px', textAlign: 'right', fontWeight: 600, color: '#6b7280' }}>₹{o.originalAmount.toLocaleString('en-IN')}</td>
+                        <td style={{ padding: '16px', textAlign: 'right', fontWeight: 700, color: '#dc2626' }}>-₹{o.discountGiven.toLocaleString('en-IN')}</td>
+                        <td style={{ padding: '16px', textAlign: 'right', fontWeight: 800, color: '#16a34a', fontSize: '15px' }}>₹{o.totalCollected.toLocaleString('en-IN')}</td>
+                        <td style={{ padding: '16px', textAlign: 'center' }}>
+                          <span style={{ padding: '4px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', background: '#f3f4f6', color: '#374151' }}>
+                            {o.paymentMethod || 'cash'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )
+      }
 
       case 'kot': {
         return (
@@ -1347,6 +1425,20 @@ export default function Reports() {
           ['Revenue Lost (Cancelled)', `₹${pnlData.cancelled.revenue.toLocaleString()}`],
         ]
       } : null
+      case 'offer-sales': return {
+        title: 'Offer Sales Report',
+        headers: ['Bill No', 'Date', 'Time', 'Offer / Promo Name', 'Original Amount (₹)', 'Discount Saved (₹)', 'Final Paid (₹)', 'Payment Mode'],
+        rows: (offerSalesReport?.orders || []).map(o => [
+          `#${String(o.orderNumber || o.id).padStart(6, '0')}`,
+          new Date(o.createdAt || o.date).toLocaleDateString('en-IN'),
+          new Date(o.createdAt || o.date).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+          o.offerName,
+          `₹${o.originalAmount.toLocaleString('en-IN')}`,
+          `₹${o.discountGiven.toLocaleString('en-IN')}`,
+          `₹${o.totalCollected.toLocaleString('en-IN')}`,
+          (o.paymentMethod || 'cash').toUpperCase()
+        ])
+      }
       case 'kot': return {
         title: 'KOT Report',
         headers: ['KOT #', 'Table / Type', 'Items', 'Time', 'Amount', 'Status'],
