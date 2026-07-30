@@ -422,7 +422,8 @@ export default function Billing() {
         <div class="info-row"><span class="info-label">Date:</span><span class="info-value">${dateStr}</span></div>
         <div class="info-row"><span class="info-label">Time:</span><span class="info-value">${timeStr}</span></div>
         <div class="info-row"><span class="info-label">Payment:</span><span class="info-value" style="text-transform:capitalize">${bill.paymentMethod || 'cash'}</span></div>
-        ${bill.customerName ? `<div class="info-row"><span class="info-label">Customer:</span><span class="info-value">${bill.customerName}</span></div>` : ''}
+        ${bill.customerName ? `<div class="info-row"><span class="info-label">Customer Name:</span><span class="info-value"><strong>${bill.customerName}</strong></span></div>` : ''}
+        ${bill.customerPhone ? `<div class="info-row"><span class="info-label">Customer Phone:</span><span class="info-value"><strong>${bill.customerPhone}</strong></span></div>` : ''}
         <div class="divider"></div>
         <div class="col-header"><span class="item-name">Item</span><span class="item-qty">Qty</span><span class="item-price">Amount</span></div>
         ${items.map((item, i) => {

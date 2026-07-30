@@ -258,7 +258,7 @@ const PrintService = {
           <div class="meta-row"><span>Bill No: <strong>#${String(orderNum).padStart(6, '0')}</strong></span><span>KOT No: <strong>${bill.kotNumber || (bill.orderNumber ? `KOT-${bill.orderNumber}` : `KOT-${orderNum}`)}</strong></span></div>
           <div class="meta-row"><span>Date: ${dateStr}</span><span>Time: ${timeStr}</span></div>
           <div class="meta-row"><span>Mode: <strong>${(bill.type || 'DINE-IN').toUpperCase()}</strong></span><span>Payment: <strong>${paymentMethod}</strong></span></div>
-          ${bill.customerPhone ? `<div class="meta-row"><span>Mob: ${bill.customerPhone}</span></div>` : ''}
+          ${(bill.customerName || bill.customerPhone) ? `<div class="meta-row">${bill.customerName ? `<span>Cust: <strong>${bill.customerName}</strong></span>` : ''}${bill.customerPhone ? `<span>Mob: <strong>${bill.customerPhone}</strong></span>` : ''}</div>` : ''}
         </div>
 
         <div class="col-header">

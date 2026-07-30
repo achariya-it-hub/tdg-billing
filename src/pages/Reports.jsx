@@ -683,6 +683,7 @@ export default function Reports() {
                 <thead>
                   <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Bill / Order #</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Customer</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Type / Table</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Date & Time</th>
                     <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Amount (₹)</th>
@@ -693,11 +694,21 @@ export default function Reports() {
                 <tbody>
                   {ordersReport.length === 0 ? (
                     <tr>
-                      <td colSpan={6} style={{ padding: '32px', textAlign: 'center', color: '#9ca3af' }}>No bill records found for this period</td>
+                      <td colSpan={7} style={{ padding: '32px', textAlign: 'center', color: '#9ca3af' }}>No bill records found for this period</td>
                     </tr>
                   ) : ordersReport.map(order => (
                     <tr key={order.id || order.orderNumber} style={{ borderBottom: '1px solid #f3f4f6' }}>
                       <td style={{ padding: '16px', fontWeight: 700, color: '#1a1a2e' }}>#{order.orderNumber || order.id}</td>
+                      <td style={{ padding: '16px', fontSize: '13px' }}>
+                        {order.customerName || order.customerPhone ? (
+                          <div>
+                            {order.customerName && <div style={{ fontWeight: 600, color: '#111827' }}>{order.customerName}</div>}
+                            {order.customerPhone && <div style={{ fontSize: '12px', color: '#6b7280' }}>📞 {order.customerPhone}</div>}
+                          </div>
+                        ) : (
+                          <span style={{ color: '#9ca3af' }}>-</span>
+                        )}
+                      </td>
                       <td style={{ padding: '16px', fontSize: '13px', textTransform: 'capitalize' }}>
                         <span style={{ background: '#f3f4f6', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>
                           {order.tableNumber ? `Table ${order.tableNumber}` : order.type || 'POS'}
