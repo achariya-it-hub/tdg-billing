@@ -88,7 +88,13 @@ const sampleMenuItems = [
   { id: 'm56', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Regular)', price: 59, isAvailable: 1 },
   { id: 'm57', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Large)', price: 99, isAvailable: 1 },
   { id: 'm58', categoryId: 'c9', name: 'Veg - Hot Chocolate', price: 99, isAvailable: 1 },
-  { id: 'm59', categoryId: 'c9', name: 'Veg - Signature Tea', price: 99, isAvailable: 1 }
+  { id: 'm59', categoryId: 'c9', name: 'Veg - Signature Tea', price: 99, isAvailable: 1 },
+
+  // Kombucha (c10)
+  { id: 'm59a', categoryId: 'c10', name: 'Mint Kombucha', price: 114.29, taxInclusive: true, isAvailable: 1 },
+  { id: 'm59b', categoryId: 'c10', name: 'Hibiscus Kombucha', price: 114.29, taxInclusive: true, isAvailable: 1 },
+  { id: 'm59c', categoryId: 'c10', name: 'Ginger Kombucha', price: 114.29, taxInclusive: true, isAvailable: 1 },
+  { id: 'm59d', categoryId: 'c10', name: 'Butterfly Pea Kombucha', price: 114.29, taxInclusive: true, isAvailable: 1 }
 ]
 
 export const useMenuStore = create((set, get) => ({

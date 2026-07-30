@@ -3,67 +3,67 @@
     {
       "id": "c10",
       "name": "Beverages & Kombucha",
-      "icon": "\ud83c\udf79",
+      "icon": "🍹",
       "color": "#0284c7"
     },
     {
       "id": "c9",
       "name": "Desserts",
-      "icon": "\ud83c\udf70",
+      "icon": "🍰",
       "color": "#ec4899"
     },
     {
       "id": "c4",
       "name": "Dips & Add-Ons",
-      "icon": "\ud83e\udd63",
+      "icon": "🥣",
       "color": "#e63946"
     },
     {
       "id": "c6",
       "name": "Fries",
-      "icon": "\ud83c\udf5f",
+      "icon": "🍟",
       "color": "#f59e0b"
     },
     {
       "id": "c1",
       "name": "Gyros",
-      "icon": "\ud83e\udd59",
+      "icon": "🥙",
       "color": "#d97706"
     },
     {
       "id": "c2",
       "name": "Meals & Combos",
-      "icon": "\ud83c\udf71",
+      "icon": "🍱",
       "color": "#8b5cf6"
     },
     {
       "id": "c11",
       "name": "Protein Max",
-      "icon": "\ud83d\udcaa",
+      "icon": "💪",
       "color": "#10b981"
     },
     {
       "id": "c3",
       "name": "Rice & Salads",
-      "icon": "\ud83e\udd57",
+      "icon": "🥗",
       "color": "#059669"
     },
     {
       "id": "c7",
       "name": "Shakes & Softy",
-      "icon": "\ud83e\udd64",
+      "icon": "🥤",
       "color": "#db2777"
     },
     {
       "id": "c5_strips",
       "name": "Strips",
-      "icon": "\ud83c\udf57",
+      "icon": "🍗",
       "color": "#ca8a04"
     },
     {
       "id": "c5_wings",
       "name": "Wings",
-      "icon": "\ud83c\udf57",
+      "icon": "🍗",
       "color": "#b45309"
     }
   ],
@@ -770,37 +770,41 @@
       "id": "m59a",
       "categoryId": "c10",
       "name": "Mint Kombucha",
-      "price": 120,
+      "price": 114.29,
       "description": "Organic sparkling mint probiotic Kombucha drink",
       "isAvailable": true,
-      "image": "/images/menu/mint-kombucha.png"
+      "image": "/images/menu/mint-kombucha.png",
+      "taxInclusive": true
     },
     {
       "id": "m59b",
       "categoryId": "c10",
       "name": "Hibiscus Kombucha",
-      "price": 120,
+      "price": 114.29,
       "description": "Organic sparkling hibiscus probiotic Kombucha drink",
       "isAvailable": true,
-      "image": "/images/menu/kombucha-hibiscus.png"
+      "image": "/images/menu/kombucha-hibiscus.png",
+      "taxInclusive": true
     },
     {
       "id": "m59c",
       "categoryId": "c10",
       "name": "Ginger Kombucha",
-      "price": 120,
+      "price": 114.29,
       "description": "Organic sparkling ginger probiotic Kombucha drink",
       "isAvailable": true,
-      "image": "/images/menu/ginger - kombucha.png"
+      "image": "/images/menu/ginger - kombucha.png",
+      "taxInclusive": true
     },
     {
       "id": "m59d",
       "categoryId": "c10",
       "name": "Butterfly Pea Kombucha",
-      "price": 120,
+      "price": 114.29,
       "description": "Organic sparkling butterfly pea probiotic Kombucha drink",
       "isAvailable": true,
-      "image": "/images/menu/butterfly pea - kombucha.png"
+      "image": "/images/menu/butterfly pea - kombucha.png",
+      "taxInclusive": true
     },
     {
       "id": "m57",
@@ -5679,17 +5683,17 @@
         "title": "Golden Gyro Feast (50% OFF)",
         "desc": "1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink",
         "tag": "50% OFF",
-        "price": "\u20b9199",
-        "origPrice": "\u20b9398",
+        "price": "₹199",
+        "origPrice": "₹398",
         "image": "/uploads/menu/m1.jpg"
       },
       {
         "id": "2",
         "title": "Crispy Chicken & Dip Combo",
         "desc": "4 Pcs Crispy Chicken + 2 Garlic Dips + Fries",
-        "tag": "SAVE \u20b9151",
-        "price": "\u20b9299",
-        "origPrice": "\u20b9450",
+        "tag": "SAVE ₹151",
+        "price": "₹299",
+        "origPrice": "₹450",
         "image": "/uploads/menu/m3.jpg"
       }
     ]

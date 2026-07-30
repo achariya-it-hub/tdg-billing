@@ -770,37 +770,41 @@
       "id": "m59a",
       "categoryId": "c10",
       "name": "Mint Kombucha",
-      "price": 120,
+      "price": 114.29,
       "description": "Organic sparkling mint probiotic Kombucha drink",
       "isAvailable": true,
-      "image": "/images/menu/mint-kombucha.png"
+      "image": "/images/menu/mint-kombucha.png",
+      "taxInclusive": true
     },
     {
       "id": "m59b",
       "categoryId": "c10",
       "name": "Hibiscus Kombucha",
-      "price": 120,
+      "price": 114.29,
       "description": "Organic sparkling hibiscus probiotic Kombucha drink",
       "isAvailable": true,
-      "image": "/images/menu/kombucha-hibiscus.png"
+      "image": "/images/menu/kombucha-hibiscus.png",
+      "taxInclusive": true
     },
     {
       "id": "m59c",
       "categoryId": "c10",
       "name": "Ginger Kombucha",
-      "price": 120,
+      "price": 114.29,
       "description": "Organic sparkling ginger probiotic Kombucha drink",
       "isAvailable": true,
-      "image": "/images/menu/ginger - kombucha.png"
+      "image": "/images/menu/ginger - kombucha.png",
+      "taxInclusive": true
     },
     {
       "id": "m59d",
       "categoryId": "c10",
       "name": "Butterfly Pea Kombucha",
-      "price": 120,
+      "price": 114.29,
       "description": "Organic sparkling butterfly pea probiotic Kombucha drink",
       "isAvailable": true,
-      "image": "/images/menu/butterfly pea - kombucha.png"
+      "image": "/images/menu/butterfly pea - kombucha.png",
+      "taxInclusive": true
     },
     {
       "id": "m57",
