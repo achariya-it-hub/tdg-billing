@@ -388,7 +388,7 @@ export default function POS() {
 
   const MenuItemCard = ({ item }) => {
     const cat = categories.find(c => c.id === item.categoryId)
-    const isGyroItem = isGyro(item)
+    const isGyroItem = isCustomizable(item)
     return (
       <div
         onClick={() => handleItemClick(item)}
