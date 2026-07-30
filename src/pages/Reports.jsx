@@ -62,7 +62,7 @@ const sampleRecipeData = [
   { menuItem: 'Veg - Pesto Paneer Gyro (Regular)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 75.63, price: 99, margin: '23.6%' },
   { menuItem: 'Veg - Pesto Paneer Gyro (Large)', ingredients: 'Maida, Yeast, Sugar, Iceberg, Veggies, Olives, Jalapenos, Pesto Paneer, Hummus, Peri Peri, Honey Mustard, Packaging, Labour', cost: 119.33, price: 249, margin: '52.1%' },
   { menuItem: 'Non-Veg - Chicken Salad', ingredients: 'Iceberg (40g), Onion (15g), Tomato (20g), Cucumber (25g), Capsicum (15g), Olives (5g), Chicken (65g), Honey Mustard (20g), Burger Sauce (20g), Jalapeno (5g), Dining Tray 250ml, Wooden Spoon, Tissue Paper x2, Takeaway Bag, Labour', cost: 69.05, price: 149, margin: '53.7%' },
-  { menuItem: 'Veg - Paneer Salad', ingredients: 'Iceberg, Veggies, Paneer, Olives, Honey Mustard, Burger Sauce, Jalapenos, Dinning Tray, Wooden Spoon, Tissues, Bags, Labour', cost: 76.18, price: 99, margin: '23.1%' },
+  { menuItem: 'Veg - Paneer Salad', ingredients: 'Iceberg (40g), Onion (15g), Tomato (20g), Cucumber (25g), Capsicum (15g), Paneer (65g), Olives (5g), Honey Mustard (20g), Burger Sauce (20g), Jalapeno (5g), Dining Tray 250ml, Wooden Spoon, Tissue Paper x2, Takeaway Bag, Labour', cost: 76.18, price: 149, margin: '48.9%' },
   // Thick Shakes (c6)
   { menuItem: 'Veg - Vanilla Shake (Regular)', ingredients: 'Milk Base, Vanilla Crush, Beverages Cup 330ml with Lid, Paper Straw, Labour', cost: 66.27, price: 99, margin: '33.1%' },
   { menuItem: 'Veg - Vanilla Shake (Large)', ingredients: 'Milk Base, Vanilla Crush, Beverages Cup 650ml with Lid, Paper Straw, Labour', cost: 125.95, price: 199, margin: '36.7%' },
