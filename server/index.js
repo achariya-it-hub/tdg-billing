@@ -2795,6 +2795,10 @@ app.post('/api/pos/orders', (req, res) => {
   const kotNum = getNextKotNumber()
   const now = new Date().toISOString()
   
+  const rawSub = req.body.rawSubtotal || items?.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || 0) * (item.quantity || 1)), 0) || subtotal || 0
+  const discountVal = Number(req.body.discount || req.body.discountAmount || 0)
+  const discountLabel = req.body.discountName || (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : 'Discount'))
+
   const order = {
     id,
     orderNumber: orderNum,
@@ -2802,6 +2806,11 @@ app.post('/api/pos/orders', (req, res) => {
     type: type || 'dine-in',
     status: 'pending',
     source: source || 'pos',
+    rawSubtotal: rawSub,
+    discount: discountVal,
+    discountName: discountLabel,
+    inaugurationOffer: req.body.inaugurationOffer || false,
+    specialOffer20: req.body.specialOffer20 || false,
     subtotal: subtotal || 0,
     tax: tax || 0,
     total: total || 0,

@@ -195,7 +195,11 @@ const PrintService = {
     const company = getCompanyInfoSync()
     const items = bill.items || []
     const rawSub = bill.rawSubtotal || items.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
-    const discountAmt = bill.discount || bill.discountGiven || 0
+    let discountAmt = Number(bill.discount || bill.discountGiven || bill.discountAmount || 0)
+    if (discountAmt === 0) {
+      if (bill.inaugurationOffer) discountAmt = rawSub * 0.5
+      else if (bill.specialOffer20) discountAmt = rawSub * 0.2
+    }
     const subtotal = bill.subtotal !== undefined ? bill.subtotal : Math.max(0, rawSub - discountAmt)
     const tax = bill.tax !== undefined ? bill.tax : subtotal * 0.05
     const total = bill.total !== undefined ? bill.total : Math.round(subtotal + tax)
@@ -204,7 +208,7 @@ const PrintService = {
     const orderNum = bill.orderNumber || bill.id || '1001'
     const kotNum = bill.kotNumber || bill.orderNumber || bill.id
     const paymentMethod = (bill.paymentMethod || 'cash').toUpperCase()
-    const discountLabel = bill.discountName || (bill.inaugurationOffer ? 'Inauguration Offer 50%' : (bill.specialOffer20 ? 'Special Offer 20%' : 'Discount Saved'))
+    const discountLabel = bill.discountName || (bill.inaugurationOffer ? 'Inauguration Offer 50%' : (bill.specialOffer20 ? 'Special Offer 20%' : 'Discount'))
 
     return `
       <!DOCTYPE html>
