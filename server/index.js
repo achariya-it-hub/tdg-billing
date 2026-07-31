@@ -3771,22 +3771,40 @@ app.post('/api/purchases', (req, res) => {
 // Helper for IST timezone-safe local date string (YYYY-MM-DD)
 const getLocalDateStr = (val) => {
   if (!val) return ''
+  const str = String(val).trim()
+  if (!str) return ''
+
+  // Match DD.MM.YYYY, DD.MM.YY, DD/MM/YYYY, DD/MM/YY, DD-MM-YYYY, DD-MM-YY
+  const dmyMatch = str.match(/^(\d{1,2})[\.\/\-](\d{1,2})[\.\/\-](\d{2,4})/)
+  if (dmyMatch) {
+    let day = dmyMatch[1].padStart(2, '0')
+    let month = dmyMatch[2].padStart(2, '0')
+    let year = dmyMatch[3]
+    if (year.length === 2) year = '20' + year
+    return `${year}-${month}-${day}`
+  }
+
+  // If already YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str
+
+  // Try parsing as ISO date or Date object in Asia/Kolkata IST
   try {
-    const d = typeof val === 'string' || typeof val === 'number' ? new Date(val) : val
+    const d = typeof val === 'number' ? new Date(val) : new Date(str)
     if (!isNaN(d.getTime())) {
       return d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
     }
   } catch (e) {}
-  if (typeof val === 'string' && val.length >= 10) {
-    return val.slice(0, 10)
+
+  if (str.length >= 10 && /^\d{4}-\d{2}-\d{2}/.test(str)) {
+    return str.slice(0, 10)
   }
-  return String(val).slice(0, 10)
+  return str
 }
 
-// Helper to safely extract date field from an order (checks createdAt, date, paidAt, completedAt, timestamp)
+// Helper to safely extract date field from an order (checks date first, then createdAt, paidAt, completedAt, timestamp)
 const getOrderDate = (o) => {
   if (!o) return ''
-  const val = o.createdAt || o.date || o.paidAt || o.completedAt || o.timestamp
+  const val = o.date || o.createdAt || o.paidAt || o.completedAt || o.timestamp
   return getLocalDateStr(val)
 }
 
@@ -3801,7 +3819,7 @@ const getLatestOrderDate = (orderList) => {
   return maxDate || getLocalDateStr(new Date())
 }
 
-// Helper to normalize any date input string (e.g., 30.07.2026, 30.07.26, 2026-07-30)
+// Helper to normalize any date input string (e.g., 30.07.2026, 30.07.26, 2026-07-30, today, yesterday)
 const normalizeDateStr = (inputStr) => {
   if (!inputStr) return ''
   const str = String(inputStr).trim()
@@ -3812,20 +3830,7 @@ const normalizeDateStr = (inputStr) => {
     return getLocalDateStr(y)
   }
   if (str === 'all' || str === 'latest') return str
-
-  // Match DD.MM.YYYY or DD.MM.YY (e.g. 30.07.2026 or 30.07.26)
-  const dmyMatch = str.match(/^(\d{1,2})[\.\/\-](\d{1,2})[\.\/\-](\d{2,4})$/)
-  if (dmyMatch) {
-    let day = dmyMatch[1].padStart(2, '0')
-    let month = dmyMatch[2].padStart(2, '0')
-    let year = dmyMatch[3]
-    if (year.length === 2) year = '20' + year
-    return `${year}-${month}-${day}`
-  }
-
-  // If YYYY-MM-DD
-  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str
-  return str
+  return getLocalDateStr(str)
 }
 
 // Helper for daily KOT sequence resetting to 100 every calendar day
