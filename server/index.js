@@ -4079,61 +4079,76 @@ app.get('/api/reports/daily-closing', (req, res) => {
   const pendingOrders = completedOrders.filter(o => !settledOrders.includes(o))
   const cancelledOrders = dayOrders.filter(o => (o.status || '').toLowerCase() === 'cancelled' || (o.status || '').toLowerCase() === 'void')
 
-  // Total invoices raised
   const totalInvoices = completedOrders.length
-
-  // Total sale value of all bills raised
   const totalSales = completedOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
   const settledSales = settledOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
   const pendingSales = pendingOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
 
-  // By payment method
+  // Breakdown by payment method
   const byPaymentMethod = {}
   completedOrders.forEach(o => {
-    const method = (o.paymentMethod || 'cash').toLowerCase()
+    let method = (o.paymentMethod || 'cash').toLowerCase()
+    if (method.includes('card') || method.includes('credit') || method.includes('debit')) method = 'card'
+    else if (method.includes('upi') || method.includes('gpay') || method.includes('phonepe') || method.includes('paytm') || method.includes('online')) method = 'upi'
+    else if (method.includes('wallet')) method = 'wallet'
+    else if (method.includes('cash')) method = 'cash'
+    else method = 'cash'
+
     byPaymentMethod[method] = (byPaymentMethod[method] || 0) + getOrderAmount(o)
   })
 
-  // By source (POS, mobile, kiosk, etc.)
+  // Breakdown by order source
   const bySource = {}
   completedOrders.forEach(o => {
-    const src = (o.source || o.type || 'pos').toLowerCase()
+    let src = (o.source || o.type || 'dine-in').toUpperCase()
     bySource[src] = (bySource[src] || 0) + 1
   })
 
-  // Average basket value
   const avgBasketValue = totalInvoices > 0 ? Math.round(totalSales / totalInvoices) : 0
 
-  // Expenses for the period
+  // Filter expenses with normalized date string
+  const normDate = date ? normalizeDateStr(date) : ''
+  const normFrom = from ? normalizeDateStr(from) : ''
+  const normTo = to ? normalizeDateStr(to) : ''
+
   const dayExpenses = expenses.filter(e => {
     const dStr = getLocalDateStr(e.createdAt)
-    if (from && to) return dStr >= from && dStr <= to
-    if (date && date !== 'all' && date !== 'latest') return dStr === date
+    if (normFrom && normTo) return dStr >= normFrom && dStr <= normTo
+    if (normDate && normDate !== 'all' && normDate !== 'latest') return dStr === normDate
     return true
   })
   const totalExpenses = dayExpenses.reduce((sum, e) => sum + (e.amount || 0), 0)
 
-  // Purchases for the period
+  // Filter purchases with normalized date string
   const dayPurchases = purchases.filter(p => {
     const dStr = getLocalDateStr(p.createdAt)
-    if (from && to) return dStr >= from && dStr <= to
-    if (date && date !== 'all' && date !== 'latest') return dStr === date
+    if (normFrom && normTo) return dStr >= normFrom && dStr <= normTo
+    if (normDate && normDate !== 'all' && normDate !== 'latest') return dStr === normDate
     return true
   })
   const totalPurchases = dayPurchases.reduce((sum, p) => sum + (p.total || 0), 0)
 
-  // Gross profit = totalSales - totalPurchases - totalExpenses
   const grossProfit = totalSales - totalPurchases - totalExpenses
 
   // Status breakdown
   const statusBreakdown = {}
   dayOrders.forEach(o => {
-    const s = o.status || 'unknown'
+    const s = (o.status || 'pending').toLowerCase()
     statusBreakdown[s] = (statusBreakdown[s] || 0) + 1
   })
 
+  // Format date label for UI header
+  let displayDateStr = todayStr
+  if (normDate && normDate !== 'all' && normDate !== 'latest') {
+    displayDateStr = normDate
+  } else if (normFrom && normTo) {
+    displayDateStr = `${normFrom} to ${normTo}`
+  } else if (completedOrders.length > 0) {
+    displayDateStr = getOrderDate(completedOrders[0]) || todayStr
+  }
+
   res.json({
-    date: date || (from && to ? `${from} to ${to}` : todayStr),
+    date: displayDateStr,
     totalInvoices,
     totalSales: Math.round(totalSales),
     settledSales: Math.round(settledSales),
