@@ -2689,35 +2689,20 @@ app.get('/api/pos/orders', (req, res) => {
   if (source) inMemory = inMemory.filter(o => o.source === source)
   if (date) {
     const norm = normalizeDateStr(date)
-    const latestDate = getLatestOrderDate(orders)
     const todayStr = getLocalDateStr(new Date())
     const yesterdayDate = new Date()
     yesterdayDate.setDate(yesterdayDate.getDate() - 1)
     const yesterdayStr = getLocalDateStr(yesterdayDate)
 
     if (norm === 'latest') {
+      const latestDate = getLatestOrderDate(orders)
       inMemory = inMemory.filter(o => getOrderDate(o) === latestDate || o.status === 'pending' || o.status === 'ready')
     } else if (norm === 'today' || norm === todayStr) {
-      const todayOrders = inMemory.filter(o => getOrderDate(o) === todayStr || o.status === 'pending' || o.status === 'ready')
-      if (todayOrders.length > 0) {
-        inMemory = todayOrders
-      } else {
-        inMemory = inMemory.filter(o => getOrderDate(o) === latestDate || o.status === 'pending' || o.status === 'ready')
-      }
+      inMemory = inMemory.filter(o => getOrderDate(o) === todayStr || o.status === 'pending' || o.status === 'ready')
     } else if (norm === 'yesterday' || norm === yesterdayStr) {
-      const yesterdayOrders = inMemory.filter(o => getOrderDate(o) === yesterdayStr)
-      if (yesterdayOrders.length > 0) {
-        inMemory = yesterdayOrders
-      } else {
-        inMemory = inMemory.filter(o => getOrderDate(o) === latestDate || o.status === 'pending' || o.status === 'ready')
-      }
+      inMemory = inMemory.filter(o => getOrderDate(o) === yesterdayStr)
     } else if (norm !== 'all') {
-      const matched = inMemory.filter(o => getOrderDate(o) === norm || (norm === todayStr && (o.status === 'pending' || o.status === 'ready')))
-      if (matched.length > 0) {
-        inMemory = matched
-      } else {
-        inMemory = inMemory.filter(o => getOrderDate(o) === latestDate || o.status === 'pending' || o.status === 'ready')
-      }
+      inMemory = inMemory.filter(o => getOrderDate(o) === norm || (norm === todayStr && (o.status === 'pending' || o.status === 'ready')))
     }
   }
   res.json(inMemory.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
@@ -3895,51 +3880,54 @@ function getFilteredOrdersForPeriod(reqQuery) {
 
   const today = new Date()
   const todayStr = getLocalDateStr(today)
-  const latestDate = getLatestOrderDate(validOrders)
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+  const yesterdayStr = getLocalDateStr(yesterday)
 
   if (date === 'week') {
     const pastWeek = new Date(today)
     pastWeek.setDate(pastWeek.getDate() - 7)
     const pastWeekStr = getLocalDateStr(pastWeek)
-    const res = validOrders.filter(o => getOrderDate(o) >= pastWeekStr)
-    return res.length > 0 ? res : validOrders
+    return validOrders.filter(o => getOrderDate(o) >= pastWeekStr)
   }
 
   if (date === 'month') {
     const pastMonth = new Date(today)
     pastMonth.setDate(pastMonth.getDate() - 30)
     const pastMonthStr = getLocalDateStr(pastMonth)
-    const res = validOrders.filter(o => getOrderDate(o) >= pastMonthStr)
-    return res.length > 0 ? res : validOrders
+    return validOrders.filter(o => getOrderDate(o) >= pastMonthStr)
   }
 
   if (from && to) {
     const normFrom = normalizeDateStr(from)
     const normTo = normalizeDateStr(to)
-    const res = validOrders.filter(o => {
+    return validOrders.filter(o => {
       const dStr = getOrderDate(o)
       return dStr >= normFrom && dStr <= normTo
     })
-    if (res.length > 0) return res
-    return validOrders.filter(o => getOrderDate(o) === latestDate)
   }
 
   if (from) {
     const normFrom = normalizeDateStr(from)
-    const res = validOrders.filter(o => getOrderDate(o) >= normFrom)
-    if (res.length > 0) return res
-    return validOrders.filter(o => getOrderDate(o) === latestDate)
+    return validOrders.filter(o => getOrderDate(o) >= normFrom)
   }
 
   const normDate = normalizeDateStr(date)
+  if (normDate === 'today' || normDate === todayStr) {
+    return validOrders.filter(o => getOrderDate(o) === todayStr)
+  }
+
+  if (normDate === 'yesterday' || normDate === yesterdayStr) {
+    return validOrders.filter(o => getOrderDate(o) === yesterdayStr)
+  }
+
   if (normDate === 'latest') {
+    const latestDate = getLatestOrderDate(validOrders)
     return validOrders.filter(o => getOrderDate(o) === latestDate)
   }
 
   if (normDate) {
-    const res = validOrders.filter(o => getOrderDate(o) === normDate)
-    if (res.length > 0) return res
-    return validOrders.filter(o => getOrderDate(o) === latestDate)
+    return validOrders.filter(o => getOrderDate(o) === normDate)
   }
 
   return validOrders
