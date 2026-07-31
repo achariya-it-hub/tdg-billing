@@ -9575,6 +9575,69 @@
       "name": "Fries",
       "currentStock": 30,
       "minimumStock": 10
+    },
+    {
+      "id": "inv_cola",
+      "name": "COLA",
+      "category": "Raw Material",
+      "unit": "kg",
+      "costPerUnit": 24.0,
+      "currentStock": 500,
+      "minimumStock": 50
+    },
+    {
+      "id": "inv_sprite",
+      "name": "SPRITE",
+      "category": "Raw Material",
+      "unit": "kg",
+      "costPerUnit": 24.0,
+      "currentStock": 500,
+      "minimumStock": 50
+    },
+    {
+      "id": "inv_ice_cube",
+      "name": "ICE CUBE",
+      "category": "Raw Material",
+      "unit": "kg",
+      "costPerUnit": 6.0,
+      "currentStock": 200,
+      "minimumStock": 20
+    },
+    {
+      "id": "inv_bev_lid_330",
+      "name": "BEVERAGES WITH LID 330ML",
+      "category": "Packing Material",
+      "unit": "pc",
+      "costPerUnit": 5.49,
+      "currentStock": 1000,
+      "minimumStock": 100
+    },
+    {
+      "id": "inv_bev_lid_650",
+      "name": "BEVERAGES WITH LID 650ML",
+      "category": "Packing Material",
+      "unit": "pc",
+      "costPerUnit": 6.85,
+      "currentStock": 1000,
+      "minimumStock": 100
+    },
+    {
+      "id": "inv_straw",
+      "name": "Straw",
+      "category": "Packing Material",
+      "unit": "pc",
+      "costPerUnit": 0.93,
+      "currentStock": 2000,
+      "minimumStock": 200
+    },
+    {
+      "id": "inv_labour",
+      "name": "Labour Cost",
+      "category": "Overhead",
+      "unit": "unit",
+      "costPerUnit": 3.2,
+      "currentStock": 9999,
+      "minimumStock": 0
     }
   ],
   "orderNumber": 1182,
@@ -9653,7 +9716,252 @@
   "poItems": [],
   "grns": [],
   "vendorPayments": [],
-  "recipes": [],
+  "recipes": [
+    {
+      "id": "r_m53a",
+      "menuItemId": "m53a",
+      "menuItemName": "Coca-Cola (Regular)",
+      "name": "COLA 330ML",
+      "description": "Standard recipe for COLA 330ML (Price \u20b959/-)",
+      "yieldQty": 1,
+      "prepTime": 2,
+      "rmCost": 24.36,
+      "pmCost": 6.42,
+      "labourCost": 3.2,
+      "calculatedCost": 33.98,
+      "sellingPrice": 59.0,
+      "ingredients": [
+        {
+          "id": "ri_m53a_1",
+          "inventoryItemId": "inv_cola",
+          "inventoryName": "COLA",
+          "quantity": 1.0,
+          "unit": "kg",
+          "costPerUnit": 24.0,
+          "cost": 24.0
+        },
+        {
+          "id": "ri_m53a_2",
+          "inventoryItemId": "inv_ice_cube",
+          "inventoryName": "ICE CUBE",
+          "quantity": 0.06,
+          "unit": "kg",
+          "costPerUnit": 6.0,
+          "cost": 0.36
+        },
+        {
+          "id": "ri_m53a_3",
+          "inventoryItemId": "inv_bev_lid_330",
+          "inventoryName": "BEVERAGES WITH LID 330ML",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 5.49,
+          "cost": 5.49
+        },
+        {
+          "id": "ri_m53a_4",
+          "inventoryItemId": "inv_straw",
+          "inventoryName": "Straw",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 0.93,
+          "cost": 0.93
+        },
+        {
+          "id": "ri_m53a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 3.2,
+          "cost": 3.2
+        }
+      ]
+    },
+    {
+      "id": "r_m54a",
+      "menuItemId": "m54a",
+      "menuItemName": "Sprite (Regular)",
+      "name": "SPRITE 330ML",
+      "description": "Standard recipe for SPRITE 330ML (Price \u20b959/-)",
+      "yieldQty": 1,
+      "prepTime": 2,
+      "rmCost": 24.36,
+      "pmCost": 6.42,
+      "labourCost": 3.2,
+      "calculatedCost": 33.98,
+      "sellingPrice": 59.0,
+      "ingredients": [
+        {
+          "id": "ri_m54a_1",
+          "inventoryItemId": "inv_sprite",
+          "inventoryName": "SPRITE",
+          "quantity": 1.0,
+          "unit": "kg",
+          "costPerUnit": 24.0,
+          "cost": 24.0
+        },
+        {
+          "id": "ri_m54a_2",
+          "inventoryItemId": "inv_ice_cube",
+          "inventoryName": "ICE CUBE",
+          "quantity": 0.06,
+          "unit": "kg",
+          "costPerUnit": 6.0,
+          "cost": 0.36
+        },
+        {
+          "id": "ri_m54a_3",
+          "inventoryItemId": "inv_bev_lid_330",
+          "inventoryName": "BEVERAGES WITH LID 330ML",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 5.49,
+          "cost": 5.49
+        },
+        {
+          "id": "ri_m54a_4",
+          "inventoryItemId": "inv_straw",
+          "inventoryName": "Straw",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 0.93,
+          "cost": 0.93
+        },
+        {
+          "id": "ri_m54a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 3.2,
+          "cost": 3.2
+        }
+      ]
+    },
+    {
+      "id": "r_m53b",
+      "menuItemId": "m53b",
+      "menuItemName": "Coca-Cola (Large)",
+      "name": "COLA 650ML",
+      "description": "Standard recipe for COLA 650ML (Price \u20b999/-)",
+      "yieldQty": 1,
+      "prepTime": 2,
+      "rmCost": 48.72,
+      "pmCost": 7.78,
+      "labourCost": 3.2,
+      "calculatedCost": 59.7,
+      "sellingPrice": 99.0,
+      "ingredients": [
+        {
+          "id": "ri_m53b_1",
+          "inventoryItemId": "inv_cola",
+          "inventoryName": "COLA",
+          "quantity": 2.0,
+          "unit": "kg",
+          "costPerUnit": 24.0,
+          "cost": 48.0
+        },
+        {
+          "id": "ri_m53b_2",
+          "inventoryItemId": "inv_ice_cube",
+          "inventoryName": "ICE CUBE",
+          "quantity": 0.12,
+          "unit": "kg",
+          "costPerUnit": 6.0,
+          "cost": 0.72
+        },
+        {
+          "id": "ri_m53b_3",
+          "inventoryItemId": "inv_bev_lid_650",
+          "inventoryName": "BEVERAGES WITH LID 650ML",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 6.85,
+          "cost": 6.85
+        },
+        {
+          "id": "ri_m53b_4",
+          "inventoryItemId": "inv_straw",
+          "inventoryName": "Straw",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 0.93,
+          "cost": 0.93
+        },
+        {
+          "id": "ri_m53b_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 3.2,
+          "cost": 3.2
+        }
+      ]
+    },
+    {
+      "id": "r_m54b",
+      "menuItemId": "m54b",
+      "menuItemName": "Sprite (Large)",
+      "name": "SPRITE 650ML",
+      "description": "Standard recipe for SPRITE 650ML (Price \u20b999/-)",
+      "yieldQty": 1,
+      "prepTime": 2,
+      "rmCost": 48.72,
+      "pmCost": 7.78,
+      "labourCost": 3.2,
+      "calculatedCost": 59.7,
+      "sellingPrice": 99.0,
+      "ingredients": [
+        {
+          "id": "ri_m54b_1",
+          "inventoryItemId": "inv_sprite",
+          "inventoryName": "SPRITE",
+          "quantity": 2.0,
+          "unit": "kg",
+          "costPerUnit": 24.0,
+          "cost": 48.0
+        },
+        {
+          "id": "ri_m54b_2",
+          "inventoryItemId": "inv_ice_cube",
+          "inventoryName": "ICE CUBE",
+          "quantity": 0.12,
+          "unit": "kg",
+          "costPerUnit": 6.0,
+          "cost": 0.72
+        },
+        {
+          "id": "ri_m54b_3",
+          "inventoryItemId": "inv_bev_lid_650",
+          "inventoryName": "BEVERAGES WITH LID 650ML",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 6.85,
+          "cost": 6.85
+        },
+        {
+          "id": "ri_m54b_4",
+          "inventoryItemId": "inv_straw",
+          "inventoryName": "Straw",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 0.93,
+          "cost": 0.93
+        },
+        {
+          "id": "ri_m54b_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 3.2,
+          "cost": 3.2
+        }
+      ]
+    }
+  ],
   "mrns": [],
   "company": {
     "name": "Tendens Gyros",

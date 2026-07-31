@@ -4545,123 +4545,87 @@ const sampleRecipes = [
     ]
   },
   {
-    "id": "r_m54",
-    "menuItemId": "m54",
-    "menuItemName": "Veg - Sprite / Coca-Cola (Regular)",
-    "name": "Veg - Sprite / Coca-Cola (Regular) Recipe",
-    "description": "Standard recipe for Veg - Sprite / Coca-Cola (Regular)",
+    "id": "r_m53a",
+    "menuItemId": "m53a",
+    "menuItemName": "Coca-Cola (Regular)",
+    "name": "COLA 330ML",
+    "description": "Standard recipe for COLA 330ML (Price ₹59/-)",
     "yieldQty": 1,
-    "prepTime": 10,
-    "calculatedCost": 33.15,
+    "prepTime": 2,
+    "rmCost": 24.36,
+    "pmCost": 6.42,
+    "labourCost": 3.20,
+    "calculatedCost": 33.98,
+    "sellingPrice": 59.00,
     "ingredients": [
-      {
-        "id": "ri_m54_1",
-        "inventoryItemId": "i_gen_1",
-        "inventoryName": "Cola/Sprite 330ml",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.52
-      },
-      {
-        "id": "ri_m54_2",
-        "inventoryItemId": "i_gen_2",
-        "inventoryName": "Ice Cube",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.52
-      },
-      {
-        "id": "ri_m54_3",
-        "inventoryItemId": "i_gen_3",
-        "inventoryName": "Lime/Peach",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.52
-      },
-      {
-        "id": "ri_m54_4",
-        "inventoryItemId": "i_gen_4",
-        "inventoryName": "Cup with Lid",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.52
-      },
-      {
-        "id": "ri_m54_5",
-        "inventoryItemId": "i_gen_5",
-        "inventoryName": "Straw",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.52
-      },
-      {
-        "id": "ri_m54_6",
-        "inventoryItemId": "i_gen_6",
-        "inventoryName": "Labour",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 5.52
-      }
+      { "id": "ri_m53a_1", "inventoryItemId": "inv_cola", "inventoryName": "COLA", "quantity": 1.000, "unit": "kg", "costPerUnit": 24.00, "cost": 24.00 },
+      { "id": "ri_m53a_2", "inventoryItemId": "inv_ice_cube", "inventoryName": "ICE CUBE", "quantity": 0.060, "unit": "kg", "costPerUnit": 6.00, "cost": 0.36 },
+      { "id": "ri_m53a_3", "inventoryItemId": "inv_bev_lid_330", "inventoryName": "BEVERAGES WITH LID 330ML", "quantity": 1.000, "unit": "pc", "costPerUnit": 5.49, "cost": 5.49 },
+      { "id": "ri_m53a_4", "inventoryItemId": "inv_straw", "inventoryName": "Straw", "quantity": 1.000, "unit": "pc", "costPerUnit": 0.93, "cost": 0.93 },
+      { "id": "ri_m53a_5", "inventoryItemId": "inv_labour", "inventoryName": "Labour Cost", "quantity": 1.000, "unit": "unit", "costPerUnit": 3.20, "cost": 3.20 }
     ]
   },
   {
-    "id": "r_m55",
-    "menuItemId": "m55",
-    "menuItemName": "Veg - Sprite / Coca-Cola (Large)",
-    "name": "Veg - Sprite / Coca-Cola (Large) Recipe",
-    "description": "Standard recipe for Veg - Sprite / Coca-Cola (Large)",
+    "id": "r_m54a",
+    "menuItemId": "m54a",
+    "menuItemName": "Sprite (Regular)",
+    "name": "SPRITE 330ML",
+    "description": "Standard recipe for SPRITE 330ML (Price ₹59/-)",
     "yieldQty": 1,
-    "prepTime": 10,
-    "calculatedCost": 59.7,
+    "prepTime": 2,
+    "rmCost": 24.36,
+    "pmCost": 6.42,
+    "labourCost": 3.20,
+    "calculatedCost": 33.98,
+    "sellingPrice": 59.00,
     "ingredients": [
-      {
-        "id": "ri_m55_1",
-        "inventoryItemId": "i_gen_1",
-        "inventoryName": "Cola/Sprite 650ml",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 9.95
-      },
-      {
-        "id": "ri_m55_2",
-        "inventoryItemId": "i_gen_2",
-        "inventoryName": "Ice Cube",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 9.95
-      },
-      {
-        "id": "ri_m55_3",
-        "inventoryItemId": "i_gen_3",
-        "inventoryName": "Lime/Peach",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 9.95
-      },
-      {
-        "id": "ri_m55_4",
-        "inventoryItemId": "i_gen_4",
-        "inventoryName": "Cup with Lid",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 9.95
-      },
-      {
-        "id": "ri_m55_5",
-        "inventoryItemId": "i_gen_5",
-        "inventoryName": "Straw",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 9.95
-      },
-      {
-        "id": "ri_m55_6",
-        "inventoryItemId": "i_gen_6",
-        "inventoryName": "Labour",
-        "quantity": 1,
-        "unit": "unit",
-        "cost": 9.95
-      }
+      { "id": "ri_m54a_1", "inventoryItemId": "inv_sprite", "inventoryName": "SPRITE", "quantity": 1.000, "unit": "kg", "costPerUnit": 24.00, "cost": 24.00 },
+      { "id": "ri_m54a_2", "inventoryItemId": "inv_ice_cube", "inventoryName": "ICE CUBE", "quantity": 0.060, "unit": "kg", "costPerUnit": 6.00, "cost": 0.36 },
+      { "id": "ri_m54a_3", "inventoryItemId": "inv_bev_lid_330", "inventoryName": "BEVERAGES WITH LID 330ML", "quantity": 1.000, "unit": "pc", "costPerUnit": 5.49, "cost": 5.49 },
+      { "id": "ri_m54a_4", "inventoryItemId": "inv_straw", "inventoryName": "Straw", "quantity": 1.000, "unit": "pc", "costPerUnit": 0.93, "cost": 0.93 },
+      { "id": "ri_m54a_5", "inventoryItemId": "inv_labour", "inventoryName": "Labour Cost", "quantity": 1.000, "unit": "unit", "costPerUnit": 3.20, "cost": 3.20 }
+    ]
+  },
+  {
+    "id": "r_m53b",
+    "menuItemId": "m53b",
+    "menuItemName": "Coca-Cola (Large)",
+    "name": "COLA 650ML",
+    "description": "Standard recipe for COLA 650ML (Price ₹99/-)",
+    "yieldQty": 1,
+    "prepTime": 2,
+    "rmCost": 48.72,
+    "pmCost": 7.78,
+    "labourCost": 3.20,
+    "calculatedCost": 59.70,
+    "sellingPrice": 99.00,
+    "ingredients": [
+      { "id": "ri_m53b_1", "inventoryItemId": "inv_cola", "inventoryName": "COLA", "quantity": 2.000, "unit": "kg", "costPerUnit": 24.00, "cost": 48.00 },
+      { "id": "ri_m53b_2", "inventoryItemId": "inv_ice_cube", "inventoryName": "ICE CUBE", "quantity": 0.120, "unit": "kg", "costPerUnit": 6.00, "cost": 0.72 },
+      { "id": "ri_m53b_3", "inventoryItemId": "inv_bev_lid_650", "inventoryName": "BEVERAGES WITH LID 650ML", "quantity": 1.000, "unit": "pc", "costPerUnit": 6.85, "cost": 6.85 },
+      { "id": "ri_m53b_4", "inventoryItemId": "inv_straw", "inventoryName": "Straw", "quantity": 1.000, "unit": "pc", "costPerUnit": 0.93, "cost": 0.93 },
+      { "id": "ri_m53b_5", "inventoryItemId": "inv_labour", "inventoryName": "Labour Cost", "quantity": 1.000, "unit": "unit", "costPerUnit": 3.20, "cost": 3.20 }
+    ]
+  },
+  {
+    "id": "r_m54b",
+    "menuItemId": "m54b",
+    "menuItemName": "Sprite (Large)",
+    "name": "SPRITE 650ML",
+    "description": "Standard recipe for SPRITE 650ML (Price ₹99/-)",
+    "yieldQty": 1,
+    "prepTime": 2,
+    "rmCost": 48.72,
+    "pmCost": 7.78,
+    "labourCost": 3.20,
+    "calculatedCost": 59.70,
+    "sellingPrice": 99.00,
+    "ingredients": [
+      { "id": "ri_m54b_1", "inventoryItemId": "inv_sprite", "inventoryName": "SPRITE", "quantity": 2.000, "unit": "kg", "costPerUnit": 24.00, "cost": 48.00 },
+      { "id": "ri_m54b_2", "inventoryItemId": "inv_ice_cube", "inventoryName": "ICE CUBE", "quantity": 0.120, "unit": "kg", "costPerUnit": 6.00, "cost": 0.72 },
+      { "id": "ri_m54b_3", "inventoryItemId": "inv_bev_lid_650", "inventoryName": "BEVERAGES WITH LID 650ML", "quantity": 1.000, "unit": "pc", "costPerUnit": 6.85, "cost": 6.85 },
+      { "id": "ri_m54b_4", "inventoryItemId": "inv_straw", "inventoryName": "Straw", "quantity": 1.000, "unit": "pc", "costPerUnit": 0.93, "cost": 0.93 },
+      { "id": "ri_m54b_5", "inventoryItemId": "inv_labour", "inventoryName": "Labour Cost", "quantity": 1.000, "unit": "unit", "costPerUnit": 3.20, "cost": 3.20 }
     ]
   },
   {
