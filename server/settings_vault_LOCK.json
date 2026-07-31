@@ -53,16 +53,5 @@
       "origPrice": "₹450",
       "image": "/uploads/menu/m3.jpg"
     }
-  ],
-  "settings": {
-    "company": {
-      "name": "Tendens Gyros",
-      "phone": "8877661150",
-      "email": "info@tendengyros.com",
-      "gst": "33FJSPA2544H1Z9",
-      "gstNo": "33FJSPA2544H1Z9",
-      "gstin": "33FJSPA2544H1Z9",
-      "address": "Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram"
-    }
-  }
+  ]
 }

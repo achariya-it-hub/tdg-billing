@@ -3997,8 +3997,6 @@ function getFilteredOrdersForPeriod(reqQuery) {
     return validOrders
   }
 
-  const today = new Date()
-  const todayStr = getLocalDateStr(today)
   const yesterday = new Date(today)
   yesterday.setDate(yesterday.getDate() - 1)
   const yesterdayStr = getLocalDateStr(yesterday)
