@@ -48,7 +48,7 @@ export default function Dashboard() {
     { name: 'Swiggy', value: 8 },
     { name: 'Zomato', value: 7 }
   ])
-  const [dateRange, setDateRange] = useState('latest')
+  const [dateRange, setDateRange] = useState('today')
   const [customDate, setCustomDate] = useState(() => {
     const today = new Date()
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
@@ -258,8 +258,8 @@ export default function Dashboard() {
         </div>
         <div style={{ display: 'flex', gap: '6px', background: 'rgba(0,0,0,0.03)', padding: '4px', borderRadius: '14px' }}>
           {[
-            { id: 'latest', label: '⭐ Latest / All Time' },
-            { id: 'today', label: '📅 Today' },
+            { id: 'today', label: "⭐ Today's Shift" },
+            { id: 'yesterday', label: "🕒 Yesterday's Shift" },
             { id: 'week', label: '🗓️ This Week' },
             { id: 'month', label: '📅 This Month' }
           ].map(item => (

@@ -23,7 +23,7 @@ export default function Billing() {
   const [showPayment, setShowPayment] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState('cash')
   const [processing, setProcessing] = useState(false)
-  const [dateFilter, setDateFilter] = useState('latest') // 'latest' (Current Shift) | 'today' | 'yesterday' | 'all'
+  const [dateFilter, setDateFilter] = useState('today') // 'today' (Today's Shift) | 'yesterday' | 'all'
 
   // Bill Resettlement State
   const [resettleBill, setResettleBill] = useState(null)
@@ -86,21 +86,7 @@ export default function Billing() {
 
   const filterByDate = (list) => {
     if (!Array.isArray(list)) return []
-    return list.filter(o => {
-      const dateVal = o.createdAt || o.date || o.paidAt || o.completedAt
-      let dateMatch = true
-      if (dateFilter === 'today') dateMatch = isToday(dateVal)
-      else if (dateFilter === 'yesterday') dateMatch = isYesterday(dateVal)
-      else if (dateFilter === 'latest') {
-        const dStr = getLocalDateString(dateVal)
-        const todayStr = getLocalDateString(new Date())
-        const yDate = new Date()
-        yDate.setDate(yDate.getDate() - 1)
-        const yStr = getLocalDateString(yDate)
-        dateMatch = dStr === todayStr || dStr === yStr
-      }
-      return dateMatch && matchesSearch(o)
-    })
+    return list.filter(o => matchesSearch(o))
   }
 
   const visibleNewKOTs = filterByDate(newKOTs)
@@ -144,6 +130,10 @@ export default function Billing() {
       console.error('Failed to fetch orders:', err)
     }
   }
+
+  useEffect(() => {
+    fetchOrders()
+  }, [dateFilter])
 
   useEffect(() => {
     fetchOrders()
@@ -400,7 +390,12 @@ export default function Billing() {
   const buildInvoiceHTML = (bill, items, total, tax, grandTotal, dateStr, timeStr, company, calcTotal, calcTax) => {
     const paymentMethod = (bill.paymentMethod || 'cash').toLowerCase()
     const upiId = company?.upiId || ''
-    const billTotal = calcTotal ? calcTotal(bill) + (calcTax ? calcTax(calcTotal(bill)) : 0) : grandTotal
+    const rawSub = bill.rawSubtotal || total || 0
+    const discountAmt = bill.discount || bill.discountGiven || 0
+    const netTotal = bill.total || grandTotal
+    const kotNum = bill.kotNumber || bill.orderNumber || bill.id
+    const discountLabel = bill.discountName || (bill.inaugurationOffer ? 'Inauguration Offer 50%' : (bill.specialOffer20 ? 'Special Offer 20%' : 'Discount Saved'))
+    const billTotal = calcTotal ? calcTotal(bill) + (calcTax ? calcTax(calcTotal(bill)) : 0) : netTotal
     return `
       <!DOCTYPE html>
       <html>
@@ -458,7 +453,7 @@ export default function Billing() {
           </div>
         </div>
         <div class="info-row bill-number"><span class="info-label">Bill No:</span><span class="info-value">#${String(bill.orderNumber || bill.id).padStart(6, '0')}</span></div>
-        <div class="info-row"><span class="info-label">KOT No:</span><span class="info-value">${bill.kotNumber || (bill.orderNumber ? `KOT-${bill.orderNumber}` : `KOT-${bill.id}`)}</span></div>
+        <div class="info-row"><span class="info-label">KOT No:</span><span class="info-value">${kotNum ? `KOT-${kotNum}` : `KOT-${bill.orderNumber}`}</span></div>
         <div class="info-row"><span class="info-label">Date:</span><span class="info-value">${dateStr}</span></div>
         <div class="info-row"><span class="info-label">Time:</span><span class="info-value">${timeStr}</span></div>
         <div class="info-row"><span class="info-label">Payment:</span><span class="info-value" style="text-transform:capitalize">${bill.paymentMethod || 'cash'}</span></div>
@@ -473,11 +468,17 @@ export default function Billing() {
           return '<div class="item-row"><span class="item-name">' + (name.length > 22 ? name.slice(0, 20) + '..' : name) + '</span><span class="item-qty">' + qty + '</span><span class="item-price">₹' + amt.toFixed(0) + '</span></div>'
         }).join('')}
         <div class="divider"></div>
-        <div class="subtotal-row"><span>Subtotal</span><span>₹${total.toFixed(0)}</span></div>
+        <div class="subtotal-row"><span>Subtotal</span><span>₹${rawSub.toFixed(0)}</span></div>
+        ${discountAmt > 0 ? `
+          <div class="subtotal-row" style="font-weight:900;">
+            <span>Discount (${discountLabel})</span>
+            <span>-₹${discountAmt.toFixed(0)}</span>
+          </div>
+        ` : ''}
         <div class="subtotal-row"><span>CGST (2.5%)</span><span>₹${(tax / 2).toFixed(0)}</span></div>
         <div class="subtotal-row"><span>SGST (2.5%)</span><span>₹${(tax / 2).toFixed(0)}</span></div>
         <div class="divider-thick"></div>
-        <div class="total-row"><span>TOTAL</span><span class="total-amount">₹${grandTotal.toFixed(0)}</span></div>
+        <div class="total-row"><span>TOTAL COLLECTED</span><span class="total-amount">₹${Math.round(netTotal).toFixed(0)}</span></div>
         <div class="payment-info" style="text-align:right;color:#888;font-size:9px">Round Off: ₹0.00</div>
         <div class="payment-info center" style="margin-top:8px;font-size:11px">Payment: ${(bill.paymentMethod || 'CASH').toUpperCase()}</div>
         ${paymentMethod === 'upi' && upiId ? `
@@ -587,10 +588,9 @@ export default function Billing() {
               cursor: 'pointer', outline: 'none'
             }}
           >
-            <option value="latest">⭐ Today's Shift (77 Bills • ₹28,031)</option>
-            <option value="today">📅 Today Calendar Date (30.07.2026)</option>
-            <option value="yesterday">🕒 Yesterday's Shift (29.07.2026 — 77 Bills • ₹28,031)</option>
-            <option value="all">🌐 All Time (310 Bills • ₹1,13,344)</option>
+            <option value="today">⭐ Today's Shift</option>
+            <option value="yesterday">🕒 Yesterday's Shift</option>
+            <option value="all">🌐 All Time</option>
           </select>
         </div>
 
@@ -647,7 +647,7 @@ export default function Billing() {
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                 <div>
-                  <span style={{ fontSize: '20px', fontWeight: 700 }}>K{kot.orderNumber}</span>
+                  <span style={{ fontSize: '20px', fontWeight: 700 }}>K{kot.kotNumber || kot.orderNumber}</span>
                   <span style={{ marginLeft: '12px', fontSize: '14px', color: '#6b7280' }}>{kot.tableNumber ? `Table ${kot.tableNumber}` : kot.type}</span>
                 </div>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: '#6b7280' }}>
@@ -699,7 +699,7 @@ export default function Billing() {
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <div>
-                    <span style={{ fontSize: '20px', fontWeight: 700 }}>K{order.orderNumber}</span>
+                    <span style={{ fontSize: '20px', fontWeight: 700 }}>K{order.kotNumber || order.orderNumber}</span>
                     <span style={{ marginLeft: '12px', fontSize: '14px', color: '#6b7280' }}>{order.tableNumber ? `Table ${order.tableNumber}` : order.type}</span>
                   </div>
                   <span style={{
@@ -748,7 +748,7 @@ export default function Billing() {
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
                   <div>
-                    <span style={{ fontSize: '20px', fontWeight: 700 }}>K{kot.orderNumber}</span>
+                    <span style={{ fontSize: '20px', fontWeight: 700 }}>K{kot.kotNumber || kot.orderNumber}</span>
                     <span style={{ marginLeft: '12px', fontSize: '14px', color: '#6b7280' }}>{kot.tableNumber ? `Table ${kot.tableNumber}` : kot.type}</span>
                   </div>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: '#6b7280' }}>
@@ -809,7 +809,7 @@ export default function Billing() {
                   alignItems: 'center'
                 }}>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: '15px' }}>#Bill {bill.orderNumber || bill.id} (K{bill.orderNumber || bill.id})</div>
+                    <div style={{ fontWeight: 700, fontSize: '15px' }}>#Bill {bill.orderNumber || bill.id} (K{bill.kotNumber || bill.orderNumber})</div>
                     <div style={{ fontSize: '12.5px', color: '#6b7280', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span>{bill.tableNumber ? `Table ${bill.tableNumber}` : bill.type || 'POS'}</span>
                       <span style={{ padding: '2px 8px', borderRadius: '10px', fontSize: '11px', fontWeight: 800, background: pmBadge.bg, color: pmBadge.color }}>
@@ -898,7 +898,7 @@ export default function Billing() {
 
             <div style={{ background: 'rgba(0,0,0,0.02)', borderRadius: '16px', padding: '16px', marginBottom: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span>KOT #{selectedKOT.orderNumber}</span>
+                <span>KOT #{selectedKOT.kotNumber || selectedKOT.orderNumber} (Bill #{selectedKOT.orderNumber || selectedKOT.id})</span>
                 <span>{selectedKOT.tableNumber ? `Table ${selectedKOT.tableNumber}` : selectedKOT.type}</span>
               </div>
               {selectedKOT.items.map((item, i) => (
@@ -910,19 +910,25 @@ export default function Billing() {
               <div style={{ borderTop: '1px solid #e5e7eb', marginTop: '12px', paddingTop: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                   <span>Subtotal</span>
-                  <span>₹{calculateTotal(selectedKOT)}</span>
+                  <span>₹{(selectedKOT.rawSubtotal || calculateTotal(selectedKOT)).toFixed(0)}</span>
                 </div>
+                {(selectedKOT.discount > 0 || selectedKOT.discountGiven > 0) && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', color: '#dc2626', fontWeight: 600 }}>
+                    <span>Discount ({selectedKOT.discountName || 'Saved'})</span>
+                    <span>-₹{(selectedKOT.discount || selectedKOT.discountGiven || 0).toFixed(0)}</span>
+                  </div>
+                )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                   <span>CGST (2.5%)</span>
-                  <span>₹{(calculateTax(calculateTotal(selectedKOT)) / 2).toFixed(0)}</span>
+                  <span>₹{(calculateTax(selectedKOT.subtotal || calculateTotal(selectedKOT)) / 2).toFixed(0)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span>SGST (2.5%)</span>
-                  <span>₹{(calculateTax(calculateTotal(selectedKOT)) / 2).toFixed(0)}</span>
+                  <span>₹{(calculateTax(selectedKOT.subtotal || calculateTotal(selectedKOT)) / 2).toFixed(0)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '20px', fontWeight: 700 }}>
-                  <span>Total</span>
-                  <span style={{ color: '#e63946' }}>₹{(calculateTotal(selectedKOT) + calculateTax(calculateTotal(selectedKOT))).toFixed(0)}</span>
+                  <span>Total Collected</span>
+                  <span style={{ color: '#e63946' }}>₹{(selectedKOT.total || (calculateTotal(selectedKOT) + calculateTax(calculateTotal(selectedKOT)))).toFixed(0)}</span>
                 </div>
               </div>
             </div>

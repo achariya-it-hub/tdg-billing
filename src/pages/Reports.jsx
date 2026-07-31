@@ -100,7 +100,7 @@ const reportTypes = [
 
 export default function Reports() {
   const [activeReport, setActiveReport] = useState('daily-closing')
-  const [dateRange, setDateRange] = useState('latest')
+  const [dateRange, setDateRange] = useState('today')
   const [closing, setClosing] = useState(null)
   const [paymentReport, setPaymentReport] = useState(null)
   const [pnlData, setPnlData] = useState(null)
@@ -1651,12 +1651,11 @@ export default function Reports() {
               cursor: 'pointer'
             }}
           >
-            <option value="latest">⭐ Yesterday's Closing Shift (77 Bills • ₹28,031)</option>
-            <option value="yesterday">🕒 Yesterday (29.07.2026: 77 Bills • ₹28,031)</option>
-            <option value="today">📅 Today</option>
-            <option value="week">🗓️ This Week (310 Bills • ₹1,13,344)</option>
-            <option value="month">📅 This Month (310 Bills • ₹1,13,344)</option>
-            <option value="all">🌐 All Time (310 Bills • ₹1,13,344)</option>
+            <option value="today">⭐ Today's Shift</option>
+            <option value="yesterday">🕒 Yesterday's Shift</option>
+            <option value="week">🗓️ This Week</option>
+            <option value="month">📅 This Month</option>
+            <option value="all">🌐 All Time</option>
             <option value="custom">📅 Select Specific Date...</option>
           </select>
 

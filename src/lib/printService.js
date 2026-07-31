@@ -194,13 +194,17 @@ const PrintService = {
   generateBillHTML: (bill) => {
     const company = getCompanyInfoSync()
     const items = bill.items || []
-    const subtotal = bill.subtotal || items.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
+    const rawSub = bill.rawSubtotal || items.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
+    const discountAmt = bill.discount || bill.discountGiven || 0
+    const subtotal = bill.subtotal !== undefined ? bill.subtotal : Math.max(0, rawSub - discountAmt)
     const tax = bill.tax !== undefined ? bill.tax : subtotal * 0.05
-    const total = bill.total || (subtotal + tax)
+    const total = bill.total !== undefined ? bill.total : Math.round(subtotal + tax)
     const dateStr = bill.createdAt ? new Date(bill.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
     const timeStr = bill.createdAt ? new Date(bill.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
     const orderNum = bill.orderNumber || bill.id || '1001'
+    const kotNum = bill.kotNumber || bill.orderNumber || bill.id
     const paymentMethod = (bill.paymentMethod || 'cash').toUpperCase()
+    const discountLabel = bill.discountName || (bill.inaugurationOffer ? 'Inauguration Offer 50%' : (bill.specialOffer20 ? 'Special Offer 20%' : 'Discount Saved'))
 
     return `
       <!DOCTYPE html>
@@ -259,7 +263,7 @@ const PrintService = {
         </div>
 
         <div class="meta-section">
-          <div class="meta-row"><span>Bill No: <strong>#${String(orderNum).padStart(6, '0')}</strong></span><span>KOT No: <strong>${bill.kotNumber || (bill.orderNumber ? `KOT-${bill.orderNumber}` : `KOT-${orderNum}`)}</strong></span></div>
+          <div class="meta-row"><span>Bill No: <strong>#${String(orderNum).padStart(6, '0')}</strong></span><span>KOT No: <strong>${kotNum ? `KOT-${kotNum}` : `KOT-${orderNum}`}</strong></span></div>
           <div class="meta-row"><span>Date: ${dateStr}</span><span>Time: ${timeStr}</span></div>
           <div class="meta-row"><span>Mode: <strong>${(bill.type || 'DINE-IN').toUpperCase()}</strong></span><span>Payment: <strong>${paymentMethod}</strong></span></div>
           ${(bill.customerName || bill.customerPhone) ? `<div class="meta-row">${bill.customerName ? `<span>Cust: <strong>${bill.customerName}</strong></span>` : ''}${bill.customerPhone ? `<span>Mob: <strong>${bill.customerPhone}</strong></span>` : ''}</div>` : ''}
@@ -309,19 +313,20 @@ const PrintService = {
         }).join('')}
 
         <div class="totals-section">
-          ${bill.discount > 0 || bill.inaugurationOffer || bill.specialOffer20 ? `
-            <div class="total-row-sub"><span>Subtotal:</span><span>₹${(bill.rawSubtotal || (subtotal + (bill.discount || 0))).toFixed(0)}</span></div>
-            <div class="total-row-sub" style="font-weight:900"><span>${bill.inaugurationOffer ? 'Inauguration Offer (50% OFF)' : 'Special Offer (20% OFF)'}:</span><span>-₹${(bill.discount || 0).toFixed(0)}</span></div>
-          ` : `
-            <div class="total-row-sub"><span>Subtotal:</span><span>₹${subtotal.toFixed(0)}</span></div>
-          `}
+          <div class="total-row-sub"><span>Subtotal:</span><span>₹${rawSub.toFixed(0)}</span></div>
+          ${discountAmt > 0 ? `
+            <div class="total-row-sub" style="font-weight:900;">
+              <span>Discount (${discountLabel}):</span>
+              <span>-₹${discountAmt.toFixed(0)}</span>
+            </div>
+          ` : ''}
           <div class="total-row-sub"><span>CGST (2.5%):</span><span>₹${(tax / 2).toFixed(0)}</span></div>
           <div class="total-row-sub"><span>SGST (2.5%):</span><span>₹${(tax / 2).toFixed(0)}</span></div>
         </div>
 
         <div class="total-box">
-          <span>NET TOTAL:</span>
-          <span>₹${total.toFixed(0)}</span>
+          <span>TOTAL COLLECTED:</span>
+          <span>₹${Math.round(total).toFixed(0)}</span>
         </div>
 
         <div class="footer">

@@ -2688,9 +2688,25 @@ app.get('/api/pos/orders', (req, res) => {
   }
   if (source) inMemory = inMemory.filter(o => o.source === source)
   if (date) {
-    const targetDate = date === 'today' ? getLocalDateStr(new Date()) : date
-    if (targetDate !== 'all' && targetDate !== 'latest') {
-      inMemory = inMemory.filter(o => getOrderDate(o) === targetDate)
+    const norm = normalizeDateStr(date)
+    const latestDate = getLatestOrderDate(orders)
+    if (norm === 'latest') {
+      inMemory = inMemory.filter(o => getOrderDate(o) === latestDate || o.status === 'pending' || o.status === 'ready')
+    } else if (norm === 'today') {
+      const todayStr = getLocalDateStr(new Date())
+      const todayOrders = inMemory.filter(o => getOrderDate(o) === todayStr)
+      if (todayOrders.length > 0) {
+        inMemory = todayOrders
+      } else {
+        inMemory = inMemory.filter(o => getOrderDate(o) === latestDate || o.status === 'pending' || o.status === 'ready')
+      }
+    } else if (norm !== 'all') {
+      const dateMatched = inMemory.filter(o => getOrderDate(o) === norm)
+      if (dateMatched.length > 0) {
+        inMemory = dateMatched
+      } else {
+        inMemory = inMemory.filter(o => getOrderDate(o) === latestDate || o.status === 'pending' || o.status === 'ready')
+      }
     }
   }
   res.json(inMemory.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
@@ -2701,11 +2717,13 @@ app.post('/api/pos/orders', (req, res) => {
   
   const id = uuid()
   const orderNum = ++orderNumber
+  const kotNum = getNextKotNumber()
   const now = new Date().toISOString()
   
   const order = {
     id,
     orderNumber: orderNum,
+    kotNumber: kotNum,
     type: type || 'dine-in',
     status: 'pending',
     source: source || 'pos',
@@ -2740,7 +2758,7 @@ app.post('/api/pos/orders', (req, res) => {
   
   // Emit to connected clients
   io.emit('order:created', order)
-  io.to('kitchen').emit('kot:created', { id, orderNumber: `K${orderNum}`, items: order.items, tableNumber: order.tableNumber, type: order.type, createdAt: now })
+  io.to('kitchen').emit('kot:created', { id, orderNumber: `K${kotNum}`, kotNumber: kotNum, billNumber: orderNum, items: order.items, tableNumber: order.tableNumber, type: order.type, createdAt: now })
   
   res.status(201).json(order)
 })
@@ -3776,6 +3794,67 @@ const getOrderDate = (o) => {
   return getLocalDateStr(val)
 }
 
+// Helper to calculate the most recent order date dynamically from an order list
+const getLatestOrderDate = (orderList) => {
+  if (!orderList || orderList.length === 0) return getLocalDateStr(new Date())
+  let maxDate = ''
+  for (const o of orderList) {
+    const d = getOrderDate(o)
+    if (d && d > maxDate) maxDate = d
+  }
+  return maxDate || getLocalDateStr(new Date())
+}
+
+// Helper to normalize any date input string (e.g., 30.07.2026, 30.07.26, 2026-07-30)
+const normalizeDateStr = (inputStr) => {
+  if (!inputStr) return ''
+  const str = String(inputStr).trim()
+  if (str === 'today') return getLocalDateStr(new Date())
+  if (str === 'yesterday') {
+    const y = new Date()
+    y.setDate(y.getDate() - 1)
+    return getLocalDateStr(y)
+  }
+  if (str === 'all' || str === 'latest') return str
+
+  // Match DD.MM.YYYY or DD.MM.YY (e.g. 30.07.2026 or 30.07.26)
+  const dmyMatch = str.match(/^(\d{1,2})[\.\/\-](\d{1,2})[\.\/\-](\d{2,4})$/)
+  if (dmyMatch) {
+    let day = dmyMatch[1].padStart(2, '0')
+    let month = dmyMatch[2].padStart(2, '0')
+    let year = dmyMatch[3]
+    if (year.length === 2) year = '20' + year
+    return `${year}-${month}-${day}`
+  }
+
+  // If YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str
+  return str
+}
+
+// Helper for daily KOT sequence resetting to 100 every calendar day
+let currentKotDateStr = ''
+let currentKotSeq = 99
+
+function getNextKotNumber() {
+  const todayStr = getLocalDateStr(new Date())
+  if (currentKotDateStr !== todayStr) {
+    currentKotDateStr = todayStr
+    const todayOrders = orders.filter(o => getOrderDate(o) === todayStr)
+    let maxKot = 99
+    todayOrders.forEach(o => {
+      const kNum = Number(o.kotNumber)
+      if (!isNaN(kNum) && kNum > maxKot) {
+        maxKot = kNum
+      }
+    })
+    currentKotSeq = todayOrders.length === 0 ? 100 : Math.max(100, maxKot + 1)
+  } else {
+    currentKotSeq++
+  }
+  return currentKotSeq
+}
+
 // Helper to compute order total amount safely
 const getOrderAmount = (o) => {
   if (o.total !== undefined && o.total !== null && Number(o.total) > 0) {
@@ -3799,40 +3878,45 @@ function getFilteredOrdersForPeriod(reqQuery) {
   const todayStr = getLocalDateStr(new Date())
 
   const validOrders = orders.filter(isValidSalesOrder)
+  const latestDate = getLatestOrderDate(validOrders)
 
   if (date === 'all' || date === 'week' || date === 'month') {
     return validOrders
   }
 
-  if (date === 'today') {
+  const normDate = normalizeDateStr(date)
+
+  if (normDate === 'today') {
     const todayOrders = validOrders.filter(o => getOrderDate(o) === todayStr)
     if (todayOrders.length > 0) return todayOrders
-    // If no orders today yet, fallback to yesterday's closing shift (77 bills, ₹28,031)
-    return validOrders.filter(o => getOrderDate(o) === '2026-07-29')
+    return validOrders.filter(o => getOrderDate(o) === latestDate)
   }
 
-  if (date === 'latest' || date === 'yesterday') {
-    // Yesterday closing (29.07.2026): 77 Bills, ₹28,031
-    const yOrders = validOrders.filter(o => getOrderDate(o) === '2026-07-29')
-    if (yOrders.length > 0) return yOrders
+  if (normDate === 'latest' || normDate === 'yesterday') {
+    const latestOrders = validOrders.filter(o => getOrderDate(o) === latestDate)
+    if (latestOrders.length > 0) return latestOrders
   }
 
   if (from && to) {
+    const normFrom = normalizeDateStr(from)
+    const normTo = normalizeDateStr(to)
     return validOrders.filter(o => {
       const dStr = getOrderDate(o)
-      return dStr >= from && dStr <= to
+      return dStr >= normFrom && dStr <= normTo
     })
   }
 
   if (from) {
-    return validOrders.filter(o => getOrderDate(o) >= from)
+    const normFrom = normalizeDateStr(from)
+    return validOrders.filter(o => getOrderDate(o) >= normFrom)
   }
 
-  if (date) {
-    return validOrders.filter(o => getOrderDate(o) === date)
+  if (normDate && normDate !== 'all') {
+    const matched = validOrders.filter(o => getOrderDate(o) === normDate)
+    if (matched.length > 0) return matched
   }
 
-  return validOrders.filter(o => getOrderDate(o) === todayStr)
+  return validOrders.filter(o => getOrderDate(o) === latestDate || getOrderDate(o) === todayStr)
 }
 
 // ============ AUTOMATIC MIDNIGHT 12:00 AM IST DAY CLOSING ENGINE ============
