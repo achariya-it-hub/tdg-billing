@@ -18,11 +18,32 @@ const JWT_SECRET = process.env.JWT_SECRET || 'tdg_secret_key_123'
 const DATA_DIR = process.env.DATA_DIR || __dirname
 const DB_PATH = join(DATA_DIR, 'db.json')
 
+process.on('uncaughtException', (err) => {
+  console.error('CRITICAL: Uncaught Exception:', err)
+})
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('CRITICAL: Unhandled Rejection:', reason)
+})
+
 function readDb() {
   try {
     if (existsSync(DB_PATH)) {
       const content = readFileSync(DB_PATH, 'utf-8').trim()
       if (content) return JSON.parse(content)
+    }
+    const seedPath = join(__dirname, 'seed-db.json')
+    if (existsSync(seedPath)) {
+      console.log('db.json not found. Auto-seeding initial database from seed-db.json...')
+      const content = readFileSync(seedPath, 'utf-8').trim()
+      if (content) {
+        const parsed = JSON.parse(content)
+        try {
+          writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2))
+        } catch (we) {
+          console.error('Failed writing initial db.json:', we.message)
+        }
+        return parsed
+      }
     }
   } catch (e) {
     console.error('Error reading db.json:', e.message)
