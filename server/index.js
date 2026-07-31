@@ -2696,13 +2696,13 @@ app.get('/api/pos/orders', (req, res) => {
 
     if (norm === 'latest') {
       const latestDate = getLatestOrderDate(orders)
-      inMemory = inMemory.filter(o => getOrderDate(o) === latestDate || o.status === 'pending' || o.status === 'ready')
+      inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
     } else if (norm === 'today' || norm === todayStr) {
-      inMemory = inMemory.filter(o => getOrderDate(o) === todayStr || o.status === 'pending' || o.status === 'ready')
+      inMemory = inMemory.filter(o => getOrderDate(o) === todayStr)
     } else if (norm === 'yesterday' || norm === yesterdayStr) {
       inMemory = inMemory.filter(o => getOrderDate(o) === yesterdayStr)
     } else if (norm !== 'all') {
-      inMemory = inMemory.filter(o => getOrderDate(o) === norm || (norm === todayStr && (o.status === 'pending' || o.status === 'ready')))
+      inMemory = inMemory.filter(o => getOrderDate(o) === norm)
     }
   }
   res.json(inMemory.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
@@ -3965,7 +3965,12 @@ const isValidSalesOrder = (o) => {
 function getFilteredOrdersForPeriod(reqQuery) {
   const { date, from, to } = reqQuery || {}
   const validOrders = orders.filter(isValidSalesOrder)
-  if (!date && !from && !to) return validOrders
+  const today = new Date()
+  const todayStr = getLocalDateStr(today)
+
+  if (!date && !from && !to) {
+    return validOrders.filter(o => getOrderDate(o) === todayStr)
+  }
 
   if (date === 'all') {
     return validOrders
