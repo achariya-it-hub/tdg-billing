@@ -44,10 +44,12 @@ try {
   const serverSize = countSize(serverDst)
   console.log(`   ✓ server/  (${serverSize} files, db.json excluded)`)
 
-  // Copy package files
+  // Copy package & root entry files
   cpSync(join(root, 'package.json'), join(stage, 'package.json'))
   cpSync(join(root, 'package-lock.json'), join(stage, 'package-lock.json'))
-  console.log('   ✓ package.json + package-lock.json')
+  if (existsSync(join(root, 'index.js'))) cpSync(join(root, 'index.js'), join(stage, 'index.js'))
+  if (existsSync(join(root, 'app.js'))) cpSync(join(root, 'app.js'), join(stage, 'app.js'))
+  console.log('   ✓ package.json + index.js + app.js')
 
   // 3. Create zip
   console.log('\n3. Creating deploy-hostinger.zip...')
