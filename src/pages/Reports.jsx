@@ -127,6 +127,8 @@ export default function Reports() {
     return `${year}-${month}-${day}`
   }
 
+  const getApiUrl = () => window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
+
   const getQueryParams = () => {
     if (dateRange === 'custom') {
       return `from=${customDate}&to=${customDate}&date=${customDate}`
@@ -139,41 +141,42 @@ export default function Reports() {
       setLoading(true)
       try {
         const q = getQueryParams()
+        const baseUrl = getApiUrl()
         if (activeReport === 'daily-closing') {
-          const r = await fetch(`/api/reports/daily-closing?${q}`)
+          const r = await fetch(`${baseUrl}/api/reports/daily-closing?${q}`)
           if (r.ok) setClosing(await r.json())
         } else if (activeReport === 'payment-report') {
-          const r = await fetch(`/api/reports/payment-report?${q}`)
+          const r = await fetch(`${baseUrl}/api/reports/payment-report?${q}`)
           if (r.ok) setPaymentReport(await r.json())
         } else if (activeReport === 'offer-sales') {
-          const r = await fetch(`/api/reports/offer-sales?${q}`)
+          const r = await fetch(`${baseUrl}/api/reports/offer-sales?${q}`)
           if (r.ok) setOfferSalesReport(await r.json())
         } else if (activeReport === 'itemwise-sales') {
-          const r = await fetch(`/api/reports/itemwise-sales?${q}`)
+          const r = await fetch(`${baseUrl}/api/reports/itemwise-sales?${q}`)
           if (r.ok) setItemwiseReport(await r.json())
         } else if (activeReport === 'categorywise-sales') {
-          const r = await fetch(`/api/reports/categorywise-sales?${q}`)
+          const r = await fetch(`${baseUrl}/api/reports/categorywise-sales?${q}`)
           if (r.ok) setCategorywiseReport(await r.json())
         } else if (activeReport === 'pnl') {
-          const r = await fetch(`/api/reports/pnl?${q}`)
+          const r = await fetch(`${baseUrl}/api/reports/pnl?${q}`)
           if (r.ok) setPnlData(await r.json())
         } else if (activeReport === 'po') {
-          const r = await fetch(`/api/reports/purchase-orders?${q}`)
+          const r = await fetch(`${baseUrl}/api/reports/purchase-orders?${q}`)
           if (r.ok) setPoReport(await r.json())
         } else if (activeReport === 'grn') {
-          const r = await fetch(`/api/reports/grns?${q}`)
+          const r = await fetch(`${baseUrl}/api/reports/grns?${q}`)
           if (r.ok) setGrnReport(await r.json())
         } else if (activeReport === 'customer') {
-          const r = await fetch(`/api/reports/customers?${q}`)
+          const r = await fetch(`${baseUrl}/api/reports/customers?${q}`)
           if (r.ok) setCustomerReport(await r.json())
         } else if (activeReport === 'expense-report') {
-          const r = await fetch(`/api/reports/expenses?${q}`)
+          const r = await fetch(`${baseUrl}/api/reports/expenses?${q}`)
           if (r.ok) setExpenseReport(await r.json())
         } else if (activeReport === 'bill' || activeReport === 'kot') {
-          const r = await fetch(`/api/pos/orders?${q}`)
+          const r = await fetch(`${baseUrl}/api/pos/orders?${q}`)
           if (r.ok) setOrdersReport(await r.json())
         }
-      } catch { /* ignore */ }
+      } catch (err) { console.error('Failed to fetch report:', err) }
       setLoading(false)
     }
     fetchData()
