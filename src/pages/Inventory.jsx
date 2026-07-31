@@ -16,14 +16,39 @@ const sampleInventory = [
   { id: '8', name: 'Tomato Ketchup', category: 'Sauces', unit: 'kg', currentStock: 15, minimumStock: 5, costPerUnit: 80, supplier: 'Food Supplies Inc.', lastRestocked: '2024-01-09' },
 ]
 
+const API = () => window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
+
 export default function Inventory() {
   const toast = useToast()
-  const [inventory, setInventory] = useState(sampleInventory)
+  const [inventory, setInventory] = useState([])
+  const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('stock')
   const [showAddModal, setShowAddModal] = useState(false)
   const [showRestockModal, setShowRestockModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [restockQty, setRestockQty] = useState('')
+
+  useEffect(() => {
+    fetchInventory()
+  }, [])
+
+  const fetchInventory = async () => {
+    try {
+      setLoading(true)
+      const res = await fetch(`${API()}/api/inventory`)
+      if (res.ok) {
+        const data = await res.json()
+        if (Array.isArray(data) && data.length > 0) {
+          setInventory(data)
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch live inventory:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const lowStockItems = inventory.filter(item => item.currentStock <= item.minimumStock)
   const totalValue = inventory.reduce((sum, item) => sum + (item.currentStock * item.costPerUnit), 0)
@@ -99,7 +124,7 @@ export default function Inventory() {
               <Box size={24} color="#8b5cf6" />
             </div>
             <div>
-              <div style={{ fontSize: '24px', fontWeight: 700 }}>{inventory.length}</div>
+              <div style={{ fontSize: '24px', fontWeight: 700 }}>{new Set(inventory.map(i => i.category || 'General')).size}</div>
               <div style={{ fontSize: '13px', color: '#6b7280' }}>Categories</div>
             </div>
           </div>
