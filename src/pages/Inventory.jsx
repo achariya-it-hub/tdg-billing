@@ -50,8 +50,13 @@ export default function Inventory() {
     }
   }
 
-  const lowStockItems = inventory.filter(item => item.currentStock <= item.minimumStock)
-  const totalValue = inventory.reduce((sum, item) => sum + (item.currentStock * item.costPerUnit), 0)
+  const lowStockItems = inventory.filter(item => (Number(item.currentStock) || 0) <= (Number(item.minimumStock) || 0))
+  const totalValue = inventory.reduce((sum, item) => {
+    const stock = Number(item.currentStock) || 0
+    const cost = Number(item.costPerUnit) || Number(item.cost) || 0
+    const val = stock * cost
+    return sum + (isNaN(val) ? 0 : val)
+  }, 0)
 
   const getStockStatus = (current, minimum) => {
     if (current <= minimum * 0.5) return { color: '#ef4444', label: 'Critical', bg: '#fef2f2' }
@@ -247,11 +252,11 @@ export default function Inventory() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                   <div>
                     <div style={{ fontSize: '12px', color: '#9ca3af' }}>Cost/Unit</div>
-                    <div style={{ fontSize: '16px', fontWeight: 600 }}>₹{item.costPerUnit}</div>
+                    <div style={{ fontSize: '16px', fontWeight: 600 }}>₹{(Number(item.costPerUnit) || Number(item.cost) || 0).toLocaleString()}</div>
                   </div>
                   <div>
                     <div style={{ fontSize: '12px', color: '#9ca3af' }}>Total Value</div>
-                    <div style={{ fontSize: '16px', fontWeight: 600 }}>₹{(item.currentStock * item.costPerUnit).toLocaleString()}</div>
+                    <div style={{ fontSize: '16px', fontWeight: 600 }}>₹{((Number(item.currentStock) || 0) * (Number(item.costPerUnit) || Number(item.cost) || 0)).toLocaleString()}</div>
                   </div>
                 </div>
 

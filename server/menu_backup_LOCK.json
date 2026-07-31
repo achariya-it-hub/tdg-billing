@@ -5757,20 +5757,29 @@
     {
       "id": "1",
       "name": "Chicken Breast",
-      "currentStock": 50,
-      "minimumStock": 20
+      "currentStock": 50.0,
+      "minimumStock": 20.0,
+      "costPerUnit": 180.0,
+      "unit": "kg",
+      "category": "Raw Material"
     },
     {
       "id": "2",
       "name": "Burger Buns",
-      "currentStock": 200,
-      "minimumStock": 50
+      "currentStock": 200.0,
+      "minimumStock": 50.0,
+      "costPerUnit": 8.0,
+      "unit": "kg",
+      "category": "Raw Material"
     },
     {
       "id": "3",
       "name": "Fries",
-      "currentStock": 30,
-      "minimumStock": 10
+      "currentStock": 30.0,
+      "minimumStock": 10.0,
+      "costPerUnit": 45.0,
+      "unit": "kg",
+      "category": "Raw Material"
     },
     {
       "id": "inv_cola",
@@ -5778,8 +5787,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 24.0,
-      "currentStock": 500,
-      "minimumStock": 50
+      "currentStock": 500.0,
+      "minimumStock": 50.0
     },
     {
       "id": "inv_sprite",
@@ -5787,8 +5796,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 24.0,
-      "currentStock": 500,
-      "minimumStock": 50
+      "currentStock": 500.0,
+      "minimumStock": 50.0
     },
     {
       "id": "inv_ice_cube",
@@ -5796,8 +5805,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 6.0,
-      "currentStock": 200,
-      "minimumStock": 20
+      "currentStock": 200.0,
+      "minimumStock": 20.0
     },
     {
       "id": "inv_bev_lid_330",
@@ -5805,8 +5814,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 5.49,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_bev_lid_650",
@@ -5814,8 +5823,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 6.85,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_straw",
@@ -5823,8 +5832,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 0.93,
-      "currentStock": 2000,
-      "minimumStock": 200
+      "currentStock": 2000.0,
+      "minimumStock": 200.0
     },
     {
       "id": "inv_labour",
@@ -5832,8 +5841,8 @@
       "category": "Overhead",
       "unit": "unit",
       "costPerUnit": 3.2,
-      "currentStock": 9999,
-      "minimumStock": 0
+      "currentStock": 9999.0,
+      "minimumStock": 0.0
     },
     {
       "id": "inv_lime",
@@ -5841,8 +5850,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 550.0,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_peach",
@@ -5850,8 +5859,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 550.0,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_paper_straw",
@@ -5859,8 +5868,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 0.7,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_bev_lid_650_icetea",
@@ -5868,8 +5877,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 8.09,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_butter",
@@ -5877,8 +5886,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 754.29,
-      "currentStock": 50,
-      "minimumStock": 5
+      "currentStock": 50.0,
+      "minimumStock": 5.0
     },
     {
       "id": "inv_dark_compound",
@@ -5887,7 +5896,7 @@
       "unit": "kg",
       "costPerUnit": 598.0,
       "currentStock": 5.0,
-      "minimumStock": 5
+      "minimumStock": 5.0
     },
     {
       "id": "inv_egg",
@@ -5895,8 +5904,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 6.3,
-      "currentStock": 500,
-      "minimumStock": 50
+      "currentStock": 500.0,
+      "minimumStock": 50.0
     },
     {
       "id": "inv_vanilla_essence",
@@ -5904,8 +5913,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 484.75,
-      "currentStock": 20,
-      "minimumStock": 2
+      "currentStock": 20.0,
+      "minimumStock": 2.0
     },
     {
       "id": "inv_white_sugar",
@@ -5913,8 +5922,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 48.19,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_maida",
@@ -5923,7 +5932,7 @@
       "unit": "kg",
       "costPerUnit": 46.85,
       "currentStock": 134.0,
-      "minimumStock": 10
+      "minimumStock": 10.0
     },
     {
       "id": "inv_brown_sugar",
@@ -5932,7 +5941,7 @@
       "unit": "kg",
       "costPerUnit": 147.24,
       "currentStock": 2.5,
-      "minimumStock": 5
+      "minimumStock": 5.0
     },
     {
       "id": "inv_milk_compound",
@@ -5940,8 +5949,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 328.0,
-      "currentStock": 50,
-      "minimumStock": 5
+      "currentStock": 50.0,
+      "minimumStock": 5.0
     },
     {
       "id": "inv_white_compound",
@@ -5949,8 +5958,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 391.82,
-      "currentStock": 50,
-      "minimumStock": 5
+      "currentStock": 50.0,
+      "minimumStock": 5.0
     },
     {
       "id": "inv_dinning_tray_250ml",
@@ -5958,8 +5967,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 2.95,
-      "currentStock": 8840,
-      "minimumStock": 100
+      "currentStock": 8840.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_wooden_spoon",
@@ -5967,8 +5976,8 @@
       "category": "Packing Material",
       "unit": "pack",
       "costPerUnit": 91.25,
-      "currentStock": 20,
-      "minimumStock": 100
+      "currentStock": 20.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_tissue_paper",
@@ -5977,7 +5986,7 @@
       "unit": "kg",
       "costPerUnit": 17.41,
       "currentStock": 51.0,
-      "minimumStock": 500
+      "minimumStock": 500.0
     },
     {
       "id": "inv_takeaway_bags",
@@ -5985,8 +5994,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 6.65,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_fried_chicken_mix",
@@ -5994,8 +6003,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 39.25,
-      "currentStock": 200,
-      "minimumStock": 20
+      "currentStock": 200.0,
+      "minimumStock": 20.0
     },
     {
       "id": "inv_extra_hot_spicy",
@@ -6003,8 +6012,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 560.0,
-      "currentStock": 50,
-      "minimumStock": 5
+      "currentStock": 50.0,
+      "minimumStock": 5.0
     },
     {
       "id": "inv_refined_oil",
@@ -6013,7 +6022,7 @@
       "unit": "kg",
       "costPerUnit": 193.85,
       "currentStock": 310.0,
-      "minimumStock": 10
+      "minimumStock": 10.0
     },
     {
       "id": "inv_chicken_leg_thigh",
@@ -6021,8 +6030,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 250.0,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_chicken_cover_1pc",
@@ -6030,8 +6039,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 1.14,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_chicken_tub_4pc",
@@ -6039,8 +6048,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 8.31,
-      "currentStock": 10120,
-      "minimumStock": 50
+      "currentStock": 10120.0,
+      "minimumStock": 50.0
     },
     {
       "id": "inv_tub_lid_4pc",
@@ -6048,8 +6057,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 2.41,
-      "currentStock": 5600,
-      "minimumStock": 50
+      "currentStock": 5600.0,
+      "minimumStock": 50.0
     },
     {
       "id": "inv_chicken_wings",
@@ -6057,8 +6066,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 185.71,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_wings_box_6pc",
@@ -6066,8 +6075,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 6.11,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_chicken_strips",
@@ -6075,8 +6084,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 350.0,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_dry_yeast",
@@ -6085,7 +6094,7 @@
       "unit": "kg",
       "costPerUnit": 335.7,
       "currentStock": 1.5,
-      "minimumStock": 2
+      "minimumStock": 2.0
     },
     {
       "id": "inv_cp_powder",
@@ -6093,8 +6102,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 256.37,
-      "currentStock": 20,
-      "minimumStock": 2
+      "currentStock": 20.0,
+      "minimumStock": 2.0
     },
     {
       "id": "inv_iceberg",
@@ -6102,8 +6111,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 272.0,
-      "currentStock": 30,
-      "minimumStock": 3
+      "currentStock": 30.0,
+      "minimumStock": 3.0
     },
     {
       "id": "inv_onion",
@@ -6112,7 +6121,7 @@
       "unit": "kg",
       "costPerUnit": 39.75,
       "currentStock": 6.0,
-      "minimumStock": 10
+      "minimumStock": 10.0
     },
     {
       "id": "inv_tomato",
@@ -6120,8 +6129,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 73.5,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_cucumber",
@@ -6129,8 +6138,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 84.0,
-      "currentStock": 50,
-      "minimumStock": 5
+      "currentStock": 50.0,
+      "minimumStock": 5.0
     },
     {
       "id": "inv_olives",
@@ -6138,8 +6147,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 775.0,
-      "currentStock": 20,
-      "minimumStock": 2
+      "currentStock": 20.0,
+      "minimumStock": 2.0
     },
     {
       "id": "inv_jalapeno",
@@ -6148,7 +6157,7 @@
       "unit": "kg",
       "costPerUnit": 118.0,
       "currentStock": 17.0,
-      "minimumStock": 2
+      "minimumStock": 2.0
     },
     {
       "id": "inv_spicy_chicken",
@@ -6156,8 +6165,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 301.89,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_hummus",
@@ -6165,8 +6174,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 28.96,
-      "currentStock": 50,
-      "minimumStock": 5
+      "currentStock": 50.0,
+      "minimumStock": 5.0
     },
     {
       "id": "inv_peri_peri_sauce",
@@ -6175,7 +6184,7 @@
       "unit": "kg",
       "costPerUnit": 349.44,
       "currentStock": 0.5,
-      "minimumStock": 5
+      "minimumStock": 5.0
     },
     {
       "id": "inv_honey_mustard",
@@ -6183,8 +6192,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 43.65,
-      "currentStock": 50,
-      "minimumStock": 5
+      "currentStock": 50.0,
+      "minimumStock": 5.0
     },
     {
       "id": "inv_dining_sheet",
@@ -6192,8 +6201,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 1.55,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_dinning_tray",
@@ -6201,8 +6210,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 3.67,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_cream_chicken",
@@ -6210,8 +6219,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 274.0,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_pesto_chicken",
@@ -6219,8 +6228,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 381.75,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_basil",
@@ -6228,8 +6237,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 210.0,
-      "currentStock": 20,
-      "minimumStock": 2
+      "currentStock": 20.0,
+      "minimumStock": 2.0
     },
     {
       "id": "inv_almond",
@@ -6237,8 +6246,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 962.5,
-      "currentStock": 20,
-      "minimumStock": 2
+      "currentStock": 20.0,
+      "minimumStock": 2.0
     },
     {
       "id": "inv_black_pepper",
@@ -6247,7 +6256,7 @@
       "unit": "kg",
       "costPerUnit": 108.91,
       "currentStock": 1.0,
-      "minimumStock": 2
+      "minimumStock": 2.0
     },
     {
       "id": "inv_spicy_paneer",
@@ -6255,8 +6264,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 451.89,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_cream_paneer",
@@ -6264,8 +6273,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 424.0,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_bbq_paneer",
@@ -6273,8 +6282,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 420.4,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_pesto_paneer",
@@ -6282,8 +6291,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 531.75,
-      "currentStock": 100,
-      "minimumStock": 10
+      "currentStock": 100.0,
+      "minimumStock": 10.0
     },
     {
       "id": "inv_potato",
@@ -6291,8 +6300,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 50.0,
-      "currentStock": 200,
-      "minimumStock": 20
+      "currentStock": 200.0,
+      "minimumStock": 20.0
     },
     {
       "id": "inv_cajun_masala",
@@ -6300,8 +6309,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 600.0,
-      "currentStock": 10,
-      "minimumStock": 1
+      "currentStock": 10.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_fries_cup",
@@ -6309,8 +6318,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 6.55,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_paper_bag",
@@ -6318,8 +6327,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 6.45,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_vanilla_crush",
@@ -6327,8 +6336,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 270.0,
-      "currentStock": 20,
-      "minimumStock": 2
+      "currentStock": 20.0,
+      "minimumStock": 2.0
     },
     {
       "id": "inv_strawberry_crush",
@@ -6336,8 +6345,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 280.0,
-      "currentStock": 20,
-      "minimumStock": 2
+      "currentStock": 20.0,
+      "minimumStock": 2.0
     },
     {
       "id": "inv_biscoff_spread",
@@ -6345,8 +6354,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 750.0,
-      "currentStock": 20,
-      "minimumStock": 2
+      "currentStock": 20.0,
+      "minimumStock": 2.0
     },
     {
       "id": "inv_chocolate_sauce",
@@ -6355,7 +6364,7 @@
       "unit": "kg",
       "costPerUnit": 1040.0,
       "currentStock": 5.0,
-      "minimumStock": 2
+      "minimumStock": 2.0
     },
     {
       "id": "inv_kunafa_pistachio",
@@ -6363,8 +6372,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 950.0,
-      "currentStock": 10,
-      "minimumStock": 1
+      "currentStock": 10.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_pet_glass_350",
@@ -6372,8 +6381,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 5.0,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_pet_glass_500",
@@ -6381,8 +6390,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 6.5,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_hot_choco_powder",
@@ -6390,8 +6399,8 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 450.0,
-      "currentStock": 20,
-      "minimumStock": 2
+      "currentStock": 20.0,
+      "minimumStock": 2.0
     },
     {
       "id": "inv_paper_cup_250",
@@ -6399,8 +6408,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 3.5,
-      "currentStock": 1000,
-      "minimumStock": 100
+      "currentStock": 1000.0,
+      "minimumStock": 100.0
     },
     {
       "id": "inv_softy_mix",
@@ -6408,8 +6417,8 @@
       "category": "Raw Material",
       "unit": "L",
       "costPerUnit": 65.0,
-      "currentStock": 50,
-      "minimumStock": 5
+      "currentStock": 50.0,
+      "minimumStock": 5.0
     },
     {
       "id": "inv_waffle_cone",
@@ -6417,8 +6426,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 3.5,
-      "currentStock": 500,
-      "minimumStock": 50
+      "currentStock": 500.0,
+      "minimumStock": 50.0
     },
     {
       "id": "inv_kombucha_base",
@@ -6426,8 +6435,8 @@
       "category": "Raw Material",
       "unit": "L",
       "costPerUnit": 120.0,
-      "currentStock": 50,
-      "minimumStock": 5
+      "currentStock": 50.0,
+      "minimumStock": 5.0
     },
     {
       "id": "inv_ginger_kombucha_350ml",
@@ -6435,8 +6444,8 @@
       "category": "Beverages",
       "unit": "pc",
       "costPerUnit": 70.8,
-      "currentStock": 45,
-      "minimumStock": 4
+      "currentStock": 45.0,
+      "minimumStock": 4.0
     },
     {
       "id": "inv_hibiscus_kombucha_350ml",
@@ -6444,8 +6453,8 @@
       "category": "Beverages",
       "unit": "pc",
       "costPerUnit": 70.8,
-      "currentStock": 35,
-      "minimumStock": 3
+      "currentStock": 35.0,
+      "minimumStock": 3.0
     },
     {
       "id": "inv_mint_kombucha_350ml",
@@ -6453,8 +6462,8 @@
       "category": "Beverages",
       "unit": "pc",
       "costPerUnit": 70.8,
-      "currentStock": 40,
-      "minimumStock": 4
+      "currentStock": 40.0,
+      "minimumStock": 4.0
     },
     {
       "id": "inv_boneless_chicken",
@@ -6463,7 +6472,7 @@
       "unit": "kg",
       "costPerUnit": 236.41,
       "currentStock": 324.655,
-      "minimumStock": 32
+      "minimumStock": 32.0
     },
     {
       "id": "inv_aluminium_roll",
@@ -6472,7 +6481,7 @@
       "unit": "kg",
       "costPerUnit": 472.89,
       "currentStock": 5.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_beverages_350ml_with_lid",
@@ -6480,8 +6489,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 5.4,
-      "currentStock": 29550,
-      "minimumStock": 2955
+      "currentStock": 29550.0,
+      "minimumStock": 2955.0
     },
     {
       "id": "inv_beverages_500ml_with_lid",
@@ -6489,8 +6498,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 8.04,
-      "currentStock": 8850,
-      "minimumStock": 885
+      "currentStock": 8850.0,
+      "minimumStock": 885.0
     },
     {
       "id": "inv_burger_box",
@@ -6498,8 +6507,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 5.47,
-      "currentStock": 65,
-      "minimumStock": 6
+      "currentStock": 65.0,
+      "minimumStock": 6.0
     },
     {
       "id": "inv_butter_paper",
@@ -6508,7 +6517,7 @@
       "unit": "kg",
       "costPerUnit": 375.03,
       "currentStock": 85.0,
-      "minimumStock": 8
+      "minimumStock": 8.0
     },
     {
       "id": "inv_butter_sheet_roll",
@@ -6517,7 +6526,7 @@
       "unit": "roll",
       "costPerUnit": 246.62,
       "currentStock": 9.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_carry_bag_13_x_16",
@@ -6526,7 +6535,7 @@
       "unit": "pack",
       "costPerUnit": 233.64,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_chicken_cover_2_pcs",
@@ -6534,8 +6543,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 1.84,
-      "currentStock": 2000,
-      "minimumStock": 200
+      "currentStock": 2000.0,
+      "minimumStock": 200.0
     },
     {
       "id": "inv_chicken_cover_4_pcs",
@@ -6543,8 +6552,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 3.12,
-      "currentStock": 4700,
-      "minimumStock": 470
+      "currentStock": 4700.0,
+      "minimumStock": 470.0
     },
     {
       "id": "inv_chicken_tub_8_pcs",
@@ -6552,8 +6561,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 10.55,
-      "currentStock": 5920,
-      "minimumStock": 592
+      "currentStock": 5920.0,
+      "minimumStock": 592.0
     },
     {
       "id": "inv_cling_wrap",
@@ -6562,7 +6571,7 @@
       "unit": "pc",
       "costPerUnit": 370.0,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_dining_sheet",
@@ -6570,8 +6579,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 2.05,
-      "currentStock": 170,
-      "minimumStock": 17
+      "currentStock": 170.0,
+      "minimumStock": 17.0
     },
     {
       "id": "inv_dinning_tray_500ml",
@@ -6579,8 +6588,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 4.24,
-      "currentStock": 5200,
-      "minimumStock": 520
+      "currentStock": 5200.0,
+      "minimumStock": 520.0
     },
     {
       "id": "inv_dip_small_bowl",
@@ -6588,8 +6597,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 1.77,
-      "currentStock": 850,
-      "minimumStock": 85
+      "currentStock": 850.0,
+      "minimumStock": 85.0
     },
     {
       "id": "inv_foam_large",
@@ -6597,8 +6606,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 7.55,
-      "currentStock": 6000,
-      "minimumStock": 600
+      "currentStock": 6000.0,
+      "minimumStock": 600.0
     },
     {
       "id": "inv_garbage_cover_jumbo",
@@ -6606,8 +6615,8 @@
       "category": "Packing Material",
       "unit": "kg",
       "costPerUnit": 109.95,
-      "currentStock": 20,
-      "minimumStock": 2
+      "currentStock": 20.0,
+      "minimumStock": 2.0
     },
     {
       "id": "inv_hand_nitrile_gloves",
@@ -6615,8 +6624,8 @@
       "category": "Packing Material",
       "unit": "pack",
       "costPerUnit": 454.0,
-      "currentStock": 10,
-      "minimumStock": 1
+      "currentStock": 10.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_hand_wash",
@@ -6625,7 +6634,7 @@
       "unit": "container",
       "costPerUnit": 56.25,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_juice_cup_250ml",
@@ -6633,8 +6642,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 3.04,
-      "currentStock": 126,
-      "minimumStock": 12
+      "currentStock": 126.0,
+      "minimumStock": 12.0
     },
     {
       "id": "inv_juice_paper_cup_roll",
@@ -6643,7 +6652,7 @@
       "unit": "roll",
       "costPerUnit": 17.59,
       "currentStock": 7.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_mel_cup",
@@ -6652,7 +6661,7 @@
       "unit": "pack",
       "costPerUnit": 111.25,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_paper_bag___large",
@@ -6660,8 +6669,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 10.36,
-      "currentStock": 2950,
-      "minimumStock": 295
+      "currentStock": 2950.0,
+      "minimumStock": 295.0
     },
     {
       "id": "inv_paper_bag___small",
@@ -6669,8 +6678,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 7.04,
-      "currentStock": 5940,
-      "minimumStock": 594
+      "currentStock": 5940.0,
+      "minimumStock": 594.0
     },
     {
       "id": "inv_paper_plate",
@@ -6679,7 +6688,7 @@
       "unit": "pack",
       "costPerUnit": 78.08,
       "currentStock": 2.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_paper_straw_pack",
@@ -6688,7 +6697,7 @@
       "unit": "pack",
       "costPerUnit": 8.0,
       "currentStock": 2.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_paper_straw___gp",
@@ -6696,8 +6705,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 0.7,
-      "currentStock": 39500,
-      "minimumStock": 3950
+      "currentStock": 39500.0,
+      "minimumStock": 3950.0
     },
     {
       "id": "inv_pp_cover_10_14",
@@ -6706,7 +6715,7 @@
       "unit": "kg",
       "costPerUnit": 242.13,
       "currentStock": 3.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_pp_cover_6_10",
@@ -6715,7 +6724,7 @@
       "unit": "kg",
       "costPerUnit": 242.13,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_silver_plate_8",
@@ -6723,8 +6732,8 @@
       "category": "Packing Material",
       "unit": "pack",
       "costPerUnit": 47.6,
-      "currentStock": 10,
-      "minimumStock": 1
+      "currentStock": 10.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_softies_wave_cup",
@@ -6732,8 +6741,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 2.53,
-      "currentStock": 22400,
-      "minimumStock": 2240
+      "currentStock": 22400.0,
+      "minimumStock": 2240.0
     },
     {
       "id": "inv_sugar_cone",
@@ -6741,8 +6750,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 2.95,
-      "currentStock": 1115,
-      "minimumStock": 111
+      "currentStock": 1115.0,
+      "minimumStock": 111.0
     },
     {
       "id": "inv_tea_cup",
@@ -6751,7 +6760,7 @@
       "unit": "pack",
       "costPerUnit": 43.36,
       "currentStock": 4.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_tub_lid_8_pcs",
@@ -6759,8 +6768,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 3.35,
-      "currentStock": 5400,
-      "minimumStock": 540
+      "currentStock": 5400.0,
+      "minimumStock": 540.0
     },
     {
       "id": "inv_vanilla_softy_tube",
@@ -6768,8 +6777,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 407.5,
-      "currentStock": 4,
-      "minimumStock": 1
+      "currentStock": 4.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_white_tape_1_inch",
@@ -6778,7 +6787,7 @@
       "unit": "kg",
       "costPerUnit": 17.41,
       "currentStock": 3.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_wings_3_pcs_cover",
@@ -6786,8 +6795,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 6.01,
-      "currentStock": 5640,
-      "minimumStock": 564
+      "currentStock": 5640.0,
+      "minimumStock": 564.0
     },
     {
       "id": "inv_wings_6_pcs_cover",
@@ -6795,8 +6804,8 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 7.18,
-      "currentStock": 5110,
-      "minimumStock": 511
+      "currentStock": 5110.0,
+      "minimumStock": 511.0
     },
     {
       "id": "inv_wooden_fork",
@@ -6804,8 +6813,8 @@
       "category": "Packing Material",
       "unit": "pack",
       "costPerUnit": 91.25,
-      "currentStock": 15,
-      "minimumStock": 1
+      "currentStock": 15.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_wooden_stirrer",
@@ -6814,7 +6823,7 @@
       "unit": "pack",
       "costPerUnit": 14.01,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_aromatic_mix",
@@ -6823,7 +6832,7 @@
       "unit": "kg",
       "costPerUnit": 271.74,
       "currentStock": 5.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_atta",
@@ -6832,7 +6841,7 @@
       "unit": "kg",
       "costPerUnit": 59.45,
       "currentStock": 15.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_beverage_seasoning_masala",
@@ -6841,7 +6850,7 @@
       "unit": "kg",
       "costPerUnit": 259.05,
       "currentStock": 25.0,
-      "minimumStock": 2
+      "minimumStock": 2.0
     },
     {
       "id": "inv_bbq_seasoning",
@@ -6850,7 +6859,7 @@
       "unit": "kg",
       "costPerUnit": 144.0,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_black_olives",
@@ -6858,8 +6867,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 564.0,
-      "currentStock": 4,
-      "minimumStock": 1
+      "currentStock": 4.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_bread_crumb",
@@ -6868,7 +6877,7 @@
       "unit": "kg",
       "costPerUnit": 248.5,
       "currentStock": 19.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_bread_improver",
@@ -6877,7 +6886,7 @@
       "unit": "kg",
       "costPerUnit": 248.5,
       "currentStock": 4.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_cajun_spice",
@@ -6886,7 +6895,7 @@
       "unit": "kg",
       "costPerUnit": 343.34,
       "currentStock": 2.5,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_calcium_propionate",
@@ -6895,7 +6904,7 @@
       "unit": "kg",
       "costPerUnit": 272.5,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_cheese_white",
@@ -6904,7 +6913,7 @@
       "unit": "kg",
       "costPerUnit": 547.0,
       "currentStock": 10.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_cheese_jalapeno_seasoning",
@@ -6912,8 +6921,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 1134.0,
-      "currentStock": 2,
-      "minimumStock": 1
+      "currentStock": 2.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_cheese_slice___brite",
@@ -6921,8 +6930,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 464.0,
-      "currentStock": 1,
-      "minimumStock": 1
+      "currentStock": 1.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_chicken_seasoning",
@@ -6931,7 +6940,7 @@
       "unit": "kg",
       "costPerUnit": 277.66,
       "currentStock": 7.5,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_cinnamon",
@@ -6940,7 +6949,7 @@
       "unit": "kg",
       "costPerUnit": 126.0,
       "currentStock": 2.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_del_monte_chilli_garlic",
@@ -6949,7 +6958,7 @@
       "unit": "kg",
       "costPerUnit": 476.64,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_del_monte_chilli_mayo",
@@ -6958,7 +6967,7 @@
       "unit": "kg",
       "costPerUnit": 441.01,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_del_monte_chilli_white",
@@ -6967,7 +6976,7 @@
       "unit": "kg",
       "costPerUnit": 482.81,
       "currentStock": 5.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_demerara_sugar",
@@ -6976,7 +6985,7 @@
       "unit": "kg",
       "costPerUnit": 158.04,
       "currentStock": 0.25,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_denness_powder",
@@ -6985,7 +6994,7 @@
       "unit": "kg",
       "costPerUnit": 291.64,
       "currentStock": 9.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_dough_premix",
@@ -6994,7 +7003,7 @@
       "unit": "kg",
       "costPerUnit": 209.5,
       "currentStock": 5.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_dulce_de_leche_cream_spread",
@@ -7003,7 +7012,7 @@
       "unit": "kg",
       "costPerUnit": 1017.6,
       "currentStock": 5.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_fgg",
@@ -7012,7 +7021,7 @@
       "unit": "kg",
       "costPerUnit": 72.18,
       "currentStock": 7.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_frozen_fried_onion",
@@ -7021,7 +7030,7 @@
       "unit": "kg",
       "costPerUnit": 117.14,
       "currentStock": 15.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_frozen_french_fry",
@@ -7029,8 +7038,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 1260.0,
-      "currentStock": 2,
-      "minimumStock": 1
+      "currentStock": 2.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_frozen_strawberry",
@@ -7039,7 +7048,7 @@
       "unit": "kg",
       "costPerUnit": 437.5,
       "currentStock": 4.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_garlic",
@@ -7048,7 +7057,7 @@
       "unit": "kg",
       "costPerUnit": 248.5,
       "currentStock": 0.5,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_garlic_powder",
@@ -7057,7 +7066,7 @@
       "unit": "kg",
       "costPerUnit": 272.5,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_ghee",
@@ -7066,7 +7075,7 @@
       "unit": "kg",
       "costPerUnit": 375.0,
       "currentStock": 3.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_green_peas",
@@ -7075,7 +7084,7 @@
       "unit": "kg",
       "costPerUnit": 249.0,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_habanero",
@@ -7084,7 +7093,7 @@
       "unit": "kg",
       "costPerUnit": 172.5,
       "currentStock": 0.4,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_honey",
@@ -7093,7 +7102,7 @@
       "unit": "kg",
       "costPerUnit": 471.84,
       "currentStock": 5.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_kasturi_methi",
@@ -7102,7 +7111,7 @@
       "unit": "kg",
       "costPerUnit": 1058.5,
       "currentStock": 0.1,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_kashmiri_chilly",
@@ -7111,7 +7120,7 @@
       "unit": "kg",
       "costPerUnit": 1298.5,
       "currentStock": 0.2,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_kidney_beans",
@@ -7120,7 +7129,7 @@
       "unit": "kg",
       "costPerUnit": 199.0,
       "currentStock": 2.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_kokum",
@@ -7129,7 +7138,7 @@
       "unit": "kg",
       "costPerUnit": 199.0,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_leza_flavour",
@@ -7138,7 +7147,7 @@
       "unit": "kg",
       "costPerUnit": 126.0,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_lotus_biscuit",
@@ -7147,7 +7156,7 @@
       "unit": "pc",
       "costPerUnit": 171.62,
       "currentStock": 0.5,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_lotus_paste",
@@ -7155,8 +7164,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 545.4,
-      "currentStock": 8,
-      "minimumStock": 1
+      "currentStock": 8.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_lotus_spread",
@@ -7164,8 +7173,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 654.4,
-      "currentStock": 1,
-      "minimumStock": 1
+      "currentStock": 1.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_mayonnaise",
@@ -7174,7 +7183,7 @@
       "unit": "kg",
       "costPerUnit": 168.43,
       "currentStock": 33.0,
-      "minimumStock": 3
+      "minimumStock": 3.0
     },
     {
       "id": "inv_milk_maker",
@@ -7183,7 +7192,7 @@
       "unit": "kg",
       "costPerUnit": 125.4,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_milk",
@@ -7192,7 +7201,7 @@
       "unit": "L",
       "costPerUnit": 54.62,
       "currentStock": 42.0,
-      "minimumStock": 4
+      "minimumStock": 4.0
     },
     {
       "id": "inv_milk_powder",
@@ -7201,7 +7210,7 @@
       "unit": "kg",
       "costPerUnit": 140.4,
       "currentStock": 47.0,
-      "minimumStock": 4
+      "minimumStock": 4.0
     },
     {
       "id": "inv_mon_oregano",
@@ -7210,7 +7219,7 @@
       "unit": "kg",
       "costPerUnit": 249.2,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_mon_mayonnaise",
@@ -7219,7 +7228,7 @@
       "unit": "kg",
       "costPerUnit": 258.72,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_monn_strawberry_puree",
@@ -7227,8 +7236,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 1334.87,
-      "currentStock": 3,
-      "minimumStock": 1
+      "currentStock": 3.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_monin_white_chocolate",
@@ -7237,7 +7246,7 @@
       "unit": "kg",
       "costPerUnit": 415.2,
       "currentStock": 8.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_mustard_oil",
@@ -7246,7 +7255,7 @@
       "unit": "L",
       "costPerUnit": 210.21,
       "currentStock": 1.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_mustard_paste",
@@ -7255,7 +7264,7 @@
       "unit": "kg",
       "costPerUnit": 107.1,
       "currentStock": 3.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_mustard_sauce",
@@ -7263,8 +7272,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 158.76,
-      "currentStock": 1,
-      "minimumStock": 1
+      "currentStock": 1.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_muffins",
@@ -7273,7 +7282,7 @@
       "unit": "kg",
       "costPerUnit": 1058.0,
       "currentStock": 0.5,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_olive_oil_extra_virgin",
@@ -7282,7 +7291,7 @@
       "unit": "L",
       "costPerUnit": 585.0,
       "currentStock": 7.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_oregano_flakes",
@@ -7291,7 +7300,7 @@
       "unit": "kg",
       "costPerUnit": 105.84,
       "currentStock": 20.0,
-      "minimumStock": 2
+      "minimumStock": 2.0
     },
     {
       "id": "inv_oregano_sprinkler",
@@ -7300,7 +7309,7 @@
       "unit": "kg",
       "costPerUnit": 535.31,
       "currentStock": 3.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_oreo_biscuits",
@@ -7308,8 +7317,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 78.0,
-      "currentStock": 1,
-      "minimumStock": 1
+      "currentStock": 1.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_paprika_powder",
@@ -7318,7 +7327,7 @@
       "unit": "kg",
       "costPerUnit": 123.36,
       "currentStock": 31.0,
-      "minimumStock": 3
+      "minimumStock": 3.0
     },
     {
       "id": "inv_peri_peri_seasoning",
@@ -7327,7 +7336,7 @@
       "unit": "kg",
       "costPerUnit": 418.58,
       "currentStock": 15.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_red_chilli_powder",
@@ -7336,7 +7345,7 @@
       "unit": "kg",
       "costPerUnit": 329.65,
       "currentStock": 2.5,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_red_chilli_sauce_tilted",
@@ -7344,8 +7353,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 69.65,
-      "currentStock": 1,
-      "minimumStock": 1
+      "currentStock": 1.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_refined_salt",
@@ -7354,7 +7363,7 @@
       "unit": "kg",
       "costPerUnit": 39.71,
       "currentStock": 7.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_semiya",
@@ -7363,7 +7372,7 @@
       "unit": "kg",
       "costPerUnit": 199.1,
       "currentStock": 0.5,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_sour_cream_cheese_marinade_masala",
@@ -7372,7 +7381,7 @@
       "unit": "kg",
       "costPerUnit": 304.5,
       "currentStock": 25.0,
-      "minimumStock": 2
+      "minimumStock": 2.0
     },
     {
       "id": "inv_sugar___white",
@@ -7381,7 +7390,7 @@
       "unit": "kg",
       "costPerUnit": 50.87,
       "currentStock": 40.0,
-      "minimumStock": 4
+      "minimumStock": 4.0
     },
     {
       "id": "inv_sweet_chili_sauce",
@@ -7389,8 +7398,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 212.4,
-      "currentStock": 1,
-      "minimumStock": 1
+      "currentStock": 1.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_tabasco_sauce",
@@ -7398,8 +7407,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 235.4,
-      "currentStock": 1,
-      "minimumStock": 1
+      "currentStock": 1.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_tahini_paste_600gms",
@@ -7407,8 +7416,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 533.49,
-      "currentStock": 7,
-      "minimumStock": 1
+      "currentStock": 7.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_taste_powder",
@@ -7417,7 +7426,7 @@
       "unit": "kg",
       "costPerUnit": 196.0,
       "currentStock": 2.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_tomato_ketchup",
@@ -7425,8 +7434,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 178.2,
-      "currentStock": 1,
-      "minimumStock": 1
+      "currentStock": 1.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_tomato_paste",
@@ -7435,7 +7444,7 @@
       "unit": "kg",
       "costPerUnit": 71.5,
       "currentStock": 20.0,
-      "minimumStock": 2
+      "minimumStock": 2.0
     },
     {
       "id": "inv_tomato_sauce",
@@ -7444,7 +7453,7 @@
       "unit": "kg",
       "costPerUnit": 67.41,
       "currentStock": 15.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_unsalted_butter",
@@ -7453,7 +7462,7 @@
       "unit": "kg",
       "costPerUnit": 699.91,
       "currentStock": 15.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_veg_mayonnaise",
@@ -7462,7 +7471,7 @@
       "unit": "kg",
       "costPerUnit": 132.6,
       "currentStock": 2.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_vinegar_premium",
@@ -7470,8 +7479,8 @@
       "category": "Raw Material",
       "unit": "pc",
       "costPerUnit": 814.01,
-      "currentStock": 1,
-      "minimumStock": 1
+      "currentStock": 1.0,
+      "minimumStock": 1.0
     },
     {
       "id": "inv_volcanic_hot__spicy_seasoning",
@@ -7480,7 +7489,7 @@
       "unit": "kg",
       "costPerUnit": 423.5,
       "currentStock": 3.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_white_choco",
@@ -7489,7 +7498,7 @@
       "unit": "kg",
       "costPerUnit": 106.32,
       "currentStock": 0.5,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_white_pepper",
@@ -7498,7 +7507,7 @@
       "unit": "kg",
       "costPerUnit": 1437.5,
       "currentStock": 0.2,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_white_vinegar",
@@ -7507,7 +7516,7 @@
       "unit": "L",
       "costPerUnit": 70.66,
       "currentStock": 11.25,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_basil_leaves",
@@ -7516,7 +7525,7 @@
       "unit": "kg",
       "costPerUnit": 348.6,
       "currentStock": 1.25,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_fresh_cucumber",
@@ -7525,7 +7534,7 @@
       "unit": "kg",
       "costPerUnit": 80.94,
       "currentStock": 15.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_green_capsicum",
@@ -7534,7 +7543,7 @@
       "unit": "kg",
       "costPerUnit": 158.75,
       "currentStock": 5.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_iceberg",
@@ -7543,7 +7552,7 @@
       "unit": "kg",
       "costPerUnit": 248.15,
       "currentStock": 6.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_jam_tomato",
@@ -7552,7 +7561,7 @@
       "unit": "kg",
       "costPerUnit": 61.19,
       "currentStock": 12.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_lettuce",
@@ -7561,7 +7570,7 @@
       "unit": "kg",
       "costPerUnit": 228.31,
       "currentStock": 14.248,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_parsley",
@@ -7570,7 +7579,7 @@
       "unit": "kg",
       "costPerUnit": 59.6,
       "currentStock": 4.0,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_red_cabbage",
@@ -7579,7 +7588,7 @@
       "unit": "kg",
       "costPerUnit": 89.6,
       "currentStock": 2.5,
-      "minimumStock": 1
+      "minimumStock": 1.0
     },
     {
       "id": "inv_white_onion",
@@ -7588,7 +7597,7 @@
       "unit": "kg",
       "costPerUnit": 38.69,
       "currentStock": 0.96,
-      "minimumStock": 1
+      "minimumStock": 1.0
     }
   ],
   "orderNumber": 1182,
