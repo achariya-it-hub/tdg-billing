@@ -2708,6 +2708,85 @@ app.get('/api/pos/orders', (req, res) => {
   res.json(inMemory.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
 })
 
+function deductInventoryForOrder(order) {
+  if (!order || !order.items || !Array.isArray(order.items) || order.inventoryDeducted) return
+  
+  let deductedAny = false
+  order.items.forEach(item => {
+    const mId = item.menuItemId || item.id
+    const orderQty = Number(item.quantity) || 1
+    
+    // Find matching recipe
+    const recipe = (typeof recipes !== 'undefined' && Array.isArray(recipes)) 
+      ? recipes.find(r => r.menuItemId === mId || r.id === mId || (r.menuItemName && item.menuItemName && r.menuItemName.toLowerCase() === item.menuItemName.toLowerCase()))
+      : null
+    
+    if (recipe && recipe.ingredients && Array.isArray(recipe.ingredients)) {
+      recipe.ingredients.forEach(ing => {
+        const invId = ing.inventoryItemId
+        const invName = ing.inventoryName
+        const reqQtyPerUnit = Number(ing.quantity) || 0
+        const totalDeduct = reqQtyPerUnit * orderQty
+        
+        if (totalDeduct > 0 && typeof inventory !== 'undefined' && Array.isArray(inventory)) {
+          const invItem = inventory.find(i => (invId && i.id === invId) || (invName && i.name.toLowerCase() === invName.toLowerCase()))
+          if (invItem) {
+            invItem.currentStock = Math.max(0, Number((Number(invItem.currentStock || 0) - totalDeduct).toFixed(4)))
+            deductedAny = true
+          }
+        }
+      })
+    }
+  })
+  
+  if (deductedAny) {
+    order.inventoryDeducted = true
+    saveState()
+    if (typeof io !== 'undefined' && io) {
+      io.emit('inventory:updated', inventory)
+    }
+  }
+}
+
+function restoreInventoryForOrder(order) {
+  if (!order || !order.items || !Array.isArray(order.items) || !order.inventoryDeducted) return
+  
+  let restoredAny = false
+  order.items.forEach(item => {
+    const mId = item.menuItemId || item.id
+    const orderQty = Number(item.quantity) || 1
+    
+    const recipe = (typeof recipes !== 'undefined' && Array.isArray(recipes))
+      ? recipes.find(r => r.menuItemId === mId || r.id === mId || (r.menuItemName && item.menuItemName && r.menuItemName.toLowerCase() === item.menuItemName.toLowerCase()))
+      : null
+    
+    if (recipe && recipe.ingredients && Array.isArray(recipe.ingredients)) {
+      recipe.ingredients.forEach(ing => {
+        const invId = ing.inventoryItemId
+        const invName = ing.inventoryName
+        const reqQtyPerUnit = Number(ing.quantity) || 0
+        const totalRestore = reqQtyPerUnit * orderQty
+        
+        if (totalRestore > 0 && typeof inventory !== 'undefined' && Array.isArray(inventory)) {
+          const invItem = inventory.find(i => (invId && i.id === invId) || (invName && i.name.toLowerCase() === invName.toLowerCase()))
+          if (invItem) {
+            invItem.currentStock = Number((Number(invItem.currentStock || 0) + totalRestore).toFixed(4))
+            restoredAny = true
+          }
+        }
+      })
+    }
+  })
+  
+  if (restoredAny) {
+    order.inventoryDeducted = false
+    saveState()
+    if (typeof io !== 'undefined' && io) {
+      io.emit('inventory:updated', inventory)
+    }
+  }
+}
+
 app.post('/api/pos/orders', (req, res) => {
   const { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod, complimentary, complimentaryType, specialRemarks } = req.body
   
@@ -2750,6 +2829,7 @@ app.post('/api/pos/orders', (req, res) => {
   }
   
   orders.unshift(order)
+  deductInventoryForOrder(order)
   saveState()
   
   // Emit to connected clients
@@ -2771,6 +2851,9 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
     if (status === 'cancelled') {
       if (cancelReason) order.cancelReason = cancelReason
       if (req.body.cancelledBy) order.cancelledBy = req.body.cancelledBy
+      restoreInventoryForOrder(order)
+    } else if (status === 'completed' || status === 'served' || status === 'ready' || status === 'preparing') {
+      deductInventoryForOrder(order)
     }
     order.updatedAt = new Date().toISOString()
     io.emit('order:updated', order)
@@ -2991,14 +3074,10 @@ app.patch('/api/inventory/:id', (req, res) => {
 
 // Recipes / Inventory deduction
 app.post('/api/recipes/deduct', (req, res) => {
-  const { orderItems } = req.body
-  
-  orderItems?.forEach(orderItem => {
-    // Simple deduction - in production, would use recipe mapping
-    console.log('Deduct inventory for:', orderItem)
-  })
-  
-  res.json({ success: true })
+  const { orderItems, items } = req.body
+  const itemList = orderItems || items || []
+  deductInventoryForOrder({ items: itemList })
+  res.json({ success: true, inventory })
 })
 
 // ============ LOYALTY API ROUTES ============
