@@ -23,7 +23,11 @@ export default function Billing() {
   const [showPayment, setShowPayment] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState('cash')
   const [processing, setProcessing] = useState(false)
-  const [dateFilter, setDateFilter] = useState('today') // 'today' (Today's Shift) | 'yesterday' | 'all'
+  const [dateFilter, setDateFilter] = useState('today') // 'today' (Today's Shift) | 'yesterday' | 'all' | 'custom'
+  const [customDate, setCustomDate] = useState(() => {
+    const today = new Date()
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+  })
 
   // Bill Resettlement State
   const [resettleBill, setResettleBill] = useState(null)
@@ -85,7 +89,6 @@ export default function Billing() {
   }
 
   const filterByDate = (list) => {
-    if (!Array.isArray(list)) return []
     return list.filter(o => matchesSearch(o))
   }
 
@@ -102,9 +105,10 @@ export default function Billing() {
 
   const fetchOrders = async () => {
     try {
+      const queryDate = dateFilter === 'custom' ? customDate : dateFilter
       const [allRes, paidRes] = await Promise.all([
-        fetch(`${getApiUrl()}/api/pos/orders?date=${dateFilter}`),
-        fetch(`${getApiUrl()}/api/pos/orders?status=completed&date=${dateFilter}`)
+        fetch(`${getApiUrl()}/api/pos/orders?date=${queryDate}`),
+        fetch(`${getApiUrl()}/api/pos/orders?status=completed&date=${queryDate}`)
       ])
       if (allRes.ok && paidRes.ok) {
         const all = await allRes.json()
@@ -133,7 +137,7 @@ export default function Billing() {
 
   useEffect(() => {
     fetchOrders()
-  }, [dateFilter])
+  }, [dateFilter, customDate])
 
   useEffect(() => {
     fetchOrders()
@@ -591,7 +595,19 @@ export default function Billing() {
             <option value="today">⭐ Today's Shift</option>
             <option value="yesterday">🕒 Yesterday's Shift</option>
             <option value="all">🌐 All Time</option>
+            <option value="custom">📅 Select Specific Date...</option>
           </select>
+          {dateFilter === 'custom' && (
+            <input
+              type="date"
+              value={customDate}
+              onChange={e => setCustomDate(e.target.value)}
+              style={{
+                padding: '5px 10px', borderRadius: '8px', border: '1px solid #e63946',
+                fontSize: '13px', fontWeight: 700, outline: 'none', color: '#1a1a2e', background: 'white'
+              }}
+            />
+          )}
         </div>
 
         {/* Live Instant Search Bar */}
