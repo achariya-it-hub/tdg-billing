@@ -17716,6 +17716,2065 @@
           "cost": 5.0
         }
       ]
+    },
+    {
+      "id": "r_m5a",
+      "menuItemId": "m5a",
+      "menuItemName": "BBQ Gyro - Chicken (Mini)",
+      "name": "RECIPE - BBQ GYRO - CHICKEN (MINI)",
+      "description": "Standard recipe for BBQ Gyro - Chicken (Mini) (Price \u20b999/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 31.72,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 60.08,
+      "sellingPrice": 99.0,
+      "ingredients": [
+        {
+          "id": "ri_m5a_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 1.79
+        },
+        {
+          "id": "ri_m5a_2",
+          "inventoryItemId": "inv_spicy_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.05,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 20.0
+        },
+        {
+          "id": "ri_m5a_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m5a_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m5a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m6a",
+      "menuItemId": "m6a",
+      "menuItemName": "BBQ Gyro - Chicken (Signature)",
+      "name": "RECIPE - BBQ GYRO - CHICKEN (SIGNATURE)",
+      "description": "Standard recipe for BBQ Gyro - Chicken (Signature) (Price \u20b9249/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 53.51,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 81.87,
+      "sellingPrice": 249.0,
+      "ingredients": [
+        {
+          "id": "ri_m6a_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.08,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 3.58
+        },
+        {
+          "id": "ri_m6a_2",
+          "inventoryItemId": "inv_spicy_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 40.0
+        },
+        {
+          "id": "ri_m6a_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m6a_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m6a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m7a",
+      "menuItemId": "m7a",
+      "menuItemName": "Peri Peri Gyro - Chicken (Mini)",
+      "name": "RECIPE - PERI PERI GYRO - CHICKEN (MINI)",
+      "description": "Standard recipe for Peri Peri Gyro - Chicken (Mini) (Price \u20b999/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 31.72,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 60.08,
+      "sellingPrice": 99.0,
+      "ingredients": [
+        {
+          "id": "ri_m7a_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 1.79
+        },
+        {
+          "id": "ri_m7a_2",
+          "inventoryItemId": "inv_spicy_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.05,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 20.0
+        },
+        {
+          "id": "ri_m7a_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m7a_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m7a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m7b",
+      "menuItemId": "m7b",
+      "menuItemName": "Peri Peri Gyro - Paneer (Mini)",
+      "name": "RECIPE - PERI PERI GYRO - PANEER (MINI)",
+      "description": "Standard recipe for Peri Peri Gyro - Paneer (Mini) (Price \u20b999/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 31.72,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 60.08,
+      "sellingPrice": 99.0,
+      "ingredients": [
+        {
+          "id": "ri_m7b_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 1.79
+        },
+        {
+          "id": "ri_m7b_2",
+          "inventoryItemId": "inv_pesto_paneer",
+          "inventoryName": "Paneer Portion",
+          "quantity": 0.05,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 20.0
+        },
+        {
+          "id": "ri_m7b_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m7b_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m7b_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m8a",
+      "menuItemId": "m8a",
+      "menuItemName": "Peri Peri Gyro - Chicken (Signature)",
+      "name": "RECIPE - PERI PERI GYRO - CHICKEN (SIGNATURE)",
+      "description": "Standard recipe for Peri Peri Gyro - Chicken (Signature) (Price \u20b9249/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 53.51,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 81.87,
+      "sellingPrice": 249.0,
+      "ingredients": [
+        {
+          "id": "ri_m8a_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.08,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 3.58
+        },
+        {
+          "id": "ri_m8a_2",
+          "inventoryItemId": "inv_spicy_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 40.0
+        },
+        {
+          "id": "ri_m8a_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m8a_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m8a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m8b",
+      "menuItemId": "m8b",
+      "menuItemName": "Peri Peri Gyro - Paneer (Signature)",
+      "name": "RECIPE - PERI PERI GYRO - PANEER (SIGNATURE)",
+      "description": "Standard recipe for Peri Peri Gyro - Paneer (Signature) (Price \u20b9249/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 53.51,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 81.87,
+      "sellingPrice": 249.0,
+      "ingredients": [
+        {
+          "id": "ri_m8b_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.08,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 3.58
+        },
+        {
+          "id": "ri_m8b_2",
+          "inventoryItemId": "inv_pesto_paneer",
+          "inventoryName": "Paneer Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 40.0
+        },
+        {
+          "id": "ri_m8b_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m8b_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m8b_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m9a",
+      "menuItemId": "m9a",
+      "menuItemName": "Signature Gyro - Chicken (Mini)",
+      "name": "RECIPE - SIGNATURE GYRO - CHICKEN (MINI)",
+      "description": "Standard recipe for Signature Gyro - Chicken (Mini) (Price \u20b999/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 53.51,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 81.87,
+      "sellingPrice": 99.0,
+      "ingredients": [
+        {
+          "id": "ri_m9a_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.08,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 3.58
+        },
+        {
+          "id": "ri_m9a_2",
+          "inventoryItemId": "inv_spicy_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 40.0
+        },
+        {
+          "id": "ri_m9a_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m9a_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m9a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m9b",
+      "menuItemId": "m9b",
+      "menuItemName": "Signature Gyro - Paneer (Mini)",
+      "name": "RECIPE - SIGNATURE GYRO - PANEER (MINI)",
+      "description": "Standard recipe for Signature Gyro - Paneer (Mini) (Price \u20b999/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 53.51,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 81.87,
+      "sellingPrice": 99.0,
+      "ingredients": [
+        {
+          "id": "ri_m9b_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.08,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 3.58
+        },
+        {
+          "id": "ri_m9b_2",
+          "inventoryItemId": "inv_pesto_paneer",
+          "inventoryName": "Paneer Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 40.0
+        },
+        {
+          "id": "ri_m9b_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m9b_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m9b_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m10a",
+      "menuItemId": "m10a",
+      "menuItemName": "Signature Gyro - Chicken (Signature)",
+      "name": "RECIPE - SIGNATURE GYRO - CHICKEN (SIGNATURE)",
+      "description": "Standard recipe for Signature Gyro - Chicken (Signature) (Price \u20b9249/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 53.51,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 81.87,
+      "sellingPrice": 249.0,
+      "ingredients": [
+        {
+          "id": "ri_m10a_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.08,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 3.58
+        },
+        {
+          "id": "ri_m10a_2",
+          "inventoryItemId": "inv_spicy_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 40.0
+        },
+        {
+          "id": "ri_m10a_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m10a_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m10a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m10b",
+      "menuItemId": "m10b",
+      "menuItemName": "Signature Gyro - Paneer (Signature)",
+      "name": "RECIPE - SIGNATURE GYRO - PANEER (SIGNATURE)",
+      "description": "Standard recipe for Signature Gyro - Paneer (Signature) (Price \u20b9249/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 53.51,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 81.87,
+      "sellingPrice": 249.0,
+      "ingredients": [
+        {
+          "id": "ri_m10b_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.08,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 3.58
+        },
+        {
+          "id": "ri_m10b_2",
+          "inventoryItemId": "inv_pesto_paneer",
+          "inventoryName": "Paneer Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 40.0
+        },
+        {
+          "id": "ri_m10b_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m10b_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m10b_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m27a",
+      "menuItemId": "m27a",
+      "menuItemName": "Loaded Chicken Fries",
+      "name": "RECIPE - LOADED CHICKEN FRIES",
+      "description": "Standard recipe for Loaded Chicken Fries (Price \u20b9199/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 52.91,
+      "pmCost": 15.0,
+      "labourCost": 10.0,
+      "calculatedCost": 77.91,
+      "sellingPrice": 199.0,
+      "ingredients": [
+        {
+          "id": "ri_m27a_1",
+          "inventoryItemId": "inv_potato",
+          "inventoryName": "Potato Fries Base",
+          "quantity": 0.25,
+          "unit": "kg",
+          "costPerUnit": 50.0,
+          "cost": 12.5
+        },
+        {
+          "id": "ri_m27a_2",
+          "inventoryItemId": "inv_boneless_chicken",
+          "inventoryName": "Chicken Topping",
+          "quantity": 0.08,
+          "unit": "kg",
+          "costPerUnit": 300.0,
+          "cost": 24.0
+        },
+        {
+          "id": "ri_m27a_3",
+          "inventoryItemId": "inv_cheese_white",
+          "inventoryName": "Melted Cheese Sauce",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 547.0,
+          "cost": 16.41
+        },
+        {
+          "id": "ri_m27a_4",
+          "inventoryItemId": "inv_dinning_tray_500ml",
+          "inventoryName": "Loaded Fries Tray & Bag",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 15.0,
+          "cost": 15.0
+        },
+        {
+          "id": "ri_m27a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 10.0,
+          "cost": 10.0
+        }
+      ]
+    },
+    {
+      "id": "r_m27b",
+      "menuItemId": "m27b",
+      "menuItemName": "Loaded Paneer Fries",
+      "name": "RECIPE - LOADED PANEER FRIES",
+      "description": "Standard recipe for Loaded Paneer Fries (Price \u20b9199/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 52.91,
+      "pmCost": 15.0,
+      "labourCost": 10.0,
+      "calculatedCost": 77.91,
+      "sellingPrice": 199.0,
+      "ingredients": [
+        {
+          "id": "ri_m27b_1",
+          "inventoryItemId": "inv_potato",
+          "inventoryName": "Potato Fries Base",
+          "quantity": 0.25,
+          "unit": "kg",
+          "costPerUnit": 50.0,
+          "cost": 12.5
+        },
+        {
+          "id": "ri_m27b_2",
+          "inventoryItemId": "inv_pesto_paneer",
+          "inventoryName": "Paneer Topping",
+          "quantity": 0.08,
+          "unit": "kg",
+          "costPerUnit": 300.0,
+          "cost": 24.0
+        },
+        {
+          "id": "ri_m27b_3",
+          "inventoryItemId": "inv_cheese_white",
+          "inventoryName": "Melted Cheese Sauce",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 547.0,
+          "cost": 16.41
+        },
+        {
+          "id": "ri_m27b_4",
+          "inventoryItemId": "inv_dinning_tray_500ml",
+          "inventoryName": "Loaded Fries Tray & Bag",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 15.0,
+          "cost": 15.0
+        },
+        {
+          "id": "ri_m27b_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 10.0,
+          "cost": 10.0
+        }
+      ]
+    },
+    {
+      "id": "r_m28a",
+      "menuItemId": "m28a",
+      "menuItemName": "Lebanese Rice Bowl (Chicken)",
+      "name": "RECIPE - LEBANESE RICE BOWL (CHICKEN)",
+      "description": "Standard recipe for Lebanese Rice Bowl (Chicken) (Price \u20b9199/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 47.05,
+      "pmCost": 12.0,
+      "labourCost": 12.0,
+      "calculatedCost": 71.05,
+      "sellingPrice": 199.0,
+      "ingredients": [
+        {
+          "id": "ri_m28a_1",
+          "inventoryItemId": "inv_atta",
+          "inventoryName": "Lebanese Rice Base",
+          "quantity": 0.2,
+          "unit": "kg",
+          "costPerUnit": 60.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m28a_2",
+          "inventoryItemId": "inv_boneless_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 300.0,
+          "cost": 30.0
+        },
+        {
+          "id": "ri_m28a_3",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "House Dressing",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 5.05
+        },
+        {
+          "id": "ri_m28a_4",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Bowl Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m28a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        }
+      ]
+    },
+    {
+      "id": "r_m28b",
+      "menuItemId": "m28b",
+      "menuItemName": "Lebanese Rice Bowl (Paneer)",
+      "name": "RECIPE - LEBANESE RICE BOWL (PANEER)",
+      "description": "Standard recipe for Lebanese Rice Bowl (Paneer) (Price \u20b9199/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 47.05,
+      "pmCost": 12.0,
+      "labourCost": 12.0,
+      "calculatedCost": 71.05,
+      "sellingPrice": 199.0,
+      "ingredients": [
+        {
+          "id": "ri_m28b_1",
+          "inventoryItemId": "inv_atta",
+          "inventoryName": "Lebanese Rice Base",
+          "quantity": 0.2,
+          "unit": "kg",
+          "costPerUnit": 60.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m28b_2",
+          "inventoryItemId": "inv_pesto_paneer",
+          "inventoryName": "Paneer Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 300.0,
+          "cost": 30.0
+        },
+        {
+          "id": "ri_m28b_3",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "House Dressing",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 5.05
+        },
+        {
+          "id": "ri_m28b_4",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Bowl Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m28b_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        }
+      ]
+    },
+    {
+      "id": "r_m29a",
+      "menuItemId": "m29a",
+      "menuItemName": "Signature Salad (Chicken)",
+      "name": "RECIPE - SIGNATURE SALAD (CHICKEN)",
+      "description": "Standard recipe for Signature Salad (Chicken) (Price \u20b9149/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 47.05,
+      "pmCost": 12.0,
+      "labourCost": 12.0,
+      "calculatedCost": 71.05,
+      "sellingPrice": 149.0,
+      "ingredients": [
+        {
+          "id": "ri_m29a_1",
+          "inventoryItemId": "inv_atta",
+          "inventoryName": "Fresh Salad Base",
+          "quantity": 0.2,
+          "unit": "kg",
+          "costPerUnit": 60.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m29a_2",
+          "inventoryItemId": "inv_boneless_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 300.0,
+          "cost": 30.0
+        },
+        {
+          "id": "ri_m29a_3",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "House Dressing",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 5.05
+        },
+        {
+          "id": "ri_m29a_4",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Bowl Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m29a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        }
+      ]
+    },
+    {
+      "id": "r_m29b",
+      "menuItemId": "m29b",
+      "menuItemName": "Signature Salad (Paneer)",
+      "name": "RECIPE - SIGNATURE SALAD (PANEER)",
+      "description": "Standard recipe for Signature Salad (Paneer) (Price \u20b9149/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 47.05,
+      "pmCost": 12.0,
+      "labourCost": 12.0,
+      "calculatedCost": 71.05,
+      "sellingPrice": 149.0,
+      "ingredients": [
+        {
+          "id": "ri_m29b_1",
+          "inventoryItemId": "inv_atta",
+          "inventoryName": "Fresh Salad Base",
+          "quantity": 0.2,
+          "unit": "kg",
+          "costPerUnit": 60.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m29b_2",
+          "inventoryItemId": "inv_pesto_paneer",
+          "inventoryName": "Paneer Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 300.0,
+          "cost": 30.0
+        },
+        {
+          "id": "ri_m29b_3",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "House Dressing",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 5.05
+        },
+        {
+          "id": "ri_m29b_4",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Bowl Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m29b_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        }
+      ]
+    },
+    {
+      "id": "r_m30",
+      "menuItemId": "m30",
+      "menuItemName": "Express Meal",
+      "name": "RECIPE - EXPRESS MEAL",
+      "description": "Standard recipe for Express Meal (Price \u20b9149/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 37.25,
+      "pmCost": 7.45,
+      "labourCost": 5.96,
+      "calculatedCost": 50.66,
+      "sellingPrice": 149.0,
+      "ingredients": [
+        {
+          "id": "ri_m30_1",
+          "inventoryItemId": "inv_boneless_chicken",
+          "inventoryName": "Combo Food Ingredients",
+          "quantity": 1.0,
+          "unit": "portion",
+          "costPerUnit": 37.25,
+          "cost": 37.25
+        },
+        {
+          "id": "ri_m30_2",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Combo Meal Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 7.45,
+          "cost": 7.45
+        },
+        {
+          "id": "ri_m30_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 5.96,
+          "cost": 5.96
+        }
+      ]
+    },
+    {
+      "id": "r_m31",
+      "menuItemId": "m31",
+      "menuItemName": "Classic Gyro Meal",
+      "name": "RECIPE - CLASSIC GYRO MEAL",
+      "description": "Standard recipe for Classic Gyro Meal (Price \u20b9249/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 31.72,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 60.08,
+      "sellingPrice": 249.0,
+      "ingredients": [
+        {
+          "id": "ri_m31_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 1.79
+        },
+        {
+          "id": "ri_m31_2",
+          "inventoryItemId": "inv_spicy_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.05,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 20.0
+        },
+        {
+          "id": "ri_m31_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m31_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m31_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m32",
+      "menuItemId": "m32",
+      "menuItemName": "Signature Gyro Meal",
+      "name": "RECIPE - SIGNATURE GYRO MEAL",
+      "description": "Standard recipe for Signature Gyro Meal (Price \u20b9299/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 53.51,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 81.87,
+      "sellingPrice": 299.0,
+      "ingredients": [
+        {
+          "id": "ri_m32_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.08,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 3.58
+        },
+        {
+          "id": "ri_m32_2",
+          "inventoryItemId": "inv_spicy_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 40.0
+        },
+        {
+          "id": "ri_m32_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m32_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m32_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m33",
+      "menuItemId": "m33",
+      "menuItemName": "Lebanese Rice Box",
+      "name": "RECIPE - LEBANESE RICE BOX",
+      "description": "Standard recipe for Lebanese Rice Box (Price \u20b9299/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 47.05,
+      "pmCost": 12.0,
+      "labourCost": 12.0,
+      "calculatedCost": 71.05,
+      "sellingPrice": 299.0,
+      "ingredients": [
+        {
+          "id": "ri_m33_1",
+          "inventoryItemId": "inv_atta",
+          "inventoryName": "Lebanese Rice Base",
+          "quantity": 0.2,
+          "unit": "kg",
+          "costPerUnit": 60.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m33_2",
+          "inventoryItemId": "inv_pesto_paneer",
+          "inventoryName": "Paneer Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 300.0,
+          "cost": 30.0
+        },
+        {
+          "id": "ri_m33_3",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "House Dressing",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 5.05
+        },
+        {
+          "id": "ri_m33_4",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Bowl Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m33_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        }
+      ]
+    },
+    {
+      "id": "r_m34",
+      "menuItemId": "m34",
+      "menuItemName": "Duo Gyro Feast",
+      "name": "RECIPE - DUO GYRO FEAST",
+      "description": "Standard recipe for Duo Gyro Feast (Price \u20b9349/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 31.72,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 60.08,
+      "sellingPrice": 349.0,
+      "ingredients": [
+        {
+          "id": "ri_m34_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 1.79
+        },
+        {
+          "id": "ri_m34_2",
+          "inventoryItemId": "inv_spicy_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.05,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 20.0
+        },
+        {
+          "id": "ri_m34_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m34_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m34_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m35",
+      "menuItemId": "m35",
+      "menuItemName": "Double Crunch Box",
+      "name": "RECIPE - DOUBLE CRUNCH BOX",
+      "description": "Standard recipe for Double Crunch Box (Price \u20b9499/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 124.75,
+      "pmCost": 24.95,
+      "labourCost": 19.96,
+      "calculatedCost": 169.66,
+      "sellingPrice": 499.0,
+      "ingredients": [
+        {
+          "id": "ri_m35_1",
+          "inventoryItemId": "inv_boneless_chicken",
+          "inventoryName": "Combo Food Ingredients",
+          "quantity": 1.0,
+          "unit": "portion",
+          "costPerUnit": 124.75,
+          "cost": 124.75
+        },
+        {
+          "id": "ri_m35_2",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Combo Meal Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 24.95,
+          "cost": 24.95
+        },
+        {
+          "id": "ri_m35_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 19.96,
+          "cost": 19.96
+        }
+      ]
+    },
+    {
+      "id": "r_m36",
+      "menuItemId": "m36",
+      "menuItemName": "Mega Feast Meal",
+      "name": "RECIPE - MEGA FEAST MEAL",
+      "description": "Standard recipe for Mega Feast Meal (Price \u20b9649/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 162.25,
+      "pmCost": 32.45,
+      "labourCost": 25.96,
+      "calculatedCost": 220.66,
+      "sellingPrice": 649.0,
+      "ingredients": [
+        {
+          "id": "ri_m36_1",
+          "inventoryItemId": "inv_boneless_chicken",
+          "inventoryName": "Combo Food Ingredients",
+          "quantity": 1.0,
+          "unit": "portion",
+          "costPerUnit": 162.25,
+          "cost": 162.25
+        },
+        {
+          "id": "ri_m36_2",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Combo Meal Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 32.45,
+          "cost": 32.45
+        },
+        {
+          "id": "ri_m36_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 25.96,
+          "cost": 25.96
+        }
+      ]
+    },
+    {
+      "id": "r_m37",
+      "menuItemId": "m37",
+      "menuItemName": "Den's Party Meal",
+      "name": "RECIPE - DEN'S PARTY MEAL",
+      "description": "Standard recipe for Den's Party Meal (Price \u20b9899/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 224.75,
+      "pmCost": 44.95,
+      "labourCost": 35.96,
+      "calculatedCost": 305.66,
+      "sellingPrice": 899.0,
+      "ingredients": [
+        {
+          "id": "ri_m37_1",
+          "inventoryItemId": "inv_boneless_chicken",
+          "inventoryName": "Combo Food Ingredients",
+          "quantity": 1.0,
+          "unit": "portion",
+          "costPerUnit": 224.75,
+          "cost": 224.75
+        },
+        {
+          "id": "ri_m37_2",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Combo Meal Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 44.95,
+          "cost": 44.95
+        },
+        {
+          "id": "ri_m37_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 35.96,
+          "cost": 35.96
+        }
+      ]
+    },
+    {
+      "id": "r_m38",
+      "menuItemId": "m38",
+      "menuItemName": "Super 5 Bucket",
+      "name": "RECIPE - SUPER 5 BUCKET",
+      "description": "Standard recipe for Super 5 Bucket (Price \u20b91299/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 324.75,
+      "pmCost": 64.95,
+      "labourCost": 51.96,
+      "calculatedCost": 441.66,
+      "sellingPrice": 1299.0,
+      "ingredients": [
+        {
+          "id": "ri_m38_1",
+          "inventoryItemId": "inv_boneless_chicken",
+          "inventoryName": "Combo Food Ingredients",
+          "quantity": 1.0,
+          "unit": "portion",
+          "costPerUnit": 324.75,
+          "cost": 324.75
+        },
+        {
+          "id": "ri_m38_2",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Combo Meal Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 64.95,
+          "cost": 64.95
+        },
+        {
+          "id": "ri_m38_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 51.96,
+          "cost": 51.96
+        }
+      ]
+    },
+    {
+      "id": "r_m39a",
+      "menuItemId": "m39a",
+      "menuItemName": "Gyro - Protein Max (Chicken)",
+      "name": "RECIPE - GYRO - PROTEIN MAX (CHICKEN)",
+      "description": "Standard recipe for Gyro - Protein Max (Chicken) (Price \u20b9299/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 31.72,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 60.08,
+      "sellingPrice": 299.0,
+      "ingredients": [
+        {
+          "id": "ri_m39a_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 1.79
+        },
+        {
+          "id": "ri_m39a_2",
+          "inventoryItemId": "inv_spicy_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.05,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 20.0
+        },
+        {
+          "id": "ri_m39a_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m39a_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m39a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m39b",
+      "menuItemId": "m39b",
+      "menuItemName": "Gyro - Protein Max (Paneer)",
+      "name": "RECIPE - GYRO - PROTEIN MAX (PANEER)",
+      "description": "Standard recipe for Gyro - Protein Max (Paneer) (Price \u20b9299/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 31.72,
+      "pmCost": 12.41,
+      "labourCost": 15.95,
+      "calculatedCost": 60.08,
+      "sellingPrice": 299.0,
+      "ingredients": [
+        {
+          "id": "ri_m39b_1",
+          "inventoryItemId": "inv_maida",
+          "inventoryName": "MAIDA (Pita)",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 44.77,
+          "cost": 1.79
+        },
+        {
+          "id": "ri_m39b_2",
+          "inventoryItemId": "inv_pesto_paneer",
+          "inventoryName": "Paneer Portion",
+          "quantity": 0.05,
+          "unit": "kg",
+          "costPerUnit": 400.0,
+          "cost": 20.0
+        },
+        {
+          "id": "ri_m39b_3",
+          "inventoryItemId": "inv_iceberg",
+          "inventoryName": "ICEBERG & Veggies",
+          "quantity": 0.04,
+          "unit": "kg",
+          "costPerUnit": 248.15,
+          "cost": 9.93
+        },
+        {
+          "id": "ri_m39b_4",
+          "inventoryItemId": "inv_dinning_tray",
+          "inventoryName": "Dinning Tray & Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.41,
+          "cost": 12.41
+        },
+        {
+          "id": "ri_m39b_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 15.95,
+          "cost": 15.95
+        }
+      ]
+    },
+    {
+      "id": "r_m40a",
+      "menuItemId": "m40a",
+      "menuItemName": "Lebanese Rice - Protein Max (Chicken)",
+      "name": "RECIPE - LEBANESE RICE - PROTEIN MAX (CHICKEN)",
+      "description": "Standard recipe for Lebanese Rice - Protein Max (Chicken) (Price \u20b9299/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 47.05,
+      "pmCost": 12.0,
+      "labourCost": 12.0,
+      "calculatedCost": 71.05,
+      "sellingPrice": 299.0,
+      "ingredients": [
+        {
+          "id": "ri_m40a_1",
+          "inventoryItemId": "inv_atta",
+          "inventoryName": "Lebanese Rice Base",
+          "quantity": 0.2,
+          "unit": "kg",
+          "costPerUnit": 60.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m40a_2",
+          "inventoryItemId": "inv_boneless_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 300.0,
+          "cost": 30.0
+        },
+        {
+          "id": "ri_m40a_3",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "House Dressing",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 5.05
+        },
+        {
+          "id": "ri_m40a_4",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Bowl Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m40a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        }
+      ]
+    },
+    {
+      "id": "r_m40b",
+      "menuItemId": "m40b",
+      "menuItemName": "Lebanese Rice - Protein Max (Paneer)",
+      "name": "RECIPE - LEBANESE RICE - PROTEIN MAX (PANEER)",
+      "description": "Standard recipe for Lebanese Rice - Protein Max (Paneer) (Price \u20b9299/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 47.05,
+      "pmCost": 12.0,
+      "labourCost": 12.0,
+      "calculatedCost": 71.05,
+      "sellingPrice": 299.0,
+      "ingredients": [
+        {
+          "id": "ri_m40b_1",
+          "inventoryItemId": "inv_atta",
+          "inventoryName": "Lebanese Rice Base",
+          "quantity": 0.2,
+          "unit": "kg",
+          "costPerUnit": 60.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m40b_2",
+          "inventoryItemId": "inv_pesto_paneer",
+          "inventoryName": "Paneer Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 300.0,
+          "cost": 30.0
+        },
+        {
+          "id": "ri_m40b_3",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "House Dressing",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 5.05
+        },
+        {
+          "id": "ri_m40b_4",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Bowl Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m40b_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        }
+      ]
+    },
+    {
+      "id": "r_m41a",
+      "menuItemId": "m41a",
+      "menuItemName": "Salad - Protein Max (Chicken)",
+      "name": "RECIPE - SALAD - PROTEIN MAX (CHICKEN)",
+      "description": "Standard recipe for Salad - Protein Max (Chicken) (Price \u20b9299/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 47.05,
+      "pmCost": 12.0,
+      "labourCost": 12.0,
+      "calculatedCost": 71.05,
+      "sellingPrice": 299.0,
+      "ingredients": [
+        {
+          "id": "ri_m41a_1",
+          "inventoryItemId": "inv_atta",
+          "inventoryName": "Fresh Salad Base",
+          "quantity": 0.2,
+          "unit": "kg",
+          "costPerUnit": 60.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m41a_2",
+          "inventoryItemId": "inv_boneless_chicken",
+          "inventoryName": "Chicken Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 300.0,
+          "cost": 30.0
+        },
+        {
+          "id": "ri_m41a_3",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "House Dressing",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 5.05
+        },
+        {
+          "id": "ri_m41a_4",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Bowl Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m41a_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        }
+      ]
+    },
+    {
+      "id": "r_m41b",
+      "menuItemId": "m41b",
+      "menuItemName": "Salad - Protein Max (Paneer)",
+      "name": "RECIPE - SALAD - PROTEIN MAX (PANEER)",
+      "description": "Standard recipe for Salad - Protein Max (Paneer) (Price \u20b9299/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 47.05,
+      "pmCost": 12.0,
+      "labourCost": 12.0,
+      "calculatedCost": 71.05,
+      "sellingPrice": 299.0,
+      "ingredients": [
+        {
+          "id": "ri_m41b_1",
+          "inventoryItemId": "inv_atta",
+          "inventoryName": "Fresh Salad Base",
+          "quantity": 0.2,
+          "unit": "kg",
+          "costPerUnit": 60.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m41b_2",
+          "inventoryItemId": "inv_pesto_paneer",
+          "inventoryName": "Paneer Portion",
+          "quantity": 0.1,
+          "unit": "kg",
+          "costPerUnit": 300.0,
+          "cost": 30.0
+        },
+        {
+          "id": "ri_m41b_3",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "House Dressing",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 5.05
+        },
+        {
+          "id": "ri_m41b_4",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Bowl Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        },
+        {
+          "id": "ri_m41b_5",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 12.0,
+          "cost": 12.0
+        }
+      ]
+    },
+    {
+      "id": "r_m62a",
+      "menuItemId": "m62a",
+      "menuItemName": "Turkish Chilli Dip",
+      "name": "RECIPE - TURKISH CHILLI DIP",
+      "description": "Standard recipe for Turkish Chilli Dip (Price \u20b915/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 1.73,
+      "pmCost": 1.77,
+      "labourCost": 1.0,
+      "calculatedCost": 4.5,
+      "sellingPrice": 15.0,
+      "ingredients": [
+        {
+          "id": "ri_m62a_1",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "Base Sauce / Mayo",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 1.73
+        },
+        {
+          "id": "ri_m62a_2",
+          "inventoryItemId": "inv_dip_small_bowl",
+          "inventoryName": "Dip Small Bowl",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 1.77,
+          "cost": 1.77
+        },
+        {
+          "id": "ri_m62a_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 1.0,
+          "cost": 1.0
+        }
+      ]
+    },
+    {
+      "id": "r_m62b",
+      "menuItemId": "m62b",
+      "menuItemName": "Jalapeno Cheese Dip",
+      "name": "RECIPE - JALAPENO CHEESE DIP",
+      "description": "Standard recipe for Jalapeno Cheese Dip (Price \u20b915/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 1.73,
+      "pmCost": 1.77,
+      "labourCost": 1.0,
+      "calculatedCost": 4.5,
+      "sellingPrice": 15.0,
+      "ingredients": [
+        {
+          "id": "ri_m62b_1",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "Base Sauce / Mayo",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 1.73
+        },
+        {
+          "id": "ri_m62b_2",
+          "inventoryItemId": "inv_dip_small_bowl",
+          "inventoryName": "Dip Small Bowl",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 1.77,
+          "cost": 1.77
+        },
+        {
+          "id": "ri_m62b_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 1.0,
+          "cost": 1.0
+        }
+      ]
+    },
+    {
+      "id": "r_m62c",
+      "menuItemId": "m62c",
+      "menuItemName": "Garlic Mayo Dip",
+      "name": "RECIPE - GARLIC MAYO DIP",
+      "description": "Standard recipe for Garlic Mayo Dip (Price \u20b915/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 1.73,
+      "pmCost": 1.77,
+      "labourCost": 1.0,
+      "calculatedCost": 4.5,
+      "sellingPrice": 15.0,
+      "ingredients": [
+        {
+          "id": "ri_m62c_1",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "Base Sauce / Mayo",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 1.73
+        },
+        {
+          "id": "ri_m62c_2",
+          "inventoryItemId": "inv_dip_small_bowl",
+          "inventoryName": "Dip Small Bowl",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 1.77,
+          "cost": 1.77
+        },
+        {
+          "id": "ri_m62c_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 1.0,
+          "cost": 1.0
+        }
+      ]
+    },
+    {
+      "id": "r_m62d",
+      "menuItemId": "m62d",
+      "menuItemName": "Spicy Mayo Dip",
+      "name": "RECIPE - SPICY MAYO DIP",
+      "description": "Standard recipe for Spicy Mayo Dip (Price \u20b915/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 1.73,
+      "pmCost": 1.77,
+      "labourCost": 1.0,
+      "calculatedCost": 4.5,
+      "sellingPrice": 15.0,
+      "ingredients": [
+        {
+          "id": "ri_m62d_1",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "Base Sauce / Mayo",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 1.73
+        },
+        {
+          "id": "ri_m62d_2",
+          "inventoryItemId": "inv_dip_small_bowl",
+          "inventoryName": "Dip Small Bowl",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 1.77,
+          "cost": 1.77
+        },
+        {
+          "id": "ri_m62d_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 1.0,
+          "cost": 1.0
+        }
+      ]
+    },
+    {
+      "id": "r_m62e",
+      "menuItemId": "m62e",
+      "menuItemName": "Peri Peri Dip",
+      "name": "RECIPE - PERI PERI DIP",
+      "description": "Standard recipe for Peri Peri Dip (Price \u20b915/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 1.73,
+      "pmCost": 1.77,
+      "labourCost": 1.0,
+      "calculatedCost": 4.5,
+      "sellingPrice": 15.0,
+      "ingredients": [
+        {
+          "id": "ri_m62e_1",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "Base Sauce / Mayo",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 1.73
+        },
+        {
+          "id": "ri_m62e_2",
+          "inventoryItemId": "inv_dip_small_bowl",
+          "inventoryName": "Dip Small Bowl",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 1.77,
+          "cost": 1.77
+        },
+        {
+          "id": "ri_m62e_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 1.0,
+          "cost": 1.0
+        }
+      ]
+    },
+    {
+      "id": "r_m62f",
+      "menuItemId": "m62f",
+      "menuItemName": "Honey Mustard Dip",
+      "name": "RECIPE - HONEY MUSTARD DIP",
+      "description": "Standard recipe for Honey Mustard Dip (Price \u20b915/-)",
+      "yieldQty": 1,
+      "prepTime": 8,
+      "rmCost": 1.73,
+      "pmCost": 1.77,
+      "labourCost": 1.0,
+      "calculatedCost": 4.5,
+      "sellingPrice": 15.0,
+      "ingredients": [
+        {
+          "id": "ri_m62f_1",
+          "inventoryItemId": "inv_mayonnaise",
+          "inventoryName": "Base Sauce / Mayo",
+          "quantity": 0.03,
+          "unit": "kg",
+          "costPerUnit": 168.43,
+          "cost": 1.73
+        },
+        {
+          "id": "ri_m62f_2",
+          "inventoryItemId": "inv_dip_small_bowl",
+          "inventoryName": "Dip Small Bowl",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 1.77,
+          "cost": 1.77
+        },
+        {
+          "id": "ri_m62f_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 1.0,
+          "cost": 1.0
+        }
+      ]
     }
   ],
   "mrns": [],
