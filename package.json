@@ -11,7 +11,7 @@
     "deploy": "vite build && node scripts/deploy.js",
     "deploy:hostinger": "node scripts/deploy-hostinger.js",
     "preview": "vite preview",
-    "start": "vite build && node server/index.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

@@ -490,11 +490,11 @@ export default function Reports() {
                     <thead>
                       <tr style={{ background: '#fef2f2' }}>
                         <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Bill / KOT #</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight 700, color: '#991b1b' }}>Time</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight 700, color: '#991b1b' }}>Type / Table</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight 700, color: '#991b1b' }}>Cancelled Items</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight 700, color: '#991b1b' }}>Amount (₹)</th>
-                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight 700, color: '#991b1b' }}>Reason</th>
+                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Time</th>
+                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Type / Table</th>
+                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Cancelled Items</th>
+                        <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Amount (₹)</th>
+                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Reason</th>
                       </tr>
                     </thead>
                     <tbody>
