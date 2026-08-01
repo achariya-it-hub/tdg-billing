@@ -409,13 +409,13 @@ function restoreState() {
     }
   }
 
-  // Safety: if db.json is missing or lacks business data, seed from master seed-db.json or latest backup
+  // Safety: if db.json is missing or lacks orders/users/categories data, seed from master seed-db.json or latest backup
   const isDbEmptyOrMissing = !existsSync(DB_PATH) || 
     !db || 
-    ((!db.orders || !db.orders.length) && (!db.users || !db.users.length) && (!db.categories || !db.categories.length))
+    (!db.orders || !db.orders.length) || (!db.users || !db.users.length) || (!db.categories || !db.categories.length)
 
   if (isDbEmptyOrMissing) {
-    console.log('[DATA PROTECTION] db.json missing or empty. Initializing from seed-db.json...')
+    console.log('[DATA PROTECTION] db.json missing or empty orders. Initializing from seed-db.json...')
     let foundBackup = null
     if (existsSync(SEED_PATH)) {
       try {
