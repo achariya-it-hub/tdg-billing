@@ -4081,7 +4081,10 @@ function getFilteredOrdersForPeriod(reqQuery) {
   const todayStr = getLocalDateStr(today)
 
   if (!date && !from && !to) {
-    return validOrders.filter(o => getOrderDate(o) === todayStr)
+    const todayOrders = validOrders.filter(o => getOrderDate(o) === todayStr)
+    if (todayOrders.length > 0) return todayOrders
+    const latestDate = getLatestOrderDate(validOrders)
+    return validOrders.filter(o => getOrderDate(o) === latestDate)
   }
 
   if (date === 'all') {
@@ -4122,7 +4125,10 @@ function getFilteredOrdersForPeriod(reqQuery) {
 
   const normDate = normalizeDateStr(date)
   if (normDate === 'today' || normDate === todayStr) {
-    return validOrders.filter(o => getOrderDate(o) === todayStr)
+    const todayOrders = validOrders.filter(o => getOrderDate(o) === todayStr)
+    if (todayOrders.length > 0) return todayOrders
+    const latestDate = getLatestOrderDate(validOrders)
+    return validOrders.filter(o => getOrderDate(o) === latestDate)
   }
 
   if (normDate === 'yesterday' || normDate === yesterdayStr) {
