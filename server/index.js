@@ -4484,8 +4484,17 @@ app.get('/api/reports/daily-closing', (req, res) => {
     displayDateStr = getOrderDate(completedOrders[0]) || todayStr
   }
 
-  const hourlySales = computeHourlySales(completedOrders)
-  const threeHourSales = computeThreeHourSales(completedOrders)
+  const cancelledValue = cancelledOrders.reduce((sum, o) => sum + (o.total || o.totalPrice || 0), 0)
+  const cancelledList = cancelledOrders.map(o => ({
+    id: o.id || o.orderNumber,
+    orderNumber: o.orderNumber || o.id,
+    date: getOrderDate(o),
+    time: o.createdAt ? new Date(o.createdAt).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : '',
+    type: o.type || (o.tableNumber ? `Table ${o.tableNumber}` : 'POS'),
+    items: o.items || [],
+    total: o.total || o.totalPrice || 0,
+    reason: o.cancelReason || o.notes || 'Cancelled by Staff'
+  }))
 
   res.json({
     date: displayDateStr,
@@ -4501,6 +4510,8 @@ app.get('/api/reports/daily-closing', (req, res) => {
     bySource,
     statusBreakdown,
     cancelledCount: cancelledOrders.length,
+    cancelledValue: Math.round(cancelledValue),
+    cancelledOrders: cancelledList,
     hourlySales,
     threeHourSales
   })

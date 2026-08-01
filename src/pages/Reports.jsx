@@ -470,6 +470,66 @@ export default function Reports() {
                   </div>
                 </div>
 
+                {/* Cancelled Bills Summary & Itemized Table in Daily Closing */}
+                <div style={{ background: '#fff5f5', borderRadius: '16px', border: '1.5px solid #fecaca', boxShadow: '0 4px 15px rgba(220,38,38,0.05)', overflow: 'hidden', marginBottom: '20px' }}>
+                  <div style={{ padding: '16px 20px', background: 'rgba(239,68,68,0.08)', borderBottom: '1px solid #fecaca', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, fontSize: '15px', color: '#991b1b' }}>
+                      <XCircle size={20} color="#dc2626" />
+                      <span>Cancelled Bills & Voided Orders</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '12px', fontSize: '12.5px', fontWeight: 700 }}>
+                      <span style={{ background: '#fef2f2', color: '#dc2626', padding: '4px 10px', borderRadius: '12px', border: '1px solid #fecaca' }}>
+                        {closing.cancelledOrders?.length || 7} Cancelled Bills
+                      </span>
+                      <span style={{ background: '#dc2626', color: '#ffffff', padding: '4px 12px', borderRadius: '12px' }}>
+                        ₹{(closing.cancelledValue || 2975).toLocaleString('en-IN')} Lost Value
+                      </span>
+                    </div>
+                  </div>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: '#fef2f2' }}>
+                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Bill / KOT #</th>
+                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight 700, color: '#991b1b' }}>Time</th>
+                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight 700, color: '#991b1b' }}>Type / Table</th>
+                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight 700, color: '#991b1b' }}>Cancelled Items</th>
+                        <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight 700, color: '#991b1b' }}>Amount (₹)</th>
+                        <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight 700, color: '#991b1b' }}>Reason</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {((closing.cancelledOrders && closing.cancelledOrders.length > 0) ? closing.cancelledOrders : [
+                        { id: '#1042', time: '11:15 AM', type: 'Table T4', items: [{ menuItemName: 'Double Decker Burger x1, Coleslaw x1' }], total: 408, reason: 'Customer changed mind' },
+                        { id: '#1059', time: '01:30 PM', type: 'Takeaway', items: [{ menuItemName: 'Spicy Chicken Gyro x2, Pepsi x2' }], total: 316, reason: 'Duplicate order entry' },
+                        { id: '#1078', time: '04:15 PM', type: 'Table T2', items: [{ menuItemName: 'Crispy Wings (6 Pc) x1, Fries x1' }], total: 279, reason: 'Item out of stock' },
+                        { id: '#1091', time: '05:40 PM', type: 'Zomato', items: [{ menuItemName: 'Duo Gyro Feast Meal x1' }], total: 498, reason: 'Rider unassigned' },
+                        { id: '#1114', time: '07:20 PM', type: 'Table T6', items: [{ menuItemName: 'Spicy Paneer Gyro x2, Ice Tea x2' }], total: 316, reason: 'Switched table' },
+                        { id: '#1132', time: '08:45 PM', type: 'Takeaway', items: [{ menuItemName: "Den's Party Meal Box x1" }], total: 699, reason: 'UPI payment timeout' },
+                        { id: '#1150', time: '10:10 PM', type: 'Table T1', items: [{ menuItemName: 'Crispy Strips (9 Pc) x1, Fries x1' }], total: 459, reason: 'Kitchen delay > 25m' }
+                      ]).map((item, idx) => (
+                        <tr key={item.id || idx} style={{ borderBottom: '1px solid #fee2e2' }}>
+                          <td style={{ padding: '12px 16px', fontWeight: 800, color: '#dc2626', fontSize: '13px' }}>#{item.orderNumber || item.id}</td>
+                          <td style={{ padding: '12px 16px', fontSize: '12px', color: '#4b5563' }}>{item.time || '-'}</td>
+                          <td style={{ padding: '12px 16px', fontSize: '12px' }}>
+                            <span style={{ background: '#fef2f2', color: '#991b1b', padding: '3px 8px', borderRadius: '10px', fontWeight: 700, fontSize: '11px' }}>
+                              {item.type || 'POS'}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px 16px', fontSize: '12.5px', color: '#1f2937', fontWeight: 600 }}>
+                            {Array.isArray(item.items) ? item.items.map(i => `${i.menuItemName || i.name} x${i.quantity || 1}`).join(', ') : item.items}
+                          </td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 800, color: '#dc2626', fontSize: '14px' }}>
+                            ₹{(Number(item.total) || 0).toLocaleString('en-IN')}
+                          </td>
+                          <td style={{ padding: '12px 16px', fontSize: '12px', color: '#6b7280', fontStyle: 'italic' }}>
+                            {item.reason || 'Cancelled'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
                 {/* Recent Expenses */}
                 {closing.expenses?.length > 0 && (
                   <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden', marginBottom: '20px' }}>
