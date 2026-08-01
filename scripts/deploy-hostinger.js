@@ -41,8 +41,16 @@ try {
       rmSync(join(serverDst, f), { recursive: true, force: true })
     }
   }
+
+  // Package seed-db.json so Hostinger automatically seeds all store data on first run
+  const localDbPath = join(root, 'server', 'db.json')
+  if (existsSync(localDbPath)) {
+    cpSync(localDbPath, join(serverDst, 'seed-db.json'))
+    console.log('   ✓ Auto-seed database (seed-db.json) packaged')
+  }
+
   const serverSize = countSize(serverDst)
-  console.log(`   ✓ server/  (${serverSize} files, db.json excluded)`)
+  console.log(`   ✓ server/  (${serverSize} files, db.json seeded as seed-db.json)`)
 
   // Copy package & root entry files
   cpSync(join(root, 'package.json'), join(stage, 'package.json'))

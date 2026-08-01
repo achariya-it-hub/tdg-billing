@@ -29,11 +29,14 @@ function readDb() {
   try {
     if (existsSync(DB_PATH)) {
       const content = readFileSync(DB_PATH, 'utf-8').trim()
-      if (content) return JSON.parse(content)
+      if (content && content !== '{}') {
+        const parsed = JSON.parse(content)
+        if (parsed && Array.isArray(parsed.orders) && parsed.orders.length > 0) return parsed
+      }
     }
     const seedPath = join(__dirname, 'seed-db.json')
     if (existsSync(seedPath)) {
-      console.log('db.json not found. Auto-seeding initial database from seed-db.json...')
+      console.log('db.json missing or empty orders. Auto-seeding initial database from seed-db.json...')
       const content = readFileSync(seedPath, 'utf-8').trim()
       if (content) {
         const parsed = JSON.parse(content)
