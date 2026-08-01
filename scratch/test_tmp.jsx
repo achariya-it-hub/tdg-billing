@@ -349,8 +349,6 @@ export default function Purchase() {
     } finally {
       setIsProcessingImage(false)
     }
-  }
-
   const handlePdfFileSelect = async (e) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -664,6 +662,17 @@ export default function Purchase() {
             }}
           />
         </div>
+        <Button variant="secondary" onClick={() => pdfInputRef.current?.click()}>
+          <Upload size={18} />
+          Upload PDF Invoice
+        </Button>
+        <input
+          ref={pdfInputRef}
+          type="file"
+          accept="application/pdf,image/*,.pdf"
+          onChange={handlePdfFileSelect}
+          style={{ display: 'none' }}
+        />
         <Button onClick={() => {
           if (activeTab === 'orders') setShowPOModal(true)
           else if (activeTab === 'suppliers') setShowSupplierModal(true)
@@ -1004,20 +1013,24 @@ export default function Purchase() {
           </div>
 
           <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563' }}>Items ({poForm.items.length})</label>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <Button size="sm" variant="secondary" onClick={() => fileInputRef.current?.click()}>
-                    <Camera size={16} />
-                    Import from Image
-                  </Button>
-                  <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={handleImageFileSelect} style={{ display: 'none' }} />
-                  <Button size="sm" variant="secondary" onClick={() => { setPoItemForm({ name: '', quantity: '', unit: 'kg', rate: '' }); setShowPOItemModal(true) }}>
-                    <Plus size={16} />
-                    Add Item
-                  </Button>
-                </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563' }}>Items ({poForm.items.length})</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <Button size="sm" variant="secondary" onClick={() => pdfInputRef.current?.click()}>
+                  <Upload size={16} />
+                  Import from PDF Invoice
+                </Button>
+                <Button size="sm" variant="secondary" onClick={() => fileInputRef.current?.click()}>
+                  <Camera size={16} />
+                  Import from Image
+                </Button>
+                <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={handleImageFileSelect} style={{ display: 'none' }} />
+                <Button size="sm" variant="secondary" onClick={() => { setPoItemForm({ name: '', quantity: '', unit: 'kg', rate: '' }); setShowPOItemModal(true) }}>
+                  <Plus size={16} />
+                  Add Item
+                </Button>
               </div>
+            </div>
             {poForm.items.length === 0 ? (
               <div style={{ background: '#f9fafb', borderRadius: '12px', padding: '32px', textAlign: 'center' }}>
                 <Package size={32} color="#9ca3af" style={{ marginBottom: '8px' }} />
@@ -1535,4 +1548,7 @@ export default function Purchase() {
       </Modal>
     </div>
   )
+}
+
+  return null
 }

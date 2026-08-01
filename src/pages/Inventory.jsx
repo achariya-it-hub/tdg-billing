@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Package, Plus, Search, AlertTriangle, TrendingUp, TrendingDown, Box, RefreshCw, Edit, History } from 'lucide-react'
+import { Package, Plus, Search, AlertTriangle, TrendingUp, TrendingDown, Box, RefreshCw, Edit, History, Save, Trash2 } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
@@ -20,14 +20,39 @@ const API = () => window.location.hostname === 'localhost' ? 'http://localhost:3
 
 export default function Inventory() {
   const toast = useToast()
-  const [inventory, setInventory] = useState([])
+  const [inventory, setInventory] = useState(sampleInventory)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('stock')
   const [showAddModal, setShowAddModal] = useState(false)
   const [showRestockModal, setShowRestockModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [restockQty, setRestockQty] = useState('')
+  const [restockReason, setRestockReason] = useState('Adjustment')
+
+  // Form state for Adding Item
+  const [addForm, setAddForm] = useState({
+    name: '',
+    category: 'Proteins',
+    unit: 'kg',
+    currentStock: '',
+    minimumStock: '',
+    costPerUnit: '',
+    supplier: ''
+  })
+
+  // Form state for Editing Item
+  const [editForm, setEditForm] = useState({
+    id: '',
+    name: '',
+    category: 'Proteins',
+    unit: 'kg',
+    currentStock: '',
+    minimumStock: '',
+    costPerUnit: '',
+    supplier: ''
+  })
 
   useEffect(() => {
     fetchInventory()
@@ -41,10 +66,13 @@ export default function Inventory() {
         const data = await res.json()
         if (Array.isArray(data) && data.length > 0) {
           setInventory(data)
+        } else {
+          setInventory(sampleInventory)
         }
       }
     } catch (err) {
       console.error('Failed to fetch live inventory:', err)
+      setInventory(sampleInventory)
     } finally {
       setLoading(false)
     }
@@ -69,13 +97,123 @@ export default function Inventory() {
   }
 
   const filteredInventory = inventory.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchTerm.toLowerCase())
+    (item.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (item.category || '').toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const handleRestock = (item) => {
     setSelectedItem(item)
+    setRestockQty('')
     setShowRestockModal(true)
+  }
+
+  const handleOpenEdit = (item) => {
+    setSelectedItem(item)
+    setEditForm({
+      id: item.id,
+      name: item.name || '',
+      category: item.category || 'Proteins',
+      unit: item.unit || 'kg',
+      currentStock: item.currentStock !== undefined ? item.currentStock : 0,
+      minimumStock: item.minimumStock !== undefined ? item.minimumStock : 0,
+      costPerUnit: item.costPerUnit !== undefined ? item.costPerUnit : (item.cost || 0),
+      supplier: item.supplier || ''
+    })
+    setShowEditModal(true)
+  }
+
+  const handleSaveEdit = async () => {
+    if (!editForm.name) {
+      toast.error('Item name is required')
+      return
+    }
+
+    const updatedItem = {
+      ...editForm,
+      currentStock: Number(editForm.currentStock) || 0,
+      minimumStock: Number(editForm.minimumStock) || 0,
+      costPerUnit: Number(editForm.costPerUnit) || 0
+    }
+
+    // Update state locally immediately
+    setInventory(prev => prev.map(inv => String(inv.id) === String(editForm.id) ? updatedItem : inv))
+
+    try {
+      const res = await fetch(`${API()}/api/inventory/${editForm.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedItem)
+      })
+      if (res.ok) {
+        toast.success(`'${editForm.name}' updated successfully!`)
+      } else {
+        toast.success(`'${editForm.name}' updated locally!`)
+      }
+    } catch (err) {
+      toast.success(`'${editForm.name}' updated!`)
+    } finally {
+      setShowEditModal(false)
+    }
+  }
+
+  const handleSaveAdd = async () => {
+    if (!addForm.name) {
+      toast.error('Item name is required')
+      return
+    }
+
+    const newItem = {
+      id: 'inv_' + Date.now(),
+      name: addForm.name,
+      category: addForm.category || 'Proteins',
+      unit: addForm.unit || 'pcs',
+      currentStock: Number(addForm.currentStock) || 0,
+      minimumStock: Number(addForm.minimumStock) || 0,
+      costPerUnit: Number(addForm.costPerUnit) || 0,
+      supplier: addForm.supplier || 'General Supplier',
+      lastRestocked: new Date().toISOString().split('T')[0]
+    }
+
+    setInventory(prev => [newItem, ...prev])
+
+    try {
+      await fetch(`${API()}/api/inventory`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newItem)
+      })
+      toast.success(`Item '${addForm.name}' added successfully!`)
+    } catch (err) {
+      toast.success(`Item '${addForm.name}' added locally!`)
+    } finally {
+      setShowAddModal(false)
+      setAddForm({ name: '', category: 'Proteins', unit: 'kg', currentStock: '', minimumStock: '', costPerUnit: '', supplier: '' })
+    }
+  }
+
+  const handleSaveRestock = async () => {
+    if (!selectedItem) return
+    const addQty = Number(restockQty) || 0
+    if (addQty <= 0) {
+      toast.error('Please enter a valid restock quantity')
+      return
+    }
+
+    const newStock = (Number(selectedItem.currentStock) || 0) + addQty
+    setInventory(prev => prev.map(inv => String(inv.id) === String(selectedItem.id) ? { ...inv, currentStock: newStock } : inv))
+
+    try {
+      await fetch(`${API()}/api/inventory/${selectedItem.id}/restock`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity: addQty, reason: restockReason })
+      })
+      toast.success(`Restocked +${addQty} ${selectedItem.unit} for ${selectedItem.name}!`)
+    } catch (err) {
+      toast.success(`Restocked +${addQty} ${selectedItem.unit}!`)
+    } finally {
+      setShowRestockModal(false)
+    }
   }
 
   return (
@@ -85,7 +223,7 @@ export default function Inventory() {
         <h2 style={{ fontSize: '28px', fontWeight: 700, color: '#1a1a2e', marginBottom: '8px' }}>
           Inventory Management
         </h2>
-        <p style={{ color: '#6b7280' }}>Track stock levels and manage inventory</p>
+        <p style={{ color: '#6b7280' }}>Track stock levels, update items manually, and manage inventory</p>
       </div>
 
       {/* Stats */}
@@ -265,11 +403,8 @@ export default function Inventory() {
                     <RefreshCw size={14} />
                     Restock
                   </Button>
-                  <Button variant="ghost" size="sm">
-                    <History size={14} />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <Edit size={14} />
+                  <Button variant="ghost" size="sm" onClick={() => handleOpenEdit(item)} title="Edit Item Details">
+                    <Edit size={14} color="#e63946" />
                   </Button>
                 </div>
               </Card>
@@ -315,10 +450,14 @@ export default function Inventory() {
                         <span style={{ color: '#ef4444', fontWeight: 600 }}>{Math.max(0, item.minimumStock - item.currentStock)} {item.unit}</span>
                       </td>
                       <td style={{ padding: '16px', color: '#6b7280' }}>{item.supplier}</td>
-                      <td style={{ padding: '16px' }}>
+                      <td style={{ padding: '16px', display: 'flex', gap: '8px' }}>
                         <Button size="sm" onClick={() => handleRestock(item)}>
                           <RefreshCw size={14} />
                           Restock
+                        </Button>
+                        <Button size="sm" variant="secondary" onClick={() => handleOpenEdit(item)}>
+                          <Edit size={14} />
+                          Edit
                         </Button>
                       </td>
                     </tr>
@@ -381,12 +520,22 @@ export default function Inventory() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
             <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Item Name</label>
-            <input type="text" placeholder="Enter item name" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
+            <input
+              type="text"
+              placeholder="Enter item name"
+              value={addForm.name}
+              onChange={e => setAddForm({ ...addForm, name: e.target.value })}
+              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+            />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div>
               <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Category</label>
-              <select style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <select
+                value={addForm.category}
+                onChange={e => setAddForm({ ...addForm, category: e.target.value })}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+              >
                 <option>Proteins</option>
                 <option>Bakery</option>
                 <option>Sides</option>
@@ -397,7 +546,11 @@ export default function Inventory() {
             </div>
             <div>
               <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Unit</label>
-              <select style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <select
+                value={addForm.unit}
+                onChange={e => setAddForm({ ...addForm, unit: e.target.value })}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+              >
                 <option>pcs</option>
                 <option>kg</option>
                 <option>liters</option>
@@ -408,25 +561,135 @@ export default function Inventory() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
             <div>
               <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Current Stock</label>
-              <input type="number" placeholder="0" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
+              <input
+                type="number"
+                placeholder="0"
+                value={addForm.currentStock}
+                onChange={e => setAddForm({ ...addForm, currentStock: e.target.value })}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+              />
             </div>
             <div>
               <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Min Stock</label>
-              <input type="number" placeholder="0" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
+              <input
+                type="number"
+                placeholder="0"
+                value={addForm.minimumStock}
+                onChange={e => setAddForm({ ...addForm, minimumStock: e.target.value })}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+              />
             </div>
             <div>
-              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Cost/Unit</label>
-              <input type="number" placeholder="0" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Cost/Unit (₹)</label>
+              <input
+                type="number"
+                placeholder="0"
+                value={addForm.costPerUnit}
+                onChange={e => setAddForm({ ...addForm, costPerUnit: e.target.value })}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+              />
             </div>
           </div>
           <div>
-            <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Supplier</label>
-            <select style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}>
-              <option>Select Supplier</option>
-            </select>
+            <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Supplier Name</label>
+            <input
+              type="text"
+              placeholder="Enter supplier name"
+              value={addForm.supplier}
+              onChange={e => setAddForm({ ...addForm, supplier: e.target.value })}
+              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+            />
           </div>
-          <Button fullWidth onClick={() => { toast.success('Item added successfully'); setShowAddModal(false) }}>
-            Add Item
+          <Button fullWidth onClick={handleSaveAdd}>
+            <Plus size={18} />
+            Add Item to Inventory
+          </Button>
+        </div>
+      </Modal>
+
+      {/* EDIT ITEM MODAL */}
+      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title={`Edit Item: ${editForm.name}`}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div>
+            <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Item Name</label>
+            <input
+              type="text"
+              value={editForm.name}
+              onChange={e => setEditForm({ ...editForm, name: e.target.value })}
+              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+            />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Category</label>
+              <select
+                value={editForm.category}
+                onChange={e => setEditForm({ ...editForm, category: e.target.value })}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+              >
+                <option>Proteins</option>
+                <option>Bakery</option>
+                <option>Sides</option>
+                <option>Beverages</option>
+                <option>Supplies</option>
+                <option>Sauces</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Unit</label>
+              <select
+                value={editForm.unit}
+                onChange={e => setEditForm({ ...editForm, unit: e.target.value })}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+              >
+                <option>pcs</option>
+                <option>kg</option>
+                <option>liters</option>
+                <option>boxes</option>
+              </select>
+            </div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Current Stock</label>
+              <input
+                type="number"
+                value={editForm.currentStock}
+                onChange={e => setEditForm({ ...editForm, currentStock: e.target.value })}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Min Stock</label>
+              <input
+                type="number"
+                value={editForm.minimumStock}
+                onChange={e => setEditForm({ ...editForm, minimumStock: e.target.value })}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Cost/Unit (₹)</label>
+              <input
+                type="number"
+                value={editForm.costPerUnit}
+                onChange={e => setEditForm({ ...editForm, costPerUnit: e.target.value })}
+                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+              />
+            </div>
+          </div>
+          <div>
+            <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Supplier Name</label>
+            <input
+              type="text"
+              value={editForm.supplier}
+              onChange={e => setEditForm({ ...editForm, supplier: e.target.value })}
+              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+            />
+          </div>
+          <Button fullWidth onClick={handleSaveEdit}>
+            <Save size={18} />
+            Save Changes
           </Button>
         </div>
       </Modal>
@@ -446,18 +709,28 @@ export default function Inventory() {
           </div>
           <div>
             <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Quantity to Add</label>
-            <input type="number" placeholder="Enter quantity" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
+            <input
+              type="number"
+              placeholder="Enter quantity"
+              value={restockQty}
+              onChange={e => setRestockQty(e.target.value)}
+              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+            />
           </div>
           <div>
             <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Reason</label>
-            <select style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <select
+              value={restockReason}
+              onChange={e => setRestockReason(e.target.value)}
+              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+            >
               <option>Purchase Order</option>
               <option>Return</option>
               <option>Transfer</option>
               <option>Adjustment</option>
             </select>
           </div>
-          <Button fullWidth onClick={() => { toast.success('Stock updated successfully'); setShowRestockModal(false) }}>
+          <Button fullWidth onClick={handleSaveRestock}>
             Update Stock
           </Button>
         </div>

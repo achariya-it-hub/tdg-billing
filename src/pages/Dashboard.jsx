@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { TrendingUp, TrendingDown, DollarSign, ShoppingBag, Users, Clock, BarChart3, PieChart, ArrowUpRight, ArrowDownRight, RotateCcw, X } from 'lucide-react'
-import { BarChart, Bar, LineChart, Line, PieChart as RechartsPie, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, LabelList, ComposedChart, Line, AreaChart, Area, PieChart as RechartsPie, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 const COLORS = ['#e63946', '#f4a261', '#e9c46a', '#2a9d8f', '#4895ef', '#9b5de5']
 
@@ -25,15 +25,9 @@ export default function Dashboard() {
     { name: 'French Fries', quantity: 56, revenue: 5544 },
     { name: 'Pepsi', quantity: 78, revenue: 3822 }
   ])
-  const [hourlyData, setHourlyData] = useState([
-    { hour: '11AM', orders: 8, revenue: 2400 },
-    { hour: '12PM', orders: 15, revenue: 4800 },
-    { hour: '1PM', orders: 22, revenue: 7200 },
-    { hour: '2PM', orders: 18, revenue: 5600 },
-    { hour: '3PM', orders: 12, revenue: 3600 },
-    { hour: '4PM', orders: 8, revenue: 2400 },
-    { hour: '5PM', orders: 6, revenue: 1800 }
-  ])
+  const [slotInterval, setSlotInterval] = useState('3h')
+  const [hourlyData, setHourlyData] = useState([])
+  const [threeHourData, setThreeHourData] = useState([])
   const [categoryData, setCategoryData] = useState([
     { name: 'Burgers', value: 35 },
     { name: 'Chicken', value: 28 },
@@ -130,6 +124,14 @@ export default function Dashboard() {
             avgOrder: avg,
             onlineOrders: onlineCount
           })
+
+          if (closing.hourlySales && closing.hourlySales.length > 0) {
+            setHourlyData(closing.hourlySales)
+          }
+
+          if (closing.threeHourSales && closing.threeHourSales.length > 0) {
+            setThreeHourData(closing.threeHourSales)
+          }
 
           if (closing.bySource && Object.keys(closing.bySource).length > 0) {
             const formattedSource = Object.entries(closing.bySource).map(([src, val]) => ({
@@ -295,50 +297,338 @@ export default function Dashboard() {
 
       {/* Charts Row */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', marginBottom: '24px' }}>
-        {/* Hourly Sales */}
-        <div style={{
-          background: 'rgba(255,255,255,0.75)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderRadius: '20px',
-          border: '1px solid rgba(255,255,255,0.3)',
-          padding: '24px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
-        }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '24px', letterSpacing: '-0.3px' }}>Hourly Sales</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={hourlyData.filter(h => h.orderCount > 0)}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.04)" />
-              <XAxis dataKey="hourLabel" stroke="#9ca3af" fontSize={12} />
-              <YAxis stroke="#9ca3af" fontSize={12} />
-              <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,0,0,0.06)', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.08)' }} />
-              <Line type="monotone" dataKey="revenue" stroke="#e63946" strokeWidth={3} dot={{ fill: '#e63946', r: 5, strokeWidth: 2, stroke: 'white' }} activeDot={{ r: 7, strokeWidth: 2, stroke: 'white' }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+      {/* Charts Row */}
+      {(() => {
+        const currentDisplayData = slotInterval === '3h' ? (threeHourData.length > 0 ? threeHourData : hourlyData) : hourlyData
+        return (
+          <>
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', marginBottom: '24px' }}>
+              {/* BILLS ISSUED BY TIME SLOT - Dark Executive Tech Theme */}
+              <div style={{
+                background: 'linear-gradient(180deg, #070e22 0%, #0c1836 100%)',
+                borderRadius: '20px',
+                border: '1px solid rgba(59, 130, 246, 0.35)',
+                padding: '24px',
+                boxShadow: '0 12px 36px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                minHeight: '340px',
+                color: '#ffffff'
+              }}>
+                {/* Header with Circular Icon & Underline Accent */}
+                <div style={{ marginBottom: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '38px',
+                      height: '38px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 0 12px rgba(59, 130, 246, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.4)'
+                    }}>
+                      <BarChart3 size={20} color="#ffffff" />
+                    </div>
+                    <h3 style={{
+                      fontSize: '16px',
+                      fontWeight: 800,
+                      margin: 0,
+                      letterSpacing: '1px',
+                      color: '#ffffff',
+                      textTransform: 'uppercase'
+                    }}>
+                      BILLS ISSUED BY TIME SLOT
+                    </h3>
+                  </div>
+                  <div style={{
+                    height: '2px',
+                    width: '100%',
+                    background: 'linear-gradient(90deg, #3b82f6 0%, rgba(59, 130, 246, 0.1) 80%, transparent 100%)',
+                    marginTop: '12px',
+                    borderRadius: '2px'
+                  }} />
+                </div>
 
-        {/* Sales by Source */}
-        <div style={{
-          background: 'rgba(255,255,255,0.75)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderRadius: '20px',
-          border: '1px solid rgba(255,255,255,0.3)',
-          padding: '24px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
-        }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '24px', letterSpacing: '-0.3px' }}>By Source</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <RechartsPie>
-              <Pie data={sourceData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="revenue" nameKey="source" label={({ source, percent }) => `${source} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
-                {sourceData.map((entry, index) => (
-                  <Cell key={entry.source} fill={COLORS[index % COLORS.length]} stroke="white" strokeWidth={2} />
-                ))}
-              </Pie>
-              <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,0,0,0.06)', borderRadius: '12px' }} />
-            </RechartsPie>
-          </ResponsiveContainer>
-        </div>
+                <div style={{ width: '100%', height: '270px', minHeight: '270px', position: 'relative' }}>
+                  <span style={{
+                    position: 'absolute',
+                    top: '-6px',
+                    left: '8px',
+                    fontSize: '13px',
+                    color: '#94a3b8',
+                    fontWeight: 600,
+                    zIndex: 2
+                  }}>
+                    Bills
+                  </span>
+
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={
+                        (currentDisplayData.length > 0 ? currentDisplayData : [
+                          { hourLabel: '09:00 AM - 12:00 PM', revenue: 750, orderCount: 3 },
+                          { hourLabel: '12:00 PM - 03:00 PM', revenue: 1336, orderCount: 5 },
+                          { hourLabel: '03:00 PM - 06:00 PM', revenue: 4503, orderCount: 16 },
+                          { hourLabel: '06:00 PM - 09:00 PM', revenue: 9832, orderCount: 30 },
+                          { hourLabel: '09:00 PM - 11:59 PM', revenue: 5080, orderCount: 12 }
+                        ]).map(d => ({
+                          ...d,
+                          orderCount: d.orderCount || d.orders || 0,
+                          // format label for multi-line display
+                          shortLabel: (d.hourLabel || d.timeSlot || '').replace(' - ', '\n- ')
+                        }))
+                      }
+                      margin={{ top: 28, right: 16, left: -10, bottom: 25 }}
+                    >
+                      <defs>
+                        <linearGradient id="electricBlueGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#3b82f6" stopOpacity={1} />
+                          <stop offset="100%" stopColor="#1d4ed8" stopOpacity={0.9} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.08)" vertical={false} />
+                      <XAxis
+                        dataKey="shortLabel"
+                        stroke="#94a3b8"
+                        fontSize={11}
+                        tickLine={false}
+                        interval={0}
+                        tick={({ x, y, payload }) => {
+                          const lines = payload.value.split('\n')
+                          return (
+                            <g transform={`translate(${x},${y + 8})`}>
+                              <text x={0} y={0} dy={0} textAnchor="middle" fill="#cbd5e1" fontSize={11} fontWeight={600}>
+                                {lines[0]}
+                              </text>
+                              {lines[1] && (
+                                <text x={0} y={0} dy={14} textAnchor="middle" fill="#94a3b8" fontSize={11} fontWeight={500}>
+                                  {lines[1]}
+                                </text>
+                              )}
+                            </g>
+                          )
+                        }}
+                      />
+                      <YAxis
+                        stroke="#94a3b8"
+                        fontSize={11}
+                        tickLine={false}
+                        domain={[0, 40]}
+                        ticks={[0, 10, 20, 30, 40]}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          background: 'rgba(15, 23, 42, 0.95)',
+                          backdropFilter: 'blur(12px)',
+                          border: '1px solid rgba(59, 130, 246, 0.4)',
+                          borderRadius: '12px',
+                          color: '#ffffff',
+                          boxShadow: '0 8px 24px rgba(0,0,0,0.5)'
+                        }}
+                        formatter={(value, name) => [
+                          name === 'revenue' ? `₹${Number(value).toLocaleString()}` : `${value} bills`,
+                          name === 'revenue' ? 'Revenue' : 'Bills Issued'
+                        ]}
+                        labelFormatter={(label) => `Slot: ${label.replace('\n', ' ')}`}
+                      />
+                      <Bar
+                        dataKey="orderCount"
+                        fill="url(#electricBlueGrad)"
+                        radius={[6, 6, 0, 0]}
+                        barSize={48}
+                        stroke="#60a5fa"
+                        strokeWidth={1}
+                      >
+                        <LabelList
+                          dataKey="orderCount"
+                          position="top"
+                          fill="#ffffff"
+                          fontSize={15}
+                          fontWeight={700}
+                          offset={8}
+                        />
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Sales by Source */}
+              <div style={{
+                background: 'rgba(255,255,255,0.75)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                borderRadius: '20px',
+                border: '1px solid rgba(255,255,255,0.3)',
+                padding: '24px',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+              }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '24px', letterSpacing: '-0.3px' }}>By Source</h3>
+                <ResponsiveContainer width="100%" height={280}>
+                  <RechartsPie>
+                    <Pie data={sourceData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="revenue" nameKey="source" label={({ source, percent }) => `${source} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
+                      {sourceData.map((entry, index) => (
+                        <Cell key={entry.source} fill={COLORS[index % COLORS.length]} stroke="white" strokeWidth={2} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,0,0,0.06)', borderRadius: '12px' }} />
+                  </RechartsPie>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Slot Detailed Billing Breakdown */}
+            <div style={{
+              background: 'rgba(255,255,255,0.85)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              borderRadius: '20px',
+              border: '1px solid rgba(255,255,255,0.3)',
+              padding: '24px',
+              marginBottom: '24px',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.04)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <div>
+                  <h3 style={{ fontSize: '18px', fontWeight: 700, margin: 0, letterSpacing: '-0.3px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Clock size={20} color="#e63946" /> {slotInterval === '3h' ? '3-Hour Slot Billing Breakdown (09:00 - 23:00 Hrs)' : 'Hour-by-Hour Billing Breakdown'}
+                  </h3>
+                  <p style={{ fontSize: '13px', color: '#6b7280', margin: '4px 0 0 0' }}>
+                    Sales distribution and bill volume grouped by {slotInterval === '3h' ? '3-hour time blocks' : 'hour'}
+                  </p>
+                </div>
+
+                {/* Interval Selector Toggle */}
+                <div style={{ display: 'flex', gap: '4px', background: 'rgba(0,0,0,0.04)', padding: '4px', borderRadius: '12px' }}>
+                  <button
+                    onClick={() => setSlotInterval('3h')}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      fontWeight: 600,
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      background: slotInterval === '3h' ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'transparent',
+                      color: slotInterval === '3h' ? 'white' : '#6b7280',
+                      boxShadow: slotInterval === '3h' ? '0 2px 8px rgba(230,57,70,0.3)' : 'none',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    ⏱️ 3-Hour Slots (9 - 23 Hrs)
+                  </button>
+                  <button
+                    onClick={() => setSlotInterval('1h')}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      fontWeight: 600,
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      background: slotInterval === '1h' ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'transparent',
+                      color: slotInterval === '1h' ? 'white' : '#6b7280',
+                      boxShadow: slotInterval === '1h' ? '0 2px 8px rgba(230,57,70,0.3)' : 'none',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    🕐 1-Hour Slots
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 8px' }}>
+                  <thead>
+                    <tr style={{ color: '#6b7280', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <th style={{ textAlign: 'left', padding: '12px 16px' }}>Time Slot</th>
+                      <th style={{ textAlign: 'center', padding: '12px 16px' }}>Bills Issued</th>
+                      <th style={{ textAlign: 'right', padding: '12px 16px' }}>Revenue (₹)</th>
+                      <th style={{ textAlign: 'right', padding: '12px 16px' }}>Avg Bill Value (₹)</th>
+                      <th style={{ textAlign: 'left', padding: '12px 24px', width: '220px' }}>Sales Share</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentDisplayData.filter(h => (h.orderCount || h.orders || 0) > 0 || (h.revenue || 0) > 0).length === 0 ? (
+                      <tr>
+                        <td colSpan={5} style={{ textAlign: 'center', padding: '32px', color: '#9ca3af', fontSize: '14px' }}>
+                          No billing activity recorded for the selected date range.
+                        </td>
+                      </tr>
+                    ) : (
+                      currentDisplayData
+                        .filter(h => (h.orderCount || h.orders || 0) > 0 || (h.revenue || 0) > 0)
+                        .map((item, idx) => {
+                          const billCnt = item.orderCount || item.orders || 0
+                          const rev = item.revenue || 0
+                          const avg = item.avgOrder || (billCnt > 0 ? Math.round(rev / billCnt) : 0)
+                          const pct = item.pct || 0
+
+                          return (
+                            <tr
+                              key={item.timeSlot || item.hourLabel || idx}
+                              style={{
+                                background: idx % 2 === 0 ? 'white' : 'rgba(249, 250, 251, 0.8)',
+                                borderRadius: '12px',
+                                boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                                transition: 'all 0.2s'
+                              }}
+                            >
+                              <td style={{ padding: '14px 16px', borderRadius: '12px 0 0 12px', fontWeight: 600, fontSize: '14px', color: '#1f2937' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <span style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '50%',
+                                    background: rev > 10000 ? '#10b981' : rev > 3000 ? '#f59e0b' : '#3b82f6'
+                                  }}></span>
+                                  {item.timeSlot || item.hourLabel}
+                                </div>
+                              </td>
+                              <td style={{ padding: '14px 16px', textAlign: 'center' }}>
+                                <span style={{
+                                  background: 'rgba(230,57,70,0.08)',
+                                  color: '#e63946',
+                                  padding: '4px 12px',
+                                  borderRadius: '8px',
+                                  fontWeight: 700,
+                                  fontSize: '13px'
+                                }}>
+                                  {billCnt} {billCnt === 1 ? 'bill' : 'bills'}
+                                </span>
+                              </td>
+                              <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 700, fontSize: '15px', color: '#111827' }}>
+                                ₹{rev.toLocaleString()}
+                              </td>
+                              <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 600, fontSize: '14px', color: '#4b5563' }}>
+                                ₹{avg.toLocaleString()}
+                              </td>
+                              <td style={{ padding: '14px 24px', borderRadius: '0 12px 12px 0' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                  <div style={{ flex: 1, height: '8px', background: 'rgba(0,0,0,0.06)', borderRadius: '4px', overflow: 'hidden' }}>
+                                    <div style={{
+                                      width: `${Math.min(100, Math.max(0, pct))}%`,
+                                      height: '100%',
+                                      background: 'linear-gradient(90deg, #e63946, #c1121f)',
+                                      borderRadius: '4px',
+                                      transition: 'width 0.4s ease'
+                                    }} />
+                                  </div>
+                                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#374151', minWidth: '40px' }}>
+                                    {pct}%
+                                  </span>
+                                </div>
+                              </td>
+                            </tr>
+                          )
+                        })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )
+      })()}
       </div>
 
       {/* Bottom Row */}

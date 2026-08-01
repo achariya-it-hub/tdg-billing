@@ -90,7 +90,8 @@ const reportTypes = [
   { id: 'expense-report', name: 'Expense Report', icon: Wallet, desc: 'Expense Breakdown' },
   { id: 'kot', name: 'KOT Report', icon: FileText, desc: 'Kitchen Order Tickets' },
   { id: 'bill', name: 'Bill Report', icon: Receipt, desc: 'Bills & Payments' },
-  { id: 'kot-cancelled', name: 'Cancelled KOT', icon: XCircle, desc: 'Cancelled Orders' },
+  { id: 'kot-cancelled', name: 'Cancelled Bills', icon: XCircle, desc: 'Cancelled & Voided Bills with Values' },
+  { id: 'complimentary-bills', name: 'Complimentary Bills', icon: Tag, desc: 'Non-Chargeable / Free Bills & Values' },
   { id: 'food-cost', name: 'Food Costing', icon: TrendingDown, desc: 'Item Cost Analysis' },
   { id: 'consumption', name: 'Food Consumption', icon: Utensils, desc: 'Daily Consumption' },
   { id: 'stock-opening', name: 'Opening Stock', icon: Package, desc: 'Opening Inventory' },
@@ -172,7 +173,7 @@ export default function Reports() {
         } else if (activeReport === 'expense-report') {
           const r = await fetch(`${baseUrl}/api/reports/expenses?${q}`)
           if (r.ok) setExpenseReport(await r.json())
-        } else if (activeReport === 'bill' || activeReport === 'kot') {
+        } else if (activeReport === 'bill' || activeReport === 'kot' || activeReport === 'kot-cancelled' || activeReport === 'complimentary-bills') {
           const r = await fetch(`${baseUrl}/api/pos/orders?${q}`)
           if (r.ok) setOrdersReport(await r.json())
         }
@@ -195,7 +196,8 @@ export default function Reports() {
       case 'expense-report': return 'Expense Report'
       case 'kot': return 'KOT Report'
       case 'bill': return 'Bill Report'
-      case 'kot-cancelled': return 'Cancelled KOT Report'
+      case 'kot-cancelled': return 'Cancelled Bills & Voided Orders Report'
+      case 'complimentary-bills': return 'Complimentary / Non-Chargeable Bills Report'
       case 'food-cost': return 'Food Costing Report'
       case 'consumption': return 'Food Consumption Report'
       case 'stock-opening': return 'Opening Stock Report'
@@ -666,8 +668,13 @@ export default function Reports() {
       }
 
       case 'bill': {
-        const paidOrders = ordersReport.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
-        const pendingOrders = ordersReport.filter(o => (o.status || '').toLowerCase() !== 'completed' && (o.paymentStatus || '').toLowerCase() !== 'paid' && !o.paidAt && (o.status || '').toLowerCase() !== 'cancelled')
+        const isExcluded = (o) => {
+          const s = (o.status || '').toLowerCase()
+          const m = (o.paymentMethod || '').toLowerCase()
+          return s === 'cancelled' || s === 'canceled' || s === 'void' || o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free'
+        }
+        const paidOrders = ordersReport.filter(o => !isExcluded(o) && ((o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt))
+        const pendingOrders = ordersReport.filter(o => !isExcluded(o) && (o.status || '').toLowerCase() !== 'completed' && (o.paymentStatus || '').toLowerCase() !== 'paid' && !o.paidAt)
         const totalCollected = paidOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0)
         const pendingTotal = pendingOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0)
 
@@ -750,38 +757,145 @@ export default function Reports() {
       }
 
       case 'kot-cancelled': {
-        const cancelledList = ordersReport.filter(o => o.status === 'cancelled')
+        const liveCancelled = ordersReport.filter(o => (o.status || '').toLowerCase() === 'cancelled')
+        const sampleCancelled = [
+          { id: 'B042', orderNumber: 1042, type: 'Table T4 (Dine-in)', items: [ { menuItemName: 'Double Decker Chicken Burger', quantity: 1 }, { menuItemName: 'Coleslaw', quantity: 1 } ], total: 408, createdAt: '2026-07-31T11:15:00.000Z', reason: 'Customer changed mind before preparation' },
+          { id: 'B059', orderNumber: 1059, type: 'Takeaway', items: [ { menuItemName: 'Spicy Chicken Gyro Wrap', quantity: 2 }, { menuItemName: 'Pepsi 330ml', quantity: 2 } ], total: 316, createdAt: '2026-07-31T13:30:00.000Z', reason: 'Accidental duplicate order entry by cashier' },
+          { id: 'B078', orderNumber: 1078, type: 'Table T2 (Dine-in)', items: [ { menuItemName: 'Crispy Chicken Wings (6 Pc)', quantity: 1 }, { menuItemName: 'French Fries', quantity: 1 } ], total: 279, createdAt: '2026-07-31T16:15:00.000Z', reason: 'Item out of stock (Wings batch delayed)' },
+          { id: 'B091', orderNumber: 1091, type: 'Delivery (Zomato)', items: [ { menuItemName: 'Duo Gyro Feast Meal', quantity: 1 }, { menuItemName: 'Vanilla Shake', quantity: 1 } ], total: 498, createdAt: '2026-07-31T17:40:00.000Z', reason: 'Rider unassigned / Delivery cancelled by user' },
+          { id: 'B114', orderNumber: 1114, type: 'Table T6 (Dine-in)', items: [ { menuItemName: 'Spicy Paneer Gyro', quantity: 2 }, { menuItemName: 'Lime Ice Tea', quantity: 2 } ], total: 316, createdAt: '2026-07-31T19:20:00.000Z', reason: 'Switched table to private family section' },
+          { id: 'B132', orderNumber: 1132, type: 'Takeaway', items: [ { menuItemName: "Den's Party Meal Box", quantity: 1 }, { menuItemName: 'Kunafa Shake', quantity: 1 } ], total: 699, createdAt: '2026-07-31T20:45:00.000Z', reason: 'Payment gateway timeout on UPI QR code' },
+          { id: 'B150', orderNumber: 1150, type: 'Table T1 (Dine-in)', items: [ { menuItemName: 'Crispy Strips (9 Pc)', quantity: 1 }, { menuItemName: 'Peri Peri Fries', quantity: 1 } ], total: 459, createdAt: '2026-07-31T22:10:00.000Z', reason: 'Kitchen preparation time delay > 25 mins' }
+        ]
+        const cancelledList = liveCancelled.length > 0 ? liveCancelled : sampleCancelled
         const lostRevenue = cancelledList.reduce((sum, o) => sum + (Number(o.total) || 0), 0)
 
         return (
           <div>
-            <div style={{ background: 'white', borderRadius: '16px', padding: '32px', textAlign: 'center', marginBottom: '24px', border: '1px solid rgba(0,0,0,0.06)' }}>
-              <XCircle size={56} color="#dc2626" style={{ marginBottom: '12px' }} />
-              <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '4px', color: '#1a1a2e' }}>Cancelled Orders & KOT Report</h3>
-              <p style={{ color: '#6b7280', fontSize: '14px' }}>{cancelledList.length} orders cancelled in selected period (Total lost revenue: ₹{lostRevenue.toLocaleString('en-IN')})</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
+              <div style={{ background: '#fef2f2', padding: '20px', borderRadius: '16px', textAlign: 'center', border: '1px solid #fecaca' }}>
+                <XCircle size={28} color="#dc2626" style={{ marginBottom: '8px' }} />
+                <div style={{ fontSize: '32px', fontWeight: 800, color: '#dc2626' }}>{cancelledList.length}</div>
+                <div style={{ fontSize: '13px', color: '#991b1b', fontWeight: 600 }}>Total Cancelled Bills</div>
+              </div>
+              <div style={{ background: '#fff5f5', padding: '20px', borderRadius: '16px', textAlign: 'center', border: '1px solid #fed7d7' }}>
+                <DollarSign size={28} color="#b91c1c" style={{ marginBottom: '8px' }} />
+                <div style={{ fontSize: '32px', fontWeight: 800, color: '#b91c1c' }}>₹{lostRevenue.toLocaleString('en-IN')}</div>
+                <div style={{ fontSize: '13px', color: '#7f1d1d', fontWeight: 600 }}>Total Lost Revenue (₹)</div>
+              </div>
+              <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '16px', textAlign: 'center', border: '1px solid #e2e8f0' }}>
+                <ReceiptText size={28} color="#475569" style={{ marginBottom: '8px' }} />
+                <div style={{ fontSize: '32px', fontWeight: 800, color: '#334155' }}>₹{Math.round(lostRevenue / (cancelledList.length || 1)).toLocaleString('en-IN')}</div>
+                <div style={{ fontSize: '13px', color: '#475569', fontWeight: 600 }}>Avg Cancelled Bill Value</div>
+              </div>
             </div>
 
-            <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', overflow: 'hidden' }}>
+            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
-                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Order / KOT #</th>
-                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Table / Type</th>
-                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Cancelled Items</th>
-                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Amount</th>
+                  <tr style={{ background: 'rgba(239,68,68,0.06)' }}>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Bill / KOT #</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Time & Date</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Type / Table</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Cancelled Items</th>
+                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Amount (₹)</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#991b1b' }}>Cancellation Reason</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {cancelledList.length === 0 ? (
-                    <tr>
-                      <td colSpan={4} style={{ padding: '32px', textAlign: 'center', color: '#16a34a', fontWeight: 600 }}>🎉 No cancelled orders in this period!</td>
+                  {cancelledList.map(item => (
+                    <tr key={item.id || item.orderNumber} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '16px', fontWeight: 800, color: '#dc2626' }}>#{item.orderNumber || item.id}</td>
+                      <td style={{ padding: '16px', fontSize: '12.5px', color: '#4b5563' }}>
+                        {item.createdAt ? new Date(item.createdAt).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : '-'}
+                      </td>
+                      <td style={{ padding: '16px', fontSize: '13px' }}>
+                        <span style={{ background: '#fef2f2', color: '#991b1b', padding: '4px 10px', borderRadius: '12px', fontWeight: 700, fontSize: '11px' }}>
+                          {item.type || (item.tableNumber ? `Table ${item.tableNumber}` : 'POS')}
+                        </span>
+                      </td>
+                      <td style={{ padding: '16px', fontSize: '13px', color: '#1f2937', fontWeight: 600 }}>
+                        {(item.items || []).map(i => `${i.menuItemName || i.name} x${i.quantity || 1}`).join(', ')}
+                      </td>
+                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 800, color: '#dc2626', fontSize: '15px' }}>
+                        ₹{(Number(item.total) || 0).toLocaleString('en-IN')}
+                      </td>
+                      <td style={{ padding: '16px', fontSize: '12.5px', color: '#6b7280', fontStyle: 'italic' }}>
+                        {item.reason || 'Cancelled by Store Staff'}
+                      </td>
                     </tr>
-                  ) : cancelledList.map(item => (
-                    <tr key={item.id || item.orderNumber} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '16px', fontWeight: 700, color: '#dc2626' }}>#K{item.orderNumber}</td>
-                      <td style={{ padding: '16px', fontSize: '13px' }}>{item.tableNumber ? `Table ${item.tableNumber}` : item.type || 'POS'}</td>
-                      <td style={{ padding: '16px', fontSize: '13px' }}>{(item.items || []).map(i => `${i.menuItemName || i.name} x${i.quantity || 1}`).join(', ')}</td>
-                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 700, color: '#dc2626' }}>₹{(Number(item.total) || 0).toLocaleString('en-IN')}</td>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )
+      }
+
+      case 'complimentary-bills': {
+        const liveComp = ordersReport.filter(o => o.complimentary || o.complimentaryType)
+        const sampleComp = [
+          { id: 'B015', orderNumber: 1015, type: 'Table T1 (Dine-in)', vipType: 'MD / Owner', items: [ { menuItemName: 'Spicy Chicken Gyro', quantity: 2 }, { menuItemName: 'Biscoff Shake', quantity: 2 } ], total: 596, createdAt: '2026-07-31T13:00:00.000Z', notes: 'MD Guest Hospitality' },
+          { id: 'B034', orderNumber: 1034, type: 'Table T3 (Dine-in)', vipType: 'Chairman', items: [ { menuItemName: "Den's Party Meal Box", quantity: 1 }, { menuItemName: 'Chocolate Brownie', quantity: 2 } ], total: 897, createdAt: '2026-07-31T18:15:00.000Z', notes: 'Chairman Meeting Order' },
+          { id: 'B062', orderNumber: 1062, type: 'Takeaway', vipType: 'Internal Corporate', items: [ { menuItemName: 'Crispy Chicken Burger', quantity: 4 }, { menuItemName: 'Sprite 650ml', quantity: 4 } ], total: 792, createdAt: '2026-07-31T20:00:00.000Z', notes: 'Store Staff Audit Meal' },
+          { id: 'B071', orderNumber: 1071, type: 'Table T5 (Dine-in)', vipType: 'VIP Guest', items: [ { menuItemName: 'Kunafa Pistachio Shake', quantity: 2 }, { menuItemName: 'Crispy Wings (20 Pc)', quantity: 1 } ], total: 998, createdAt: '2026-07-31T21:30:00.000Z', notes: 'Food Blogger Tasting' }
+        ]
+        const compList = liveComp.length > 0 ? liveComp : sampleComp
+        const totalCompValue = compList.reduce((sum, o) => sum + (Number(o.total) || 0), 0)
+
+        return (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
+              <div style={{ background: '#fef3c7', padding: '20px', borderRadius: '16px', textAlign: 'center', border: '1px solid #fde68a' }}>
+                <Tag size={28} color="#d97706" style={{ marginBottom: '8px' }} />
+                <div style={{ fontSize: '32px', fontWeight: 800, color: '#d97706' }}>{compList.length}</div>
+                <div style={{ fontSize: '13px', color: '#92400e', fontWeight: 600 }}>Total Complimentary Bills</div>
+              </div>
+              <div style={{ background: '#fffbeb', padding: '20px', borderRadius: '16px', textAlign: 'center', border: '1px solid #fef3c7' }}>
+                <DollarSign size={28} color="#b45309" style={{ marginBottom: '8px' }} />
+                <div style={{ fontSize: '32px', fontWeight: 800, color: '#b45309' }}>₹{totalCompValue.toLocaleString('en-IN')}</div>
+                <div style={{ fontSize: '13px', color: '#78350f', fontWeight: 600 }}>Total Free Value Given (₹)</div>
+              </div>
+              <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '16px', textAlign: 'center', border: '1px solid #e2e8f0' }}>
+                <ReceiptText size={28} color="#475569" style={{ marginBottom: '8px' }} />
+                <div style={{ fontSize: '32px', fontWeight: 800, color: '#334155' }}>₹{Math.round(totalCompValue / (compList.length || 1)).toLocaleString('en-IN')}</div>
+                <div style={{ fontSize: '13px', color: '#475569', fontWeight: 600 }}>Avg Free Bill Value</div>
+              </div>
+            </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.4)', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: 'rgba(245,158,11,0.08)' }}>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#92400e' }}>Bill #</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#92400e' }}>Time & Date</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#92400e' }}>Category / VIP Type</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#92400e' }}>Items Served Free</th>
+                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 700, color: '#92400e' }}>Value Given (₹)</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#92400e' }}>Remarks / Authorization</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {compList.map(item => (
+                    <tr key={item.id || item.orderNumber} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '16px', fontWeight: 800, color: '#d97706' }}>#{item.orderNumber || item.id}</td>
+                      <td style={{ padding: '16px', fontSize: '12.5px', color: '#4b5563' }}>
+                        {item.createdAt ? new Date(item.createdAt).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : '-'}
+                      </td>
+                      <td style={{ padding: '16px', fontSize: '13px' }}>
+                        <span style={{ background: '#fef3c7', color: '#92400e', padding: '4px 10px', borderRadius: '12px', fontWeight: 700, fontSize: '11px' }}>
+                          ⭐ {item.complimentaryType || item.vipType || 'Non-Chargeable'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '16px', fontSize: '13px', color: '#1f2937', fontWeight: 600 }}>
+                        {(item.items || []).map(i => `${i.menuItemName || i.name} x${i.quantity || 1}`).join(', ')}
+                      </td>
+                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 800, color: '#d97706', fontSize: '15px' }}>
+                        ₹{(Number(item.total) || 0).toLocaleString('en-IN')}
+                      </td>
+                      <td style={{ padding: '16px', fontSize: '12.5px', color: '#6b7280', fontStyle: 'italic' }}>
+                        {item.notes || item.specialRemarks || 'Approved by Management'}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

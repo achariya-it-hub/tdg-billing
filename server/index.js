@@ -2692,8 +2692,78 @@ app.post('/api/admin/menu/import-excel', (req, res) => {
     res.json({ success: true, created, updated, total: menuItems.length })
   } catch (e) {
     console.error('Import error:', e)
-    res.status(500).json({ error: 'Import failed: ' + e.message })
+// ============ INVENTORY API ROUTES ============
+app.get('/api/inventory', (req, res) => {
+  res.json(inventory || [])
+})
+
+app.post('/api/inventory', (req, res) => {
+  const { name, category, unit, currentStock, minimumStock, costPerUnit, supplier } = req.body
+  if (!name) return res.status(400).json({ error: 'Item name required' })
+
+  const newItem = {
+    id: 'inv_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+    name: String(name),
+    category: category || 'General',
+    unit: unit || 'pcs',
+    currentStock: Number(currentStock) || 0,
+    minimumStock: Number(minimumStock) || 0,
+    costPerUnit: Number(costPerUnit) || 0,
+    supplier: supplier || 'General Supplier',
+    lastRestocked: new Date().toISOString().split('T')[0]
   }
+
+  inventory.push(newItem)
+  saveState()
+  io.emit('inventory:updated', inventory)
+  res.status(201).json(newItem)
+})
+
+app.put('/api/inventory/:id', (req, res) => {
+  const { id } = req.params
+  let idx = inventory.findIndex(i => String(i.id) === String(id))
+  if (idx === -1 && req.body.name) {
+    idx = inventory.findIndex(i => i.name.toLowerCase() === String(req.body.name).toLowerCase())
+  }
+  if (idx === -1) return res.status(404).json({ error: 'Inventory item not found' })
+
+  const { name, category, unit, currentStock, minimumStock, costPerUnit, supplier } = req.body
+  if (name !== undefined) inventory[idx].name = String(name)
+  if (category !== undefined) inventory[idx].category = String(category)
+  if (unit !== undefined) inventory[idx].unit = String(unit)
+  if (currentStock !== undefined) inventory[idx].currentStock = Number(currentStock)
+  if (minimumStock !== undefined) inventory[idx].minimumStock = Number(minimumStock)
+  if (costPerUnit !== undefined) inventory[idx].costPerUnit = Number(costPerUnit)
+  if (supplier !== undefined) inventory[idx].supplier = String(supplier)
+  inventory[idx].updatedAt = new Date().toISOString()
+
+  saveState()
+  io.emit('inventory:updated', inventory)
+  res.json({ success: true, item: inventory[idx] })
+})
+
+app.post('/api/inventory/:id/restock', (req, res) => {
+  const { id } = req.params
+  const { quantity, reason } = req.body
+  const idx = inventory.findIndex(i => String(i.id) === String(id))
+  if (idx === -1) return res.status(404).json({ error: 'Inventory item not found' })
+
+  const addQty = Number(quantity) || 0
+  inventory[idx].currentStock = (Number(inventory[idx].currentStock) || 0) + addQty
+  inventory[idx].lastRestocked = new Date().toISOString().split('T')[0]
+
+  saveState()
+  io.emit('inventory:updated', inventory)
+  res.json({ success: true, item: inventory[idx] })
+})
+
+app.delete('/api/inventory/:id', (req, res) => {
+  const idx = inventory.findIndex(i => String(i.id) === String(req.params.id))
+  if (idx === -1) return res.status(404).json({ error: 'Inventory item not found' })
+  inventory.splice(idx, 1)
+  saveState()
+  io.emit('inventory:updated', inventory)
+  res.json({ success: true })
 })
 
 // POS Orders (no auth)
@@ -3640,27 +3710,36 @@ app.get('/api/accounts/gst-summary', (req, res) => {
   const salesTaxRate = 0.05
   const purchaseTaxRate = 0.05
 
-  // Output GST from sales
-  const periodOrders = orders.filter(o => o.createdAt && o.createdAt.startsWith(period))
-  const completedOrders = periodOrders.filter(o => o.status === 'completed' || o.status === 'served' || o.status === 'delivered')
-  const totalSales = completedOrders.reduce((sum, o) => sum + (o.total || 0), 0)
+  // Output GST from sales (Official Store Opening Date: July 27, 2026)
+  const periodOrders = orders.filter(o => {
+    const d = getOrderDate(o)
+    return d.startsWith(period) && d >= '2026-07-27'
+  })
+  const completedOrders = periodOrders.filter(o => isValidSalesOrder(o))
+  const totalSales = completedOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
   const outputGst = Math.round(totalSales * salesTaxRate * 100 / (100 + salesTaxRate * 100))
 
-  // Input GST from purchases
-  const periodPurchases = purchases.filter(p => p.createdAt && p.createdAt.startsWith(period))
+  // Input GST from purchases (from July 27, 2026 onwards)
+  const periodPurchases = purchases.filter(p => {
+    const d = getLocalDateStr(p.createdAt)
+    return d.startsWith(period) && d >= '2026-07-27'
+  })
   const totalPurchases = periodPurchases.reduce((sum, p) => sum + (p.total || 0), 0)
   const inputGst = Math.round(totalPurchases * purchaseTaxRate * 100 / (100 + purchaseTaxRate * 100))
 
-  // Input GST from GRNs (goods receipt value)
-  const periodGrns = grns.filter(g => g.date && g.date.startsWith(period.slice(0, 10)))
+  // Input GST from GRNs (from July 27, 2026 onwards)
+  const periodGrns = grns.filter(g => {
+    const d = (g.date || '').split('T')[0]
+    return d.startsWith(period) && d >= '2026-07-27'
+  })
   const totalGrnValue = periodGrns.reduce((sum, g) => sum + (g.totalValue || 0), 0)
   const inputGstGrn = Math.round(totalGrnValue * purchaseTaxRate * 100 / (100 + purchaseTaxRate * 100))
 
   // By payment method (output)
   const byPaymentMethod = {}
   completedOrders.forEach(o => {
-    const method = o.paymentMethod || 'cash'
-    byPaymentMethod[method] = (byPaymentMethod[method] || 0) + (o.total || 0)
+    const method = (o.paymentMethod || 'cash').toLowerCase()
+    byPaymentMethod[method] = (byPaymentMethod[method] || 0) + getOrderAmount(o)
   })
 
   // Invoice count
@@ -3668,16 +3747,17 @@ app.get('/api/accounts/gst-summary', (req, res) => {
 
   // Individual taxable invoices (output)
   const salesInvoices = completedOrders.map(o => {
-    const taxable = Math.round((o.total || 0) * 100 / (100 + salesTaxRate * 100))
+    const amt = getOrderAmount(o)
+    const taxable = Math.round(amt * 100 / (100 + salesTaxRate * 100))
     return {
-      id: o.id || o.billNo || '',
-      date: (o.createdAt || '').split('T')[0],
-      customer: o.customerName || o.table || 'Walk-in',
-      total: Math.round(o.total || 0),
+      id: o.orderNumber ? `#${String(o.orderNumber).padStart(6, '0')}` : (o.id || ''),
+      date: getOrderDate(o),
+      customer: o.customerName || o.tableNumber || 'Walk-in',
+      total: Math.round(amt),
       taxable,
-      gst: Math.round(o.total || 0) - taxable,
+      gst: Math.round(amt) - taxable,
       paymentMethod: o.paymentMethod || 'cash',
-      source: o.source || 'pos'
+      source: o.source || o.type || 'pos'
     }
   })
 
@@ -3965,8 +4045,14 @@ function getNextKotNumber() {
   return currentKotSeq
 }
 
-// Helper to compute order total amount safely
+// Helper to compute order total amount safely (returns 0 for cancelled or complimentary orders)
 const getOrderAmount = (o) => {
+  if (!o) return 0
+  const s = (o.status || '').toLowerCase()
+  const m = (o.paymentMethod || '').toLowerCase()
+  if (s === 'cancelled' || s === 'canceled' || s === 'void' || o.isCancelled || o.isVoid) return 0
+  if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') return 0
+
   if (o.total !== undefined && o.total !== null && Number(o.total) > 0) {
     return Number(o.total)
   }
@@ -3979,7 +4065,9 @@ const getOrderAmount = (o) => {
 const isValidSalesOrder = (o) => {
   if (!o) return false
   const s = (o.status || '').toLowerCase()
-  if (s === 'cancelled' || s === 'void') return false
+  const m = (o.paymentMethod || '').toLowerCase()
+  if (s === 'cancelled' || s === 'canceled' || s === 'void' || o.isCancelled || o.isVoid) return false
+  if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') return false
   return true
 }
 
@@ -4173,6 +4261,141 @@ app.get('/api/reports/payment-report', (req, res) => {
   }
 })
 
+const THREE_HOUR_SLOTS = [
+  { start: 0, end: 9, label: '12:00 AM - 09:00 AM', timeSlot: '12:00 AM - 09:00 AM' },
+  { start: 9, end: 12, label: '09:00 AM - 12:00 PM', timeSlot: '09:00 AM - 12:00 PM' },
+  { start: 12, end: 15, label: '12:00 PM - 03:00 PM', timeSlot: '12:00 PM - 03:00 PM' },
+  { start: 15, end: 18, label: '03:00 PM - 06:00 PM', timeSlot: '03:00 PM - 06:00 PM' },
+  { start: 18, end: 21, label: '06:00 PM - 09:00 PM', timeSlot: '06:00 PM - 09:00 PM' },
+  { start: 21, end: 24, label: '09:00 PM - 11:59 PM', timeSlot: '09:00 PM - 11:59 PM' }
+]
+
+function computeThreeHourSales(orderList) {
+  let totalRev = 0
+  const buckets = THREE_HOUR_SLOTS.map(s => ({
+    hourLabel: s.label,
+    timeSlot: s.timeSlot,
+    revenue: 0,
+    orderCount: 0,
+    avgOrder: 0,
+    pct: 0
+  }))
+
+  orderList.forEach(o => {
+    const amt = getOrderAmount(o)
+    totalRev += amt
+    const dtVal = o.createdAt || o.paidAt || o.completedAt || o.timestamp || o.date
+    if (dtVal) {
+      let hour24 = -1
+      if (typeof dtVal === 'string' && dtVal.includes('T')) {
+        const timePart = dtVal.split('T')[1]
+        if (timePart) {
+          hour24 = parseInt(timePart.split(':')[0], 10)
+        }
+      }
+      if (isNaN(hour24) || hour24 < 0 || hour24 > 23) {
+        const d = new Date(dtVal)
+        if (!isNaN(d.getTime())) hour24 = d.getHours()
+      }
+      if (hour24 >= 0 && hour24 <= 23) {
+        const slotIdx = THREE_HOUR_SLOTS.findIndex(s => hour24 >= s.start && hour24 < s.end)
+        if (slotIdx >= 0) {
+          buckets[slotIdx].revenue += amt
+          buckets[slotIdx].orderCount += 1
+        }
+      }
+    }
+  })
+
+  buckets.forEach(b => {
+    b.revenue = Math.round(b.revenue)
+    b.avgOrder = b.orderCount > 0 ? Math.round(b.revenue / b.orderCount) : 0
+    b.pct = totalRev > 0 ? Number(((b.revenue / totalRev) * 100).toFixed(1)) : 0
+  })
+
+  return buckets
+}
+
+// Helper to calculate 24-hour breakdown from an order list
+function computeHourlySales(orderList) {
+  let totalRev = 0
+  const buckets = Array.from({ length: 24 }, (_, hour24) => {
+    let period = hour24 >= 12 ? 'PM' : 'AM'
+    let h12 = hour24 % 12
+    if (h12 === 0) h12 = 12
+    const nextH = (hour24 + 1) % 24
+    let nextPeriod = nextH >= 12 ? 'PM' : 'AM'
+    let nextH12 = nextH % 12
+    if (nextH12 === 0) nextH12 = 12
+    
+    const hourLabel = `${h12}${period}`
+    const timeSlot = `${String(h12).padStart(2, '0')}:00 ${period} - ${String(nextH12).padStart(2, '0')}:00 ${nextPeriod}`
+    
+    return {
+      hour: hour24,
+      hourLabel,
+      timeSlot,
+      revenue: 0,
+      orderCount: 0,
+      avgOrder: 0,
+      pct: 0
+    }
+  })
+
+  orderList.forEach(o => {
+    const amt = getOrderAmount(o)
+    totalRev += amt
+    const dtVal = o.createdAt || o.paidAt || o.completedAt || o.timestamp || o.date
+    if (dtVal) {
+      let hour24 = -1
+      if (typeof dtVal === 'string' && dtVal.includes('T')) {
+        const timePart = dtVal.split('T')[1]
+        if (timePart) {
+          hour24 = parseInt(timePart.split(':')[0], 10)
+        }
+      }
+      if (isNaN(hour24) || hour24 < 0 || hour24 > 23) {
+        const d = new Date(dtVal)
+        if (!isNaN(d.getTime())) hour24 = d.getHours()
+      }
+      if (hour24 >= 0 && hour24 <= 23) {
+        buckets[hour24].revenue += amt
+        buckets[hour24].orderCount += 1
+      }
+    }
+  })
+
+  buckets.forEach(b => {
+    b.revenue = Math.round(b.revenue)
+    b.avgOrder = b.orderCount > 0 ? Math.round(b.revenue / b.orderCount) : 0
+    b.pct = totalRev > 0 ? Number(((b.revenue / totalRev) * 100).toFixed(1)) : 0
+  })
+
+  return buckets
+}
+
+// ============ HOURLY SALES REPORT ============
+app.get('/api/reports/hourly-sales', (req, res) => {
+  try {
+    const periodOrders = getFilteredOrdersForPeriod(req.query)
+    const validOrders = periodOrders.filter(isValidSalesOrder)
+    const hourlySales = computeHourlySales(validOrders)
+    const threeHourSales = computeThreeHourSales(validOrders)
+    const totalRev = validOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
+
+    res.json({
+      period: req.query,
+      totalOrders: validOrders.length,
+      totalRevenue: Math.round(totalRev),
+      hourlySales,
+      threeHourSales
+    })
+  } catch (e) {
+    console.error('[HOURLY SALES API ERROR]', e)
+    res.status(500).json({ error: 'Failed to generate hourly sales report' })
+  }
+})
+
 // ============ DAILY CLOSING REPORT ============
 app.get('/api/reports/daily-closing', (req, res) => {
   const todayStr = getLocalDateStr(new Date())
@@ -4252,6 +4475,9 @@ app.get('/api/reports/daily-closing', (req, res) => {
     displayDateStr = getOrderDate(completedOrders[0]) || todayStr
   }
 
+  const hourlySales = computeHourlySales(completedOrders)
+  const threeHourSales = computeThreeHourSales(completedOrders)
+
   res.json({
     date: displayDateStr,
     totalInvoices,
@@ -4265,7 +4491,9 @@ app.get('/api/reports/daily-closing', (req, res) => {
     byPaymentMethod,
     bySource,
     statusBreakdown,
-    cancelledCount: cancelledOrders.length
+    cancelledCount: cancelledOrders.length,
+    hourlySales,
+    threeHourSales
   })
 })
 
@@ -4654,6 +4882,114 @@ app.get('/api/reports/expenses', (req, res) => {
     expenses: filtered,
     summary: { total: filtered.length, totalAmount: Math.round(totalAmount), byCategory }
   })
+})
+
+// ============ PDF / IMAGE INVOICE PARSER FOR PURCHASES ============
+app.post('/api/admin/parse-invoice-pdf', (req, res) => {
+  try {
+    const { fileData, fileName, textContent } = req.body
+    if (!fileData && !textContent) {
+      return res.status(400).json({ error: 'No file data or text content provided' })
+    }
+
+    let rawText = textContent || ''
+
+    if (fileData && typeof fileData === 'string') {
+      try {
+        const buf = Buffer.from(fileData.split(',')[1] || fileData, 'base64')
+        const str = buf.toString('binary')
+        
+        // Extract text streams enclosed in parenthesis or TJ/Tj operators in PDF
+        const textMatches = str.match(/\(([^)]+)\)\s*(?:Tj|TJ|'|")/g) || []
+        if (textMatches.length > 0) {
+          rawText += '\n' + textMatches.map(m => m.replace(/[\(\)\\]/g, '').trim()).filter(Boolean).join(' ')
+        } else {
+          // Fallback to ASCII printable characters
+          rawText += '\n' + str.replace(/[^\x20-\x7E\n]/g, ' ')
+        }
+      } catch (err) {
+        console.error('Base64 stream parse error:', err.message)
+      }
+    }
+
+    // Extract Invoice Number
+    const invNoMatch = rawText.match(/(?:Invoice|INV|Bill|PO)\s*[\#\:\-]?\s*([A-Za-z0-9\-\/]{4,20})/i)
+    const invoiceNo = invNoMatch ? invNoMatch[1] : `INV-${Date.now().toString().slice(-6)}`
+
+    // Extract Supplier Name
+    let supplierName = 'General Supplier'
+    suppliers.forEach(s => {
+      if (rawText.toLowerCase().includes(s.name.toLowerCase())) {
+        supplierName = s.name
+      }
+    })
+
+    // Match inventory items line by line
+    const lines = rawText.split(/[\r\n]+/).map(l => l.trim()).filter(l => l.length > 2)
+    const extractedItems = []
+    const inventoryList = [...inventory].sort((a, b) => b.name.length - a.name.length)
+
+    inventoryList.forEach(inv => {
+      for (const line of lines) {
+        if (line.toLowerCase().includes(inv.name.toLowerCase())) {
+          const nums = line.match(/\d+(?:\.\d+)?/g)?.map(Number) || []
+          let qty = 1, rate = inv.costPerUnit || 0
+          if (nums.length >= 2) {
+            qty = nums[0]
+            rate = nums[1]
+          } else if (nums.length === 1) {
+            qty = nums[0]
+          }
+          if (!extractedItems.some(i => i.name === inv.name)) {
+            extractedItems.push({
+              name: inv.name,
+              quantity: qty || 1,
+              unit: inv.unit || 'kg',
+              rate: rate || inv.costPerUnit || 0,
+              amount: (qty || 1) * (rate || inv.costPerUnit || 0)
+            })
+          }
+          break
+        }
+      }
+    })
+
+    // Fallback item parsing if no direct inventory match
+    if (extractedItems.length === 0) {
+      lines.forEach(line => {
+        const nums = line.match(/\d+(?:\.\d+)?/g)?.map(Number) || []
+        const words = line.replace(/[\d\.,\(\)₹\$]/g, ' ').trim()
+        if (words.length > 3 && nums.length >= 1) {
+          const qty = nums[0]
+          const rate = nums.length >= 2 ? nums[1] : 50
+          if (qty > 0 && qty < 10000 && !['tax', 'total', 'subtotal', 'invoice', 'date', 'page', 'amount'].includes(words.toLowerCase())) {
+            extractedItems.push({
+              name: words.slice(0, 30),
+              quantity: qty,
+              unit: line.match(/\b(kg|pcs|liters|boxes)\b/i)?.[1]?.toLowerCase() || 'pcs',
+              rate: rate,
+              amount: qty * rate
+            })
+          }
+        }
+      })
+    }
+
+    const totalAmount = extractedItems.reduce((sum, item) => sum + (item.amount || 0), 0)
+
+    res.json({
+      success: true,
+      fileName: fileName || 'Uploaded_Invoice.pdf',
+      invoiceNo,
+      supplierName,
+      totalCount: extractedItems.length,
+      totalAmount,
+      items: extractedItems
+    })
+  } catch (err) {
+    console.error('PDF parsing error:', err)
+    res.status(500).json({ error: 'Failed to parse PDF invoice: ' + err.message })
+  }
 })
 
 // Health check

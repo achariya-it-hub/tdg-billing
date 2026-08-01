@@ -228,8 +228,9 @@ export default function Customizer() {
 
         {/* Stage 3: Sauces */}
         <section style={{ marginBottom: '32px' }}>
-          <div style={{ background: '#000', color: '#ffc300', padding: '12px 18px', borderRadius: '12px', fontWeight: 900, textTransform: 'uppercase', fontSize: '14px', marginBottom: '16px' }}>
-            🌶️ CHOOSE YOUR SAUCE
+          <div style={{ background: '#000', color: '#ffc300', padding: '12px 18px', borderRadius: '12px', fontWeight: 900, textTransform: 'uppercase', fontSize: '14px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>🌶️ CHOOSE YOUR SAUCES</span>
+            <span style={{ fontSize: '10px', background: '#e63946', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontWeight: 800 }}>MULTI</span>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
             {sauces.map(s => {
