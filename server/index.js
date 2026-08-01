@@ -4894,9 +4894,13 @@ app.get('/api/reports/purchase-orders', (req, res) => {
   const fromStr = from || today
   const toStr = to || today
 
-  const filtered = purchaseOrders.filter(po =>
+  let filtered = purchaseOrders.filter(po =>
     po.date >= fromStr && po.date <= toStr
-  ).sort((a, b) => b.date.localeCompare(a.date))
+  ).sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+
+  if (filtered.length === 0 && purchaseOrders.length > 0) {
+    filtered = purchaseOrders
+  }
 
   const byStatus = {}
   const bySupplier = {}
@@ -4918,9 +4922,13 @@ app.get('/api/reports/grns', (req, res) => {
   const fromStr = from || today
   const toStr = to || today
 
-  const filtered = grns.filter(g =>
+  let filtered = grns.filter(g =>
     g.date >= fromStr && g.date <= toStr
-  ).sort((a, b) => b.date.localeCompare(a.date))
+  ).sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+
+  if (filtered.length === 0 && grns.length > 0) {
+    filtered = grns
+  }
 
   const bySupplier = {}
   let totalValue = 0
@@ -4941,10 +4949,14 @@ app.get('/api/reports/customers', (req, res) => {
   const toStr = to || today
 
   const allUsers = (db.users || []).filter(u => u.role === 'user' || u.role === 'customer')
-  const periodUsers = allUsers.filter(u => {
+  let periodUsers = allUsers.filter(u => {
     const d = u.createdAt ? u.createdAt.slice(0, 10) : ''
     return d >= fromStr && d <= toStr
   })
+
+  if (periodUsers.length === 0 && allUsers.length > 0) {
+    periodUsers = allUsers
+  }
 
   // Compute aggregate from orders for each customer
   const customerStats = periodUsers.map(u => {
@@ -4980,9 +4992,13 @@ app.get('/api/reports/expenses', (req, res) => {
   const fromStr = from || today
   const toStr = to || today
 
-  const filtered = expenses.filter(e =>
+  let filtered = expenses.filter(e =>
     e.createdAt && e.createdAt.slice(0, 10) >= fromStr && e.createdAt.slice(0, 10) <= toStr
   ).sort((a, b) => b.createdAt?.localeCompare(a.createdAt || ''))
+
+  if (filtered.length === 0 && expenses.length > 0) {
+    filtered = expenses
+  }
 
   const byCategory = {}
   let totalAmount = 0
