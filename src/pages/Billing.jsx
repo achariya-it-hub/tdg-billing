@@ -113,17 +113,6 @@ export default function Billing() {
       let all = allRes.ok ? await allRes.json() : []
       let paid = paidRes.ok ? await paidRes.json() : []
 
-      if (dateFilter === 'today' && all.length === 0 && paid.length === 0) {
-        const fallbackRes = await fetch(`${getApiUrl()}/api/pos/orders?date=all`)
-        if (fallbackRes.ok) {
-          const allOrders = await fallbackRes.json()
-          if (Array.isArray(allOrders) && allOrders.length > 0) {
-            all = allOrders
-            paid = allOrders.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
-          }
-        }
-      }
-
       const orderMap = new Map()
       if (Array.isArray(all)) all.forEach(o => orderMap.set(o.id, o))
       if (Array.isArray(paid)) paid.forEach(o => orderMap.set(o.id, o))
