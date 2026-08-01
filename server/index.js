@@ -2949,7 +2949,7 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
   const { id } = req.params
   const { status, paymentStatus, cancelReason } = req.body
   
-  const order = orders.find(o => o.id === id)
+  const order = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
   if (order) {
     order.status = status || order.status
     order.paymentStatus = paymentStatus || order.paymentStatus
@@ -3022,9 +3022,27 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
         saveState()
       }
     }
+    return res.json({ success: true, order })
   }
   
-  res.json({ success: true })
+  res.status(404).json({ error: 'Order not found' })
+})
+
+app.post('/api/pos/orders/:id/cancel', (req, res) => {
+  const { id } = req.params
+  const { reason, cancelledBy } = req.body || {}
+  const targetOrder = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
+  if (!targetOrder) {
+    return res.status(404).json({ error: 'Order / Bill not found' })
+  }
+  targetOrder.status = 'cancelled'
+  targetOrder.cancelReason = reason || 'Cancelled by Staff'
+  if (cancelledBy) targetOrder.cancelledBy = cancelledBy
+  targetOrder.updatedAt = new Date().toISOString()
+  restoreInventoryForOrder(targetOrder)
+  saveState()
+  io.emit('order:updated', targetOrder)
+  res.json({ success: true, message: `Bill #${targetOrder.orderNumber || targetOrder.id} cancelled successfully`, order: targetOrder })
 })
 
 // ─── Online Orders (Zomato/Swiggy/Zepto) ───
