@@ -4081,7 +4081,10 @@ function getFilteredOrdersForPeriod(reqQuery) {
   const todayStr = getLocalDateStr(today)
 
   if (!date && !from && !to) {
-    return validOrders.filter(o => getOrderDate(o) === todayStr)
+    const todayOrders = validOrders.filter(o => getOrderDate(o) === todayStr)
+    if (todayOrders.length > 0) return todayOrders
+    const latestDate = getLatestOrderDate(validOrders)
+    return validOrders.filter(o => getOrderDate(o) === latestDate)
   }
 
   if (date === 'all') {
@@ -4122,7 +4125,10 @@ function getFilteredOrdersForPeriod(reqQuery) {
 
   const normDate = normalizeDateStr(date)
   if (normDate === 'today' || normDate === todayStr) {
-    return validOrders.filter(o => getOrderDate(o) === todayStr)
+    const todayOrders = validOrders.filter(o => getOrderDate(o) === todayStr)
+    if (todayOrders.length > 0) return todayOrders
+    const latestDate = getLatestOrderDate(validOrders)
+    return validOrders.filter(o => getOrderDate(o) === latestDate)
   }
 
   if (normDate === 'yesterday' || normDate === yesterdayStr) {
@@ -4854,8 +4860,15 @@ app.get('/api/pos/orders', (req, res) => {
         return dStr >= normFrom && dStr <= normTo
       })
     } else {
-      // 'today' or default date filtering
-      list = list.filter(o => getOrderDate(o) === todayStr)
+      // 'today' or default date filtering with latest active shift fallback
+      let tOrders = list.filter(o => getOrderDate(o) === todayStr)
+      if (tOrders.length === 0) {
+        const latestDate = getLatestOrderDate(list)
+        if (latestDate) {
+          tOrders = list.filter(o => getOrderDate(o) === latestDate)
+        }
+      }
+      list = tOrders
     }
 
     if (status) {
