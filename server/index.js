@@ -4784,13 +4784,58 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
   })).sort((a, b) => b.totalRevenue - a.totalRevenue)
 
   res.json({
-    period: { from: fromStr, to: toStr },
+    period: req.query,
     totalOrders: periodOrders.length,
     totalCategories: categoriesList.length,
     totalItemsSold: totalQtySum,
     totalRevenue: Math.round(totalRevenueSum),
     categories: categoriesList
   })
+})
+
+// ============ PAYMENT BREAKDOWN REPORT ============
+app.get('/api/reports/payment-report', (req, res) => {
+  const periodOrders = getFilteredOrdersForPeriod(req.query)
+  const completed = periodOrders.filter(isValidSalesOrder)
+
+  const byMethod = { cash: 0, upi: 0, card: 0, wallet: 0, complimentary: 0 }
+  const methodCounts = { cash: 0, upi: 0, card: 0, wallet: 0, complimentary: 0 }
+
+  completed.forEach(o => {
+    let m = (o.paymentMethod || 'cash').toLowerCase()
+    if (m.includes('card') || m.includes('credit') || m.includes('debit')) m = 'card'
+    else if (m.includes('upi') || m.includes('gpay') || m.includes('phonepe') || m.includes('paytm') || m.includes('online')) m = 'upi'
+    else if (m.includes('wallet')) m = 'wallet'
+    else if (m.includes('complimentary') || m.includes('nc') || m.includes('free')) m = 'complimentary'
+    else m = 'cash'
+
+    const amt = getOrderAmount(o)
+    byMethod[m] = (byMethod[m] || 0) + amt
+    methodCounts[m] = (methodCounts[m] || 0) + 1
+  })
+
+  const totalRev = completed.reduce((sum, o) => sum + getOrderAmount(o), 0)
+
+  res.json({
+    totalInvoices: completed.length,
+    totalSales: Math.round(totalRev),
+    byMethod,
+    methodCounts,
+    orders: completed.map(o => ({
+      id: o.id || o.orderNumber,
+      orderNumber: o.orderNumber || o.id,
+      date: getOrderDate(o),
+      type: o.type || 'dine-in',
+      paymentMethod: o.paymentMethod || 'cash',
+      amount: getOrderAmount(o)
+    }))
+  })
+})
+
+// ============ POS ORDERS LIST FOR REPORTS ============
+app.get('/api/pos/orders', (req, res) => {
+  const filtered = getFilteredOrdersForPeriod(req.query)
+  res.json(filtered || [])
 })
 
 // Purchase Orders Report
