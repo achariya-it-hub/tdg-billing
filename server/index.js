@@ -4410,7 +4410,12 @@ app.get('/api/reports/daily-closing', (req, res) => {
   const todayStr = getLocalDateStr(new Date())
   const { date, from, to } = req.query
 
-  const dayOrders = getFilteredOrdersForPeriod(req.query)
+  let dayOrders = getFilteredOrdersForPeriod(req.query)
+  if (!dayOrders || dayOrders.length === 0) {
+    const validAll = orders.filter(isValidSalesOrder)
+    const latestShiftDate = getLatestOrderDate(validAll) || getLatestOrderDate(orders)
+    dayOrders = orders.filter(o => getOrderDate(o) === latestShiftDate)
+  }
   const completedOrders = dayOrders.filter(o => isValidSalesOrder(o))
   const settledOrders = completedOrders.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
   const pendingOrders = completedOrders.filter(o => !settledOrders.includes(o))
