@@ -14768,7 +14768,1657 @@
       "createdAt": "2026-07-30T18:07:13.000+05:30",
       "paidAt": "2026-07-30T18:07:13.000+05:30",
       "date": "2026-07-30"
+    },
+    {
+      "id": 1175,
+      "orderNumber": 1175,
+      "kotNumber": "KOT-92",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 238,
+          "quantity": 1,
+          "totalPrice": 238
+        }
+      ],
+      "subtotal": 238,
+      "tax": 12,
+      "total": 250,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T10:30:00.000+05:30",
+      "paidAt": "2026-07-31T10:30:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1176,
+      "orderNumber": 1176,
+      "kotNumber": "KOT-93",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 171,
+          "quantity": 1,
+          "totalPrice": 171
+        }
+      ],
+      "subtotal": 171,
+      "tax": 9,
+      "total": 180,
+      "type": "dine-in",
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T11:15:00.000+05:30",
+      "paidAt": "2026-07-31T11:15:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1177,
+      "orderNumber": 1177,
+      "kotNumber": "KOT-94",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 305,
+          "quantity": 1,
+          "totalPrice": 305
+        }
+      ],
+      "subtotal": 305,
+      "tax": 15,
+      "total": 320,
+      "type": "takeaway",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T11:45:00.000+05:30",
+      "paidAt": "2026-07-31T11:45:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1178,
+      "orderNumber": 1178,
+      "kotNumber": "KOT-95",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 276,
+          "quantity": 1,
+          "totalPrice": 276
+        }
+      ],
+      "subtotal": 276,
+      "tax": 14,
+      "total": 290,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T12:20:00.000+05:30",
+      "paidAt": "2026-07-31T12:20:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1179,
+      "orderNumber": 1179,
+      "kotNumber": "KOT-96",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 205,
+          "quantity": 1,
+          "totalPrice": 205
+        }
+      ],
+      "subtotal": 205,
+      "tax": 10,
+      "total": 215,
+      "type": "dine-in",
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T13:05:00.000+05:30",
+      "paidAt": "2026-07-31T13:05:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1180,
+      "orderNumber": 1180,
+      "kotNumber": "KOT-97",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 333,
+          "quantity": 1,
+          "totalPrice": 333
+        }
+      ],
+      "subtotal": 333,
+      "tax": 17,
+      "total": 350,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T13:40:00.000+05:30",
+      "paidAt": "2026-07-31T13:40:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1181,
+      "orderNumber": 1181,
+      "kotNumber": "KOT-98",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 248,
+          "quantity": 1,
+          "totalPrice": 248
+        }
+      ],
+      "subtotal": 248,
+      "tax": 12,
+      "total": 260,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T14:15:00.000+05:30",
+      "paidAt": "2026-07-31T14:15:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1182,
+      "orderNumber": 1182,
+      "kotNumber": "KOT-99",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 210,
+          "quantity": 1,
+          "totalPrice": 210
+        }
+      ],
+      "subtotal": 210,
+      "tax": 11,
+      "total": 221,
+      "type": "takeaway",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T14:45:00.000+05:30",
+      "paidAt": "2026-07-31T14:45:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1240,
+      "orderNumber": 1240,
+      "kotNumber": "KOT-157",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 328,
+          "quantity": 1,
+          "totalPrice": 328
+        }
+      ],
+      "subtotal": 328,
+      "tax": 16,
+      "total": 344,
+      "type": "takeaway",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T21:53:00.000+05:30",
+      "paidAt": "2026-07-31T21:53:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1239,
+      "orderNumber": 1239,
+      "kotNumber": "KOT-156",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 519,
+          "quantity": 1,
+          "totalPrice": 519
+        }
+      ],
+      "subtotal": 519,
+      "tax": 26,
+      "total": 545,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T21:44:00.000+05:30",
+      "paidAt": "2026-07-31T21:44:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1238,
+      "orderNumber": 1238,
+      "kotNumber": "KOT-155",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 399,
+          "quantity": 1,
+          "totalPrice": 399
+        }
+      ],
+      "subtotal": 399,
+      "tax": 20,
+      "total": 419,
+      "type": "dine-in",
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T21:39:00.000+05:30",
+      "paidAt": "2026-07-31T21:39:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1237,
+      "orderNumber": 1237,
+      "kotNumber": "KOT-154",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 518,
+          "quantity": 1,
+          "totalPrice": 518
+        }
+      ],
+      "subtotal": 518,
+      "tax": 26,
+      "total": 544,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T21:28:00.000+05:30",
+      "paidAt": "2026-07-31T21:28:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1236,
+      "orderNumber": 1236,
+      "kotNumber": "KOT-153",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 782,
+          "quantity": 1,
+          "totalPrice": 782
+        }
+      ],
+      "subtotal": 782,
+      "tax": 39,
+      "total": 821,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T21:26:00.000+05:30",
+      "paidAt": "2026-07-31T21:26:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1235,
+      "orderNumber": 1235,
+      "kotNumber": "KOT-152",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 119,
+          "quantity": 1,
+          "totalPrice": 119
+        }
+      ],
+      "subtotal": 119,
+      "tax": 6,
+      "total": 125,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T21:16:00.000+05:30",
+      "paidAt": "2026-07-31T21:16:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1234,
+      "orderNumber": 1234,
+      "kotNumber": "KOT-151",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 119,
+          "quantity": 1,
+          "totalPrice": 119
+        }
+      ],
+      "subtotal": 119,
+      "tax": 6,
+      "total": 125,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T21:14:00.000+05:30",
+      "paidAt": "2026-07-31T21:14:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1233,
+      "orderNumber": 1233,
+      "kotNumber": "KOT-150",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 719,
+          "quantity": 1,
+          "totalPrice": 719
+        }
+      ],
+      "subtotal": 719,
+      "tax": 36,
+      "total": 755,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T21:12:00.000+05:30",
+      "paidAt": "2026-07-31T21:12:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1232,
+      "orderNumber": 1232,
+      "kotNumber": "KOT-149",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 460,
+          "quantity": 1,
+          "totalPrice": 460
+        }
+      ],
+      "subtotal": 460,
+      "tax": 23,
+      "total": 483,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T21:08:00.000+05:30",
+      "paidAt": "2026-07-31T21:08:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1231,
+      "orderNumber": 1231,
+      "kotNumber": "KOT-148",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 317,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T21:03:00.000+05:30",
+      "paidAt": "2026-07-31T21:03:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1230,
+      "orderNumber": 1230,
+      "kotNumber": "KOT-147",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 159,
+          "quantity": 1,
+          "totalPrice": 159
+        }
+      ],
+      "subtotal": 159,
+      "tax": 8,
+      "total": 167,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T21:01:00.000+05:30",
+      "paidAt": "2026-07-31T21:01:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1229,
+      "orderNumber": 1229,
+      "kotNumber": "KOT-146",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 399,
+          "quantity": 1,
+          "totalPrice": 399
+        }
+      ],
+      "subtotal": 399,
+      "tax": 20,
+      "total": 419,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T21:00:00.000+05:30",
+      "paidAt": "2026-07-31T21:00:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1228,
+      "orderNumber": 1228,
+      "kotNumber": "KOT-145",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 119,
+          "quantity": 1,
+          "totalPrice": 119
+        }
+      ],
+      "subtotal": 119,
+      "tax": 6,
+      "total": 125,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T20:57:00.000+05:30",
+      "paidAt": "2026-07-31T20:57:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1227,
+      "orderNumber": 1227,
+      "kotNumber": "KOT-144",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 216,
+          "quantity": 1,
+          "totalPrice": 216
+        }
+      ],
+      "subtotal": 216,
+      "tax": 11,
+      "total": 227,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T20:56:00.000+05:30",
+      "paidAt": "2026-07-31T20:56:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1226,
+      "orderNumber": 1226,
+      "kotNumber": "KOT-143",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 79,
+          "quantity": 1,
+          "totalPrice": 79
+        }
+      ],
+      "subtotal": 79,
+      "tax": 4,
+      "total": 83,
+      "type": "dine-in",
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T20:51:00.000+05:30",
+      "paidAt": "2026-07-31T20:51:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1225,
+      "orderNumber": 1225,
+      "kotNumber": "KOT-142",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 628,
+          "quantity": 1,
+          "totalPrice": 628
+        }
+      ],
+      "subtotal": 628,
+      "tax": 31,
+      "total": 659,
+      "type": "takeaway",
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T20:48:00.000+05:30",
+      "paidAt": "2026-07-31T20:48:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1224,
+      "orderNumber": 1224,
+      "kotNumber": "KOT-141",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 239,
+          "quantity": 1,
+          "totalPrice": 239
+        }
+      ],
+      "subtotal": 239,
+      "tax": 12,
+      "total": 251,
+      "type": "dine-in",
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T20:38:00.000+05:30",
+      "paidAt": "2026-07-31T20:38:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1223,
+      "orderNumber": 1223,
+      "kotNumber": "KOT-140",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 299
+        }
+      ],
+      "subtotal": 299,
+      "tax": 15,
+      "total": 314,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T20:37:00.000+05:30",
+      "paidAt": "2026-07-31T20:37:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1222,
+      "orderNumber": 1222,
+      "kotNumber": "KOT-139",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 79,
+          "quantity": 1,
+          "totalPrice": 79
+        }
+      ],
+      "subtotal": 79,
+      "tax": 4,
+      "total": 83,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T20:30:00.000+05:30",
+      "paidAt": "2026-07-31T20:30:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1221,
+      "orderNumber": 1221,
+      "kotNumber": "KOT-138",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 294,
+          "quantity": 1,
+          "totalPrice": 294
+        }
+      ],
+      "subtotal": 294,
+      "tax": 15,
+      "total": 309,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T20:23:00.000+05:30",
+      "paidAt": "2026-07-31T20:23:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1220,
+      "orderNumber": 1220,
+      "kotNumber": "KOT-137",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 208,
+          "quantity": 1,
+          "totalPrice": 208
+        }
+      ],
+      "subtotal": 208,
+      "tax": 10,
+      "total": 218,
+      "type": "takeaway",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T20:16:00.000+05:30",
+      "paidAt": "2026-07-31T20:16:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1219,
+      "orderNumber": 1219,
+      "kotNumber": "KOT-136",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 159,
+          "quantity": 1,
+          "totalPrice": 159
+        }
+      ],
+      "subtotal": 159,
+      "tax": 8,
+      "total": 167,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:58:00.000+05:30",
+      "paidAt": "2026-07-31T19:58:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1218,
+      "orderNumber": 1218,
+      "kotNumber": "KOT-135",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 351,
+          "quantity": 1,
+          "totalPrice": 351
+        }
+      ],
+      "subtotal": 351,
+      "tax": 18,
+      "total": 369,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:57:00.000+05:30",
+      "paidAt": "2026-07-31T19:57:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1217,
+      "orderNumber": 1217,
+      "kotNumber": "KOT-134",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 310,
+          "quantity": 1,
+          "totalPrice": 310
+        }
+      ],
+      "subtotal": 310,
+      "tax": 15,
+      "total": 325,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:56:00.000+05:30",
+      "paidAt": "2026-07-31T19:56:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1216,
+      "orderNumber": 1216,
+      "kotNumber": "KOT-133",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 719,
+          "quantity": 1,
+          "totalPrice": 719
+        }
+      ],
+      "subtotal": 719,
+      "tax": 36,
+      "total": 755,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:53:00.000+05:30",
+      "paidAt": "2026-07-31T19:53:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1215,
+      "orderNumber": 1215,
+      "kotNumber": "KOT-132",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 144,
+          "quantity": 1,
+          "totalPrice": 144
+        }
+      ],
+      "subtotal": 144,
+      "tax": 7,
+      "total": 151,
+      "type": "dine-in",
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:50:00.000+05:30",
+      "paidAt": "2026-07-31T19:50:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1214,
+      "orderNumber": 1214,
+      "kotNumber": "KOT-131",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 762,
+          "quantity": 1,
+          "totalPrice": 762
+        }
+      ],
+      "subtotal": 762,
+      "tax": 38,
+      "total": 800,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:49:00.000+05:30",
+      "paidAt": "2026-07-31T19:49:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1213,
+      "orderNumber": 1213,
+      "kotNumber": "KOT-130",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 79,
+          "quantity": 1,
+          "totalPrice": 79
+        }
+      ],
+      "subtotal": 79,
+      "tax": 4,
+      "total": 83,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:44:00.000+05:30",
+      "paidAt": "2026-07-31T19:44:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1212,
+      "orderNumber": 1212,
+      "kotNumber": "KOT-129",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 477,
+          "quantity": 1,
+          "totalPrice": 477
+        }
+      ],
+      "subtotal": 477,
+      "tax": 24,
+      "total": 501,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:43:00.000+05:30",
+      "paidAt": "2026-07-31T19:43:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1211,
+      "orderNumber": 1211,
+      "kotNumber": "KOT-128",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 869,
+          "quantity": 1,
+          "totalPrice": 869
+        }
+      ],
+      "subtotal": 869,
+      "tax": 43,
+      "total": 912,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:39:00.000+05:30",
+      "paidAt": "2026-07-31T19:39:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1210,
+      "orderNumber": 1210,
+      "kotNumber": "KOT-127",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 175,
+          "quantity": 1,
+          "totalPrice": 175
+        }
+      ],
+      "subtotal": 175,
+      "tax": 9,
+      "total": 184,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:33:00.000+05:30",
+      "paidAt": "2026-07-31T19:33:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1209,
+      "orderNumber": 1209,
+      "kotNumber": "KOT-126",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 198,
+          "quantity": 1,
+          "totalPrice": 198
+        }
+      ],
+      "subtotal": 198,
+      "tax": 10,
+      "total": 208,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:28:00.000+05:30",
+      "paidAt": "2026-07-31T19:28:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1208,
+      "orderNumber": 1208,
+      "kotNumber": "KOT-125",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 112,
+          "quantity": 1,
+          "totalPrice": 112
+        }
+      ],
+      "subtotal": 112,
+      "tax": 6,
+      "total": 118,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:19:00.000+05:30",
+      "paidAt": "2026-07-31T19:19:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1207,
+      "orderNumber": 1207,
+      "kotNumber": "KOT-124",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 318,
+          "quantity": 1,
+          "totalPrice": 318
+        }
+      ],
+      "subtotal": 318,
+      "tax": 16,
+      "total": 334,
+      "type": "dine-in",
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:15:00.000+05:30",
+      "paidAt": "2026-07-31T19:15:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1206,
+      "orderNumber": 1206,
+      "kotNumber": "KOT-123",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 287,
+          "quantity": 1,
+          "totalPrice": 287
+        }
+      ],
+      "subtotal": 287,
+      "tax": 14,
+      "total": 301,
+      "type": "dine-in",
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:06:00.000+05:30",
+      "paidAt": "2026-07-31T19:06:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1205,
+      "orderNumber": 1205,
+      "kotNumber": "KOT-122",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 452,
+          "quantity": 1,
+          "totalPrice": 452
+        }
+      ],
+      "subtotal": 452,
+      "tax": 23,
+      "total": 475,
+      "type": "dine-in",
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:03:00.000+05:30",
+      "paidAt": "2026-07-31T19:03:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1204,
+      "orderNumber": 1204,
+      "kotNumber": "KOT-121",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 436,
+          "quantity": 1,
+          "totalPrice": 436
+        }
+      ],
+      "subtotal": 436,
+      "tax": 22,
+      "total": 458,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T19:01:00.000+05:30",
+      "paidAt": "2026-07-31T19:01:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1203,
+      "orderNumber": 1203,
+      "kotNumber": "KOT-120",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 79,
+          "quantity": 1,
+          "totalPrice": 79
+        }
+      ],
+      "subtotal": 79,
+      "tax": 4,
+      "total": 83,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T18:59:00.000+05:30",
+      "paidAt": "2026-07-31T18:59:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1202,
+      "orderNumber": 1202,
+      "kotNumber": "KOT-119",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 384,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T18:59:00.000+05:30",
+      "paidAt": "2026-07-31T18:59:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1201,
+      "orderNumber": 1201,
+      "kotNumber": "KOT-118",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 573,
+          "quantity": 1,
+          "totalPrice": 573
+        }
+      ],
+      "subtotal": 573,
+      "tax": 29,
+      "total": 602,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T18:46:00.000+05:30",
+      "paidAt": "2026-07-31T18:46:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1200,
+      "orderNumber": 1200,
+      "kotNumber": "KOT-117",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 159,
+          "quantity": 1,
+          "totalPrice": 159
+        }
+      ],
+      "subtotal": 159,
+      "tax": 8,
+      "total": 167,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T18:22:00.000+05:30",
+      "paidAt": "2026-07-31T18:22:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1199,
+      "orderNumber": 1199,
+      "kotNumber": "KOT-116",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 159,
+          "quantity": 1,
+          "totalPrice": 159
+        }
+      ],
+      "subtotal": 159,
+      "tax": 8,
+      "total": 167,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T18:12:00.000+05:30",
+      "paidAt": "2026-07-31T18:12:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1198,
+      "orderNumber": 1198,
+      "kotNumber": "KOT-115",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 399,
+          "quantity": 1,
+          "totalPrice": 399
+        }
+      ],
+      "subtotal": 399,
+      "tax": 20,
+      "total": 419,
+      "type": "dine-in",
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T17:59:00.000+05:30",
+      "paidAt": "2026-07-31T17:59:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1197,
+      "orderNumber": 1197,
+      "kotNumber": "KOT-114",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 398,
+          "quantity": 1,
+          "totalPrice": 398
+        }
+      ],
+      "subtotal": 398,
+      "tax": 20,
+      "total": 418,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T17:49:00.000+05:30",
+      "paidAt": "2026-07-31T17:49:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1196,
+      "orderNumber": 1196,
+      "kotNumber": "KOT-113",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 158,
+          "quantity": 1,
+          "totalPrice": 158
+        }
+      ],
+      "subtotal": 158,
+      "tax": 8,
+      "total": 166,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T17:39:00.000+05:30",
+      "paidAt": "2026-07-31T17:39:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1195,
+      "orderNumber": 1195,
+      "kotNumber": "KOT-112",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 279,
+          "quantity": 1,
+          "totalPrice": 279
+        }
+      ],
+      "subtotal": 279,
+      "tax": 14,
+      "total": 293,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T17:36:00.000+05:30",
+      "paidAt": "2026-07-31T17:36:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1194,
+      "orderNumber": 1194,
+      "kotNumber": "KOT-111",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 158,
+          "quantity": 1,
+          "totalPrice": 158
+        }
+      ],
+      "subtotal": 158,
+      "tax": 8,
+      "total": 166,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T17:08:00.000+05:30",
+      "paidAt": "2026-07-31T17:08:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1193,
+      "orderNumber": 1193,
+      "kotNumber": "KOT-110",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 79,
+          "quantity": 1,
+          "totalPrice": 79
+        }
+      ],
+      "subtotal": 79,
+      "tax": 4,
+      "total": 83,
+      "type": "takeaway",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T17:07:00.000+05:30",
+      "paidAt": "2026-07-31T17:07:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1192,
+      "orderNumber": 1192,
+      "kotNumber": "KOT-109",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 96,
+          "quantity": 1,
+          "totalPrice": 96
+        }
+      ],
+      "subtotal": 96,
+      "tax": 5,
+      "total": 101,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T16:40:00.000+05:30",
+      "paidAt": "2026-07-31T16:40:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1191,
+      "orderNumber": 1191,
+      "kotNumber": "KOT-108",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 79,
+          "quantity": 1,
+          "totalPrice": 79
+        }
+      ],
+      "subtotal": 79,
+      "tax": 4,
+      "total": 83,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T16:35:00.000+05:30",
+      "paidAt": "2026-07-31T16:35:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1190,
+      "orderNumber": 1190,
+      "kotNumber": "KOT-107",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 63,
+          "quantity": 1,
+          "totalPrice": 63
+        }
+      ],
+      "subtotal": 63,
+      "tax": 3,
+      "total": 66,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T16:28:00.000+05:30",
+      "paidAt": "2026-07-31T16:28:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1189,
+      "orderNumber": 1189,
+      "kotNumber": "KOT-106",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 375,
+          "quantity": 1,
+          "totalPrice": 375
+        }
+      ],
+      "subtotal": 375,
+      "tax": 19,
+      "total": 394,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T16:27:00.000+05:30",
+      "paidAt": "2026-07-31T16:27:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1188,
+      "orderNumber": 1188,
+      "kotNumber": "KOT-105",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 190,
+          "quantity": 1,
+          "totalPrice": 190
+        }
+      ],
+      "subtotal": 190,
+      "tax": 9,
+      "total": 199,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T16:15:00.000+05:30",
+      "paidAt": "2026-07-31T16:15:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1187,
+      "orderNumber": 1187,
+      "kotNumber": "KOT-104",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 190,
+          "quantity": 1,
+          "totalPrice": 190
+        }
+      ],
+      "subtotal": 190,
+      "tax": 10,
+      "total": 200,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T16:06:00.000+05:30",
+      "paidAt": "2026-07-31T16:06:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1186,
+      "orderNumber": 1186,
+      "kotNumber": "KOT-103",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 278,
+          "quantity": 1,
+          "totalPrice": 278
+        }
+      ],
+      "subtotal": 278,
+      "tax": 14,
+      "total": 292,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T15:54:00.000+05:30",
+      "paidAt": "2026-07-31T15:54:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1185,
+      "orderNumber": 1185,
+      "kotNumber": "KOT-102",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 567,
+          "quantity": 1,
+          "totalPrice": 567
+        }
+      ],
+      "subtotal": 567,
+      "tax": 28,
+      "total": 595,
+      "type": "dine-in",
+      "paymentMethod": "cash",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T15:35:00.000+05:30",
+      "paidAt": "2026-07-31T15:35:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1184,
+      "orderNumber": 1184,
+      "kotNumber": "KOT-101",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 581,
+          "quantity": 1,
+          "totalPrice": 581
+        }
+      ],
+      "subtotal": 581,
+      "tax": 29,
+      "total": 610,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T15:06:00.000+05:30",
+      "paidAt": "2026-07-31T15:06:00.000+05:30",
+      "date": "2026-07-31"
+    },
+    {
+      "id": 1183,
+      "orderNumber": 1183,
+      "kotNumber": "KOT-100",
+      "items": [
+        {
+          "menuItemId": "m1",
+          "menuItemName": "Restaurant Order",
+          "name": "Restaurant Order",
+          "unitPrice": 398,
+          "quantity": 1,
+          "totalPrice": 398
+        }
+      ],
+      "subtotal": 398,
+      "tax": 20,
+      "total": 418,
+      "type": "dine-in",
+      "paymentMethod": "upi",
+      "paymentStatus": "paid",
+      "status": "completed",
+      "createdAt": "2026-07-31T15:03:00.000+05:30",
+      "paidAt": "2026-07-31T15:03:00.000+05:30",
+      "date": "2026-07-31"
     }
   ],
-  "count": 495
+  "count": 561
 }

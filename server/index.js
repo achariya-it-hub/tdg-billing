@@ -2689,9 +2689,12 @@ app.post('/api/admin/menu/import-excel', (req, res) => {
 
     saveState()
     io.emit('menu:updated', { created, updated })
-    res.json({ success: true, created, updated, total: menuItems.length })
   } catch (e) {
     console.error('Import error:', e)
+    res.status(500).json({ error: 'Import failed: ' + e.message })
+  }
+})
+
 // ============ INVENTORY API ROUTES ============
 app.get('/api/inventory', (req, res) => {
   res.json(inventory || [])
