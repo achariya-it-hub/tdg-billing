@@ -69,14 +69,10 @@ export default function Dashboard() {
       return `${year}-${month}-${day}`
     }
     if (dateRange === 'today') {
-      const d = formatLocalYYYYMMDD(today)
-      return `from=${d}&to=${d}&date=${d}`
+      return 'date=today'
     }
     if (dateRange === 'yesterday') {
-      const y = new Date(today)
-      y.setDate(y.getDate() - 1)
-      const d = formatLocalYYYYMMDD(y)
-      return `from=${d}&to=${d}&date=${d}`
+      return 'date=yesterday'
     }
     if (dateRange === 'week') {
       const w = new Date(today)

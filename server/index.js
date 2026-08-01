@@ -4083,15 +4083,23 @@ function getFilteredOrdersForPeriod(reqQuery) {
   const today = new Date()
   const todayStr = getLocalDateStr(today)
 
-  if (!date && !from && !to) {
-    const todayOrders = validOrders.filter(o => getOrderDate(o) === todayStr)
-    if (todayOrders.length > 0) return todayOrders
-    const latestDate = getLatestOrderDate(validOrders)
-    return validOrders.filter(o => getOrderDate(o) === latestDate)
-  }
-
   if (date === 'all') {
     return validOrders
+  }
+
+  const resolveOrFallback = (filteredList) => {
+    if (Array.isArray(filteredList) && filteredList.length > 0) return filteredList
+    const latestDate = getLatestOrderDate(validOrders)
+    if (latestDate) {
+      const latestOrders = validOrders.filter(o => getOrderDate(o) === latestDate)
+      if (latestOrders.length > 0) return latestOrders
+    }
+    return filteredList || []
+  }
+
+  if (!date && !from && !to) {
+    const todayOrders = validOrders.filter(o => getOrderDate(o) === todayStr)
+    return resolveOrFallback(todayOrders)
   }
 
   const yesterday = new Date(today)
@@ -4102,40 +4110,43 @@ function getFilteredOrdersForPeriod(reqQuery) {
     const pastWeek = new Date(today)
     pastWeek.setDate(pastWeek.getDate() - 7)
     const pastWeekStr = getLocalDateStr(pastWeek)
-    return validOrders.filter(o => getOrderDate(o) >= pastWeekStr)
+    const res = validOrders.filter(o => getOrderDate(o) >= pastWeekStr)
+    return resolveOrFallback(res)
   }
 
   if (date === 'month') {
     const pastMonth = new Date(today)
     pastMonth.setDate(pastMonth.getDate() - 30)
     const pastMonthStr = getLocalDateStr(pastMonth)
-    return validOrders.filter(o => getOrderDate(o) >= pastMonthStr)
-  }
-
-  if (from && to) {
-    const normFrom = normalizeDateStr(from)
-    const normTo = normalizeDateStr(to)
-    return validOrders.filter(o => {
-      const dStr = getOrderDate(o)
-      return dStr >= normFrom && dStr <= normTo
-    })
-  }
-
-  if (from) {
-    const normFrom = normalizeDateStr(from)
-    return validOrders.filter(o => getOrderDate(o) >= normFrom)
+    const res = validOrders.filter(o => getOrderDate(o) >= pastMonthStr)
+    return resolveOrFallback(res)
   }
 
   const normDate = normalizeDateStr(date)
   if (normDate === 'today' || normDate === todayStr) {
     const todayOrders = validOrders.filter(o => getOrderDate(o) === todayStr)
-    if (todayOrders.length > 0) return todayOrders
-    const latestDate = getLatestOrderDate(validOrders)
-    return validOrders.filter(o => getOrderDate(o) === latestDate)
+    return resolveOrFallback(todayOrders)
   }
 
   if (normDate === 'yesterday' || normDate === yesterdayStr) {
-    return validOrders.filter(o => getOrderDate(o) === yesterdayStr)
+    const yOrders = validOrders.filter(o => getOrderDate(o) === yesterdayStr)
+    return resolveOrFallback(yOrders)
+  }
+
+  if (from && to) {
+    const normFrom = normalizeDateStr(from)
+    const normTo = normalizeDateStr(to)
+    const res = validOrders.filter(o => {
+      const dStr = getOrderDate(o)
+      return dStr >= normFrom && dStr <= normTo
+    })
+    return resolveOrFallback(res)
+  }
+
+  if (from) {
+    const normFrom = normalizeDateStr(from)
+    const res = validOrders.filter(o => getOrderDate(o) >= normFrom)
+    return resolveOrFallback(res)
   }
 
   if (normDate === 'latest') {
@@ -4144,10 +4155,12 @@ function getFilteredOrdersForPeriod(reqQuery) {
   }
 
   if (normDate) {
-    return validOrders.filter(o => getOrderDate(o) === normDate)
+    const specific = validOrders.filter(o => getOrderDate(o) === normDate)
+    return resolveOrFallback(specific)
   }
 
-  return validOrders
+  const latestDate = getLatestOrderDate(validOrders)
+  return validOrders.filter(o => getOrderDate(o) === latestDate)
 }
 
 // ============ AUTOMATIC MIDNIGHT 12:00 AM IST DAY CLOSING ENGINE ============
