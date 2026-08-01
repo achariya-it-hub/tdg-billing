@@ -4301,14 +4301,19 @@ function computeThreeHourSales(orderList) {
     hourLabel: s.label,
     timeSlot: s.timeSlot,
     revenue: 0,
+    settledBills: 0,
+    pendingVoid: 0,
+    totalBills: 0,
     orderCount: 0,
     avgOrder: 0,
     pct: 0
   }))
 
   orderList.forEach(o => {
-    const amt = getOrderAmount(o)
+    const isValid = isValidSalesOrder(o)
+    const amt = isValid ? getOrderAmount(o) : 0
     totalRev += amt
+
     const dtVal = o.createdAt || o.paidAt || o.completedAt || o.timestamp || o.date
     if (dtVal) {
       let hour24 = -1
@@ -4325,8 +4330,14 @@ function computeThreeHourSales(orderList) {
       if (hour24 >= 0 && hour24 <= 23) {
         const slotIdx = THREE_HOUR_SLOTS.findIndex(s => hour24 >= s.start && hour24 < s.end)
         if (slotIdx >= 0) {
-          buckets[slotIdx].revenue += amt
-          buckets[slotIdx].orderCount += 1
+          buckets[slotIdx].totalBills += 1
+          if (isValid) {
+            buckets[slotIdx].revenue += amt
+            buckets[slotIdx].settledBills += 1
+            buckets[slotIdx].orderCount += 1
+          } else {
+            buckets[slotIdx].pendingVoid += 1
+          }
         }
       }
     }
@@ -4334,7 +4345,7 @@ function computeThreeHourSales(orderList) {
 
   buckets.forEach(b => {
     b.revenue = Math.round(b.revenue)
-    b.avgOrder = b.orderCount > 0 ? Math.round(b.revenue / b.orderCount) : 0
+    b.avgOrder = b.settledBills > 0 ? Math.round(b.revenue / b.settledBills) : 0
     b.pct = totalRev > 0 ? Number(((b.revenue / totalRev) * 100).toFixed(1)) : 0
   })
 
@@ -4361,6 +4372,9 @@ function computeHourlySales(orderList) {
       hourLabel,
       timeSlot,
       revenue: 0,
+      settledBills: 0,
+      pendingVoid: 0,
+      totalBills: 0,
       orderCount: 0,
       avgOrder: 0,
       pct: 0
@@ -4368,8 +4382,10 @@ function computeHourlySales(orderList) {
   })
 
   orderList.forEach(o => {
-    const amt = getOrderAmount(o)
+    const isValid = isValidSalesOrder(o)
+    const amt = isValid ? getOrderAmount(o) : 0
     totalRev += amt
+
     const dtVal = o.createdAt || o.paidAt || o.completedAt || o.timestamp || o.date
     if (dtVal) {
       let hour24 = -1
@@ -4384,15 +4400,21 @@ function computeHourlySales(orderList) {
         if (!isNaN(d.getTime())) hour24 = d.getHours()
       }
       if (hour24 >= 0 && hour24 <= 23) {
-        buckets[hour24].revenue += amt
-        buckets[hour24].orderCount += 1
+        buckets[hour24].totalBills += 1
+        if (isValid) {
+          buckets[hour24].revenue += amt
+          buckets[hour24].settledBills += 1
+          buckets[hour24].orderCount += 1
+        } else {
+          buckets[hour24].pendingVoid += 1
+        }
       }
     }
   })
 
   buckets.forEach(b => {
     b.revenue = Math.round(b.revenue)
-    b.avgOrder = b.orderCount > 0 ? Math.round(b.revenue / b.orderCount) : 0
+    b.avgOrder = b.settledBills > 0 ? Math.round(b.revenue / b.settledBills) : 0
     b.pct = totalRev > 0 ? Number(((b.revenue / totalRev) * 100).toFixed(1)) : 0
   })
 
@@ -4404,9 +4426,22 @@ app.get('/api/reports/hourly-sales', (req, res) => {
   try {
     const periodOrders = getFilteredOrdersForPeriod(req.query)
     const validOrders = periodOrders.filter(isValidSalesOrder)
-    const hourlySales = computeHourlySales(validOrders)
-    const threeHourSales = computeThreeHourSales(validOrders)
+    const hourlySales = computeHourlySales(periodOrders)
+    const threeHourSales = computeThreeHourSales(periodOrders)
     const totalRev = validOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
+
+    res.json({
+      period: req.query,
+      totalOrders: validOrders.length,
+      totalRevenue: Math.round(totalRev),
+      hourlySales,
+      threeHourSales
+    })
+  } catch (e) {
+    console.error('[HOURLY SALES API ERROR]', e)
+    res.status(500).json({ error: 'Failed to generate hourly sales report' })
+  }
+})
 
     res.json({
       period: req.query,
@@ -4457,7 +4492,9 @@ app.get('/api/reports/daily-closing', (req, res) => {
     bySource[src] = (bySource[src] || 0) + 1
   })
 
-  const avgBasketValue = totalInvoices > 0 ? Math.round(totalSales / totalInvoices) : 0
+  const avgBasketValue = totalInvoices > 0 ? Math.round(totalSales / totalInvoices) : 0;
+const hourlySales = computeHourlySales(dayOrders);
+const threeHourSales = computeThreeHourSales(dayOrders);
 
   // Filter expenses with normalized date string
   const normDate = date ? normalizeDateStr(date) : ''

@@ -544,7 +544,7 @@ export default function Dashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {currentDisplayData.filter(h => (h.orderCount || h.orders || 0) > 0 || (h.revenue || 0) > 0).length === 0 ? (
+                    {currentDisplayData.filter(h => (h.totalBills || h.orderCount || h.orders || 0) > 0 || (h.revenue || 0) > 0).length === 0 ? (
                       <tr>
                         <td colSpan={5} style={{ textAlign: 'center', padding: '32px', color: '#9ca3af', fontSize: '14px' }}>
                           No billing activity recorded for the selected date range.
@@ -552,11 +552,12 @@ export default function Dashboard() {
                       </tr>
                     ) : (
                       currentDisplayData
-                        .filter(h => (h.orderCount || h.orders || 0) > 0 || (h.revenue || 0) > 0)
+                        .filter(h => (h.totalBills || h.orderCount || h.orders || 0) > 0 || (h.revenue || 0) > 0)
                         .map((item, idx) => {
-                          const billCnt = item.orderCount || item.orders || 0
+                          const settledCnt = item.settledBills !== undefined ? item.settledBills : (item.orderCount || item.orders || 0)
+                          const pendingVoidCnt = item.pendingVoid || 0
                           const rev = item.revenue || 0
-                          const avg = item.avgOrder || (billCnt > 0 ? Math.round(rev / billCnt) : 0)
+                          const avg = item.avgOrder || (settledCnt > 0 ? Math.round(rev / settledCnt) : 0)
                           const pct = item.pct || 0
 
                           return (
@@ -589,7 +590,12 @@ export default function Dashboard() {
                                   fontWeight: 700,
                                   fontSize: '13px'
                                 }}>
-                                  {billCnt} {billCnt === 1 ? 'bill' : 'bills'}
+                                  {settledCnt} {settledCnt === 1 ? 'bill' : 'bills'}
+                                  {pendingVoidCnt > 0 && (
+                                    <span style={{ marginLeft: '6px', color: '#6b7280', fontSize: '11px', fontWeight: 600 }}>
+                                      (+{pendingVoidCnt} void)
+                                    </span>
+                                  )}
                                 </span>
                               </td>
                               <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: 700, fontSize: '15px', color: '#111827' }}>
