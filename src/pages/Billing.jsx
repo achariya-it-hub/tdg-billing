@@ -106,30 +106,39 @@ export default function Billing() {
   const fetchOrders = async () => {
     try {
       const queryDate = dateFilter === 'custom' ? customDate : dateFilter
-      const [allRes, paidRes] = await Promise.all([
+      let [allRes, paidRes] = await Promise.all([
         fetch(`${getApiUrl()}/api/pos/orders?date=${queryDate}`),
         fetch(`${getApiUrl()}/api/pos/orders?status=completed&date=${queryDate}`)
       ])
-      if (allRes.ok && paidRes.ok) {
-        const all = await allRes.json()
-        const paid = await paidRes.json()
+      let all = allRes.ok ? await allRes.json() : []
+      let paid = paidRes.ok ? await paidRes.json() : []
 
-        const orderMap = new Map()
-        if (Array.isArray(all)) all.forEach(o => orderMap.set(o.id, o))
-        if (Array.isArray(paid)) paid.forEach(o => orderMap.set(o.id, o))
-        const combined = Array.from(orderMap.values())
-
-        // Include ALL order types so no bills are missed!
-        const filtered = combined.filter(o => (o.status || '').toLowerCase() !== 'cancelled' && (o.status || '').toLowerCase() !== 'void')
-        
-        const comp = filtered.filter(o => o.complimentary)
-        setComplimentaryOrders(comp)
-
-        const nonComp = filtered.filter(o => !o.complimentary)
-        setNewKOTs(nonComp.filter(o => o.status === 'pending'))
-        setPendingKOTs(nonComp.filter(o => o.status === 'ready' || o.status === 'in-progress' || o.status === 'preparing' || o.status === 'served'))
-        setPaidBills(nonComp.filter(o => o.status === 'completed' || o.paymentStatus === 'paid' || o.paidAt))
+      if (dateFilter === 'today' && all.length === 0 && paid.length === 0) {
+        const fallbackRes = await fetch(`${getApiUrl()}/api/pos/orders?date=all`)
+        if (fallbackRes.ok) {
+          const allOrders = await fallbackRes.json()
+          if (Array.isArray(allOrders) && allOrders.length > 0) {
+            all = allOrders
+            paid = allOrders.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
+          }
+        }
       }
+
+      const orderMap = new Map()
+      if (Array.isArray(all)) all.forEach(o => orderMap.set(o.id, o))
+      if (Array.isArray(paid)) paid.forEach(o => orderMap.set(o.id, o))
+      const combined = Array.from(orderMap.values())
+
+      // Include ALL order types so no bills are missed!
+      const filtered = combined.filter(o => (o.status || '').toLowerCase() !== 'cancelled' && (o.status || '').toLowerCase() !== 'void')
+      
+      const comp = filtered.filter(o => o.complimentary || o.isComplimentary || (o.paymentMethod || '').toLowerCase() === 'complimentary' || o.type === 'complimentary')
+      setComplimentaryOrders(comp)
+
+      const nonComp = filtered.filter(o => !o.complimentary && !o.isComplimentary && (o.paymentMethod || '').toLowerCase() !== 'complimentary' && o.type !== 'complimentary')
+      setNewKOTs(nonComp.filter(o => o.status === 'pending'))
+      setPendingKOTs(nonComp.filter(o => (o.status === 'ready' || o.status === 'in-progress' || o.status === 'preparing' || o.status === 'served') && o.status !== 'completed' && o.paymentStatus !== 'paid'))
+      setPaidBills(nonComp.filter(o => o.status === 'completed' || o.paymentStatus === 'paid' || o.paidAt))
     } catch (err) {
       console.error('Failed to fetch orders:', err)
     }

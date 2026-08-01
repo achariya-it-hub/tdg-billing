@@ -4837,10 +4837,59 @@ app.get('/api/reports/payment-report', (req, res) => {
   })
 })
 
-// ============ POS ORDERS LIST FOR REPORTS ============
+// ============ POS ORDERS LIST FOR BILLING COUNTER & REPORTS ============
 app.get('/api/pos/orders', (req, res) => {
-  const filtered = getFilteredOrdersForPeriod(req.query)
-  res.json(filtered || [])
+  try {
+    const { date, from, to, status } = req.query
+    const today = new Date()
+    const todayStr = getLocalDateStr(today)
+
+    let list = orders.filter(o => {
+      if (!o) return false
+      const s = (o.status || '').toLowerCase()
+      return s !== 'cancelled' && s !== 'canceled' && s !== 'void' && !o.isCancelled && !o.isVoid
+    })
+
+    if (date === 'all') {
+      // return all non-cancelled
+    } else if (date === 'yesterday') {
+      const yesterday = new Date(today)
+      yesterday.setDate(yesterday.getDate() - 1)
+      const yesterdayStr = getLocalDateStr(yesterday)
+      list = list.filter(o => getOrderDate(o) === yesterdayStr)
+    } else if (from && to) {
+      const normFrom = normalizeDateStr(from)
+      const normTo = normalizeDateStr(to)
+      list = list.filter(o => {
+        const dStr = getOrderDate(o)
+        return dStr >= normFrom && dStr <= normTo
+      })
+    } else {
+      // 'today' or default date filtering with latest shift fallback
+      let tOrders = list.filter(o => getOrderDate(o) === todayStr)
+      if (tOrders.length === 0) {
+        const latestDate = getLatestOrderDate(list)
+        if (latestDate) {
+          tOrders = list.filter(o => getOrderDate(o) === latestDate)
+        }
+      }
+      list = tOrders
+    }
+
+    if (status) {
+      const normStatus = status.toLowerCase()
+      if (normStatus === 'completed') {
+        list = list.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
+      } else {
+        list = list.filter(o => (o.status || '').toLowerCase() === normStatus)
+      }
+    }
+
+    res.json(list || [])
+  } catch (err) {
+    console.error('[POS ORDERS API ERROR]', err)
+    res.status(500).json({ error: 'Failed to fetch orders' })
+  }
 })
 
 // Purchase Orders Report
