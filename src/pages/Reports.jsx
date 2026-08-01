@@ -352,30 +352,22 @@ export default function Reports() {
         )
 
       case 'daily-closing': {
-        const displayClosing = (closing && (closing.totalInvoices > 0 || closing.totalSales > 0)) ? closing : {
-          date: 'Latest Active Shift',
-          totalInvoices: 66,
-          totalSales: 24850,
-          settledSales: 18420,
-          pendingSales: 6430,
-          totalPurchases: 4500,
-          totalExpenses: 2100,
-          grossProfit: 18250,
-          avgBasketValue: 376,
-          byPaymentMethod: { cash: 10200, upi: 8220, card: 4800, wallet: 1630 },
-          bySource: { 'DINE-IN': 42, TAKEAWAY: 18, ZOMATO: 6 },
-          statusBreakdown: { completed: 66, cancelled: 7, complimentary: 2 },
-          cancelledCount: 7,
-          cancelledValue: 2975,
-          cancelledOrders: [
-            { id: '#1042', time: '11:15 AM', type: 'Table T4', items: [{ menuItemName: 'Double Decker Burger x1, Coleslaw x1' }], total: 408, reason: 'Customer changed mind' },
-            { id: '#1059', time: '01:30 PM', type: 'Takeaway', items: [{ menuItemName: 'Spicy Chicken Gyro x2, Pepsi x2' }], total: 316, reason: 'Duplicate order entry' },
-            { id: '#1078', time: '04:15 PM', type: 'Table T2', items: [{ menuItemName: 'Crispy Wings (6 Pc) x1, Fries x1' }], total: 279, reason: 'Item out of stock' },
-            { id: '#1091', time: '05:40 PM', type: 'Zomato', items: [{ menuItemName: 'Duo Gyro Feast Meal x1' }], total: 498, reason: 'Rider unassigned' },
-            { id: '#1114', time: '07:20 PM', type: 'Table T6', items: [{ menuItemName: 'Spicy Paneer Gyro x2, Ice Tea x2' }], total: 316, reason: 'Switched table' },
-            { id: '#1132', time: '08:45 PM', type: 'Takeaway', items: [{ menuItemName: "Den's Party Meal Box x1" }], total: 699, reason: 'UPI payment timeout' },
-            { id: '#1150', time: '10:10 PM', type: 'Table T1', items: [{ menuItemName: 'Crispy Strips (9 Pc) x1, Fries x1' }], total: 459, reason: 'Kitchen delay > 25m' }
-          ]
+        const displayClosing = closing || {
+          date: 'Today',
+          totalInvoices: 0,
+          totalSales: 0,
+          settledSales: 0,
+          pendingSales: 0,
+          totalPurchases: 0,
+          totalExpenses: 0,
+          grossProfit: 0,
+          avgBasketValue: 0,
+          byPaymentMethod: {},
+          bySource: {},
+          statusBreakdown: {},
+          cancelledCount: 0,
+          cancelledValue: 0,
+          cancelledOrders: []
         }
 
         return (

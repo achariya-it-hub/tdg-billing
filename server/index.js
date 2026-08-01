@@ -4081,10 +4081,7 @@ function getFilteredOrdersForPeriod(reqQuery) {
   const todayStr = getLocalDateStr(today)
 
   if (!date && !from && !to) {
-    const todayOrders = validOrders.filter(o => getOrderDate(o) === todayStr)
-    if (todayOrders.length > 0) return todayOrders
-    const latestDate = getLatestOrderDate(validOrders)
-    return validOrders.filter(o => getOrderDate(o) === latestDate)
+    return validOrders.filter(o => getOrderDate(o) === todayStr)
   }
 
   if (date === 'all') {
@@ -4125,10 +4122,7 @@ function getFilteredOrdersForPeriod(reqQuery) {
 
   const normDate = normalizeDateStr(date)
   if (normDate === 'today' || normDate === todayStr) {
-    const todayOrders = validOrders.filter(o => getOrderDate(o) === todayStr)
-    if (todayOrders.length > 0) return todayOrders
-    const latestDate = getLatestOrderDate(validOrders)
-    return validOrders.filter(o => getOrderDate(o) === latestDate)
+    return validOrders.filter(o => getOrderDate(o) === todayStr)
   }
 
   if (normDate === 'yesterday' || normDate === yesterdayStr) {
@@ -4410,12 +4404,7 @@ app.get('/api/reports/daily-closing', (req, res) => {
   const todayStr = getLocalDateStr(new Date())
   const { date, from, to } = req.query
 
-  let dayOrders = getFilteredOrdersForPeriod(req.query)
-  if (!dayOrders || dayOrders.length === 0) {
-    const validAll = orders.filter(isValidSalesOrder)
-    const latestShiftDate = getLatestOrderDate(validAll) || getLatestOrderDate(orders)
-    dayOrders = orders.filter(o => getOrderDate(o) === latestShiftDate)
-  }
+  const dayOrders = getFilteredOrdersForPeriod(req.query)
   const completedOrders = dayOrders.filter(o => isValidSalesOrder(o))
   const settledOrders = completedOrders.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
   const pendingOrders = completedOrders.filter(o => !settledOrders.includes(o))
@@ -4865,15 +4854,8 @@ app.get('/api/pos/orders', (req, res) => {
         return dStr >= normFrom && dStr <= normTo
       })
     } else {
-      // 'today' or default date filtering with latest shift fallback
-      let tOrders = list.filter(o => getOrderDate(o) === todayStr)
-      if (tOrders.length === 0) {
-        const latestDate = getLatestOrderDate(list)
-        if (latestDate) {
-          tOrders = list.filter(o => getOrderDate(o) === latestDate)
-        }
-      }
-      list = tOrders
+      // 'today' or default date filtering
+      list = list.filter(o => getOrderDate(o) === todayStr)
     }
 
     if (status) {
