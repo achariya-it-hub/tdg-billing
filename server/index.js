@@ -2774,22 +2774,37 @@ app.delete('/api/inventory/:id', (req, res) => {
 
 // POS Orders (no auth)
 app.get('/api/pos/orders', (req, res) => {
-  const { status, source, date } = req.query
+  const { status, source, date, from, to } = req.query
   let inMemory = [...orders]
+
   if (status) {
     if (status === 'completed') {
       inMemory = inMemory.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
     } else {
-      inMemory = inMemory.filter(o => o.status === status)
+      inMemory = inMemory.filter(o => (o.status || '').toLowerCase() === (status || '').toLowerCase())
     }
   }
-  if (source) inMemory = inMemory.filter(o => o.source === source)
-  if (date) {
+
+  if (source) inMemory = inMemory.filter(o => (o.source || '').toLowerCase() === (source || '').toLowerCase())
+
+  const today = new Date()
+  const todayStr = getLocalDateStr(today)
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+  const yesterdayStr = getLocalDateStr(yesterday)
+
+  if (from && to) {
+    const normFrom = normalizeDateStr(from)
+    const normTo = normalizeDateStr(to)
+    inMemory = inMemory.filter(o => {
+      const dStr = getOrderDate(o)
+      return dStr >= normFrom && dStr <= normTo
+    })
+  } else if (from) {
+    const normFrom = normalizeDateStr(from)
+    inMemory = inMemory.filter(o => getOrderDate(o) >= normFrom)
+  } else if (date) {
     const norm = normalizeDateStr(date)
-    const todayStr = getLocalDateStr(new Date())
-    const yesterdayDate = new Date()
-    yesterdayDate.setDate(yesterdayDate.getDate() - 1)
-    const yesterdayStr = getLocalDateStr(yesterdayDate)
 
     if (norm === 'latest') {
       const latestDate = getLatestOrderDate(orders)
@@ -2798,11 +2813,22 @@ app.get('/api/pos/orders', (req, res) => {
       inMemory = inMemory.filter(o => getOrderDate(o) === todayStr)
     } else if (norm === 'yesterday' || norm === yesterdayStr) {
       inMemory = inMemory.filter(o => getOrderDate(o) === yesterdayStr)
+    } else if (norm === 'week' || date === 'week') {
+      const pastWeek = new Date(today)
+      pastWeek.setDate(pastWeek.getDate() - 7)
+      const pastWeekStr = getLocalDateStr(pastWeek)
+      inMemory = inMemory.filter(o => getOrderDate(o) >= pastWeekStr)
+    } else if (norm === 'month' || date === 'month') {
+      const pastMonth = new Date(today)
+      pastMonth.setDate(pastMonth.getDate() - 30)
+      const pastMonthStr = getLocalDateStr(pastMonth)
+      inMemory = inMemory.filter(o => getOrderDate(o) >= pastMonthStr)
     } else if (norm !== 'all') {
       inMemory = inMemory.filter(o => getOrderDate(o) === norm)
     }
   }
-  res.json(inMemory.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
+
+  res.json(inMemory.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)))
 })
 
 function deductInventoryForOrder(order) {
