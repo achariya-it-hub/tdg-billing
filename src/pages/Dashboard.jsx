@@ -256,6 +256,7 @@ export default function Dashboard() {
         </div>
         <div style={{ display: 'flex', gap: '6px', background: 'rgba(0,0,0,0.03)', padding: '4px', borderRadius: '14px' }}>
           {[
+            { id: 'latest', label: "⚡ Latest Active Shift" },
             { id: 'today', label: "⭐ Today's Shift" },
             { id: 'yesterday', label: "🕒 Yesterday's Shift" },
             { id: 'week', label: '🗓️ This Week' },

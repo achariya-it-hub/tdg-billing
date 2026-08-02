@@ -1843,6 +1843,7 @@ export default function Reports() {
               cursor: 'pointer'
             }}
           >
+            <option value="latest">⚡ Latest Active Shift</option>
             <option value="today">⭐ Today's Shift</option>
             <option value="yesterday">🕒 Yesterday's Shift</option>
             <option value="week">🗓️ This Week</option>
