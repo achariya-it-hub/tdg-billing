@@ -4017,6 +4017,64 @@ app.get('/api/accounts/due-bills', (req, res) => {
   res.json(bills)
 })
 
+// ============ CLOUD / LOCAL DATA SYNC BRIDGE ============
+const SYNC_SECRET = process.env.SYNC_SECRET || 'TDG_POS_SYNC_2026_SECRET'
+
+app.post('/api/sync/push', (req, res) => {
+  try {
+    const token = req.headers['x-sync-token'] || req.body.syncToken
+    if (token !== SYNC_SECRET && process.env.NODE_ENV === 'production') {
+      return res.status(401).json({ error: 'Unauthorized sync token' })
+    }
+
+    const { orders: incomingOrders, inventory: incomingInv, expenses: incomingExp, menuItems: incomingMenu, categories: incomingCat, recipes: incomingRec } = req.body
+
+    if (Array.isArray(incomingOrders)) {
+      const orderMap = new Map()
+      orders.forEach(o => orderMap.set(String(o.id), o))
+      incomingOrders.forEach(o => orderMap.set(String(o.id), o))
+      orders.length = 0
+      orders.push(...Array.from(orderMap.values()))
+    }
+
+    if (Array.isArray(incomingInv) && incomingInv.length > 0) {
+      inventory.length = 0
+      inventory.push(...incomingInv)
+    }
+
+    if (Array.isArray(incomingExp) && incomingExp.length > 0) {
+      expenses.length = 0
+      expenses.push(...incomingExp)
+    }
+
+    if (Array.isArray(incomingMenu) && incomingMenu.length > 0) {
+      menuItems.length = 0
+      menuItems.push(...incomingMenu)
+    }
+
+    if (Array.isArray(incomingCat) && incomingCat.length > 0) {
+      categories.length = 0
+      categories.push(...incomingCat)
+    }
+
+    if (Array.isArray(incomingRec) && incomingRec.length > 0) {
+      recipes.length = 0
+      recipes.push(...incomingRec)
+    }
+
+    saveState()
+    console.log(`[SYNC PUSH SUCCESS] Database updated with ${orders.length} orders`)
+    res.json({ success: true, message: 'Data synced successfully', ordersCount: orders.length })
+  } catch (err) {
+    console.error('[SYNC PUSH ERROR]', err)
+    res.status(500).json({ error: err.message || 'Sync failed' })
+  }
+})
+
+app.get('/api/sync/pull', (req, res) => {
+  res.json(db)
+})
+
 // ============ PURCHASES (supplier orders) ============
 app.get('/api/purchases', (req, res) => {
   const { date } = req.query

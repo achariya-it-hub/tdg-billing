@@ -352,8 +352,41 @@ function DataTab({ pin, settings, onSaved }) {
   const [resetPin, setResetPin] = useState('')
   const [showReset, setShowReset] = useState(false)
   const [resetMsg, setResetMsg] = useState('')
+  const [cloudUrl, setCloudUrl] = useState(() => localStorage.getItem('cloudSyncUrl') || '')
+  const [syncing, setSyncing] = useState(false)
+  const [syncMsg, setSyncMsg] = useState('')
   const fileRef = useRef()
   const restoreRef = useRef()
+
+  const handlePushToCloud = async () => {
+    if (!cloudUrl) { setSyncMsg('❌ Enter your Hostinger website domain (e.g. https://yourdomain.com)'); return }
+    setSyncing(true); setSyncMsg('')
+    try {
+      localStorage.setItem('cloudSyncUrl', cloudUrl)
+      const localRes = await fetch(`${API_BASE}/api/settings/export-backup?pin=${pin}`)
+      if (!localRes.ok) { setSyncMsg('❌ Could not export local data'); setSyncing(false); return }
+      const localDbData = await localRes.json()
+
+      const target = cloudUrl.replace(/\/$/, '')
+      const cloudRes = await fetch(`${target}/api/sync/push`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-sync-token': 'TDG_POS_SYNC_2026_SECRET'
+        },
+        body: JSON.stringify(localDbData)
+      })
+      const cloudData = await cloudRes.json()
+      if (cloudData.success) {
+        setSyncMsg(`✅ Success! Synced ${cloudData.ordersCount || 'all'} orders & menu items to Hostinger Cloud!`)
+      } else {
+        setSyncMsg(`❌ Sync Error: ${cloudData.error || 'Hostinger server error'}`)
+      }
+    } catch (e) {
+      setSyncMsg(`❌ Connection Error: Could not connect to ${cloudUrl}. Ensure domain is active.`)
+    }
+    setSyncing(false)
+  }
 
   const handleUploadCSV = async (e, isVip50 = false) => {
     const file = e.target.files[0]; if (!file) return
@@ -417,6 +450,46 @@ function DataTab({ pin, settings, onSaved }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* Cloud Data Sync Bridge */}
+      <div style={{ ...glassCard, border: '1.5px solid rgba(59, 130, 246, 0.3)', background: 'linear-gradient(135deg, rgba(239, 246, 255, 0.6), rgba(255, 255, 255, 0.9))' }}>
+        <h3 style={{ fontSize: '17px', fontWeight: 700, marginBottom: '6px', color: '#1d4ed8', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Database size={22} color="#3b82f6" /> ⚡ Local-to-Hostinger Cloud Data Sync
+        </h3>
+        <p style={{ fontSize: '13px', color: '#4b5563', marginBottom: '16px' }}>
+          Instantly sync all local bills, sales orders, inventory, and menu items from this billing counter PC directly to your live Hostinger website.
+        </p>
+
+        {syncMsg && (
+          <div style={{
+            background: syncMsg.includes('✅') ? 'rgba(22,163,74,0.1)' : 'rgba(220,38,38,0.1)',
+            color: syncMsg.includes('✅') ? '#15803d' : '#b91c1c',
+            padding: '12px 16px', borderRadius: '10px', fontSize: '13.5px', marginBottom: '16px', fontWeight: 700
+          }}>
+            {syncMsg}
+          </div>
+        )}
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '12px', alignItems: 'center' }}>
+          <div>
+            <label style={labelStyle}>Hostinger Live Website URL</label>
+            <input
+              style={inputStyle}
+              placeholder="e.g. https://yourdomain.com"
+              value={cloudUrl}
+              onChange={e => setCloudUrl(e.target.value)}
+            />
+          </div>
+          <div style={{ alignSelf: 'end' }}>
+            <button
+              onClick={handlePushToCloud}
+              disabled={syncing}
+              style={{ ...btnPrimary, background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', boxShadow: '0 4px 16px rgba(37,99,235,0.3)', padding: '11px 20px' }}
+            >
+              <Upload size={16} /> {syncing ? 'Syncing...' : '☁️ Sync Local Data to Hostinger Cloud'}
+            </button>
+          </div>
+        </div>
+      </div>
       {/* Upload 50% Exclusive Discount Customers */}
       <div style={{ ...glassCard, border: '1.5px solid rgba(245, 158, 11, 0.3)', background: 'linear-gradient(135deg, rgba(254, 243, 199, 0.4), rgba(255, 255, 255, 0.8))' }}>
         <h3 style={{ fontSize: '17px', fontWeight: 700, marginBottom: '6px', color: '#b45309', display: 'flex', alignItems: 'center', gap: '10px' }}>
