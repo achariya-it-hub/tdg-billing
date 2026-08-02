@@ -3,268 +3,88 @@
     {
       "id": "c10",
       "name": "Beverages & Kombucha",
-      "icon": "\ud83c\udf79",
+      "icon": "🍹",
       "color": "#0284c7"
     },
     {
       "id": "c9",
       "name": "Desserts",
-      "icon": "\ud83c\udf70",
+      "icon": "🍰",
       "color": "#ec4899"
     },
     {
       "id": "c4",
       "name": "Dips & Add-Ons",
-      "icon": "\ud83e\udd63",
+      "icon": "🥣",
       "color": "#e63946"
     },
     {
       "id": "c6",
       "name": "Fries",
-      "icon": "\ud83c\udf5f",
+      "icon": "🍟",
       "color": "#f59e0b"
     },
     {
       "id": "c1",
       "name": "Gyros",
-      "icon": "\ud83e\udd59",
+      "icon": "🥙",
       "color": "#d97706"
     },
     {
       "id": "c2",
       "name": "Meals & Combos",
-      "icon": "\ud83c\udf71",
+      "icon": "🍱",
       "color": "#8b5cf6"
     },
     {
       "id": "c11",
       "name": "Protein Max",
-      "icon": "\ud83d\udcaa",
+      "icon": "💪",
       "color": "#10b981"
     },
     {
       "id": "c3",
       "name": "Rice & Salads",
-      "icon": "\ud83e\udd57",
+      "icon": "🥗",
       "color": "#059669"
     },
     {
       "id": "c7",
       "name": "Shakes & Softy",
-      "icon": "\ud83e\udd64",
+      "icon": "🥤",
       "color": "#db2777"
     },
     {
       "id": "c5_strips",
       "name": "Strips",
-      "icon": "\ud83c\udf57",
+      "icon": "🍗",
       "color": "#ca8a04"
     },
     {
       "id": "c5_wings",
       "name": "Wings",
-      "icon": "\ud83c\udf57",
+      "icon": "🍗",
       "color": "#b45309"
     }
   ],
   "menuItems": [
     {
-      "id": "m1a",
-      "categoryId": "c1",
-      "name": "Spicy Gyro - Chicken (Mini)",
-      "price": 99,
-      "description": "Fresh pita wrap with spicy chicken, hummus & veggies",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m1b",
-      "categoryId": "c1",
-      "name": "Spicy Gyro - Paneer (Mini)",
-      "price": 99,
-      "description": "Fresh pita wrap with spicy paneer, hummus & veggies",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m2a",
-      "categoryId": "c1",
-      "name": "Spicy Gyro - Chicken (Signature)",
-      "price": 249,
-      "description": "Signature large pita wrap with spicy chicken",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m2b",
-      "categoryId": "c1",
-      "name": "Spicy Gyro - Paneer (Signature)",
-      "price": 249,
-      "description": "Signature large pita wrap with spicy paneer",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m3a",
-      "categoryId": "c1",
-      "name": "Creamy Gyro - Chicken (Mini)",
-      "price": 99,
-      "description": "Creamy garlic chicken pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m3b",
-      "categoryId": "c1",
-      "name": "Creamy Gyro - Paneer (Mini)",
-      "price": 99,
-      "description": "Creamy garlic paneer pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m4a",
-      "categoryId": "c1",
-      "name": "Creamy Gyro - Chicken (Signature)",
-      "price": 249,
-      "description": "Signature large creamy garlic chicken pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m4b",
-      "categoryId": "c1",
-      "name": "Creamy Gyro - Paneer (Signature)",
-      "price": 249,
-      "description": "Signature large creamy garlic paneer pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m5a",
-      "categoryId": "c1",
-      "name": "BBQ Gyro - Chicken (Mini)",
-      "price": 99,
-      "description": "Smoky BBQ chicken pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m5b",
-      "categoryId": "c1",
-      "name": "BBQ Gyro - Paneer (Mini)",
-      "price": 99,
-      "description": "Smoky BBQ paneer pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m6a",
-      "categoryId": "c1",
-      "name": "BBQ Gyro - Chicken (Signature)",
-      "price": 249,
-      "description": "Signature large smoky BBQ chicken pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m6b",
-      "categoryId": "c1",
-      "name": "BBQ Gyro - Paneer (Signature)",
-      "price": 249,
-      "description": "Signature large smoky BBQ paneer pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m7a",
-      "categoryId": "c1",
-      "name": "Peri Peri Gyro - Chicken (Mini)",
-      "price": 99,
-      "description": "Zesty peri peri chicken pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m7b",
-      "categoryId": "c1",
-      "name": "Peri Peri Gyro - Paneer (Mini)",
-      "price": 99,
-      "description": "Zesty peri peri paneer pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m8a",
-      "categoryId": "c1",
-      "name": "Peri Peri Gyro - Chicken (Signature)",
-      "price": 249,
-      "description": "Signature large zesty peri peri chicken pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m8b",
-      "categoryId": "c1",
-      "name": "Peri Peri Gyro - Paneer (Signature)",
-      "price": 249,
-      "description": "Signature large zesty peri peri paneer pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m9a",
-      "categoryId": "c1",
-      "name": "Signature Gyro - Chicken (Mini)",
-      "price": 99,
-      "description": "Ten Dens special chicken gyro wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m9b",
-      "categoryId": "c1",
-      "name": "Signature Gyro - Paneer (Mini)",
-      "price": 99,
-      "description": "Ten Dens special paneer gyro wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m10a",
-      "categoryId": "c1",
-      "name": "Signature Gyro - Chicken (Signature)",
-      "price": 249,
-      "description": "Ten Dens special signature chicken gyro wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m10b",
-      "categoryId": "c1",
-      "name": "Signature Gyro - Paneer (Signature)",
-      "price": 249,
-      "description": "Ten Dens special signature paneer gyro wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
       "id": "m11",
-      "categoryId": "c5_wings",
-      "name": "1 Pc Leg & Thigh (1 Dip)",
-      "price": 70,
-      "description": "1 Pc Crispy Fried Chicken Leg & Thigh + 1 Dip",
+      "categoryId": "c1",
+      "name": "Pesto Gyro (Mini)",
+      "price": 99,
+      "description": "Herby pesto gyro wrap with fresh veggies (Chicken or Paneer)",
       "isAvailable": true,
-      "image": "/images/menu/Leg& Thigh.png"
+      "image": "/images/menu/gyro.png"
     },
     {
       "id": "m12",
-      "categoryId": "c5_wings",
-      "name": "2 Pc Leg & Thigh (1 Dip)",
-      "price": 140,
-      "description": "2 Pc Crispy Fried Chicken Leg & Thigh + 1 Dip",
+      "categoryId": "c1",
+      "name": "Pesto Gyro (Signature)",
+      "price": 249,
+      "description": "Large signature herby pesto gyro wrap (Chicken or Paneer)",
       "isAvailable": true,
-      "image": "/images/menu/Leg& Thigh.png"
+      "image": "/images/menu/gyro.png"
     },
     {
       "id": "m13",
@@ -544,24 +364,6 @@
       "description": "5 Leg & Thighs, 10 Wings, 10 Strips, 5 Regular Drinks",
       "isAvailable": true,
       "image": "/images/menu/super 5 bucket.png"
-    },
-    {
-      "id": "m39a",
-      "categoryId": "c11",
-      "name": "Gyro - Protein Max (Chicken)",
-      "price": 299,
-      "description": "Extra high protein Gyro wrap with grilled chicken",
-      "isAvailable": true,
-      "image": "/images/menu/protein max.png"
-    },
-    {
-      "id": "m39b",
-      "categoryId": "c11",
-      "name": "Gyro - Protein Max (Paneer)",
-      "price": 299,
-      "description": "Extra high protein Gyro wrap with grilled paneer",
-      "isAvailable": true,
-      "image": "/images/menu/protein max.png"
     },
     {
       "id": "m40a",
@@ -897,38 +699,101 @@
       "image": "/images/menu/honey mustard.png"
     },
     {
-      "id": "m11a",
+      "id": "m1",
       "categoryId": "c1",
-      "name": "Pesto Gyro - Chicken (Mini)",
+      "name": "Spicy Gyro (Mini)",
       "price": 99,
-      "description": "Fresh pita wrap with aromatic pesto chicken, hummus & veggies",
+      "description": "Fresh pita wrap with spicy sauce & fresh veggies (Chicken or Paneer)",
       "isAvailable": true,
       "image": "/images/menu/gyro.png"
     },
     {
-      "id": "m12a",
+      "id": "m2",
       "categoryId": "c1",
-      "name": "Pesto Gyro - Chicken (Signature)",
+      "name": "Spicy Gyro (Signature)",
       "price": 249,
-      "description": "Signature large pita wrap with aromatic pesto chicken",
+      "description": "Large signature pita wrap with spicy sauce & fresh veggies (Chicken or Paneer)",
       "isAvailable": true,
       "image": "/images/menu/gyro.png"
     },
     {
-      "id": "m11b",
+      "id": "m3",
       "categoryId": "c1",
-      "name": "Pesto Gyro - Paneer (Mini)",
+      "name": "Creamy Gyro (Mini)",
       "price": 99,
-      "description": "Fresh pita wrap with aromatic pesto paneer, hummus & veggies",
+      "description": "Fluffy pita wrap with creamy garlic sauce & fresh veggies (Chicken or Paneer)",
       "isAvailable": true,
       "image": "/images/menu/gyro.png"
     },
     {
-      "id": "m12b",
+      "id": "m4",
       "categoryId": "c1",
-      "name": "Pesto Gyro - Paneer (Signature)",
+      "name": "Creamy Gyro (Signature)",
       "price": 249,
-      "description": "Signature large pita wrap with aromatic pesto paneer",
+      "description": "Large signature pita wrap with creamy garlic sauce (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m5",
+      "categoryId": "c1",
+      "name": "BBQ Gyro (Mini)",
+      "price": 99,
+      "description": "Pita wrap with smoky BBQ sauce & fresh veggies (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m6",
+      "categoryId": "c1",
+      "name": "BBQ Gyro (Signature)",
+      "price": 249,
+      "description": "Large signature pita wrap with smoky BBQ sauce (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m7",
+      "categoryId": "c1",
+      "name": "Peri Peri Gyro (Mini)",
+      "price": 99,
+      "description": "Zesty Peri Peri pita wrap with fresh veggies (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m8",
+      "categoryId": "c1",
+      "name": "Peri Peri Gyro (Signature)",
+      "price": 249,
+      "description": "Large signature Peri Peri pita wrap (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m9",
+      "categoryId": "c1",
+      "name": "Signature Gyro (Mini)",
+      "price": 99,
+      "description": "Our house signature gyro wrap (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m10",
+      "categoryId": "c1",
+      "name": "Signature Gyro (Signature)",
+      "price": 249,
+      "description": "Large house signature gyro wrap (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m39",
+      "categoryId": "c1",
+      "name": "Gyro - Protein Max",
+      "price": 299,
+      "description": "High protein double wrap (Chicken or Paneer)",
       "isAvailable": true,
       "image": "/images/menu/gyro.png"
     }
@@ -17408,17 +17273,17 @@
         "title": "Golden Gyro Feast (50% OFF)",
         "desc": "1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink",
         "tag": "50% OFF",
-        "price": "\u20b9199",
-        "origPrice": "\u20b9398",
+        "price": "₹199",
+        "origPrice": "₹398",
         "image": "/uploads/menu/m1.jpg"
       },
       {
         "id": "2",
         "title": "Crispy Chicken & Dip Combo",
         "desc": "4 Pcs Crispy Chicken + 2 Garlic Dips + Fries",
-        "tag": "SAVE \u20b9151",
-        "price": "\u20b9299",
-        "origPrice": "\u20b9450",
+        "tag": "SAVE ₹151",
+        "price": "₹299",
+        "origPrice": "₹450",
         "image": "/uploads/menu/m3.jpg"
       }
     ]
@@ -19371,7 +19236,7 @@
       "menuItemId": "m53a",
       "menuItemName": "Coca-Cola (Regular)",
       "name": "COLA 330ML",
-      "description": "Standard recipe for COLA 330ML (Price \u20b959/-)",
+      "description": "Standard recipe for COLA 330ML (Price ₹59/-)",
       "yieldQty": 1,
       "prepTime": 2,
       "rmCost": 24.36,
@@ -19432,7 +19297,7 @@
       "menuItemId": "m54a",
       "menuItemName": "Sprite (Regular)",
       "name": "SPRITE 330ML",
-      "description": "Standard recipe for SPRITE 330ML (Price \u20b959/-)",
+      "description": "Standard recipe for SPRITE 330ML (Price ₹59/-)",
       "yieldQty": 1,
       "prepTime": 2,
       "rmCost": 24.36,
@@ -19493,7 +19358,7 @@
       "menuItemId": "m53b",
       "menuItemName": "Coca-Cola (Large)",
       "name": "COLA 650ML",
-      "description": "Standard recipe for COLA 650ML (Price \u20b999/-)",
+      "description": "Standard recipe for COLA 650ML (Price ₹99/-)",
       "yieldQty": 1,
       "prepTime": 2,
       "rmCost": 48.72,
@@ -19554,7 +19419,7 @@
       "menuItemId": "m54b",
       "menuItemName": "Sprite (Large)",
       "name": "SPRITE 650ML",
-      "description": "Standard recipe for SPRITE 650ML (Price \u20b999/-)",
+      "description": "Standard recipe for SPRITE 650ML (Price ₹99/-)",
       "yieldQty": 1,
       "prepTime": 2,
       "rmCost": 48.72,
@@ -19615,7 +19480,7 @@
       "menuItemId": "m56a",
       "menuItemName": "Lime Ice Tea (Regular)",
       "name": "Lime 330ml",
-      "description": "Standard recipe for Lime Ice Tea 330ml (Price \u20b959/-)",
+      "description": "Standard recipe for Lime Ice Tea 330ml (Price ₹59/-)",
       "yieldQty": 1,
       "prepTime": 2,
       "rmCost": 17.4,
@@ -19676,7 +19541,7 @@
       "menuItemId": "m55a",
       "menuItemName": "Peach Ice Tea (Regular)",
       "name": "Peach 330ml",
-      "description": "Standard recipe for Peach Ice Tea 330ml (Price \u20b959/-)",
+      "description": "Standard recipe for Peach Ice Tea 330ml (Price ₹59/-)",
       "yieldQty": 1,
       "prepTime": 2,
       "rmCost": 17.4,
@@ -19737,7 +19602,7 @@
       "menuItemId": "m56b",
       "menuItemName": "Lime Ice Tea (Large)",
       "name": "Lime 650ml",
-      "description": "Standard recipe for Lime Ice Tea 650ml (Price \u20b999/-)",
+      "description": "Standard recipe for Lime Ice Tea 650ml (Price ₹99/-)",
       "yieldQty": 1,
       "prepTime": 2,
       "rmCost": 34.8,
@@ -19798,7 +19663,7 @@
       "menuItemId": "m55b",
       "menuItemName": "Peach Ice Tea (Large)",
       "name": "Peach 650ml",
-      "description": "Standard recipe for Peach Ice Tea 650ml (Price \u20b999/-)",
+      "description": "Standard recipe for Peach Ice Tea 650ml (Price ₹99/-)",
       "yieldQty": 1,
       "prepTime": 2,
       "rmCost": 34.8,
@@ -19859,7 +19724,7 @@
       "menuItemId": "m60",
       "menuItemName": "Chocolate Brownie",
       "name": "CHOCOLATE BROWNIE",
-      "description": "Standard recipe for Chocolate Brownie (Price \u20b999/-)",
+      "description": "Standard recipe for Chocolate Brownie (Price ₹99/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 29.82,
@@ -19992,7 +19857,7 @@
       "menuItemId": "m61",
       "menuItemName": "Blondie Cake",
       "name": "BLONDIE CAKE",
-      "description": "Standard recipe for Blondie Cake (Price \u20b999/-)",
+      "description": "Standard recipe for Blondie Cake (Price ₹99/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 28.62,
@@ -20107,7 +19972,7 @@
       "menuItemId": "m11",
       "menuItemName": "1 Pc Leg & Thigh (1 Dip)",
       "name": "CRISPY CHICKEN LEG 1 PC",
-      "description": "Standard recipe for 1 Pc Crispy Chicken Leg & Thigh (Price \u20b970/-)",
+      "description": "Standard recipe for 1 Pc Crispy Chicken Leg & Thigh (Price ₹70/-)",
       "yieldQty": 1,
       "prepTime": 12,
       "rmCost": 30.2,
@@ -20195,7 +20060,7 @@
       "menuItemId": "m12",
       "menuItemName": "2 Pc Leg & Thigh (1 Dip)",
       "name": "CRISPY CHICKEN 2 PCS",
-      "description": "Standard recipe for 2 Pc Crispy Chicken Leg & Thigh (Price \u20b9140/-)",
+      "description": "Standard recipe for 2 Pc Crispy Chicken Leg & Thigh (Price ₹140/-)",
       "yieldQty": 1,
       "prepTime": 12,
       "rmCost": 60.4,
@@ -20283,7 +20148,7 @@
       "menuItemId": "m13",
       "menuItemName": "4 Pc Leg & Thigh (2 Dips)",
       "name": "CRISPY CHICKEN 4 PCS",
-      "description": "Standard recipe for 4 Pc Crispy Chicken Leg & Thigh (Price \u20b9280/-)",
+      "description": "Standard recipe for 4 Pc Crispy Chicken Leg & Thigh (Price ₹280/-)",
       "yieldQty": 1,
       "prepTime": 15,
       "rmCost": 120.8,
@@ -20380,7 +20245,7 @@
       "menuItemId": "m14",
       "menuItemName": "8 Pc Leg & Thigh (4 Dips)",
       "name": "CRISPY CHICKEN 8 PCS",
-      "description": "Standard recipe for 8 Pc Crispy Chicken Leg & Thigh (Price \u20b9560/-)",
+      "description": "Standard recipe for 8 Pc Crispy Chicken Leg & Thigh (Price ₹560/-)",
       "yieldQty": 1,
       "prepTime": 18,
       "rmCost": 241.6,
@@ -20477,7 +20342,7 @@
       "menuItemId": "m15",
       "menuItemName": "12 Pc Leg & Thigh (6 Dips)",
       "name": "CRISPY CHICKEN 12 PCS",
-      "description": "Standard recipe for 12 Pc Crispy Chicken Leg & Thigh (Price \u20b9840/-)",
+      "description": "Standard recipe for 12 Pc Crispy Chicken Leg & Thigh (Price ₹840/-)",
       "yieldQty": 1,
       "prepTime": 20,
       "rmCost": 362.4,
@@ -20574,7 +20439,7 @@
       "menuItemId": "m16",
       "menuItemName": "3 Pc Wings (1 Dip)",
       "name": "CRISPY WINGS 3 PCS",
-      "description": "Standard recipe for 3 Pc Crispy Chicken Wings (Price \u20b990/-)",
+      "description": "Standard recipe for 3 Pc Crispy Chicken Wings (Price ₹90/-)",
       "yieldQty": 1,
       "prepTime": 10,
       "rmCost": 30.9,
@@ -20662,7 +20527,7 @@
       "menuItemId": "m17",
       "menuItemName": "6 Pc Wings (2 Dips)",
       "name": "CRISPY WINGS 6 PCS",
-      "description": "Standard recipe for 6 Pc Crispy Chicken Wings (Price \u20b9180/-)",
+      "description": "Standard recipe for 6 Pc Crispy Chicken Wings (Price ₹180/-)",
       "yieldQty": 1,
       "prepTime": 10,
       "rmCost": 61.8,
@@ -20750,7 +20615,7 @@
       "menuItemId": "m18",
       "menuItemName": "9 Pc Wings (3 Dips)",
       "name": "CRISPY WINGS 9 PCS",
-      "description": "Standard recipe for 9 Pc Crispy Chicken Wings (Price \u20b9270/-)",
+      "description": "Standard recipe for 9 Pc Crispy Chicken Wings (Price ₹270/-)",
       "yieldQty": 1,
       "prepTime": 12,
       "rmCost": 92.7,
@@ -20838,7 +20703,7 @@
       "menuItemId": "m19",
       "menuItemName": "20 Pc Wings (6 Dips)",
       "name": "CRISPY WINGS 20 PCS",
-      "description": "Standard recipe for 20 Pc Crispy Chicken Wings (Price \u20b9600/-)",
+      "description": "Standard recipe for 20 Pc Crispy Chicken Wings (Price ₹600/-)",
       "yieldQty": 1,
       "prepTime": 15,
       "rmCost": 206,
@@ -20926,7 +20791,7 @@
       "menuItemId": "m20",
       "menuItemName": "60 Pc Wings (12 Dips)",
       "name": "CRISPY WINGS 60 PCS",
-      "description": "Standard recipe for 60 Pc Crispy Chicken Wings (Price \u20b91500/-)",
+      "description": "Standard recipe for 60 Pc Crispy Chicken Wings (Price ₹1500/-)",
       "yieldQty": 1,
       "prepTime": 25,
       "rmCost": 515,
@@ -21014,7 +20879,7 @@
       "menuItemId": "m21",
       "menuItemName": "3 Pc Strips (1 Dip)",
       "name": "CRISPY STRIPS 3 PCS",
-      "description": "Standard recipe for 3 Pc Crispy Chicken Strips (Price \u20b9120/-)",
+      "description": "Standard recipe for 3 Pc Crispy Chicken Strips (Price ₹120/-)",
       "yieldQty": 1,
       "prepTime": 10,
       "rmCost": 42.9,
@@ -21102,7 +20967,7 @@
       "menuItemId": "m22",
       "menuItemName": "6 Pc Strips (2 Dips)",
       "name": "CRISPY STRIPS 6 PCS",
-      "description": "Standard recipe for 6 Pc Crispy Chicken Strips (Price \u20b9240/-)",
+      "description": "Standard recipe for 6 Pc Crispy Chicken Strips (Price ₹240/-)",
       "yieldQty": 1,
       "prepTime": 10,
       "rmCost": 85.8,
@@ -21190,7 +21055,7 @@
       "menuItemId": "m23",
       "menuItemName": "9 Pc Strips (3 Dips)",
       "name": "CRISPY STRIPS 9 PCS",
-      "description": "Standard recipe for 9 Pc Crispy Chicken Strips (Price \u20b9360/-)",
+      "description": "Standard recipe for 9 Pc Crispy Chicken Strips (Price ₹360/-)",
       "yieldQty": 1,
       "prepTime": 12,
       "rmCost": 128.7,
@@ -21278,7 +21143,7 @@
       "menuItemId": "m24",
       "menuItemName": "20 Pc Strips (6 Dips)",
       "name": "CRISPY STRIPS 20 PCS",
-      "description": "Standard recipe for 20 Pc Crispy Chicken Strips (Price \u20b9800/-)",
+      "description": "Standard recipe for 20 Pc Crispy Chicken Strips (Price ₹800/-)",
       "yieldQty": 1,
       "prepTime": 15,
       "rmCost": 286,
@@ -21366,7 +21231,7 @@
       "menuItemId": "m25",
       "menuItemName": "60 Pc Strips (12 Dips)",
       "name": "CRISPY STRIPS 60 PCS",
-      "description": "Standard recipe for 60 Pc Crispy Chicken Strips (Price \u20b92400/-)",
+      "description": "Standard recipe for 60 Pc Crispy Chicken Strips (Price ₹2400/-)",
       "yieldQty": 1,
       "prepTime": 25,
       "rmCost": 858,
@@ -21450,11 +21315,11 @@
       ]
     },
     {
-      "id": "r_m1a",
-      "menuItemId": "m1a",
-      "menuItemName": "Spicy Gyro - Chicken (Mini)",
-      "name": "SPICY CHICKEN GYROS - SMALL",
-      "description": "Standard recipe for Spicy Gyro Chicken Mini (Price \u20b999/-)",
+      "id": "r_m1",
+      "menuItemId": "m1",
+      "menuItemName": "Spicy Gyro (Mini)",
+      "name": "SPICY GYRO (MINI)",
+      "description": "Standard recipe for Spicy Gyro (Mini)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 35.79,
@@ -21655,11 +21520,11 @@
       ]
     },
     {
-      "id": "r_m2a",
-      "menuItemId": "m2a",
-      "menuItemName": "Spicy Gyro - Chicken (Signature)",
-      "name": "SPICY CHICKEN GYROS - LARGE",
-      "description": "Standard recipe for Spicy Gyro Chicken Signature Large (Price \u20b9249/-)",
+      "id": "r_m2",
+      "menuItemId": "m2",
+      "menuItemName": "Spicy Gyro (Signature)",
+      "name": "SPICY GYRO (SIGNATURE)",
+      "description": "Standard recipe for Spicy Gyro (Signature)",
       "yieldQty": 1,
       "prepTime": 10,
       "rmCost": 67.68,
@@ -21860,11 +21725,11 @@
       ]
     },
     {
-      "id": "r_m3a",
-      "menuItemId": "m3a",
-      "menuItemName": "Creamy Gyro - Chicken (Mini)",
-      "name": "CREAM CHICKEN - SMALL",
-      "description": "Standard recipe for Creamy Gyro Chicken Mini (Price \u20b999/-)",
+      "id": "r_m3",
+      "menuItemId": "m3",
+      "menuItemName": "Creamy Gyro (Mini)",
+      "name": "CREAMY GYRO (MINI)",
+      "description": "Standard recipe for Creamy Gyro (Mini)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 34.39,
@@ -22065,11 +21930,11 @@
       ]
     },
     {
-      "id": "r_m4a",
-      "menuItemId": "m4a",
-      "menuItemName": "Creamy Gyro - Chicken (Signature)",
-      "name": "CREAM CHICKEN - LARGE",
-      "description": "Standard recipe for Creamy Gyro Chicken Signature Large (Price \u20b9249/-)",
+      "id": "r_m4",
+      "menuItemId": "m4",
+      "menuItemName": "Creamy Gyro (Signature)",
+      "name": "CREAMY GYRO (SIGNATURE)",
+      "description": "Standard recipe for Creamy Gyro (Signature)",
       "yieldQty": 1,
       "prepTime": 10,
       "rmCost": 65.19,
@@ -22270,11 +22135,11 @@
       ]
     },
     {
-      "id": "r_m11a",
-      "menuItemId": "m11a",
-      "menuItemName": "Pesto Gyro - Chicken (Mini)",
-      "name": "PESTO CHICKEN GYROS - SMALL",
-      "description": "Standard recipe for Pesto Gyro Chicken Mini (Price \u20b999/-)",
+      "id": "r_m11",
+      "menuItemId": "m11",
+      "menuItemName": "Pesto Gyro (Mini)",
+      "name": "PESTO GYRO (MINI)",
+      "description": "Standard recipe for Pesto Gyro (Mini)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 39.77,
@@ -22475,11 +22340,11 @@
       ]
     },
     {
-      "id": "r_m12a",
-      "menuItemId": "m12a",
-      "menuItemName": "Pesto Gyro - Chicken (Signature)",
-      "name": "PESTO CHICKEN GYROS - LARGE",
-      "description": "Standard recipe for Pesto Gyro Chicken Signature Large (Price \u20b9249/-)",
+      "id": "r_m12",
+      "menuItemId": "m12",
+      "menuItemName": "Pesto Gyro (Signature)",
+      "name": "PESTO GYRO (SIGNATURE)",
+      "description": "Standard recipe for Pesto Gyro (Signature)",
       "yieldQty": 1,
       "prepTime": 10,
       "rmCost": 75.97,
@@ -22680,831 +22545,11 @@
       ]
     },
     {
-      "id": "r_m1b",
-      "menuItemId": "m1b",
-      "menuItemName": "Spicy Gyro - Paneer (Mini)",
-      "name": "SPICY PANNER GYROS - SMALL",
-      "description": "Standard recipe for Spicy Gyro Paneer Mini (Price \u20b999/-)",
-      "yieldQty": 1,
-      "prepTime": 8,
-      "rmCost": 43.28,
-      "pmCost": 12.41,
-      "labourCost": 15.95,
-      "calculatedCost": 71.64,
-      "sellingPrice": 99,
-      "ingredients": [
-        {
-          "id": "ri_m1b_1",
-          "inventoryItemId": "inv_water",
-          "inventoryName": "WATER",
-          "quantity": 0.015,
-          "unit": "kg",
-          "costPerUnit": 20,
-          "cost": 0.3
-        },
-        {
-          "id": "ri_m1b_2",
-          "inventoryItemId": "inv_dry_yeast",
-          "inventoryName": "DRY YEAST",
-          "quantity": 0.006,
-          "unit": "kg",
-          "costPerUnit": 377.12,
-          "cost": 2.07
-        },
-        {
-          "id": "ri_m1b_3",
-          "inventoryItemId": "inv_white_sugar",
-          "inventoryName": "SUGAR",
-          "quantity": 0.05,
-          "unit": "kg",
-          "costPerUnit": 48.19,
-          "cost": 2.41
-        },
-        {
-          "id": "ri_m1b_4",
-          "inventoryItemId": "inv_maida",
-          "inventoryName": "MAIDA",
-          "quantity": 0.04,
-          "unit": "kg",
-          "costPerUnit": 44.77,
-          "cost": 1.79
-        },
-        {
-          "id": "ri_m1b_5",
-          "inventoryItemId": "inv_salt",
-          "inventoryName": "SALT",
-          "quantity": 0.06,
-          "unit": "kg",
-          "costPerUnit": 30,
-          "cost": 1.8
-        },
-        {
-          "id": "ri_m1b_6",
-          "inventoryItemId": "inv_cp_powder",
-          "inventoryName": "CP POWDER",
-          "quantity": 0.03,
-          "unit": "kg",
-          "costPerUnit": 256.37,
-          "cost": 7.69
-        },
-        {
-          "id": "ri_m1b_7",
-          "inventoryItemId": "inv_iceberg",
-          "inventoryName": "ICEBERG",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 273,
-          "cost": 2.73
-        },
-        {
-          "id": "ri_m1b_8",
-          "inventoryItemId": "inv_onion",
-          "inventoryName": "ONION",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 33,
-          "cost": 0.33
-        },
-        {
-          "id": "ri_m1b_9",
-          "inventoryItemId": "inv_tomato",
-          "inventoryName": "TOMATO",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 73.5,
-          "cost": 0.74
-        },
-        {
-          "id": "ri_m1b_10",
-          "inventoryItemId": "inv_cucumber",
-          "inventoryName": "CUCUMBER",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 84,
-          "cost": 0.84
-        },
-        {
-          "id": "ri_m1b_11",
-          "inventoryItemId": "inv_olives",
-          "inventoryName": "OLIVES",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 775,
-          "cost": 7.75
-        },
-        {
-          "id": "ri_m1b_12",
-          "inventoryItemId": "inv_jalapeno",
-          "inventoryName": "JELAPENO",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 330,
-          "cost": 3.3
-        },
-        {
-          "id": "ri_m1b_13",
-          "inventoryItemId": "inv_spicy_paneer",
-          "inventoryName": "SPICY PANNER",
-          "quantity": 0.05,
-          "unit": "kg",
-          "costPerUnit": 451.89,
-          "cost": 22.6
-        },
-        {
-          "id": "ri_m1b_14",
-          "inventoryItemId": "inv_hummus",
-          "inventoryName": "HUMMUS",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 28.96,
-          "cost": 0.29
-        },
-        {
-          "id": "ri_m1b_15",
-          "inventoryItemId": "inv_peri_peri_sauce",
-          "inventoryName": "PERI PERI",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 352.27,
-          "cost": 3.52
-        },
-        {
-          "id": "ri_m1b_16",
-          "inventoryItemId": "inv_honey_mustard",
-          "inventoryName": "HONEY MUSTARD",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 43.65,
-          "cost": 0.44
-        },
-        {
-          "id": "ri_m1b_17",
-          "inventoryItemId": "inv_tissue_paper",
-          "inventoryName": "Tissue Paper",
-          "quantity": 2,
-          "unit": "pc",
-          "costPerUnit": 0.27,
-          "cost": 0.54
-        },
-        {
-          "id": "ri_m1b_18",
-          "inventoryItemId": "inv_dining_sheet",
-          "inventoryName": "Dinning Sheet",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 1.55,
-          "cost": 1.55
-        },
-        {
-          "id": "ri_m1b_19",
-          "inventoryItemId": "inv_dinning_tray",
-          "inventoryName": "Dinning Tray",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 3.67,
-          "cost": 3.67
-        },
-        {
-          "id": "ri_m1b_20",
-          "inventoryItemId": "inv_takeaway_bags",
-          "inventoryName": "Take away Bag",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 6.65,
-          "cost": 6.65
-        },
-        {
-          "id": "ri_m1b_21",
-          "inventoryItemId": "inv_labour",
-          "inventoryName": "Labour Cost",
-          "quantity": 1,
-          "unit": "unit",
-          "costPerUnit": 15.95,
-          "cost": 15.95
-        }
-      ]
-    },
-    {
-      "id": "r_m2b",
-      "menuItemId": "m2b",
-      "menuItemName": "Spicy Gyro - Paneer (Signature)",
-      "name": "SPICY PANNER GYROS - LARGE",
-      "description": "Standard recipe for Spicy Gyro Paneer Signature Large (Price \u20b9249/-)",
-      "yieldQty": 1,
-      "prepTime": 10,
-      "rmCost": 82.98,
-      "pmCost": 12.41,
-      "labourCost": 15.95,
-      "calculatedCost": 111.34,
-      "sellingPrice": 249,
-      "ingredients": [
-        {
-          "id": "ri_m2b_1",
-          "inventoryItemId": "inv_water",
-          "inventoryName": "WATER",
-          "quantity": 0.015,
-          "unit": "kg",
-          "costPerUnit": 20,
-          "cost": 0.3
-        },
-        {
-          "id": "ri_m2b_2",
-          "inventoryItemId": "inv_dry_yeast",
-          "inventoryName": "DRY YEAST",
-          "quantity": 0.006,
-          "unit": "kg",
-          "costPerUnit": 377.12,
-          "cost": 2.07
-        },
-        {
-          "id": "ri_m2b_3",
-          "inventoryItemId": "inv_white_sugar",
-          "inventoryName": "SUGAR",
-          "quantity": 0.05,
-          "unit": "kg",
-          "costPerUnit": 48.19,
-          "cost": 2.41
-        },
-        {
-          "id": "ri_m2b_4",
-          "inventoryItemId": "inv_maida",
-          "inventoryName": "MAIDA",
-          "quantity": 0.08,
-          "unit": "kg",
-          "costPerUnit": 44.77,
-          "cost": 3.58
-        },
-        {
-          "id": "ri_m2b_5",
-          "inventoryItemId": "inv_salt",
-          "inventoryName": "SALT",
-          "quantity": 0.06,
-          "unit": "kg",
-          "costPerUnit": 30,
-          "cost": 1.8
-        },
-        {
-          "id": "ri_m2b_6",
-          "inventoryItemId": "inv_cp_powder",
-          "inventoryName": "CP POWDER",
-          "quantity": 0.03,
-          "unit": "kg",
-          "costPerUnit": 256.37,
-          "cost": 7.69
-        },
-        {
-          "id": "ri_m2b_7",
-          "inventoryItemId": "inv_iceberg",
-          "inventoryName": "ICEBERG",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 273,
-          "cost": 2.73
-        },
-        {
-          "id": "ri_m2b_8",
-          "inventoryItemId": "inv_onion",
-          "inventoryName": "ONION",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 33,
-          "cost": 0.33
-        },
-        {
-          "id": "ri_m2b_9",
-          "inventoryItemId": "inv_tomato",
-          "inventoryName": "TOMATO",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 73.5,
-          "cost": 0.74
-        },
-        {
-          "id": "ri_m2b_10",
-          "inventoryItemId": "inv_cucumber",
-          "inventoryName": "CUCUMBER",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 84,
-          "cost": 0.84
-        },
-        {
-          "id": "ri_m2b_11",
-          "inventoryItemId": "inv_olives",
-          "inventoryName": "OLIVES",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 775,
-          "cost": 7.75
-        },
-        {
-          "id": "ri_m2b_12",
-          "inventoryItemId": "inv_jalapeno",
-          "inventoryName": "JELAPENO",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 330,
-          "cost": 3.3
-        },
-        {
-          "id": "ri_m2b_13",
-          "inventoryItemId": "inv_spicy_paneer",
-          "inventoryName": "SPICY PANNER",
-          "quantity": 0.1,
-          "unit": "kg",
-          "costPerUnit": 451.89,
-          "cost": 45.19
-        },
-        {
-          "id": "ri_m2b_14",
-          "inventoryItemId": "inv_hummus",
-          "inventoryName": "HUMMUS",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 28.96,
-          "cost": 0.29
-        },
-        {
-          "id": "ri_m2b_15",
-          "inventoryItemId": "inv_peri_peri_sauce",
-          "inventoryName": "PERI PERI",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 352.27,
-          "cost": 3.52
-        },
-        {
-          "id": "ri_m2b_16",
-          "inventoryItemId": "inv_honey_mustard",
-          "inventoryName": "HONEY MUSTARD",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 43.65,
-          "cost": 0.44
-        },
-        {
-          "id": "ri_m2b_17",
-          "inventoryItemId": "inv_tissue_paper",
-          "inventoryName": "Tissue Paper",
-          "quantity": 2,
-          "unit": "pc",
-          "costPerUnit": 0.27,
-          "cost": 0.54
-        },
-        {
-          "id": "ri_m2b_18",
-          "inventoryItemId": "inv_dining_sheet",
-          "inventoryName": "Dinning Sheet",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 1.55,
-          "cost": 1.55
-        },
-        {
-          "id": "ri_m2b_19",
-          "inventoryItemId": "inv_dinning_tray",
-          "inventoryName": "Dinning Tray",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 3.67,
-          "cost": 3.67
-        },
-        {
-          "id": "ri_m2b_20",
-          "inventoryItemId": "inv_takeaway_bags",
-          "inventoryName": "Take away Bag",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 6.65,
-          "cost": 6.65
-        },
-        {
-          "id": "ri_m2b_21",
-          "inventoryItemId": "inv_labour",
-          "inventoryName": "Labour Cost",
-          "quantity": 1,
-          "unit": "unit",
-          "costPerUnit": 15.95,
-          "cost": 15.95
-        }
-      ]
-    },
-    {
-      "id": "r_m3b",
-      "menuItemId": "m3b",
-      "menuItemName": "Creamy Gyro - Paneer (Mini)",
-      "name": "CREAM PANEER GYROS - SMALL",
-      "description": "Standard recipe for Creamy Gyro Paneer Mini (Price \u20b999/-)",
-      "yieldQty": 1,
-      "prepTime": 8,
-      "rmCost": 41.89,
-      "pmCost": 12.41,
-      "labourCost": 15.95,
-      "calculatedCost": 70.25,
-      "sellingPrice": 99,
-      "ingredients": [
-        {
-          "id": "ri_m3b_1",
-          "inventoryItemId": "inv_water",
-          "inventoryName": "WATER",
-          "quantity": 0.015,
-          "unit": "kg",
-          "costPerUnit": 20,
-          "cost": 0.3
-        },
-        {
-          "id": "ri_m3b_2",
-          "inventoryItemId": "inv_dry_yeast",
-          "inventoryName": "DRY YEAST",
-          "quantity": 0.006,
-          "unit": "kg",
-          "costPerUnit": 377.12,
-          "cost": 2.07
-        },
-        {
-          "id": "ri_m3b_3",
-          "inventoryItemId": "inv_white_sugar",
-          "inventoryName": "SUGAR",
-          "quantity": 0.05,
-          "unit": "kg",
-          "costPerUnit": 48.19,
-          "cost": 2.41
-        },
-        {
-          "id": "ri_m3b_4",
-          "inventoryItemId": "inv_maida",
-          "inventoryName": "MAIDA",
-          "quantity": 0.04,
-          "unit": "kg",
-          "costPerUnit": 44.77,
-          "cost": 1.79
-        },
-        {
-          "id": "ri_m3b_5",
-          "inventoryItemId": "inv_salt",
-          "inventoryName": "SALT",
-          "quantity": 0.06,
-          "unit": "kg",
-          "costPerUnit": 30,
-          "cost": 1.8
-        },
-        {
-          "id": "ri_m3b_6",
-          "inventoryItemId": "inv_cp_powder",
-          "inventoryName": "CP POWDER",
-          "quantity": 0.03,
-          "unit": "kg",
-          "costPerUnit": 256.37,
-          "cost": 7.69
-        },
-        {
-          "id": "ri_m3b_7",
-          "inventoryItemId": "inv_iceberg",
-          "inventoryName": "ICEBERG",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 273,
-          "cost": 2.73
-        },
-        {
-          "id": "ri_m3b_8",
-          "inventoryItemId": "inv_onion",
-          "inventoryName": "ONION",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 33,
-          "cost": 0.33
-        },
-        {
-          "id": "ri_m3b_9",
-          "inventoryItemId": "inv_tomato",
-          "inventoryName": "TOMATO",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 73.5,
-          "cost": 0.74
-        },
-        {
-          "id": "ri_m3b_10",
-          "inventoryItemId": "inv_cucumber",
-          "inventoryName": "CUCUMBER",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 84,
-          "cost": 0.84
-        },
-        {
-          "id": "ri_m3b_11",
-          "inventoryItemId": "inv_olives",
-          "inventoryName": "OLIVES",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 775,
-          "cost": 7.75
-        },
-        {
-          "id": "ri_m3b_12",
-          "inventoryItemId": "inv_jalapeno",
-          "inventoryName": "JELAPENO",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 330,
-          "cost": 3.3
-        },
-        {
-          "id": "ri_m3b_13",
-          "inventoryItemId": "inv_cream_paneer",
-          "inventoryName": "CREAM PANNER",
-          "quantity": 0.05,
-          "unit": "kg",
-          "costPerUnit": 424,
-          "cost": 21.2
-        },
-        {
-          "id": "ri_m3b_14",
-          "inventoryItemId": "inv_hummus",
-          "inventoryName": "HUMMUS",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 28.96,
-          "cost": 0.29
-        },
-        {
-          "id": "ri_m3b_15",
-          "inventoryItemId": "inv_peri_peri_sauce",
-          "inventoryName": "PERI PERI",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 352.27,
-          "cost": 3.52
-        },
-        {
-          "id": "ri_m3b_16",
-          "inventoryItemId": "inv_honey_mustard",
-          "inventoryName": "HONEY MUSTARD",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 43.65,
-          "cost": 0.44
-        },
-        {
-          "id": "ri_m3b_17",
-          "inventoryItemId": "inv_tissue_paper",
-          "inventoryName": "Tissue Paper",
-          "quantity": 2,
-          "unit": "pc",
-          "costPerUnit": 0.27,
-          "cost": 0.54
-        },
-        {
-          "id": "ri_m3b_18",
-          "inventoryItemId": "inv_dining_sheet",
-          "inventoryName": "Dinning Sheet",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 1.55,
-          "cost": 1.55
-        },
-        {
-          "id": "ri_m3b_19",
-          "inventoryItemId": "inv_dinning_tray",
-          "inventoryName": "Dinning Tray",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 3.67,
-          "cost": 3.67
-        },
-        {
-          "id": "ri_m3b_20",
-          "inventoryItemId": "inv_takeaway_bags",
-          "inventoryName": "Take away Bag",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 6.65,
-          "cost": 6.65
-        },
-        {
-          "id": "ri_m3b_21",
-          "inventoryItemId": "inv_labour",
-          "inventoryName": "Labour Cost",
-          "quantity": 1,
-          "unit": "unit",
-          "costPerUnit": 15.95,
-          "cost": 15.95
-        }
-      ]
-    },
-    {
-      "id": "r_m4b",
-      "menuItemId": "m4b",
-      "menuItemName": "Creamy Gyro - Paneer (Signature)",
-      "name": "CREAM PANEER GYROS - LARGE",
-      "description": "Standard recipe for Creamy Gyro Paneer Signature Large (Price \u20b9249/-)",
-      "yieldQty": 1,
-      "prepTime": 10,
-      "rmCost": 80.19,
-      "pmCost": 12.41,
-      "labourCost": 15.95,
-      "calculatedCost": 108.55,
-      "sellingPrice": 249,
-      "ingredients": [
-        {
-          "id": "ri_m4b_1",
-          "inventoryItemId": "inv_water",
-          "inventoryName": "WATER",
-          "quantity": 0.015,
-          "unit": "kg",
-          "costPerUnit": 20,
-          "cost": 0.3
-        },
-        {
-          "id": "ri_m4b_2",
-          "inventoryItemId": "inv_dry_yeast",
-          "inventoryName": "DRY YEAST",
-          "quantity": 0.006,
-          "unit": "kg",
-          "costPerUnit": 377.12,
-          "cost": 2.07
-        },
-        {
-          "id": "ri_m4b_3",
-          "inventoryItemId": "inv_white_sugar",
-          "inventoryName": "SUGAR",
-          "quantity": 0.05,
-          "unit": "kg",
-          "costPerUnit": 48.19,
-          "cost": 2.41
-        },
-        {
-          "id": "ri_m4b_4",
-          "inventoryItemId": "inv_maida",
-          "inventoryName": "MAIDA",
-          "quantity": 0.08,
-          "unit": "kg",
-          "costPerUnit": 44.77,
-          "cost": 3.58
-        },
-        {
-          "id": "ri_m4b_5",
-          "inventoryItemId": "inv_salt",
-          "inventoryName": "SALT",
-          "quantity": 0.06,
-          "unit": "kg",
-          "costPerUnit": 30,
-          "cost": 1.8
-        },
-        {
-          "id": "ri_m4b_6",
-          "inventoryItemId": "inv_cp_powder",
-          "inventoryName": "CP POWDER",
-          "quantity": 0.03,
-          "unit": "kg",
-          "costPerUnit": 256.37,
-          "cost": 7.69
-        },
-        {
-          "id": "ri_m4b_7",
-          "inventoryItemId": "inv_iceberg",
-          "inventoryName": "ICEBERG",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 273,
-          "cost": 2.73
-        },
-        {
-          "id": "ri_m4b_8",
-          "inventoryItemId": "inv_onion",
-          "inventoryName": "ONION",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 33,
-          "cost": 0.33
-        },
-        {
-          "id": "ri_m4b_9",
-          "inventoryItemId": "inv_tomato",
-          "inventoryName": "TOMATO",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 73.5,
-          "cost": 0.74
-        },
-        {
-          "id": "ri_m4b_10",
-          "inventoryItemId": "inv_cucumber",
-          "inventoryName": "CUCUMBER",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 84,
-          "cost": 0.84
-        },
-        {
-          "id": "ri_m4b_11",
-          "inventoryItemId": "inv_olives",
-          "inventoryName": "OLIVES",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 775,
-          "cost": 7.75
-        },
-        {
-          "id": "ri_m4b_12",
-          "inventoryItemId": "inv_jalapeno",
-          "inventoryName": "JELAPENO",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 330,
-          "cost": 3.3
-        },
-        {
-          "id": "ri_m4b_13",
-          "inventoryItemId": "inv_cream_paneer",
-          "inventoryName": "CREAM PANNER",
-          "quantity": 0.1,
-          "unit": "kg",
-          "costPerUnit": 424,
-          "cost": 42.4
-        },
-        {
-          "id": "ri_m4b_14",
-          "inventoryItemId": "inv_hummus",
-          "inventoryName": "HUMMUS",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 28.96,
-          "cost": 0.29
-        },
-        {
-          "id": "ri_m4b_15",
-          "inventoryItemId": "inv_peri_peri_sauce",
-          "inventoryName": "PERI PERI",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 352.27,
-          "cost": 3.52
-        },
-        {
-          "id": "ri_m4b_16",
-          "inventoryItemId": "inv_honey_mustard",
-          "inventoryName": "HONEY MUSTARD",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 43.65,
-          "cost": 0.44
-        },
-        {
-          "id": "ri_m4b_17",
-          "inventoryItemId": "inv_tissue_paper",
-          "inventoryName": "Tissue Paper",
-          "quantity": 2,
-          "unit": "pc",
-          "costPerUnit": 0.27,
-          "cost": 0.54
-        },
-        {
-          "id": "ri_m4b_18",
-          "inventoryItemId": "inv_dining_sheet",
-          "inventoryName": "Dinning Sheet",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 1.55,
-          "cost": 1.55
-        },
-        {
-          "id": "ri_m4b_19",
-          "inventoryItemId": "inv_dinning_tray",
-          "inventoryName": "Dinning Tray",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 3.67,
-          "cost": 3.67
-        },
-        {
-          "id": "ri_m4b_20",
-          "inventoryItemId": "inv_takeaway_bags",
-          "inventoryName": "Take away Bag",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 6.65,
-          "cost": 6.65
-        },
-        {
-          "id": "ri_m4b_21",
-          "inventoryItemId": "inv_labour",
-          "inventoryName": "Labour Cost",
-          "quantity": 1,
-          "unit": "unit",
-          "costPerUnit": 15.95,
-          "cost": 15.95
-        }
-      ]
-    },
-    {
-      "id": "r_m5b",
-      "menuItemId": "m5b",
-      "menuItemName": "BBQ Gyro - Paneer (Mini)",
-      "name": "BARBEQUE PANNER GYROS - SMALL",
-      "description": "Standard recipe for BBQ Gyro Paneer Mini (Price \u20b999/-)",
+      "id": "r_m5",
+      "menuItemId": "m5",
+      "menuItemName": "BBQ Gyro (Mini)",
+      "name": "BBQ GYRO (MINI)",
+      "description": "Standard recipe for BBQ Gyro (Mini)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 41.71,
@@ -23705,11 +22750,11 @@
       ]
     },
     {
-      "id": "r_m6b",
-      "menuItemId": "m6b",
-      "menuItemName": "BBQ Gyro - Paneer (Signature)",
-      "name": "BARBEQUE PANNER GYROS - LARGE",
-      "description": "Standard recipe for BBQ Gyro Paneer Signature Large (Price \u20b9249/-)",
+      "id": "r_m6",
+      "menuItemId": "m6",
+      "menuItemName": "BBQ Gyro (Signature)",
+      "name": "BBQ GYRO (SIGNATURE)",
+      "description": "Standard recipe for BBQ Gyro (Signature)",
       "yieldQty": 1,
       "prepTime": 10,
       "rmCost": 79.83,
@@ -23910,421 +22955,11 @@
       ]
     },
     {
-      "id": "r_m11b",
-      "menuItemId": "m11b",
-      "menuItemName": "Pesto Gyro - Paneer (Mini)",
-      "name": "PESTO PANNER GYROS - SMALL",
-      "description": "Standard recipe for Pesto Gyro Paneer Mini (Price \u20b999/-)",
-      "yieldQty": 1,
-      "prepTime": 8,
-      "rmCost": 47.27,
-      "pmCost": 12.41,
-      "labourCost": 15.95,
-      "calculatedCost": 75.63,
-      "sellingPrice": 99,
-      "ingredients": [
-        {
-          "id": "ri_m11b_1",
-          "inventoryItemId": "inv_water",
-          "inventoryName": "WATER",
-          "quantity": 0.015,
-          "unit": "kg",
-          "costPerUnit": 20,
-          "cost": 0.3
-        },
-        {
-          "id": "ri_m11b_2",
-          "inventoryItemId": "inv_dry_yeast",
-          "inventoryName": "DRY YEAST",
-          "quantity": 0.006,
-          "unit": "kg",
-          "costPerUnit": 377.12,
-          "cost": 2.07
-        },
-        {
-          "id": "ri_m11b_3",
-          "inventoryItemId": "inv_white_sugar",
-          "inventoryName": "SUGAR",
-          "quantity": 0.05,
-          "unit": "kg",
-          "costPerUnit": 48.19,
-          "cost": 2.41
-        },
-        {
-          "id": "ri_m11b_4",
-          "inventoryItemId": "inv_maida",
-          "inventoryName": "MAIDA",
-          "quantity": 0.04,
-          "unit": "kg",
-          "costPerUnit": 44.77,
-          "cost": 1.79
-        },
-        {
-          "id": "ri_m11b_5",
-          "inventoryItemId": "inv_salt",
-          "inventoryName": "SALT",
-          "quantity": 0.06,
-          "unit": "kg",
-          "costPerUnit": 30,
-          "cost": 1.8
-        },
-        {
-          "id": "ri_m11b_6",
-          "inventoryItemId": "inv_cp_powder",
-          "inventoryName": "CP POWDER",
-          "quantity": 0.03,
-          "unit": "kg",
-          "costPerUnit": 256.37,
-          "cost": 7.69
-        },
-        {
-          "id": "ri_m11b_7",
-          "inventoryItemId": "inv_iceberg",
-          "inventoryName": "ICEBERG",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 273,
-          "cost": 2.73
-        },
-        {
-          "id": "ri_m11b_8",
-          "inventoryItemId": "inv_onion",
-          "inventoryName": "ONION",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 33,
-          "cost": 0.33
-        },
-        {
-          "id": "ri_m11b_9",
-          "inventoryItemId": "inv_tomato",
-          "inventoryName": "TOMATO",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 73.5,
-          "cost": 0.74
-        },
-        {
-          "id": "ri_m11b_10",
-          "inventoryItemId": "inv_cucumber",
-          "inventoryName": "CUCUMBER",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 84,
-          "cost": 0.84
-        },
-        {
-          "id": "ri_m11b_11",
-          "inventoryItemId": "inv_olives",
-          "inventoryName": "OLIVES",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 775,
-          "cost": 7.75
-        },
-        {
-          "id": "ri_m11b_12",
-          "inventoryItemId": "inv_jalapeno",
-          "inventoryName": "JELAPENO",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 330,
-          "cost": 3.3
-        },
-        {
-          "id": "ri_m11b_13",
-          "inventoryItemId": "inv_pesto_paneer",
-          "inventoryName": "PESTO PANNER",
-          "quantity": 0.05,
-          "unit": "kg",
-          "costPerUnit": 531.75,
-          "cost": 26.59
-        },
-        {
-          "id": "ri_m11b_14",
-          "inventoryItemId": "inv_hummus",
-          "inventoryName": "HUMMUS",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 28.96,
-          "cost": 0.29
-        },
-        {
-          "id": "ri_m11b_15",
-          "inventoryItemId": "inv_peri_peri_sauce",
-          "inventoryName": "PERI PERI",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 352.27,
-          "cost": 3.52
-        },
-        {
-          "id": "ri_m11b_16",
-          "inventoryItemId": "inv_honey_mustard",
-          "inventoryName": "HONEY MUSTARD",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 43.65,
-          "cost": 0.44
-        },
-        {
-          "id": "ri_m11b_17",
-          "inventoryItemId": "inv_tissue_paper",
-          "inventoryName": "Tissue Paper",
-          "quantity": 2,
-          "unit": "pc",
-          "costPerUnit": 0.27,
-          "cost": 0.54
-        },
-        {
-          "id": "ri_m11b_18",
-          "inventoryItemId": "inv_dining_sheet",
-          "inventoryName": "Dinning Sheet",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 1.55,
-          "cost": 1.55
-        },
-        {
-          "id": "ri_m11b_19",
-          "inventoryItemId": "inv_dinning_tray",
-          "inventoryName": "Dinning Tray",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 3.67,
-          "cost": 3.67
-        },
-        {
-          "id": "ri_m11b_20",
-          "inventoryItemId": "inv_takeaway_bags",
-          "inventoryName": "Take away Bag",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 6.65,
-          "cost": 6.65
-        },
-        {
-          "id": "ri_m11b_21",
-          "inventoryItemId": "inv_labour",
-          "inventoryName": "Labour Cost",
-          "quantity": 1,
-          "unit": "unit",
-          "costPerUnit": 15.95,
-          "cost": 15.95
-        }
-      ]
-    },
-    {
-      "id": "r_m12b",
-      "menuItemId": "m12b",
-      "menuItemName": "Pesto Gyro - Paneer (Signature)",
-      "name": "PESTO PANNER GYROS - LARGE",
-      "description": "Standard recipe for Pesto Gyro Paneer Signature Large (Price \u20b9249/-)",
-      "yieldQty": 1,
-      "prepTime": 10,
-      "rmCost": 90.97,
-      "pmCost": 12.41,
-      "labourCost": 15.95,
-      "calculatedCost": 119.33,
-      "sellingPrice": 249,
-      "ingredients": [
-        {
-          "id": "ri_m12b_1",
-          "inventoryItemId": "inv_water",
-          "inventoryName": "WATER",
-          "quantity": 0.015,
-          "unit": "kg",
-          "costPerUnit": 20,
-          "cost": 0.3
-        },
-        {
-          "id": "ri_m12b_2",
-          "inventoryItemId": "inv_dry_yeast",
-          "inventoryName": "DRY YEAST",
-          "quantity": 0.006,
-          "unit": "kg",
-          "costPerUnit": 377.12,
-          "cost": 2.07
-        },
-        {
-          "id": "ri_m12b_3",
-          "inventoryItemId": "inv_white_sugar",
-          "inventoryName": "SUGAR",
-          "quantity": 0.05,
-          "unit": "kg",
-          "costPerUnit": 48.19,
-          "cost": 2.41
-        },
-        {
-          "id": "ri_m12b_4",
-          "inventoryItemId": "inv_maida",
-          "inventoryName": "MAIDA",
-          "quantity": 0.08,
-          "unit": "kg",
-          "costPerUnit": 44.77,
-          "cost": 3.58
-        },
-        {
-          "id": "ri_m12b_5",
-          "inventoryItemId": "inv_salt",
-          "inventoryName": "SALT",
-          "quantity": 0.06,
-          "unit": "kg",
-          "costPerUnit": 30,
-          "cost": 1.8
-        },
-        {
-          "id": "ri_m12b_6",
-          "inventoryItemId": "inv_cp_powder",
-          "inventoryName": "CP POWDER",
-          "quantity": 0.03,
-          "unit": "kg",
-          "costPerUnit": 256.37,
-          "cost": 7.69
-        },
-        {
-          "id": "ri_m12b_7",
-          "inventoryItemId": "inv_iceberg",
-          "inventoryName": "ICEBERG",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 273,
-          "cost": 2.73
-        },
-        {
-          "id": "ri_m12b_8",
-          "inventoryItemId": "inv_onion",
-          "inventoryName": "ONION",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 33,
-          "cost": 0.33
-        },
-        {
-          "id": "ri_m12b_9",
-          "inventoryItemId": "inv_tomato",
-          "inventoryName": "TOMATO",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 73.5,
-          "cost": 0.74
-        },
-        {
-          "id": "ri_m12b_10",
-          "inventoryItemId": "inv_cucumber",
-          "inventoryName": "CUCUMBER",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 84,
-          "cost": 0.84
-        },
-        {
-          "id": "ri_m12b_11",
-          "inventoryItemId": "inv_olives",
-          "inventoryName": "OLIVES",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 775,
-          "cost": 7.75
-        },
-        {
-          "id": "ri_m12b_12",
-          "inventoryItemId": "inv_jalapeno",
-          "inventoryName": "JELAPENO",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 330,
-          "cost": 3.3
-        },
-        {
-          "id": "ri_m12b_13",
-          "inventoryItemId": "inv_pesto_paneer",
-          "inventoryName": "PESTO PANNER",
-          "quantity": 0.1,
-          "unit": "kg",
-          "costPerUnit": 531.75,
-          "cost": 53.18
-        },
-        {
-          "id": "ri_m12b_14",
-          "inventoryItemId": "inv_hummus",
-          "inventoryName": "HUMMUS",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 28.96,
-          "cost": 0.29
-        },
-        {
-          "id": "ri_m12b_15",
-          "inventoryItemId": "inv_peri_peri_sauce",
-          "inventoryName": "PERI PERI",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 352.27,
-          "cost": 3.52
-        },
-        {
-          "id": "ri_m12b_16",
-          "inventoryItemId": "inv_honey_mustard",
-          "inventoryName": "HONEY MUSTARD",
-          "quantity": 0.01,
-          "unit": "kg",
-          "costPerUnit": 43.65,
-          "cost": 0.44
-        },
-        {
-          "id": "ri_m12b_17",
-          "inventoryItemId": "inv_tissue_paper",
-          "inventoryName": "Tissue Paper",
-          "quantity": 2,
-          "unit": "pc",
-          "costPerUnit": 0.27,
-          "cost": 0.54
-        },
-        {
-          "id": "ri_m12b_18",
-          "inventoryItemId": "inv_dining_sheet",
-          "inventoryName": "Dinning Sheet",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 1.55,
-          "cost": 1.55
-        },
-        {
-          "id": "ri_m12b_19",
-          "inventoryItemId": "inv_dinning_tray",
-          "inventoryName": "Dinning Tray",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 3.67,
-          "cost": 3.67
-        },
-        {
-          "id": "ri_m12b_20",
-          "inventoryItemId": "inv_takeaway_bags",
-          "inventoryName": "Take away Bag",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 6.65,
-          "cost": 6.65
-        },
-        {
-          "id": "ri_m12b_21",
-          "inventoryItemId": "inv_labour",
-          "inventoryName": "Labour Cost",
-          "quantity": 1,
-          "unit": "unit",
-          "costPerUnit": 15.95,
-          "cost": 15.95
-        }
-      ]
-    },
-    {
       "id": "r_m26a",
       "menuItemId": "m26a",
       "menuItemName": "Salted Fries",
       "name": "FRENCH FRIES",
-      "description": "Standard recipe for Salted French Fries (Price \u20b999/-)",
+      "description": "Standard recipe for Salted French Fries (Price ₹99/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 15.37,
@@ -24412,7 +23047,7 @@
       "menuItemId": "m26b",
       "menuItemName": "Peri Peri Fries",
       "name": "PERI PERI FRIES",
-      "description": "Standard recipe for Peri Peri Fries (Price \u20b999/-)",
+      "description": "Standard recipe for Peri Peri Fries (Price ₹99/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 19.92,
@@ -24500,7 +23135,7 @@
       "menuItemId": "m26c",
       "menuItemName": "Cajun Fries",
       "name": "KAJU FRIES",
-      "description": "Standard recipe for Cajun Fries (Price \u20b999/-)",
+      "description": "Standard recipe for Cajun Fries (Price ₹99/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 20.02,
@@ -24588,7 +23223,7 @@
       "menuItemId": "m42",
       "menuItemName": "Vanilla Shake (Regular)",
       "name": "VANILLA SHAKE REGULAR",
-      "description": "Standard recipe for Vanilla Shake Regular (Price \u20b9120/-)",
+      "description": "Standard recipe for Vanilla Shake Regular (Price ₹120/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 24.5,
@@ -24649,7 +23284,7 @@
       "menuItemId": "m43",
       "menuItemName": "Vanilla Shake (Large)",
       "name": "VANILLA SHAKE LARGE",
-      "description": "Standard recipe for Vanilla Shake Large (Price \u20b9199/-)",
+      "description": "Standard recipe for Vanilla Shake Large (Price ₹199/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 39.74,
@@ -24710,7 +23345,7 @@
       "menuItemId": "m44",
       "menuItemName": "Strawberry Shake (Regular)",
       "name": "STRAWBERRY SHAKE REGULAR",
-      "description": "Standard recipe for Strawberry Shake Regular (Price \u20b9120/-)",
+      "description": "Standard recipe for Strawberry Shake Regular (Price ₹120/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 24.8,
@@ -24771,7 +23406,7 @@
       "menuItemId": "m45",
       "menuItemName": "Strawberry Shake (Large)",
       "name": "STRAWBERRY SHAKE LARGE",
-      "description": "Standard recipe for Strawberry Shake Large (Price \u20b9199/-)",
+      "description": "Standard recipe for Strawberry Shake Large (Price ₹199/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 40.24,
@@ -24832,7 +23467,7 @@
       "menuItemId": "m46",
       "menuItemName": "Biscoff Shake (Regular)",
       "name": "BISCOFF SHAKE REGULAR",
-      "description": "Standard recipe for Biscoff Shake Regular (Price \u20b9120/-)",
+      "description": "Standard recipe for Biscoff Shake Regular (Price ₹120/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 38.9,
@@ -24893,7 +23528,7 @@
       "menuItemId": "m47",
       "menuItemName": "Biscoff Shake (Large)",
       "name": "BISCOFF SHAKE LARGE",
-      "description": "Standard recipe for Biscoff Shake Large (Price \u20b9199/-)",
+      "description": "Standard recipe for Biscoff Shake Large (Price ₹199/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 63.74,
@@ -24954,7 +23589,7 @@
       "menuItemId": "m48",
       "menuItemName": "Chocolate Shake (Regular)",
       "name": "CHOCOLATE SHAKE REGULAR",
-      "description": "Standard recipe for Chocolate Shake Regular (Price \u20b9120/-)",
+      "description": "Standard recipe for Chocolate Shake Regular (Price ₹120/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 26,
@@ -25015,7 +23650,7 @@
       "menuItemId": "m49",
       "menuItemName": "Chocolate Shake (Large)",
       "name": "CHOCOLATE SHAKE LARGE",
-      "description": "Standard recipe for Chocolate Shake Large (Price \u20b9199/-)",
+      "description": "Standard recipe for Chocolate Shake Large (Price ₹199/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 42.24,
@@ -25076,7 +23711,7 @@
       "menuItemId": "m50",
       "menuItemName": "Kunafa Pistachio Shake (Regular)",
       "name": "KUNAFA PISTACHIO SHAKE REGULAR",
-      "description": "Standard recipe for Kunafa Pistachio Shake Regular (Price \u20b9120/-)",
+      "description": "Standard recipe for Kunafa Pistachio Shake Regular (Price ₹120/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 44.9,
@@ -25137,7 +23772,7 @@
       "menuItemId": "m51",
       "menuItemName": "Kunafa Pistachio Shake (Large)",
       "name": "KUNAFA PISTACHIO SHAKE LARGE",
-      "description": "Standard recipe for Kunafa Pistachio Shake Large (Price \u20b9199/-)",
+      "description": "Standard recipe for Kunafa Pistachio Shake Large (Price ₹199/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 73.74,
@@ -25198,7 +23833,7 @@
       "menuItemId": "m52",
       "menuItemName": "Vanilla Softy",
       "name": "VANILLA SOFTY",
-      "description": "Standard recipe for Vanilla Softy Cone (Price \u20b939/-)",
+      "description": "Standard recipe for Vanilla Softy Cone (Price ₹39/-)",
       "yieldQty": 1,
       "prepTime": 2,
       "rmCost": 6.5,
@@ -25250,7 +23885,7 @@
       "menuItemId": "m57",
       "menuItemName": "Hot Chocolate",
       "name": "HOT CHOCOLATE",
-      "description": "Standard recipe for Hot Chocolate (Price \u20b999/-)",
+      "description": "Standard recipe for Hot Chocolate (Price ₹99/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 21.97,
@@ -25311,7 +23946,7 @@
       "menuItemId": "m58",
       "menuItemName": "Signature Tea",
       "name": "SIGNATURE TEA",
-      "description": "Standard recipe for Signature Tea (Price \u20b999/-)",
+      "description": "Standard recipe for Signature Tea (Price ₹99/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 15,
@@ -25372,7 +24007,7 @@
       "menuItemId": "m59a",
       "menuItemName": "Mint Kombucha",
       "name": "MINT KOMBUCHA",
-      "description": "Standard recipe for Mint Kombucha (Price \u20b9114.29/-)",
+      "description": "Standard recipe for Mint Kombucha (Price ₹114.29/-)",
       "yieldQty": 1,
       "prepTime": 3,
       "rmCost": 32.5,
@@ -25424,7 +24059,7 @@
       "menuItemId": "m59b",
       "menuItemName": "Hibiscus Kombucha",
       "name": "HIBISCUS KOMBUCHA",
-      "description": "Standard recipe for Hibiscus Kombucha (Price \u20b9114.29/-)",
+      "description": "Standard recipe for Hibiscus Kombucha (Price ₹114.29/-)",
       "yieldQty": 1,
       "prepTime": 3,
       "rmCost": 32.5,
@@ -25476,7 +24111,7 @@
       "menuItemId": "m59c",
       "menuItemName": "Ginger Kombucha",
       "name": "GINGER KOMBUCHA",
-      "description": "Standard recipe for Ginger Kombucha (Price \u20b9114.29/-)",
+      "description": "Standard recipe for Ginger Kombucha (Price ₹114.29/-)",
       "yieldQty": 1,
       "prepTime": 3,
       "rmCost": 32.5,
@@ -25528,7 +24163,7 @@
       "menuItemId": "m59d",
       "menuItemName": "Butterfly Pea Kombucha",
       "name": "BUTTERFLY PEA KOMBUCHA",
-      "description": "Standard recipe for Butterfly Pea Kombucha (Price \u20b9114.29/-)",
+      "description": "Standard recipe for Butterfly Pea Kombucha (Price ₹114.29/-)",
       "yieldQty": 1,
       "prepTime": 3,
       "rmCost": 32.5,
@@ -25576,133 +24211,11 @@
       ]
     },
     {
-      "id": "r_m5a",
-      "menuItemId": "m5a",
-      "menuItemName": "BBQ Gyro - Chicken (Mini)",
-      "name": "RECIPE - BBQ GYRO - CHICKEN (MINI)",
-      "description": "Standard recipe for BBQ Gyro - Chicken (Mini) (Price \u20b999/-)",
-      "yieldQty": 1,
-      "prepTime": 8,
-      "rmCost": 31.72,
-      "pmCost": 12.41,
-      "labourCost": 15.95,
-      "calculatedCost": 60.08,
-      "sellingPrice": 99,
-      "ingredients": [
-        {
-          "id": "ri_m5a_1",
-          "inventoryItemId": "inv_maida",
-          "inventoryName": "MAIDA (Pita)",
-          "quantity": 0.04,
-          "unit": "kg",
-          "costPerUnit": 44.77,
-          "cost": 1.79
-        },
-        {
-          "id": "ri_m5a_2",
-          "inventoryItemId": "inv_spicy_chicken",
-          "inventoryName": "Chicken Portion",
-          "quantity": 0.05,
-          "unit": "kg",
-          "costPerUnit": 400,
-          "cost": 20
-        },
-        {
-          "id": "ri_m5a_3",
-          "inventoryItemId": "inv_iceberg",
-          "inventoryName": "ICEBERG & Veggies",
-          "quantity": 0.04,
-          "unit": "kg",
-          "costPerUnit": 248.15,
-          "cost": 9.93
-        },
-        {
-          "id": "ri_m5a_4",
-          "inventoryItemId": "inv_dinning_tray",
-          "inventoryName": "Dinning Tray & Packaging",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 12.41,
-          "cost": 12.41
-        },
-        {
-          "id": "ri_m5a_5",
-          "inventoryItemId": "inv_labour",
-          "inventoryName": "Labour Cost",
-          "quantity": 1,
-          "unit": "unit",
-          "costPerUnit": 15.95,
-          "cost": 15.95
-        }
-      ]
-    },
-    {
-      "id": "r_m6a",
-      "menuItemId": "m6a",
-      "menuItemName": "BBQ Gyro - Chicken (Signature)",
-      "name": "RECIPE - BBQ GYRO - CHICKEN (SIGNATURE)",
-      "description": "Standard recipe for BBQ Gyro - Chicken (Signature) (Price \u20b9249/-)",
-      "yieldQty": 1,
-      "prepTime": 8,
-      "rmCost": 53.51,
-      "pmCost": 12.41,
-      "labourCost": 15.95,
-      "calculatedCost": 81.87,
-      "sellingPrice": 249,
-      "ingredients": [
-        {
-          "id": "ri_m6a_1",
-          "inventoryItemId": "inv_maida",
-          "inventoryName": "MAIDA (Pita)",
-          "quantity": 0.08,
-          "unit": "kg",
-          "costPerUnit": 44.77,
-          "cost": 3.58
-        },
-        {
-          "id": "ri_m6a_2",
-          "inventoryItemId": "inv_spicy_chicken",
-          "inventoryName": "Chicken Portion",
-          "quantity": 0.1,
-          "unit": "kg",
-          "costPerUnit": 400,
-          "cost": 40
-        },
-        {
-          "id": "ri_m6a_3",
-          "inventoryItemId": "inv_iceberg",
-          "inventoryName": "ICEBERG & Veggies",
-          "quantity": 0.04,
-          "unit": "kg",
-          "costPerUnit": 248.15,
-          "cost": 9.93
-        },
-        {
-          "id": "ri_m6a_4",
-          "inventoryItemId": "inv_dinning_tray",
-          "inventoryName": "Dinning Tray & Packaging",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 12.41,
-          "cost": 12.41
-        },
-        {
-          "id": "ri_m6a_5",
-          "inventoryItemId": "inv_labour",
-          "inventoryName": "Labour Cost",
-          "quantity": 1,
-          "unit": "unit",
-          "costPerUnit": 15.95,
-          "cost": 15.95
-        }
-      ]
-    },
-    {
-      "id": "r_m7a",
-      "menuItemId": "m7a",
-      "menuItemName": "Peri Peri Gyro - Chicken (Mini)",
-      "name": "RECIPE - PERI PERI GYRO - CHICKEN (MINI)",
-      "description": "Standard recipe for Peri Peri Gyro - Chicken (Mini) (Price \u20b999/-)",
+      "id": "r_m7",
+      "menuItemId": "m7",
+      "menuItemName": "Peri Peri Gyro (Mini)",
+      "name": "PERI PERI GYRO (MINI)",
+      "description": "Standard recipe for Peri Peri Gyro (Mini)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 31.72,
@@ -25759,72 +24272,11 @@
       ]
     },
     {
-      "id": "r_m7b",
-      "menuItemId": "m7b",
-      "menuItemName": "Peri Peri Gyro - Paneer (Mini)",
-      "name": "RECIPE - PERI PERI GYRO - PANEER (MINI)",
-      "description": "Standard recipe for Peri Peri Gyro - Paneer (Mini) (Price \u20b999/-)",
-      "yieldQty": 1,
-      "prepTime": 8,
-      "rmCost": 31.72,
-      "pmCost": 12.41,
-      "labourCost": 15.95,
-      "calculatedCost": 60.08,
-      "sellingPrice": 99,
-      "ingredients": [
-        {
-          "id": "ri_m7b_1",
-          "inventoryItemId": "inv_maida",
-          "inventoryName": "MAIDA (Pita)",
-          "quantity": 0.04,
-          "unit": "kg",
-          "costPerUnit": 44.77,
-          "cost": 1.79
-        },
-        {
-          "id": "ri_m7b_2",
-          "inventoryItemId": "inv_pesto_paneer",
-          "inventoryName": "Paneer Portion",
-          "quantity": 0.05,
-          "unit": "kg",
-          "costPerUnit": 400,
-          "cost": 20
-        },
-        {
-          "id": "ri_m7b_3",
-          "inventoryItemId": "inv_iceberg",
-          "inventoryName": "ICEBERG & Veggies",
-          "quantity": 0.04,
-          "unit": "kg",
-          "costPerUnit": 248.15,
-          "cost": 9.93
-        },
-        {
-          "id": "ri_m7b_4",
-          "inventoryItemId": "inv_dinning_tray",
-          "inventoryName": "Dinning Tray & Packaging",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 12.41,
-          "cost": 12.41
-        },
-        {
-          "id": "ri_m7b_5",
-          "inventoryItemId": "inv_labour",
-          "inventoryName": "Labour Cost",
-          "quantity": 1,
-          "unit": "unit",
-          "costPerUnit": 15.95,
-          "cost": 15.95
-        }
-      ]
-    },
-    {
-      "id": "r_m8a",
-      "menuItemId": "m8a",
-      "menuItemName": "Peri Peri Gyro - Chicken (Signature)",
-      "name": "RECIPE - PERI PERI GYRO - CHICKEN (SIGNATURE)",
-      "description": "Standard recipe for Peri Peri Gyro - Chicken (Signature) (Price \u20b9249/-)",
+      "id": "r_m8",
+      "menuItemId": "m8",
+      "menuItemName": "Peri Peri Gyro (Signature)",
+      "name": "PERI PERI GYRO (SIGNATURE)",
+      "description": "Standard recipe for Peri Peri Gyro (Signature)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 53.51,
@@ -25881,72 +24333,11 @@
       ]
     },
     {
-      "id": "r_m8b",
-      "menuItemId": "m8b",
-      "menuItemName": "Peri Peri Gyro - Paneer (Signature)",
-      "name": "RECIPE - PERI PERI GYRO - PANEER (SIGNATURE)",
-      "description": "Standard recipe for Peri Peri Gyro - Paneer (Signature) (Price \u20b9249/-)",
-      "yieldQty": 1,
-      "prepTime": 8,
-      "rmCost": 53.51,
-      "pmCost": 12.41,
-      "labourCost": 15.95,
-      "calculatedCost": 81.87,
-      "sellingPrice": 249,
-      "ingredients": [
-        {
-          "id": "ri_m8b_1",
-          "inventoryItemId": "inv_maida",
-          "inventoryName": "MAIDA (Pita)",
-          "quantity": 0.08,
-          "unit": "kg",
-          "costPerUnit": 44.77,
-          "cost": 3.58
-        },
-        {
-          "id": "ri_m8b_2",
-          "inventoryItemId": "inv_pesto_paneer",
-          "inventoryName": "Paneer Portion",
-          "quantity": 0.1,
-          "unit": "kg",
-          "costPerUnit": 400,
-          "cost": 40
-        },
-        {
-          "id": "ri_m8b_3",
-          "inventoryItemId": "inv_iceberg",
-          "inventoryName": "ICEBERG & Veggies",
-          "quantity": 0.04,
-          "unit": "kg",
-          "costPerUnit": 248.15,
-          "cost": 9.93
-        },
-        {
-          "id": "ri_m8b_4",
-          "inventoryItemId": "inv_dinning_tray",
-          "inventoryName": "Dinning Tray & Packaging",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 12.41,
-          "cost": 12.41
-        },
-        {
-          "id": "ri_m8b_5",
-          "inventoryItemId": "inv_labour",
-          "inventoryName": "Labour Cost",
-          "quantity": 1,
-          "unit": "unit",
-          "costPerUnit": 15.95,
-          "cost": 15.95
-        }
-      ]
-    },
-    {
-      "id": "r_m9a",
-      "menuItemId": "m9a",
-      "menuItemName": "Signature Gyro - Chicken (Mini)",
-      "name": "RECIPE - SIGNATURE GYRO - CHICKEN (MINI)",
-      "description": "Standard recipe for Signature Gyro - Chicken (Mini) (Price \u20b999/-)",
+      "id": "r_m9",
+      "menuItemId": "m9",
+      "menuItemName": "Signature Gyro (Mini)",
+      "name": "SIGNATURE GYRO (MINI)",
+      "description": "Standard recipe for Signature Gyro (Mini)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 53.51,
@@ -26003,72 +24394,11 @@
       ]
     },
     {
-      "id": "r_m9b",
-      "menuItemId": "m9b",
-      "menuItemName": "Signature Gyro - Paneer (Mini)",
-      "name": "RECIPE - SIGNATURE GYRO - PANEER (MINI)",
-      "description": "Standard recipe for Signature Gyro - Paneer (Mini) (Price \u20b999/-)",
-      "yieldQty": 1,
-      "prepTime": 8,
-      "rmCost": 53.51,
-      "pmCost": 12.41,
-      "labourCost": 15.95,
-      "calculatedCost": 81.87,
-      "sellingPrice": 99,
-      "ingredients": [
-        {
-          "id": "ri_m9b_1",
-          "inventoryItemId": "inv_maida",
-          "inventoryName": "MAIDA (Pita)",
-          "quantity": 0.08,
-          "unit": "kg",
-          "costPerUnit": 44.77,
-          "cost": 3.58
-        },
-        {
-          "id": "ri_m9b_2",
-          "inventoryItemId": "inv_pesto_paneer",
-          "inventoryName": "Paneer Portion",
-          "quantity": 0.1,
-          "unit": "kg",
-          "costPerUnit": 400,
-          "cost": 40
-        },
-        {
-          "id": "ri_m9b_3",
-          "inventoryItemId": "inv_iceberg",
-          "inventoryName": "ICEBERG & Veggies",
-          "quantity": 0.04,
-          "unit": "kg",
-          "costPerUnit": 248.15,
-          "cost": 9.93
-        },
-        {
-          "id": "ri_m9b_4",
-          "inventoryItemId": "inv_dinning_tray",
-          "inventoryName": "Dinning Tray & Packaging",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 12.41,
-          "cost": 12.41
-        },
-        {
-          "id": "ri_m9b_5",
-          "inventoryItemId": "inv_labour",
-          "inventoryName": "Labour Cost",
-          "quantity": 1,
-          "unit": "unit",
-          "costPerUnit": 15.95,
-          "cost": 15.95
-        }
-      ]
-    },
-    {
-      "id": "r_m10a",
-      "menuItemId": "m10a",
-      "menuItemName": "Signature Gyro - Chicken (Signature)",
-      "name": "RECIPE - SIGNATURE GYRO - CHICKEN (SIGNATURE)",
-      "description": "Standard recipe for Signature Gyro - Chicken (Signature) (Price \u20b9249/-)",
+      "id": "r_m10",
+      "menuItemId": "m10",
+      "menuItemName": "Signature Gyro (Signature)",
+      "name": "SIGNATURE GYRO (SIGNATURE)",
+      "description": "Standard recipe for Signature Gyro (Signature)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 53.51,
@@ -26125,72 +24455,11 @@
       ]
     },
     {
-      "id": "r_m10b",
-      "menuItemId": "m10b",
-      "menuItemName": "Signature Gyro - Paneer (Signature)",
-      "name": "RECIPE - SIGNATURE GYRO - PANEER (SIGNATURE)",
-      "description": "Standard recipe for Signature Gyro - Paneer (Signature) (Price \u20b9249/-)",
-      "yieldQty": 1,
-      "prepTime": 8,
-      "rmCost": 53.51,
-      "pmCost": 12.41,
-      "labourCost": 15.95,
-      "calculatedCost": 81.87,
-      "sellingPrice": 249,
-      "ingredients": [
-        {
-          "id": "ri_m10b_1",
-          "inventoryItemId": "inv_maida",
-          "inventoryName": "MAIDA (Pita)",
-          "quantity": 0.08,
-          "unit": "kg",
-          "costPerUnit": 44.77,
-          "cost": 3.58
-        },
-        {
-          "id": "ri_m10b_2",
-          "inventoryItemId": "inv_pesto_paneer",
-          "inventoryName": "Paneer Portion",
-          "quantity": 0.1,
-          "unit": "kg",
-          "costPerUnit": 400,
-          "cost": 40
-        },
-        {
-          "id": "ri_m10b_3",
-          "inventoryItemId": "inv_iceberg",
-          "inventoryName": "ICEBERG & Veggies",
-          "quantity": 0.04,
-          "unit": "kg",
-          "costPerUnit": 248.15,
-          "cost": 9.93
-        },
-        {
-          "id": "ri_m10b_4",
-          "inventoryItemId": "inv_dinning_tray",
-          "inventoryName": "Dinning Tray & Packaging",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 12.41,
-          "cost": 12.41
-        },
-        {
-          "id": "ri_m10b_5",
-          "inventoryItemId": "inv_labour",
-          "inventoryName": "Labour Cost",
-          "quantity": 1,
-          "unit": "unit",
-          "costPerUnit": 15.95,
-          "cost": 15.95
-        }
-      ]
-    },
-    {
       "id": "r_m27a",
       "menuItemId": "m27a",
       "menuItemName": "Loaded Chicken Fries",
       "name": "RECIPE - LOADED CHICKEN FRIES",
-      "description": "Standard recipe for Loaded Chicken Fries (Price \u20b9199/-)",
+      "description": "Standard recipe for Loaded Chicken Fries (Price ₹199/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 52.91,
@@ -26251,7 +24520,7 @@
       "menuItemId": "m27b",
       "menuItemName": "Loaded Paneer Fries",
       "name": "RECIPE - LOADED PANEER FRIES",
-      "description": "Standard recipe for Loaded Paneer Fries (Price \u20b9199/-)",
+      "description": "Standard recipe for Loaded Paneer Fries (Price ₹199/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 52.91,
@@ -26312,7 +24581,7 @@
       "menuItemId": "m28a",
       "menuItemName": "Lebanese Rice Bowl (Chicken)",
       "name": "RECIPE - LEBANESE RICE BOWL (CHICKEN)",
-      "description": "Standard recipe for Lebanese Rice Bowl (Chicken) (Price \u20b9199/-)",
+      "description": "Standard recipe for Lebanese Rice Bowl (Chicken) (Price ₹199/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 47.05,
@@ -26373,7 +24642,7 @@
       "menuItemId": "m28b",
       "menuItemName": "Lebanese Rice Bowl (Paneer)",
       "name": "RECIPE - LEBANESE RICE BOWL (PANEER)",
-      "description": "Standard recipe for Lebanese Rice Bowl (Paneer) (Price \u20b9199/-)",
+      "description": "Standard recipe for Lebanese Rice Bowl (Paneer) (Price ₹199/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 47.05,
@@ -26434,7 +24703,7 @@
       "menuItemId": "m29a",
       "menuItemName": "Signature Salad (Chicken)",
       "name": "RECIPE - SIGNATURE SALAD (CHICKEN)",
-      "description": "Standard recipe for Signature Salad (Chicken) (Price \u20b9149/-)",
+      "description": "Standard recipe for Signature Salad (Chicken) (Price ₹149/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 47.05,
@@ -26495,7 +24764,7 @@
       "menuItemId": "m29b",
       "menuItemName": "Signature Salad (Paneer)",
       "name": "RECIPE - SIGNATURE SALAD (PANEER)",
-      "description": "Standard recipe for Signature Salad (Paneer) (Price \u20b9149/-)",
+      "description": "Standard recipe for Signature Salad (Paneer) (Price ₹149/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 47.05,
@@ -26556,7 +24825,7 @@
       "menuItemId": "m30",
       "menuItemName": "Express Meal",
       "name": "RECIPE - EXPRESS MEAL",
-      "description": "Standard recipe for Express Meal (Price \u20b9149/-)",
+      "description": "Standard recipe for Express Meal (Price ₹149/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 37.25,
@@ -26599,7 +24868,7 @@
       "menuItemId": "m31",
       "menuItemName": "Classic Gyro Meal",
       "name": "RECIPE - CLASSIC GYRO MEAL",
-      "description": "Standard recipe for Classic Gyro Meal (Price \u20b9249/-)",
+      "description": "Standard recipe for Classic Gyro Meal (Price ₹249/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 31.72,
@@ -26660,7 +24929,7 @@
       "menuItemId": "m32",
       "menuItemName": "Signature Gyro Meal",
       "name": "RECIPE - SIGNATURE GYRO MEAL",
-      "description": "Standard recipe for Signature Gyro Meal (Price \u20b9299/-)",
+      "description": "Standard recipe for Signature Gyro Meal (Price ₹299/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 53.51,
@@ -26721,7 +24990,7 @@
       "menuItemId": "m33",
       "menuItemName": "Lebanese Rice Box",
       "name": "RECIPE - LEBANESE RICE BOX",
-      "description": "Standard recipe for Lebanese Rice Box (Price \u20b9299/-)",
+      "description": "Standard recipe for Lebanese Rice Box (Price ₹299/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 47.05,
@@ -26782,7 +25051,7 @@
       "menuItemId": "m34",
       "menuItemName": "Duo Gyro Feast",
       "name": "RECIPE - DUO GYRO FEAST",
-      "description": "Standard recipe for Duo Gyro Feast (Price \u20b9349/-)",
+      "description": "Standard recipe for Duo Gyro Feast (Price ₹349/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 31.72,
@@ -26843,7 +25112,7 @@
       "menuItemId": "m35",
       "menuItemName": "Double Crunch Box",
       "name": "RECIPE - DOUBLE CRUNCH BOX",
-      "description": "Standard recipe for Double Crunch Box (Price \u20b9499/-)",
+      "description": "Standard recipe for Double Crunch Box (Price ₹499/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 124.75,
@@ -26886,7 +25155,7 @@
       "menuItemId": "m36",
       "menuItemName": "Mega Feast Meal",
       "name": "RECIPE - MEGA FEAST MEAL",
-      "description": "Standard recipe for Mega Feast Meal (Price \u20b9649/-)",
+      "description": "Standard recipe for Mega Feast Meal (Price ₹649/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 162.25,
@@ -26929,7 +25198,7 @@
       "menuItemId": "m37",
       "menuItemName": "Den's Party Meal",
       "name": "RECIPE - DEN'S PARTY MEAL",
-      "description": "Standard recipe for Den's Party Meal (Price \u20b9899/-)",
+      "description": "Standard recipe for Den's Party Meal (Price ₹899/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 224.75,
@@ -26972,7 +25241,7 @@
       "menuItemId": "m38",
       "menuItemName": "Super 5 Bucket",
       "name": "RECIPE - SUPER 5 BUCKET",
-      "description": "Standard recipe for Super 5 Bucket (Price \u20b91299/-)",
+      "description": "Standard recipe for Super 5 Bucket (Price ₹1299/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 324.75,
@@ -27011,11 +25280,11 @@
       ]
     },
     {
-      "id": "r_m39a",
-      "menuItemId": "m39a",
-      "menuItemName": "Gyro - Protein Max (Chicken)",
-      "name": "RECIPE - GYRO - PROTEIN MAX (CHICKEN)",
-      "description": "Standard recipe for Gyro - Protein Max (Chicken) (Price \u20b9299/-)",
+      "id": "r_m39",
+      "menuItemId": "m39",
+      "menuItemName": "Gyro - Protein Max",
+      "name": "GYRO - PROTEIN MAX",
+      "description": "Standard recipe for Gyro - Protein Max",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 31.72,
@@ -27072,72 +25341,11 @@
       ]
     },
     {
-      "id": "r_m39b",
-      "menuItemId": "m39b",
-      "menuItemName": "Gyro - Protein Max (Paneer)",
-      "name": "RECIPE - GYRO - PROTEIN MAX (PANEER)",
-      "description": "Standard recipe for Gyro - Protein Max (Paneer) (Price \u20b9299/-)",
-      "yieldQty": 1,
-      "prepTime": 8,
-      "rmCost": 31.72,
-      "pmCost": 12.41,
-      "labourCost": 15.95,
-      "calculatedCost": 60.08,
-      "sellingPrice": 299,
-      "ingredients": [
-        {
-          "id": "ri_m39b_1",
-          "inventoryItemId": "inv_maida",
-          "inventoryName": "MAIDA (Pita)",
-          "quantity": 0.04,
-          "unit": "kg",
-          "costPerUnit": 44.77,
-          "cost": 1.79
-        },
-        {
-          "id": "ri_m39b_2",
-          "inventoryItemId": "inv_pesto_paneer",
-          "inventoryName": "Paneer Portion",
-          "quantity": 0.05,
-          "unit": "kg",
-          "costPerUnit": 400,
-          "cost": 20
-        },
-        {
-          "id": "ri_m39b_3",
-          "inventoryItemId": "inv_iceberg",
-          "inventoryName": "ICEBERG & Veggies",
-          "quantity": 0.04,
-          "unit": "kg",
-          "costPerUnit": 248.15,
-          "cost": 9.93
-        },
-        {
-          "id": "ri_m39b_4",
-          "inventoryItemId": "inv_dinning_tray",
-          "inventoryName": "Dinning Tray & Packaging",
-          "quantity": 1,
-          "unit": "pc",
-          "costPerUnit": 12.41,
-          "cost": 12.41
-        },
-        {
-          "id": "ri_m39b_5",
-          "inventoryItemId": "inv_labour",
-          "inventoryName": "Labour Cost",
-          "quantity": 1,
-          "unit": "unit",
-          "costPerUnit": 15.95,
-          "cost": 15.95
-        }
-      ]
-    },
-    {
       "id": "r_m40a",
       "menuItemId": "m40a",
       "menuItemName": "Lebanese Rice - Protein Max (Chicken)",
       "name": "RECIPE - LEBANESE RICE - PROTEIN MAX (CHICKEN)",
-      "description": "Standard recipe for Lebanese Rice - Protein Max (Chicken) (Price \u20b9299/-)",
+      "description": "Standard recipe for Lebanese Rice - Protein Max (Chicken) (Price ₹299/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 47.05,
@@ -27198,7 +25406,7 @@
       "menuItemId": "m40b",
       "menuItemName": "Lebanese Rice - Protein Max (Paneer)",
       "name": "RECIPE - LEBANESE RICE - PROTEIN MAX (PANEER)",
-      "description": "Standard recipe for Lebanese Rice - Protein Max (Paneer) (Price \u20b9299/-)",
+      "description": "Standard recipe for Lebanese Rice - Protein Max (Paneer) (Price ₹299/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 47.05,
@@ -27259,7 +25467,7 @@
       "menuItemId": "m41a",
       "menuItemName": "Salad - Protein Max (Chicken)",
       "name": "RECIPE - SALAD - PROTEIN MAX (CHICKEN)",
-      "description": "Standard recipe for Salad - Protein Max (Chicken) (Price \u20b9299/-)",
+      "description": "Standard recipe for Salad - Protein Max (Chicken) (Price ₹299/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 47.05,
@@ -27320,7 +25528,7 @@
       "menuItemId": "m41b",
       "menuItemName": "Salad - Protein Max (Paneer)",
       "name": "RECIPE - SALAD - PROTEIN MAX (PANEER)",
-      "description": "Standard recipe for Salad - Protein Max (Paneer) (Price \u20b9299/-)",
+      "description": "Standard recipe for Salad - Protein Max (Paneer) (Price ₹299/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 47.05,
@@ -27381,7 +25589,7 @@
       "menuItemId": "m62a",
       "menuItemName": "Turkish Chilli Dip",
       "name": "RECIPE - TURKISH CHILLI DIP",
-      "description": "Standard recipe for Turkish Chilli Dip (Price \u20b915/-)",
+      "description": "Standard recipe for Turkish Chilli Dip (Price ₹15/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 1.73,
@@ -27424,7 +25632,7 @@
       "menuItemId": "m62b",
       "menuItemName": "Jalapeno Cheese Dip",
       "name": "RECIPE - JALAPENO CHEESE DIP",
-      "description": "Standard recipe for Jalapeno Cheese Dip (Price \u20b915/-)",
+      "description": "Standard recipe for Jalapeno Cheese Dip (Price ₹15/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 1.73,
@@ -27467,7 +25675,7 @@
       "menuItemId": "m62c",
       "menuItemName": "Garlic Mayo Dip",
       "name": "RECIPE - GARLIC MAYO DIP",
-      "description": "Standard recipe for Garlic Mayo Dip (Price \u20b915/-)",
+      "description": "Standard recipe for Garlic Mayo Dip (Price ₹15/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 1.73,
@@ -27510,7 +25718,7 @@
       "menuItemId": "m62d",
       "menuItemName": "Spicy Mayo Dip",
       "name": "RECIPE - SPICY MAYO DIP",
-      "description": "Standard recipe for Spicy Mayo Dip (Price \u20b915/-)",
+      "description": "Standard recipe for Spicy Mayo Dip (Price ₹15/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 1.73,
@@ -27553,7 +25761,7 @@
       "menuItemId": "m62e",
       "menuItemName": "Peri Peri Dip",
       "name": "RECIPE - PERI PERI DIP",
-      "description": "Standard recipe for Peri Peri Dip (Price \u20b915/-)",
+      "description": "Standard recipe for Peri Peri Dip (Price ₹15/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 1.73,
@@ -27596,7 +25804,7 @@
       "menuItemId": "m62f",
       "menuItemName": "Honey Mustard Dip",
       "name": "RECIPE - HONEY MUSTARD DIP",
-      "description": "Standard recipe for Honey Mustard Dip (Price \u20b915/-)",
+      "description": "Standard recipe for Honey Mustard Dip (Price ₹15/-)",
       "yieldQty": 1,
       "prepTime": 8,
       "rmCost": 1.73,
