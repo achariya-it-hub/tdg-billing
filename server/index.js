@@ -4096,7 +4096,7 @@ const isValidSalesOrder = (o) => {
 }
 
 function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
-  const { date, from, to } = reqQuery || {}
+  const { date, from, to, fallback } = reqQuery || {}
   const targetOrders = includeAll ? orders : orders.filter(isValidSalesOrder)
   const today = new Date()
   const todayStr = getLocalDateStr(today)
@@ -4105,12 +4105,18 @@ function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
     return targetOrders
   }
 
-  const resolveOrFallback = (filteredList) => {
-    if (Array.isArray(filteredList) && filteredList.length > 0) return filteredList
+  if (date === 'latest') {
     const latestDate = getLatestOrderDate(targetOrders)
-    if (latestDate) {
-      const latestOrders = targetOrders.filter(o => getOrderDate(o) === latestDate)
-      if (latestOrders.length > 0) return latestOrders
+    return targetOrders.filter(o => getOrderDate(o) === latestDate)
+  }
+
+  const resolveOrFallback = (filteredList) => {
+    if (fallback === 'true' && (!filteredList || filteredList.length === 0)) {
+      const latestDate = getLatestOrderDate(targetOrders)
+      if (latestDate) {
+        const latestOrders = targetOrders.filter(o => getOrderDate(o) === latestDate)
+        if (latestOrders.length > 0) return latestOrders
+      }
     }
     return filteredList || []
   }
@@ -4167,18 +4173,13 @@ function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
     return resolveOrFallback(res)
   }
 
-  if (normDate === 'latest') {
-    const latestDate = getLatestOrderDate(targetOrders)
-    return targetOrders.filter(o => getOrderDate(o) === latestDate)
-  }
-
   if (normDate) {
     const specific = targetOrders.filter(o => getOrderDate(o) === normDate)
     return resolveOrFallback(specific)
   }
 
-  const latestDate = getLatestOrderDate(targetOrders)
-  return targetOrders.filter(o => getOrderDate(o) === latestDate)
+  const todayOrders = targetOrders.filter(o => getOrderDate(o) === todayStr)
+  return resolveOrFallback(todayOrders)
 }
 
 // ============ AUTOMATIC MIDNIGHT 12:00 AM IST DAY CLOSING ENGINE ============
