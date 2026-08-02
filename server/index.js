@@ -2796,13 +2796,23 @@ app.get('/api/pos/orders', (req, res) => {
   if (from && to) {
     const normFrom = normalizeDateStr(from)
     const normTo = normalizeDateStr(to)
-    inMemory = inMemory.filter(o => {
+    const filtered = inMemory.filter(o => {
       const dStr = getOrderDate(o)
       return dStr >= normFrom && dStr <= normTo
     })
+    if (filtered.length > 0 || req.query.strict === 'true') inMemory = filtered
+    else {
+      const latestDate = getLatestOrderDate(orders)
+      inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
+    }
   } else if (from) {
     const normFrom = normalizeDateStr(from)
-    inMemory = inMemory.filter(o => getOrderDate(o) >= normFrom)
+    const filtered = inMemory.filter(o => getOrderDate(o) >= normFrom)
+    if (filtered.length > 0 || req.query.strict === 'true') inMemory = filtered
+    else {
+      const latestDate = getLatestOrderDate(orders)
+      inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
+    }
   } else if (date) {
     const norm = normalizeDateStr(date)
 
@@ -2810,21 +2820,46 @@ app.get('/api/pos/orders', (req, res) => {
       const latestDate = getLatestOrderDate(orders)
       inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
     } else if (norm === 'today' || norm === todayStr) {
-      inMemory = inMemory.filter(o => getOrderDate(o) === todayStr)
+      const filtered = inMemory.filter(o => getOrderDate(o) === todayStr)
+      if (filtered.length > 0 || req.query.strict === 'true') inMemory = filtered
+      else {
+        const latestDate = getLatestOrderDate(orders)
+        inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
+      }
     } else if (norm === 'yesterday' || norm === yesterdayStr) {
-      inMemory = inMemory.filter(o => getOrderDate(o) === yesterdayStr)
+      const filtered = inMemory.filter(o => getOrderDate(o) === yesterdayStr)
+      if (filtered.length > 0 || req.query.strict === 'true') inMemory = filtered
+      else {
+        const latestDate = getLatestOrderDate(orders)
+        inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
+      }
     } else if (norm === 'week' || date === 'week') {
       const pastWeek = new Date(today)
       pastWeek.setDate(pastWeek.getDate() - 7)
       const pastWeekStr = getLocalDateStr(pastWeek)
-      inMemory = inMemory.filter(o => getOrderDate(o) >= pastWeekStr)
+      const filtered = inMemory.filter(o => getOrderDate(o) >= pastWeekStr)
+      if (filtered.length > 0 || req.query.strict === 'true') inMemory = filtered
+      else {
+        const latestDate = getLatestOrderDate(orders)
+        inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
+      }
     } else if (norm === 'month' || date === 'month') {
       const pastMonth = new Date(today)
       pastMonth.setDate(pastMonth.getDate() - 30)
       const pastMonthStr = getLocalDateStr(pastMonth)
-      inMemory = inMemory.filter(o => getOrderDate(o) >= pastMonthStr)
+      const filtered = inMemory.filter(o => getOrderDate(o) >= pastMonthStr)
+      if (filtered.length > 0 || req.query.strict === 'true') inMemory = filtered
+      else {
+        const latestDate = getLatestOrderDate(orders)
+        inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
+      }
     } else if (norm !== 'all') {
-      inMemory = inMemory.filter(o => getOrderDate(o) === norm)
+      const filtered = inMemory.filter(o => getOrderDate(o) === norm)
+      if (filtered.length > 0 || req.query.strict === 'true') inMemory = filtered
+      else {
+        const latestDate = getLatestOrderDate(orders)
+        inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
+      }
     }
   }
 
@@ -4122,7 +4157,7 @@ const isValidSalesOrder = (o) => {
 }
 
 function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
-  const { date, from, to, fallback } = reqQuery || {}
+  const { date, from, to, strict } = reqQuery || {}
   const targetOrders = includeAll ? orders : orders.filter(isValidSalesOrder)
   const today = new Date()
   const todayStr = getLocalDateStr(today)
@@ -4137,12 +4172,14 @@ function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
   }
 
   const resolveOrFallback = (filteredList) => {
-    if (fallback === 'true' && (!filteredList || filteredList.length === 0)) {
-      const latestDate = getLatestOrderDate(targetOrders)
-      if (latestDate) {
-        const latestOrders = targetOrders.filter(o => getOrderDate(o) === latestDate)
-        if (latestOrders.length > 0) return latestOrders
-      }
+    if (Array.isArray(filteredList) && filteredList.length > 0) return filteredList
+    if (strict === 'true') return filteredList || []
+    
+    // Auto fallback to latest active date with billing data so reports are never blank
+    const latestDate = getLatestOrderDate(targetOrders)
+    if (latestDate) {
+      const latestOrders = targetOrders.filter(o => getOrderDate(o) === latestDate)
+      if (latestOrders.length > 0) return latestOrders
     }
     return filteredList || []
   }
