@@ -17231,349 +17231,9 @@
       "id": "10311",
       "orderNumber": 10311,
       "date": "2026-08-01",
-      "createdAt": "2026-08-01T11:46:07.000+05:30",
-      "paidAt": "2026-08-01T11:46:07.000+05:30",
-      "completedAt": "2026-08-01T11:46:07.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m1",
-          "name": "Spicy Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m12",
-          "name": "Pesto Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        }
-      ],
-      "subtotal": 331,
-      "tax": 17,
-      "total": 348
-    },
-    {
-      "id": "10312",
-      "orderNumber": 10312,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T11:59:04.000+05:30",
-      "paidAt": "2026-08-01T11:59:04.000+05:30",
-      "completedAt": "2026-08-01T11:59:04.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m53b",
-          "name": "Coca-Cola (Large)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m35",
-          "name": "Double Crunch Box",
-          "price": 499,
-          "unitPrice": 499,
-          "quantity": 1,
-          "totalPrice": 499
-        }
-      ],
-      "subtotal": 570,
-      "tax": 28,
-      "total": 598
-    },
-    {
-      "id": "10313",
-      "orderNumber": 10313,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T11:35:04.000+05:30",
-      "paidAt": "2026-08-01T11:35:04.000+05:30",
-      "completedAt": "2026-08-01T11:35:04.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m54a",
-          "name": "Sprite (Regular)",
-          "price": 59,
-          "unitPrice": 59,
-          "quantity": 1,
-          "totalPrice": 59
-        },
-        {
-          "id": "m56a",
-          "name": "Lime Ice Tea (Regular)",
-          "price": 59,
-          "unitPrice": 59,
-          "quantity": 1,
-          "totalPrice": 59
-        }
-      ],
-      "subtotal": 112,
-      "tax": 6,
-      "total": 118
-    },
-    {
-      "id": "10314",
-      "orderNumber": 10314,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T11:33:29.000+05:30",
-      "paidAt": "2026-08-01T11:33:29.000+05:30",
-      "completedAt": "2026-08-01T11:33:29.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m47",
-          "name": "Biscoff Shake (Large)",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        },
-        {
-          "id": "m14",
-          "name": "8 Pc Leg & Thigh (4 Dips)",
-          "price": 560,
-          "unitPrice": 560,
-          "quantity": 1,
-          "totalPrice": 560
-        }
-      ],
-      "subtotal": 723,
-      "tax": 36,
-      "total": 759
-    },
-    {
-      "id": "10315",
-      "orderNumber": 10315,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T11:13:36.000+05:30",
-      "paidAt": "2026-08-01T11:13:36.000+05:30",
-      "completedAt": "2026-08-01T11:13:36.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m56b",
-          "name": "Lime Ice Tea (Large)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m62b",
-          "name": "Jalapeno Cheese Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        }
-      ],
-      "subtotal": 109,
-      "tax": 5,
-      "total": 114
-    },
-    {
-      "id": "10316",
-      "orderNumber": 10316,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T12:52:23.000+05:30",
-      "paidAt": "2026-08-01T12:52:23.000+05:30",
-      "completedAt": "2026-08-01T12:52:23.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m59b",
-          "name": "Hibiscus Kombucha",
-          "price": 114.29,
-          "unitPrice": 114.29,
-          "quantity": 1,
-          "totalPrice": 114.29
-        },
-        {
-          "id": "m59a",
-          "name": "Mint Kombucha",
-          "price": 114.29,
-          "unitPrice": 114.29,
-          "quantity": 1,
-          "totalPrice": 114.29
-        }
-      ],
-      "subtotal": 218,
-      "tax": 11,
-      "total": 228.58
-    },
-    {
-      "id": "10317",
-      "orderNumber": 10317,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T12:56:24.000+05:30",
-      "paidAt": "2026-08-01T12:56:24.000+05:30",
-      "completedAt": "2026-08-01T12:56:24.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m53b",
-          "name": "Coca-Cola (Large)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m34",
-          "name": "Duo Gyro Feast",
-          "price": 349,
-          "unitPrice": 349,
-          "quantity": 1,
-          "totalPrice": 349
-        }
-      ],
-      "subtotal": 427,
-      "tax": 21,
-      "total": 448
-    },
-    {
-      "id": "10318",
-      "orderNumber": 10318,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T12:56:02.000+05:30",
-      "paidAt": "2026-08-01T12:56:02.000+05:30",
-      "completedAt": "2026-08-01T12:56:02.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m1",
-          "name": "Spicy Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m10",
-          "name": "Signature Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        }
-      ],
-      "subtotal": 331,
-      "tax": 17,
-      "total": 348
-    },
-    {
-      "id": "10319",
-      "orderNumber": 10319,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T12:16:40.000+05:30",
-      "paidAt": "2026-08-01T12:16:40.000+05:30",
-      "completedAt": "2026-08-01T12:16:40.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m26c",
-          "name": "Cajun Fries",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m46",
-          "name": "Biscoff Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        }
-      ],
-      "subtotal": 209,
-      "tax": 10,
-      "total": 219
-    },
-    {
-      "id": "10320",
-      "orderNumber": 10320,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T12:27:19.000+05:30",
-      "paidAt": "2026-08-01T12:27:19.000+05:30",
-      "completedAt": "2026-08-01T12:27:19.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m40b",
-          "name": "Lebanese Rice - Protein Max (Paneer)",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        },
-        {
-          "id": "m26b",
-          "name": "Peri Peri Fries",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 379,
-      "tax": 19,
-      "total": 398
-    },
-    {
-      "id": "10321",
-      "orderNumber": 10321,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T13:56:21.000+05:30",
-      "paidAt": "2026-08-01T13:56:21.000+05:30",
-      "completedAt": "2026-08-01T13:56:21.000+05:30",
+      "createdAt": "2026-08-01T11:48:34.000+05:30",
+      "paidAt": "2026-08-01T11:48:34.000+05:30",
+      "completedAt": "2026-08-01T11:48:34.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "UPI",
@@ -17583,18 +17243,270 @@
         {
           "id": "m11",
           "name": "Pesto Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
+          "price": 396,
+          "unitPrice": 396,
           "quantity": 1,
-          "totalPrice": 99
-        },
+          "totalPrice": 396
+        }
+      ],
+      "subtotal": 377,
+      "tax": 19,
+      "total": 396
+    },
+    {
+      "id": "10312",
+      "orderNumber": 10312,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T11:22:27.000+05:30",
+      "paidAt": "2026-08-01T11:22:27.000+05:30",
+      "completedAt": "2026-08-01T11:22:27.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
         {
-          "id": "m41b",
-          "name": "Salad - Protein Max (Paneer)",
-          "price": 299,
-          "unitPrice": 299,
+          "id": "m12",
+          "name": "Pesto Gyro (Signature)",
+          "price": 256,
+          "unitPrice": 256,
           "quantity": 1,
-          "totalPrice": 299
+          "totalPrice": 256
+        }
+      ],
+      "subtotal": 244,
+      "tax": 12,
+      "total": 256
+    },
+    {
+      "id": "10313",
+      "orderNumber": 10313,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T11:08:35.000+05:30",
+      "paidAt": "2026-08-01T11:08:35.000+05:30",
+      "completedAt": "2026-08-01T11:08:35.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m13",
+          "name": "4 Pc Leg & Thigh (2 Dips)",
+          "price": 364,
+          "unitPrice": 364,
+          "quantity": 1,
+          "totalPrice": 364
+        }
+      ],
+      "subtotal": 347,
+      "tax": 17,
+      "total": 364
+    },
+    {
+      "id": "10314",
+      "orderNumber": 10314,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T11:15:07.000+05:30",
+      "paidAt": "2026-08-01T11:15:07.000+05:30",
+      "completedAt": "2026-08-01T11:15:07.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m14",
+          "name": "8 Pc Leg & Thigh (4 Dips)",
+          "price": 288,
+          "unitPrice": 288,
+          "quantity": 1,
+          "totalPrice": 288
+        }
+      ],
+      "subtotal": 274,
+      "tax": 14,
+      "total": 288
+    },
+    {
+      "id": "10315",
+      "orderNumber": 10315,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T11:56:26.000+05:30",
+      "paidAt": "2026-08-01T11:56:26.000+05:30",
+      "completedAt": "2026-08-01T11:56:26.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m15",
+          "name": "12 Pc Leg & Thigh (6 Dips)",
+          "price": 377,
+          "unitPrice": 377,
+          "quantity": 1,
+          "totalPrice": 377
+        }
+      ],
+      "subtotal": 359,
+      "tax": 18,
+      "total": 377
+    },
+    {
+      "id": "10316",
+      "orderNumber": 10316,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T12:38:51.000+05:30",
+      "paidAt": "2026-08-01T12:38:51.000+05:30",
+      "completedAt": "2026-08-01T12:38:51.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m16",
+          "name": "3 Pc Wings (1 Dip)",
+          "price": 275,
+          "unitPrice": 275,
+          "quantity": 1,
+          "totalPrice": 275
+        }
+      ],
+      "subtotal": 262,
+      "tax": 13,
+      "total": 275
+    },
+    {
+      "id": "10317",
+      "orderNumber": 10317,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T12:20:12.000+05:30",
+      "paidAt": "2026-08-01T12:20:12.000+05:30",
+      "completedAt": "2026-08-01T12:20:12.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m17",
+          "name": "6 Pc Wings (2 Dips)",
+          "price": 344,
+          "unitPrice": 344,
+          "quantity": 1,
+          "totalPrice": 344
+        }
+      ],
+      "subtotal": 328,
+      "tax": 16,
+      "total": 344
+    },
+    {
+      "id": "10318",
+      "orderNumber": 10318,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T12:36:12.000+05:30",
+      "paidAt": "2026-08-01T12:36:12.000+05:30",
+      "completedAt": "2026-08-01T12:36:12.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m18",
+          "name": "9 Pc Wings (3 Dips)",
+          "price": 308,
+          "unitPrice": 308,
+          "quantity": 1,
+          "totalPrice": 308
+        }
+      ],
+      "subtotal": 293,
+      "tax": 15,
+      "total": 308
+    },
+    {
+      "id": "10319",
+      "orderNumber": 10319,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T12:45:55.000+05:30",
+      "paidAt": "2026-08-01T12:45:55.000+05:30",
+      "completedAt": "2026-08-01T12:45:55.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m19",
+          "name": "20 Pc Wings (6 Dips)",
+          "price": 383,
+          "unitPrice": 383,
+          "quantity": 1,
+          "totalPrice": 383
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383
+    },
+    {
+      "id": "10320",
+      "orderNumber": 10320,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T12:23:32.000+05:30",
+      "paidAt": "2026-08-01T12:23:32.000+05:30",
+      "completedAt": "2026-08-01T12:23:32.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m20",
+          "name": "60 Pc Wings (12 Dips)",
+          "price": 269,
+          "unitPrice": 269,
+          "quantity": 1,
+          "totalPrice": 269
+        }
+      ],
+      "subtotal": 256,
+      "tax": 13,
+      "total": 269
+    },
+    {
+      "id": "10321",
+      "orderNumber": 10321,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T13:07:09.000+05:30",
+      "paidAt": "2026-08-01T13:07:09.000+05:30",
+      "completedAt": "2026-08-01T13:07:09.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m21",
+          "name": "3 Pc Strips (1 Dip)",
+          "price": 398,
+          "unitPrice": 398,
+          "quantity": 1,
+          "totalPrice": 398
         }
       ],
       "subtotal": 379,
@@ -17605,77 +17517,61 @@
       "id": "10322",
       "orderNumber": 10322,
       "date": "2026-08-01",
-      "createdAt": "2026-08-01T13:43:31.000+05:30",
-      "paidAt": "2026-08-01T13:43:31.000+05:30",
-      "completedAt": "2026-08-01T13:43:31.000+05:30",
+      "createdAt": "2026-08-01T13:00:48.000+05:30",
+      "paidAt": "2026-08-01T13:00:48.000+05:30",
+      "completedAt": "2026-08-01T13:00:48.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
       "items": [
         {
-          "id": "m52",
-          "name": "Vanilla Softy",
-          "price": 39,
-          "unitPrice": 39,
+          "id": "m22",
+          "name": "6 Pc Strips (2 Dips)",
+          "price": 254,
+          "unitPrice": 254,
           "quantity": 1,
-          "totalPrice": 39
-        },
-        {
-          "id": "m59c",
-          "name": "Ginger Kombucha",
-          "price": 114.29,
-          "unitPrice": 114.29,
-          "quantity": 1,
-          "totalPrice": 114.29
+          "totalPrice": 254
         }
       ],
-      "subtotal": 146,
-      "tax": 7,
-      "total": 153.29000000000002
+      "subtotal": 242,
+      "tax": 12,
+      "total": 254
     },
     {
       "id": "10323",
       "orderNumber": 10323,
       "date": "2026-08-01",
-      "createdAt": "2026-08-01T13:59:51.000+05:30",
-      "paidAt": "2026-08-01T13:59:51.000+05:30",
-      "completedAt": "2026-08-01T13:59:51.000+05:30",
+      "createdAt": "2026-08-01T13:26:22.000+05:30",
+      "paidAt": "2026-08-01T13:26:22.000+05:30",
+      "completedAt": "2026-08-01T13:26:22.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
-      "paymentMethod": "Cash",
+      "paymentMethod": "UPI",
       "source": "DINE-IN",
       "type": "DINE-IN",
       "items": [
         {
-          "id": "m48",
-          "name": "Chocolate Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
+          "id": "m23",
+          "name": "9 Pc Strips (3 Dips)",
+          "price": 410,
+          "unitPrice": 410,
           "quantity": 1,
-          "totalPrice": 120
-        },
-        {
-          "id": "m48",
-          "name": "Chocolate Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
+          "totalPrice": 410
         }
       ],
-      "subtotal": 229,
-      "tax": 11,
-      "total": 240
+      "subtotal": 390,
+      "tax": 20,
+      "total": 410
     },
     {
       "id": "10324",
       "orderNumber": 10324,
       "date": "2026-08-01",
-      "createdAt": "2026-08-01T13:01:24.000+05:30",
-      "paidAt": "2026-08-01T13:01:24.000+05:30",
-      "completedAt": "2026-08-01T13:01:24.000+05:30",
+      "createdAt": "2026-08-01T13:40:28.000+05:30",
+      "paidAt": "2026-08-01T13:40:28.000+05:30",
+      "completedAt": "2026-08-01T13:40:28.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "Cash",
@@ -17683,1359 +17579,103 @@
       "type": "DINE-IN",
       "items": [
         {
-          "id": "m29b",
-          "name": "Signature Salad (Paneer)",
-          "price": 149,
-          "unitPrice": 149,
+          "id": "m24",
+          "name": "20 Pc Strips (6 Dips)",
+          "price": 242,
+          "unitPrice": 242,
           "quantity": 1,
-          "totalPrice": 149
-        },
-        {
-          "id": "m44",
-          "name": "Strawberry Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
+          "totalPrice": 242
         }
       ],
-      "subtotal": 256,
-      "tax": 13,
-      "total": 269
+      "subtotal": 230,
+      "tax": 12,
+      "total": 242
     },
     {
       "id": "10325",
       "orderNumber": 10325,
       "date": "2026-08-01",
-      "createdAt": "2026-08-01T13:50:27.000+05:30",
-      "paidAt": "2026-08-01T13:50:27.000+05:30",
-      "completedAt": "2026-08-01T13:50:27.000+05:30",
+      "createdAt": "2026-08-01T13:33:32.000+05:30",
+      "paidAt": "2026-08-01T13:33:32.000+05:30",
+      "completedAt": "2026-08-01T13:33:32.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "Cash",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
       "items": [
         {
-          "id": "m35",
-          "name": "Double Crunch Box",
-          "price": 499,
-          "unitPrice": 499,
+          "id": "m25",
+          "name": "60 Pc Strips (12 Dips)",
+          "price": 382,
+          "unitPrice": 382,
           "quantity": 1,
-          "totalPrice": 499
-        },
-        {
-          "id": "m32",
-          "name": "Signature Gyro Meal",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
+          "totalPrice": 382
         }
       ],
-      "subtotal": 760,
-      "tax": 38,
-      "total": 798
+      "subtotal": 364,
+      "tax": 18,
+      "total": 382
     },
     {
       "id": "10326",
       "orderNumber": 10326,
       "date": "2026-08-01",
-      "createdAt": "2026-08-01T13:46:00.000+05:30",
-      "paidAt": "2026-08-01T13:46:00.000+05:30",
-      "completedAt": "2026-08-01T13:46:00.000+05:30",
+      "createdAt": "2026-08-01T13:31:45.000+05:30",
+      "paidAt": "2026-08-01T13:31:45.000+05:30",
+      "completedAt": "2026-08-01T13:31:45.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
       "items": [
         {
-          "id": "m3",
-          "name": "Creamy Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
+          "id": "m26a",
+          "name": "Salted Fries",
+          "price": 270,
+          "unitPrice": 270,
           "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m46",
-          "name": "Biscoff Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
+          "totalPrice": 270
         }
       ],
-      "subtotal": 209,
-      "tax": 10,
-      "total": 219
+      "subtotal": 257,
+      "tax": 13,
+      "total": 270
     },
     {
       "id": "10327",
       "orderNumber": 10327,
       "date": "2026-08-01",
-      "createdAt": "2026-08-01T14:34:02.000+05:30",
-      "paidAt": "2026-08-01T14:34:02.000+05:30",
-      "completedAt": "2026-08-01T14:34:02.000+05:30",
+      "createdAt": "2026-08-01T14:04:20.000+05:30",
+      "paidAt": "2026-08-01T14:04:20.000+05:30",
+      "completedAt": "2026-08-01T14:04:20.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m62f",
-          "name": "Honey Mustard Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        },
-        {
-          "id": "m41b",
-          "name": "Salad - Protein Max (Paneer)",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        }
-      ],
-      "subtotal": 299,
-      "tax": 15,
-      "total": 314
-    },
-    {
-      "id": "10328",
-      "orderNumber": 10328,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T14:57:37.000+05:30",
-      "paidAt": "2026-08-01T14:57:37.000+05:30",
-      "completedAt": "2026-08-01T14:57:37.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m35",
-          "name": "Double Crunch Box",
-          "price": 499,
-          "unitPrice": 499,
-          "quantity": 1,
-          "totalPrice": 499
-        },
-        {
-          "id": "m59a",
-          "name": "Mint Kombucha",
-          "price": 114.29,
-          "unitPrice": 114.29,
-          "quantity": 1,
-          "totalPrice": 114.29
-        }
-      ],
-      "subtotal": 584,
-      "tax": 29,
-      "total": 613.29
-    },
-    {
-      "id": "10329",
-      "orderNumber": 10329,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T14:24:51.000+05:30",
-      "paidAt": "2026-08-01T14:24:51.000+05:30",
-      "completedAt": "2026-08-01T14:24:51.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m5",
-          "name": "BBQ Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m40a",
-          "name": "Lebanese Rice - Protein Max (Chicken)",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        }
-      ],
-      "subtotal": 379,
-      "tax": 19,
-      "total": 398
-    },
-    {
-      "id": "10330",
-      "orderNumber": 10330,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T14:44:41.000+05:30",
-      "paidAt": "2026-08-01T14:44:41.000+05:30",
-      "completedAt": "2026-08-01T14:44:41.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m46",
-          "name": "Biscoff Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        },
-        {
-          "id": "m33",
-          "name": "Lebanese Rice Box",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        }
-      ],
-      "subtotal": 399,
-      "tax": 20,
-      "total": 419
-    },
-    {
-      "id": "10331",
-      "orderNumber": 10331,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T14:04:13.000+05:30",
-      "paidAt": "2026-08-01T14:04:13.000+05:30",
-      "completedAt": "2026-08-01T14:04:13.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m27a",
-          "name": "Loaded Chicken Fries",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        },
-        {
-          "id": "m24",
-          "name": "20 Pc Strips (6 Dips)",
-          "price": 800,
-          "unitPrice": 800,
-          "quantity": 1,
-          "totalPrice": 800
-        }
-      ],
-      "subtotal": 951,
-      "tax": 48,
-      "total": 999
-    },
-    {
-      "id": "10332",
-      "orderNumber": 10332,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T15:03:01.000+05:30",
-      "paidAt": "2026-08-01T15:03:01.000+05:30",
-      "completedAt": "2026-08-01T15:03:01.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m33",
-          "name": "Lebanese Rice Box",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        },
-        {
-          "id": "m5",
-          "name": "BBQ Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 379,
-      "tax": 19,
-      "total": 398
-    },
-    {
-      "id": "10333",
-      "orderNumber": 10333,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T15:50:47.000+05:30",
-      "paidAt": "2026-08-01T15:50:47.000+05:30",
-      "completedAt": "2026-08-01T15:50:47.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m31",
-          "name": "Classic Gyro Meal",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        },
-        {
-          "id": "m31",
-          "name": "Classic Gyro Meal",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        }
-      ],
-      "subtotal": 474,
-      "tax": 24,
-      "total": 498
-    },
-    {
-      "id": "10334",
-      "orderNumber": 10334,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T15:48:03.000+05:30",
-      "paidAt": "2026-08-01T15:48:03.000+05:30",
-      "completedAt": "2026-08-01T15:48:03.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m28b",
-          "name": "Lebanese Rice Bowl (Paneer)",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        },
-        {
-          "id": "m14",
-          "name": "8 Pc Leg & Thigh (4 Dips)",
-          "price": 560,
-          "unitPrice": 560,
-          "quantity": 1,
-          "totalPrice": 560
-        }
-      ],
-      "subtotal": 723,
-      "tax": 36,
-      "total": 759
-    },
-    {
-      "id": "10335",
-      "orderNumber": 10335,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T15:18:18.000+05:30",
-      "paidAt": "2026-08-01T15:18:18.000+05:30",
-      "completedAt": "2026-08-01T15:18:18.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m24",
-          "name": "20 Pc Strips (6 Dips)",
-          "price": 800,
-          "unitPrice": 800,
-          "quantity": 1,
-          "totalPrice": 800
-        },
-        {
-          "id": "m23",
-          "name": "9 Pc Strips (3 Dips)",
-          "price": 360,
-          "unitPrice": 360,
-          "quantity": 1,
-          "totalPrice": 360
-        }
-      ],
-      "subtotal": 1105,
-      "tax": 55,
-      "total": 1160
-    },
-    {
-      "id": "10336",
-      "orderNumber": 10336,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T15:50:31.000+05:30",
-      "paidAt": "2026-08-01T15:50:31.000+05:30",
-      "completedAt": "2026-08-01T15:50:31.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m24",
-          "name": "20 Pc Strips (6 Dips)",
-          "price": 800,
-          "unitPrice": 800,
-          "quantity": 1,
-          "totalPrice": 800
-        },
-        {
-          "id": "m33",
-          "name": "Lebanese Rice Box",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        }
-      ],
-      "subtotal": 1047,
-      "tax": 52,
-      "total": 1099
-    },
-    {
-      "id": "10337",
-      "orderNumber": 10337,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T15:33:23.000+05:30",
-      "paidAt": "2026-08-01T15:33:23.000+05:30",
-      "completedAt": "2026-08-01T15:33:23.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m60",
-          "name": "Chocolate Brownie",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m46",
-          "name": "Biscoff Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        }
-      ],
-      "subtotal": 209,
-      "tax": 10,
-      "total": 219
-    },
-    {
-      "id": "10338",
-      "orderNumber": 10338,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T16:34:46.000+05:30",
-      "paidAt": "2026-08-01T16:34:46.000+05:30",
-      "completedAt": "2026-08-01T16:34:46.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m62a",
-          "name": "Turkish Chilli Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        },
-        {
-          "id": "m17",
-          "name": "6 Pc Wings (2 Dips)",
-          "price": 180,
-          "unitPrice": 180,
-          "quantity": 1,
-          "totalPrice": 180
-        }
-      ],
-      "subtotal": 186,
-      "tax": 9,
-      "total": 195
-    },
-    {
-      "id": "10339",
-      "orderNumber": 10339,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T16:52:04.000+05:30",
-      "paidAt": "2026-08-01T16:52:04.000+05:30",
-      "completedAt": "2026-08-01T16:52:04.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m7",
-          "name": "Peri Peri Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m53b",
-          "name": "Coca-Cola (Large)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 189,
-      "tax": 9,
-      "total": 198
-    },
-    {
-      "id": "10340",
-      "orderNumber": 10340,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T16:05:58.000+05:30",
-      "paidAt": "2026-08-01T16:05:58.000+05:30",
-      "completedAt": "2026-08-01T16:05:58.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m54a",
-          "name": "Sprite (Regular)",
-          "price": 59,
-          "unitPrice": 59,
-          "quantity": 1,
-          "totalPrice": 59
-        },
-        {
-          "id": "m62e",
-          "name": "Peri Peri Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        }
-      ],
-      "subtotal": 70,
-      "tax": 4,
-      "total": 74
-    },
-    {
-      "id": "10341",
-      "orderNumber": 10341,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T16:33:50.000+05:30",
-      "paidAt": "2026-08-01T16:33:50.000+05:30",
-      "completedAt": "2026-08-01T16:33:50.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m62a",
-          "name": "Turkish Chilli Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        },
-        {
-          "id": "m46",
-          "name": "Biscoff Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        }
-      ],
-      "subtotal": 129,
-      "tax": 6,
-      "total": 135
-    },
-    {
-      "id": "10342",
-      "orderNumber": 10342,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T16:16:02.000+05:30",
-      "paidAt": "2026-08-01T16:16:02.000+05:30",
-      "completedAt": "2026-08-01T16:16:02.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m56a",
-          "name": "Lime Ice Tea (Regular)",
-          "price": 59,
-          "unitPrice": 59,
-          "quantity": 1,
-          "totalPrice": 59
-        },
-        {
-          "id": "m37",
-          "name": "Den's Party Meal",
-          "price": 899,
-          "unitPrice": 899,
-          "quantity": 1,
-          "totalPrice": 899
-        }
-      ],
-      "subtotal": 912,
-      "tax": 46,
-      "total": 958
-    },
-    {
-      "id": "10343",
-      "orderNumber": 10343,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T17:26:12.000+05:30",
-      "paidAt": "2026-08-01T17:26:12.000+05:30",
-      "completedAt": "2026-08-01T17:26:12.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m11",
-          "name": "Pesto Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m52",
-          "name": "Vanilla Softy",
-          "price": 39,
-          "unitPrice": 39,
-          "quantity": 1,
-          "totalPrice": 39
-        }
-      ],
-      "subtotal": 131,
-      "tax": 7,
-      "total": 138
-    },
-    {
-      "id": "10344",
-      "orderNumber": 10344,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T17:40:03.000+05:30",
-      "paidAt": "2026-08-01T17:40:03.000+05:30",
-      "completedAt": "2026-08-01T17:40:03.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m57",
-          "name": "Hot Chocolate",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m41b",
-          "name": "Salad - Protein Max (Paneer)",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        }
-      ],
-      "subtotal": 379,
-      "tax": 19,
-      "total": 398
-    },
-    {
-      "id": "10345",
-      "orderNumber": 10345,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T17:50:13.000+05:30",
-      "paidAt": "2026-08-01T17:50:13.000+05:30",
-      "completedAt": "2026-08-01T17:50:13.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m5",
-          "name": "BBQ Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m56b",
-          "name": "Lime Ice Tea (Large)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 189,
-      "tax": 9,
-      "total": 198
-    },
-    {
-      "id": "10346",
-      "orderNumber": 10346,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T17:14:07.000+05:30",
-      "paidAt": "2026-08-01T17:14:07.000+05:30",
-      "completedAt": "2026-08-01T17:14:07.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m17",
-          "name": "6 Pc Wings (2 Dips)",
-          "price": 180,
-          "unitPrice": 180,
-          "quantity": 1,
-          "totalPrice": 180
-        },
-        {
-          "id": "m28b",
-          "name": "Lebanese Rice Bowl (Paneer)",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        }
-      ],
-      "subtotal": 361,
-      "tax": 18,
-      "total": 379
-    },
-    {
-      "id": "10347",
-      "orderNumber": 10347,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T17:39:57.000+05:30",
-      "paidAt": "2026-08-01T17:39:57.000+05:30",
-      "completedAt": "2026-08-01T17:39:57.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m56a",
-          "name": "Lime Ice Tea (Regular)",
-          "price": 59,
-          "unitPrice": 59,
-          "quantity": 1,
-          "totalPrice": 59
-        },
-        {
-          "id": "m2",
-          "name": "Spicy Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        }
-      ],
-      "subtotal": 293,
-      "tax": 15,
-      "total": 308
-    },
-    {
-      "id": "10348",
-      "orderNumber": 10348,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T17:35:07.000+05:30",
-      "paidAt": "2026-08-01T17:35:07.000+05:30",
-      "completedAt": "2026-08-01T17:35:07.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m13",
-          "name": "4 Pc Leg & Thigh (2 Dips)",
-          "price": 280,
-          "unitPrice": 280,
-          "quantity": 1,
-          "totalPrice": 280
-        },
-        {
-          "id": "m11",
-          "name": "Pesto Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 361,
-      "tax": 18,
-      "total": 379
-    },
-    {
-      "id": "10349",
-      "orderNumber": 10349,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T18:34:32.000+05:30",
-      "paidAt": "2026-08-01T18:34:32.000+05:30",
-      "completedAt": "2026-08-01T18:34:32.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m2",
-          "name": "Spicy Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        },
-        {
-          "id": "m9",
-          "name": "Signature Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 331,
-      "tax": 17,
-      "total": 348
-    },
-    {
-      "id": "10350",
-      "orderNumber": 10350,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T18:16:50.000+05:30",
-      "paidAt": "2026-08-01T18:16:50.000+05:30",
-      "completedAt": "2026-08-01T18:16:50.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m44",
-          "name": "Strawberry Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        },
-        {
-          "id": "m39",
-          "name": "Gyro - Protein Max",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        }
-      ],
-      "subtotal": 399,
-      "tax": 20,
-      "total": 419
-    },
-    {
-      "id": "10351",
-      "orderNumber": 10351,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T18:08:48.000+05:30",
-      "paidAt": "2026-08-01T18:08:48.000+05:30",
-      "completedAt": "2026-08-01T18:08:48.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m49",
-          "name": "Chocolate Shake (Large)",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        },
-        {
-          "id": "m26c",
-          "name": "Cajun Fries",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 284,
-      "tax": 14,
-      "total": 298
-    },
-    {
-      "id": "10352",
-      "orderNumber": 10352,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T18:35:59.000+05:30",
-      "paidAt": "2026-08-01T18:35:59.000+05:30",
-      "completedAt": "2026-08-01T18:35:59.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m62f",
-          "name": "Honey Mustard Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        },
-        {
-          "id": "m62e",
-          "name": "Peri Peri Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        }
-      ],
-      "subtotal": 29,
-      "tax": 1,
-      "total": 30
-    },
-    {
-      "id": "10353",
-      "orderNumber": 10353,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T18:50:18.000+05:30",
-      "paidAt": "2026-08-01T18:50:18.000+05:30",
-      "completedAt": "2026-08-01T18:50:18.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m62e",
-          "name": "Peri Peri Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        },
-        {
-          "id": "m3",
-          "name": "Creamy Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 109,
-      "tax": 5,
-      "total": 114
-    },
-    {
-      "id": "10354",
-      "orderNumber": 10354,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T19:35:32.000+05:30",
-      "paidAt": "2026-08-01T19:35:32.000+05:30",
-      "completedAt": "2026-08-01T19:35:32.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m38",
-          "name": "Super 5 Bucket",
-          "price": 1299,
-          "unitPrice": 1299,
-          "quantity": 1,
-          "totalPrice": 1299
-        },
-        {
-          "id": "m62b",
-          "name": "Jalapeno Cheese Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        }
-      ],
-      "subtotal": 1251,
-      "tax": 63,
-      "total": 1314
-    },
-    {
-      "id": "10355",
-      "orderNumber": 10355,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T19:26:32.000+05:30",
-      "paidAt": "2026-08-01T19:26:32.000+05:30",
-      "completedAt": "2026-08-01T19:26:32.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m36",
-          "name": "Mega Feast Meal",
-          "price": 649,
-          "unitPrice": 649,
-          "quantity": 1,
-          "totalPrice": 649
-        },
-        {
-          "id": "m38",
-          "name": "Super 5 Bucket",
-          "price": 1299,
-          "unitPrice": 1299,
-          "quantity": 1,
-          "totalPrice": 1299
-        }
-      ],
-      "subtotal": 1855,
-      "tax": 93,
-      "total": 1948
-    },
-    {
-      "id": "10356",
-      "orderNumber": 10356,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T19:22:09.000+05:30",
-      "paidAt": "2026-08-01T19:22:09.000+05:30",
-      "completedAt": "2026-08-01T19:22:09.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m34",
-          "name": "Duo Gyro Feast",
-          "price": 349,
-          "unitPrice": 349,
-          "quantity": 1,
-          "totalPrice": 349
-        },
-        {
-          "id": "m62a",
-          "name": "Turkish Chilli Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        }
-      ],
-      "subtotal": 347,
-      "tax": 17,
-      "total": 364
-    },
-    {
-      "id": "10357",
-      "orderNumber": 10357,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T19:20:37.000+05:30",
-      "paidAt": "2026-08-01T19:20:37.000+05:30",
-      "completedAt": "2026-08-01T19:20:37.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m61",
-          "name": "Blondie Cake",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m9",
-          "name": "Signature Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 189,
-      "tax": 9,
-      "total": 198
-    },
-    {
-      "id": "10358",
-      "orderNumber": 10358,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T19:43:24.000+05:30",
-      "paidAt": "2026-08-01T19:43:24.000+05:30",
-      "completedAt": "2026-08-01T19:43:24.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m27b",
-          "name": "Loaded Paneer Fries",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        },
-        {
-          "id": "m48",
-          "name": "Chocolate Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        }
-      ],
-      "subtotal": 304,
-      "tax": 15,
-      "total": 319
-    },
-    {
-      "id": "10359",
-      "orderNumber": 10359,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T19:06:16.000+05:30",
-      "paidAt": "2026-08-01T19:06:16.000+05:30",
-      "completedAt": "2026-08-01T19:06:16.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m36",
-          "name": "Mega Feast Meal",
-          "price": 649,
-          "unitPrice": 649,
-          "quantity": 1,
-          "totalPrice": 649
-        },
-        {
-          "id": "m43",
-          "name": "Vanilla Shake (Large)",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        }
-      ],
-      "subtotal": 808,
-      "tax": 40,
-      "total": 848
-    },
-    {
-      "id": "10360",
-      "orderNumber": 10360,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T20:44:16.000+05:30",
-      "paidAt": "2026-08-01T20:44:16.000+05:30",
-      "completedAt": "2026-08-01T20:44:16.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m16",
-          "name": "3 Pc Wings (1 Dip)",
-          "price": 90,
-          "unitPrice": 90,
-          "quantity": 1,
-          "totalPrice": 90
-        },
-        {
-          "id": "m58",
-          "name": "Signature Tea",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 180,
-      "tax": 9,
-      "total": 189
-    },
-    {
-      "id": "10361",
-      "orderNumber": 10361,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T20:55:16.000+05:30",
-      "paidAt": "2026-08-01T20:55:16.000+05:30",
-      "completedAt": "2026-08-01T20:55:16.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m16",
-          "name": "3 Pc Wings (1 Dip)",
-          "price": 90,
-          "unitPrice": 90,
-          "quantity": 1,
-          "totalPrice": 90
-        },
-        {
-          "id": "m3",
-          "name": "Creamy Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 180,
-      "tax": 9,
-      "total": 189
-    },
-    {
-      "id": "10362",
-      "orderNumber": 10362,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T20:51:54.000+05:30",
-      "paidAt": "2026-08-01T20:51:54.000+05:30",
-      "completedAt": "2026-08-01T20:51:54.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
       "source": "DINE-IN",
       "type": "DINE-IN",
       "items": [
         {
           "id": "m26b",
           "name": "Peri Peri Fries",
-          "price": 99,
-          "unitPrice": 99,
+          "price": 397,
+          "unitPrice": 397,
           "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m59d",
-          "name": "Butterfly Pea Kombucha",
-          "price": 114.29,
-          "unitPrice": 114.29,
-          "quantity": 1,
-          "totalPrice": 114.29
+          "totalPrice": 397
         }
       ],
-      "subtotal": 203,
-      "tax": 10,
-      "total": 213.29000000000002
+      "subtotal": 378,
+      "tax": 19,
+      "total": 397
     },
     {
-      "id": "10363",
-      "orderNumber": 10363,
+      "id": "10328",
+      "orderNumber": 10328,
       "date": "2026-08-01",
-      "createdAt": "2026-08-01T20:27:38.000+05:30",
-      "paidAt": "2026-08-01T20:27:38.000+05:30",
-      "completedAt": "2026-08-01T20:27:38.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m50",
-          "name": "Kunafa Pistachio Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        },
-        {
-          "id": "m5",
-          "name": "BBQ Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 209,
-      "tax": 10,
-      "total": 219
-    },
-    {
-      "id": "10364",
-      "orderNumber": 10364,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T20:07:35.000+05:30",
-      "paidAt": "2026-08-01T20:07:35.000+05:30",
-      "completedAt": "2026-08-01T20:07:35.000+05:30",
+      "createdAt": "2026-08-01T14:04:20.000+05:30",
+      "paidAt": "2026-08-01T14:04:20.000+05:30",
+      "completedAt": "2026-08-01T14:04:20.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "UPI",
@@ -19043,1929 +17683,77 @@
       "type": "DINE-IN",
       "items": [
         {
-          "id": "m36",
-          "name": "Mega Feast Meal",
-          "price": 649,
-          "unitPrice": 649,
+          "id": "m26c",
+          "name": "Cajun Fries",
+          "price": 255,
+          "unitPrice": 255,
           "quantity": 1,
-          "totalPrice": 649
-        },
-        {
-          "id": "m18",
-          "name": "9 Pc Wings (3 Dips)",
-          "price": 270,
-          "unitPrice": 270,
-          "quantity": 1,
-          "totalPrice": 270
+          "totalPrice": 255
         }
       ],
-      "subtotal": 875,
-      "tax": 44,
-      "total": 919
+      "subtotal": 243,
+      "tax": 12,
+      "total": 255
     },
     {
-      "id": "10365",
-      "orderNumber": 10365,
+      "id": "10329",
+      "orderNumber": 10329,
       "date": "2026-08-01",
-      "createdAt": "2026-08-01T21:19:28.000+05:30",
-      "paidAt": "2026-08-01T21:19:28.000+05:30",
-      "completedAt": "2026-08-01T21:19:28.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m46",
-          "name": "Biscoff Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        },
-        {
-          "id": "m7",
-          "name": "Peri Peri Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 209,
-      "tax": 10,
-      "total": 219
-    },
-    {
-      "id": "10366",
-      "orderNumber": 10366,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T21:43:08.000+05:30",
-      "paidAt": "2026-08-01T21:43:08.000+05:30",
-      "completedAt": "2026-08-01T21:43:08.000+05:30",
+      "createdAt": "2026-08-01T14:19:40.000+05:30",
+      "paidAt": "2026-08-01T14:19:40.000+05:30",
+      "completedAt": "2026-08-01T14:19:40.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "Cash",
       "source": "DINE-IN",
       "type": "DINE-IN",
       "items": [
-        {
-          "id": "m17",
-          "name": "6 Pc Wings (2 Dips)",
-          "price": 180,
-          "unitPrice": 180,
-          "quantity": 1,
-          "totalPrice": 180
-        },
-        {
-          "id": "m53b",
-          "name": "Coca-Cola (Large)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 266,
-      "tax": 13,
-      "total": 279
-    },
-    {
-      "id": "10367",
-      "orderNumber": 10367,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T21:22:17.000+05:30",
-      "paidAt": "2026-08-01T21:22:17.000+05:30",
-      "completedAt": "2026-08-01T21:22:17.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m54b",
-          "name": "Sprite (Large)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m52",
-          "name": "Vanilla Softy",
-          "price": 39,
-          "unitPrice": 39,
-          "quantity": 1,
-          "totalPrice": 39
-        }
-      ],
-      "subtotal": 131,
-      "tax": 7,
-      "total": 138
-    },
-    {
-      "id": "10368",
-      "orderNumber": 10368,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T21:58:19.000+05:30",
-      "paidAt": "2026-08-01T21:58:19.000+05:30",
-      "completedAt": "2026-08-01T21:58:19.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m12",
-          "name": "Pesto Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        },
-        {
-          "id": "m40b",
-          "name": "Lebanese Rice - Protein Max (Paneer)",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        }
-      ],
-      "subtotal": 522,
-      "tax": 26,
-      "total": 548
-    },
-    {
-      "id": "10369",
-      "orderNumber": 10369,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T21:44:37.000+05:30",
-      "paidAt": "2026-08-01T21:44:37.000+05:30",
-      "completedAt": "2026-08-01T21:44:37.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m51",
-          "name": "Kunafa Pistachio Shake (Large)",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        },
-        {
-          "id": "m6",
-          "name": "BBQ Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        }
-      ],
-      "subtotal": 427,
-      "tax": 21,
-      "total": 448
-    },
-    {
-      "id": "10370",
-      "orderNumber": 10370,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T21:02:58.000+05:30",
-      "paidAt": "2026-08-01T21:02:58.000+05:30",
-      "completedAt": "2026-08-01T21:02:58.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m56a",
-          "name": "Lime Ice Tea (Regular)",
-          "price": 59,
-          "unitPrice": 59,
-          "quantity": 1,
-          "totalPrice": 59
-        },
-        {
-          "id": "m52",
-          "name": "Vanilla Softy",
-          "price": 39,
-          "unitPrice": 39,
-          "quantity": 1,
-          "totalPrice": 39
-        }
-      ],
-      "subtotal": 93,
-      "tax": 5,
-      "total": 98
-    },
-    {
-      "id": "10371",
-      "orderNumber": 10371,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T22:21:00.000+05:30",
-      "paidAt": "2026-08-01T22:21:00.000+05:30",
-      "completedAt": "2026-08-01T22:21:00.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m34",
-          "name": "Duo Gyro Feast",
-          "price": 349,
-          "unitPrice": 349,
-          "quantity": 1,
-          "totalPrice": 349
-        },
-        {
-          "id": "m40a",
-          "name": "Lebanese Rice - Protein Max (Chicken)",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        }
-      ],
-      "subtotal": 617,
-      "tax": 31,
-      "total": 648
-    },
-    {
-      "id": "10372",
-      "orderNumber": 10372,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T22:07:14.000+05:30",
-      "paidAt": "2026-08-01T22:07:14.000+05:30",
-      "completedAt": "2026-08-01T22:07:14.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m38",
-          "name": "Super 5 Bucket",
-          "price": 1299,
-          "unitPrice": 1299,
-          "quantity": 1,
-          "totalPrice": 1299
-        },
-        {
-          "id": "m58",
-          "name": "Signature Tea",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 1331,
-      "tax": 67,
-      "total": 1398
-    },
-    {
-      "id": "10373",
-      "orderNumber": 10373,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T22:42:56.000+05:30",
-      "paidAt": "2026-08-01T22:42:56.000+05:30",
-      "completedAt": "2026-08-01T22:42:56.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m54b",
-          "name": "Sprite (Large)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m17",
-          "name": "6 Pc Wings (2 Dips)",
-          "price": 180,
-          "unitPrice": 180,
-          "quantity": 1,
-          "totalPrice": 180
-        }
-      ],
-      "subtotal": 266,
-      "tax": 13,
-      "total": 279
-    },
-    {
-      "id": "10374",
-      "orderNumber": 10374,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T22:59:25.000+05:30",
-      "paidAt": "2026-08-01T22:59:25.000+05:30",
-      "completedAt": "2026-08-01T22:59:25.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m40b",
-          "name": "Lebanese Rice - Protein Max (Paneer)",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        },
-        {
-          "id": "m31",
-          "name": "Classic Gyro Meal",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        }
-      ],
-      "subtotal": 522,
-      "tax": 26,
-      "total": 548
-    },
-    {
-      "id": "10375",
-      "orderNumber": 10375,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T22:29:21.000+05:30",
-      "paidAt": "2026-08-01T22:29:21.000+05:30",
-      "completedAt": "2026-08-01T22:29:21.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m10",
-          "name": "Signature Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        },
-        {
-          "id": "m37",
-          "name": "Den's Party Meal",
-          "price": 899,
-          "unitPrice": 899,
-          "quantity": 1,
-          "totalPrice": 899
-        }
-      ],
-      "subtotal": 1093,
-      "tax": 55,
-      "total": 1148
-    },
-    {
-      "id": "10376",
-      "orderNumber": 10376,
-      "date": "2026-08-01",
-      "createdAt": "2026-08-01T23:43:38.000+05:30",
-      "paidAt": "2026-08-01T23:43:38.000+05:30",
-      "completedAt": "2026-08-01T23:43:38.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m51",
-          "name": "Kunafa Pistachio Shake (Large)",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        }
-      ],
-      "subtotal": -7687,
-      "tax": -384,
-      "total": -8071.450000000001
-    },
-    {
-      "id": "10377",
-      "orderNumber": 10377,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T11:13:19.000+05:30",
-      "paidAt": "2026-08-02T11:13:19.000+05:30",
-      "completedAt": "2026-08-02T11:13:19.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m15",
-          "name": "12 Pc Leg & Thigh (6 Dips)",
-          "price": 840,
-          "unitPrice": 840,
-          "quantity": 1,
-          "totalPrice": 840
-        },
-        {
-          "id": "m62d",
-          "name": "Spicy Mayo Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        }
-      ],
-      "subtotal": 814,
-      "tax": 41,
-      "total": 855
-    },
-    {
-      "id": "10378",
-      "orderNumber": 10378,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T11:46:58.000+05:30",
-      "paidAt": "2026-08-02T11:46:58.000+05:30",
-      "completedAt": "2026-08-02T11:46:58.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m12",
-          "name": "Pesto Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        },
-        {
-          "id": "m37",
-          "name": "Den's Party Meal",
-          "price": 899,
-          "unitPrice": 899,
-          "quantity": 1,
-          "totalPrice": 899
-        }
-      ],
-      "subtotal": 1093,
-      "tax": 55,
-      "total": 1148
-    },
-    {
-      "id": "10379",
-      "orderNumber": 10379,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T11:15:46.000+05:30",
-      "paidAt": "2026-08-02T11:15:46.000+05:30",
-      "completedAt": "2026-08-02T11:15:46.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m1",
-          "name": "Spicy Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m10",
-          "name": "Signature Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        }
-      ],
-      "subtotal": 331,
-      "tax": 17,
-      "total": 348
-    },
-    {
-      "id": "10380",
-      "orderNumber": 10380,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T11:54:23.000+05:30",
-      "paidAt": "2026-08-02T11:54:23.000+05:30",
-      "completedAt": "2026-08-02T11:54:23.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m29b",
-          "name": "Signature Salad (Paneer)",
-          "price": 149,
-          "unitPrice": 149,
-          "quantity": 1,
-          "totalPrice": 149
-        },
-        {
-          "id": "m44",
-          "name": "Strawberry Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        }
-      ],
-      "subtotal": 256,
-      "tax": 13,
-      "total": 269
-    },
-    {
-      "id": "10381",
-      "orderNumber": 10381,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T12:58:42.000+05:30",
-      "paidAt": "2026-08-02T12:58:42.000+05:30",
-      "completedAt": "2026-08-02T12:58:42.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m34",
-          "name": "Duo Gyro Feast",
-          "price": 349,
-          "unitPrice": 349,
-          "quantity": 1,
-          "totalPrice": 349
-        },
-        {
-          "id": "m15",
-          "name": "12 Pc Leg & Thigh (6 Dips)",
-          "price": 840,
-          "unitPrice": 840,
-          "quantity": 1,
-          "totalPrice": 840
-        }
-      ],
-      "subtotal": 1132,
-      "tax": 57,
-      "total": 1189
-    },
-    {
-      "id": "10382",
-      "orderNumber": 10382,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T12:27:09.000+05:30",
-      "paidAt": "2026-08-02T12:27:09.000+05:30",
-      "completedAt": "2026-08-02T12:27:09.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m45",
-          "name": "Strawberry Shake (Large)",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        },
-        {
-          "id": "m50",
-          "name": "Kunafa Pistachio Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        }
-      ],
-      "subtotal": 304,
-      "tax": 15,
-      "total": 319
-    },
-    {
-      "id": "10383",
-      "orderNumber": 10383,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T12:40:48.000+05:30",
-      "paidAt": "2026-08-02T12:40:48.000+05:30",
-      "completedAt": "2026-08-02T12:40:48.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m62d",
-          "name": "Spicy Mayo Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        },
-        {
-          "id": "m40b",
-          "name": "Lebanese Rice - Protein Max (Paneer)",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        }
-      ],
-      "subtotal": 299,
-      "tax": 15,
-      "total": 314
-    },
-    {
-      "id": "10384",
-      "orderNumber": 10384,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T12:49:41.000+05:30",
-      "paidAt": "2026-08-02T12:49:41.000+05:30",
-      "completedAt": "2026-08-02T12:49:41.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m59b",
-          "name": "Hibiscus Kombucha",
-          "price": 114.29,
-          "unitPrice": 114.29,
-          "quantity": 1,
-          "totalPrice": 114.29
-        },
-        {
-          "id": "m62a",
-          "name": "Turkish Chilli Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        }
-      ],
-      "subtotal": 123,
-      "tax": 6,
-      "total": 129.29000000000002
-    },
-    {
-      "id": "10385",
-      "orderNumber": 10385,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T12:50:42.000+05:30",
-      "paidAt": "2026-08-02T12:50:42.000+05:30",
-      "completedAt": "2026-08-02T12:50:42.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m36",
-          "name": "Mega Feast Meal",
-          "price": 649,
-          "unitPrice": 649,
-          "quantity": 1,
-          "totalPrice": 649
-        },
-        {
-          "id": "m34",
-          "name": "Duo Gyro Feast",
-          "price": 349,
-          "unitPrice": 349,
-          "quantity": 1,
-          "totalPrice": 349
-        }
-      ],
-      "subtotal": 950,
-      "tax": 48,
-      "total": 998
-    },
-    {
-      "id": "10386",
-      "orderNumber": 10386,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T13:38:38.000+05:30",
-      "paidAt": "2026-08-02T13:38:38.000+05:30",
-      "completedAt": "2026-08-02T13:38:38.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m12",
-          "name": "Pesto Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        },
-        {
-          "id": "m47",
-          "name": "Biscoff Shake (Large)",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        }
-      ],
-      "subtotal": 427,
-      "tax": 21,
-      "total": 448
-    },
-    {
-      "id": "10387",
-      "orderNumber": 10387,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T13:26:55.000+05:30",
-      "paidAt": "2026-08-02T13:26:55.000+05:30",
-      "completedAt": "2026-08-02T13:26:55.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m44",
-          "name": "Strawberry Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        },
-        {
-          "id": "m15",
-          "name": "12 Pc Leg & Thigh (6 Dips)",
-          "price": 840,
-          "unitPrice": 840,
-          "quantity": 1,
-          "totalPrice": 840
-        }
-      ],
-      "subtotal": 914,
-      "tax": 46,
-      "total": 960
-    },
-    {
-      "id": "10388",
-      "orderNumber": 10388,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T13:36:07.000+05:30",
-      "paidAt": "2026-08-02T13:36:07.000+05:30",
-      "completedAt": "2026-08-02T13:36:07.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m47",
-          "name": "Biscoff Shake (Large)",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        },
         {
           "id": "m27a",
           "name": "Loaded Chicken Fries",
-          "price": 199,
-          "unitPrice": 199,
+          "price": 349,
+          "unitPrice": 349,
           "quantity": 1,
-          "totalPrice": 199
+          "totalPrice": 349
         }
       ],
-      "subtotal": 379,
-      "tax": 19,
-      "total": 398
-    },
-    {
-      "id": "10389",
-      "orderNumber": 10389,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T13:50:31.000+05:30",
-      "paidAt": "2026-08-02T13:50:31.000+05:30",
-      "completedAt": "2026-08-02T13:50:31.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m59d",
-          "name": "Butterfly Pea Kombucha",
-          "price": 114.29,
-          "unitPrice": 114.29,
-          "quantity": 1,
-          "totalPrice": 114.29
-        },
-        {
-          "id": "m29a",
-          "name": "Signature Salad (Chicken)",
-          "price": 149,
-          "unitPrice": 149,
-          "quantity": 1,
-          "totalPrice": 149
-        }
-      ],
-      "subtotal": 251,
-      "tax": 13,
-      "total": 263.29
-    },
-    {
-      "id": "10390",
-      "orderNumber": 10390,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T13:59:43.000+05:30",
-      "paidAt": "2026-08-02T13:59:43.000+05:30",
-      "completedAt": "2026-08-02T13:59:43.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m25",
-          "name": "60 Pc Strips (12 Dips)",
-          "price": 2400,
-          "unitPrice": 2400,
-          "quantity": 1,
-          "totalPrice": 2400
-        },
-        {
-          "id": "m56a",
-          "name": "Lime Ice Tea (Regular)",
-          "price": 59,
-          "unitPrice": 59,
-          "quantity": 1,
-          "totalPrice": 59
-        }
-      ],
-      "subtotal": 2342,
-      "tax": 117,
-      "total": 2459
-    },
-    {
-      "id": "10391",
-      "orderNumber": 10391,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T14:06:31.000+05:30",
-      "paidAt": "2026-08-02T14:06:31.000+05:30",
-      "completedAt": "2026-08-02T14:06:31.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m59d",
-          "name": "Butterfly Pea Kombucha",
-          "price": 114.29,
-          "unitPrice": 114.29,
-          "quantity": 1,
-          "totalPrice": 114.29
-        },
-        {
-          "id": "m14",
-          "name": "8 Pc Leg & Thigh (4 Dips)",
-          "price": 560,
-          "unitPrice": 560,
-          "quantity": 1,
-          "totalPrice": 560
-        }
-      ],
-      "subtotal": 642,
-      "tax": 32,
-      "total": 674.29
-    },
-    {
-      "id": "10392",
-      "orderNumber": 10392,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T14:51:59.000+05:30",
-      "paidAt": "2026-08-02T14:51:59.000+05:30",
-      "completedAt": "2026-08-02T14:51:59.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m36",
-          "name": "Mega Feast Meal",
-          "price": 649,
-          "unitPrice": 649,
-          "quantity": 1,
-          "totalPrice": 649
-        },
-        {
-          "id": "m31",
-          "name": "Classic Gyro Meal",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        }
-      ],
-      "subtotal": 855,
-      "tax": 43,
-      "total": 898
-    },
-    {
-      "id": "10393",
-      "orderNumber": 10393,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T14:45:30.000+05:30",
-      "paidAt": "2026-08-02T14:45:30.000+05:30",
-      "completedAt": "2026-08-02T14:45:30.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m62c",
-          "name": "Garlic Mayo Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        },
-        {
-          "id": "m29a",
-          "name": "Signature Salad (Chicken)",
-          "price": 149,
-          "unitPrice": 149,
-          "quantity": 1,
-          "totalPrice": 149
-        }
-      ],
-      "subtotal": 156,
-      "tax": 8,
-      "total": 164
-    },
-    {
-      "id": "10394",
-      "orderNumber": 10394,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T14:13:58.000+05:30",
-      "paidAt": "2026-08-02T14:13:58.000+05:30",
-      "completedAt": "2026-08-02T14:13:58.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m7",
-          "name": "Peri Peri Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m46",
-          "name": "Biscoff Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        }
-      ],
-      "subtotal": 209,
-      "tax": 10,
-      "total": 219
-    },
-    {
-      "id": "10395",
-      "orderNumber": 10395,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T15:55:19.000+05:30",
-      "paidAt": "2026-08-02T15:55:19.000+05:30",
-      "completedAt": "2026-08-02T15:55:19.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m39",
-          "name": "Gyro - Protein Max",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        },
-        {
-          "id": "m44",
-          "name": "Strawberry Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        }
-      ],
-      "subtotal": 399,
-      "tax": 20,
-      "total": 419
-    },
-    {
-      "id": "10396",
-      "orderNumber": 10396,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T15:32:39.000+05:30",
-      "paidAt": "2026-08-02T15:32:39.000+05:30",
-      "completedAt": "2026-08-02T15:32:39.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m42",
-          "name": "Vanilla Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        },
-        {
-          "id": "m31",
-          "name": "Classic Gyro Meal",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        }
-      ],
-      "subtotal": 351,
-      "tax": 18,
-      "total": 369
-    },
-    {
-      "id": "10397",
-      "orderNumber": 10397,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T15:24:19.000+05:30",
-      "paidAt": "2026-08-02T15:24:19.000+05:30",
-      "completedAt": "2026-08-02T15:24:19.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m46",
-          "name": "Biscoff Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        },
-        {
-          "id": "m61",
-          "name": "Blondie Cake",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 209,
-      "tax": 10,
-      "total": 219
-    },
-    {
-      "id": "10398",
-      "orderNumber": 10398,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T15:50:27.000+05:30",
-      "paidAt": "2026-08-02T15:50:27.000+05:30",
-      "completedAt": "2026-08-02T15:50:27.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m29b",
-          "name": "Signature Salad (Paneer)",
-          "price": 149,
-          "unitPrice": 149,
-          "quantity": 1,
-          "totalPrice": 149
-        },
-        {
-          "id": "m60",
-          "name": "Chocolate Brownie",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 236,
-      "tax": 12,
-      "total": 248
-    },
-    {
-      "id": "10399",
-      "orderNumber": 10399,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T15:26:21.000+05:30",
-      "paidAt": "2026-08-02T15:26:21.000+05:30",
-      "completedAt": "2026-08-02T15:26:21.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m40b",
-          "name": "Lebanese Rice - Protein Max (Paneer)",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        },
-        {
-          "id": "m29a",
-          "name": "Signature Salad (Chicken)",
-          "price": 149,
-          "unitPrice": 149,
-          "quantity": 1,
-          "totalPrice": 149
-        }
-      ],
-      "subtotal": 427,
-      "tax": 21,
-      "total": 448
-    },
-    {
-      "id": "10400",
-      "orderNumber": 10400,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T16:26:32.000+05:30",
-      "paidAt": "2026-08-02T16:26:32.000+05:30",
-      "completedAt": "2026-08-02T16:26:32.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m1",
-          "name": "Spicy Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m26c",
-          "name": "Cajun Fries",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 189,
-      "tax": 9,
-      "total": 198
-    },
-    {
-      "id": "10401",
-      "orderNumber": 10401,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T16:57:17.000+05:30",
-      "paidAt": "2026-08-02T16:57:17.000+05:30",
-      "completedAt": "2026-08-02T16:57:17.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m3",
-          "name": "Creamy Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m29b",
-          "name": "Signature Salad (Paneer)",
-          "price": 149,
-          "unitPrice": 149,
-          "quantity": 1,
-          "totalPrice": 149
-        }
-      ],
-      "subtotal": 236,
-      "tax": 12,
-      "total": 248
-    },
-    {
-      "id": "10402",
-      "orderNumber": 10402,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T16:19:46.000+05:30",
-      "paidAt": "2026-08-02T16:19:46.000+05:30",
-      "completedAt": "2026-08-02T16:19:46.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m13",
-          "name": "4 Pc Leg & Thigh (2 Dips)",
-          "price": 280,
-          "unitPrice": 280,
-          "quantity": 1,
-          "totalPrice": 280
-        },
-        {
-          "id": "m62d",
-          "name": "Spicy Mayo Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        }
-      ],
-      "subtotal": 281,
-      "tax": 14,
-      "total": 295
-    },
-    {
-      "id": "10403",
-      "orderNumber": 10403,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T16:11:55.000+05:30",
-      "paidAt": "2026-08-02T16:11:55.000+05:30",
-      "completedAt": "2026-08-02T16:11:55.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m31",
-          "name": "Classic Gyro Meal",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        },
-        {
-          "id": "m7",
-          "name": "Peri Peri Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 331,
+      "subtotal": 332,
       "tax": 17,
-      "total": 348
+      "total": 349
     },
     {
-      "id": "10404",
-      "orderNumber": 10404,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T16:59:41.000+05:30",
-      "paidAt": "2026-08-02T16:59:41.000+05:30",
-      "completedAt": "2026-08-02T16:59:41.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m32",
-          "name": "Signature Gyro Meal",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        },
-        {
-          "id": "m12",
-          "name": "Pesto Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        }
-      ],
-      "subtotal": 522,
-      "tax": 26,
-      "total": 548
-    },
-    {
-      "id": "10405",
-      "orderNumber": 10405,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T17:01:11.000+05:30",
-      "paidAt": "2026-08-02T17:01:11.000+05:30",
-      "completedAt": "2026-08-02T17:01:11.000+05:30",
+      "id": "10330",
+      "orderNumber": 10330,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T14:09:24.000+05:30",
+      "paidAt": "2026-08-01T14:09:24.000+05:30",
+      "completedAt": "2026-08-01T14:09:24.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "Cash",
       "source": "TAKEAWAY",
       "type": "TAKEAWAY",
       "items": [
-        {
-          "id": "m12",
-          "name": "Pesto Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        },
-        {
-          "id": "m32",
-          "name": "Signature Gyro Meal",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        }
-      ],
-      "subtotal": 522,
-      "tax": 26,
-      "total": 548
-    },
-    {
-      "id": "10406",
-      "orderNumber": 10406,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T17:26:04.000+05:30",
-      "paidAt": "2026-08-02T17:26:04.000+05:30",
-      "completedAt": "2026-08-02T17:26:04.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m55b",
-          "name": "Peach Ice Tea (Large)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m13",
-          "name": "4 Pc Leg & Thigh (2 Dips)",
-          "price": 280,
-          "unitPrice": 280,
-          "quantity": 1,
-          "totalPrice": 280
-        }
-      ],
-      "subtotal": 361,
-      "tax": 18,
-      "total": 379
-    },
-    {
-      "id": "10407",
-      "orderNumber": 10407,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T17:31:51.000+05:30",
-      "paidAt": "2026-08-02T17:31:51.000+05:30",
-      "completedAt": "2026-08-02T17:31:51.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m15",
-          "name": "12 Pc Leg & Thigh (6 Dips)",
-          "price": 840,
-          "unitPrice": 840,
-          "quantity": 1,
-          "totalPrice": 840
-        },
-        {
-          "id": "m20",
-          "name": "60 Pc Wings (12 Dips)",
-          "price": 1500,
-          "unitPrice": 1500,
-          "quantity": 1,
-          "totalPrice": 1500
-        }
-      ],
-      "subtotal": 2229,
-      "tax": 111,
-      "total": 2340
-    },
-    {
-      "id": "10408",
-      "orderNumber": 10408,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T17:42:22.000+05:30",
-      "paidAt": "2026-08-02T17:42:22.000+05:30",
-      "completedAt": "2026-08-02T17:42:22.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m29b",
-          "name": "Signature Salad (Paneer)",
-          "price": 149,
-          "unitPrice": 149,
-          "quantity": 1,
-          "totalPrice": 149
-        },
-        {
-          "id": "m26a",
-          "name": "Salted Fries",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 236,
-      "tax": 12,
-      "total": 248
-    },
-    {
-      "id": "10409",
-      "orderNumber": 10409,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T17:19:38.000+05:30",
-      "paidAt": "2026-08-02T17:19:38.000+05:30",
-      "completedAt": "2026-08-02T17:19:38.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m32",
-          "name": "Signature Gyro Meal",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        },
-        {
-          "id": "m4",
-          "name": "Creamy Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        }
-      ],
-      "subtotal": 522,
-      "tax": 26,
-      "total": 548
-    },
-    {
-      "id": "10410",
-      "orderNumber": 10410,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T18:47:12.000+05:30",
-      "paidAt": "2026-08-02T18:47:12.000+05:30",
-      "completedAt": "2026-08-02T18:47:12.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m32",
-          "name": "Signature Gyro Meal",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        },
-        {
-          "id": "m22",
-          "name": "6 Pc Strips (2 Dips)",
-          "price": 240,
-          "unitPrice": 240,
-          "quantity": 1,
-          "totalPrice": 240
-        }
-      ],
-      "subtotal": 513,
-      "tax": 26,
-      "total": 539
-    },
-    {
-      "id": "10411",
-      "orderNumber": 10411,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T18:44:05.000+05:30",
-      "paidAt": "2026-08-02T18:44:05.000+05:30",
-      "completedAt": "2026-08-02T18:44:05.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m62d",
-          "name": "Spicy Mayo Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        },
-        {
-          "id": "m62b",
-          "name": "Jalapeno Cheese Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
-        }
-      ],
-      "subtotal": 29,
-      "tax": 1,
-      "total": 30
-    },
-    {
-      "id": "10412",
-      "orderNumber": 10412,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T18:17:42.000+05:30",
-      "paidAt": "2026-08-02T18:17:42.000+05:30",
-      "completedAt": "2026-08-02T18:17:42.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m29a",
-          "name": "Signature Salad (Chicken)",
-          "price": 149,
-          "unitPrice": 149,
-          "quantity": 1,
-          "totalPrice": 149
-        },
-        {
-          "id": "m45",
-          "name": "Strawberry Shake (Large)",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        }
-      ],
-      "subtotal": 331,
-      "tax": 17,
-      "total": 348
-    },
-    {
-      "id": "10413",
-      "orderNumber": 10413,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T18:42:33.000+05:30",
-      "paidAt": "2026-08-02T18:42:33.000+05:30",
-      "completedAt": "2026-08-02T18:42:33.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m50",
-          "name": "Kunafa Pistachio Shake (Regular)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        },
-        {
-          "id": "m7",
-          "name": "Peri Peri Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 209,
-      "tax": 10,
-      "total": 219
-    },
-    {
-      "id": "10414",
-      "orderNumber": 10414,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T19:42:10.000+05:30",
-      "paidAt": "2026-08-02T19:42:10.000+05:30",
-      "completedAt": "2026-08-02T19:42:10.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m59a",
-          "name": "Mint Kombucha",
-          "price": 114.29,
-          "unitPrice": 114.29,
-          "quantity": 1,
-          "totalPrice": 114.29
-        },
-        {
-          "id": "m53b",
-          "name": "Coca-Cola (Large)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 203,
-      "tax": 10,
-      "total": 213.29000000000002
-    },
-    {
-      "id": "10415",
-      "orderNumber": 10415,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T19:11:43.000+05:30",
-      "paidAt": "2026-08-02T19:11:43.000+05:30",
-      "completedAt": "2026-08-02T19:11:43.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m18",
-          "name": "9 Pc Wings (3 Dips)",
-          "price": 270,
-          "unitPrice": 270,
-          "quantity": 1,
-          "totalPrice": 270
-        },
-        {
-          "id": "m39",
-          "name": "Gyro - Protein Max",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        }
-      ],
-      "subtotal": 542,
-      "tax": 27,
-      "total": 569
-    },
-    {
-      "id": "10416",
-      "orderNumber": 10416,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T19:11:34.000+05:30",
-      "paidAt": "2026-08-02T19:11:34.000+05:30",
-      "completedAt": "2026-08-02T19:11:34.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m60",
-          "name": "Chocolate Brownie",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m32",
-          "name": "Signature Gyro Meal",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        }
-      ],
-      "subtotal": 379,
-      "tax": 19,
-      "total": 398
-    },
-    {
-      "id": "10417",
-      "orderNumber": 10417,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T19:12:31.000+05:30",
-      "paidAt": "2026-08-02T19:12:31.000+05:30",
-      "completedAt": "2026-08-02T19:12:31.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m21",
-          "name": "3 Pc Strips (1 Dip)",
-          "price": 120,
-          "unitPrice": 120,
-          "quantity": 1,
-          "totalPrice": 120
-        },
-        {
-          "id": "m26c",
-          "name": "Cajun Fries",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        }
-      ],
-      "subtotal": 209,
-      "tax": 10,
-      "total": 219
-    },
-    {
-      "id": "10418",
-      "orderNumber": 10418,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T19:36:37.000+05:30",
-      "paidAt": "2026-08-02T19:36:37.000+05:30",
-      "completedAt": "2026-08-02T19:36:37.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m35",
-          "name": "Double Crunch Box",
-          "price": 499,
-          "unitPrice": 499,
-          "quantity": 1,
-          "totalPrice": 499
-        },
         {
           "id": "m27b",
           "name": "Loaded Paneer Fries",
-          "price": 199,
-          "unitPrice": 199,
+          "price": 303,
+          "unitPrice": 303,
           "quantity": 1,
-          "totalPrice": 199
+          "totalPrice": 303
         }
       ],
-      "subtotal": 665,
-      "tax": 33,
-      "total": 698
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303
     },
     {
-      "id": "10419",
-      "orderNumber": 10419,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T20:23:29.000+05:30",
-      "paidAt": "2026-08-02T20:23:29.000+05:30",
-      "completedAt": "2026-08-02T20:23:29.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m40b",
-          "name": "Lebanese Rice - Protein Max (Paneer)",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        },
-        {
-          "id": "m53a",
-          "name": "Coca-Cola (Regular)",
-          "price": 59,
-          "unitPrice": 59,
-          "quantity": 1,
-          "totalPrice": 59
-        }
-      ],
-      "subtotal": 341,
-      "tax": 17,
-      "total": 358
-    },
-    {
-      "id": "10420",
-      "orderNumber": 10420,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T20:28:36.000+05:30",
-      "paidAt": "2026-08-02T20:28:36.000+05:30",
-      "completedAt": "2026-08-02T20:28:36.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "Cash",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m59c",
-          "name": "Ginger Kombucha",
-          "price": 114.29,
-          "unitPrice": 114.29,
-          "quantity": 1,
-          "totalPrice": 114.29
-        },
-        {
-          "id": "m40b",
-          "name": "Lebanese Rice - Protein Max (Paneer)",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        }
-      ],
-      "subtotal": 394,
-      "tax": 20,
-      "total": 413.29
-    },
-    {
-      "id": "10421",
-      "orderNumber": 10421,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T20:46:15.000+05:30",
-      "paidAt": "2026-08-02T20:46:15.000+05:30",
-      "completedAt": "2026-08-02T20:46:15.000+05:30",
+      "id": "10331",
+      "orderNumber": 10331,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T14:47:37.000+05:30",
+      "paidAt": "2026-08-01T14:47:37.000+05:30",
+      "completedAt": "2026-08-01T14:47:37.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "UPI",
@@ -20975,65 +17763,23 @@
         {
           "id": "m28a",
           "name": "Lebanese Rice Bowl (Chicken)",
-          "price": 199,
-          "unitPrice": 199,
+          "price": 413,
+          "unitPrice": 413,
           "quantity": 1,
-          "totalPrice": 199
-        },
-        {
-          "id": "m9",
-          "name": "Signature Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
+          "totalPrice": 413
         }
       ],
-      "subtotal": 284,
-      "tax": 14,
-      "total": 298
+      "subtotal": 393,
+      "tax": 20,
+      "total": 413
     },
     {
-      "id": "10422",
-      "orderNumber": 10422,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T20:44:15.000+05:30",
-      "paidAt": "2026-08-02T20:44:15.000+05:30",
-      "completedAt": "2026-08-02T20:44:15.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m40a",
-          "name": "Lebanese Rice - Protein Max (Chicken)",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
-        },
-        {
-          "id": "m55a",
-          "name": "Peach Ice Tea (Regular)",
-          "price": 59,
-          "unitPrice": 59,
-          "quantity": 1,
-          "totalPrice": 59
-        }
-      ],
-      "subtotal": 341,
-      "tax": 17,
-      "total": 358
-    },
-    {
-      "id": "10423",
-      "orderNumber": 10423,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T20:30:04.000+05:30",
-      "paidAt": "2026-08-02T20:30:04.000+05:30",
-      "completedAt": "2026-08-02T20:30:04.000+05:30",
+      "id": "10332",
+      "orderNumber": 10332,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T15:47:54.000+05:30",
+      "paidAt": "2026-08-01T15:47:54.000+05:30",
+      "completedAt": "2026-08-01T15:47:54.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "UPI",
@@ -21041,33 +17787,51 @@
       "type": "DINE-IN",
       "items": [
         {
-          "id": "m23",
-          "name": "9 Pc Strips (3 Dips)",
-          "price": 360,
-          "unitPrice": 360,
+          "id": "m28b",
+          "name": "Lebanese Rice Bowl (Paneer)",
+          "price": 239,
+          "unitPrice": 239,
           "quantity": 1,
-          "totalPrice": 360
-        },
-        {
-          "id": "m62a",
-          "name": "Turkish Chilli Dip",
-          "price": 15,
-          "unitPrice": 15,
-          "quantity": 1,
-          "totalPrice": 15
+          "totalPrice": 239
         }
       ],
-      "subtotal": 357,
-      "tax": 18,
-      "total": 375
+      "subtotal": 228,
+      "tax": 11,
+      "total": 239
     },
     {
-      "id": "10424",
-      "orderNumber": 10424,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T21:28:50.000+05:30",
-      "paidAt": "2026-08-02T21:28:50.000+05:30",
-      "completedAt": "2026-08-02T21:28:50.000+05:30",
+      "id": "10333",
+      "orderNumber": 10333,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T15:44:23.000+05:30",
+      "paidAt": "2026-08-01T15:44:23.000+05:30",
+      "completedAt": "2026-08-01T15:44:23.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m29a",
+          "name": "Signature Salad (Chicken)",
+          "price": 405,
+          "unitPrice": 405,
+          "quantity": 1,
+          "totalPrice": 405
+        }
+      ],
+      "subtotal": 386,
+      "tax": 19,
+      "total": 405
+    },
+    {
+      "id": "10334",
+      "orderNumber": 10334,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T15:20:49.000+05:30",
+      "paidAt": "2026-08-01T15:20:49.000+05:30",
+      "completedAt": "2026-08-01T15:20:49.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "Cash",
@@ -21077,99 +17841,23 @@
         {
           "id": "m29b",
           "name": "Signature Salad (Paneer)",
-          "price": 149,
-          "unitPrice": 149,
+          "price": 247,
+          "unitPrice": 247,
           "quantity": 1,
-          "totalPrice": 149
-        },
-        {
-          "id": "m32",
-          "name": "Signature Gyro Meal",
-          "price": 299,
-          "unitPrice": 299,
-          "quantity": 1,
-          "totalPrice": 299
+          "totalPrice": 247
         }
       ],
-      "subtotal": 427,
-      "tax": 21,
-      "total": 448
+      "subtotal": 235,
+      "tax": 12,
+      "total": 247
     },
     {
-      "id": "10425",
-      "orderNumber": 10425,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T21:51:12.000+05:30",
-      "paidAt": "2026-08-02T21:51:12.000+05:30",
-      "completedAt": "2026-08-02T21:51:12.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m4",
-          "name": "Creamy Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
-          "quantity": 1,
-          "totalPrice": 249
-        },
-        {
-          "id": "m59c",
-          "name": "Ginger Kombucha",
-          "price": 114.29,
-          "unitPrice": 114.29,
-          "quantity": 1,
-          "totalPrice": 114.29
-        }
-      ],
-      "subtotal": 346,
-      "tax": 17,
-      "total": 363.29
-    },
-    {
-      "id": "10426",
-      "orderNumber": 10426,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T21:35:29.000+05:30",
-      "paidAt": "2026-08-02T21:35:29.000+05:30",
-      "completedAt": "2026-08-02T21:35:29.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "TAKEAWAY",
-      "type": "TAKEAWAY",
-      "items": [
-        {
-          "id": "m26b",
-          "name": "Peri Peri Fries",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m16",
-          "name": "3 Pc Wings (1 Dip)",
-          "price": 90,
-          "unitPrice": 90,
-          "quantity": 1,
-          "totalPrice": 90
-        }
-      ],
-      "subtotal": 180,
-      "tax": 9,
-      "total": 189
-    },
-    {
-      "id": "10427",
-      "orderNumber": 10427,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T21:00:21.000+05:30",
-      "paidAt": "2026-08-02T21:00:21.000+05:30",
-      "completedAt": "2026-08-02T21:00:21.000+05:30",
+      "id": "10335",
+      "orderNumber": 10335,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T15:12:03.000+05:30",
+      "paidAt": "2026-08-01T15:12:03.000+05:30",
+      "completedAt": "2026-08-01T15:12:03.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "Cash",
@@ -21177,33 +17865,25 @@
       "type": "DINE-IN",
       "items": [
         {
-          "id": "m16",
-          "name": "3 Pc Wings (1 Dip)",
-          "price": 90,
-          "unitPrice": 90,
+          "id": "m30",
+          "name": "Express Meal",
+          "price": 389,
+          "unitPrice": 389,
           "quantity": 1,
-          "totalPrice": 90
-        },
-        {
-          "id": "m60",
-          "name": "Chocolate Brownie",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
+          "totalPrice": 389
         }
       ],
-      "subtotal": 180,
-      "tax": 9,
-      "total": 189
+      "subtotal": 370,
+      "tax": 19,
+      "total": 389
     },
     {
-      "id": "10428",
-      "orderNumber": 10428,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T21:01:40.000+05:30",
-      "paidAt": "2026-08-02T21:01:40.000+05:30",
-      "completedAt": "2026-08-02T21:01:40.000+05:30",
+      "id": "10336",
+      "orderNumber": 10336,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T15:00:25.000+05:30",
+      "paidAt": "2026-08-01T15:00:25.000+05:30",
+      "completedAt": "2026-08-01T15:00:25.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "UPI",
@@ -21211,20 +17891,662 @@
       "type": "DINE-IN",
       "items": [
         {
-          "id": "m30",
-          "name": "Express Meal",
-          "price": 149,
-          "unitPrice": 149,
+          "id": "m31",
+          "name": "Classic Gyro Meal",
+          "price": 263,
+          "unitPrice": 263,
           "quantity": 1,
-          "totalPrice": 149
-        },
+          "totalPrice": 263
+        }
+      ],
+      "subtotal": 250,
+      "tax": 13,
+      "total": 263
+    },
+    {
+      "id": "10337",
+      "orderNumber": 10337,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T15:23:22.000+05:30",
+      "paidAt": "2026-08-01T15:23:22.000+05:30",
+      "completedAt": "2026-08-01T15:23:22.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m32",
+          "name": "Signature Gyro Meal",
+          "price": 371,
+          "unitPrice": 371,
+          "quantity": 1,
+          "totalPrice": 371
+        }
+      ],
+      "subtotal": 353,
+      "tax": 18,
+      "total": 371
+    },
+    {
+      "id": "10338",
+      "orderNumber": 10338,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T16:27:43.000+05:30",
+      "paidAt": "2026-08-01T16:27:43.000+05:30",
+      "completedAt": "2026-08-01T16:27:43.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m33",
+          "name": "Lebanese Rice Box",
+          "price": 281,
+          "unitPrice": 281,
+          "quantity": 1,
+          "totalPrice": 281
+        }
+      ],
+      "subtotal": 268,
+      "tax": 13,
+      "total": 281
+    },
+    {
+      "id": "10339",
+      "orderNumber": 10339,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T16:19:04.000+05:30",
+      "paidAt": "2026-08-01T16:19:04.000+05:30",
+      "completedAt": "2026-08-01T16:19:04.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m34",
+          "name": "Duo Gyro Feast",
+          "price": 395,
+          "unitPrice": 395,
+          "quantity": 1,
+          "totalPrice": 395
+        }
+      ],
+      "subtotal": 376,
+      "tax": 19,
+      "total": 395
+    },
+    {
+      "id": "10340",
+      "orderNumber": 10340,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T16:39:17.000+05:30",
+      "paidAt": "2026-08-01T16:39:17.000+05:30",
+      "completedAt": "2026-08-01T16:39:17.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m35",
+          "name": "Double Crunch Box",
+          "price": 257,
+          "unitPrice": 257,
+          "quantity": 1,
+          "totalPrice": 257
+        }
+      ],
+      "subtotal": 245,
+      "tax": 12,
+      "total": 257
+    },
+    {
+      "id": "10341",
+      "orderNumber": 10341,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T16:53:47.000+05:30",
+      "paidAt": "2026-08-01T16:53:47.000+05:30",
+      "completedAt": "2026-08-01T16:53:47.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m36",
+          "name": "Mega Feast Meal",
+          "price": 415,
+          "unitPrice": 415,
+          "quantity": 1,
+          "totalPrice": 415
+        }
+      ],
+      "subtotal": 395,
+      "tax": 20,
+      "total": 415
+    },
+    {
+      "id": "10342",
+      "orderNumber": 10342,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T16:42:34.000+05:30",
+      "paidAt": "2026-08-01T16:42:34.000+05:30",
+      "completedAt": "2026-08-01T16:42:34.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m37",
+          "name": "Den's Party Meal",
+          "price": 237,
+          "unitPrice": 237,
+          "quantity": 1,
+          "totalPrice": 237
+        }
+      ],
+      "subtotal": 226,
+      "tax": 11,
+      "total": 237
+    },
+    {
+      "id": "10343",
+      "orderNumber": 10343,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T17:16:31.000+05:30",
+      "paidAt": "2026-08-01T17:16:31.000+05:30",
+      "completedAt": "2026-08-01T17:16:31.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m38",
+          "name": "Super 5 Bucket",
+          "price": 415,
+          "unitPrice": 415,
+          "quantity": 1,
+          "totalPrice": 415
+        }
+      ],
+      "subtotal": 395,
+      "tax": 20,
+      "total": 415
+    },
+    {
+      "id": "10344",
+      "orderNumber": 10344,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T17:44:51.000+05:30",
+      "paidAt": "2026-08-01T17:44:51.000+05:30",
+      "completedAt": "2026-08-01T17:44:51.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m40a",
+          "name": "Lebanese Rice - Protein Max (Chicken)",
+          "price": 237,
+          "unitPrice": 237,
+          "quantity": 1,
+          "totalPrice": 237
+        }
+      ],
+      "subtotal": 226,
+      "tax": 11,
+      "total": 237
+    },
+    {
+      "id": "10345",
+      "orderNumber": 10345,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T17:12:20.000+05:30",
+      "paidAt": "2026-08-01T17:12:20.000+05:30",
+      "completedAt": "2026-08-01T17:12:20.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m40b",
+          "name": "Lebanese Rice - Protein Max (Paneer)",
+          "price": 388,
+          "unitPrice": 388,
+          "quantity": 1,
+          "totalPrice": 388
+        }
+      ],
+      "subtotal": 370,
+      "tax": 18,
+      "total": 388
+    },
+    {
+      "id": "10346",
+      "orderNumber": 10346,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T17:00:57.000+05:30",
+      "paidAt": "2026-08-01T17:00:57.000+05:30",
+      "completedAt": "2026-08-01T17:00:57.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m41a",
+          "name": "Salad - Protein Max (Chicken)",
+          "price": 264,
+          "unitPrice": 264,
+          "quantity": 1,
+          "totalPrice": 264
+        }
+      ],
+      "subtotal": 251,
+      "tax": 13,
+      "total": 264
+    },
+    {
+      "id": "10347",
+      "orderNumber": 10347,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T17:53:59.000+05:30",
+      "paidAt": "2026-08-01T17:53:59.000+05:30",
+      "completedAt": "2026-08-01T17:53:59.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m41b",
+          "name": "Salad - Protein Max (Paneer)",
+          "price": 342,
+          "unitPrice": 342,
+          "quantity": 1,
+          "totalPrice": 342
+        }
+      ],
+      "subtotal": 326,
+      "tax": 16,
+      "total": 342
+    },
+    {
+      "id": "10348",
+      "orderNumber": 10348,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T17:15:47.000+05:30",
+      "paidAt": "2026-08-01T17:15:47.000+05:30",
+      "completedAt": "2026-08-01T17:15:47.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m42",
+          "name": "Vanilla Shake (Regular)",
+          "price": 310,
+          "unitPrice": 310,
+          "quantity": 1,
+          "totalPrice": 310
+        }
+      ],
+      "subtotal": 295,
+      "tax": 15,
+      "total": 310
+    },
+    {
+      "id": "10349",
+      "orderNumber": 10349,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T18:30:52.000+05:30",
+      "paidAt": "2026-08-01T18:30:52.000+05:30",
+      "completedAt": "2026-08-01T18:30:52.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
         {
           "id": "m43",
           "name": "Vanilla Shake (Large)",
-          "price": 199,
-          "unitPrice": 199,
+          "price": 359,
+          "unitPrice": 359,
           "quantity": 1,
-          "totalPrice": 199
+          "totalPrice": 359
+        }
+      ],
+      "subtotal": 342,
+      "tax": 17,
+      "total": 359
+    },
+    {
+      "id": "10350",
+      "orderNumber": 10350,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T18:30:15.000+05:30",
+      "paidAt": "2026-08-01T18:30:15.000+05:30",
+      "completedAt": "2026-08-01T18:30:15.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m44",
+          "name": "Strawberry Shake (Regular)",
+          "price": 293,
+          "unitPrice": 293,
+          "quantity": 1,
+          "totalPrice": 293
+        }
+      ],
+      "subtotal": 279,
+      "tax": 14,
+      "total": 293
+    },
+    {
+      "id": "10351",
+      "orderNumber": 10351,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T18:08:25.000+05:30",
+      "paidAt": "2026-08-01T18:08:25.000+05:30",
+      "completedAt": "2026-08-01T18:08:25.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m45",
+          "name": "Strawberry Shake (Large)",
+          "price": 362,
+          "unitPrice": 362,
+          "quantity": 1,
+          "totalPrice": 362
+        }
+      ],
+      "subtotal": 345,
+      "tax": 17,
+      "total": 362
+    },
+    {
+      "id": "10352",
+      "orderNumber": 10352,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T18:08:22.000+05:30",
+      "paidAt": "2026-08-01T18:08:22.000+05:30",
+      "completedAt": "2026-08-01T18:08:22.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m46",
+          "name": "Biscoff Shake (Regular)",
+          "price": 290,
+          "unitPrice": 290,
+          "quantity": 1,
+          "totalPrice": 290
+        }
+      ],
+      "subtotal": 276,
+      "tax": 14,
+      "total": 290
+    },
+    {
+      "id": "10353",
+      "orderNumber": 10353,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T18:41:38.000+05:30",
+      "paidAt": "2026-08-01T18:41:38.000+05:30",
+      "completedAt": "2026-08-01T18:41:38.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m47",
+          "name": "Biscoff Shake (Large)",
+          "price": 376,
+          "unitPrice": 376,
+          "quantity": 1,
+          "totalPrice": 376
+        }
+      ],
+      "subtotal": 358,
+      "tax": 18,
+      "total": 376
+    },
+    {
+      "id": "10354",
+      "orderNumber": 10354,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T19:17:59.000+05:30",
+      "paidAt": "2026-08-01T19:17:59.000+05:30",
+      "completedAt": "2026-08-01T19:17:59.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m48",
+          "name": "Chocolate Shake (Regular)",
+          "price": 276,
+          "unitPrice": 276,
+          "quantity": 1,
+          "totalPrice": 276
+        }
+      ],
+      "subtotal": 263,
+      "tax": 13,
+      "total": 276
+    },
+    {
+      "id": "10355",
+      "orderNumber": 10355,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T19:49:40.000+05:30",
+      "paidAt": "2026-08-01T19:49:40.000+05:30",
+      "completedAt": "2026-08-01T19:49:40.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m49",
+          "name": "Chocolate Shake (Large)",
+          "price": 343,
+          "unitPrice": 343,
+          "quantity": 1,
+          "totalPrice": 343
+        }
+      ],
+      "subtotal": 327,
+      "tax": 16,
+      "total": 343
+    },
+    {
+      "id": "10356",
+      "orderNumber": 10356,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T19:45:28.000+05:30",
+      "paidAt": "2026-08-01T19:45:28.000+05:30",
+      "completedAt": "2026-08-01T19:45:28.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m50",
+          "name": "Kunafa Pistachio Shake (Regular)",
+          "price": 309,
+          "unitPrice": 309,
+          "quantity": 1,
+          "totalPrice": 309
+        }
+      ],
+      "subtotal": 294,
+      "tax": 15,
+      "total": 309
+    },
+    {
+      "id": "10357",
+      "orderNumber": 10357,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T19:55:35.000+05:30",
+      "paidAt": "2026-08-01T19:55:35.000+05:30",
+      "completedAt": "2026-08-01T19:55:35.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m51",
+          "name": "Kunafa Pistachio Shake (Large)",
+          "price": 358,
+          "unitPrice": 358,
+          "quantity": 1,
+          "totalPrice": 358
+        }
+      ],
+      "subtotal": 341,
+      "tax": 17,
+      "total": 358
+    },
+    {
+      "id": "10358",
+      "orderNumber": 10358,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T19:55:11.000+05:30",
+      "paidAt": "2026-08-01T19:55:11.000+05:30",
+      "completedAt": "2026-08-01T19:55:11.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m52",
+          "name": "Vanilla Softy",
+          "price": 294,
+          "unitPrice": 294,
+          "quantity": 1,
+          "totalPrice": 294
+        }
+      ],
+      "subtotal": 280,
+      "tax": 14,
+      "total": 294
+    },
+    {
+      "id": "10359",
+      "orderNumber": 10359,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T19:01:38.000+05:30",
+      "paidAt": "2026-08-01T19:01:38.000+05:30",
+      "completedAt": "2026-08-01T19:01:38.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m53a",
+          "name": "Coca-Cola (Regular)",
+          "price": 413,
+          "unitPrice": 413,
+          "quantity": 1,
+          "totalPrice": 413
+        }
+      ],
+      "subtotal": 393,
+      "tax": 20,
+      "total": 413
+    },
+    {
+      "id": "10360",
+      "orderNumber": 10360,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T20:12:37.000+05:30",
+      "paidAt": "2026-08-01T20:12:37.000+05:30",
+      "completedAt": "2026-08-01T20:12:37.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m53b",
+          "name": "Coca-Cola (Large)",
+          "price": 239,
+          "unitPrice": 239,
+          "quantity": 1,
+          "totalPrice": 239
+        }
+      ],
+      "subtotal": 228,
+      "tax": 11,
+      "total": 239
+    },
+    {
+      "id": "10361",
+      "orderNumber": 10361,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T20:44:01.000+05:30",
+      "paidAt": "2026-08-01T20:44:01.000+05:30",
+      "completedAt": "2026-08-01T20:44:01.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m54a",
+          "name": "Sprite (Regular)",
+          "price": 348,
+          "unitPrice": 348,
+          "quantity": 1,
+          "totalPrice": 348
         }
       ],
       "subtotal": 331,
@@ -21232,12 +18554,454 @@
       "total": 348
     },
     {
-      "id": "10429",
-      "orderNumber": 10429,
+      "id": "10362",
+      "orderNumber": 10362,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T20:17:14.000+05:30",
+      "paidAt": "2026-08-01T20:17:14.000+05:30",
+      "completedAt": "2026-08-01T20:17:14.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m54b",
+          "name": "Sprite (Large)",
+          "price": 303,
+          "unitPrice": 303,
+          "quantity": 1,
+          "totalPrice": 303
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303
+    },
+    {
+      "id": "10363",
+      "orderNumber": 10363,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T20:21:44.000+05:30",
+      "paidAt": "2026-08-01T20:21:44.000+05:30",
+      "completedAt": "2026-08-01T20:21:44.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m55a",
+          "name": "Peach Ice Tea (Regular)",
+          "price": 397,
+          "unitPrice": 397,
+          "quantity": 1,
+          "totalPrice": 397
+        }
+      ],
+      "subtotal": 378,
+      "tax": 19,
+      "total": 397
+    },
+    {
+      "id": "10364",
+      "orderNumber": 10364,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T20:50:36.000+05:30",
+      "paidAt": "2026-08-01T20:50:36.000+05:30",
+      "completedAt": "2026-08-01T20:50:36.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m55b",
+          "name": "Peach Ice Tea (Large)",
+          "price": 253,
+          "unitPrice": 253,
+          "quantity": 1,
+          "totalPrice": 253
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253
+    },
+    {
+      "id": "10365",
+      "orderNumber": 10365,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T21:58:22.000+05:30",
+      "paidAt": "2026-08-01T21:58:22.000+05:30",
+      "completedAt": "2026-08-01T21:58:22.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m56a",
+          "name": "Lime Ice Tea (Regular)",
+          "price": 383,
+          "unitPrice": 383,
+          "quantity": 1,
+          "totalPrice": 383
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383
+    },
+    {
+      "id": "10366",
+      "orderNumber": 10366,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T21:46:28.000+05:30",
+      "paidAt": "2026-08-01T21:46:28.000+05:30",
+      "completedAt": "2026-08-01T21:46:28.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m56b",
+          "name": "Lime Ice Tea (Large)",
+          "price": 267,
+          "unitPrice": 267,
+          "quantity": 1,
+          "totalPrice": 267
+        }
+      ],
+      "subtotal": 254,
+      "tax": 13,
+      "total": 267
+    },
+    {
+      "id": "10367",
+      "orderNumber": 10367,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T21:31:42.000+05:30",
+      "paidAt": "2026-08-01T21:31:42.000+05:30",
+      "completedAt": "2026-08-01T21:31:42.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m59a",
+          "name": "Mint Kombucha",
+          "price": 369,
+          "unitPrice": 369,
+          "quantity": 1,
+          "totalPrice": 369
+        }
+      ],
+      "subtotal": 351,
+      "tax": 18,
+      "total": 369
+    },
+    {
+      "id": "10368",
+      "orderNumber": 10368,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T21:05:11.000+05:30",
+      "paidAt": "2026-08-01T21:05:11.000+05:30",
+      "completedAt": "2026-08-01T21:05:11.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m59b",
+          "name": "Hibiscus Kombucha",
+          "price": 281,
+          "unitPrice": 281,
+          "quantity": 1,
+          "totalPrice": 281
+        }
+      ],
+      "subtotal": 268,
+      "tax": 13,
+      "total": 281
+    },
+    {
+      "id": "10369",
+      "orderNumber": 10369,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T21:29:17.000+05:30",
+      "paidAt": "2026-08-01T21:29:17.000+05:30",
+      "completedAt": "2026-08-01T21:29:17.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m59c",
+          "name": "Ginger Kombucha",
+          "price": 364,
+          "unitPrice": 364,
+          "quantity": 1,
+          "totalPrice": 364
+        }
+      ],
+      "subtotal": 347,
+      "tax": 17,
+      "total": 364
+    },
+    {
+      "id": "10370",
+      "orderNumber": 10370,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T21:02:46.000+05:30",
+      "paidAt": "2026-08-01T21:02:46.000+05:30",
+      "completedAt": "2026-08-01T21:02:46.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m59d",
+          "name": "Butterfly Pea Kombucha",
+          "price": 286,
+          "unitPrice": 286,
+          "quantity": 1,
+          "totalPrice": 286
+        }
+      ],
+      "subtotal": 272,
+      "tax": 14,
+      "total": 286
+    },
+    {
+      "id": "10371",
+      "orderNumber": 10371,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T22:32:38.000+05:30",
+      "paidAt": "2026-08-01T22:32:38.000+05:30",
+      "completedAt": "2026-08-01T22:32:38.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m57",
+          "name": "Hot Chocolate",
+          "price": 350,
+          "unitPrice": 350,
+          "quantity": 1,
+          "totalPrice": 350
+        }
+      ],
+      "subtotal": 333,
+      "tax": 17,
+      "total": 350
+    },
+    {
+      "id": "10372",
+      "orderNumber": 10372,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T22:47:28.000+05:30",
+      "paidAt": "2026-08-01T22:47:28.000+05:30",
+      "completedAt": "2026-08-01T22:47:28.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m58",
+          "name": "Signature Tea",
+          "price": 300,
+          "unitPrice": 300,
+          "quantity": 1,
+          "totalPrice": 300
+        }
+      ],
+      "subtotal": 286,
+      "tax": 14,
+      "total": 300
+    },
+    {
+      "id": "10373",
+      "orderNumber": 10373,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T22:18:20.000+05:30",
+      "paidAt": "2026-08-01T22:18:20.000+05:30",
+      "completedAt": "2026-08-01T22:18:20.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m60",
+          "name": "Chocolate Brownie",
+          "price": 356,
+          "unitPrice": 356,
+          "quantity": 1,
+          "totalPrice": 356
+        }
+      ],
+      "subtotal": 339,
+      "tax": 17,
+      "total": 356
+    },
+    {
+      "id": "10374",
+      "orderNumber": 10374,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T22:13:17.000+05:30",
+      "paidAt": "2026-08-01T22:13:17.000+05:30",
+      "completedAt": "2026-08-01T22:13:17.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m61",
+          "name": "Blondie Cake",
+          "price": 294,
+          "unitPrice": 294,
+          "quantity": 1,
+          "totalPrice": 294
+        }
+      ],
+      "subtotal": 280,
+      "tax": 14,
+      "total": 294
+    },
+    {
+      "id": "10375",
+      "orderNumber": 10375,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T22:28:39.000+05:30",
+      "paidAt": "2026-08-01T22:28:39.000+05:30",
+      "completedAt": "2026-08-01T22:28:39.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m62a",
+          "name": "Turkish Chilli Dip",
+          "price": 359,
+          "unitPrice": 359,
+          "quantity": 1,
+          "totalPrice": 359
+        }
+      ],
+      "subtotal": 342,
+      "tax": 17,
+      "total": 359
+    },
+    {
+      "id": "10376",
+      "orderNumber": 10376,
+      "date": "2026-08-01",
+      "createdAt": "2026-08-01T23:52:49.000+05:30",
+      "paidAt": "2026-08-01T23:52:49.000+05:30",
+      "completedAt": "2026-08-01T23:52:49.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m62b",
+          "name": "Jalapeno Cheese Dip",
+          "price": 291,
+          "unitPrice": 291,
+          "quantity": 1,
+          "totalPrice": 291
+        }
+      ],
+      "subtotal": 277,
+      "tax": 14,
+      "total": 291
+    },
+    {
+      "id": "10377",
+      "orderNumber": 10377,
       "date": "2026-08-02",
-      "createdAt": "2026-08-02T22:14:49.000+05:30",
-      "paidAt": "2026-08-02T22:14:49.000+05:30",
-      "completedAt": "2026-08-02T22:14:49.000+05:30",
+      "createdAt": "2026-08-02T11:21:59.000+05:30",
+      "paidAt": "2026-08-02T11:21:59.000+05:30",
+      "completedAt": "2026-08-02T11:21:59.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m11",
+          "name": "Pesto Gyro (Mini)",
+          "price": 384,
+          "unitPrice": 384,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 366,
+      "tax": 18,
+      "total": 384
+    },
+    {
+      "id": "10378",
+      "orderNumber": 10378,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T11:33:02.000+05:30",
+      "paidAt": "2026-08-02T11:33:02.000+05:30",
+      "completedAt": "2026-08-02T11:33:02.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m12",
+          "name": "Pesto Gyro (Signature)",
+          "price": 326,
+          "unitPrice": 326,
+          "quantity": 1,
+          "totalPrice": 326
+        }
+      ],
+      "subtotal": 310,
+      "tax": 16,
+      "total": 326
+    },
+    {
+      "id": "10379",
+      "orderNumber": 10379,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T11:03:18.000+05:30",
+      "paidAt": "2026-08-02T11:03:18.000+05:30",
+      "completedAt": "2026-08-02T11:03:18.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "UPI",
@@ -21247,99 +19011,49 @@
         {
           "id": "m13",
           "name": "4 Pc Leg & Thigh (2 Dips)",
-          "price": 280,
-          "unitPrice": 280,
+          "price": 411,
+          "unitPrice": 411,
           "quantity": 1,
-          "totalPrice": 280
-        },
-        {
-          "id": "m59a",
-          "name": "Mint Kombucha",
-          "price": 114.29,
-          "unitPrice": 114.29,
-          "quantity": 1,
-          "totalPrice": 114.29
+          "totalPrice": 411
         }
       ],
-      "subtotal": 376,
-      "tax": 19,
-      "total": 394.29
+      "subtotal": 391,
+      "tax": 20,
+      "total": 411
     },
     {
-      "id": "10430",
-      "orderNumber": 10430,
+      "id": "10380",
+      "orderNumber": 10380,
       "date": "2026-08-02",
-      "createdAt": "2026-08-02T22:42:49.000+05:30",
-      "paidAt": "2026-08-02T22:42:49.000+05:30",
-      "completedAt": "2026-08-02T22:42:49.000+05:30",
+      "createdAt": "2026-08-02T11:02:38.000+05:30",
+      "paidAt": "2026-08-02T11:02:38.000+05:30",
+      "completedAt": "2026-08-02T11:02:38.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
-      "paymentMethod": "UPI",
+      "paymentMethod": "Cash",
       "source": "TAKEAWAY",
       "type": "TAKEAWAY",
       "items": [
         {
-          "id": "m4",
-          "name": "Creamy Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
+          "id": "m14",
+          "name": "8 Pc Leg & Thigh (4 Dips)",
+          "price": 299,
+          "unitPrice": 299,
           "quantity": 1,
-          "totalPrice": 249
-        },
-        {
-          "id": "m59c",
-          "name": "Ginger Kombucha",
-          "price": 114.29,
-          "unitPrice": 114.29,
-          "quantity": 1,
-          "totalPrice": 114.29
+          "totalPrice": 299
         }
       ],
-      "subtotal": 346,
-      "tax": 17,
-      "total": 363.29
-    },
-    {
-      "id": "10431",
-      "orderNumber": 10431,
-      "date": "2026-08-02",
-      "createdAt": "2026-08-02T22:49:47.000+05:30",
-      "paidAt": "2026-08-02T22:49:47.000+05:30",
-      "completedAt": "2026-08-02T22:49:47.000+05:30",
-      "status": "completed",
-      "paymentStatus": "paid",
-      "paymentMethod": "UPI",
-      "source": "DINE-IN",
-      "type": "DINE-IN",
-      "items": [
-        {
-          "id": "m5",
-          "name": "BBQ Gyro (Mini)",
-          "price": 99,
-          "unitPrice": 99,
-          "quantity": 1,
-          "totalPrice": 99
-        },
-        {
-          "id": "m45",
-          "name": "Strawberry Shake (Large)",
-          "price": 199,
-          "unitPrice": 199,
-          "quantity": 1,
-          "totalPrice": 199
-        }
-      ],
-      "subtotal": 284,
+      "subtotal": 285,
       "tax": 14,
-      "total": 298
+      "total": 299
     },
     {
-      "id": "10432",
-      "orderNumber": 10432,
+      "id": "10381",
+      "orderNumber": 10381,
       "date": "2026-08-02",
-      "createdAt": "2026-08-02T22:48:29.000+05:30",
-      "paidAt": "2026-08-02T22:48:29.000+05:30",
-      "completedAt": "2026-08-02T22:48:29.000+05:30",
+      "createdAt": "2026-08-02T12:43:39.000+05:30",
+      "paidAt": "2026-08-02T12:43:39.000+05:30",
+      "completedAt": "2026-08-02T12:43:39.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "Cash",
@@ -21347,33 +19061,129 @@
       "type": "DINE-IN",
       "items": [
         {
-          "id": "m4",
-          "name": "Creamy Gyro (Signature)",
-          "price": 249,
-          "unitPrice": 249,
+          "id": "m15",
+          "name": "12 Pc Leg & Thigh (6 Dips)",
+          "price": 370,
+          "unitPrice": 370,
           "quantity": 1,
-          "totalPrice": 249
-        },
-        {
-          "id": "m37",
-          "name": "Den's Party Meal",
-          "price": 899,
-          "unitPrice": 899,
-          "quantity": 1,
-          "totalPrice": 899
+          "totalPrice": 370
         }
       ],
-      "subtotal": 1093,
-      "tax": 55,
-      "total": 1148
+      "subtotal": 352,
+      "tax": 18,
+      "total": 370
     },
     {
-      "id": "10433",
-      "orderNumber": 10433,
+      "id": "10382",
+      "orderNumber": 10382,
       "date": "2026-08-02",
-      "createdAt": "2026-08-02T23:13:14.000+05:30",
-      "paidAt": "2026-08-02T23:13:14.000+05:30",
-      "completedAt": "2026-08-02T23:13:14.000+05:30",
+      "createdAt": "2026-08-02T12:26:34.000+05:30",
+      "paidAt": "2026-08-02T12:26:34.000+05:30",
+      "completedAt": "2026-08-02T12:26:34.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m16",
+          "name": "3 Pc Wings (1 Dip)",
+          "price": 339,
+          "unitPrice": 339,
+          "quantity": 1,
+          "totalPrice": 339
+        }
+      ],
+      "subtotal": 323,
+      "tax": 16,
+      "total": 339
+    },
+    {
+      "id": "10383",
+      "orderNumber": 10383,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T12:21:55.000+05:30",
+      "paidAt": "2026-08-02T12:21:55.000+05:30",
+      "completedAt": "2026-08-02T12:21:55.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m17",
+          "name": "6 Pc Wings (2 Dips)",
+          "price": 422,
+          "unitPrice": 422,
+          "quantity": 1,
+          "totalPrice": 422
+        }
+      ],
+      "subtotal": 402,
+      "tax": 20,
+      "total": 422
+    },
+    {
+      "id": "10384",
+      "orderNumber": 10384,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T12:59:34.000+05:30",
+      "paidAt": "2026-08-02T12:59:34.000+05:30",
+      "completedAt": "2026-08-02T12:59:34.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m18",
+          "name": "9 Pc Wings (3 Dips)",
+          "price": 286,
+          "unitPrice": 286,
+          "quantity": 1,
+          "totalPrice": 286
+        }
+      ],
+      "subtotal": 272,
+      "tax": 14,
+      "total": 286
+    },
+    {
+      "id": "10385",
+      "orderNumber": 10385,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T12:18:04.000+05:30",
+      "paidAt": "2026-08-02T12:18:04.000+05:30",
+      "completedAt": "2026-08-02T12:18:04.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m19",
+          "name": "20 Pc Wings (6 Dips)",
+          "price": 392,
+          "unitPrice": 392,
+          "quantity": 1,
+          "totalPrice": 392
+        }
+      ],
+      "subtotal": 373,
+      "tax": 19,
+      "total": 392
+    },
+    {
+      "id": "10386",
+      "orderNumber": 10386,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T13:09:32.000+05:30",
+      "paidAt": "2026-08-02T13:09:32.000+05:30",
+      "completedAt": "2026-08-02T13:09:32.000+05:30",
       "status": "completed",
       "paymentStatus": "paid",
       "paymentMethod": "Cash",
@@ -21383,15 +19193,1237 @@
         {
           "id": "m20",
           "name": "60 Pc Wings (12 Dips)",
-          "price": 1500,
-          "unitPrice": 1500,
+          "price": 316,
+          "unitPrice": 316,
           "quantity": 1,
-          "totalPrice": 1500
+          "totalPrice": 316
         }
       ],
-      "subtotal": -7666,
-      "tax": -383,
-      "total": -8049.320000000003
+      "subtotal": 301,
+      "tax": 15,
+      "total": 316
+    },
+    {
+      "id": "10387",
+      "orderNumber": 10387,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T13:57:39.000+05:30",
+      "paidAt": "2026-08-02T13:57:39.000+05:30",
+      "completedAt": "2026-08-02T13:57:39.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m21",
+          "name": "3 Pc Strips (1 Dip)",
+          "price": 425,
+          "unitPrice": 425,
+          "quantity": 1,
+          "totalPrice": 425
+        }
+      ],
+      "subtotal": 405,
+      "tax": 20,
+      "total": 425
+    },
+    {
+      "id": "10388",
+      "orderNumber": 10388,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T13:14:10.000+05:30",
+      "paidAt": "2026-08-02T13:14:10.000+05:30",
+      "completedAt": "2026-08-02T13:14:10.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m22",
+          "name": "6 Pc Strips (2 Dips)",
+          "price": 283,
+          "unitPrice": 283,
+          "quantity": 1,
+          "totalPrice": 283
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283
+    },
+    {
+      "id": "10389",
+      "orderNumber": 10389,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T13:17:20.000+05:30",
+      "paidAt": "2026-08-02T13:17:20.000+05:30",
+      "completedAt": "2026-08-02T13:17:20.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m23",
+          "name": "9 Pc Strips (3 Dips)",
+          "price": 438,
+          "unitPrice": 438,
+          "quantity": 1,
+          "totalPrice": 438
+        }
+      ],
+      "subtotal": 417,
+      "tax": 21,
+      "total": 438
+    },
+    {
+      "id": "10390",
+      "orderNumber": 10390,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T13:12:27.000+05:30",
+      "paidAt": "2026-08-02T13:12:27.000+05:30",
+      "completedAt": "2026-08-02T13:12:27.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m24",
+          "name": "20 Pc Strips (6 Dips)",
+          "price": 270,
+          "unitPrice": 270,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 257,
+      "tax": 13,
+      "total": 270
+    },
+    {
+      "id": "10391",
+      "orderNumber": 10391,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T14:58:27.000+05:30",
+      "paidAt": "2026-08-02T14:58:27.000+05:30",
+      "completedAt": "2026-08-02T14:58:27.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m25",
+          "name": "60 Pc Strips (12 Dips)",
+          "price": 402,
+          "unitPrice": 402,
+          "quantity": 1,
+          "totalPrice": 402
+        }
+      ],
+      "subtotal": 383,
+      "tax": 19,
+      "total": 402
+    },
+    {
+      "id": "10392",
+      "orderNumber": 10392,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T14:07:55.000+05:30",
+      "paidAt": "2026-08-02T14:07:55.000+05:30",
+      "completedAt": "2026-08-02T14:07:55.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m26a",
+          "name": "Salted Fries",
+          "price": 306,
+          "unitPrice": 306,
+          "quantity": 1,
+          "totalPrice": 306
+        }
+      ],
+      "subtotal": 291,
+      "tax": 15,
+      "total": 306
+    },
+    {
+      "id": "10393",
+      "orderNumber": 10393,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T14:14:33.000+05:30",
+      "paidAt": "2026-08-02T14:14:33.000+05:30",
+      "completedAt": "2026-08-02T14:14:33.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m26b",
+          "name": "Peri Peri Fries",
+          "price": 405,
+          "unitPrice": 405,
+          "quantity": 1,
+          "totalPrice": 405
+        }
+      ],
+      "subtotal": 386,
+      "tax": 19,
+      "total": 405
+    },
+    {
+      "id": "10394",
+      "orderNumber": 10394,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T14:56:12.000+05:30",
+      "paidAt": "2026-08-02T14:56:12.000+05:30",
+      "completedAt": "2026-08-02T14:56:12.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m26c",
+          "name": "Cajun Fries",
+          "price": 303,
+          "unitPrice": 303,
+          "quantity": 1,
+          "totalPrice": 303
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303
+    },
+    {
+      "id": "10395",
+      "orderNumber": 10395,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T15:59:38.000+05:30",
+      "paidAt": "2026-08-02T15:59:38.000+05:30",
+      "completedAt": "2026-08-02T15:59:38.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m27a",
+          "name": "Loaded Chicken Fries",
+          "price": 431,
+          "unitPrice": 431,
+          "quantity": 1,
+          "totalPrice": 431
+        }
+      ],
+      "subtotal": 410,
+      "tax": 21,
+      "total": 431
+    },
+    {
+      "id": "10396",
+      "orderNumber": 10396,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T15:46:59.000+05:30",
+      "paidAt": "2026-08-02T15:46:59.000+05:30",
+      "completedAt": "2026-08-02T15:46:59.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m27b",
+          "name": "Loaded Paneer Fries",
+          "price": 277,
+          "unitPrice": 277,
+          "quantity": 1,
+          "totalPrice": 277
+        }
+      ],
+      "subtotal": 264,
+      "tax": 13,
+      "total": 277
+    },
+    {
+      "id": "10397",
+      "orderNumber": 10397,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T15:41:18.000+05:30",
+      "paidAt": "2026-08-02T15:41:18.000+05:30",
+      "completedAt": "2026-08-02T15:41:18.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m28a",
+          "name": "Lebanese Rice Bowl (Chicken)",
+          "price": 421,
+          "unitPrice": 421,
+          "quantity": 1,
+          "totalPrice": 421
+        }
+      ],
+      "subtotal": 401,
+      "tax": 20,
+      "total": 421
+    },
+    {
+      "id": "10398",
+      "orderNumber": 10398,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T15:05:32.000+05:30",
+      "paidAt": "2026-08-02T15:05:32.000+05:30",
+      "completedAt": "2026-08-02T15:05:32.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m28b",
+          "name": "Lebanese Rice Bowl (Paneer)",
+          "price": 287,
+          "unitPrice": 287,
+          "quantity": 1,
+          "totalPrice": 287
+        }
+      ],
+      "subtotal": 273,
+      "tax": 14,
+      "total": 287
+    },
+    {
+      "id": "10399",
+      "orderNumber": 10399,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T15:23:17.000+05:30",
+      "paidAt": "2026-08-02T15:23:17.000+05:30",
+      "completedAt": "2026-08-02T15:23:17.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m29a",
+          "name": "Signature Salad (Chicken)",
+          "price": 431,
+          "unitPrice": 431,
+          "quantity": 1,
+          "totalPrice": 431
+        }
+      ],
+      "subtotal": 410,
+      "tax": 21,
+      "total": 431
+    },
+    {
+      "id": "10400",
+      "orderNumber": 10400,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T16:27:24.000+05:30",
+      "paidAt": "2026-08-02T16:27:24.000+05:30",
+      "completedAt": "2026-08-02T16:27:24.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m29b",
+          "name": "Signature Salad (Paneer)",
+          "price": 277,
+          "unitPrice": 277,
+          "quantity": 1,
+          "totalPrice": 277
+        }
+      ],
+      "subtotal": 264,
+      "tax": 13,
+      "total": 277
+    },
+    {
+      "id": "10401",
+      "orderNumber": 10401,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T16:32:45.000+05:30",
+      "paidAt": "2026-08-02T16:32:45.000+05:30",
+      "completedAt": "2026-08-02T16:32:45.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m30",
+          "name": "Express Meal",
+          "price": 423,
+          "unitPrice": 423,
+          "quantity": 1,
+          "totalPrice": 423
+        }
+      ],
+      "subtotal": 403,
+      "tax": 20,
+      "total": 423
+    },
+    {
+      "id": "10402",
+      "orderNumber": 10402,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T16:18:15.000+05:30",
+      "paidAt": "2026-08-02T16:18:15.000+05:30",
+      "completedAt": "2026-08-02T16:18:15.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m31",
+          "name": "Classic Gyro Meal",
+          "price": 285,
+          "unitPrice": 285,
+          "quantity": 1,
+          "totalPrice": 285
+        }
+      ],
+      "subtotal": 271,
+      "tax": 14,
+      "total": 285
+    },
+    {
+      "id": "10403",
+      "orderNumber": 10403,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T16:22:37.000+05:30",
+      "paidAt": "2026-08-02T16:22:37.000+05:30",
+      "completedAt": "2026-08-02T16:22:37.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m32",
+          "name": "Signature Gyro Meal",
+          "price": 382,
+          "unitPrice": 382,
+          "quantity": 1,
+          "totalPrice": 382
+        }
+      ],
+      "subtotal": 364,
+      "tax": 18,
+      "total": 382
+    },
+    {
+      "id": "10404",
+      "orderNumber": 10404,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T16:27:29.000+05:30",
+      "paidAt": "2026-08-02T16:27:29.000+05:30",
+      "completedAt": "2026-08-02T16:27:29.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m33",
+          "name": "Lebanese Rice Box",
+          "price": 326,
+          "unitPrice": 326,
+          "quantity": 1,
+          "totalPrice": 326
+        }
+      ],
+      "subtotal": 310,
+      "tax": 16,
+      "total": 326
+    },
+    {
+      "id": "10405",
+      "orderNumber": 10405,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T17:57:45.000+05:30",
+      "paidAt": "2026-08-02T17:57:45.000+05:30",
+      "completedAt": "2026-08-02T17:57:45.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m34",
+          "name": "Duo Gyro Feast",
+          "price": 426,
+          "unitPrice": 426,
+          "quantity": 1,
+          "totalPrice": 426
+        }
+      ],
+      "subtotal": 406,
+      "tax": 20,
+      "total": 426
+    },
+    {
+      "id": "10406",
+      "orderNumber": 10406,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T17:16:19.000+05:30",
+      "paidAt": "2026-08-02T17:16:19.000+05:30",
+      "completedAt": "2026-08-02T17:16:19.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m35",
+          "name": "Double Crunch Box",
+          "price": 282,
+          "unitPrice": 282,
+          "quantity": 1,
+          "totalPrice": 282
+        }
+      ],
+      "subtotal": 269,
+      "tax": 13,
+      "total": 282
+    },
+    {
+      "id": "10407",
+      "orderNumber": 10407,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T17:54:39.000+05:30",
+      "paidAt": "2026-08-02T17:54:39.000+05:30",
+      "completedAt": "2026-08-02T17:54:39.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m36",
+          "name": "Mega Feast Meal",
+          "price": 411,
+          "unitPrice": 411,
+          "quantity": 1,
+          "totalPrice": 411
+        }
+      ],
+      "subtotal": 391,
+      "tax": 20,
+      "total": 411
+    },
+    {
+      "id": "10408",
+      "orderNumber": 10408,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T17:43:56.000+05:30",
+      "paidAt": "2026-08-02T17:43:56.000+05:30",
+      "completedAt": "2026-08-02T17:43:56.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m37",
+          "name": "Den's Party Meal",
+          "price": 297,
+          "unitPrice": 297,
+          "quantity": 1,
+          "totalPrice": 297
+        }
+      ],
+      "subtotal": 283,
+      "tax": 14,
+      "total": 297
+    },
+    {
+      "id": "10409",
+      "orderNumber": 10409,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T17:16:34.000+05:30",
+      "paidAt": "2026-08-02T17:16:34.000+05:30",
+      "completedAt": "2026-08-02T17:16:34.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m38",
+          "name": "Super 5 Bucket",
+          "price": 432,
+          "unitPrice": 432,
+          "quantity": 1,
+          "totalPrice": 432
+        }
+      ],
+      "subtotal": 411,
+      "tax": 21,
+      "total": 432
+    },
+    {
+      "id": "10410",
+      "orderNumber": 10410,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T18:09:41.000+05:30",
+      "paidAt": "2026-08-02T18:09:41.000+05:30",
+      "completedAt": "2026-08-02T18:09:41.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m40a",
+          "name": "Lebanese Rice - Protein Max (Chicken)",
+          "price": 276,
+          "unitPrice": 276,
+          "quantity": 1,
+          "totalPrice": 276
+        }
+      ],
+      "subtotal": 263,
+      "tax": 13,
+      "total": 276
+    },
+    {
+      "id": "10411",
+      "orderNumber": 10411,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T18:12:53.000+05:30",
+      "paidAt": "2026-08-02T18:12:53.000+05:30",
+      "completedAt": "2026-08-02T18:12:53.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m40b",
+          "name": "Lebanese Rice - Protein Max (Paneer)",
+          "price": 416,
+          "unitPrice": 416,
+          "quantity": 1,
+          "totalPrice": 416
+        }
+      ],
+      "subtotal": 396,
+      "tax": 20,
+      "total": 416
+    },
+    {
+      "id": "10412",
+      "orderNumber": 10412,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T18:38:29.000+05:30",
+      "paidAt": "2026-08-02T18:38:29.000+05:30",
+      "completedAt": "2026-08-02T18:38:29.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m41a",
+          "name": "Salad - Protein Max (Chicken)",
+          "price": 292,
+          "unitPrice": 292,
+          "quantity": 1,
+          "totalPrice": 292
+        }
+      ],
+      "subtotal": 278,
+      "tax": 14,
+      "total": 292
+    },
+    {
+      "id": "10413",
+      "orderNumber": 10413,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T18:14:13.000+05:30",
+      "paidAt": "2026-08-02T18:14:13.000+05:30",
+      "completedAt": "2026-08-02T18:14:13.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m41b",
+          "name": "Salad - Protein Max (Paneer)",
+          "price": 381,
+          "unitPrice": 381,
+          "quantity": 1,
+          "totalPrice": 381
+        }
+      ],
+      "subtotal": 363,
+      "tax": 18,
+      "total": 381
+    },
+    {
+      "id": "10414",
+      "orderNumber": 10414,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T19:49:05.000+05:30",
+      "paidAt": "2026-08-02T19:49:05.000+05:30",
+      "completedAt": "2026-08-02T19:49:05.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m42",
+          "name": "Vanilla Shake (Regular)",
+          "price": 327,
+          "unitPrice": 327,
+          "quantity": 1,
+          "totalPrice": 327
+        }
+      ],
+      "subtotal": 311,
+      "tax": 16,
+      "total": 327
+    },
+    {
+      "id": "10415",
+      "orderNumber": 10415,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T19:00:11.000+05:30",
+      "paidAt": "2026-08-02T19:00:11.000+05:30",
+      "completedAt": "2026-08-02T19:00:11.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m43",
+          "name": "Vanilla Shake (Large)",
+          "price": 404,
+          "unitPrice": 404,
+          "quantity": 1,
+          "totalPrice": 404
+        }
+      ],
+      "subtotal": 385,
+      "tax": 19,
+      "total": 404
+    },
+    {
+      "id": "10416",
+      "orderNumber": 10416,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T19:46:16.000+05:30",
+      "paidAt": "2026-08-02T19:46:16.000+05:30",
+      "completedAt": "2026-08-02T19:46:16.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m44",
+          "name": "Strawberry Shake (Regular)",
+          "price": 304,
+          "unitPrice": 304,
+          "quantity": 1,
+          "totalPrice": 304
+        }
+      ],
+      "subtotal": 290,
+      "tax": 14,
+      "total": 304
+    },
+    {
+      "id": "10417",
+      "orderNumber": 10417,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T19:12:24.000+05:30",
+      "paidAt": "2026-08-02T19:12:24.000+05:30",
+      "completedAt": "2026-08-02T19:12:24.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m45",
+          "name": "Strawberry Shake (Large)",
+          "price": 393,
+          "unitPrice": 393,
+          "quantity": 1,
+          "totalPrice": 393
+        }
+      ],
+      "subtotal": 374,
+      "tax": 19,
+      "total": 393
+    },
+    {
+      "id": "10418",
+      "orderNumber": 10418,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T19:43:07.000+05:30",
+      "paidAt": "2026-08-02T19:43:07.000+05:30",
+      "completedAt": "2026-08-02T19:43:07.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m46",
+          "name": "Biscoff Shake (Regular)",
+          "price": 315,
+          "unitPrice": 315,
+          "quantity": 1,
+          "totalPrice": 315
+        }
+      ],
+      "subtotal": 300,
+      "tax": 15,
+      "total": 315
+    },
+    {
+      "id": "10419",
+      "orderNumber": 10419,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T20:51:50.000+05:30",
+      "paidAt": "2026-08-02T20:51:50.000+05:30",
+      "completedAt": "2026-08-02T20:51:50.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m47",
+          "name": "Biscoff Shake (Large)",
+          "price": 423,
+          "unitPrice": 423,
+          "quantity": 1,
+          "totalPrice": 423
+        }
+      ],
+      "subtotal": 403,
+      "tax": 20,
+      "total": 423
+    },
+    {
+      "id": "10420",
+      "orderNumber": 10420,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T20:37:14.000+05:30",
+      "paidAt": "2026-08-02T20:37:14.000+05:30",
+      "completedAt": "2026-08-02T20:37:14.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m48",
+          "name": "Chocolate Shake (Regular)",
+          "price": 285,
+          "unitPrice": 285,
+          "quantity": 1,
+          "totalPrice": 285
+        }
+      ],
+      "subtotal": 271,
+      "tax": 14,
+      "total": 285
+    },
+    {
+      "id": "10421",
+      "orderNumber": 10421,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T20:31:54.000+05:30",
+      "paidAt": "2026-08-02T20:31:54.000+05:30",
+      "completedAt": "2026-08-02T20:31:54.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m49",
+          "name": "Chocolate Shake (Large)",
+          "price": 425,
+          "unitPrice": 425,
+          "quantity": 1,
+          "totalPrice": 425
+        }
+      ],
+      "subtotal": 405,
+      "tax": 20,
+      "total": 425
+    },
+    {
+      "id": "10422",
+      "orderNumber": 10422,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T20:31:50.000+05:30",
+      "paidAt": "2026-08-02T20:31:50.000+05:30",
+      "completedAt": "2026-08-02T20:31:50.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m50",
+          "name": "Kunafa Pistachio Shake (Regular)",
+          "price": 283,
+          "unitPrice": 283,
+          "quantity": 1,
+          "totalPrice": 283
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283
+    },
+    {
+      "id": "10423",
+      "orderNumber": 10423,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T20:39:35.000+05:30",
+      "paidAt": "2026-08-02T20:39:35.000+05:30",
+      "completedAt": "2026-08-02T20:39:35.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m51",
+          "name": "Kunafa Pistachio Shake (Large)",
+          "price": 428,
+          "unitPrice": 428,
+          "quantity": 1,
+          "totalPrice": 428
+        }
+      ],
+      "subtotal": 408,
+      "tax": 20,
+      "total": 428
+    },
+    {
+      "id": "10424",
+      "orderNumber": 10424,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T21:22:22.000+05:30",
+      "paidAt": "2026-08-02T21:22:22.000+05:30",
+      "completedAt": "2026-08-02T21:22:22.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m52",
+          "name": "Vanilla Softy",
+          "price": 280,
+          "unitPrice": 280,
+          "quantity": 1,
+          "totalPrice": 280
+        }
+      ],
+      "subtotal": 267,
+      "tax": 13,
+      "total": 280
+    },
+    {
+      "id": "10425",
+      "orderNumber": 10425,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T21:22:33.000+05:30",
+      "paidAt": "2026-08-02T21:22:33.000+05:30",
+      "completedAt": "2026-08-02T21:22:33.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m53a",
+          "name": "Coca-Cola (Regular)",
+          "price": 427,
+          "unitPrice": 427,
+          "quantity": 1,
+          "totalPrice": 427
+        }
+      ],
+      "subtotal": 407,
+      "tax": 20,
+      "total": 427
+    },
+    {
+      "id": "10426",
+      "orderNumber": 10426,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T21:38:06.000+05:30",
+      "paidAt": "2026-08-02T21:38:06.000+05:30",
+      "completedAt": "2026-08-02T21:38:06.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m53b",
+          "name": "Coca-Cola (Large)",
+          "price": 281,
+          "unitPrice": 281,
+          "quantity": 1,
+          "totalPrice": 281
+        }
+      ],
+      "subtotal": 268,
+      "tax": 13,
+      "total": 281
+    },
+    {
+      "id": "10427",
+      "orderNumber": 10427,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T21:45:48.000+05:30",
+      "paidAt": "2026-08-02T21:45:48.000+05:30",
+      "completedAt": "2026-08-02T21:45:48.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m54a",
+          "name": "Sprite (Regular)",
+          "price": 435,
+          "unitPrice": 435,
+          "quantity": 1,
+          "totalPrice": 435
+        }
+      ],
+      "subtotal": 414,
+      "tax": 21,
+      "total": 435
+    },
+    {
+      "id": "10428",
+      "orderNumber": 10428,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T21:34:55.000+05:30",
+      "paidAt": "2026-08-02T21:34:55.000+05:30",
+      "completedAt": "2026-08-02T21:34:55.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m54b",
+          "name": "Sprite (Large)",
+          "price": 273,
+          "unitPrice": 273,
+          "quantity": 1,
+          "totalPrice": 273
+        }
+      ],
+      "subtotal": 260,
+      "tax": 13,
+      "total": 273
+    },
+    {
+      "id": "10429",
+      "orderNumber": 10429,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T22:01:27.000+05:30",
+      "paidAt": "2026-08-02T22:01:27.000+05:30",
+      "completedAt": "2026-08-02T22:01:27.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m55a",
+          "name": "Peach Ice Tea (Regular)",
+          "price": 432,
+          "unitPrice": 432,
+          "quantity": 1,
+          "totalPrice": 432
+        }
+      ],
+      "subtotal": 411,
+      "tax": 21,
+      "total": 432
+    },
+    {
+      "id": "10430",
+      "orderNumber": 10430,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T22:10:10.000+05:30",
+      "paidAt": "2026-08-02T22:10:10.000+05:30",
+      "completedAt": "2026-08-02T22:10:10.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m55b",
+          "name": "Peach Ice Tea (Large)",
+          "price": 276,
+          "unitPrice": 276,
+          "quantity": 1,
+          "totalPrice": 276
+        }
+      ],
+      "subtotal": 263,
+      "tax": 13,
+      "total": 276
+    },
+    {
+      "id": "10431",
+      "orderNumber": 10431,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T22:34:35.000+05:30",
+      "paidAt": "2026-08-02T22:34:35.000+05:30",
+      "completedAt": "2026-08-02T22:34:35.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "Cash",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m56a",
+          "name": "Lime Ice Tea (Regular)",
+          "price": 407,
+          "unitPrice": 407,
+          "quantity": 1,
+          "totalPrice": 407
+        }
+      ],
+      "subtotal": 388,
+      "tax": 19,
+      "total": 407
+    },
+    {
+      "id": "10432",
+      "orderNumber": 10432,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T22:30:55.000+05:30",
+      "paidAt": "2026-08-02T22:30:55.000+05:30",
+      "completedAt": "2026-08-02T22:30:55.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "TAKEAWAY",
+      "type": "TAKEAWAY",
+      "items": [
+        {
+          "id": "m56b",
+          "name": "Lime Ice Tea (Large)",
+          "price": 301,
+          "unitPrice": 301,
+          "quantity": 1,
+          "totalPrice": 301
+        }
+      ],
+      "subtotal": 287,
+      "tax": 14,
+      "total": 301
+    },
+    {
+      "id": "10433",
+      "orderNumber": 10433,
+      "date": "2026-08-02",
+      "createdAt": "2026-08-02T23:23:35.000+05:30",
+      "paidAt": "2026-08-02T23:23:35.000+05:30",
+      "completedAt": "2026-08-02T23:23:35.000+05:30",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "UPI",
+      "source": "DINE-IN",
+      "type": "DINE-IN",
+      "items": [
+        {
+          "id": "m59a",
+          "name": "Mint Kombucha",
+          "price": 354,
+          "unitPrice": 354,
+          "quantity": 1,
+          "totalPrice": 354
+        }
+      ],
+      "subtotal": 337,
+      "tax": 17,
+      "total": 354
     }
   ],
   "users": [
