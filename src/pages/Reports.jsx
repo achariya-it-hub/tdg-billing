@@ -795,9 +795,9 @@ export default function Reports() {
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Customer</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Type / Table</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Date & Time</th>
-                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Original Subtotal</th>
-                    <th style={{ padding: '16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Discount & Offer</th>
-                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Net Paid (₹)</th>
+                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Bill Amount (₹)</th>
+                    <th style={{ padding: '16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Discount Saved (₹)</th>
+                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 700, color: '#059669' }}>Collected Amount (After Discount)</th>
                     <th style={{ padding: '16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Payment Mode</th>
                     <th style={{ padding: '16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Status</th>
                   </tr>
