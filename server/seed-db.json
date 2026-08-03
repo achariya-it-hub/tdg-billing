@@ -29363,6 +29363,12 @@
       "color": "#ca8a04"
     },
     {
+      "id": "c5_legthigh",
+      "name": "Leg & Thigh",
+      "icon": "🍗",
+      "color": "#ea580c"
+    },
+    {
       "id": "c5_wings",
       "name": "Wings",
       "icon": "🍗",
@@ -29371,229 +29377,52 @@
   ],
   "menuItems": [
     {
-      "id": "m1a",
-      "categoryId": "c1",
-      "name": "Spicy Gyro - Chicken (Mini)",
-      "price": 99,
-      "description": "Fresh pita wrap with spicy chicken, hummus & veggies",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m1b",
-      "categoryId": "c1",
-      "name": "Spicy Gyro - Paneer (Mini)",
-      "price": 99,
-      "description": "Fresh pita wrap with spicy paneer, hummus & veggies",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m2a",
-      "categoryId": "c1",
-      "name": "Spicy Gyro - Chicken (Signature)",
-      "price": 249,
-      "description": "Signature large pita wrap with spicy chicken",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m2b",
-      "categoryId": "c1",
-      "name": "Spicy Gyro - Paneer (Signature)",
-      "price": 249,
-      "description": "Signature large pita wrap with spicy paneer",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m3a",
-      "categoryId": "c1",
-      "name": "Creamy Gyro - Chicken (Mini)",
-      "price": 99,
-      "description": "Creamy garlic chicken pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m3b",
-      "categoryId": "c1",
-      "name": "Creamy Gyro - Paneer (Mini)",
-      "price": 99,
-      "description": "Creamy garlic paneer pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m4a",
-      "categoryId": "c1",
-      "name": "Creamy Gyro - Chicken (Signature)",
-      "price": 249,
-      "description": "Signature large creamy garlic chicken pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m4b",
-      "categoryId": "c1",
-      "name": "Creamy Gyro - Paneer (Signature)",
-      "price": 249,
-      "description": "Signature large creamy garlic paneer pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m5a",
-      "categoryId": "c1",
-      "name": "BBQ Gyro - Chicken (Mini)",
-      "price": 99,
-      "description": "Smoky BBQ chicken pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m5b",
-      "categoryId": "c1",
-      "name": "BBQ Gyro - Paneer (Mini)",
-      "price": 99,
-      "description": "Smoky BBQ paneer pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m6a",
-      "categoryId": "c1",
-      "name": "BBQ Gyro - Chicken (Signature)",
-      "price": 249,
-      "description": "Signature large smoky BBQ chicken pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m6b",
-      "categoryId": "c1",
-      "name": "BBQ Gyro - Paneer (Signature)",
-      "price": 249,
-      "description": "Signature large smoky BBQ paneer pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m7a",
-      "categoryId": "c1",
-      "name": "Peri Peri Gyro - Chicken (Mini)",
-      "price": 99,
-      "description": "Zesty peri peri chicken pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m7b",
-      "categoryId": "c1",
-      "name": "Peri Peri Gyro - Paneer (Mini)",
-      "price": 99,
-      "description": "Zesty peri peri paneer pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m8a",
-      "categoryId": "c1",
-      "name": "Peri Peri Gyro - Chicken (Signature)",
-      "price": 249,
-      "description": "Signature large zesty peri peri chicken pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m8b",
-      "categoryId": "c1",
-      "name": "Peri Peri Gyro - Paneer (Signature)",
-      "price": 249,
-      "description": "Signature large zesty peri peri paneer pita wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m9a",
-      "categoryId": "c1",
-      "name": "Signature Gyro - Chicken (Mini)",
-      "price": 99,
-      "description": "Ten Dens special chicken gyro wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m9b",
-      "categoryId": "c1",
-      "name": "Signature Gyro - Paneer (Mini)",
-      "price": 99,
-      "description": "Ten Dens special paneer gyro wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m10a",
-      "categoryId": "c1",
-      "name": "Signature Gyro - Chicken (Signature)",
-      "price": 249,
-      "description": "Ten Dens special signature chicken gyro wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
-      "id": "m10b",
-      "categoryId": "c1",
-      "name": "Signature Gyro - Paneer (Signature)",
-      "price": 249,
-      "description": "Ten Dens special signature paneer gyro wrap",
-      "isAvailable": true,
-      "image": "/images/menu/gyro.png"
-    },
-    {
       "id": "m11",
-      "categoryId": "c5_wings",
-      "name": "1 Pc Leg & Thigh (1 Dip)",
-      "price": 70,
-      "description": "1 Pc Crispy Fried Chicken Leg & Thigh + 1 Dip",
+      "categoryId": "c1",
+      "name": "Pesto Gyro (Mini)",
+      "price": 99,
+      "description": "Herby pesto gyro wrap with fresh veggies (Chicken or Paneer)",
       "isAvailable": true,
-      "image": "/images/menu/Leg& Thigh.png"
+      "image": "/images/menu/gyro.png"
     },
     {
       "id": "m12",
-      "categoryId": "c5_wings",
-      "name": "2 Pc Leg & Thigh (1 Dip)",
-      "price": 140,
-      "description": "2 Pc Crispy Fried Chicken Leg & Thigh + 1 Dip",
+      "categoryId": "c1",
+      "name": "Pesto Gyro (Signature)",
+      "price": 249,
+      "description": "Large signature herby pesto gyro wrap (Chicken or Paneer)",
       "isAvailable": true,
-      "image": "/images/menu/Leg& Thigh.png"
+      "image": "/images/menu/gyro.png"
     },
     {
       "id": "m13",
-      "categoryId": "c5_wings",
+      "categoryId": "c5_legthigh",
       "name": "4 Pc Leg & Thigh (2 Dips)",
       "price": 280,
       "description": "4 Pc Crispy Fried Chicken Leg & Thigh + 2 Dips",
       "isAvailable": true,
-      "image": "/images/menu/Leg& Thigh.png"
+      "image": "/images/menu/Leg& Thigh.png",
+      "category": "Leg & Thigh"
     },
     {
       "id": "m14",
-      "categoryId": "c5_wings",
+      "categoryId": "c5_legthigh",
       "name": "8 Pc Leg & Thigh (4 Dips)",
       "price": 560,
       "description": "8 Pc Crispy Fried Chicken Leg & Thigh + 4 Dips",
       "isAvailable": true,
-      "image": "/images/menu/Leg& Thigh.png"
+      "image": "/images/menu/Leg& Thigh.png",
+      "category": "Leg & Thigh"
     },
     {
       "id": "m15",
-      "categoryId": "c5_wings",
+      "categoryId": "c5_legthigh",
       "name": "12 Pc Leg & Thigh (6 Dips)",
       "price": 840,
       "description": "12 Pc Crispy Fried Chicken Leg & Thigh + 6 Dips",
       "isAvailable": true,
-      "image": "/images/menu/Leg& Thigh.png"
+      "image": "/images/menu/Leg& Thigh.png",
+      "category": "Leg & Thigh"
     },
     {
       "id": "m16",
@@ -29846,24 +29675,6 @@
       "description": "5 Leg & Thighs, 10 Wings, 10 Strips, 5 Regular Drinks",
       "isAvailable": true,
       "image": "/images/menu/super 5 bucket.png"
-    },
-    {
-      "id": "m39a",
-      "categoryId": "c11",
-      "name": "Gyro - Protein Max (Chicken)",
-      "price": 299,
-      "description": "Extra high protein Gyro wrap with grilled chicken",
-      "isAvailable": true,
-      "image": "/images/menu/protein max.png"
-    },
-    {
-      "id": "m39b",
-      "categoryId": "c11",
-      "name": "Gyro - Protein Max (Paneer)",
-      "price": 299,
-      "description": "Extra high protein Gyro wrap with grilled paneer",
-      "isAvailable": true,
-      "image": "/images/menu/protein max.png"
     },
     {
       "id": "m40a",
@@ -30199,38 +30010,101 @@
       "image": "/images/menu/honey mustard.png"
     },
     {
-      "id": "m11a",
+      "id": "m1",
       "categoryId": "c1",
-      "name": "Pesto Gyro - Chicken (Mini)",
+      "name": "Spicy Gyro (Mini)",
       "price": 99,
-      "description": "Fresh pita wrap with aromatic pesto chicken, hummus & veggies",
+      "description": "Fresh pita wrap with spicy sauce & fresh veggies (Chicken or Paneer)",
       "isAvailable": true,
       "image": "/images/menu/gyro.png"
     },
     {
-      "id": "m12a",
+      "id": "m2",
       "categoryId": "c1",
-      "name": "Pesto Gyro - Chicken (Signature)",
+      "name": "Spicy Gyro (Signature)",
       "price": 249,
-      "description": "Signature large pita wrap with aromatic pesto chicken",
+      "description": "Large signature pita wrap with spicy sauce & fresh veggies (Chicken or Paneer)",
       "isAvailable": true,
       "image": "/images/menu/gyro.png"
     },
     {
-      "id": "m11b",
+      "id": "m3",
       "categoryId": "c1",
-      "name": "Pesto Gyro - Paneer (Mini)",
+      "name": "Creamy Gyro (Mini)",
       "price": 99,
-      "description": "Fresh pita wrap with aromatic pesto paneer, hummus & veggies",
+      "description": "Fluffy pita wrap with creamy garlic sauce & fresh veggies (Chicken or Paneer)",
       "isAvailable": true,
       "image": "/images/menu/gyro.png"
     },
     {
-      "id": "m12b",
+      "id": "m4",
       "categoryId": "c1",
-      "name": "Pesto Gyro - Paneer (Signature)",
+      "name": "Creamy Gyro (Signature)",
       "price": 249,
-      "description": "Signature large pita wrap with aromatic pesto paneer",
+      "description": "Large signature pita wrap with creamy garlic sauce (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m5",
+      "categoryId": "c1",
+      "name": "BBQ Gyro (Mini)",
+      "price": 99,
+      "description": "Pita wrap with smoky BBQ sauce & fresh veggies (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m6",
+      "categoryId": "c1",
+      "name": "BBQ Gyro (Signature)",
+      "price": 249,
+      "description": "Large signature pita wrap with smoky BBQ sauce (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m7",
+      "categoryId": "c1",
+      "name": "Peri Peri Gyro (Mini)",
+      "price": 99,
+      "description": "Zesty Peri Peri pita wrap with fresh veggies (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m8",
+      "categoryId": "c1",
+      "name": "Peri Peri Gyro (Signature)",
+      "price": 249,
+      "description": "Large signature Peri Peri pita wrap (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m9",
+      "categoryId": "c1",
+      "name": "Signature Gyro (Mini)",
+      "price": 99,
+      "description": "Our house signature gyro wrap (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m10",
+      "categoryId": "c1",
+      "name": "Signature Gyro (Signature)",
+      "price": 249,
+      "description": "Large house signature gyro wrap (Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m39",
+      "categoryId": "c1",
+      "name": "Gyro - Protein Max",
+      "price": 299,
+      "description": "High protein double wrap (Chicken or Paneer)",
       "isAvailable": true,
       "image": "/images/menu/gyro.png"
     }

@@ -446,24 +446,26 @@ function restoreState() {
     } catch (e) {}
   }
 
-  if (existsSync(SEED_PATH)) {
-    try {
-      const seedContent = readFileSync(SEED_PATH, 'utf-8').trim()
-      if (seedContent) {
-        const seedData = JSON.parse(seedContent)
-        if (seedData.categories && Array.isArray(seedData.categories) && seedData.categories.length >= 11) {
-          db.categories = seedData.categories
-        } else if (lockData?.categories) {
-          db.categories = lockData.categories
+  if (!db.menuItems || !Array.isArray(db.menuItems) || db.menuItems.length === 0) {
+    if (existsSync(SEED_PATH)) {
+      try {
+        const seedContent = readFileSync(SEED_PATH, 'utf-8').trim()
+        if (seedContent) {
+          const seedData = JSON.parse(seedContent)
+          if (seedData.categories && Array.isArray(seedData.categories)) {
+            db.categories = seedData.categories
+          } else if (lockData?.categories) {
+            db.categories = lockData.categories
+          }
+          if (seedData.menuItems && Array.isArray(seedData.menuItems)) {
+            db.menuItems = seedData.menuItems
+          } else if (lockData?.menuItems) {
+            db.menuItems = lockData.menuItems
+          }
         }
-        if (seedData.menuItems && Array.isArray(seedData.menuItems) && seedData.menuItems.length >= 92) {
-          db.menuItems = seedData.menuItems
-        } else if (lockData?.menuItems) {
-          db.menuItems = lockData.menuItems
-        }
+      } catch (se) {
+        console.error('[DATA PROTECTION] Menu sync error:', se.message)
       }
-    } catch (se) {
-      console.error('[DATA PROTECTION] Menu sync error:', se.message)
     }
   }
 
