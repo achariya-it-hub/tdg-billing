@@ -4071,7 +4071,21 @@ const getLocalDateStr = (val) => {
   const str = String(val).trim()
   if (!str) return ''
 
-  // Match DD.MM.YYYY, DD.MM.YY, DD/MM/YYYY, DD/MM/YY, DD-MM-YYYY, DD-MM-YY
+  // 1. If already YYYY-MM-DD format
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str
+
+  // 2. If YYYY-MM-DD... ISO string (e.g. 2026-07-31T14:20:00.000Z)
+  if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+    try {
+      const d = new Date(str)
+      if (!isNaN(d.getTime())) {
+        return d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
+      }
+    } catch (e) {}
+    return str.slice(0, 10)
+  }
+
+  // 3. Match DD.MM.YYYY, DD.MM.YY, DD/MM/YYYY, DD/MM/YY, DD-MM-YYYY, DD-MM-YY
   const dmyMatch = str.match(/^(\d{1,2})[\.\/\-](\d{1,2})[\.\/\-](\d{2,4})/)
   if (dmyMatch) {
     let day = dmyMatch[1].padStart(2, '0')
@@ -4081,10 +4095,7 @@ const getLocalDateStr = (val) => {
     return `${year}-${month}-${day}`
   }
 
-  // If already YYYY-MM-DD
-  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str
-
-  // Try parsing as ISO date or Date object in Asia/Kolkata IST
+  // 4. Try parsing as ISO date or Date object in Asia/Kolkata IST
   try {
     const d = typeof val === 'number' ? new Date(val) : new Date(str)
     if (!isNaN(d.getTime())) {
@@ -4092,9 +4103,6 @@ const getLocalDateStr = (val) => {
     }
   } catch (e) {}
 
-  if (str.length >= 10 && /^\d{4}-\d{2}-\d{2}/.test(str)) {
-    return str.slice(0, 10)
-  }
   return str
 }
 
