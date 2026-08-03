@@ -4681,31 +4681,32 @@ const threeHourSales = computeThreeHourSales(dayOrders);
 
 // P&L (Profit & Loss) Report
 app.get('/api/reports/pnl', (req, res) => {
-  const date = req.query.date || getLocalDateStr(new Date())
+  const dateInput = req.query.date || getLocalDateStr(new Date())
   const period = req.query.period || 'day'
+  const normDate = normalizeDateStr(dateInput)
 
   let fromStr, toStr
   if (period === 'week') {
-    const d = new Date(date)
+    const d = new Date(normDate)
     const dayOfWeek = d.getDay()
     const fromDate = new Date(d); fromDate.setDate(d.getDate() - dayOfWeek)
     const toDate = new Date(fromDate); toDate.setDate(toDate.getDate() + 6)
     fromStr = getLocalDateStr(fromDate)
     toStr = getLocalDateStr(toDate)
   } else if (period === 'month') {
-    const d = new Date(date)
+    const d = new Date(normDate)
     const fromDate = new Date(d.getFullYear(), d.getMonth(), 1)
     const toDate = new Date(d.getFullYear(), d.getMonth() + 1, 0)
     fromStr = getLocalDateStr(fromDate)
     toStr = getLocalDateStr(toDate)
   } else {
-    fromStr = date
-    toStr = date
+    fromStr = normDate
+    toStr = normDate
   }
 
   // Revenue: valid sales orders
   const periodOrders = orders.filter(o => {
-    const dStr = getLocalDateStr(o.createdAt)
+    const dStr = getOrderDate(o)
     return dStr >= fromStr && dStr <= toStr && isValidSalesOrder(o)
   })
   const totalRevenue = periodOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
@@ -4720,7 +4721,7 @@ app.get('/api/reports/pnl', (req, res) => {
 
   // COGS: purchases in period
   const periodPurchases = purchases.filter(p => {
-    const dStr = getLocalDateStr(p.createdAt)
+    const dStr = getLocalDateStr(p.createdAt || p.date)
     return dStr >= fromStr && dStr <= toStr
   })
   const totalCogs = periodPurchases.reduce((sum, p) => sum + (p.total || 0), 0)
@@ -4729,9 +4730,10 @@ app.get('/api/reports/pnl', (req, res) => {
   const grossProfit = totalRevenue - totalCogs
 
   // Expenses by category
-  const periodExpenses = expenses.filter(e =>
-    e.createdAt && e.createdAt.slice(0, 10) >= fromStr && e.createdAt.slice(0, 10) <= toStr
-  )
+  const periodExpenses = expenses.filter(e => {
+    const dStr = getLocalDateStr(e.createdAt || e.date)
+    return dStr >= fromStr && dStr <= toStr
+  })
   const totalExpenses = periodExpenses.reduce((sum, e) => sum + (e.amount || 0), 0)
   const expensesByCategory = {}
   periodExpenses.forEach(e => {
