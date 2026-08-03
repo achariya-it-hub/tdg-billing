@@ -4228,6 +4228,32 @@ const isValidSalesOrder = (o) => {
   return true
 }
 
+const getOrderDiscountInfo = (o) => {
+  if (!o) return { discount: 0, name: '' }
+  let disc = Number(o.discount || o.discountGiven || o.discountAmount || 0)
+  let name = o.discountName || o.offerName || ''
+
+  if (disc === 0) {
+    const dStr = getOrderDate(o)
+    const net = Number(o.total) || 0
+    const rawSub = o.rawSubtotal || (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
+
+    if (dStr === '2026-07-27' || o.inaugurationOffer) {
+      disc = net > 0 ? net : Math.round(rawSub * 0.5)
+      name = 'Inauguration Offer 50% OFF'
+    } else if ((dStr >= '2026-07-30' && dStr <= '2026-08-02') || o.specialOffer20) {
+      disc = net > 0 ? Math.round(net * 0.25) : Math.round(rawSub * 0.2)
+      name = 'Special Campaign 20% OFF'
+    }
+  }
+
+  if (!name && disc > 0) {
+    name = o.inaugurationOffer ? 'Inauguration Offer 50% OFF' : (o.specialOffer20 ? 'Special Campaign 20% OFF' : 'Discount Given')
+  }
+
+  return { discount: Math.round(disc), name: name || 'Discount' }
+}
+
 function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
   const { date, from, to } = reqQuery || {}
   const targetOrders = includeAll ? orders : orders.filter(isValidSalesOrder)
@@ -4657,15 +4683,9 @@ const threeHourSales = computeThreeHourSales(dayOrders);
   let totalDiscountGiven = 0
   const byDiscountType = {}
   completedOrders.forEach(o => {
-    let disc = Number(o.discount || o.discountGiven || o.discountAmount || 0)
-    if (disc === 0) {
-      const rawSub = o.rawSubtotal || (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
-      if (o.inaugurationOffer) disc = rawSub * 0.5
-      else if (o.specialOffer20) disc = rawSub * 0.2
-    }
+    const { discount: disc, name: dName } = getOrderDiscountInfo(o)
     if (disc > 0) {
       totalDiscountGiven += disc
-      const dName = o.discountName || (o.inaugurationOffer ? 'Inauguration Offer 50%' : (o.specialOffer20 ? 'Special Offer 20%' : 'Discount'))
       if (!byDiscountType[dName]) {
         byDiscountType[dName] = { count: 0, totalDiscount: 0 }
       }
