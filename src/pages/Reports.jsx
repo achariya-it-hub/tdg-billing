@@ -755,21 +755,36 @@ export default function Reports() {
         const pendingOrders = ordersReport.filter(o => !isExcluded(o) && (o.status || '').toLowerCase() !== 'completed' && (o.paymentStatus || '').toLowerCase() !== 'paid' && !o.paidAt)
         const totalCollected = paidOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0)
         const pendingTotal = pendingOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0)
+        
+        let totalDiscountsGiven = 0
+        paidOrders.forEach(o => {
+          let disc = Number(o.discount || o.discountGiven || o.discountAmount || 0)
+          if (disc === 0) {
+            const rawSub = o.rawSubtotal || (o.items || []).reduce((s, i) => s + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
+            if (o.inaugurationOffer) disc = rawSub * 0.5
+            else if (o.specialOffer20) disc = rawSub * 0.2
+          }
+          totalDiscountsGiven += disc
+        })
 
         return (
           <div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
               <div style={{ background: '#f0fdf4', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
                 <div style={{ fontSize: '32px', fontWeight: 700, color: '#10b981' }}>₹{Math.round(totalCollected).toLocaleString('en-IN')}</div>
-                <div style={{ fontSize: '13px', color: '#166534' }}>Total Collected</div>
+                <div style={{ fontSize: '13px', color: '#166534', fontWeight: 600 }}>Total Collected</div>
               </div>
               <div style={{ background: '#eff6ff', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
                 <div style={{ fontSize: '32px', fontWeight: 700, color: '#2563eb' }}>₹{Math.round(pendingTotal).toLocaleString('en-IN')}</div>
-                <div style={{ fontSize: '13px', color: '#1e40af' }}>Pending Balance</div>
+                <div style={{ fontSize: '13px', color: '#1e40af', fontWeight: 600 }}>Pending Balance</div>
+              </div>
+              <div style={{ background: '#fef2f2', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#dc2626' }}>₹{Math.round(totalDiscountsGiven).toLocaleString('en-IN')}</div>
+                <div style={{ fontSize: '13px', color: '#991b1b', fontWeight: 600 }}>Total Discount Savings</div>
               </div>
               <div style={{ background: '#f5f3ff', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
                 <div style={{ fontSize: '32px', fontWeight: 700, color: '#8b5cf6' }}>{ordersReport.length}</div>
-                <div style={{ fontSize: '13px', color: '#6b21a8' }}>Total Transactions</div>
+                <div style={{ fontSize: '13px', color: '#6b21a8', fontWeight: 600 }}>Total Transactions</div>
               </div>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
@@ -780,53 +795,92 @@ export default function Reports() {
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Customer</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Type / Table</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Date & Time</th>
-                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Amount (₹)</th>
-                    <th style={{ padding: '16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Payment</th>
+                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Original Subtotal</th>
+                    <th style={{ padding: '16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Discount & Offer</th>
+                    <th style={{ padding: '16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Net Paid (₹)</th>
+                    <th style={{ padding: '16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Payment Mode</th>
                     <th style={{ padding: '16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {ordersReport.length === 0 ? (
                     <tr>
-                      <td colSpan={7} style={{ padding: '32px', textAlign: 'center', color: '#9ca3af' }}>No bill records found for this period</td>
+                      <td colSpan={9} style={{ padding: '32px', textAlign: 'center', color: '#9ca3af' }}>No bill records found for this period</td>
                     </tr>
-                  ) : ordersReport.map(order => (
-                    <tr key={order.id || order.orderNumber} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                      <td style={{ padding: '16px', fontWeight: 700, color: '#1a1a2e' }}>#{order.orderNumber || order.id}</td>
-                      <td style={{ padding: '16px', fontSize: '13px' }}>
-                        {order.customerName || order.customerPhone ? (
-                          <div>
-                            {order.customerName && <div style={{ fontWeight: 600, color: '#111827' }}>{order.customerName}</div>}
-                            {order.customerPhone && <div style={{ fontSize: '12px', color: '#6b7280' }}>📞 {order.customerPhone}</div>}
-                          </div>
-                        ) : (
-                          <span style={{ color: '#9ca3af' }}>-</span>
-                        )}
-                      </td>
-                      <td style={{ padding: '16px', fontSize: '13px', textTransform: 'capitalize' }}>
-                        <span style={{ background: '#f3f4f6', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>
-                          {order.tableNumber ? `Table ${order.tableNumber}` : order.type || 'POS'}
-                        </span>
-                      </td>
-                      <td style={{ padding: '16px', fontSize: '12.5px', color: '#4b5563' }}>
-                        {order.createdAt ? new Date(order.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'short', timeStyle: 'short' }) : order.date}
-                      </td>
-                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 800, color: '#10b981', fontSize: '14px' }}>₹{(Number(order.total) || 0).toLocaleString('en-IN')}</td>
-                      <td style={{ padding: '16px', textAlign: 'center', textTransform: 'uppercase', fontWeight: 700, fontSize: '12px', color: '#4b5563' }}>{order.paymentMethod || 'cash'}</td>
-                      <td style={{ padding: '16px', textAlign: 'center' }}>
-                        <span style={{
-                          padding: '4px 12px',
-                          borderRadius: '20px',
-                          fontSize: '12px',
-                          fontWeight: 700,
-                          background: order.status === 'completed' || order.paymentStatus === 'paid' ? '#f0fdf4' : order.status === 'cancelled' ? '#fef2f2' : '#fef3c7',
-                          color: order.status === 'completed' || order.paymentStatus === 'paid' ? '#166534' : order.status === 'cancelled' ? '#991b1b' : '#92400e'
-                        }}>
-                          {order.status || 'completed'}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                  ) : ordersReport.map(order => {
+                    let discAmt = Number(order.discount || order.discountGiven || order.discountAmount || 0)
+                    if (discAmt === 0) {
+                      const rawSub = order.rawSubtotal || (order.items || []).reduce((sum, i) => sum + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
+                      if (order.inaugurationOffer) discAmt = rawSub * 0.5
+                      else if (order.specialOffer20) discAmt = rawSub * 0.2
+                    }
+                    const discName = order.discountName || (order.inaugurationOffer ? 'Inauguration 50%' : (order.specialOffer20 ? 'Special 20%' : 'Discount'))
+                    const netPaid = Number(order.total) || 0
+                    const origAmt = Math.round(order.rawSubtotal || (netPaid + discAmt))
+
+                    let payLabel = (order.paymentMethod || 'cash').toUpperCase()
+                    if (order.splitPayments && typeof order.splitPayments === 'object') {
+                      const parts = []
+                      if (order.splitPayments.cash) parts.push(`Cash: ₹${order.splitPayments.cash}`)
+                      if (order.splitPayments.upi) parts.push(`UPI: ₹${order.splitPayments.upi}`)
+                      if (order.splitPayments.card) parts.push(`Card: ₹${order.splitPayments.card}`)
+                      if (parts.length > 0) payLabel = `SPLIT (${parts.join(', ')})`
+                    }
+
+                    return (
+                      <tr key={order.id || order.orderNumber} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '16px', fontWeight: 700, color: '#1a1a2e' }}>#{order.orderNumber || order.id}</td>
+                        <td style={{ padding: '16px', fontSize: '13px' }}>
+                          {order.customerName || order.customerPhone ? (
+                            <div>
+                              {order.customerName && <div style={{ fontWeight: 600, color: '#111827' }}>{order.customerName}</div>}
+                              {order.customerPhone && <div style={{ fontSize: '12px', color: '#6b7280' }}>📞 {order.customerPhone}</div>}
+                            </div>
+                          ) : (
+                            <span style={{ color: '#9ca3af' }}>-</span>
+                          )}
+                        </td>
+                        <td style={{ padding: '16px', fontSize: '13px', textTransform: 'capitalize' }}>
+                          <span style={{ background: '#f3f4f6', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>
+                            {order.tableNumber ? `Table ${order.tableNumber}` : order.type || 'POS'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '16px', fontSize: '12.5px', color: '#4b5563' }}>
+                          {order.createdAt ? new Date(order.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'short', timeStyle: 'short' }) : order.date}
+                        </td>
+                        <td style={{ padding: '16px', textAlign: 'right', fontWeight: 600, color: '#4b5563', fontSize: '13px' }}>
+                          ₹{origAmt.toLocaleString('en-IN')}
+                        </td>
+                        <td style={{ padding: '16px', textAlign: 'center' }}>
+                          {discAmt > 0 ? (
+                            <span style={{ background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca', padding: '4px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 700 }}>
+                              🏷️ {discName} (-₹{Math.round(discAmt)})
+                            </span>
+                          ) : (
+                            <span style={{ color: '#9ca3af', fontSize: '12px' }}>-</span>
+                          )}
+                        </td>
+                        <td style={{ padding: '16px', textAlign: 'right', fontWeight: 800, color: '#10b981', fontSize: '14px' }}>₹{netPaid.toLocaleString('en-IN')}</td>
+                        <td style={{ padding: '16px', textAlign: 'center', fontWeight: 700, fontSize: '11px', color: '#374151' }}>
+                          <span style={{ background: '#f3f4f6', padding: '4px 10px', borderRadius: '8px' }}>
+                            {payLabel}
+                          </span>
+                        </td>
+                        <td style={{ padding: '16px', textAlign: 'center' }}>
+                          <span style={{
+                            padding: '4px 12px',
+                            borderRadius: '20px',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            background: order.status === 'completed' || order.paymentStatus === 'paid' ? '#f0fdf4' : order.status === 'cancelled' ? '#fef2f2' : '#fef3c7',
+                            color: order.status === 'completed' || order.paymentStatus === 'paid' ? '#166534' : order.status === 'cancelled' ? '#991b1b' : '#92400e'
+                          }}>
+                            {order.status || 'completed'}
+                          </span>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
@@ -1641,12 +1695,17 @@ export default function Reports() {
       }
       case 'bill': return {
         title: 'Bill Summary Report',
-        headers: ['Bill No', 'Related KOT No', 'Date', 'Time', 'Order Type', 'Payment Mode', 'Total Amount (₹)'],
+        headers: ['Bill No', 'Related KOT No', 'Date', 'Time', 'Order Type', 'Original Subtotal (₹)', 'Offer / Discount Name', 'Discount Saved (₹)', 'Net Paid Amount (₹)', 'Payment Mode', 'Status'],
         rows: (ordersReport && ordersReport.length > 0 ? ordersReport : sampleBillData).map(b => {
-          const items = b.items || []
-          const subtotal = b.subtotal || items.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
-          const tax = b.tax !== undefined ? b.tax : subtotal * 0.05
-          const netTotal = b.total || (subtotal + tax || b.amount || 0)
+          let discAmt = Number(b.discount || b.discountGiven || b.discountAmount || 0)
+          if (discAmt === 0) {
+            const rawSub = b.rawSubtotal || (b.items || []).reduce((sum, i) => sum + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
+            if (b.inaugurationOffer) discAmt = rawSub * 0.5
+            else if (b.specialOffer20) discAmt = rawSub * 0.2
+          }
+          const discName = b.discountName || (b.inaugurationOffer ? 'Inauguration 50%' : (b.specialOffer20 ? 'Special 20%' : (discAmt > 0 ? 'Discount' : '-')))
+          const netTotal = Number(b.total) || 0
+          const origAmt = Math.round(b.rawSubtotal || (netTotal + discAmt))
 
           const dateObj = b.createdAt ? new Date(b.createdAt) : new Date()
           const dateStr = dateObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -1655,14 +1714,27 @@ export default function Reports() {
           const billNo = b.orderNumber ? `#${String(b.orderNumber).padStart(6, '0')}` : (b.billNo || `#${b.id}`)
           const kotNo = b.kotNumber || (b.orderNumber ? `KOT-${b.orderNumber}` : (b.kotId || `KOT-${b.id}`))
 
+          let payLabel = (b.paymentMethod || b.payment || 'CASH').toUpperCase()
+          if (b.splitPayments && typeof b.splitPayments === 'object') {
+            const parts = []
+            if (b.splitPayments.cash) parts.push(`Cash: ₹${b.splitPayments.cash}`)
+            if (b.splitPayments.upi) parts.push(`UPI: ₹${b.splitPayments.upi}`)
+            if (b.splitPayments.card) parts.push(`Card: ₹${b.splitPayments.card}`)
+            if (parts.length > 0) payLabel = `SPLIT (${parts.join(', ')})`
+          }
+
           return [
             billNo,
             kotNo,
             dateStr,
             timeStr,
             (b.type || 'DINE-IN').toUpperCase(),
-            (b.paymentMethod || b.payment || 'CASH').toUpperCase(),
-            `₹${Math.round(netTotal)}`
+            `₹${origAmt}`,
+            discName,
+            `₹${Math.round(discAmt)}`,
+            `₹${Math.round(netTotal)}`,
+            payLabel,
+            b.status || 'completed'
           ]
         })
       }
