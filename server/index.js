@@ -4040,6 +4040,39 @@ app.get('/api/sync/pull', (req, res) => {
   res.json(db)
 })
 
+app.post('/api/sync/pull-merge', (req, res) => {
+  try {
+    const { orders: cloudOrders, categories: cloudCategories, menuItems: cloudMenuItems, expenses: cloudExpenses, purchases: cloudPurchases } = req.body || {}
+    if (Array.isArray(cloudOrders) && cloudOrders.length > 0) {
+      const orderMap = new Map()
+      orders.forEach(o => orderMap.set(String(o.id || o.orderNumber), o))
+      cloudOrders.forEach(o => orderMap.set(String(o.id || o.orderNumber), o))
+      orders.length = 0
+      orders.push(...Array.from(orderMap.values()))
+    }
+    if (Array.isArray(cloudExpenses) && cloudExpenses.length > 0) {
+      const expMap = new Map()
+      expenses.forEach(e => expMap.set(String(e.id), e))
+      cloudExpenses.forEach(e => expMap.set(String(e.id), e))
+      expenses.length = 0
+      expenses.push(...Array.from(expMap.values()))
+    }
+    if (Array.isArray(cloudPurchases) && cloudPurchases.length > 0) {
+      const purMap = new Map()
+      purchases.forEach(p => purMap.set(String(p.id), p))
+      cloudPurchases.forEach(p => purMap.set(String(p.id), p))
+      purchases.length = 0
+      purchases.push(...Array.from(purMap.values()))
+    }
+    saveState()
+    console.log(`[SYNC PULL-MERGE SUCCESS] Local database merged with ${orders.length} total orders`)
+    res.json({ success: true, message: 'Merged cloud data into local database', ordersCount: orders.length })
+  } catch (err) {
+    console.error('[SYNC PULL-MERGE ERROR]', err)
+    res.status(500).json({ error: err.message || 'Pull merge failed' })
+  }
+})
+
 // ============ PURCHASES (supplier orders) ============
 app.get('/api/purchases', (req, res) => {
   const { date } = req.query

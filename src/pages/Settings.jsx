@@ -388,6 +388,34 @@ function DataTab({ pin, settings, onSaved }) {
     setSyncing(false)
   }
 
+  const handlePullFromCloud = async () => {
+    if (!cloudUrl) { setSyncMsg('❌ Enter your Hostinger website domain (e.g. https://yourdomain.com)'); return }
+    setSyncing(true); setSyncMsg('')
+    try {
+      localStorage.setItem('cloudSyncUrl', cloudUrl)
+      const target = cloudUrl.replace(/\/$/, '')
+      const cloudRes = await fetch(`${target}/api/sync/pull`)
+      if (!cloudRes.ok) { setSyncMsg('❌ Could not pull data from Hostinger Cloud'); setSyncing(false); return }
+      const cloudDbData = await cloudRes.json()
+
+      const mergeRes = await fetch(`${API_BASE}/api/sync/pull-merge`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cloudDbData)
+      })
+      const mergeData = await mergeRes.json()
+      if (mergeData.success) {
+        setSyncMsg(`✅ Success! Downloaded & merged ${mergeData.ordersCount} total orders from Hostinger Cloud!`)
+        setTimeout(() => window.location.reload(), 1500)
+      } else {
+        setSyncMsg(`❌ Merge Error: ${mergeData.error || 'Failed to merge'}`)
+      }
+    } catch (e) {
+      setSyncMsg(`❌ Connection Error: Could not connect to ${cloudUrl}. Ensure domain is active.`)
+    }
+    setSyncing(false)
+  }
+
   const handleUploadCSV = async (e, isVip50 = false) => {
     const file = e.target.files[0]; if (!file) return
     setImporting(true); setMsg('')
@@ -479,13 +507,20 @@ function DataTab({ pin, settings, onSaved }) {
               onChange={e => setCloudUrl(e.target.value)}
             />
           </div>
-          <div style={{ alignSelf: 'end' }}>
+          <div style={{ alignSelf: 'end', display: 'flex', gap: '8px' }}>
             <button
               onClick={handlePushToCloud}
               disabled={syncing}
-              style={{ ...btnPrimary, background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', boxShadow: '0 4px 16px rgba(37,99,235,0.3)', padding: '11px 20px' }}
+              style={{ ...btnPrimary, background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', boxShadow: '0 4px 16px rgba(37,99,235,0.3)', padding: '11px 16px', fontSize: '13px' }}
             >
-              <Upload size={16} /> {syncing ? 'Syncing...' : '☁️ Sync Local Data to Hostinger Cloud'}
+              <Upload size={15} /> {syncing ? 'Syncing...' : '☁️ Push Local to Cloud'}
+            </button>
+            <button
+              onClick={handlePullFromCloud}
+              disabled={syncing}
+              style={{ ...btnPrimary, background: 'linear-gradient(135deg, #10b981, #059669)', boxShadow: '0 4px 16px rgba(16,185,129,0.3)', padding: '11px 16px', fontSize: '13px' }}
+            >
+              <Download size={15} /> {syncing ? 'Syncing...' : '📥 Pull Cloud to Local'}
             </button>
           </div>
         </div>
