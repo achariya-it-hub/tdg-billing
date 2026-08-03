@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Receipt, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet, RefreshCw, QrCode, Calendar, Download, FileSpreadsheet, Search } from 'lucide-react'
+import { Receipt, CreditCard, Banknote, Smartphone, Check, Clock, X, Printer, Wallet, RefreshCw, QrCode, Calendar, Download, FileSpreadsheet, Search, Split } from 'lucide-react'
 import { getSocket } from '../lib/socket'
 import { useSettings } from '../lib/settingsContext'
 import PrintService from '../lib/printService'
@@ -8,6 +8,7 @@ const paymentMethods = [
   { id: 'cash', name: 'Cash', icon: Banknote },
   { id: 'card', name: 'Card', icon: CreditCard },
   { id: 'upi', name: 'UPI', icon: Smartphone },
+  { id: 'split', name: 'Split Pay', icon: Split },
   { id: 'wallet', name: 'Wallet', icon: Wallet },
 ]
 
@@ -34,6 +35,14 @@ export default function Billing() {
   const [resettlePaymentMethod, setResettlePaymentMethod] = useState('cash')
   const [resettleNotes, setResettleNotes] = useState('')
   const [resettling, setResettling] = useState(false)
+
+  // Split Payment State
+  const [splitCash, setSplitCash] = useState('')
+  const [splitUpi, setSplitUpi] = useState('')
+  const [splitCard, setSplitCard] = useState('')
+  const [resettleSplitCash, setResettleSplitCash] = useState('')
+  const [resettleSplitUpi, setResettleSplitUpi] = useState('')
+  const [resettleSplitCard, setResettleSplitCard] = useState('')
 
   const getLocalDateString = (val) => {
     if (!val) return ''
@@ -231,6 +240,22 @@ export default function Billing() {
     if (!selectedKOT) return
     setProcessing(true)
 
+    const totalBillAmt = Math.round(selectedKOT.total || (calculateTotal(selectedKOT) + calculateTax(calculateTotal(selectedKOT))))
+    let splitData = undefined
+
+    if (selectedPayment === 'split') {
+      const c = Number(splitCash) || 0
+      const u = Number(splitUpi) || 0
+      const cd = Number(splitCard) || 0
+      const sum = c + u + cd
+      if (sum !== totalBillAmt) {
+        alert(`Split amounts total (₹${sum}) does not match bill total (₹${totalBillAmt}). Please adjust!`)
+        setProcessing(false)
+        return
+      }
+      splitData = { cash: c, upi: u, card: cd }
+    }
+
     if (selectedPayment === 'wallet') {
       const phone = selectedKOT.customerPhone
       if (!phone) {
@@ -243,9 +268,9 @@ export default function Billing() {
         if (res.ok) {
           const data = await res.json()
           const balance = data.rubyPoints || 0
-          const total = calculateTotal(selectedKOT) + calculateTax(calculateTotal(selectedKOT))
+          const total = totalBillAmt
           if (balance < total) {
-            alert(`Insufficient wallet: ₹${balance} available, need ₹${total.toFixed(0)}`)
+            alert(`Insufficient wallet: ₹${balance} available, need ₹${total}`)
             setProcessing(false)
             return
           }
@@ -265,14 +290,22 @@ export default function Billing() {
       const res = await fetch(`${getApiUrl()}/api/pos/orders/${selectedKOT.id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'completed', paymentStatus: 'paid', paymentMethod: selectedPayment })
+        body: JSON.stringify({
+          status: 'completed',
+          paymentStatus: 'paid',
+          paymentMethod: selectedPayment,
+          splitPayments: splitData
+        })
       })
       if (res.ok) {
-        setPaidBills(prev => [{ ...selectedKOT, status: 'completed', paymentStatus: 'paid' }, ...prev])
+        setPaidBills(prev => [{ ...selectedKOT, status: 'completed', paymentStatus: 'paid', paymentMethod: selectedPayment, splitPayments: splitData }, ...prev])
         setPendingKOTs(prev => prev.filter(o => o.id !== selectedKOT.id))
       }
       setShowPayment(false)
       setSelectedKOT(null)
+      setSplitCash('')
+      setSplitUpi('')
+      setSplitCard('')
     } catch (err) {
       console.error('Payment failed:', err)
     }
@@ -286,12 +319,38 @@ export default function Billing() {
   const handleOpenResettle = (bill) => {
     setResettleBill(bill)
     setResettlePaymentMethod((bill.paymentMethod || 'cash').toLowerCase())
+    if (bill.splitPayments) {
+      setResettleSplitCash(bill.splitPayments.cash || '')
+      setResettleSplitUpi(bill.splitPayments.upi || '')
+      setResettleSplitCard(bill.splitPayments.card || '')
+    } else {
+      setResettleSplitCash('')
+      setResettleSplitUpi('')
+      setResettleSplitCard('')
+    }
     setResettleNotes('')
   }
 
   const handleConfirmResettle = async () => {
     if (!resettleBill) return
     setResettling(true)
+    
+    const totalBillAmt = Math.round(resettleBill.total || calculateTotal(resettleBill))
+    let splitData = undefined
+
+    if (resettlePaymentMethod === 'split') {
+      const c = Number(resettleSplitCash) || 0
+      const u = Number(resettleSplitUpi) || 0
+      const cd = Number(resettleSplitCard) || 0
+      const sum = c + u + cd
+      if (sum !== totalBillAmt) {
+        alert(`Split amounts total (₹${sum}) does not match bill total (₹${totalBillAmt}). Please adjust!`)
+        setResettling(false)
+        return
+      }
+      splitData = { cash: c, upi: u, card: cd }
+    }
+
     try {
       const billId = resettleBill.id || resettleBill.orderNumber
       const res = await fetch(`${getApiUrl()}/api/pos/orders/${billId}/resettle`, {
@@ -299,12 +358,13 @@ export default function Billing() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           paymentMethod: resettlePaymentMethod,
+          splitPayments: splitData,
           paymentStatus: 'paid',
-          notes: resettleNotes || 'Resettled due to wrong settlement'
+          notes: resettleNotes || 'Resettled payment method'
         })
       })
       if (res.ok) {
-        setPaidBills(prev => prev.map(b => (String(b.id) === String(billId) || String(b.orderNumber) === String(billId)) ? { ...b, paymentMethod: resettlePaymentMethod } : b))
+        setPaidBills(prev => prev.map(b => (String(b.id) === String(billId) || String(b.orderNumber) === String(billId)) ? { ...b, paymentMethod: resettlePaymentMethod, splitPayments: splitData } : b))
         alert(`Bill #${resettleBill.orderNumber || resettleBill.id} resettled to ${resettlePaymentMethod.toUpperCase()} successfully!`)
       } else {
         alert('Failed to resettle bill')
@@ -976,6 +1036,49 @@ export default function Billing() {
               </div>
             </div>
 
+            {selectedPayment === 'split' && (
+              <div style={{ marginBottom: '20px', padding: '16px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>Split Payment Breakdown</span>
+                  <span style={{ fontSize: '12px', fontWeight: 800, color: (Number(splitCash) + Number(splitUpi) + Number(splitCard) === Math.round(selectedKOT.total || (calculateTotal(selectedKOT) + calculateTax(calculateTotal(selectedKOT))))) ? '#10b981' : '#ef4444' }}>
+                    Total: ₹{Number(splitCash) + Number(splitUpi) + Number(splitCard)} / ₹{Math.round(selectedKOT.total || (calculateTotal(selectedKOT) + calculateTax(calculateTotal(selectedKOT))))}
+                  </span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>💵 Cash (₹)</label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={splitCash}
+                      onChange={e => setSplitCash(e.target.value)}
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontWeight: 700, fontSize: '14px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>📱 UPI (₹)</label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={splitUpi}
+                      onChange={e => setSplitUpi(e.target.value)}
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontWeight: 700, fontSize: '14px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>💳 Card (₹)</label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={splitCard}
+                      onChange={e => setSplitCard(e.target.value)}
+                      style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontWeight: 700, fontSize: '14px' }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
             {selectedPayment === 'upi' && company.upiId && (
               <div style={{ textAlign: 'center', marginBottom: '20px', padding: '16px', background: 'white', borderRadius: '16px', border: '2px dashed #d1d5db' }}>
                 <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: '#4b5563' }}>
@@ -1102,6 +1205,49 @@ export default function Billing() {
                 )
               })}
             </div>
+
+            {resettlePaymentMethod === 'split' && (
+              <div style={{ marginBottom: '16px', padding: '14px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: '#1e293b', marginBottom: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Split Amounts</span>
+                  <span style={{ fontSize: '12px', fontWeight: 800, color: (Number(resettleSplitCash) + Number(resettleSplitUpi) + Number(resettleSplitCard) === Math.round(resettleBill.total || calculateTotal(resettleBill))) ? '#10b981' : '#ef4444' }}>
+                    ₹{Number(resettleSplitCash) + Number(resettleSplitUpi) + Number(resettleSplitCard)} / ₹{Math.round(resettleBill.total || calculateTotal(resettleBill))}
+                  </span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                  <div>
+                    <label style={{ fontSize: '10px', fontWeight: 700, color: '#64748b' }}>Cash (₹)</label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={resettleSplitCash}
+                      onChange={e => setResettleSplitCash(e.target.value)}
+                      style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', fontWeight: 700, fontSize: '13px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '10px', fontWeight: 700, color: '#64748b' }}>UPI (₹)</label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={resettleSplitUpi}
+                      onChange={e => setResettleSplitUpi(e.target.value)}
+                      style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', fontWeight: 700, fontSize: '13px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '10px', fontWeight: 700, color: '#64748b' }}>Card (₹)</label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      value={resettleSplitCard}
+                      onChange={e => setResettleSplitCard(e.target.value)}
+                      style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', fontWeight: 700, fontSize: '13px' }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div style={{ marginBottom: '16px' }}>
               <div style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280', marginBottom: '4px' }}>

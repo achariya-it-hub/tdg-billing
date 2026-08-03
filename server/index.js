@@ -2938,6 +2938,7 @@ app.post('/api/pos/orders', (req, res) => {
     tax: tax || 0,
     total: total || 0,
     paymentMethod: paymentMethod || 'cash',
+    splitPayments: req.body.splitPayments || undefined,
     paymentStatus: 'pending',
     tableNumber: tableNumber || '',
     customerName: customerName || '',
@@ -2980,6 +2981,7 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
     order.status = status || order.status
     order.paymentStatus = paymentStatus || order.paymentStatus
     order.paymentMethod = req.body.paymentMethod || order.paymentMethod
+    if (req.body.splitPayments) order.splitPayments = req.body.splitPayments
     if (status === 'cancelled') {
       if (cancelReason) order.cancelReason = cancelReason
       if (req.body.cancelledBy) order.cancelledBy = req.body.cancelledBy
@@ -4342,6 +4344,8 @@ app.put('/api/pos/orders/:id/resettle', (req, res) => {
     }
 
     if (paymentMethod) targetOrder.paymentMethod = paymentMethod.toLowerCase()
+    if (req.body.splitPayments) targetOrder.splitPayments = req.body.splitPayments
+    else if (paymentMethod !== 'split') targetOrder.splitPayments = undefined
     if (paymentStatus) targetOrder.paymentStatus = paymentStatus
     if (status) targetOrder.status = status
     targetOrder.resettledAt = new Date().toISOString()
@@ -4584,14 +4588,28 @@ app.get('/api/reports/daily-closing', (req, res) => {
   // Breakdown by payment method
   const byPaymentMethod = {}
   completedOrders.forEach(o => {
-    let method = (o.paymentMethod || 'cash').toLowerCase()
-    if (method.includes('card') || method.includes('credit') || method.includes('debit')) method = 'card'
-    else if (method.includes('upi') || method.includes('gpay') || method.includes('phonepe') || method.includes('paytm') || method.includes('online')) method = 'upi'
-    else if (method.includes('wallet')) method = 'wallet'
-    else if (method.includes('cash')) method = 'cash'
-    else method = 'cash'
+    if (o.splitPayments && typeof o.splitPayments === 'object' && Object.keys(o.splitPayments).length > 0) {
+      Object.entries(o.splitPayments).forEach(([mKey, mVal]) => {
+        const val = Number(mVal) || 0
+        if (val > 0) {
+          let key = mKey.toLowerCase()
+          if (key.includes('card') || key.includes('credit') || key.includes('debit')) key = 'card'
+          else if (key.includes('upi') || key.includes('gpay') || key.includes('phonepe') || key.includes('paytm') || key.includes('online')) key = 'upi'
+          else if (key.includes('wallet')) key = 'wallet'
+          else key = 'cash'
+          byPaymentMethod[key] = (byPaymentMethod[key] || 0) + val
+        }
+      })
+    } else {
+      let method = (o.paymentMethod || 'cash').toLowerCase()
+      if (method.includes('card') || method.includes('credit') || method.includes('debit')) method = 'card'
+      else if (method.includes('upi') || method.includes('gpay') || method.includes('phonepe') || method.includes('paytm') || method.includes('online')) method = 'upi'
+      else if (method.includes('wallet')) method = 'wallet'
+      else if (method.includes('cash')) method = 'cash'
+      else method = 'cash'
 
-    byPaymentMethod[method] = (byPaymentMethod[method] || 0) + getOrderAmount(o)
+      byPaymentMethod[method] = (byPaymentMethod[method] || 0) + getOrderAmount(o)
+    }
   })
 
   // Breakdown by order source

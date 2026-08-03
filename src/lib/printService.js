@@ -207,7 +207,14 @@ const PrintService = {
     const timeStr = bill.createdAt ? new Date(bill.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
     const orderNum = bill.orderNumber || bill.id || '1001'
     const kotNum = bill.kotNumber || bill.orderNumber || bill.id
-    const paymentMethod = (bill.paymentMethod || 'cash').toUpperCase()
+    let paymentMethod = (bill.paymentMethod || 'cash').toUpperCase()
+    if ((bill.paymentMethod === 'split' || bill.splitPayments) && bill.splitPayments) {
+      const parts = []
+      if (bill.splitPayments.cash) parts.push(`Cash: ₹${bill.splitPayments.cash}`)
+      if (bill.splitPayments.upi) parts.push(`UPI: ₹${bill.splitPayments.upi}`)
+      if (bill.splitPayments.card) parts.push(`Card: ₹${bill.splitPayments.card}`)
+      if (parts.length > 0) paymentMethod = `SPLIT (${parts.join(', ')})`
+    }
     const discountLabel = bill.discountName || (bill.inaugurationOffer ? 'Inauguration Offer 50%' : (bill.specialOffer20 ? 'Special Offer 20%' : 'Discount'))
 
     return `
