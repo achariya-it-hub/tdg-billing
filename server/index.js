@@ -4239,7 +4239,7 @@ const getOrderDiscountInfo = (o) => {
     const rawSub = o.rawSubtotal || (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
 
     if (dStr === '2026-07-27' || o.inaugurationOffer) {
-      disc = net > 0 ? net : Math.round(rawSub * 0.5)
+      disc = net > 0 ? Math.round(net * 0.5) : Math.round(rawSub * 0.5)
       name = 'Inauguration Offer 50% OFF'
     } else if ((dStr >= '2026-07-30' && dStr <= '2026-08-02') || o.specialOffer20) {
       disc = net > 0 ? Math.round(net * 0.25) : Math.round(rawSub * 0.2)
