@@ -2921,13 +2921,15 @@ app.post('/api/pos/orders', (req, res) => {
   const rawSub = req.body.rawSubtotal || items?.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || 0) * (item.quantity || 1)), 0) || subtotal || 0
   const discountVal = Number(req.body.discount || req.body.discountAmount || 0)
   const discountLabel = req.body.discountName || (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : 'Discount'))
+  
+  const isDirectSettle = Boolean(req.body.settleDirectly || req.body.status === 'completed' || req.body.paymentStatus === 'paid')
 
   const order = {
     id,
     orderNumber: orderNum,
     kotNumber: kotNum,
     type: type || 'dine-in',
-    status: 'pending',
+    status: isDirectSettle ? 'completed' : 'pending',
     source: source || 'pos',
     rawSubtotal: rawSub,
     discount: discountVal,
@@ -2939,7 +2941,9 @@ app.post('/api/pos/orders', (req, res) => {
     total: total || 0,
     paymentMethod: paymentMethod || 'cash',
     splitPayments: req.body.splitPayments || undefined,
-    paymentStatus: 'pending',
+    paymentStatus: isDirectSettle ? 'paid' : 'pending',
+    paidAt: isDirectSettle ? now : undefined,
+    completedAt: isDirectSettle ? now : undefined,
     tableNumber: tableNumber || '',
     customerName: customerName || '',
     customerPhone: customerPhone || '',

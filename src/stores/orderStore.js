@@ -188,7 +188,7 @@ export const useOrderStore = create(
     return get().getSubtotal() + get().getTax()
   },
   
-  placeOrder: async (paymentMethod) => {
+  placeOrder: async (paymentMethod, settleDirectly = false, splitPayments = undefined) => {
     try {
       const order = get().currentOrder
       const items = order.items || []
@@ -223,7 +223,9 @@ export const useOrderStore = create(
             total,
             inaugurationOffer: order.inaugurationOffer || false,
             specialOffer20: order.specialOffer20 || false,
-            paymentMethod: paymentMethod || undefined,
+            paymentMethod: paymentMethod || 'cash',
+            settleDirectly: Boolean(settleDirectly),
+            splitPayments,
             customerPhone: order.customerPhone || ''
           })
         })
