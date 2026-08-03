@@ -65,6 +65,12 @@
       "color": "#ca8a04"
     },
     {
+      "id": "c5_legthigh",
+      "name": "Leg & Thigh",
+      "icon": "🍗",
+      "color": "#ea580c"
+    },
+    {
       "id": "c5_wings",
       "name": "Wings",
       "icon": "🍗",
@@ -92,30 +98,33 @@
     },
     {
       "id": "m13",
-      "categoryId": "c5_wings",
+      "categoryId": "c5_legthigh",
       "name": "4 Pc Leg & Thigh (2 Dips)",
       "price": 280,
       "description": "4 Pc Crispy Fried Chicken Leg & Thigh + 2 Dips",
       "isAvailable": true,
-      "image": "/images/menu/Leg& Thigh.png"
+      "image": "/images/menu/Leg& Thigh.png",
+      "category": "Leg & Thigh"
     },
     {
       "id": "m14",
-      "categoryId": "c5_wings",
+      "categoryId": "c5_legthigh",
       "name": "8 Pc Leg & Thigh (4 Dips)",
       "price": 560,
       "description": "8 Pc Crispy Fried Chicken Leg & Thigh + 4 Dips",
       "isAvailable": true,
-      "image": "/images/menu/Leg& Thigh.png"
+      "image": "/images/menu/Leg& Thigh.png",
+      "category": "Leg & Thigh"
     },
     {
       "id": "m15",
-      "categoryId": "c5_wings",
+      "categoryId": "c5_legthigh",
       "name": "12 Pc Leg & Thigh (6 Dips)",
       "price": 840,
       "description": "12 Pc Crispy Fried Chicken Leg & Thigh + 6 Dips",
       "isAvailable": true,
-      "image": "/images/menu/Leg& Thigh.png"
+      "image": "/images/menu/Leg& Thigh.png",
+      "category": "Leg & Thigh"
     },
     {
       "id": "m16",
