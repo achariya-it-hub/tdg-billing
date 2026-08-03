@@ -134,6 +134,16 @@ export default function Reports() {
     if (dateRange === 'custom') {
       return `from=${customDate}&to=${customDate}&date=${customDate}&strict=true`
     }
+    if (dateRange === 'today') {
+      const tStr = formatLocalYYYYMMDD(new Date())
+      return `date=today&from=${tStr}&to=${tStr}`
+    }
+    if (dateRange === 'yesterday') {
+      const y = new Date()
+      y.setDate(y.getDate() - 1)
+      const yStr = formatLocalYYYYMMDD(y)
+      return `date=yesterday&from=${yStr}&to=${yStr}`
+    }
     return `date=${dateRange}`
   }
 

@@ -5046,40 +5046,18 @@ app.get('/api/reports/payment-report', (req, res) => {
 // ============ POS ORDERS LIST FOR BILLING COUNTER & REPORTS ============
 app.get('/api/pos/orders', (req, res) => {
   try {
-    const { date, from, to, status } = req.query
-    const today = new Date()
-    const todayStr = getLocalDateStr(today)
+    const { status } = req.query
+    const includeCancelled = req.query.includeCancelled === 'true' || req.query.report === 'kot-cancelled'
 
-    let list = orders.filter(o => {
-      if (!o) return false
-      const s = (o.status || '').toLowerCase()
-      return s !== 'cancelled' && s !== 'canceled' && s !== 'void' && !o.isCancelled && !o.isVoid
-    })
+    // Use central date filtering logic (guarantees 100% exact date matching across all report screens)
+    let list = getFilteredOrdersForPeriod(req.query, true)
 
-    if (date === 'all') {
-      // return all non-cancelled
-    } else if (date === 'yesterday') {
-      const yesterday = new Date(today)
-      yesterday.setDate(yesterday.getDate() - 1)
-      const yesterdayStr = getLocalDateStr(yesterday)
-      list = list.filter(o => getOrderDate(o) === yesterdayStr)
-    } else if (from && to) {
-      const normFrom = normalizeDateStr(from)
-      const normTo = normalizeDateStr(to)
+    if (!includeCancelled) {
       list = list.filter(o => {
-        const dStr = getOrderDate(o)
-        return dStr >= normFrom && dStr <= normTo
+        if (!o) return false
+        const s = (o.status || '').toLowerCase()
+        return s !== 'cancelled' && s !== 'canceled' && s !== 'void' && !o.isCancelled && !o.isVoid
       })
-    } else {
-      // 'today' or default date filtering with latest active shift fallback
-      let tOrders = list.filter(o => getOrderDate(o) === todayStr)
-      if (tOrders.length === 0) {
-        const latestDate = getLatestOrderDate(list)
-        if (latestDate) {
-          tOrders = list.filter(o => getOrderDate(o) === latestDate)
-        }
-      }
-      list = tOrders
     }
 
     if (status) {
