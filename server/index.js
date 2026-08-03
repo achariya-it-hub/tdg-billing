@@ -4435,6 +4435,28 @@ const THREE_HOUR_SLOTS = [
   { start: 21, end: 24, label: '09:00 PM - 11:59 PM', timeSlot: '09:00 PM - 11:59 PM' }
 ]
 
+const getLocalHourIST = (dtVal) => {
+  if (!dtVal) return -1
+  try {
+    const d = typeof dtVal === 'number' ? new Date(dtVal) : new Date(String(dtVal))
+    if (!isNaN(d.getTime())) {
+      const hourStr = d.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata', hour12: false, hour: '2-digit' })
+      const h = parseInt(hourStr, 10)
+      if (!isNaN(h) && h >= 0 && h <= 23) return h
+    }
+  } catch (e) {}
+
+  const str = String(dtVal)
+  if (str.includes('T')) {
+    const timePart = str.split('T')[1]
+    if (timePart) {
+      const h = parseInt(timePart.split(':')[0], 10)
+      if (!isNaN(h) && h >= 0 && h <= 23) return h
+    }
+  }
+  return -1
+}
+
 function computeThreeHourSales(orderList) {
   let totalRev = 0
   const buckets = THREE_HOUR_SLOTS.map(s => ({
@@ -4456,17 +4478,7 @@ function computeThreeHourSales(orderList) {
 
     const dtVal = o.createdAt || o.paidAt || o.completedAt || o.timestamp || o.date
     if (dtVal) {
-      let hour24 = -1
-      if (typeof dtVal === 'string' && dtVal.includes('T')) {
-        const timePart = dtVal.split('T')[1]
-        if (timePart) {
-          hour24 = parseInt(timePart.split(':')[0], 10)
-        }
-      }
-      if (isNaN(hour24) || hour24 < 0 || hour24 > 23) {
-        const d = new Date(dtVal)
-        if (!isNaN(d.getTime())) hour24 = d.getHours()
-      }
+      const hour24 = getLocalHourIST(dtVal)
       if (hour24 >= 0 && hour24 <= 23) {
         const slotIdx = THREE_HOUR_SLOTS.findIndex(s => hour24 >= s.start && hour24 < s.end)
         if (slotIdx >= 0) {
@@ -4528,17 +4540,7 @@ function computeHourlySales(orderList) {
 
     const dtVal = o.createdAt || o.paidAt || o.completedAt || o.timestamp || o.date
     if (dtVal) {
-      let hour24 = -1
-      if (typeof dtVal === 'string' && dtVal.includes('T')) {
-        const timePart = dtVal.split('T')[1]
-        if (timePart) {
-          hour24 = parseInt(timePart.split(':')[0], 10)
-        }
-      }
-      if (isNaN(hour24) || hour24 < 0 || hour24 > 23) {
-        const d = new Date(dtVal)
-        if (!isNaN(d.getTime())) hour24 = d.getHours()
-      }
+      const hour24 = getLocalHourIST(dtVal)
       if (hour24 >= 0 && hour24 <= 23) {
         buckets[hour24].totalBills += 1
         if (isValid) {

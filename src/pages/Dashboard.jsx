@@ -56,7 +56,7 @@ export default function Dashboard() {
 
   const getQueryParams = () => {
     if (dateRange === 'custom') {
-      return `from=${customDate}&to=${customDate}&date=${customDate}`
+      return `from=${customDate}&to=${customDate}&date=${customDate}&strict=true`
     }
     if (dateRange === 'latest' || dateRange === 'all') {
       return `date=${dateRange}`
@@ -77,12 +77,12 @@ export default function Dashboard() {
     if (dateRange === 'week') {
       const w = new Date(today)
       w.setDate(w.getDate() - 7)
-      return `from=${formatLocalYYYYMMDD(w)}&to=${formatLocalYYYYMMDD(today)}`
+      return `from=${formatLocalYYYYMMDD(w)}&to=${formatLocalYYYYMMDD(today)}&strict=true`
     }
     if (dateRange === 'month') {
       const m = new Date(today)
       m.setDate(m.getDate() - 30)
-      return `from=${formatLocalYYYYMMDD(m)}&to=${formatLocalYYYYMMDD(today)}`
+      return `from=${formatLocalYYYYMMDD(m)}&to=${formatLocalYYYYMMDD(today)}&strict=true`
     }
     return `date=${dateRange}`
   }

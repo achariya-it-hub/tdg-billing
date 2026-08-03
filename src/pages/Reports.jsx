@@ -132,7 +132,7 @@ export default function Reports() {
 
   const getQueryParams = () => {
     if (dateRange === 'custom') {
-      return `from=${customDate}&to=${customDate}&date=${customDate}`
+      return `from=${customDate}&to=${customDate}&date=${customDate}&strict=true`
     }
     return `date=${dateRange}`
   }
