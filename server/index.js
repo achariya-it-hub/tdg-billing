@@ -4190,8 +4190,8 @@ function getNextKotNumber() {
     const todayOrders = orders.filter(o => getOrderDate(o) === todayStr)
     let maxKot = 99
     todayOrders.forEach(o => {
-      const kNum = Number(o.kotNumber)
-      if (!isNaN(kNum) && kNum > maxKot) {
+      const kNum = Number(o.kotNumber || o.orderNumber)
+      if (!isNaN(kNum) && kNum >= 100 && kNum < 5000 && kNum > maxKot) {
         maxKot = kNum
       }
     })
