@@ -414,7 +414,7 @@ export default function Reports() {
                 </div>
 
                 {/* Revenue vs Cost */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '20px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '20px' }}>
                   <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px' }}>
                     <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Cost Breakdown</h4>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
@@ -448,13 +448,16 @@ export default function Reports() {
                   </div>
 
                   <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px' }}>
-                    <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Order Sources</h4>
-                    {!displayClosing.bySource || Object.keys(displayClosing.bySource).length === 0 ? (
-                      <p style={{ color: '#9ca3af', fontSize: '13px' }}>No data</p>
-                    ) : Object.entries(displayClosing.bySource).map(([source, count]) => (
-                      <div key={source} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                        <span style={{ textTransform: 'capitalize', color: '#6b7280' }}>{source}</span>
-                        <span style={{ fontWeight: 700 }}>{count}</span>
+                    <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>Discount Breakdown</span>
+                      <span style={{ fontSize: '13px', fontWeight: 800, color: '#dc2626' }}>Total: -₹{(displayClosing.totalDiscountGiven || 0).toLocaleString()}</span>
+                    </h4>
+                    {!displayClosing.byDiscountType || Object.keys(displayClosing.byDiscountType).length === 0 ? (
+                      <p style={{ color: '#9ca3af', fontSize: '13px' }}>No discounts given in period</p>
+                    ) : Object.entries(displayClosing.byDiscountType).map(([discName, info]) => (
+                      <div key={discName} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '13px' }}>
+                        <span style={{ color: '#4b5563', fontWeight: 600 }}>🏷️ {discName} <small style={{ color: '#9ca3af' }}>({info.count} bills)</small></span>
+                        <span style={{ fontWeight: 700, color: '#dc2626' }}>-₹{Math.round(info.totalDiscount).toLocaleString()}</span>
                       </div>
                     ))}
                   </div>

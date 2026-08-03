@@ -4647,6 +4647,27 @@ const threeHourSales = computeThreeHourSales(dayOrders);
 
   const grossProfit = totalSales - totalPurchases - totalExpenses
 
+  // Breakdown by Discount Type & Total Discount Savings
+  let totalDiscountGiven = 0
+  const byDiscountType = {}
+  completedOrders.forEach(o => {
+    let disc = Number(o.discount || o.discountGiven || o.discountAmount || 0)
+    if (disc === 0) {
+      const rawSub = o.rawSubtotal || (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
+      if (o.inaugurationOffer) disc = rawSub * 0.5
+      else if (o.specialOffer20) disc = rawSub * 0.2
+    }
+    if (disc > 0) {
+      totalDiscountGiven += disc
+      const dName = o.discountName || (o.inaugurationOffer ? 'Inauguration Offer 50%' : (o.specialOffer20 ? 'Special Offer 20%' : 'Discount'))
+      if (!byDiscountType[dName]) {
+        byDiscountType[dName] = { count: 0, totalDiscount: 0 }
+      }
+      byDiscountType[dName].count += 1
+      byDiscountType[dName].totalDiscount += disc
+    }
+  })
+
   // Status breakdown
   const statusBreakdown = {}
   dayOrders.forEach(o => {
@@ -4688,6 +4709,8 @@ const threeHourSales = computeThreeHourSales(dayOrders);
     avgBasketValue,
     byPaymentMethod,
     bySource,
+    totalDiscountGiven: Math.round(totalDiscountGiven),
+    byDiscountType,
     statusBreakdown,
     cancelledCount: cancelledOrders.length,
     cancelledValue: Math.round(cancelledValue),
