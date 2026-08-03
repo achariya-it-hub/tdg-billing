@@ -5558,19 +5558,19 @@ async function seedAdmin() {
     console.log('Migrated: initialized settings in db.json')
   }
 
-  // Auto-sync menu items and categories from seed-db.json if updated
+  // Auto-sync menu items and categories from seed-db.json if empty or updated
   try {
     const seedPath = join(__dirname, 'seed-db.json')
     if (existsSync(seedPath)) {
       const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
       if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length > 0) {
         let updated = false
-        if (JSON.stringify(categories) !== JSON.stringify(seedData.categories)) {
+        if (categories.length === 0 && seedData.categories?.length > 0) {
           categories.length = 0
           categories.push(...(seedData.categories || []))
           updated = true
         }
-        if (JSON.stringify(menuItems) !== JSON.stringify(seedData.menuItems)) {
+        if (menuItems.length === 0 || (seedData.menuItems.length > menuItems.length)) {
           menuItems.length = 0
           menuItems.push(...(seedData.menuItems || []))
           updated = true
