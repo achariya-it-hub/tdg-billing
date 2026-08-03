@@ -22799,17 +22799,18 @@
         {
           "id": "m15",
           "name": "12 Pc Leg & Thigh (6 Dips)",
-          "price": 413,
-          "unitPrice": 413,
+          "price": 840,
+          "unitPrice": 840,
           "quantity": 1,
-          "totalPrice": 413
+          "totalPrice": 840
         }
       ],
-      "subtotal": 393,
-      "tax": 20,
-      "total": 413,
+      "subtotal": 840,
+      "tax": 42,
+      "total": 882,
       "kotNumber": 100,
-      "updatedAt": "2026-08-03T11:06:03.000+05:30"
+      "updatedAt": "2026-08-03T11:06:03.000+05:30",
+      "rawSubtotal": 840
     },
     {
       "id": "10668",
@@ -22827,17 +22828,18 @@
         {
           "id": "m12",
           "name": "Pesto Gyro (Signature)",
-          "price": 285,
-          "unitPrice": 285,
+          "price": 249,
+          "unitPrice": 249,
           "quantity": 1,
-          "totalPrice": 285
+          "totalPrice": 249
         }
       ],
-      "subtotal": 271,
-      "tax": 14,
-      "total": 285,
+      "subtotal": 249,
+      "tax": 12,
+      "total": 261,
       "kotNumber": 101,
-      "updatedAt": "2026-08-03T11:08:02.000+05:30"
+      "updatedAt": "2026-08-03T11:08:02.000+05:30",
+      "rawSubtotal": 249
     },
     {
       "id": "10313",
@@ -22907,17 +22909,18 @@
         {
           "id": "m11",
           "name": "Pesto Gyro (Mini)",
-          "price": 369,
-          "unitPrice": 369,
+          "price": 99,
+          "unitPrice": 99,
           "quantity": 1,
-          "totalPrice": 369
+          "totalPrice": 99
         }
       ],
-      "subtotal": 351,
-      "tax": 18,
-      "total": 369,
+      "subtotal": 99,
+      "tax": 5,
+      "total": 104,
       "kotNumber": 102,
-      "updatedAt": "2026-08-03T11:21:30.000+05:30"
+      "updatedAt": "2026-08-03T11:21:30.000+05:30",
+      "rawSubtotal": 99
     },
     {
       "id": "10312",
@@ -22961,17 +22964,18 @@
         {
           "id": "m13",
           "name": "4 Pc Leg & Thigh (2 Dips)",
-          "price": 373,
-          "unitPrice": 373,
+          "price": 280,
+          "unitPrice": 280,
           "quantity": 1,
-          "totalPrice": 373
+          "totalPrice": 280
         }
       ],
-      "subtotal": 355,
-      "tax": 18,
-      "total": 373,
+      "subtotal": 280,
+      "tax": 14,
+      "total": 294,
       "kotNumber": 103,
-      "updatedAt": "2026-08-03T11:40:03.000+05:30"
+      "updatedAt": "2026-08-03T11:40:03.000+05:30",
+      "rawSubtotal": 280
     },
     {
       "id": "10311",
@@ -23015,17 +23019,18 @@
         {
           "id": "m14",
           "name": "8 Pc Leg & Thigh (4 Dips)",
-          "price": 281,
-          "unitPrice": 281,
+          "price": 560,
+          "unitPrice": 560,
           "quantity": 1,
-          "totalPrice": 281
+          "totalPrice": 560
         }
       ],
-      "subtotal": 268,
-      "tax": 13,
-      "total": 281,
+      "subtotal": 560,
+      "tax": 28,
+      "total": 588,
       "kotNumber": 104,
-      "updatedAt": "2026-08-03T11:55:11.000+05:30"
+      "updatedAt": "2026-08-03T11:55:11.000+05:30",
+      "rawSubtotal": 560
     },
     {
       "id": "10315",
@@ -23069,17 +23074,18 @@
         {
           "id": "m19",
           "name": "20 Pc Wings (6 Dips)",
-          "price": 401,
-          "unitPrice": 401,
+          "price": 600,
+          "unitPrice": 600,
           "quantity": 1,
-          "totalPrice": 401
+          "totalPrice": 600
         }
       ],
-      "subtotal": 382,
-      "tax": 19,
-      "total": 401,
+      "subtotal": 600,
+      "tax": 30,
+      "total": 630,
       "kotNumber": 105,
-      "updatedAt": "2026-08-03T12:03:10.000+05:30"
+      "updatedAt": "2026-08-03T12:03:10.000+05:30",
+      "rawSubtotal": 600
     },
     {
       "id": "10674",
@@ -23097,17 +23103,18 @@
         {
           "id": "m18",
           "name": "9 Pc Wings (3 Dips)",
-          "price": 291,
-          "unitPrice": 291,
+          "price": 270,
+          "unitPrice": 270,
           "quantity": 1,
-          "totalPrice": 291
+          "totalPrice": 270
         }
       ],
-      "subtotal": 277,
+      "subtotal": 270,
       "tax": 14,
-      "total": 291,
+      "total": 284,
       "kotNumber": 106,
-      "updatedAt": "2026-08-03T12:13:29.000+05:30"
+      "updatedAt": "2026-08-03T12:13:29.000+05:30",
+      "rawSubtotal": 270
     },
     {
       "id": "10673",
@@ -23125,17 +23132,18 @@
         {
           "id": "m17",
           "name": "6 Pc Wings (2 Dips)",
-          "price": 363,
-          "unitPrice": 363,
+          "price": 180,
+          "unitPrice": 180,
           "quantity": 1,
-          "totalPrice": 363
+          "totalPrice": 180
         }
       ],
-      "subtotal": 346,
-      "tax": 17,
-      "total": 363,
+      "subtotal": 180,
+      "tax": 9,
+      "total": 189,
       "kotNumber": 107,
-      "updatedAt": "2026-08-03T12:14:29.000+05:30"
+      "updatedAt": "2026-08-03T12:14:29.000+05:30",
+      "rawSubtotal": 180
     },
     {
       "id": "10317",
@@ -23205,17 +23213,18 @@
         {
           "id": "m16",
           "name": "3 Pc Wings (1 Dip)",
-          "price": 241,
-          "unitPrice": 241,
+          "price": 90,
+          "unitPrice": 90,
           "quantity": 1,
-          "totalPrice": 241
+          "totalPrice": 90
         }
       ],
-      "subtotal": 230,
-      "tax": 11,
-      "total": 241,
+      "subtotal": 90,
+      "tax": 5,
+      "total": 95,
       "kotNumber": 108,
-      "updatedAt": "2026-08-03T12:31:45.000+05:30"
+      "updatedAt": "2026-08-03T12:31:45.000+05:30",
+      "rawSubtotal": 90
     },
     {
       "id": "10318",
@@ -23311,17 +23320,18 @@
         {
           "id": "m20",
           "name": "60 Pc Wings (12 Dips)",
-          "price": 253,
-          "unitPrice": 253,
+          "price": 1500,
+          "unitPrice": 1500,
           "quantity": 1,
-          "totalPrice": 253
+          "totalPrice": 1500
         }
       ],
-      "subtotal": 241,
-      "tax": 12,
-      "total": 253,
+      "subtotal": 1500,
+      "tax": 75,
+      "total": 1575,
       "kotNumber": 109,
-      "updatedAt": "2026-08-03T12:51:14.000+05:30"
+      "updatedAt": "2026-08-03T12:51:14.000+05:30",
+      "rawSubtotal": 1500
     },
     {
       "id": "10322",
@@ -23391,17 +23401,18 @@
         {
           "id": "m24",
           "name": "20 Pc Strips (6 Dips)",
-          "price": 306,
-          "unitPrice": 306,
+          "price": 800,
+          "unitPrice": 800,
           "quantity": 1,
-          "totalPrice": 306
+          "totalPrice": 800
         }
       ],
-      "subtotal": 291,
-      "tax": 15,
-      "total": 306,
+      "subtotal": 800,
+      "tax": 40,
+      "total": 840,
       "kotNumber": 110,
-      "updatedAt": "2026-08-03T13:25:39.000+05:30"
+      "updatedAt": "2026-08-03T13:25:39.000+05:30",
+      "rawSubtotal": 800
     },
     {
       "id": "10323",
@@ -23497,17 +23508,18 @@
         {
           "id": "m22",
           "name": "6 Pc Strips (2 Dips)",
-          "price": 244,
-          "unitPrice": 244,
+          "price": 240,
+          "unitPrice": 240,
           "quantity": 1,
-          "totalPrice": 244
+          "totalPrice": 240
         }
       ],
-      "subtotal": 232,
+      "subtotal": 240,
       "tax": 12,
-      "total": 244,
+      "total": 252,
       "kotNumber": 111,
-      "updatedAt": "2026-08-03T13:33:47.000+05:30"
+      "updatedAt": "2026-08-03T13:33:47.000+05:30",
+      "rawSubtotal": 240
     },
     {
       "id": "10324",
@@ -23551,17 +23563,18 @@
         {
           "id": "m26a",
           "name": "Salted Fries",
-          "price": 280,
-          "unitPrice": 280,
+          "price": 99,
+          "unitPrice": 99,
           "quantity": 1,
-          "totalPrice": 280
+          "totalPrice": 99
         }
       ],
-      "subtotal": 267,
-      "tax": 13,
-      "total": 280,
+      "subtotal": 99,
+      "tax": 5,
+      "total": 104,
       "kotNumber": 112,
-      "updatedAt": "2026-08-03T13:40:46.000+05:30"
+      "updatedAt": "2026-08-03T13:40:46.000+05:30",
+      "rawSubtotal": 99
     },
     {
       "id": "10677",
@@ -23579,17 +23592,18 @@
         {
           "id": "m21",
           "name": "3 Pc Strips (1 Dip)",
-          "price": 410,
-          "unitPrice": 410,
+          "price": 120,
+          "unitPrice": 120,
           "quantity": 1,
-          "totalPrice": 410
+          "totalPrice": 120
         }
       ],
-      "subtotal": 390,
-      "tax": 20,
-      "total": 410,
+      "subtotal": 120,
+      "tax": 6,
+      "total": 126,
       "kotNumber": 113,
-      "updatedAt": "2026-08-03T13:41:46.000+05:30"
+      "updatedAt": "2026-08-03T13:41:46.000+05:30",
+      "rawSubtotal": 120
     },
     {
       "id": "10681",
@@ -23607,17 +23621,18 @@
         {
           "id": "m25",
           "name": "60 Pc Strips (12 Dips)",
-          "price": 374,
-          "unitPrice": 374,
+          "price": 2400,
+          "unitPrice": 2400,
           "quantity": 1,
-          "totalPrice": 374
+          "totalPrice": 2400
         }
       ],
-      "subtotal": 356,
-      "tax": 18,
-      "total": 374,
+      "subtotal": 2400,
+      "tax": 120,
+      "total": 2520,
       "kotNumber": 114,
-      "updatedAt": "2026-08-03T13:43:58.000+05:30"
+      "updatedAt": "2026-08-03T13:43:58.000+05:30",
+      "rawSubtotal": 2400
     },
     {
       "id": "10679",
@@ -23635,17 +23650,18 @@
         {
           "id": "m23",
           "name": "9 Pc Strips (3 Dips)",
-          "price": 348,
-          "unitPrice": 348,
+          "price": 360,
+          "unitPrice": 360,
           "quantity": 1,
-          "totalPrice": 348
+          "totalPrice": 360
         }
       ],
-      "subtotal": 331,
-      "tax": 17,
-      "total": 348,
+      "subtotal": 360,
+      "tax": 18,
+      "total": 378,
       "kotNumber": 115,
-      "updatedAt": "2026-08-03T13:46:52.000+05:30"
+      "updatedAt": "2026-08-03T13:46:52.000+05:30",
+      "rawSubtotal": 360
     },
     {
       "id": "10327",
@@ -23715,17 +23731,18 @@
         {
           "id": "m28a",
           "name": "Lebanese Rice Bowl (Chicken)",
-          "price": 405,
-          "unitPrice": 405,
+          "price": 199,
+          "unitPrice": 199,
           "quantity": 1,
-          "totalPrice": 405
+          "totalPrice": 199
         }
       ],
-      "subtotal": 386,
-      "tax": 19,
-      "total": 405,
+      "subtotal": 199,
+      "tax": 10,
+      "total": 209,
       "kotNumber": 116,
-      "updatedAt": "2026-08-03T14:05:46.000+05:30"
+      "updatedAt": "2026-08-03T14:05:46.000+05:30",
+      "rawSubtotal": 199
     },
     {
       "id": "10330",
@@ -23795,17 +23812,18 @@
         {
           "id": "m27a",
           "name": "Loaded Chicken Fries",
-          "price": 397,
-          "unitPrice": 397,
+          "price": 199,
+          "unitPrice": 199,
           "quantity": 1,
-          "totalPrice": 397
+          "totalPrice": 199
         }
       ],
-      "subtotal": 378,
-      "tax": 19,
-      "total": 397,
+      "subtotal": 199,
+      "tax": 10,
+      "total": 209,
       "kotNumber": 117,
-      "updatedAt": "2026-08-03T14:35:21.000+05:30"
+      "updatedAt": "2026-08-03T14:35:21.000+05:30",
+      "rawSubtotal": 199
     },
     {
       "id": "10331",
@@ -23849,17 +23867,18 @@
         {
           "id": "m26c",
           "name": "Cajun Fries",
-          "price": 240,
-          "unitPrice": 240,
+          "price": 99,
+          "unitPrice": 99,
           "quantity": 1,
-          "totalPrice": 240
+          "totalPrice": 99
         }
       ],
-      "subtotal": 229,
-      "tax": 11,
-      "total": 240,
+      "subtotal": 99,
+      "tax": 5,
+      "total": 104,
       "kotNumber": 118,
-      "updatedAt": "2026-08-03T14:53:40.000+05:30"
+      "updatedAt": "2026-08-03T14:53:40.000+05:30",
+      "rawSubtotal": 99
     },
     {
       "id": "10686",
@@ -23877,17 +23896,18 @@
         {
           "id": "m27b",
           "name": "Loaded Paneer Fries",
-          "price": 257,
-          "unitPrice": 257,
+          "price": 199,
+          "unitPrice": 199,
           "quantity": 1,
-          "totalPrice": 257
+          "totalPrice": 199
         }
       ],
-      "subtotal": 245,
-      "tax": 12,
-      "total": 257,
+      "subtotal": 199,
+      "tax": 10,
+      "total": 209,
       "kotNumber": 119,
-      "updatedAt": "2026-08-03T14:56:32.000+05:30"
+      "updatedAt": "2026-08-03T14:56:32.000+05:30",
+      "rawSubtotal": 199
     },
     {
       "id": "10683",
@@ -23905,17 +23925,18 @@
         {
           "id": "m26b",
           "name": "Peri Peri Fries",
-          "price": 414,
-          "unitPrice": 414,
+          "price": 99,
+          "unitPrice": 99,
           "quantity": 1,
-          "totalPrice": 414
+          "totalPrice": 99
         }
       ],
-      "subtotal": 394,
-      "tax": 20,
-      "total": 414,
+      "subtotal": 99,
+      "tax": 5,
+      "total": 104,
       "kotNumber": 120,
-      "updatedAt": "2026-08-03T14:56:49.000+05:30"
+      "updatedAt": "2026-08-03T14:56:49.000+05:30",
+      "rawSubtotal": 99
     },
     {
       "id": "10336",
@@ -23959,17 +23980,18 @@
         {
           "id": "m29a",
           "name": "Signature Salad (Chicken)",
-          "price": 338,
-          "unitPrice": 338,
+          "price": 149,
+          "unitPrice": 149,
           "quantity": 1,
-          "totalPrice": 338
+          "totalPrice": 149
         }
       ],
-      "subtotal": 322,
-      "tax": 16,
-      "total": 338,
+      "subtotal": 149,
+      "tax": 7,
+      "total": 156,
       "kotNumber": 121,
-      "updatedAt": "2026-08-03T15:02:32.000+05:30"
+      "updatedAt": "2026-08-03T15:02:32.000+05:30",
+      "rawSubtotal": 149
     },
     {
       "id": "10691",
@@ -23987,17 +24009,18 @@
         {
           "id": "m30",
           "name": "Express Meal",
-          "price": 362,
-          "unitPrice": 362,
+          "price": 149,
+          "unitPrice": 149,
           "quantity": 1,
-          "totalPrice": 362
+          "totalPrice": 149
         }
       ],
-      "subtotal": 345,
-      "tax": 17,
-      "total": 362,
+      "subtotal": 149,
+      "tax": 7,
+      "total": 156,
       "kotNumber": 122,
-      "updatedAt": "2026-08-03T15:03:53.000+05:30"
+      "updatedAt": "2026-08-03T15:03:53.000+05:30",
+      "rawSubtotal": 149
     },
     {
       "id": "10688",
@@ -24015,17 +24038,18 @@
         {
           "id": "m28b",
           "name": "Lebanese Rice Bowl (Paneer)",
-          "price": 249,
-          "unitPrice": 249,
+          "price": 199,
+          "unitPrice": 199,
           "quantity": 1,
-          "totalPrice": 249
+          "totalPrice": 199
         }
       ],
-      "subtotal": 237,
-      "tax": 12,
-      "total": 249,
+      "subtotal": 199,
+      "tax": 10,
+      "total": 209,
       "kotNumber": 123,
-      "updatedAt": "2026-08-03T15:08:12.000+05:30"
+      "updatedAt": "2026-08-03T15:08:12.000+05:30",
+      "rawSubtotal": 199
     },
     {
       "id": "10335",
@@ -24069,17 +24093,18 @@
         {
           "id": "m31",
           "name": "Classic Gyro Meal",
-          "price": 292,
-          "unitPrice": 292,
+          "price": 249,
+          "unitPrice": 249,
           "quantity": 1,
-          "totalPrice": 292
+          "totalPrice": 249
         }
       ],
-      "subtotal": 278,
-      "tax": 14,
-      "total": 292,
+      "subtotal": 249,
+      "tax": 12,
+      "total": 261,
       "kotNumber": 124,
-      "updatedAt": "2026-08-03T15:15:58.000+05:30"
+      "updatedAt": "2026-08-03T15:15:58.000+05:30",
+      "rawSubtotal": 249
     },
     {
       "id": "10334",
@@ -24175,17 +24200,18 @@
         {
           "id": "m32",
           "name": "Signature Gyro Meal",
-          "price": 410,
-          "unitPrice": 410,
+          "price": 299,
+          "unitPrice": 299,
           "quantity": 1,
-          "totalPrice": 410
+          "totalPrice": 299
         }
       ],
-      "subtotal": 390,
-      "tax": 20,
-      "total": 410,
+      "subtotal": 299,
+      "tax": 15,
+      "total": 314,
       "kotNumber": 125,
-      "updatedAt": "2026-08-03T15:44:49.000+05:30"
+      "updatedAt": "2026-08-03T15:44:49.000+05:30",
+      "rawSubtotal": 299
     },
     {
       "id": "10332",
@@ -24229,17 +24255,18 @@
         {
           "id": "m29b",
           "name": "Signature Salad (Paneer)",
-          "price": 316,
-          "unitPrice": 316,
+          "price": 149,
+          "unitPrice": 149,
           "quantity": 1,
-          "totalPrice": 316
+          "totalPrice": 149
         }
       ],
-      "subtotal": 301,
-      "tax": 15,
-      "total": 316,
+      "subtotal": 149,
+      "tax": 7,
+      "total": 156,
       "kotNumber": 126,
-      "updatedAt": "2026-08-03T15:59:50.000+05:30"
+      "updatedAt": "2026-08-03T15:59:50.000+05:30",
+      "rawSubtotal": 149
     },
     {
       "id": "10698",
@@ -24257,17 +24284,18 @@
         {
           "id": "m37",
           "name": "Den's Party Meal",
-          "price": 246,
-          "unitPrice": 246,
+          "price": 899,
+          "unitPrice": 899,
           "quantity": 1,
-          "totalPrice": 246
+          "totalPrice": 899
         }
       ],
-      "subtotal": 234,
-      "tax": 12,
-      "total": 246,
+      "subtotal": 899,
+      "tax": 45,
+      "total": 944,
       "kotNumber": 127,
-      "updatedAt": "2026-08-03T16:17:06.000+05:30"
+      "updatedAt": "2026-08-03T16:17:06.000+05:30",
+      "rawSubtotal": 899
     },
     {
       "id": "10339",
@@ -24311,17 +24339,18 @@
         {
           "id": "m34",
           "name": "Duo Gyro Feast",
-          "price": 339,
-          "unitPrice": 339,
+          "price": 349,
+          "unitPrice": 349,
           "quantity": 1,
-          "totalPrice": 339
+          "totalPrice": 349
         }
       ],
-      "subtotal": 323,
-      "tax": 16,
-      "total": 339,
+      "subtotal": 349,
+      "tax": 17,
+      "total": 366,
       "kotNumber": 128,
-      "updatedAt": "2026-08-03T16:20:49.000+05:30"
+      "updatedAt": "2026-08-03T16:20:49.000+05:30",
+      "rawSubtotal": 349
     },
     {
       "id": "10338",
@@ -24365,17 +24394,18 @@
         {
           "id": "m36",
           "name": "Mega Feast Meal",
-          "price": 408,
-          "unitPrice": 408,
+          "price": 649,
+          "unitPrice": 649,
           "quantity": 1,
-          "totalPrice": 408
+          "totalPrice": 649
         }
       ],
-      "subtotal": 389,
-      "tax": 19,
-      "total": 408,
+      "subtotal": 649,
+      "tax": 32,
+      "total": 681,
       "kotNumber": 129,
-      "updatedAt": "2026-08-03T16:37:50.000+05:30"
+      "updatedAt": "2026-08-03T16:37:50.000+05:30",
+      "rawSubtotal": 649
     },
     {
       "id": "10340",
@@ -24419,17 +24449,18 @@
         {
           "id": "m35",
           "name": "Double Crunch Box",
-          "price": 315,
-          "unitPrice": 315,
+          "price": 499,
+          "unitPrice": 499,
           "quantity": 1,
-          "totalPrice": 315
+          "totalPrice": 499
         }
       ],
-      "subtotal": 300,
-      "tax": 15,
-      "total": 315,
+      "subtotal": 499,
+      "tax": 25,
+      "total": 524,
       "kotNumber": 130,
-      "updatedAt": "2026-08-03T16:42:17.000+05:30"
+      "updatedAt": "2026-08-03T16:42:17.000+05:30",
+      "rawSubtotal": 499
     },
     {
       "id": "10342",
@@ -24473,17 +24504,18 @@
         {
           "id": "m33",
           "name": "Lebanese Rice Box",
-          "price": 244,
-          "unitPrice": 244,
+          "price": 299,
+          "unitPrice": 299,
           "quantity": 1,
-          "totalPrice": 244
+          "totalPrice": 299
         }
       ],
-      "subtotal": 232,
-      "tax": 12,
-      "total": 244,
+      "subtotal": 299,
+      "tax": 15,
+      "total": 314,
       "kotNumber": 131,
-      "updatedAt": "2026-08-03T16:43:15.000+05:30"
+      "updatedAt": "2026-08-03T16:43:15.000+05:30",
+      "rawSubtotal": 299
     },
     {
       "id": "10341",
@@ -24553,17 +24585,18 @@
         {
           "id": "m38",
           "name": "Super 5 Bucket",
-          "price": 387,
-          "unitPrice": 387,
+          "price": 1299,
+          "unitPrice": 1299,
           "quantity": 1,
-          "totalPrice": 387
+          "totalPrice": 1299
         }
       ],
-      "subtotal": 369,
-      "tax": 18,
-      "total": 387,
+      "subtotal": 1299,
+      "tax": 65,
+      "total": 1364,
       "kotNumber": 132,
-      "updatedAt": "2026-08-03T17:02:55.000+05:30"
+      "updatedAt": "2026-08-03T17:02:55.000+05:30",
+      "rawSubtotal": 1299
     },
     {
       "id": "10701",
@@ -24581,17 +24614,18 @@
         {
           "id": "m40b",
           "name": "Lebanese Rice - Protein Max (Paneer)",
-          "price": 391,
-          "unitPrice": 391,
+          "price": 299,
+          "unitPrice": 299,
           "quantity": 1,
-          "totalPrice": 391
+          "totalPrice": 299
         }
       ],
-      "subtotal": 372,
-      "tax": 19,
-      "total": 391,
+      "subtotal": 299,
+      "tax": 15,
+      "total": 314,
       "kotNumber": 133,
-      "updatedAt": "2026-08-03T17:04:22.000+05:30"
+      "updatedAt": "2026-08-03T17:04:22.000+05:30",
+      "rawSubtotal": 299
     },
     {
       "id": "10702",
@@ -24609,17 +24643,18 @@
         {
           "id": "m41a",
           "name": "Salad - Protein Max (Chicken)",
-          "price": 263,
-          "unitPrice": 263,
+          "price": 299,
+          "unitPrice": 299,
           "quantity": 1,
-          "totalPrice": 263
+          "totalPrice": 299
         }
       ],
-      "subtotal": 250,
-      "tax": 13,
-      "total": 263,
+      "subtotal": 299,
+      "tax": 15,
+      "total": 314,
       "kotNumber": 134,
-      "updatedAt": "2026-08-03T17:04:42.000+05:30"
+      "updatedAt": "2026-08-03T17:04:42.000+05:30",
+      "rawSubtotal": 299
     },
     {
       "id": "10345",
@@ -24663,17 +24698,18 @@
         {
           "id": "m41b",
           "name": "Salad - Protein Max (Paneer)",
-          "price": 414,
-          "unitPrice": 414,
+          "price": 299,
+          "unitPrice": 299,
           "quantity": 1,
-          "totalPrice": 414
+          "totalPrice": 299
         }
       ],
-      "subtotal": 394,
-      "tax": 20,
-      "total": 414,
+      "subtotal": 299,
+      "tax": 15,
+      "total": 314,
       "kotNumber": 135,
-      "updatedAt": "2026-08-03T17:15:44.000+05:30"
+      "updatedAt": "2026-08-03T17:15:44.000+05:30",
+      "rawSubtotal": 299
     },
     {
       "id": "10348",
@@ -24795,17 +24831,18 @@
         {
           "id": "m40a",
           "name": "Lebanese Rice - Protein Max (Chicken)",
-          "price": 267,
-          "unitPrice": 267,
+          "price": 299,
+          "unitPrice": 299,
           "quantity": 1,
-          "totalPrice": 267
+          "totalPrice": 299
         }
       ],
-      "subtotal": 254,
-      "tax": 13,
-      "total": 267,
+      "subtotal": 299,
+      "tax": 15,
+      "total": 314,
       "kotNumber": 136,
-      "updatedAt": "2026-08-03T17:55:22.000+05:30"
+      "updatedAt": "2026-08-03T17:55:22.000+05:30",
+      "rawSubtotal": 299
     },
     {
       "id": "10709",
@@ -24823,17 +24860,18 @@
         {
           "id": "m47",
           "name": "Biscoff Shake (Large)",
-          "price": 362,
-          "unitPrice": 362,
+          "price": 199,
+          "unitPrice": 199,
           "quantity": 1,
-          "totalPrice": 362
+          "totalPrice": 199
         }
       ],
-      "subtotal": 345,
-      "tax": 17,
-      "total": 362,
+      "subtotal": 199,
+      "tax": 10,
+      "total": 209,
       "kotNumber": 137,
-      "updatedAt": "2026-08-03T18:01:39.000+05:30"
+      "updatedAt": "2026-08-03T18:01:39.000+05:30",
+      "rawSubtotal": 199
     },
     {
       "id": "10704",
@@ -24851,17 +24889,18 @@
         {
           "id": "m42",
           "name": "Vanilla Shake (Regular)",
-          "price": 240,
-          "unitPrice": 240,
+          "price": 120,
+          "unitPrice": 120,
           "quantity": 1,
-          "totalPrice": 240
+          "totalPrice": 120
         }
       ],
-      "subtotal": 229,
-      "tax": 11,
-      "total": 240,
+      "subtotal": 120,
+      "tax": 6,
+      "total": 126,
       "kotNumber": 138,
-      "updatedAt": "2026-08-03T18:04:32.000+05:30"
+      "updatedAt": "2026-08-03T18:04:32.000+05:30",
+      "rawSubtotal": 120
     },
     {
       "id": "10706",
@@ -24879,17 +24918,18 @@
         {
           "id": "m44",
           "name": "Strawberry Shake (Regular)",
-          "price": 238,
-          "unitPrice": 238,
+          "price": 120,
+          "unitPrice": 120,
           "quantity": 1,
-          "totalPrice": 238
+          "totalPrice": 120
         }
       ],
-      "subtotal": 227,
-      "tax": 11,
-      "total": 238,
+      "subtotal": 120,
+      "tax": 6,
+      "total": 126,
       "kotNumber": 139,
-      "updatedAt": "2026-08-03T18:06:32.000+05:30"
+      "updatedAt": "2026-08-03T18:06:32.000+05:30",
+      "rawSubtotal": 120
     },
     {
       "id": "10352",
@@ -25011,17 +25051,18 @@
         {
           "id": "m45",
           "name": "Strawberry Shake (Large)",
-          "price": 337,
-          "unitPrice": 337,
+          "price": 199,
+          "unitPrice": 199,
           "quantity": 1,
-          "totalPrice": 337
+          "totalPrice": 199
         }
       ],
-      "subtotal": 321,
-      "tax": 16,
-      "total": 337,
+      "subtotal": 199,
+      "tax": 10,
+      "total": 209,
       "kotNumber": 140,
-      "updatedAt": "2026-08-03T18:39:25.000+05:30"
+      "updatedAt": "2026-08-03T18:39:25.000+05:30",
+      "rawSubtotal": 199
     },
     {
       "id": "10708",
@@ -25039,17 +25080,18 @@
         {
           "id": "m46",
           "name": "Biscoff Shake (Regular)",
-          "price": 317,
-          "unitPrice": 317,
+          "price": 120,
+          "unitPrice": 120,
           "quantity": 1,
-          "totalPrice": 317
+          "totalPrice": 120
         }
       ],
-      "subtotal": 302,
-      "tax": 15,
-      "total": 317,
+      "subtotal": 120,
+      "tax": 6,
+      "total": 126,
       "kotNumber": 141,
-      "updatedAt": "2026-08-03T18:41:04.000+05:30"
+      "updatedAt": "2026-08-03T18:41:04.000+05:30",
+      "rawSubtotal": 120
     },
     {
       "id": "10353",
@@ -25093,17 +25135,18 @@
         {
           "id": "m43",
           "name": "Vanilla Shake (Large)",
-          "price": 416,
-          "unitPrice": 416,
+          "price": 199,
+          "unitPrice": 199,
           "quantity": 1,
-          "totalPrice": 416
+          "totalPrice": 199
         }
       ],
-      "subtotal": 396,
-      "tax": 20,
-      "total": 416,
+      "subtotal": 199,
+      "tax": 10,
+      "total": 209,
       "kotNumber": 142,
-      "updatedAt": "2026-08-03T18:58:44.000+05:30"
+      "updatedAt": "2026-08-03T18:58:44.000+05:30",
+      "rawSubtotal": 199
     },
     {
       "id": "10712",
@@ -25121,17 +25164,18 @@
         {
           "id": "m50",
           "name": "Kunafa Pistachio Shake (Regular)",
-          "price": 249,
-          "unitPrice": 249,
+          "price": 120,
+          "unitPrice": 120,
           "quantity": 1,
-          "totalPrice": 249
+          "totalPrice": 120
         }
       ],
-      "subtotal": 237,
-      "tax": 12,
-      "total": 249,
+      "subtotal": 120,
+      "tax": 6,
+      "total": 126,
       "kotNumber": 143,
-      "updatedAt": "2026-08-03T19:00:17.000+05:30"
+      "updatedAt": "2026-08-03T19:00:17.000+05:30",
+      "rawSubtotal": 120
     },
     {
       "id": "10711",
@@ -25149,17 +25193,18 @@
         {
           "id": "m49",
           "name": "Chocolate Shake (Large)",
-          "price": 405,
-          "unitPrice": 405,
+          "price": 199,
+          "unitPrice": 199,
           "quantity": 1,
-          "totalPrice": 405
+          "totalPrice": 199
         }
       ],
-      "subtotal": 386,
-      "tax": 19,
-      "total": 405,
+      "subtotal": 199,
+      "tax": 10,
+      "total": 209,
       "kotNumber": 144,
-      "updatedAt": "2026-08-03T19:00:28.000+05:30"
+      "updatedAt": "2026-08-03T19:00:28.000+05:30",
+      "rawSubtotal": 199
     },
     {
       "id": "10359",
@@ -25203,17 +25248,18 @@
         {
           "id": "m48",
           "name": "Chocolate Shake (Regular)",
-          "price": 292,
-          "unitPrice": 292,
+          "price": 120,
+          "unitPrice": 120,
           "quantity": 1,
-          "totalPrice": 292
+          "totalPrice": 120
         }
       ],
-      "subtotal": 278,
-      "tax": 14,
-      "total": 292,
+      "subtotal": 120,
+      "tax": 6,
+      "total": 126,
       "kotNumber": 145,
-      "updatedAt": "2026-08-03T19:02:07.000+05:30"
+      "updatedAt": "2026-08-03T19:02:07.000+05:30",
+      "rawSubtotal": 120
     },
     {
       "id": "10714",
@@ -25231,17 +25277,18 @@
         {
           "id": "m52",
           "name": "Vanilla Softy",
-          "price": 252,
-          "unitPrice": 252,
+          "price": 39,
+          "unitPrice": 39,
           "quantity": 1,
-          "totalPrice": 252
+          "totalPrice": 39
         }
       ],
-      "subtotal": 240,
-      "tax": 12,
-      "total": 252,
+      "subtotal": 39,
+      "tax": 2,
+      "total": 41,
       "kotNumber": 146,
-      "updatedAt": "2026-08-03T19:15:19.000+05:30"
+      "updatedAt": "2026-08-03T19:15:19.000+05:30",
+      "rawSubtotal": 39
     },
     {
       "id": "10354",
@@ -25285,17 +25332,18 @@
         {
           "id": "m51",
           "name": "Kunafa Pistachio Shake (Large)",
-          "price": 402,
-          "unitPrice": 402,
+          "price": 199,
+          "unitPrice": 199,
           "quantity": 1,
-          "totalPrice": 402
+          "totalPrice": 199
         }
       ],
-      "subtotal": 383,
-      "tax": 19,
-      "total": 402,
+      "subtotal": 199,
+      "tax": 10,
+      "total": 209,
       "kotNumber": 147,
-      "updatedAt": "2026-08-03T19:42:33.000+05:30"
+      "updatedAt": "2026-08-03T19:42:33.000+05:30",
+      "rawSubtotal": 199
     },
     {
       "id": "10356",
@@ -25495,17 +25543,18 @@
         {
           "id": "m53b",
           "name": "Coca-Cola (Large)",
-          "price": 248,
-          "unitPrice": 248,
+          "price": 99,
+          "unitPrice": 99,
           "quantity": 1,
-          "totalPrice": 248
+          "totalPrice": 99
         }
       ],
-      "subtotal": 236,
-      "tax": 12,
-      "total": 248,
+      "subtotal": 99,
+      "tax": 5,
+      "total": 104,
       "kotNumber": 148,
-      "updatedAt": "2026-08-03T20:34:12.000+05:30"
+      "updatedAt": "2026-08-03T20:34:12.000+05:30",
+      "rawSubtotal": 99
     },
     {
       "id": "10715",
@@ -25523,17 +25572,18 @@
         {
           "id": "m53a",
           "name": "Coca-Cola (Regular)",
-          "price": 406,
-          "unitPrice": 406,
+          "price": 59,
+          "unitPrice": 59,
           "quantity": 1,
-          "totalPrice": 406
+          "totalPrice": 59
         }
       ],
-      "subtotal": 387,
-      "tax": 19,
-      "total": 406,
+      "subtotal": 59,
+      "tax": 3,
+      "total": 62,
       "kotNumber": 149,
-      "updatedAt": "2026-08-03T20:37:56.000+05:30"
+      "updatedAt": "2026-08-03T20:37:56.000+05:30",
+      "rawSubtotal": 59
     },
     {
       "id": "10719",
@@ -25551,17 +25601,18 @@
         {
           "id": "m55a",
           "name": "Peach Ice Tea (Regular)",
-          "price": 414,
-          "unitPrice": 414,
+          "price": 59,
+          "unitPrice": 59,
           "quantity": 1,
-          "totalPrice": 414
+          "totalPrice": 59
         }
       ],
-      "subtotal": 394,
-      "tax": 20,
-      "total": 414,
+      "subtotal": 59,
+      "tax": 3,
+      "total": 62,
       "kotNumber": 150,
-      "updatedAt": "2026-08-03T20:42:42.000+05:30"
+      "updatedAt": "2026-08-03T20:42:42.000+05:30",
+      "rawSubtotal": 59
     },
     {
       "id": "10361",
@@ -25605,17 +25656,18 @@
         {
           "id": "m54b",
           "name": "Sprite (Large)",
-          "price": 238,
-          "unitPrice": 238,
+          "price": 99,
+          "unitPrice": 99,
           "quantity": 1,
-          "totalPrice": 238
+          "totalPrice": 99
         }
       ],
-      "subtotal": 227,
-      "tax": 11,
-      "total": 238,
+      "subtotal": 99,
+      "tax": 5,
+      "total": 104,
       "kotNumber": 151,
-      "updatedAt": "2026-08-03T20:46:44.000+05:30"
+      "updatedAt": "2026-08-03T20:46:44.000+05:30",
+      "rawSubtotal": 99
     },
     {
       "id": "10717",
@@ -25633,17 +25685,18 @@
         {
           "id": "m54a",
           "name": "Sprite (Regular)",
-          "price": 416,
-          "unitPrice": 416,
+          "price": 59,
+          "unitPrice": 59,
           "quantity": 1,
-          "totalPrice": 416
+          "totalPrice": 59
         }
       ],
-      "subtotal": 396,
-      "tax": 20,
-      "total": 416,
+      "subtotal": 59,
+      "tax": 3,
+      "total": 62,
       "kotNumber": 152,
-      "updatedAt": "2026-08-03T20:49:10.000+05:30"
+      "updatedAt": "2026-08-03T20:49:10.000+05:30",
+      "rawSubtotal": 59
     },
     {
       "id": "10364",
@@ -25687,17 +25740,18 @@
         {
           "id": "m55b",
           "name": "Peach Ice Tea (Large)",
-          "price": 240,
-          "unitPrice": 240,
+          "price": 99,
+          "unitPrice": 99,
           "quantity": 1,
-          "totalPrice": 240
+          "totalPrice": 99
         }
       ],
-      "subtotal": 229,
-      "tax": 11,
-      "total": 240,
+      "subtotal": 99,
+      "tax": 5,
+      "total": 104,
       "kotNumber": 153,
-      "updatedAt": "2026-08-03T20:58:37.000+05:30"
+      "updatedAt": "2026-08-03T20:58:37.000+05:30",
+      "rawSubtotal": 99
     },
     {
       "id": "10370",
@@ -25741,17 +25795,18 @@
         {
           "id": "m59a",
           "name": "Mint Kombucha",
-          "price": 410,
-          "unitPrice": 410,
+          "price": 114.29,
+          "unitPrice": 114.29,
           "quantity": 1,
-          "totalPrice": 410
+          "totalPrice": 114.29
         }
       ],
-      "subtotal": 390,
-      "tax": 20,
-      "total": 410,
+      "subtotal": 114.29,
+      "tax": 6,
+      "total": 120.29,
       "kotNumber": 154,
-      "updatedAt": "2026-08-03T21:04:02.000+05:30"
+      "updatedAt": "2026-08-03T21:04:02.000+05:30",
+      "rawSubtotal": 114.29
     },
     {
       "id": "10368",
@@ -25795,17 +25850,18 @@
         {
           "id": "m59c",
           "name": "Ginger Kombucha",
-          "price": 337,
-          "unitPrice": 337,
+          "price": 114.29,
+          "unitPrice": 114.29,
           "quantity": 1,
-          "totalPrice": 337
+          "totalPrice": 114.29
         }
       ],
-      "subtotal": 321,
-      "tax": 16,
-      "total": 337,
+      "subtotal": 114.29,
+      "tax": 6,
+      "total": 120.29,
       "kotNumber": 155,
-      "updatedAt": "2026-08-03T21:18:15.000+05:30"
+      "updatedAt": "2026-08-03T21:18:15.000+05:30",
+      "rawSubtotal": 114.29
     },
     {
       "id": "10369",
@@ -25875,17 +25931,18 @@
         {
           "id": "m59b",
           "name": "Hibiscus Kombucha",
-          "price": 242,
-          "unitPrice": 242,
+          "price": 114.29,
+          "unitPrice": 114.29,
           "quantity": 1,
-          "totalPrice": 242
+          "totalPrice": 114.29
         }
       ],
-      "subtotal": 230,
-      "tax": 12,
-      "total": 242,
+      "subtotal": 114.29,
+      "tax": 6,
+      "total": 120.29,
       "kotNumber": 156,
-      "updatedAt": "2026-08-03T21:32:05.000+05:30"
+      "updatedAt": "2026-08-03T21:32:05.000+05:30",
+      "rawSubtotal": 114.29
     },
     {
       "id": "10722",
@@ -25903,17 +25960,18 @@
         {
           "id": "m56b",
           "name": "Lime Ice Tea (Large)",
-          "price": 237,
-          "unitPrice": 237,
+          "price": 99,
+          "unitPrice": 99,
           "quantity": 1,
-          "totalPrice": 237
+          "totalPrice": 99
         }
       ],
-      "subtotal": 226,
-      "tax": 11,
-      "total": 237,
+      "subtotal": 99,
+      "tax": 5,
+      "total": 104,
       "kotNumber": 157,
-      "updatedAt": "2026-08-03T21:44:19.000+05:30"
+      "updatedAt": "2026-08-03T21:44:19.000+05:30",
+      "rawSubtotal": 99
     },
     {
       "id": "10366",
@@ -25957,17 +26015,18 @@
         {
           "id": "m56a",
           "name": "Lime Ice Tea (Regular)",
-          "price": 416,
-          "unitPrice": 416,
+          "price": 59,
+          "unitPrice": 59,
           "quantity": 1,
-          "totalPrice": 416
+          "totalPrice": 59
         }
       ],
-      "subtotal": 396,
-      "tax": 20,
-      "total": 416,
+      "subtotal": 59,
+      "tax": 3,
+      "total": 62,
       "kotNumber": 158,
-      "updatedAt": "2026-08-03T21:56:23.000+05:30"
+      "updatedAt": "2026-08-03T21:56:23.000+05:30",
+      "rawSubtotal": 59
     },
     {
       "id": "10365",
@@ -26011,17 +26070,18 @@
         {
           "id": "m59d",
           "name": "Butterfly Pea Kombucha",
-          "price": 315,
-          "unitPrice": 315,
+          "price": 114.29,
+          "unitPrice": 114.29,
           "quantity": 1,
-          "totalPrice": 315
+          "totalPrice": 114.29
         }
       ],
-      "subtotal": 300,
-      "tax": 15,
-      "total": 315,
+      "subtotal": 114.29,
+      "tax": 6,
+      "total": 120.29,
       "kotNumber": 159,
-      "updatedAt": "2026-08-03T22:01:43.000+05:30"
+      "updatedAt": "2026-08-03T22:01:43.000+05:30",
+      "rawSubtotal": 114.29
     },
     {
       "id": "10727",
@@ -26039,17 +26099,18 @@
         {
           "id": "m57",
           "name": "Hot Chocolate",
-          "price": 383,
-          "unitPrice": 383,
+          "price": 99,
+          "unitPrice": 99,
           "quantity": 1,
-          "totalPrice": 383
+          "totalPrice": 99
         }
       ],
-      "subtotal": 365,
-      "tax": 18,
-      "total": 383,
+      "subtotal": 99,
+      "tax": 5,
+      "total": 104,
       "kotNumber": 160,
-      "updatedAt": "2026-08-03T22:10:55.000+05:30"
+      "updatedAt": "2026-08-03T22:10:55.000+05:30",
+      "rawSubtotal": 99
     },
     {
       "id": "10374",
@@ -26093,17 +26154,18 @@
         {
           "id": "m60",
           "name": "Chocolate Brownie",
-          "price": 378,
-          "unitPrice": 378,
+          "price": 99,
+          "unitPrice": 99,
           "quantity": 1,
-          "totalPrice": 378
+          "totalPrice": 99
         }
       ],
-      "subtotal": 360,
-      "tax": 18,
-      "total": 378,
+      "subtotal": 99,
+      "tax": 5,
+      "total": 104,
       "kotNumber": 161,
-      "updatedAt": "2026-08-03T22:16:39.000+05:30"
+      "updatedAt": "2026-08-03T22:16:39.000+05:30",
+      "rawSubtotal": 99
     },
     {
       "id": "10373",
@@ -26225,17 +26287,18 @@
         {
           "id": "m61",
           "name": "Blondie Cake",
-          "price": 274,
-          "unitPrice": 274,
+          "price": 99,
+          "unitPrice": 99,
           "quantity": 1,
-          "totalPrice": 274
+          "totalPrice": 99
         }
       ],
-      "subtotal": 261,
-      "tax": 13,
-      "total": 274,
+      "subtotal": 99,
+      "tax": 5,
+      "total": 104,
       "kotNumber": 162,
-      "updatedAt": "2026-08-03T22:52:27.000+05:30"
+      "updatedAt": "2026-08-03T22:52:27.000+05:30",
+      "rawSubtotal": 99
     },
     {
       "id": "10728",
@@ -26253,17 +26316,18 @@
         {
           "id": "m58",
           "name": "Signature Tea",
-          "price": 269,
-          "unitPrice": 269,
+          "price": 99,
+          "unitPrice": 99,
           "quantity": 1,
-          "totalPrice": 269
+          "totalPrice": 99
         }
       ],
-      "subtotal": 256,
-      "tax": 13,
-      "total": 269,
+      "subtotal": 99,
+      "tax": 5,
+      "total": 104,
       "kotNumber": 163,
-      "updatedAt": "2026-08-03T22:54:31.000+05:30"
+      "updatedAt": "2026-08-03T22:54:31.000+05:30",
+      "rawSubtotal": 99
     },
     {
       "id": "10731",
@@ -26281,17 +26345,18 @@
         {
           "id": "m62a",
           "name": "Turkish Chilli Dip",
-          "price": 326,
-          "unitPrice": 326,
+          "price": 15,
+          "unitPrice": 15,
           "quantity": 1,
-          "totalPrice": 326
+          "totalPrice": 15
         }
       ],
-      "subtotal": 310,
-      "tax": 16,
-      "total": 326,
+      "subtotal": 15,
+      "tax": 1,
+      "total": 16,
       "kotNumber": 164,
-      "updatedAt": "2026-08-03T23:41:37.000+05:30"
+      "updatedAt": "2026-08-03T23:41:37.000+05:30",
+      "rawSubtotal": 15
     },
     {
       "id": "10376",
