@@ -5469,6 +5469,33 @@ async function seedAdmin() {
     writeDb(db)
     console.log('Migrated: initialized settings in db.json')
   }
+
+  // Auto-sync menu items and categories from seed-db.json if updated
+  try {
+    const seedPath = join(__dirname, 'seed-db.json')
+    if (existsSync(seedPath)) {
+      const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
+      if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length > 0) {
+        let updated = false
+        if (JSON.stringify(categories) !== JSON.stringify(seedData.categories)) {
+          categories.length = 0
+          categories.push(...(seedData.categories || []))
+          updated = true
+        }
+        if (JSON.stringify(menuItems) !== JSON.stringify(seedData.menuItems)) {
+          menuItems.length = 0
+          menuItems.push(...(seedData.menuItems || []))
+          updated = true
+        }
+        if (updated) {
+          saveState()
+          console.log(`[MENU AUTO-MIGRATION] Updated database menu (${menuItems.length} items, ${categories.length} categories) from seed-db.json`)
+        }
+      }
+    }
+  } catch (e) {
+    console.error('[MENU AUTO-MIGRATION ERROR]', e)
+  }
 }
 seedAdmin()
 
