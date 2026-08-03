@@ -409,7 +409,7 @@ export default function Reports() {
                   <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px', textAlign: 'center' }}>
                     <DollarSign size={22} color="#2563eb" style={{ marginBottom: '8px' }} />
                     <div style={{ fontSize: '32px', fontWeight: 700, color: '#2563eb' }}>₹{(displayClosing.totalSales || 0).toLocaleString()}</div>
-                    <div style={{ fontSize: '13px', color: '#1e40af' }}>Total Sales</div>
+                    <div style={{ fontSize: '13px', color: '#1e40af', fontWeight: 600 }}>Net Sales (After Discount)</div>
                   </div>
                   <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px', textAlign: 'center' }}>
                     <ShoppingCart size={22} color="#f59e0b" style={{ marginBottom: '8px' }} />
@@ -426,20 +426,28 @@ export default function Reports() {
                 {/* Revenue vs Cost */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '20px' }}>
                   <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px' }}>
-                    <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '16px' }}>Cost Breakdown</h4>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                      <span style={{ color: '#6b7280' }}>Total Sales</span>
-                      <span style={{ fontWeight: 700, color: '#10b981' }}>₹{(displayClosing.totalSales || 0).toLocaleString()}</span>
+                    <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '14px' }}>Sales & Cost Breakdown</h4>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13px' }}>
+                      <span style={{ color: '#6b7280' }}>Menu Bill Total</span>
+                      <span style={{ fontWeight: 600, color: '#4b5563' }}>₹{((displayClosing.totalSales || 0) + (displayClosing.totalDiscountGiven || 0)).toLocaleString()}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13px' }}>
+                      <span style={{ color: '#dc2626', fontWeight: 600 }}>Discount Savings</span>
+                      <span style={{ fontWeight: 700, color: '#dc2626' }}>- ₹{(displayClosing.totalDiscountGiven || 0).toLocaleString()}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', borderTop: '1px dashed #e5e7eb', paddingTop: '8px', fontSize: '13px' }}>
+                      <span style={{ color: '#059669', fontWeight: 700 }}>Net Paid Collected</span>
+                      <span style={{ fontWeight: 800, color: '#10b981' }}>₹{(displayClosing.totalSales || 0).toLocaleString()}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12.5px' }}>
                       <span style={{ color: '#6b7280' }}>Purchases</span>
                       <span style={{ fontWeight: 700, color: '#dc2626' }}>- ₹{(displayClosing.totalPurchases || 0).toLocaleString()}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '12.5px' }}>
                       <span style={{ color: '#6b7280' }}>Expenses</span>
                       <span style={{ fontWeight: 700, color: '#dc2626' }}>- ₹{(displayClosing.totalExpenses || 0).toLocaleString()}</span>
                     </div>
-                    <div style={{ borderTop: '2px solid #f3f4f6', paddingTop: '12px', display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ borderTop: '2px solid #f3f4f6', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', fontSize: '13.5px' }}>
                       <span style={{ fontWeight: 700 }}>Gross Profit</span>
                       <span style={{ fontWeight: 800, color: displayClosing.grossProfit >= 0 ? '#10b981' : '#dc2626' }}>₹{(displayClosing.grossProfit || 0).toLocaleString()}</span>
                     </div>
