@@ -2920,10 +2920,23 @@ app.post('/api/pos/orders', (req, res) => {
   const kotNum = getNextKotNumber()
   const now = new Date().toISOString()
   
-  const rawSub = req.body.rawSubtotal || items?.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || 0) * (item.quantity || 1)), 0) || subtotal || 0
-  const discountVal = Number(req.body.discount || req.body.discountAmount || 0)
-  const discountLabel = req.body.discountName || (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : 'Discount'))
-  
+  // SERVER-AUTHORITATIVE TOTALS:
+  // Never trust client-sent subtotal/tax/total — recompute from the actual line items so
+  // every stored bill is internally consistent: rawSubtotal - discount = subtotal,
+  // subtotal + tax = total. This is what makes all reports reconcile.
+  const itemList = Array.isArray(items) ? items : []
+  const rawSub = Math.round(itemList.reduce((sum, item) => sum + (Number(item.totalPrice) || (Number(item.unitPrice || item.price || 0) * Number(item.quantity || item.qty || 1))), 0))
+  let discountVal = Number(req.body.discount || req.body.discountAmount || 0)
+  if (!(discountVal > 0)) {
+    if (req.body.inaugurationOffer) discountVal = Math.round(rawSub * 0.5)
+    else if (req.body.specialOffer20) discountVal = Math.round(rawSub * 0.2)
+  }
+  discountVal = Math.max(0, Math.min(Math.round(discountVal), rawSub))
+  const netSub = rawSub - discountVal
+  const taxVal = Math.round(netSub * 0.05)
+  const totalVal = netSub + taxVal
+  const discountLabel = req.body.discountName || (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'Discount' : '')))
+
   const isDirectSettle = Boolean(req.body.settleDirectly || req.body.status === 'completed' || req.body.paymentStatus === 'paid')
 
   const order = {
@@ -2938,9 +2951,9 @@ app.post('/api/pos/orders', (req, res) => {
     discountName: discountLabel,
     inaugurationOffer: req.body.inaugurationOffer || false,
     specialOffer20: req.body.specialOffer20 || false,
-    subtotal: subtotal || 0,
-    tax: tax || 0,
-    total: total || 0,
+    subtotal: netSub,
+    tax: taxVal,
+    total: totalVal,
     paymentMethod: paymentMethod || 'cash',
     splitPayments: req.body.splitPayments || undefined,
     paymentStatus: isDirectSettle ? 'paid' : 'pending',
@@ -4211,7 +4224,7 @@ const getOrderAmount = (o) => {
   if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') return 0
 
   if (o.total !== undefined && o.total !== null && Number(o.total) > 0) {
-    return Number(o.total)
+    return Math.round(Number(o.total) * 100) / 100
   }
   const items = o.items || []
   const subtotal = items.reduce((sum, i) => sum + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
@@ -4228,30 +4241,43 @@ const isValidSalesOrder = (o) => {
   return true
 }
 
+// Gross value of an order's line items (before discount & before GST)
+const getOrderItemsTotal = (o) => {
+  if (!o) return 0
+  const items = o.items || []
+  return items.reduce((sum, i) => sum + (Number(i.totalPrice) || (Number(i.unitPrice || i.price || 0) * Number(i.quantity || i.qty || 1))), 0)
+}
+
+// Single source of truth for an order's discount amount.
+// Only trusts EXPLICITLY STORED discount/offer data (never date-based guesses),
+// so daily-closing, offer-sales and P&L all agree with each other.
+const getOrderDiscountAmount = (o) => {
+  if (!o) return 0
+  const stored = Number(o.discount ?? o.discountGiven ?? o.discountAmount ?? 0)
+  if (stored > 0) return Math.round(stored)
+
+  const rawSub = Number(o.rawSubtotal) || getOrderItemsTotal(o)
+  if (rawSub > 0) {
+    if (o.inaugurationOffer) return Math.round(rawSub * 0.5)
+    if (o.specialOffer20) return Math.round(rawSub * 0.2)
+  }
+
+  // Back-compat: some older captain/mobile orders stored discountPct
+  if (Number(o.discountPct) > 0) return Math.round(rawSub * Number(o.discountPct) / 100)
+
+  return 0
+}
+
 const getOrderDiscountInfo = (o) => {
   if (!o) return { discount: 0, name: '' }
-  let disc = Number(o.discount || o.discountGiven || o.discountAmount || 0)
+  const disc = getOrderDiscountAmount(o)
   let name = o.discountName || o.offerName || ''
-
-  if (disc === 0) {
-    const dStr = getOrderDate(o)
-    const net = Number(o.total) || 0
-    const rawSub = o.rawSubtotal || (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
-
-    if (dStr === '2026-07-27' || o.inaugurationOffer) {
-      disc = net > 0 ? Math.round(net * 0.5) : Math.round(rawSub * 0.5)
-      name = 'Inauguration Offer 50% OFF'
-    } else if ((dStr >= '2026-07-30' && dStr <= '2026-08-02') || o.specialOffer20) {
-      disc = net > 0 ? Math.round(net * 0.25) : Math.round(rawSub * 0.2)
-      name = 'Special Campaign 20% OFF'
-    }
+  if (!name) {
+    if (o.inaugurationOffer) name = 'Inauguration Offer 50% OFF'
+    else if (o.specialOffer20) name = 'Special Campaign 20% OFF'
+    else if (disc > 0) name = 'Discount Given'
   }
-
-  if (!name && disc > 0) {
-    name = o.inaugurationOffer ? 'Inauguration Offer 50% OFF' : (o.specialOffer20 ? 'Special Campaign 20% OFF' : 'Discount Given')
-  }
-
-  return { discount: Math.round(disc), name: name || 'Discount' }
+  return { discount: disc, name: name || 'Discount' }
 }
 
 function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
@@ -4427,11 +4453,12 @@ app.get('/api/reports/payment-report', (req, res) => {
 
     // Calculate percentages
     Object.keys(byMethod).forEach(m => {
+      byMethod[m].total = Math.round(byMethod[m].total * 100) / 100
       byMethod[m].percentage = totalRevenue > 0 ? Number(((byMethod[m].total / totalRevenue) * 100).toFixed(1)) : 0
     })
 
     res.json({
-      totalRevenue,
+      totalRevenue: Math.round(totalRevenue * 100) / 100,
       totalBills: validOrders.length,
       byMethod,
       orders: validOrders
@@ -4712,6 +4739,11 @@ const threeHourSales = computeThreeHourSales(dayOrders);
   }
 
   const cancelledValue = cancelledOrders.reduce((sum, o) => sum + (o.total || o.totalPrice || 0), 0)
+
+  const cleanByPaymentMethod = {}
+  Object.keys(byPaymentMethod).forEach(k => {
+    if (byPaymentMethod[k]) cleanByPaymentMethod[k] = Math.round(byPaymentMethod[k] * 100) / 100
+  })
   const cancelledList = cancelledOrders.map(o => ({
     id: o.id || o.orderNumber,
     orderNumber: o.orderNumber || o.id,
@@ -4726,14 +4758,14 @@ const threeHourSales = computeThreeHourSales(dayOrders);
   res.json({
     date: displayDateStr,
     totalInvoices,
-    totalSales: Math.round(totalSales),
-    settledSales: Math.round(settledSales),
-    pendingSales: Math.round(pendingSales),
+    totalSales: Math.round(totalSales * 100) / 100,
+    settledSales: Math.round(settledSales * 100) / 100,
+    pendingSales: Math.round(pendingSales * 100) / 100,
     totalPurchases: Math.round(totalPurchases),
     totalExpenses: Math.round(totalExpenses),
     grossProfit: Math.round(grossProfit),
     avgBasketValue,
-    byPaymentMethod,
+    byPaymentMethod: cleanByPaymentMethod,
     bySource,
     totalDiscountGiven: Math.round(totalDiscountGiven),
     byDiscountType,
@@ -4842,40 +4874,22 @@ app.get('/api/reports/offer-sales', (req, res) => {
 
   periodOrders.forEach(o => {
     const rawTotal = getOrderAmount(o)
-    const items = o.items || []
-    const subtotal = o.subtotal || items.reduce((sum, i) => sum + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
-    
-    const isOffer20 = o.specialOffer20 || o.offer20Pct || false
-    const isVip50 = o.discountPct === 50 || o.isVip50 || (o.tier && o.tier.includes('50%'))
-    const isComplimentary = Boolean(o.complimentary)
-    const hasDiscount = Boolean(o.discountAmount > 0 || o.discountPct > 0 || (subtotal > rawTotal && !o.tax))
+    const gross = getOrderItemsTotal(o)
+    const isComplimentary = Boolean(o.complimentary || o.isComplimentary || (o.paymentMethod || '').toLowerCase() === 'complimentary' || o.type === 'complimentary')
 
     let offerName = null
     let discountGiven = 0
-    let originalAmount = subtotal
+    let originalAmount = gross
 
-    if (isVip50) {
-      offerName = '50% VIP Exclusive Discount'
-      discountGiven = Math.round(subtotal * 0.5)
-      originalAmount = subtotal
-    } else if (isOffer20) {
-      offerName = '20% Special Offer (29.07 - 02.08)'
-      discountGiven = Math.round(subtotal * 0.2)
-      originalAmount = subtotal
-    } else if (isComplimentary) {
+    if (isComplimentary) {
       offerName = `Complimentary (${o.complimentaryType || 'General'})`
-      discountGiven = subtotal
-      originalAmount = subtotal
-    } else if (hasDiscount) {
-      offerName = o.offerName || o.promoName || 'Special Order Discount'
-      discountGiven = o.discountAmount || (subtotal - rawTotal) || 0
-      originalAmount = subtotal
+      discountGiven = gross
+      originalAmount = gross
     } else {
-      const dStr = getOrderDate(o)
-      if (dStr >= '2026-07-29' && dStr <= '2026-08-02') {
-        offerName = '20% Special Offer Campaign'
-        discountGiven = Math.round(subtotal * 0.2)
-        originalAmount = subtotal
+      discountGiven = getOrderDiscountAmount(o)
+      if (discountGiven > 0) {
+        offerName = o.discountName || o.offerName || o.promoName ||
+          (o.inaugurationOffer ? 'Inauguration Offer 50% OFF' : (o.specialOffer20 ? 'Special Campaign 20% OFF' : 'Discount Given'))
       }
     }
 
@@ -4928,15 +4942,23 @@ app.get('/api/reports/itemwise-sales', (req, res) => {
 
   periodOrders.forEach(o => {
     const items = o.items || []
+    // Scale item revenue so each order's item revenue sums to the NET amount
+    // actually collected (incl. GST, after discount) — this makes Itemwise,
+    // Categorywise, Daily Closing and Payment Report all reconcile exactly.
+    const orderNet = getOrderAmount(o)
+    const orderGross = Number(o.rawSubtotal) || getOrderItemsTotal(o)
+    const scale = orderGross > 0 ? orderNet / orderGross : 1
+
     items.forEach(i => {
       const name = i.menuItemName || i.name || 'Unspecified Item'
       const category = i.category || 'General'
       const qty = Number(i.quantity || i.qty || 1)
       const unitPrice = Number(i.unitPrice || i.price || 0)
       const totalPrice = Number(i.totalPrice || unitPrice * qty)
+      const netRevenue = totalPrice * scale
 
       totalQtySum += qty
-      totalRevenueSum += totalPrice
+      totalRevenueSum += netRevenue
 
       if (!itemMap[name]) {
         itemMap[name] = {
@@ -4949,7 +4971,7 @@ app.get('/api/reports/itemwise-sales', (req, res) => {
         }
       }
       itemMap[name].totalQty += qty
-      itemMap[name].totalRevenue += totalPrice
+      itemMap[name].totalRevenue += netRevenue
       itemMap[name].orderCount += 1
     })
   })
@@ -4957,7 +4979,7 @@ app.get('/api/reports/itemwise-sales', (req, res) => {
   const itemsList = Object.values(itemMap).map(item => ({
     ...item,
     avgPrice: item.totalQty > 0 ? Math.round(item.totalRevenue / item.totalQty) : item.unitPrice,
-    totalRevenue: Math.round(item.totalRevenue),
+    totalRevenue: Math.round(item.totalRevenue * 100) / 100,
     contributionPct: totalRevenueSum > 0 ? Number(((item.totalRevenue / totalRevenueSum) * 100).toFixed(1)) : 0
   })).sort((a, b) => b.totalRevenue - a.totalRevenue)
 
@@ -4965,7 +4987,7 @@ app.get('/api/reports/itemwise-sales', (req, res) => {
     period: req.query,
     totalOrders: periodOrders.length,
     totalItemsSold: totalQtySum,
-    totalRevenue: Math.round(totalRevenueSum),
+    totalRevenue: Math.round(totalRevenueSum * 100) / 100,
     items: itemsList
   })
 })
@@ -4980,14 +5002,19 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
 
   periodOrders.forEach(o => {
     const items = o.items || []
+    const orderNet = getOrderAmount(o)
+    const orderGross = Number(o.rawSubtotal) || getOrderItemsTotal(o)
+    const scale = orderGross > 0 ? orderNet / orderGross : 1
+
     items.forEach(i => {
       const category = i.category || 'General'
       const qty = Number(i.quantity || i.qty || 1)
       const unitPrice = Number(i.unitPrice || i.price || 0)
       const totalPrice = Number(i.totalPrice || unitPrice * qty)
+      const netRevenue = totalPrice * scale
 
       totalQtySum += qty
-      totalRevenueSum += totalPrice
+      totalRevenueSum += netRevenue
 
       if (!catMap[category]) {
         catMap[category] = {
@@ -5000,7 +5027,7 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
       }
       catMap[category].itemsSet.add(i.name || i.menuItemName || 'Item')
       catMap[category].totalQty += qty
-      catMap[category].totalRevenue += totalPrice
+      catMap[category].totalRevenue += netRevenue
       catMap[category].orderCount += 1
     })
   })
@@ -5009,7 +5036,7 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
     category: cat.category,
     uniqueItemCount: cat.itemsSet.size,
     totalQty: cat.totalQty,
-    totalRevenue: Math.round(cat.totalRevenue),
+    totalRevenue: Math.round(cat.totalRevenue * 100) / 100,
     orderCount: cat.orderCount,
     contributionPct: totalRevenueSum > 0 ? Number(((cat.totalRevenue / totalRevenueSum) * 100).toFixed(1)) : 0
   })).sort((a, b) => b.totalRevenue - a.totalRevenue)
@@ -5019,47 +5046,8 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
     totalOrders: periodOrders.length,
     totalCategories: categoriesList.length,
     totalItemsSold: totalQtySum,
-    totalRevenue: Math.round(totalRevenueSum),
+    totalRevenue: Math.round(totalRevenueSum * 100) / 100,
     categories: categoriesList
-  })
-})
-
-// ============ PAYMENT BREAKDOWN REPORT ============
-app.get('/api/reports/payment-report', (req, res) => {
-  const periodOrders = getFilteredOrdersForPeriod(req.query)
-  const completed = periodOrders.filter(isValidSalesOrder)
-
-  const byMethod = { cash: 0, upi: 0, card: 0, wallet: 0, complimentary: 0 }
-  const methodCounts = { cash: 0, upi: 0, card: 0, wallet: 0, complimentary: 0 }
-
-  completed.forEach(o => {
-    let m = (o.paymentMethod || 'cash').toLowerCase()
-    if (m.includes('card') || m.includes('credit') || m.includes('debit')) m = 'card'
-    else if (m.includes('upi') || m.includes('gpay') || m.includes('phonepe') || m.includes('paytm') || m.includes('online')) m = 'upi'
-    else if (m.includes('wallet')) m = 'wallet'
-    else if (m.includes('complimentary') || m.includes('nc') || m.includes('free')) m = 'complimentary'
-    else m = 'cash'
-
-    const amt = getOrderAmount(o)
-    byMethod[m] = (byMethod[m] || 0) + amt
-    methodCounts[m] = (methodCounts[m] || 0) + 1
-  })
-
-  const totalRev = completed.reduce((sum, o) => sum + getOrderAmount(o), 0)
-
-  res.json({
-    totalInvoices: completed.length,
-    totalSales: Math.round(totalRev),
-    byMethod,
-    methodCounts,
-    orders: completed.map(o => ({
-      id: o.id || o.orderNumber,
-      orderNumber: o.orderNumber || o.id,
-      date: getOrderDate(o),
-      type: o.type || 'dine-in',
-      paymentMethod: o.paymentMethod || 'cash',
-      amount: getOrderAmount(o)
-    }))
   })
 })
 
