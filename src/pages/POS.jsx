@@ -363,6 +363,25 @@ export default function POS() {
     setProcessing(false)
   }
 
+  const handleDirectSettle = async (method) => {
+    if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place and settle order'); return }
+    setProcessing(true)
+    try {
+      const newOrder = await placeOrder(method, true)
+      toast.success(`Order #${newOrder.orderNumber || newOrder.id} settled via ${method.toUpperCase()}!`)
+      setShowCart(false)
+      if (newOrder) {
+        setLastPlacedOrder(newOrder)
+        setShowSuccessModal(true)
+        if (newOrder.id) printedOrderIdsRef.current.add(String(newOrder.id))
+        if (newOrder.orderNumber) printedOrderIdsRef.current.add(String(newOrder.orderNumber))
+        PrintService.printKOTAndBill(newOrder, true)
+      }
+    }
+    catch (err) { console.error('Direct settle error:', err); toast.error('Failed: ' + err.message) }
+    setProcessing(false)
+  }
+
   const CategoryPills = ({ onSelect }) => (
     <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px' }}>
       <button onClick={() => setSelectedCategory(null)} style={{
@@ -580,13 +599,62 @@ export default function POS() {
               ))}
             </div>
             <button onClick={handlePlaceOrder} disabled={processing || currentOrder.items.length === 0} style={{
-              width: '100%', padding: '18px', border: 'none', borderRadius: '14px', fontSize: '17px', fontWeight: 700,
+              width: '100%', padding: '16px', border: 'none', borderRadius: '14px', fontSize: '16px', fontWeight: 700,
               background: processing ? '#9ca3af' : currentOrder.complimentary ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #e63946, #c1121f)',
               color: 'white', cursor: processing || currentOrder.items.length === 0 ? 'not-allowed' : 'pointer',
-              boxShadow: processing ? 'none' : currentOrder.complimentary ? '0 4px 16px rgba(245,158,11,0.3)' : '0 4px 16px rgba(230,57,70,0.35)'
+              boxShadow: processing ? 'none' : currentOrder.complimentary ? '0 4px 16px rgba(245,158,11,0.3)' : '0 4px 16px rgba(230,57,70,0.35)',
+              marginBottom: '10px'
             }}>
-              {processing ? 'Placing...' : currentOrder.complimentary ? `Place (Complimentary)` : `Place Order • ₹${getTotal().toFixed(0)}`}
+              {processing ? 'Placing...' : currentOrder.complimentary ? `Place (Complimentary)` : `Place Order (Pending) • ₹${getTotal().toFixed(0)}`}
             </button>
+
+            {/* Quick Settle & Pay Buttons Mobile */}
+            <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '12px', border: '1.5px dashed #cbd5e1' }}>
+              <div style={{ fontSize: '11px', fontWeight: 800, color: '#047857', marginBottom: '8px', textAlign: 'center', letterSpacing: '0.5px' }}>
+                ⚡ QUICK SETTLE & PAY DIRECTLY:
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => handleDirectSettle('cash')}
+                  disabled={currentOrder.items.length === 0 || processing}
+                  style={{
+                    padding: '12px 4px', borderRadius: '10px', border: 'none',
+                    background: processing || currentOrder.items.length === 0 ? '#cbd5e1' : 'linear-gradient(135deg, #10b981, #059669)',
+                    color: 'white', fontWeight: 800, fontSize: '13px', cursor: currentOrder.items.length === 0 ? 'not-allowed' : 'pointer',
+                    textAlign: 'center', boxShadow: '0 2px 6px rgba(16,185,129,0.25)'
+                  }}
+                >
+                  💵 Cash
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDirectSettle('upi')}
+                  disabled={currentOrder.items.length === 0 || processing}
+                  style={{
+                    padding: '12px 4px', borderRadius: '10px', border: 'none',
+                    background: processing || currentOrder.items.length === 0 ? '#cbd5e1' : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                    color: 'white', fontWeight: 800, fontSize: '13px', cursor: currentOrder.items.length === 0 ? 'not-allowed' : 'pointer',
+                    textAlign: 'center', boxShadow: '0 2px 6px rgba(37,99,235,0.25)'
+                  }}
+                >
+                  📱 UPI
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDirectSettle('card')}
+                  disabled={currentOrder.items.length === 0 || processing}
+                  style={{
+                    padding: '12px 4px', borderRadius: '10px', border: 'none',
+                    background: processing || currentOrder.items.length === 0 ? '#cbd5e1' : 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
+                    color: 'white', fontWeight: 800, fontSize: '13px', cursor: currentOrder.items.length === 0 ? 'not-allowed' : 'pointer',
+                    textAlign: 'center', boxShadow: '0 2px 6px rgba(139,92,246,0.25)'
+                  }}
+                >
+                  💳 Card
+                </button>
+              </div>
+            </div>
           </div>
         </Modal>
       </div>
@@ -836,10 +904,58 @@ export default function POS() {
 
           <Button fullWidth size="lg" onClick={handlePlaceOrder} disabled={currentOrder.items.length === 0 || processing}
             variant={currentOrder.complimentary ? 'warning' : 'primary'}
-            style={{ borderRadius: '10px', padding: '12px', fontSize: '15px', fontWeight: 800, boxShadow: '0 4px 14px rgba(230,57,70,0.3)' }}
+            style={{ borderRadius: '10px', padding: '10px', fontSize: '14px', fontWeight: 800, boxShadow: '0 4px 14px rgba(230,57,70,0.3)', marginBottom: '8px' }}
           >
-            {processing ? 'Placing...' : currentOrder.complimentary ? `Place (Free)` : `Place Order • ₹${getTotal().toFixed(0)}`}
+            {processing ? 'Placing...' : currentOrder.complimentary ? `Place Order (Free)` : `Place Order (Pending) • ₹${getTotal().toFixed(0)}`}
           </Button>
+
+          {/* Quick Direct Settle Buttons */}
+          <div style={{ background: '#f8fafc', padding: '8px', borderRadius: '10px', border: '1.5px dashed #cbd5e1' }}>
+            <div style={{ fontSize: '10.5px', fontWeight: 800, color: '#047857', marginBottom: '6px', textAlign: 'center', letterSpacing: '0.5px' }}>
+              ⚡ QUICK SETTLE & PAY DIRECTLY:
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+              <button
+                type="button"
+                onClick={() => handleDirectSettle('cash')}
+                disabled={currentOrder.items.length === 0 || processing}
+                style={{
+                  padding: '9px 2px', borderRadius: '8px', border: 'none',
+                  background: processing || currentOrder.items.length === 0 ? '#cbd5e1' : 'linear-gradient(135deg, #10b981, #059669)',
+                  color: 'white', fontWeight: 800, fontSize: '11.5px', cursor: currentOrder.items.length === 0 ? 'not-allowed' : 'pointer',
+                  textAlign: 'center', boxShadow: '0 2px 6px rgba(16,185,129,0.25)', transition: 'all 0.15s'
+                }}
+              >
+                💵 Cash Pay
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDirectSettle('upi')}
+                disabled={currentOrder.items.length === 0 || processing}
+                style={{
+                  padding: '9px 2px', borderRadius: '8px', border: 'none',
+                  background: processing || currentOrder.items.length === 0 ? '#cbd5e1' : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  color: 'white', fontWeight: 800, fontSize: '11.5px', cursor: currentOrder.items.length === 0 ? 'not-allowed' : 'pointer',
+                  textAlign: 'center', boxShadow: '0 2px 6px rgba(37,99,235,0.25)', transition: 'all 0.15s'
+                }}
+              >
+                📱 UPI Pay
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDirectSettle('card')}
+                disabled={currentOrder.items.length === 0 || processing}
+                style={{
+                  padding: '9px 2px', borderRadius: '8px', border: 'none',
+                  background: processing || currentOrder.items.length === 0 ? '#cbd5e1' : 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
+                  color: 'white', fontWeight: 800, fontSize: '11.5px', cursor: currentOrder.items.length === 0 ? 'not-allowed' : 'pointer',
+                  textAlign: 'center', boxShadow: '0 2px 6px rgba(139,92,246,0.25)', transition: 'all 0.15s'
+                }}
+              >
+                💳 Card Pay
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

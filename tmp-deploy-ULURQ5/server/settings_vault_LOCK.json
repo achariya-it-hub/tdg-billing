@@ -1,0 +1,57 @@
+{
+  "company": {
+    "name": "Tendens Gyros",
+    "address": "Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram",
+    "phone": "8877661150",
+    "email": "info@tendengyros.com",
+    "gst": "33FJSPA2544H1Z9",
+    "logo": null,
+    "upiId": "",
+    "deliveryEnabled": true,
+    "gstNo": "33FJSPA2544H1Z9",
+    "gstin": "33FJSPA2544H1Z9"
+  },
+  "theme": {
+    "accentPrimary": "#e63946",
+    "accentPrimaryDark": "#c1121f",
+    "bgPrimary": "#f5f5f7"
+  },
+  "printers": [
+    {
+      "id": "default",
+      "name": "Default Printer",
+      "ip": "",
+      "type": "browser",
+      "isDefault": true
+    }
+  ],
+  "paymentGateways": {
+    "ccavenue": {
+      "merchantId": "",
+      "workingKey": "",
+      "accessCode": "",
+      "isProduction": false,
+      "isEnabled": true
+    }
+  },
+  "offers": [
+    {
+      "id": "1",
+      "title": "Golden Gyro Feast (50% OFF)",
+      "desc": "1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink",
+      "tag": "50% OFF",
+      "price": "₹199",
+      "origPrice": "₹398",
+      "image": "/uploads/menu/m1.jpg"
+    },
+    {
+      "id": "2",
+      "title": "Crispy Chicken & Dip Combo",
+      "desc": "4 Pcs Crispy Chicken + 2 Garlic Dips + Fries",
+      "tag": "SAVE ₹151",
+      "price": "₹299",
+      "origPrice": "₹450",
+      "image": "/uploads/menu/m3.jpg"
+    }
+  ]
+}
