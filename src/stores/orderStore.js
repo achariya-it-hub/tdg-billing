@@ -171,8 +171,8 @@ export const useOrderStore = create(
 
   getDiscount: () => {
     const raw = get().getRawSubtotal()
-    if (get().currentOrder.inaugurationOffer) return raw * 0.5
-    if (get().currentOrder.specialOffer20) return raw * 0.2
+    if (get().currentOrder.inaugurationOffer) return Math.round(raw * 0.5)
+    if (get().currentOrder.specialOffer20) return Math.round(raw * 0.2)
     return 0
   },
   
@@ -181,7 +181,7 @@ export const useOrderStore = create(
   },
   
   getTax: () => {
-    return get().getSubtotal() * 0.05
+    return Math.round(get().getSubtotal() * 0.05)
   },
   
   getTotal: () => {
