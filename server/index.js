@@ -4663,17 +4663,33 @@ const isCompletedSale = (o) => {
   const p = (o.paymentStatus || '').toLowerCase()
   const m = (o.paymentMethod || '').toLowerCase()
 
-  if (s === 'cancelled' || s === 'canceled' || s === 'void' || o.isCancelled || o.isVoid) return false
-  if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') return false
+  // Requirement 3: Exclude Cancelled, Void, Complimentary, Draft, Deleted, Duplicate
+  if (s === 'cancelled' || s === 'canceled' || s === 'void' || s === 'draft' || s === 'deleted' || o.isCancelled || o.isVoid || o.isDraft || o.isDeleted || o.isDuplicate) {
+    return false
+  }
+  if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') {
+    return false
+  }
 
-  return true
+  // Requirement 4: Include only Completed or Paid Bills
+  return s === 'completed' || p === 'paid' || Boolean(o.settleDirectly)
 }
 
 const isValidSalesOrder = isCompletedSale
 
 function getCompletedSales(reqQuery, options = {}) {
   const candidateOrders = getFilteredOrdersForPeriod(reqQuery, true)
-  return candidateOrders.filter(isCompletedSale)
+  const completedSales = candidateOrders.filter(isCompletedSale)
+  const totalSales = completedSales.reduce((sum, o) => sum + getOrderAmount(o), 0)
+
+  // Requirement 5: Debug Logging
+  console.log(`[SALES COUNT AUDIT] Filter: ${JSON.stringify(reqQuery || {})}`)
+  console.log(`[SALES COUNT AUDIT] Raw Orders Count: ${orders.length}`)
+  console.log(`[SALES COUNT AUDIT] Filtered Orders Count (Period): ${candidateOrders.length}`)
+  console.log(`[SALES COUNT AUDIT] Bill Count Returned: ${completedSales.length}`)
+  console.log(`[SALES COUNT AUDIT] Total Sales Returned: ₹${Math.round(totalSales)}`)
+
+  return completedSales
 }
 
 function calculateSalesMetrics(salesOrders = []) {
@@ -5543,24 +5559,24 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
 // ============ POS ORDERS LIST FOR BILLING COUNTER & REPORTS ============
 app.get('/api/pos/orders', (req, res) => {
   try {
-    const { status } = req.query
-    const includeCancelled = req.query.includeCancelled === 'true' || req.query.report === 'kot-cancelled'
+    const { status, report } = req.query
+    const includeCancelled = req.query.includeCancelled === 'true' || report === 'kot-cancelled'
 
     let list = getFilteredOrdersForPeriod(req.query, true)
 
-    if (!includeCancelled) {
-      list = list.filter(o => {
-        if (!o) return false
-        const s = (o.status || '').toLowerCase()
-        return s !== 'cancelled' && s !== 'canceled' && s !== 'void' && !o.isCancelled && !o.isVoid
-      })
-    }
+    if (report === 'bill' || (status && status.toLowerCase() === 'completed')) {
+      list = getCompletedSales(req.query)
+    } else {
+      if (!includeCancelled) {
+        list = list.filter(o => {
+          if (!o) return false
+          const s = (o.status || '').toLowerCase()
+          return s !== 'cancelled' && s !== 'canceled' && s !== 'void' && s !== 'draft' && s !== 'deleted' && !o.isCancelled && !o.isVoid && !o.isDraft && !o.isDeleted && !o.isDuplicate
+        })
+      }
 
-    if (status) {
-      const normStatus = status.toLowerCase()
-      if (normStatus === 'completed') {
-        list = getCompletedSales(req.query)
-      } else {
+      if (status) {
+        const normStatus = status.toLowerCase()
         list = list.filter(o => (o.status || '').toLowerCase() === normStatus)
       }
     }
