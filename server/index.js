@@ -31,12 +31,12 @@ function readDb() {
       const content = readFileSync(DB_PATH, 'utf-8').trim()
       if (content && content !== '{}') {
         const parsed = JSON.parse(content)
-        if (parsed && Array.isArray(parsed.orders) && parsed.orders.length > 0) return parsed
+        if (parsed && typeof parsed === 'object') return parsed
       }
     }
     const seedPath = join(__dirname, 'seed-db.json')
     if (existsSync(seedPath)) {
-      console.log('db.json missing or empty orders. Auto-seeding initial database from seed-db.json...')
+      console.log('db.json missing. Initializing database on first installation from seed-db.json...')
       const content = readFileSync(seedPath, 'utf-8').trim()
       if (content) {
         const parsed = JSON.parse(content)
@@ -51,7 +51,7 @@ function readDb() {
   } catch (e) {
     console.error('Error reading db.json:', e.message)
   }
-  return { users: [], orders: [], transactions: [], menu: null }
+  return { users: [], orders: [], transactions: [], categories: [], menuItems: [], recipes: [], settings: {} }
 }
 
 const BACKUP_DIR = join(DATA_DIR, 'backups')
@@ -393,6 +393,7 @@ function findLatestValidBackup() {
 }
 
 // Safe Data Protection & State Restoration
+// Safe Data Protection & State Restoration
 function restoreState() {
   let db = readDb()
   const SEED_PATH = join(__dirname, 'seed-db.json')
@@ -409,13 +410,11 @@ function restoreState() {
     }
   }
 
-  // Safety: if db.json is missing or lacks orders/users/categories data, seed from master seed-db.json or latest backup
-  const isDbEmptyOrMissing = !existsSync(DB_PATH) || 
-    !db || 
-    (!db.orders || !db.orders.length) || (!db.users || !db.users.length) || (!db.categories || !db.categories.length)
+  // Safety: if db.json is completely missing, seed on initial installation only
+  const isDbMissing = !existsSync(DB_PATH) || !db
 
-  if (isDbEmptyOrMissing) {
-    console.log('[DATA PROTECTION] db.json missing or empty orders. Initializing from seed-db.json...')
+  if (isDbMissing) {
+    console.log('[DATA PROTECTION] db.json missing. Initializing on first installation from seed-db.json...')
     let foundBackup = null
     if (existsSync(SEED_PATH)) {
       try {
@@ -436,40 +435,11 @@ function restoreState() {
     }
   }
 
-  // Master Menu Sync & Lock Guard: Ensure all 11 categories and 92 menu items are preserved
-  const LOCK_PATH = join(__dirname, 'menu_backup_LOCK.json')
-  let lockData = null
-  if (existsSync(LOCK_PATH)) {
-    try {
-      const lockContent = readFileSync(LOCK_PATH, 'utf-8').trim()
-      if (lockContent) lockData = JSON.parse(lockContent)
-    } catch (e) {}
-  }
+  // Preserve 100% of operational business data and menu items from db.json (db.json is the single source of truth)
+  if (db.categories && Array.isArray(db.categories)) categories = db.categories
+  if (db.menuItems && Array.isArray(db.menuItems)) menuItems = db.menuItems
+  if (db.recipes && Array.isArray(db.recipes)) recipes = db.recipes
 
-  if (!db.menuItems || !Array.isArray(db.menuItems) || db.menuItems.length === 0) {
-    if (existsSync(SEED_PATH)) {
-      try {
-        const seedContent = readFileSync(SEED_PATH, 'utf-8').trim()
-        if (seedContent) {
-          const seedData = JSON.parse(seedContent)
-          if (seedData.categories && Array.isArray(seedData.categories)) {
-            db.categories = seedData.categories
-          } else if (lockData?.categories) {
-            db.categories = lockData.categories
-          }
-          if (seedData.menuItems && Array.isArray(seedData.menuItems)) {
-            db.menuItems = seedData.menuItems
-          } else if (lockData?.menuItems) {
-            db.menuItems = lockData.menuItems
-          }
-        }
-      } catch (se) {
-        console.error('[DATA PROTECTION] Menu sync error:', se.message)
-      }
-    }
-  }
-
-  // Preserve 100% of operational business data (NEVER overwrite or lose sales data)
   if (db.orders && Array.isArray(db.orders)) orders = db.orders
   orders = syncSalesVault(orders)
   if (db.loyaltyUsers && Array.isArray(db.loyaltyUsers)) loyaltyUsers = db.loyaltyUsers
@@ -482,9 +452,6 @@ function restoreState() {
   if (db.purchases && Array.isArray(db.purchases)) purchases = db.purchases
   if (db.onlineOrders && Array.isArray(db.onlineOrders)) onlineOrders = db.onlineOrders
   if (db.aggregators && Array.isArray(db.aggregators)) aggregators = db.aggregators
-  if (db.categories && Array.isArray(db.categories)) categories = db.categories
-  if (db.menuItems && Array.isArray(db.menuItems)) menuItems = db.menuItems
-  if (db.recipes && Array.isArray(db.recipes)) recipes = db.recipes
   if (db.users && Array.isArray(db.users)) mobileAppUsers = db.users
   if (db.suppliers && Array.isArray(db.suppliers)) suppliers = db.suppliers
   if (db.purchaseOrders && Array.isArray(db.purchaseOrders)) purchaseOrders = db.purchaseOrders
@@ -534,16 +501,7 @@ function restoreState() {
     db.users = mobileAppUsers
   }
 
-  // Clean up legacy Burger items if any remain
-  categories = categories.filter(c => c.name !== 'Burger' && c.name !== 'Burgers')
-  menuItems = menuItems.filter(i => !i.name.toLowerCase().includes('burger'))
-  recipes = recipes.filter(r => !r.menuItemName?.toLowerCase().includes('burger'))
-  db.categories = categories
-  db.menuItems = menuItems
-  db.recipes = recipes
-
-  writeDb(db)
-  console.log('[DATA PROTECTION] Database initialized. All operational data (invoices, KOTs, POs, GRNs, MRNs, customers) strictly preserved!')
+  console.log('[DATA PROTECTION] Database initialized. db.json is the single source of truth for all menu items and operational data!')
 }
 
 const app = express()
@@ -5594,33 +5552,6 @@ async function seedAdmin() {
     db.settings = settings
     writeDb(db)
     console.log('Migrated: initialized settings in db.json')
-  }
-
-  // Auto-sync menu items and categories from seed-db.json if empty or updated
-  try {
-    const seedPath = join(__dirname, 'seed-db.json')
-    if (existsSync(seedPath)) {
-      const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
-      if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length > 0) {
-        let updated = false
-        if (categories.length === 0 && seedData.categories?.length > 0) {
-          categories.length = 0
-          categories.push(...(seedData.categories || []))
-          updated = true
-        }
-        if (menuItems.length === 0 || (seedData.menuItems.length > menuItems.length)) {
-          menuItems.length = 0
-          menuItems.push(...(seedData.menuItems || []))
-          updated = true
-        }
-        if (updated) {
-          saveState()
-          console.log(`[MENU AUTO-MIGRATION] Updated database menu (${menuItems.length} items, ${categories.length} categories) from seed-db.json`)
-        }
-      }
-    }
-  } catch (e) {
-    console.error('[MENU AUTO-MIGRATION ERROR]', e)
   }
 }
 seedAdmin()
