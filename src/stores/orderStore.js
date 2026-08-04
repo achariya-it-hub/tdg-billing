@@ -122,7 +122,15 @@ export const useOrderStore = create(
         complimentaryType: '',
         specialRemarks: '',
         inaugurationOffer: false,
-        specialOffer20: isSpecial20Active()
+        specialOffer20: isSpecial20Active(),
+        staffBenefitOffer: false,
+        employeeId: null,
+        employeeName: null,
+        employeeDept: null,
+        familyMemberId: null,
+        familyMemberName: null,
+        offerName: null,
+        offerType: null
       }
     })
   },
@@ -150,7 +158,8 @@ export const useOrderStore = create(
       currentOrder: {
         ...state.currentOrder,
         inaugurationOffer: !!enabled,
-        specialOffer20: enabled ? false : state.currentOrder.specialOffer20
+        specialOffer20: enabled ? false : state.currentOrder.specialOffer20,
+        staffBenefitOffer: enabled ? false : state.currentOrder.staffBenefitOffer
       }
     }))
   },
@@ -160,7 +169,45 @@ export const useOrderStore = create(
       currentOrder: {
         ...state.currentOrder,
         specialOffer20: !!enabled,
-        inaugurationOffer: enabled ? false : state.currentOrder.inaugurationOffer
+        inaugurationOffer: enabled ? false : state.currentOrder.inaugurationOffer,
+        staffBenefitOffer: enabled ? false : state.currentOrder.staffBenefitOffer
+      }
+    }))
+  },
+
+  setStaffBenefitOffer: (data) => {
+    if (!data || !data.eligible) {
+      set(state => ({
+        currentOrder: {
+          ...state.currentOrder,
+          staffBenefitOffer: false,
+          employeeId: null,
+          employeeName: null,
+          employeeDept: null,
+          familyMemberId: null,
+          familyMemberName: null,
+          offerName: null,
+          offerType: null
+        }
+      }))
+      return
+    }
+
+    set(state => ({
+      currentOrder: {
+        ...state.currentOrder,
+        staffBenefitOffer: true,
+        inaugurationOffer: false,
+        specialOffer20: false,
+        employeeId: data.employee?.id || null,
+        employeeName: data.employee?.name || null,
+        employeeDept: data.employee?.department || null,
+        familyMemberId: data.familyMember?.id || null,
+        familyMemberName: data.familyMember?.name || null,
+        offerName: data.offerName || 'Achariya Family Week 2026',
+        offerType: 'staff_family',
+        discountPct: data.discountPct || 50,
+        discountName: `${data.offerName || 'Achariya Family Week 2026'} (50% OFF)`
       }
     }))
   },
@@ -171,6 +218,10 @@ export const useOrderStore = create(
 
   getDiscount: () => {
     const raw = get().getRawSubtotal()
+    if (get().currentOrder.staffBenefitOffer) {
+      const pct = (get().currentOrder.discountPct || 50) / 100
+      return Math.round(raw * pct)
+    }
     if (get().currentOrder.inaugurationOffer) return Math.round(raw * 0.5)
     if (get().currentOrder.specialOffer20) return Math.round(raw * 0.2)
     return 0
@@ -223,6 +274,16 @@ export const useOrderStore = create(
             total,
             inaugurationOffer: order.inaugurationOffer || false,
             specialOffer20: order.specialOffer20 || false,
+            staffBenefitOffer: order.staffBenefitOffer || false,
+            employeeId: order.employeeId || null,
+            employeeName: order.employeeName || null,
+            employeeDept: order.employeeDept || null,
+            familyMemberId: order.familyMemberId || null,
+            familyMemberName: order.familyMemberName || null,
+            offerName: order.offerName || null,
+            offerType: order.offerType || null,
+            discountPct: order.discountPct || 0,
+            discountName: order.discountName || undefined,
             paymentMethod: paymentMethod || 'cash',
             settleDirectly: Boolean(settleDirectly),
             splitPayments,

@@ -8,6 +8,7 @@ const TABS = [
   { id: 'company', label: 'Company Info', icon: Building2 },
   { id: 'payment', label: 'Payment Gateways', icon: CreditCard },
   { id: 'offers', label: 'App Offers Manager', icon: Tag },
+  { id: 'achariya-staff-promo', label: '🎓 Achariya Staff Promotion', icon: ShieldCheck },
   { id: 'images', label: 'App Image Manager', icon: ImageIcon },
   { id: 'data', label: 'Data Management', icon: Database },
   { id: 'printers', label: 'Printers', icon: Printer },
@@ -88,10 +89,181 @@ export default function Settings() {
       {activeTab === 'company' && <CompanyTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'payment' && <PaymentGatewaysTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'offers' && <OffersTab pin={pin} settings={settings} onSaved={reloadSettings} />}
+      {activeTab === 'achariya-staff-promo' && <AchariyaStaffPromoTab />}
       {activeTab === 'images' && <ImagesTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'data' && <DataTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'printers' && <PrintersTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'theme' && <ThemeTab pin={pin} settings={settings} onSaved={reloadSettings} />}
+    </div>
+  )
+}
+
+function AchariyaStaffPromoTab() {
+  const [loading, setLoading] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [message, setMessage] = useState('')
+
+  const [form, setForm] = useState({
+    enabled: true,
+    title: 'Achariya Family Week 2026',
+    offerType: 'staff_family',
+    startDate: '2026-08-04',
+    endDate: '2026-08-09',
+    discountPct: 50,
+    maxDiscountPerBill: 0,
+    maxBillsPerDay: 1,
+    applicableOrderTypes: ['dine-in', 'pos', 'takeaway', 'delivery', 'dinein']
+  })
+
+  useEffect(() => {
+    setLoading(true)
+    fetch(`${API_BASE}/api/staff/settings`)
+      .then(res => res.json())
+      .then(data => {
+        if (data) setForm(prev => ({ ...prev, ...data }))
+        setLoading(false)
+      })
+      .catch(e => setLoading(false))
+  }, [])
+
+  const handleSave = async () => {
+    setSaving(true)
+    setMessage('')
+    try {
+      const res = await fetch(`${API_BASE}/api/staff/settings`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setMessage('✅ Achariya Staff Promotion settings saved successfully!')
+      } else {
+        setMessage('❌ Failed to save settings')
+      }
+    } catch (e) {
+      setMessage('❌ Network error')
+    }
+    setSaving(false)
+  }
+
+  if (loading) return <div style={{ padding: '20px' }}>Loading Achariya Staff Promotion Settings...</div>
+
+  return (
+    <div style={{
+      background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)',
+      borderRadius: '24px', border: '1px solid rgba(255,255,255,0.3)', padding: '28px',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.06)'
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div>
+          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#1e1b4b', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span>🎓 Achariya Staff & Family Benefit Settings</span>
+          </h2>
+          <p style={{ fontSize: '13px', color: '#6b7280', marginTop: '4px' }}>
+            Configure valid dates, benefit discount percentage, usage limits, and order types.
+          </p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f5f3ff', padding: '8px 14px', borderRadius: '14px', border: '1px solid #ddd6fe' }}>
+          <span style={{ fontSize: '13px', fontWeight: 700, color: '#5b21b6' }}>Promotion Status:</span>
+          <button
+            type="button"
+            onClick={() => setForm({ ...form, enabled: !form.enabled })}
+            style={{
+              padding: '6px 16px', borderRadius: '20px', border: 'none', fontWeight: 800, fontSize: '12px',
+              cursor: 'pointer', background: form.enabled ? '#16a34a' : '#dc2626', color: 'white'
+            }}
+          >
+            {form.enabled ? 'ACTIVE' : 'DISABLED'}
+          </button>
+        </div>
+      </div>
+
+      {message && (
+        <div style={{ padding: '12px 16px', borderRadius: '12px', background: message.startsWith('✅') ? '#f0fdf4' : '#fef2f2', color: message.startsWith('✅') ? '#166534' : '#dc2626', fontWeight: 700, fontSize: '13.5px', marginBottom: '20px' }}>
+          {message}
+        </div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+        <div>
+          <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px', display: 'block' }}>Promotion Title</label>
+          <input
+            type="text"
+            value={form.title}
+            onChange={e => setForm({ ...form, title: e.target.value })}
+            style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1.5px solid #d1d5db', fontSize: '13.5px' }}
+          />
+        </div>
+
+        <div>
+          <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px', display: 'block' }}>Discount Percentage (%)</label>
+          <input
+            type="number"
+            value={form.discountPct}
+            onChange={e => setForm({ ...form, discountPct: Number(e.target.value) })}
+            style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1.5px solid #d1d5db', fontSize: '13.5px', fontWeight: 800, color: '#7c3aed' }}
+          />
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+        <div>
+          <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px', display: 'block' }}>Start Date (00:00)</label>
+          <input
+            type="date"
+            value={form.startDate}
+            onChange={e => setForm({ ...form, startDate: e.target.value })}
+            style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1.5px solid #d1d5db', fontSize: '13.5px' }}
+          />
+        </div>
+
+        <div>
+          <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px', display: 'block' }}>End Date (23:59)</label>
+          <input
+            type="date"
+            value={form.endDate}
+            onChange={e => setForm({ ...form, endDate: e.target.value })}
+            style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1.5px solid #d1d5db', fontSize: '13.5px' }}
+          />
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+        <div>
+          <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px', display: 'block' }}>Max Bills Allowed Per Customer Per Day</label>
+          <input
+            type="number"
+            value={form.maxBillsPerDay}
+            onChange={e => setForm({ ...form, maxBillsPerDay: Number(e.target.value) })}
+            style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1.5px solid #d1d5db', fontSize: '13.5px' }}
+          />
+          <span style={{ fontSize: '11.5px', color: '#6b7280' }}>Default 1 Bill Per Customer Per Day</span>
+        </div>
+
+        <div>
+          <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px', display: 'block' }}>Max Discount Amount Limit (₹0 = Unlimited)</label>
+          <input
+            type="number"
+            value={form.maxDiscountPerBill}
+            onChange={e => setForm({ ...form, maxDiscountPerBill: Number(e.target.value) })}
+            style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1.5px solid #d1d5db', fontSize: '13.5px' }}
+          />
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={handleSave}
+        disabled={saving}
+        style={{
+          width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+          background: 'linear-gradient(135deg, #7c3aed, #6d28d9)', color: 'white',
+          fontWeight: 800, fontSize: '15px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(124,58,237,0.3)'
+        }}
+      >
+        {saving ? 'Saving Settings...' : '💾 Save Achariya Promotion Settings'}
+      </button>
     </div>
   )
 }

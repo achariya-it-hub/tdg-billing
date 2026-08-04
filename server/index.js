@@ -108,6 +108,9 @@ function writeDb(data = {}) {
       poItems: typeof poItems !== 'undefined' && poItems !== undefined ? poItems : (data.poItems || []),
       grns: typeof grns !== 'undefined' && grns !== undefined ? grns : (data.grns || []),
       vendorPayments: typeof vendorPayments !== 'undefined' && vendorPayments !== undefined ? vendorPayments : (data.vendorPayments || []),
+      employees: typeof employees !== 'undefined' && employees !== undefined ? employees : (data.employees || []),
+      staffAuditLogs: typeof staffAuditLogs !== 'undefined' && staffAuditLogs !== undefined ? staffAuditLogs : (data.staffAuditLogs || []),
+      staffPromotionSettings: typeof staffPromotionSettings !== 'undefined' && staffPromotionSettings !== undefined ? staffPromotionSettings : (data.staffPromotionSettings || {}),
       settings: typeof settings !== 'undefined' && settings !== undefined ? settings : (data.settings || {})
     }
 
@@ -133,6 +136,67 @@ function writeDb(data = {}) {
 // Persist ALL in-memory state to db.json (single source of truth)
 // Billing system users (PIN-based login for billing staff)
 let billingUsers = []
+let employees = []
+let staffAuditLogs = []
+let staffPromotionSettings = {
+  enabled: true,
+  title: 'Achariya Family Week 2026',
+  offerType: 'staff_family',
+  startDate: '2026-08-04',
+  endDate: '2026-08-09',
+  discountPct: 50,
+  maxDiscountPerBill: 0,
+  maxBillsPerDay: 1,
+  applicableOrderTypes: ['dine-in', 'pos', 'takeaway', 'delivery', 'dinein'],
+  applicableCategories: [],
+  applicableMenuItems: []
+}
+
+const defaultEmployees = [
+  {
+    id: 'EMP001',
+    name: 'Dr. S. Achariya',
+    department: 'Management',
+    designation: 'Director',
+    mobile: '9876543210',
+    email: 'director@achariya.org',
+    status: 'Active',
+    joiningDate: '2020-01-01',
+    qrCode: 'EMP001',
+    familyMembers: [
+      { id: 'FAM001_1', employeeId: 'EMP001', name: 'Mrs. A. Achariya', relationship: 'Spouse', mobile: '9876543211', status: 'Active' },
+      { id: 'FAM001_2', employeeId: 'EMP001', name: 'Kavya Achariya', relationship: 'Daughter', mobile: '9876543212', status: 'Active' }
+    ]
+  },
+  {
+    id: 'EMP002',
+    name: 'Rajesh Kumar',
+    department: 'Billing',
+    designation: 'Senior Cashier',
+    mobile: '9876543220',
+    email: 'rajesh@achariya.org',
+    status: 'Active',
+    joiningDate: '2022-03-15',
+    qrCode: 'EMP002',
+    familyMembers: [
+      { id: 'FAM002_1', employeeId: 'EMP002', name: 'Sunita Kumar', relationship: 'Spouse', mobile: '9876543221', status: 'Active' }
+    ]
+  },
+  {
+    id: 'EMP003',
+    name: 'Priya Sharma',
+    department: 'Teaching',
+    designation: 'Assistant Professor',
+    mobile: '9876543230',
+    email: 'priya@achariya.org',
+    status: 'Active',
+    joiningDate: '2021-07-10',
+    qrCode: 'EMP003',
+    familyMembers: [
+      { id: 'FAM003_1', employeeId: 'EMP003', name: 'Ramesh Sharma', relationship: 'Father', mobile: '9876543231', status: 'Active' }
+    ]
+  }
+]
 const BILLING_MODULES = [
   'pos', 'captain', 'kitchen', 'billing', 'kot', 'purchase',
   'inventory', 'menu', 'hr', 'loyalty', 'customers', 'reports',
@@ -338,6 +402,9 @@ function saveState() {
     poItems: poItems && poItems.length ? poItems : (currentDb.poItems || []),
     grns: grns && grns.length ? grns : (currentDb.grns || []),
     vendorPayments: vendorPayments && vendorPayments.length ? vendorPayments : (currentDb.vendorPayments || []),
+    employees: employees,
+    staffAuditLogs: staffAuditLogs,
+    staffPromotionSettings: staffPromotionSettings,
     settings: settings
   })
 }
@@ -458,6 +525,10 @@ function restoreState() {
   if (db.poItems && Array.isArray(db.poItems)) poItems = db.poItems
   if (db.grns && Array.isArray(db.grns)) grns = db.grns
   if (db.vendorPayments && Array.isArray(db.vendorPayments)) vendorPayments = db.vendorPayments
+  if (db.employees && Array.isArray(db.employees) && db.employees.length > 0) employees = db.employees
+  else employees = defaultEmployees
+  if (db.staffAuditLogs && Array.isArray(db.staffAuditLogs)) staffAuditLogs = db.staffAuditLogs
+  if (db.staffPromotionSettings) staffPromotionSettings = { ...staffPromotionSettings, ...db.staffPromotionSettings }
   if (db.settings) {
     settings = {
       ...settings,
@@ -2732,6 +2803,371 @@ app.delete('/api/inventory/:id', (req, res) => {
   res.json({ success: true })
 })
 
+// ============ ACHARIYA STAFF & FAMILY BENEFIT PROMOTION APIs ============
+
+// 1. Employee Master List
+app.get('/api/staff/employees', (req, res) => {
+  const { search, status, department } = req.query
+  let list = employees || []
+  if (status) list = list.filter(e => (e.status || '').toLowerCase() === status.toLowerCase())
+  if (department) list = list.filter(e => (e.department || '').toLowerCase() === department.toLowerCase())
+  if (search) {
+    const q = search.toLowerCase().trim()
+    list = list.filter(e =>
+      (e.id || '').toLowerCase().includes(q) ||
+      (e.name || '').toLowerCase().includes(q) ||
+      (e.mobile || '').includes(q) ||
+      (e.email || '').toLowerCase().includes(q) ||
+      (e.department || '').toLowerCase().includes(q) ||
+      (e.familyMembers || []).some(f => (f.name || '').toLowerCase().includes(q) || (f.mobile || '').includes(q))
+    )
+  }
+  res.json(list)
+})
+
+// 2. Create Employee
+app.post('/api/staff/employees', (req, res) => {
+  const { id, name, department, designation, mobile, email, status, joiningDate, qrCode, familyMembers } = req.body
+  if (!id || !name) return res.status(400).json({ error: 'Employee ID and Name are required' })
+
+  const empId = String(id).trim().toUpperCase()
+  const existing = employees.find(e => e.id.toLowerCase() === empId.toLowerCase())
+  if (existing) return res.status(400).json({ error: 'Employee ID already exists' })
+
+  const newEmp = {
+    id: empId,
+    name: String(name).trim(),
+    department: department || 'General',
+    designation: designation || 'Staff',
+    mobile: mobile || '',
+    email: email || '',
+    status: status || 'Active',
+    joiningDate: joiningDate || new Date().toISOString().slice(0, 10),
+    qrCode: qrCode || empId,
+    familyMembers: Array.isArray(familyMembers) ? familyMembers : [],
+    createdAt: new Date().toISOString()
+  }
+
+  employees.push(newEmp)
+  saveState()
+  res.status(201).json({ success: true, employee: newEmp })
+})
+
+// 3. Edit Employee & Family Members
+app.put('/api/staff/employees/:id', (req, res) => {
+  const empId = req.params.id
+  const idx = employees.findIndex(e => e.id.toLowerCase() === empId.toLowerCase())
+  if (idx === -1) return res.status(404).json({ error: 'Employee not found' })
+
+  const { name, department, designation, mobile, email, status, joiningDate, qrCode, familyMembers } = req.body
+  if (name !== undefined) employees[idx].name = name
+  if (department !== undefined) employees[idx].department = department
+  if (designation !== undefined) employees[idx].designation = designation
+  if (mobile !== undefined) employees[idx].mobile = mobile
+  if (email !== undefined) employees[idx].email = email
+  if (status !== undefined) employees[idx].status = status
+  if (joiningDate !== undefined) employees[idx].joiningDate = joiningDate
+  if (qrCode !== undefined) employees[idx].qrCode = qrCode
+  if (familyMembers !== undefined && Array.isArray(familyMembers)) employees[idx].familyMembers = familyMembers
+
+  saveState()
+  res.json({ success: true, employee: employees[idx] })
+})
+
+// 4. Delete Employee
+app.delete('/api/staff/employees/:id', (req, res) => {
+  const empId = req.params.id
+  const idx = employees.findIndex(e => e.id.toLowerCase() === empId.toLowerCase())
+  if (idx === -1) return res.status(404).json({ error: 'Employee not found' })
+
+  employees.splice(idx, 1)
+  saveState()
+  res.json({ success: true })
+})
+
+// 5. Bulk Employee & Family Import
+app.post('/api/staff/employees/import', (req, res) => {
+  const { items } = req.body
+  if (!Array.isArray(items) || items.length === 0) return res.status(400).json({ error: 'No items provided' })
+
+  let imported = 0, updated = 0
+  items.forEach(item => {
+    if (!item.id || !item.name) return
+    const empId = String(item.id).trim().toUpperCase()
+    const idx = employees.findIndex(e => e.id.toLowerCase() === empId.toLowerCase())
+    if (idx >= 0) {
+      employees[idx] = { ...employees[idx], ...item, id: empId }
+      updated++
+    } else {
+      employees.push({
+        id: empId,
+        name: item.name,
+        department: item.department || 'General',
+        designation: item.designation || 'Staff',
+        mobile: item.mobile || '',
+        email: item.email || '',
+        status: item.status || 'Active',
+        joiningDate: item.joiningDate || new Date().toISOString().slice(0, 10),
+        qrCode: item.qrCode || empId,
+        familyMembers: Array.isArray(item.familyMembers) ? item.familyMembers : []
+      })
+      imported++
+    }
+  })
+  saveState()
+  res.json({ success: true, imported, updated, total: employees.length })
+})
+
+// 6. POS Staff Verification Endpoint (CRITICAL VALIDATION ENGINE)
+app.get('/api/staff/verify', (req, res) => {
+  const query = (req.query.query || '').trim()
+  const orderType = (req.query.orderType || 'dine-in').toLowerCase()
+
+  if (!query) return res.status(400).json({ eligible: false, message: 'Please enter Employee ID, Name, Mobile, or QR Code' })
+
+  // 1. Check Promotion Settings & Status
+  if (!staffPromotionSettings.enabled) {
+    return res.json({ eligible: false, message: 'Achariya Staff Promotion is currently DISABLED by Admin' })
+  }
+
+  // 2. Check Promotion Date Range (04-Aug-2026 00:00 to 09-Aug-2026 23:59)
+  const todayStr = new Date().toISOString().slice(0, 10)
+  if (staffPromotionSettings.startDate && todayStr < staffPromotionSettings.startDate) {
+    return res.json({ eligible: false, message: `Promotion starts on ${staffPromotionSettings.startDate}` })
+  }
+  if (staffPromotionSettings.endDate && todayStr > staffPromotionSettings.endDate) {
+    return res.json({ eligible: false, message: `Promotion EXPIRED on ${staffPromotionSettings.endDate}` })
+  }
+
+  // 3. Search Employee by ID, Name, Mobile, QR Code, or Family Mobile
+  const qLower = query.toLowerCase()
+  let matchedEmp = null
+  let matchedFamily = null
+
+  // Exact ID / QR Code match
+  matchedEmp = employees.find(e => e.id.toLowerCase() === qLower || (e.qrCode && e.qrCode.toLowerCase() === qLower))
+
+  // Mobile match on Employee
+  if (!matchedEmp) {
+    const cleanQ = query.replace(/\D/g, '')
+    if (cleanQ.length >= 7) {
+      matchedEmp = employees.find(e => (e.mobile || '').replace(/\D/g, '').includes(cleanQ))
+    }
+  }
+
+  // Name match on Employee
+  if (!matchedEmp) {
+    matchedEmp = employees.find(e => e.name.toLowerCase().includes(qLower))
+  }
+
+  // Mobile or Name match on Family Member
+  if (!matchedEmp) {
+    const cleanQ = query.replace(/\D/g, '')
+    for (const emp of employees) {
+      const fam = (emp.familyMembers || []).find(f =>
+        (cleanQ.length >= 7 && (f.mobile || '').replace(/\D/g, '').includes(cleanQ)) ||
+        f.name.toLowerCase().includes(qLower)
+      )
+      if (fam) {
+        matchedEmp = emp
+        matchedFamily = fam
+        break
+      }
+    }
+  }
+
+  if (!matchedEmp) {
+    return res.json({ eligible: false, message: `No active Employee or Family Member found for "${query}"` })
+  }
+
+  // 4. Validate Employee & Family Status
+  if (matchedEmp.status !== 'Active') {
+    return res.json({ eligible: false, message: `Employee ${matchedEmp.name} (ID: ${matchedEmp.id}) is INACTIVE` })
+  }
+  if (matchedFamily && matchedFamily.status !== 'Active') {
+    return res.json({ eligible: false, message: `Family Member ${matchedFamily.name} is INACTIVE` })
+  }
+
+  // 5. Usage Limit Check (Default 1 bill per customer per day)
+  const maxBillsPerDay = Number(staffPromotionSettings.maxBillsPerDay) || 1
+  const todayOrders = orders.filter(o => {
+    if (!o.createdAt) return false
+    const oDate = o.createdAt.slice(0, 10)
+    if (oDate !== todayStr) return false
+    if (o.status === 'cancelled') return false
+    return (
+      (o.employeeId && String(o.employeeId).toLowerCase() === matchedEmp.id.toLowerCase()) ||
+      (matchedFamily && o.familyMemberId && String(o.familyMemberId).toLowerCase() === matchedFamily.id.toLowerCase())
+    )
+  })
+
+  const usageTodayCount = todayOrders.length
+  if (usageTodayCount >= maxBillsPerDay) {
+    return res.json({
+      eligible: false,
+      message: `Usage Limit Exceeded! ${matchedEmp.name} has already used ${usageTodayCount} bill(s) today (Limit: ${maxBillsPerDay}/day).`
+    })
+  }
+
+  // All Validations Passed!
+  res.json({
+    eligible: true,
+    offerName: staffPromotionSettings.title || 'Achariya Family Week 2026',
+    offerType: 'staff_family',
+    discountPct: Number(staffPromotionSettings.discountPct) || 50,
+    employee: {
+      id: matchedEmp.id,
+      name: matchedEmp.name,
+      department: matchedEmp.department,
+      designation: matchedEmp.designation,
+      mobile: matchedEmp.mobile
+    },
+    familyMember: matchedFamily ? {
+      id: matchedFamily.id,
+      name: matchedFamily.name,
+      relationship: matchedFamily.relationship,
+      mobile: matchedFamily.mobile
+    } : null,
+    usageTodayCount,
+    maxBillsPerDay,
+    message: `Eligible! 50% Benefit for ${matchedFamily ? matchedFamily.name + ' (' + matchedFamily.relationship + ' of ' + matchedEmp.name + ')' : matchedEmp.name}`
+  })
+})
+
+// 7. Get & Update Staff Promotion Settings
+app.get('/api/staff/settings', (req, res) => {
+  res.json(staffPromotionSettings)
+})
+
+app.put('/api/staff/settings', (req, res) => {
+  staffPromotionSettings = {
+    ...staffPromotionSettings,
+    ...req.body
+  }
+  saveState()
+  res.json({ success: true, settings: staffPromotionSettings })
+})
+
+// 8. Staff Benefit & Promotion Summary Reports
+app.get('/api/reports/staff-benefit', (req, res) => {
+  const { startDate, endDate } = req.query
+  let filteredOrders = getCompletedSales(req.query).filter(o => o.employeeId || o.offerType === 'staff_family')
+
+  if (startDate) filteredOrders = filteredOrders.filter(o => o.createdAt.slice(0, 10) >= startDate)
+  if (endDate) filteredOrders = filteredOrders.filter(o => o.createdAt.slice(0, 10) <= endDate)
+
+  const employeeWise = {}
+  const deptWise = {}
+  const familyWise = {}
+
+  let totalBills = 0, totalGross = 0, totalDiscount = 0, totalNet = 0
+
+  filteredOrders.forEach(o => {
+    const gross = Number(o.rawSubtotal || o.subtotal || o.total || 0)
+    const disc = getOrderDiscountAmount(o)
+    const net = getOrderAmount(o)
+    const empId = o.employeeId || 'UNKNOWN'
+    const empName = o.employeeName || 'Unknown Staff'
+    const dept = o.employeeDept || 'General'
+
+    totalBills++
+    totalGross += gross
+    totalDiscount += disc
+    totalNet += net
+
+    if (!employeeWise[empId]) {
+      employeeWise[empId] = { employeeId: empId, name: empName, department: dept, billsCount: 0, grossAmount: 0, discountAmount: 0, netAmount: 0 }
+    }
+    employeeWise[empId].billsCount++
+    employeeWise[empId].grossAmount += gross
+    employeeWise[empId].discountAmount += disc
+    employeeWise[empId].netAmount += net
+
+    if (!deptWise[dept]) {
+      deptWise[dept] = { department: dept, billsCount: 0, grossAmount: 0, discountAmount: 0, netAmount: 0 }
+    }
+    deptWise[dept].billsCount++
+    deptWise[dept].grossAmount += gross
+    deptWise[dept].discountAmount += disc
+    deptWise[dept].netAmount += net
+
+    if (o.familyMemberId || o.familyMemberName) {
+      const fKey = o.familyMemberId || o.familyMemberName
+      if (!familyWise[fKey]) {
+        familyWise[fKey] = { familyMemberId: fKey, name: o.familyMemberName, employeeName: empName, billsCount: 0, grossAmount: 0, discountAmount: 0, netAmount: 0 }
+      }
+      familyWise[fKey].billsCount++
+      familyWise[fKey].grossAmount += gross
+      familyWise[fKey].discountAmount += disc
+      familyWise[fKey].netAmount += net
+    }
+  })
+
+  res.json({
+    summary: { totalBills, totalGross, totalDiscount, totalNet },
+    employeeWise: Object.values(employeeWise),
+    departmentWise: Object.values(deptWise),
+    familyWise: Object.values(familyWise)
+  })
+})
+
+app.get('/api/reports/promotion-summary', (req, res) => {
+  const { startDate, endDate } = req.query
+  let completed = getCompletedSales(req.query)
+
+  if (startDate) completed = completed.filter(o => o.createdAt.slice(0, 10) >= startDate)
+  if (endDate) completed = completed.filter(o => o.createdAt.slice(0, 10) <= endDate)
+
+  let totalBills = 0, totalGrossSales = 0, totalDiscount = 0, totalNetSales = 0
+
+  const empMap = {}
+  const familyMap = {}
+
+  completed.forEach(o => {
+    const disc = getOrderDiscountAmount(o)
+    if (disc > 0) {
+      const gross = Number(o.rawSubtotal || o.subtotal || o.total || 0)
+      const net = getOrderAmount(o)
+
+      totalBills++
+      totalGrossSales += gross
+      totalDiscount += disc
+      totalNetSales += net
+
+      if (o.employeeId) {
+        const key = o.employeeId
+        if (!empMap[key]) empMap[key] = { employeeId: key, name: o.employeeName || key, bills: 0, discount: 0 }
+        empMap[key].bills++
+        empMap[key].discount += disc
+      }
+
+      if (o.familyMemberName) {
+        const fKey = o.familyMemberName
+        if (!familyMap[fKey]) familyMap[fKey] = { name: fKey, employeeName: o.employeeName || '', bills: 0, discount: 0 }
+        familyMap[fKey].bills++
+        familyMap[fKey].discount += disc
+      }
+    }
+  })
+
+  const topEmployees = Object.values(empMap).sort((a, b) => b.discount - a.discount).slice(0, 10)
+  const topFamilyMembers = Object.values(familyMap).sort((a, b) => b.discount - a.discount).slice(0, 10)
+
+  res.json({
+    totalBills,
+    totalGrossSales,
+    totalDiscount,
+    totalNetSales,
+    topEmployees,
+    topFamilyMembers
+  })
+})
+
+// Audit Logs Endpoint
+app.get('/api/staff/audit-logs', (req, res) => {
+  res.json(staffAuditLogs)
+})
+
 // POS Orders (no auth)
 app.get('/api/pos/orders', (req, res) => {
   const { status, source, date, from, to } = req.query
@@ -2880,7 +3316,11 @@ app.post('/api/pos/orders', (req, res) => {
   
   const rawSub = req.body.rawSubtotal || items?.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || 0) * (item.quantity || 1)), 0) || subtotal || 0
   const discountVal = Number(req.body.discount || req.body.discountAmount || 0)
-  const discountLabel = req.body.discountName || (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : 'Discount'))
+  const isStaffBenefit = Boolean(req.body.staffBenefitOffer || req.body.employeeId || req.body.offerType === 'staff_family')
+  const discountLabel = req.body.discountName || (
+    isStaffBenefit ? (req.body.offerName || 'Achariya Family Week 2026') :
+    (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : 'Discount'))
+  )
   
   const isDirectSettle = Boolean(req.body.settleDirectly || req.body.status === 'completed' || req.body.paymentStatus === 'paid')
 
@@ -2894,6 +3334,16 @@ app.post('/api/pos/orders', (req, res) => {
     rawSubtotal: rawSub,
     discount: discountVal,
     discountName: discountLabel,
+    offerName: req.body.offerName || (isStaffBenefit ? 'Achariya Family Week 2026' : undefined),
+    offerType: req.body.offerType || (isStaffBenefit ? 'staff_family' : undefined),
+    employeeId: req.body.employeeId || undefined,
+    employeeName: req.body.employeeName || undefined,
+    employeeDept: req.body.employeeDept || undefined,
+    familyMemberId: req.body.familyMemberId || undefined,
+    familyMemberName: req.body.familyMemberName || undefined,
+    discountPct: req.body.discountPct || (isStaffBenefit ? 50 : undefined),
+    approvedBy: req.body.approvedBy || req.body.cashier || 'Cashier',
+    terminal: req.body.terminal || 'POS-1',
     inaugurationOffer: req.body.inaugurationOffer || false,
     specialOffer20: req.body.specialOffer20 || false,
     subtotal: subtotal || 0,
@@ -2925,6 +3375,24 @@ app.post('/api/pos/orders', (req, res) => {
     })) || []
   }
   
+  if (isStaffBenefit && (req.body.employeeId || req.body.employeeName)) {
+    staffAuditLogs.unshift({
+      id: 'log_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      employeeId: req.body.employeeId || 'EMP',
+      employeeName: req.body.employeeName || 'Staff',
+      familyMemberId: req.body.familyMemberId || null,
+      familyMemberName: req.body.familyMemberName || null,
+      cashier: req.body.approvedBy || req.body.cashier || 'Cashier',
+      terminal: req.body.terminal || 'POS-1',
+      billNumber: orderNum,
+      promotionName: req.body.offerName || 'Achariya Family Week 2026',
+      discount: discountVal,
+      grossAmount: rawSub,
+      netAmount: total || 0,
+      createdAt: now
+    })
+  }
+
   orders.unshift(order)
   deductInventoryForOrder(order)
   saveState()
@@ -4158,6 +4626,18 @@ function getNextKotNumber() {
     currentKotSeq++
   }
   return currentKotSeq
+}
+
+// Helper to compute order gross subtotal
+const getOrderGrossAmount = (o) => {
+  if (!o) return 0
+  return Number(o.rawSubtotal || o.subtotal || o.total || 0)
+}
+
+// Helper to compute order discount amount
+const getOrderDiscountAmount = (o) => {
+  if (!o) return 0
+  return Number(o.discount || o.discountAmount || 0)
 }
 
 // Helper to compute order total amount safely (returns 0 for cancelled or complimentary orders)

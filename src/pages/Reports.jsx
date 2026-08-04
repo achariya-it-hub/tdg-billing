@@ -79,6 +79,8 @@ const sampleRecipeData = [
 
 const reportTypes = [
   { id: 'daily-closing', name: 'Daily Closing', icon: Sun, desc: 'Day Summary & Profit' },
+  { id: 'staff-benefit', name: 'Staff Benefit Report', icon: Award, desc: 'Employee, Family & Department Benefits' },
+  { id: 'promotion-summary', name: 'Promotion Summary', icon: Tag, desc: 'Total Sales, Discounts & Net Revenue' },
   { id: 'payment-report', name: 'Payment Report', icon: Wallet, desc: 'Bills Settled with Cash/UPI/Card/Wallet' },
   { id: 'offer-sales', name: 'Offer Sales', icon: Tag, desc: 'Bills & Revenue Made on Offers' },
   { id: 'itemwise-sales', name: 'Itemwise Sales', icon: Tag, desc: 'Sales & Quantity by Item' },
@@ -112,6 +114,8 @@ export default function Reports() {
   const [itemwiseReport, setItemwiseReport] = useState(null)
   const [categorywiseReport, setCategorywiseReport] = useState(null)
   const [offerSalesReport, setOfferSalesReport] = useState(null)
+  const [staffBenefitReport, setStaffBenefitReport] = useState(null)
+  const [promotionSummaryReport, setPromotionSummaryReport] = useState(null)
   const [ordersReport, setOrdersReport] = useState([])
   const [loading, setLoading] = useState(false)
   const [showExportMenu, setShowExportMenu] = useState(false)
@@ -156,6 +160,12 @@ export default function Reports() {
         if (activeReport === 'daily-closing') {
           const r = await fetch(`${baseUrl}/api/reports/daily-closing?${q}`)
           if (r.ok) setClosing(await r.json())
+        } else if (activeReport === 'staff-benefit') {
+          const r = await fetch(`${baseUrl}/api/reports/staff-benefit?${q}`)
+          if (r.ok) setStaffBenefitReport(await r.json())
+        } else if (activeReport === 'promotion-summary') {
+          const r = await fetch(`${baseUrl}/api/reports/promotion-summary?${q}`)
+          if (r.ok) setPromotionSummaryReport(await r.json())
         } else if (activeReport === 'payment-report') {
           const r = await fetch(`${baseUrl}/api/reports/payment-report?${q}`)
           if (r.ok) setPaymentReport(await r.json())
@@ -559,6 +569,178 @@ export default function Reports() {
           </div>
         )
       }
+
+      {/* Staff Benefit Report */}
+      {activeReport === 'staff-benefit' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {/* KPI Summary Cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+            <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#64748b', marginBottom: '6px' }}>Total Staff Bills</div>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: '#1e293b' }}>{staffBenefitReport?.summary?.totalBills || 0}</div>
+            </div>
+            <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#64748b', marginBottom: '6px' }}>Total Gross Sales</div>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a' }}>₹{(staffBenefitReport?.summary?.totalGross || 0).toLocaleString()}</div>
+            </div>
+            <div style={{ background: '#f5f3ff', borderRadius: '16px', padding: '20px', border: '1.5px solid #c4b5fd', boxShadow: '0 2px 8px rgba(124,58,237,0.1)' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#6d28d9', marginBottom: '6px' }}>Total Benefit Discount (50%)</div>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: '#7c3aed' }}>₹{(staffBenefitReport?.summary?.totalDiscount || 0).toLocaleString()}</div>
+            </div>
+            <div style={{ background: '#f0fdf4', borderRadius: '16px', padding: '20px', border: '1.5px solid #86efac', boxShadow: '0 2px 8px rgba(22,163,74,0.1)' }}>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#15803d', marginBottom: '6px' }}>Total Net Sales</div>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: '#16a34a' }}>₹{(staffBenefitReport?.summary?.totalNet || 0).toLocaleString()}</div>
+            </div>
+          </div>
+
+          {/* Employee-Wise Table */}
+          <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc', fontWeight: 800, fontSize: '15px', color: '#0f172a' }}>
+              👤 Employee-Wise Benefit Sales Breakdown
+            </div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: '#f1f5f9', borderBottom: '1px solid #cbd5e1' }}>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#475569' }}>EMP ID</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#475569' }}>Employee Name</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#475569' }}>Department</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: '#475569' }}>Bills</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 700, color: '#475569' }}>Gross Sales</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 700, color: '#7c3aed' }}>Discount (50%)</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 700, color: '#16a34a' }}>Net Sales</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(!staffBenefitReport?.employeeWise || staffBenefitReport.employeeWise.length === 0) ? (
+                    <tr><td colSpan="7" style={{ padding: '24px', textAlign: 'center', color: '#94a3b8', fontSize: '13px' }}>No staff benefit sales found for selected date range</td></tr>
+                  ) : (
+                    staffBenefitReport.employeeWise.map((emp, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '12px 16px', fontWeight: 800, color: '#2563eb', fontFamily: 'monospace' }}>{emp.employeeId}</td>
+                        <td style={{ padding: '12px 16px', fontWeight: 700, color: '#1e293b' }}>{emp.name}</td>
+                        <td style={{ padding: '12px 16px', color: '#64748b', fontSize: '13px' }}>{emp.department}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 700 }}>{emp.billsCount}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 600 }}>₹{emp.grossAmount.toLocaleString()}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 800, color: '#7c3aed' }}>₹{emp.discountAmount.toLocaleString()}</td>
+                        <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 800, color: '#16a34a' }}>₹{emp.netAmount.toLocaleString()}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Department-Wise & Family-Wise Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc', fontWeight: 800, fontSize: '14px', color: '#0f172a' }}>
+                🏢 Department-Wise Summary
+              </div>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: '#f1f5f9' }}>
+                    <th style={{ padding: '10px 14px', textAlign: 'left', fontSize: '12px', color: '#475569' }}>Department</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'center', fontSize: '12px', color: '#475569' }}>Bills</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'right', fontSize: '12px', color: '#7c3aed' }}>Discount</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'right', fontSize: '12px', color: '#16a34a' }}>Net Sales</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(staffBenefitReport?.departmentWise || []).map((dept, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '10px 14px', fontWeight: 700, color: '#334155' }}>{dept.department}</td>
+                      <td style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 600 }}>{dept.billsCount}</td>
+                      <td style={{ padding: '10px 14px', textAlign: 'right', fontWeight: 700, color: '#7c3aed' }}>₹{dept.discountAmount.toLocaleString()}</td>
+                      <td style={{ padding: '10px 14px', textAlign: 'right', fontWeight: 800, color: '#16a34a' }}>₹{dept.netAmount.toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc', fontWeight: 800, fontSize: '14px', color: '#0f172a' }}>
+                👨‍👩‍👧‍👦 Family Member Benefit Breakdown
+              </div>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: '#f1f5f9' }}>
+                    <th style={{ padding: '10px 14px', textAlign: 'left', fontSize: '12px', color: '#475569' }}>Family Member</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'left', fontSize: '12px', color: '#475569' }}>Employee</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'right', fontSize: '12px', color: '#7c3aed' }}>Discount</th>
+                    <th style={{ padding: '10px 14px', textAlign: 'right', fontSize: '12px', color: '#16a34a' }}>Net Sales</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(staffBenefitReport?.familyWise || []).length === 0 ? (
+                    <tr><td colSpan="4" style={{ padding: '16px', textAlign: 'center', color: '#94a3b8', fontSize: '12px' }}>No family member transactions</td></tr>
+                  ) : (
+                    (staffBenefitReport?.familyWise || []).map((fam, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '10px 14px', fontWeight: 700, color: '#1e293b' }}>{fam.name || fam.familyMemberId}</td>
+                        <td style={{ padding: '10px 14px', color: '#64748b', fontSize: '12px' }}>{fam.employeeName}</td>
+                        <td style={{ padding: '10px 14px', textAlign: 'right', fontWeight: 700, color: '#7c3aed' }}>₹{fam.discountAmount.toLocaleString()}</td>
+                        <td style={{ padding: '10px 14px', textAlign: 'right', fontWeight: 800, color: '#16a34a' }}>₹{fam.netAmount.toLocaleString()}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Promotion Summary Report */}
+      {activeReport === 'promotion-summary' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+            <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: '13px', color: '#64748b', marginBottom: '4px' }}>Total Discounted Bills</div>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a' }}>{promotionSummaryReport?.totalBills || 0}</div>
+            </div>
+            <div style={{ background: '#ffffff', borderRadius: '16px', padding: '20px', border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: '13px', color: '#64748b', marginBottom: '4px' }}>Total Gross Sales</div>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a' }}>₹{(promotionSummaryReport?.totalGrossSales || 0).toLocaleString()}</div>
+            </div>
+            <div style={{ background: '#f5f3ff', borderRadius: '16px', padding: '20px', border: '1.5px solid #c4b5fd' }}>
+              <div style={{ fontSize: '13px', color: '#6d28d9', fontWeight: 700, marginBottom: '4px' }}>Total Promotion Discounts</div>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: '#7c3aed' }}>₹{(promotionSummaryReport?.totalDiscount || 0).toLocaleString()}</div>
+            </div>
+            <div style={{ background: '#f0fdf4', borderRadius: '16px', padding: '20px', border: '1.5px solid #86efac' }}>
+              <div style={{ fontSize: '13px', color: '#15803d', fontWeight: 700, marginBottom: '4px' }}>Total Net Revenue</div>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: '#16a34a' }}>₹{(promotionSummaryReport?.totalNetSales || 0).toLocaleString()}</div>
+            </div>
+          </div>
+
+          <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '20px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#0f172a', marginBottom: '16px' }}>🏆 Top Beneficiaries by Promotion Discount</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+              <div>
+                <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#475569', marginBottom: '10px' }}>Top Staff Beneficiaries</h4>
+                {(promotionSummaryReport?.topEmployees || []).map((emp, idx) => (
+                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px', marginBottom: '6px' }}>
+                    <span style={{ fontWeight: 700, color: '#1e293b' }}>{emp.name} ({emp.employeeId})</span>
+                    <span style={{ fontWeight: 800, color: '#7c3aed' }}>-₹{emp.discount.toLocaleString()} ({emp.bills} bills)</span>
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#475569', marginBottom: '10px' }}>Top Family Beneficiaries</h4>
+                {(promotionSummaryReport?.topFamilyMembers || []).map((fam, idx) => (
+                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px', marginBottom: '6px' }}>
+                    <span style={{ fontWeight: 700, color: '#1e293b' }}>{fam.name} ({fam.employeeName})</span>
+                    <span style={{ fontWeight: 800, color: '#7c3aed' }}>-₹{fam.discount.toLocaleString()} ({fam.bills} bills)</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       case 'offer-sales': {
         if (!offerSalesReport) return <div style={{ padding: '40px', textAlign: 'center', color: '#6b7280' }}>Loading Offer Sales Report...</div>

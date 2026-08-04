@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
-import { Users, Plus, Search, UserPlus, Calendar, Clock, CheckCircle, XCircle, Award, Edit, Trash2, ChevronDown, Mail, Phone, Star, Target, Flag, TrendingUp, ListChecks } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Users, Plus, Search, UserPlus, Calendar, Clock, CheckCircle, XCircle, Award, Edit, Trash2, ChevronDown, Mail, Phone, Star, Target, Flag, TrendingUp, ListChecks, ShieldCheck, Download, Upload, QrCode, UserCheck, HeartHandshake } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import { useToast } from '../components/ui/Toaster'
+import API_BASE from '../lib/apiConfig'
 
 const sampleStaff = [
   { id: '1', name: 'Rajesh Kumar', role: 'manager', department: 'Management', email: 'rajesh@tdgbilling.com', phone: '+91 98765 43210', joiningDate: '2022-03-15', salary: 45000, attendance: 95, performance: 4.5 },
@@ -65,10 +66,213 @@ export default function HR() {
   const toast = useToast()
   const [staff, setStaff] = useState(sampleStaff)
   const [attendance, setAttendance] = useState(sampleAttendance)
-  const [activeTab, setActiveTab] = useState('staff')
+  const [activeTab, setActiveTab] = useState('achariya-staff')
   const [showAddModal, setShowAddModal] = useState(false)
   const [showShiftModal, setShowShiftModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+
+  // Achariya Staff & Family Master State
+  const [employees, setEmployees] = useState([])
+  const [loadingEmployees, setLoadingEmployees] = useState(false)
+  const [showAchariyaModal, setShowAchariyaModal] = useState(false)
+  const [editingEmp, setEditingEmp] = useState(null)
+  const [showQrModal, setShowQrModal] = useState(false)
+  const [selectedQrEmp, setSelectedQrEmp] = useState(null)
+  const importFileRef = useRef(null)
+
+  const [empForm, setEmpForm] = useState({
+    id: '', name: '', department: 'Teaching', designation: 'Professor',
+    mobile: '', email: '', status: 'Active', joiningDate: new Date().toISOString().slice(0, 10),
+    qrCode: '', familyMembers: []
+  })
+
+  const fetchEmployees = async () => {
+    setLoadingEmployees(true)
+    try {
+      const res = await fetch(`${API_BASE}/api/staff/employees`)
+      const data = await res.json()
+      if (Array.isArray(data)) setEmployees(data)
+    } catch (e) {
+      console.error('Error fetching employees:', e)
+    }
+    setLoadingEmployees(false)
+  }
+
+  useEffect(() => {
+    fetchEmployees()
+  }, [])
+
+  const handleOpenAddEmployee = () => {
+    setEditingEmp(null)
+    setEmpForm({
+      id: 'EMP' + (100 + employees.length + 1),
+      name: '', department: 'Teaching', designation: 'Professor',
+      mobile: '', email: '', status: 'Active', joiningDate: new Date().toISOString().slice(0, 10),
+      qrCode: '', familyMembers: []
+    })
+    setShowAchariyaModal(true)
+  }
+
+  const handleOpenEditEmployee = (emp) => {
+    setEditingEmp(emp)
+    setEmpForm({
+      id: emp.id,
+      name: emp.name,
+      department: emp.department || 'Teaching',
+      designation: emp.designation || 'Staff',
+      mobile: emp.mobile || '',
+      email: emp.email || '',
+      status: emp.status || 'Active',
+      joiningDate: emp.joiningDate || new Date().toISOString().slice(0, 10),
+      qrCode: emp.qrCode || emp.id,
+      familyMembers: emp.familyMembers ? [...emp.familyMembers] : []
+    })
+    setShowAchariyaModal(true)
+  }
+
+  const handleSaveEmployee = async () => {
+    if (!empForm.id || !empForm.name) {
+      toast.error('Employee ID and Name are required')
+      return
+    }
+
+    try {
+      const isEdit = !!editingEmp
+      const url = isEdit ? `${API_BASE}/api/staff/employees/${editingEmp.id}` : `${API_BASE}/api/staff/employees`
+      const method = isEdit ? 'PUT' : 'POST'
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...empForm, qrCode: empForm.qrCode || empForm.id })
+      })
+
+      const data = await res.json()
+      if (res.ok && data.success) {
+        toast.success(isEdit ? 'Employee updated successfully!' : 'Employee created successfully!')
+        setShowAchariyaModal(false)
+        fetchEmployees()
+      } else {
+        toast.error(data.error || 'Failed to save employee')
+      }
+    } catch (e) {
+      toast.error('Network error saving employee')
+    }
+  }
+
+  const handleDeleteEmployee = async (id) => {
+    if (!confirm(`Are you sure you want to delete Employee ID ${id}?`)) return
+    try {
+      const res = await fetch(`${API_BASE}/api/staff/employees/${id}`, { method: 'DELETE' })
+      if (res.ok) {
+        toast.success('Employee deleted successfully')
+        fetchEmployees()
+      } else {
+        toast.error('Failed to delete employee')
+      }
+    } catch (e) {
+      toast.error('Network error')
+    }
+  }
+
+  const handleAddFamilyMemberRow = () => {
+    const newFam = {
+      id: 'FAM_' + Date.now() + '_' + Math.floor(Math.random() * 100),
+      employeeId: empForm.id,
+      name: '',
+      relationship: 'Spouse',
+      mobile: '',
+      status: 'Active'
+    }
+    setEmpForm({ ...empForm, familyMembers: [...empForm.familyMembers, newFam] })
+  }
+
+  const handleRemoveFamilyMemberRow = (idx) => {
+    const updated = empForm.familyMembers.filter((_, i) => i !== idx)
+    setEmpForm({ ...empForm, familyMembers: updated })
+  }
+
+  const handleUpdateFamilyMemberRow = (idx, field, value) => {
+    const updated = [...empForm.familyMembers]
+    updated[idx] = { ...updated[idx], [field]: value }
+    setEmpForm({ ...empForm, familyMembers: updated })
+  }
+
+  const handleExportEmployeesCsv = () => {
+    if (employees.length === 0) { toast.error('No employees to export'); return }
+    let csv = 'Employee ID,Employee Name,Department,Designation,Mobile,Email,Status,Joining Date,QR Code,Family Name,Relationship,Family Mobile,Family Status\n'
+    employees.forEach(emp => {
+      if (emp.familyMembers && emp.familyMembers.length > 0) {
+        emp.familyMembers.forEach(fam => {
+          csv += `"${emp.id}","${emp.name}","${emp.department || ''}","${emp.designation || ''}","${emp.mobile || ''}","${emp.email || ''}","${emp.status}","${emp.joiningDate || ''}","${emp.qrCode || ''}","${fam.name || ''}","${fam.relationship || ''}","${fam.mobile || ''}","${fam.status || ''}"\n`
+        })
+      } else {
+        csv += `"${emp.id}","${emp.name}","${emp.department || ''}","${emp.designation || ''}","${emp.mobile || ''}","${emp.email || ''}","${emp.status}","${emp.joiningDate || ''}","${emp.qrCode || ''}","","","",""\n`
+      }
+    })
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a'); a.href = url; a.download = `achariya-employees-${new Date().toISOString().slice(0,10)}.csv`
+    a.click(); URL.revokeObjectURL(url)
+    toast.success('Exported Employees & Family Master CSV')
+  }
+
+  const handleImportEmployeesCsv = async (e) => {
+    const file = e.target.files[0]; if (!file) return
+    try {
+      const text = await file.text()
+      const lines = text.trim().split('\n')
+      if (lines.length < 2) { toast.error('CSV must have header + at least 1 row'); return }
+
+      const empMap = {}
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(',').map(c => c.trim().replace(/^["']|["']$/g, ''))
+        if (!row[0] || !row[1]) continue
+        const empId = row[0].toUpperCase()
+        if (!empMap[empId]) {
+          empMap[empId] = {
+            id: empId,
+            name: row[1],
+            department: row[2] || 'General',
+            designation: row[3] || 'Staff',
+            mobile: row[4] || '',
+            email: row[5] || '',
+            status: row[6] || 'Active',
+            joiningDate: row[7] || new Date().toISOString().slice(0, 10),
+            qrCode: row[8] || empId,
+            familyMembers: []
+          }
+        }
+        if (row[9]) {
+          empMap[empId].familyMembers.push({
+            id: 'FAM_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+            employeeId: empId,
+            name: row[9],
+            relationship: row[10] || 'Other',
+            mobile: row[11] || '',
+            status: row[12] || 'Active'
+          })
+        }
+      }
+
+      const items = Object.values(empMap)
+      const res = await fetch(`${API_BASE}/api/staff/employees/import`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items })
+      })
+      const data = await res.json()
+      if (data.success) {
+        toast.success(`Imported ${data.imported} new, updated ${data.updated} employees!`)
+        fetchEmployees()
+      } else {
+        toast.error(data.error || 'Import failed')
+      }
+    } catch (err) {
+      toast.error('Failed to parse CSV file: ' + err.message)
+    }
+    if (importFileRef.current) importFileRef.current.value = ''
+  }
 
   const todayPresent = attendance.filter(a => a.status === 'present').length
   const avgAttendance = Math.round(staff.reduce((sum, s) => sum + s.attendance, 0) / staff.length)
@@ -194,8 +398,9 @@ export default function HR() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
         {[
+          { id: 'achariya-staff', label: '🎓 Achariya Employee & Family Master', icon: Users },
           { id: 'staff', label: 'Staff Directory', icon: Users },
           { id: 'attendance', label: 'Attendance', icon: Calendar },
           { id: 'shifts', label: 'Shift Management', icon: Clock },
@@ -248,6 +453,363 @@ export default function HR() {
           {activeTab === 'staff' ? 'Add Staff' : activeTab === 'shifts' ? 'Add Shift' : 'Mark Attendance'}
         </Button>
       </div>
+
+      {/* Achariya Staff & Family Master Tab */}
+      {activeTab === 'achariya-staff' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* Action Bar */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '12px', flex: 1, minWidth: '280px' }}>
+              <div style={{ flex: 1, position: 'relative' }}>
+                <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+                <input
+                  type="text"
+                  placeholder="Search by Employee ID, Name, Department, Mobile, or Family Member..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px 12px 42px',
+                    borderRadius: '12px',
+                    border: '1.5px solid var(--border)',
+                    background: 'white',
+                    fontSize: '13.5px',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <Button onClick={handleExportEmployeesCsv} variant="secondary" size="sm">
+                <Download size={16} /> Export CSV
+              </Button>
+              <label style={{
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                padding: '8px 16px', borderRadius: '10px', background: '#eff6ff',
+                color: '#2563eb', fontWeight: 600, fontSize: '13px', cursor: 'pointer',
+                border: '1px solid #bfdbfe'
+              }}>
+                <Upload size={16} /> Bulk Import CSV
+                <input ref={importFileRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={handleImportEmployeesCsv} />
+              </label>
+              <Button onClick={handleOpenAddEmployee} size="sm">
+                <Plus size={16} /> Add New Employee
+              </Button>
+            </div>
+          </div>
+
+          {/* Employee List Table */}
+          <Card padding="none">
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e' }}>Employee & Family Master</h3>
+                <p style={{ color: '#6b7280', fontSize: '13px' }}>{employees.length} Total Registered Achariya Staff Members</p>
+              </div>
+              <span style={{ padding: '6px 14px', borderRadius: '20px', background: '#f5f3ff', color: '#7c3aed', fontWeight: 700, fontSize: '12px' }}>
+                Achariya Family Week Active
+              </span>
+            </div>
+
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1.5px solid var(--border)', background: '#f8fafc' }}>
+                    <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Emp ID</th>
+                    <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Employee Name</th>
+                    <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Dept / Designation</th>
+                    <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Contact</th>
+                    <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Status</th>
+                    <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Family Members</th>
+                    <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 700, color: '#475569', textTransform: 'uppercase' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {employees
+                    .filter(emp => {
+                      if (!searchTerm) return true
+                      const q = searchTerm.toLowerCase().trim()
+                      return (
+                        emp.id.toLowerCase().includes(q) ||
+                        emp.name.toLowerCase().includes(q) ||
+                        (emp.department || '').toLowerCase().includes(q) ||
+                        (emp.mobile || '').includes(q) ||
+                        (emp.familyMembers || []).some(f => f.name.toLowerCase().includes(q) || (f.mobile || '').includes(q))
+                      )
+                    })
+                    .map(emp => (
+                      <tr key={emp.id} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.15s' }}>
+                        <td style={{ padding: '14px 16px' }}>
+                          <span style={{
+                            padding: '4px 10px', borderRadius: '8px', background: '#eff6ff',
+                            color: '#1d4ed8', fontWeight: 800, fontSize: '12.5px', fontFamily: 'monospace'
+                          }}>
+                            {emp.id}
+                          </span>
+                        </td>
+                        <td style={{ padding: '14px 16px' }}>
+                          <div style={{ fontWeight: 700, color: '#1a1a2e', fontSize: '14px' }}>{emp.name}</div>
+                          <div style={{ fontSize: '11.5px', color: '#6b7280' }}>Joined {emp.joiningDate || 'N/A'}</div>
+                        </td>
+                        <td style={{ padding: '14px 16px' }}>
+                          <div style={{ fontWeight: 600, fontSize: '13px', color: '#334155' }}>{emp.department || 'General'}</div>
+                          <div style={{ fontSize: '11.5px', color: '#64748b' }}>{emp.designation || 'Staff'}</div>
+                        </td>
+                        <td style={{ padding: '14px 16px' }}>
+                          <div style={{ fontSize: '13px', color: '#334155', fontWeight: 600 }}>📱 {emp.mobile || 'No Mobile'}</div>
+                          <div style={{ fontSize: '11.5px', color: '#64748b' }}>✉️ {emp.email || 'No Email'}</div>
+                        </td>
+                        <td style={{ padding: '14px 16px' }}>
+                          <span style={{
+                            padding: '4px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: 700,
+                            background: emp.status === 'Active' ? '#f0fdf4' : '#fef2f2',
+                            color: emp.status === 'Active' ? '#16a34a' : '#dc2626'
+                          }}>
+                            {emp.status}
+                          </span>
+                        </td>
+                        <td style={{ padding: '14px 16px' }}>
+                          {emp.familyMembers && emp.familyMembers.length > 0 ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                              {emp.familyMembers.map((fam, fIdx) => (
+                                <div key={fIdx} style={{ fontSize: '12px', background: '#f8fafc', padding: '3px 8px', borderRadius: '6px', border: '1px solid #e2e8f0', display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                  <span style={{ fontWeight: 700, color: '#0f172a' }}>{fam.name}</span>
+                                  <span style={{ color: '#64748b', fontSize: '10.5px' }}>({fam.relationship})</span>
+                                  {fam.mobile && <span style={{ color: '#2563eb', fontSize: '10.5px' }}>📱 {fam.mobile}</span>}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <span style={{ color: '#9ca3af', fontSize: '12px' }}>None added</span>
+                          )}
+                        </td>
+                        <td style={{ padding: '14px 16px', textAlign: 'center' }}>
+                          <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                            <button
+                              onClick={() => { setSelectedQrEmp(emp); setShowQrModal(true) }}
+                              style={{ padding: '6px 10px', borderRadius: '8px', background: '#f5f3ff', color: '#7c3aed', border: '1px solid #ddd6fe', fontWeight: 700, fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                              title="Show QR Code"
+                            >
+                              <QrCode size={14} /> QR
+                            </button>
+                            <button
+                              onClick={() => handleOpenEditEmployee(emp)}
+                              style={{ padding: '6px 10px', borderRadius: '8px', background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe', fontWeight: 700, fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                            >
+                              <Edit size={14} /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteEmployee(emp.id)}
+                              style={{ padding: '6px 10px', borderRadius: '8px', background: '#fef2f2', color: '#dc2626', border: '1px solid #fca5a5', fontWeight: 700, fontSize: '12px', cursor: 'pointer' }}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Add / Edit Employee & Family Master Modal */}
+      <Modal isOpen={showAchariyaModal} onClose={() => setShowAchariyaModal(false)} title={editingEmp ? `Edit Employee (${editingEmp.id})` : 'Add New Employee'} size="lg">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '75vh', overflowY: 'auto', paddingRight: '4px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '4px', display: 'block' }}>Employee ID *</label>
+              <input
+                type="text"
+                disabled={!!editingEmp}
+                placeholder="e.g. EMP001"
+                value={empForm.id}
+                onChange={e => setEmpForm({ ...empForm, id: e.target.value.toUpperCase() })}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #d1d5db', fontSize: '13px', background: editingEmp ? '#f3f4f6' : 'white' }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '4px', display: 'block' }}>Employee Name *</label>
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={empForm.name}
+                onChange={e => setEmpForm({ ...empForm, name: e.target.value })}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #d1d5db', fontSize: '13px' }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '4px', display: 'block' }}>Department</label>
+              <select
+                value={empForm.department}
+                onChange={e => setEmpForm({ ...empForm, department: e.target.value })}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #d1d5db', fontSize: '13px' }}
+              >
+                <option value="Teaching">Teaching</option>
+                <option value="Admin">Admin</option>
+                <option value="Billing">Billing</option>
+                <option value="Management">Management</option>
+                <option value="IT">IT</option>
+                <option value="Operations">Operations</option>
+                <option value="General">General</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '4px', display: 'block' }}>Designation</label>
+              <input
+                type="text"
+                placeholder="e.g. Professor, Manager"
+                value={empForm.designation}
+                onChange={e => setEmpForm({ ...empForm, designation: e.target.value })}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #d1d5db', fontSize: '13px' }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '4px', display: 'block' }}>Status</label>
+              <select
+                value={empForm.status}
+                onChange={e => setEmpForm({ ...empForm, status: e.target.value })}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #d1d5db', fontSize: '13px' }}
+              >
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '4px', display: 'block' }}>Mobile Number</label>
+              <input
+                type="text"
+                placeholder="10-digit mobile"
+                value={empForm.mobile}
+                onChange={e => setEmpForm({ ...empForm, mobile: e.target.value })}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #d1d5db', fontSize: '13px' }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '4px', display: 'block' }}>Email Address</label>
+              <input
+                type="email"
+                placeholder="email@domain.com"
+                value={empForm.email}
+                onChange={e => setEmpForm({ ...empForm, email: e.target.value })}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #d1d5db', fontSize: '13px' }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '4px', display: 'block' }}>Joining Date</label>
+              <input
+                type="date"
+                value={empForm.joiningDate}
+                onChange={e => setEmpForm({ ...empForm, joiningDate: e.target.value })}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1.5px solid #d1d5db', fontSize: '13px' }}
+              />
+            </div>
+          </div>
+
+          {/* FAMILY MASTER SUB-SECTION */}
+          <div style={{ borderTop: '2px dashed #cbd5e1', paddingTop: '16px', marginTop: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <div>
+                <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#1e293b' }}>👨‍👩‍👧‍👦 Family Master ({empForm.familyMembers.length})</h4>
+                <p style={{ fontSize: '12px', color: '#64748b' }}>Family members eligible for 50% Benefit promotion</p>
+              </div>
+              <Button onClick={handleAddFamilyMemberRow} size="sm" variant="secondary">
+                <Plus size={14} /> Add Family Member
+              </Button>
+            </div>
+
+            {empForm.familyMembers.length === 0 ? (
+              <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '10px', textAlign: 'center', fontSize: '12.5px', color: '#94a3b8' }}>
+                No family members added yet. Click "Add Family Member" above.
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {empForm.familyMembers.map((fam, idx) => (
+                  <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1.2fr 100px auto', gap: '8px', background: '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', alignItems: 'center' }}>
+                    <input
+                      type="text"
+                      placeholder="Family Member Name"
+                      value={fam.name}
+                      onChange={e => handleUpdateFamilyMemberRow(idx, 'name', e.target.value)}
+                      style={{ padding: '8px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12.5px' }}
+                    />
+                    <select
+                      value={fam.relationship}
+                      onChange={e => handleUpdateFamilyMemberRow(idx, 'relationship', e.target.value)}
+                      style={{ padding: '8px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12.5px' }}
+                    >
+                      <option value="Father">Father</option>
+                      <option value="Mother">Mother</option>
+                      <option value="Spouse">Spouse</option>
+                      <option value="Son">Son</option>
+                      <option value="Daughter">Daughter</option>
+                      <option value="Brother">Brother</option>
+                      <option value="Sister">Sister</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    <input
+                      type="text"
+                      placeholder="Mobile Number"
+                      value={fam.mobile}
+                      onChange={e => handleUpdateFamilyMemberRow(idx, 'mobile', e.target.value)}
+                      style={{ padding: '8px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12.5px' }}
+                    />
+                    <select
+                      value={fam.status}
+                      onChange={e => handleUpdateFamilyMemberRow(idx, 'status', e.target.value)}
+                      style={{ padding: '8px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12.5px' }}
+                    >
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                    <button
+                      onClick={() => handleRemoveFamilyMemberRow(idx)}
+                      style={{ padding: '8px', border: 'none', background: '#fef2f2', color: '#dc2626', borderRadius: '8px', cursor: 'pointer' }}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <Button fullWidth onClick={handleSaveEmployee} style={{ marginTop: '12px' }}>
+            <ShieldCheck size={18} /> {editingEmp ? 'Save Employee Changes' : 'Create Employee Record'}
+          </Button>
+        </div>
+      </Modal>
+
+      {/* QR Code Modal */}
+      <Modal isOpen={showQrModal} onClose={() => setShowQrModal(false)} title={`📱 Employee QR Code - ${selectedQrEmp?.name || ''}`} size="sm">
+        {selectedQrEmp && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', padding: '10px' }}>
+            <div style={{
+              width: '180px', height: '180px', background: '#1e293b', borderRadius: '16px',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              color: 'white', border: '4px solid #7c3aed', boxShadow: '0 8px 24px rgba(124,58,237,0.25)'
+            }}>
+              <QrCode size={96} color="#c4b5fd" />
+              <span style={{ fontSize: '14px', fontWeight: 800, marginTop: '8px', letterSpacing: '1px' }}>{selectedQrEmp.id}</span>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '16px', fontWeight: 800, color: '#0f172a' }}>{selectedQrEmp.name}</div>
+              <div style={{ fontSize: '13px', color: '#64748b' }}>{selectedQrEmp.department} - {selectedQrEmp.designation}</div>
+              <div style={{ fontSize: '12px', color: '#16a34a', fontWeight: 700, marginTop: '4px' }}>✓ Active 50% Benefit Eligible</div>
+            </div>
+            <Button onClick={() => window.print()} fullWidth variant="secondary">
+              Print Badge / QR Code
+            </Button>
+          </div>
+        )}
+      </Modal>
 
       {/* Staff Directory */}
       {activeTab === 'staff' && (

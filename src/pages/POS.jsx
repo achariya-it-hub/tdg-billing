@@ -93,7 +93,7 @@ export default function POS() {
   const {
     currentOrder, addItem, updateItemQuantity, removeItem,
     setOrderType, setTableNumber, setCustomerName, setCustomerPhone, setComplimentary, setSpecialRemarks, clearOrder,
-    setInaugurationOffer, setSpecialOffer20, getDiscount,
+    setInaugurationOffer, setSpecialOffer20, setStaffBenefitOffer, getDiscount,
     holdOrder, recallOrder, heldOrders, getSubtotal, getTax, getTotal, placeOrder
   } = useOrderStore()
 
@@ -103,6 +103,52 @@ export default function POS() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [showCart, setShowCart] = useState(false)
   const [soundOn, setSoundOn] = useState(() => getSoundEnabled())
+
+  // Staff Benefit Promotion State
+  const [showStaffModal, setShowStaffModal] = useState(false)
+  const [staffSearchQuery, setStaffSearchQuery] = useState('')
+  const [verifyingStaff, setVerifyingStaff] = useState(false)
+  const [staffVerifyResult, setStaffVerifyResult] = useState(null)
+  const [staffVerifyError, setStaffVerifyError] = useState(null)
+
+  const handleVerifyStaff = async () => {
+    if (!staffSearchQuery || !staffSearchQuery.trim()) {
+      setStaffVerifyError('Please enter Employee ID, Name, Mobile, or QR Code')
+      return
+    }
+    setVerifyingStaff(true)
+    setStaffVerifyError(null)
+    setStaffVerifyResult(null)
+
+    try {
+      const res = await fetch(`${API_BASE}/api/staff/verify?query=${encodeURIComponent(staffSearchQuery.trim())}&orderType=${currentOrder.type}`)
+      const data = await res.json()
+
+      if (data.eligible) {
+        setStaffVerifyResult(data)
+      } else {
+        setStaffVerifyError(data.message || 'Not eligible for promotion')
+      }
+    } catch (e) {
+      setStaffVerifyError('Network error while verifying staff eligibility')
+    }
+    setVerifyingStaff(false)
+  }
+
+  const handleApplyStaffBenefit = () => {
+    if (staffVerifyResult && staffVerifyResult.eligible) {
+      setStaffBenefitOffer(staffVerifyResult)
+      toast.success(`Applied 50% Benefit for ${staffVerifyResult.familyMember ? staffVerifyResult.familyMember.name : staffVerifyResult.employee.name}!`)
+      setShowStaffModal(false)
+      setStaffSearchQuery('')
+      setStaffVerifyResult(null)
+    }
+  }
+
+  const handleRemoveStaffBenefit = () => {
+    setStaffBenefitOffer(null)
+    toast.success('Removed Staff Benefit discount')
+  }
 
   const filteredMenuItems = menuItems.filter(item => {
     if (!itemSearchTerm || !itemSearchTerm.trim()) return true
@@ -838,6 +884,12 @@ export default function POS() {
                 <span>-₹{getDiscount().toFixed(2)}</span>
               </div>
             )}
+            {currentOrder.staffBenefitOffer && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#7c3aed', fontWeight: 700 }}>
+                <span>🎓 Achariya Staff Benefit (50% OFF):</span>
+                <span>-₹{getDiscount().toFixed(2)}</span>
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>GST (5%):</span>
               <span>₹{getTax().toFixed(2)}</span>
@@ -853,6 +905,30 @@ export default function POS() {
             <span style={{ fontSize: '14px', fontWeight: 700 }}>NET TOTAL</span>
             <span style={{ fontSize: '20px', fontWeight: 900, color: '#f87171' }}>₹{getTotal().toFixed(2)}</span>
           </div>
+
+          {/* Achariya Staff Benefit Button */}
+          <button
+            type="button"
+            onClick={() => {
+              if (currentOrder.staffBenefitOffer) {
+                handleRemoveStaffBenefit()
+              } else {
+                setShowStaffModal(true)
+              }
+            }}
+            style={{
+              width: '100%', padding: '7px 8px', borderRadius: '8px', marginBottom: '6px',
+              border: currentOrder.staffBenefitOffer ? '2px solid #7c3aed' : '1px dashed #7c3aed',
+              background: currentOrder.staffBenefitOffer ? '#7c3aed' : '#f5f3ff',
+              color: currentOrder.staffBenefitOffer ? '#ffffff' : '#5b21b6',
+              fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center',
+              boxShadow: currentOrder.staffBenefitOffer ? '0 2px 8px rgba(124,58,237,0.3)' : 'none',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+              transition: 'all 0.15s'
+            }}
+          >
+            🎓 {currentOrder.staffBenefitOffer ? `ACHARIYA STAFF 50% ACTIVE (${currentOrder.familyMemberName || currentOrder.employeeName})` : 'Achariya Staff & Family Benefit (50% OFF)'}
+          </button>
 
           {/* Offer Buttons - Side by Side Compact Flex */}
           <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
@@ -1477,6 +1553,82 @@ export default function POS() {
               Done / New Order
             </button>
           </div>
+        </div>
+      </Modal>
+
+      {/* Achariya Staff & Family Benefit Modal */}
+      <Modal isOpen={showStaffModal} onClose={() => setShowStaffModal(false)} title="🎓 Achariya Staff & Family Benefit (50% OFF)" size="md">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ background: '#f5f3ff', padding: '14px 16px', borderRadius: '14px', border: '1px solid #ddd6fe' }}>
+            <div style={{ fontSize: '14px', fontWeight: 800, color: '#5b21b6', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>🎉 Achariya Family Week 2026</span>
+              <span style={{ fontSize: '10px', background: '#7c3aed', color: 'white', padding: '2px 8px', borderRadius: '12px' }}>50% BENEFIT</span>
+            </div>
+            <div style={{ fontSize: '12px', color: '#6d28d9', lineHeight: 1.4 }}>
+              Valid from <strong>04-Aug-2026 00:00</strong> to <strong>09-Aug-2026 23:59</strong> for Active Staff & Family Members. Default 1 bill per customer per day.
+            </div>
+          </div>
+
+          <div>
+            <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px', display: 'block' }}>
+              Cashier Options (Search Employee ID, Name, Mobile, QR Code, or Family Mobile):
+            </label>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <input
+                type="text"
+                placeholder="e.g. EMP001, Dr. Achariya, 9876543210..."
+                value={staffSearchQuery}
+                onChange={e => setStaffSearchQuery(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleVerifyStaff()}
+                style={{ flex: 1, padding: '12px 14px', borderRadius: '10px', border: '1.5px solid #c4b5fd', fontSize: '13px', outline: 'none' }}
+              />
+              <button
+                onClick={handleVerifyStaff}
+                disabled={verifyingStaff}
+                style={{
+                  padding: '12px 20px', borderRadius: '10px', border: 'none',
+                  background: 'linear-gradient(135deg, #7c3aed, #6d28d9)', color: 'white',
+                  fontWeight: 800, fontSize: '13px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(124,58,237,0.3)'
+                }}
+              >
+                {verifyingStaff ? 'Verifying...' : 'Verify'}
+              </button>
+            </div>
+          </div>
+
+          {staffVerifyError && (
+            <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', color: '#dc2626', padding: '14px', borderRadius: '12px', fontSize: '13px', fontWeight: 700 }}>
+              ❌ {staffVerifyError}
+            </div>
+          )}
+
+          {staffVerifyResult && staffVerifyResult.eligible && (
+            <div style={{ background: '#f0fdf4', border: '1.5px solid #86efac', padding: '16px', borderRadius: '14px' }}>
+              <div style={{ fontSize: '14px', fontWeight: 800, color: '#166534', marginBottom: '8px' }}>
+                ✅ {staffVerifyResult.message}
+              </div>
+              <div style={{ fontSize: '13px', color: '#15803d', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div><strong>Employee ID:</strong> {staffVerifyResult.employee.id}</div>
+                <div><strong>Employee Name:</strong> {staffVerifyResult.employee.name}</div>
+                <div><strong>Department:</strong> {staffVerifyResult.employee.department} ({staffVerifyResult.employee.designation})</div>
+                {staffVerifyResult.familyMember && (
+                  <div><strong>Family Member:</strong> {staffVerifyResult.familyMember.name} ({staffVerifyResult.familyMember.relationship})</div>
+                )}
+                <div><strong>Usage Limit Today:</strong> {staffVerifyResult.usageTodayCount} / {staffVerifyResult.maxBillsPerDay} used today</div>
+                <div><strong>Offer Discount:</strong> {staffVerifyResult.discountPct}% OFF Gross Amount</div>
+              </div>
+              <button
+                onClick={handleApplyStaffBenefit}
+                style={{
+                  marginTop: '14px', width: '100%', padding: '12px', borderRadius: '10px', border: 'none',
+                  background: 'linear-gradient(135deg, #16a34a, #15803d)', color: 'white',
+                  fontWeight: 800, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(22,163,74,0.3)'
+                }}
+              >
+                Apply 50% Staff Benefit Discount
+              </button>
+            </div>
+          )}
         </div>
       </Modal>
 
