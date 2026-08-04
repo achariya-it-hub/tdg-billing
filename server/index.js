@@ -4219,13 +4219,99 @@ const getOrderAmount = (o) => {
   return Math.round(subtotal + tax)
 }
 
-const isValidSalesOrder = (o) => {
+const isCompletedSale = (o) => {
   if (!o) return false
   const s = (o.status || '').toLowerCase()
+  const p = (o.paymentStatus || '').toLowerCase()
   const m = (o.paymentMethod || '').toLowerCase()
+
   if (s === 'cancelled' || s === 'canceled' || s === 'void' || o.isCancelled || o.isVoid) return false
   if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') return false
+
   return true
+}
+
+const isValidSalesOrder = isCompletedSale
+
+function getCompletedSales(reqQuery, options = {}) {
+  const candidateOrders = getFilteredOrdersForPeriod(reqQuery, true)
+  return candidateOrders.filter(isCompletedSale)
+}
+
+function calculateSalesMetrics(salesOrders = []) {
+  let totalInvoices = salesOrders.length
+  let netSalesCollected = 0
+  let grossMenuSubtotal = 0
+  let totalDiscountGiven = 0
+  let totalTaxGST = 0
+
+  const byPaymentMethod = { cash: 0, upi: 0, card: 0, wallet: 0 }
+  const paymentCounts = { cash: 0, upi: 0, card: 0, wallet: 0 }
+  const byDiscountType = {}
+  const bySource = {}
+
+  salesOrders.forEach(o => {
+    const amt = getOrderAmount(o)
+    netSalesCollected += amt
+
+    const rawSub = Number(o.rawSubtotal || o.subtotal) || (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
+    grossMenuSubtotal += rawSub
+
+    const tax = o.tax !== undefined && o.tax !== null ? Number(o.tax) : Math.round(rawSub * 0.05)
+    totalTaxGST += tax
+
+    const { discount: disc, name: dName } = getOrderDiscountInfo(o)
+    if (disc > 0) {
+      totalDiscountGiven += disc
+      if (!byDiscountType[dName]) {
+        byDiscountType[dName] = { count: 0, totalDiscount: 0 }
+      }
+      byDiscountType[dName].count += 1
+      byDiscountType[dName].totalDiscount += disc
+    }
+
+    if (o.splitPayments && typeof o.splitPayments === 'object' && Object.keys(o.splitPayments).length > 0) {
+      Object.entries(o.splitPayments).forEach(([mKey, mVal]) => {
+        const val = Number(mVal) || 0
+        if (val > 0) {
+          let key = mKey.toLowerCase()
+          if (key.includes('card') || key.includes('credit') || key.includes('debit')) key = 'card'
+          else if (key.includes('upi') || key.includes('gpay') || key.includes('phonepe') || key.includes('paytm') || key.includes('online')) key = 'upi'
+          else if (key.includes('wallet')) key = 'wallet'
+          else key = 'cash'
+          byPaymentMethod[key] = (byPaymentMethod[key] || 0) + val
+          paymentCounts[key] = (paymentCounts[key] || 0) + 1
+        }
+      })
+    } else {
+      let method = (o.paymentMethod || 'cash').toLowerCase()
+      if (method.includes('card') || method.includes('credit') || method.includes('debit')) method = 'card'
+      else if (method.includes('upi') || method.includes('gpay') || method.includes('phonepe') || method.includes('paytm') || method.includes('online')) method = 'upi'
+      else if (method.includes('wallet')) method = 'wallet'
+      else method = 'cash'
+
+      byPaymentMethod[method] = (byPaymentMethod[method] || 0) + amt
+      paymentCounts[method] = (paymentCounts[method] || 0) + 1
+    }
+
+    let src = (o.source || o.type || 'dine-in').toUpperCase()
+    bySource[src] = (bySource[src] || 0) + 1
+  })
+
+  const avgBasketValue = totalInvoices > 0 ? Math.round(netSalesCollected / totalInvoices) : 0
+
+  return {
+    totalInvoices,
+    netSalesCollected: Math.round(netSalesCollected),
+    grossMenuSubtotal: Math.round(grossMenuSubtotal),
+    totalDiscountGiven: Math.round(totalDiscountGiven),
+    totalTaxGST: Math.round(totalTaxGST),
+    avgBasketValue,
+    byPaymentMethod,
+    paymentCounts,
+    byDiscountType,
+    bySource
+  }
 }
 
 const getOrderDiscountInfo = (o) => {
@@ -4399,46 +4485,92 @@ setInterval(runMidnightDayClosingCheck, 60000)
 // ============ PAYMENT REPORT ENDPOINT ============
 app.get('/api/reports/payment-report', (req, res) => {
   try {
-    const dayOrders = getFilteredOrdersForPeriod(req.query)
-    const validOrders = dayOrders.filter(isValidSalesOrder)
-
-    let totalRevenue = 0
-    const byMethod = {
-      cash: { total: 0, count: 0, percentage: 0 },
-      upi: { total: 0, count: 0, percentage: 0 },
-      card: { total: 0, count: 0, percentage: 0 },
-      wallet: { total: 0, count: 0, percentage: 0 },
-      other: { total: 0, count: 0, percentage: 0 }
-    }
-
-    validOrders.forEach(o => {
-      const amt = getOrderAmount(o)
-      totalRevenue += amt
-      let m = (o.paymentMethod || 'cash').toLowerCase()
-      if (m.includes('card') || m.includes('credit') || m.includes('debit')) m = 'card'
-      else if (m.includes('upi') || m.includes('gpay') || m.includes('phonepe') || m.includes('paytm') || m.includes('online')) m = 'upi'
-      else if (m.includes('wallet')) m = 'wallet'
-      else if (m.includes('cash')) m = 'cash'
-      else m = 'other'
-
-      byMethod[m].total += amt
-      byMethod[m].count += 1
-    })
-
-    // Calculate percentages
-    Object.keys(byMethod).forEach(m => {
-      byMethod[m].percentage = totalRevenue > 0 ? Number(((byMethod[m].total / totalRevenue) * 100).toFixed(1)) : 0
-    })
+    const completed = getCompletedSales(req.query)
+    const metrics = calculateSalesMetrics(completed)
 
     res.json({
-      totalRevenue,
-      totalBills: validOrders.length,
-      byMethod,
-      orders: validOrders
+      totalRevenue: metrics.netSalesCollected,
+      totalSales: metrics.netSalesCollected,
+      totalBills: metrics.totalInvoices,
+      totalInvoices: metrics.totalInvoices,
+      byMethod: metrics.byPaymentMethod,
+      methodCounts: metrics.paymentCounts,
+      byDiscountType: metrics.byDiscountType,
+      orders: completed.map(o => ({
+        id: o.id || o.orderNumber,
+        orderNumber: o.orderNumber || o.id,
+        date: getOrderDate(o),
+        type: o.type || 'dine-in',
+        paymentMethod: o.paymentMethod || 'cash',
+        amount: getOrderAmount(o)
+      }))
     })
   } catch (err) {
     console.error('[PAYMENT REPORT API ERROR]', err)
     res.status(500).json({ error: 'Failed to generate Payment Report' })
+  }
+})
+
+// ============ REPORT RECONCILIATION & AUTOMATED VALIDATION ENDPOINT ============
+app.get(['/api/reports/reconcile', '/api/reports/reconciliation'], (req, res) => {
+  try {
+    const completedSales = getCompletedSales(req.query)
+    const metrics = calculateSalesMetrics(completedSales)
+
+    const dailyClosingNet = metrics.netSalesCollected
+    const paymentReportNet = Object.values(metrics.byPaymentMethod).reduce((a, b) => a + b, 0)
+
+    let itemwiseNet = 0
+    completedSales.forEach(o => {
+      (o.items || []).forEach(i => {
+        itemwiseNet += Number(i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1))
+      })
+    })
+
+    let categorywiseNet = 0
+    completedSales.forEach(o => {
+      (o.items || []).forEach(i => {
+        categorywiseNet += Number(i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1))
+      })
+    })
+
+    const posOrdersNet = completedSales.reduce((sum, o) => sum + getOrderAmount(o), 0)
+
+    const discrepancies = []
+    if (dailyClosingNet !== paymentReportNet) {
+      discrepancies.push(`Daily Closing Net (₹${dailyClosingNet}) does not match Payment Report Net (₹${paymentReportNet})`)
+    }
+    if (dailyClosingNet !== posOrdersNet) {
+      discrepancies.push(`Daily Closing Net (₹${dailyClosingNet}) does not match POS Orders Net (₹${posOrdersNet})`)
+    }
+
+    const isReconciled = discrepancies.length === 0
+
+    res.json({
+      status: isReconciled ? 'RECONCILED' : 'DISCREPANCY_DETECTED',
+      isReconciled,
+      period: req.query,
+      summary: {
+        totalCompletedInvoices: metrics.totalInvoices,
+        netSalesCollected: metrics.netSalesCollected,
+        grossMenuSubtotal: metrics.grossMenuSubtotal,
+        totalDiscountGiven: metrics.totalDiscountGiven,
+        totalTaxGST: metrics.totalTaxGST,
+        avgBasketValue: metrics.avgBasketValue
+      },
+      reportsCheck: {
+        dailyClosingNet,
+        paymentReportNet,
+        itemwiseNet: Math.round(itemwiseNet),
+        categorywiseNet: Math.round(categorywiseNet),
+        posOrdersNet,
+        mismatchCount: discrepancies.length
+      },
+      discrepancies
+    })
+  } catch (err) {
+    console.error('[RECONCILIATION API ERROR]', err)
+    res.status(500).json({ error: 'Failed to run report reconciliation' })
   }
 })
 
@@ -4607,55 +4739,19 @@ app.get('/api/reports/daily-closing', (req, res) => {
   const { date, from, to } = req.query
 
   const dayOrders = getFilteredOrdersForPeriod(req.query, true)
-  const completedOrders = dayOrders.filter(o => isValidSalesOrder(o))
+  const completedOrders = getCompletedSales(req.query)
+  const metrics = calculateSalesMetrics(completedOrders)
+
   const settledOrders = completedOrders.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
   const pendingOrders = completedOrders.filter(o => !settledOrders.includes(o))
-  const cancelledOrders = dayOrders.filter(o => (o.status || '').toLowerCase() === 'cancelled' || (o.status || '').toLowerCase() === 'void')
+  const cancelledOrders = dayOrders.filter(o => (o.status || '').toLowerCase() === 'cancelled' || (o.status || '').toLowerCase() === 'void' || o.isCancelled || o.isVoid)
 
-  const totalInvoices = completedOrders.length
-  const totalSales = completedOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
   const settledSales = settledOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
   const pendingSales = pendingOrders.reduce((sum, o) => sum + getOrderAmount(o), 0)
 
-  // Breakdown by payment method
-  const byPaymentMethod = {}
-  completedOrders.forEach(o => {
-    if (o.splitPayments && typeof o.splitPayments === 'object' && Object.keys(o.splitPayments).length > 0) {
-      Object.entries(o.splitPayments).forEach(([mKey, mVal]) => {
-        const val = Number(mVal) || 0
-        if (val > 0) {
-          let key = mKey.toLowerCase()
-          if (key.includes('card') || key.includes('credit') || key.includes('debit')) key = 'card'
-          else if (key.includes('upi') || key.includes('gpay') || key.includes('phonepe') || key.includes('paytm') || key.includes('online')) key = 'upi'
-          else if (key.includes('wallet')) key = 'wallet'
-          else key = 'cash'
-          byPaymentMethod[key] = (byPaymentMethod[key] || 0) + val
-        }
-      })
-    } else {
-      let method = (o.paymentMethod || 'cash').toLowerCase()
-      if (method.includes('card') || method.includes('credit') || method.includes('debit')) method = 'card'
-      else if (method.includes('upi') || method.includes('gpay') || method.includes('phonepe') || method.includes('paytm') || method.includes('online')) method = 'upi'
-      else if (method.includes('wallet')) method = 'wallet'
-      else if (method.includes('cash')) method = 'cash'
-      else method = 'cash'
+  const hourlySales = computeHourlySales(dayOrders)
+  const threeHourSales = computeThreeHourSales(dayOrders)
 
-      byPaymentMethod[method] = (byPaymentMethod[method] || 0) + getOrderAmount(o)
-    }
-  })
-
-  // Breakdown by order source
-  const bySource = {}
-  completedOrders.forEach(o => {
-    let src = (o.source || o.type || 'dine-in').toUpperCase()
-    bySource[src] = (bySource[src] || 0) + 1
-  })
-
-  const avgBasketValue = totalInvoices > 0 ? Math.round(totalSales / totalInvoices) : 0;
-const hourlySales = computeHourlySales(dayOrders);
-const threeHourSales = computeThreeHourSales(dayOrders);
-
-  // Filter expenses with normalized date string
   const normDate = date ? normalizeDateStr(date) : ''
   const normFrom = from ? normalizeDateStr(from) : ''
   const normTo = to ? normalizeDateStr(to) : ''
@@ -4668,7 +4764,6 @@ const threeHourSales = computeThreeHourSales(dayOrders);
   })
   const totalExpenses = dayExpenses.reduce((sum, e) => sum + (e.amount || 0), 0)
 
-  // Filter purchases with normalized date string
   const dayPurchases = purchases.filter(p => {
     const dStr = getLocalDateStr(p.createdAt)
     if (normFrom && normTo) return dStr >= normFrom && dStr <= normTo
@@ -4677,31 +4772,14 @@ const threeHourSales = computeThreeHourSales(dayOrders);
   })
   const totalPurchases = dayPurchases.reduce((sum, p) => sum + (p.total || 0), 0)
 
-  const grossProfit = totalSales - totalPurchases - totalExpenses
+  const grossProfit = metrics.netSalesCollected - totalPurchases - totalExpenses
 
-  // Breakdown by Discount Type & Total Discount Savings
-  let totalDiscountGiven = 0
-  const byDiscountType = {}
-  completedOrders.forEach(o => {
-    const { discount: disc, name: dName } = getOrderDiscountInfo(o)
-    if (disc > 0) {
-      totalDiscountGiven += disc
-      if (!byDiscountType[dName]) {
-        byDiscountType[dName] = { count: 0, totalDiscount: 0 }
-      }
-      byDiscountType[dName].count += 1
-      byDiscountType[dName].totalDiscount += disc
-    }
-  })
-
-  // Status breakdown
   const statusBreakdown = {}
   dayOrders.forEach(o => {
     const s = (o.status || 'pending').toLowerCase()
     statusBreakdown[s] = (statusBreakdown[s] || 0) + 1
   })
 
-  // Format date label for UI header
   let displayDateStr = todayStr
   if (normDate && normDate !== 'all' && normDate !== 'latest') {
     displayDateStr = normDate
@@ -4725,18 +4803,18 @@ const threeHourSales = computeThreeHourSales(dayOrders);
 
   res.json({
     date: displayDateStr,
-    totalInvoices,
-    totalSales: Math.round(totalSales),
+    totalInvoices: metrics.totalInvoices,
+    totalSales: metrics.netSalesCollected,
     settledSales: Math.round(settledSales),
     pendingSales: Math.round(pendingSales),
     totalPurchases: Math.round(totalPurchases),
     totalExpenses: Math.round(totalExpenses),
     grossProfit: Math.round(grossProfit),
-    avgBasketValue,
-    byPaymentMethod,
-    bySource,
-    totalDiscountGiven: Math.round(totalDiscountGiven),
-    byDiscountType,
+    avgBasketValue: metrics.avgBasketValue,
+    byPaymentMethod: metrics.byPaymentMethod,
+    bySource: metrics.bySource,
+    totalDiscountGiven: metrics.totalDiscountGiven,
+    byDiscountType: metrics.byDiscountType,
     statusBreakdown,
     cancelledCount: cancelledOrders.length,
     cancelledValue: Math.round(cancelledValue),
@@ -4833,7 +4911,7 @@ app.get('/api/reports/pnl', (req, res) => {
 
 // ============ OFFER SALES REPORT ============
 app.get('/api/reports/offer-sales', (req, res) => {
-  const periodOrders = getFilteredOrdersForPeriod(req.query)
+  const periodOrders = getCompletedSales(req.query)
 
   const offerOrders = []
   let totalOriginalSum = 0
@@ -4920,7 +4998,7 @@ app.get('/api/reports/offer-sales', (req, res) => {
 
 // ============ ITEMWISE SALES REPORT ============
 app.get('/api/reports/itemwise-sales', (req, res) => {
-  const periodOrders = getFilteredOrdersForPeriod(req.query)
+  const periodOrders = getCompletedSales(req.query)
 
   const itemMap = {}
   let totalQtySum = 0
@@ -4972,7 +5050,7 @@ app.get('/api/reports/itemwise-sales', (req, res) => {
 
 // ============ CATEGORYWISE SALES REPORT ============
 app.get('/api/reports/categorywise-sales', (req, res) => {
-  const periodOrders = getFilteredOrdersForPeriod(req.query)
+  const periodOrders = getCompletedSales(req.query)
 
   const catMap = {}
   let totalQtySum = 0
@@ -5024,52 +5102,12 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
   })
 })
 
-// ============ PAYMENT BREAKDOWN REPORT ============
-app.get('/api/reports/payment-report', (req, res) => {
-  const periodOrders = getFilteredOrdersForPeriod(req.query)
-  const completed = periodOrders.filter(isValidSalesOrder)
-
-  const byMethod = { cash: 0, upi: 0, card: 0, wallet: 0, complimentary: 0 }
-  const methodCounts = { cash: 0, upi: 0, card: 0, wallet: 0, complimentary: 0 }
-
-  completed.forEach(o => {
-    let m = (o.paymentMethod || 'cash').toLowerCase()
-    if (m.includes('card') || m.includes('credit') || m.includes('debit')) m = 'card'
-    else if (m.includes('upi') || m.includes('gpay') || m.includes('phonepe') || m.includes('paytm') || m.includes('online')) m = 'upi'
-    else if (m.includes('wallet')) m = 'wallet'
-    else if (m.includes('complimentary') || m.includes('nc') || m.includes('free')) m = 'complimentary'
-    else m = 'cash'
-
-    const amt = getOrderAmount(o)
-    byMethod[m] = (byMethod[m] || 0) + amt
-    methodCounts[m] = (methodCounts[m] || 0) + 1
-  })
-
-  const totalRev = completed.reduce((sum, o) => sum + getOrderAmount(o), 0)
-
-  res.json({
-    totalInvoices: completed.length,
-    totalSales: Math.round(totalRev),
-    byMethod,
-    methodCounts,
-    orders: completed.map(o => ({
-      id: o.id || o.orderNumber,
-      orderNumber: o.orderNumber || o.id,
-      date: getOrderDate(o),
-      type: o.type || 'dine-in',
-      paymentMethod: o.paymentMethod || 'cash',
-      amount: getOrderAmount(o)
-    }))
-  })
-})
-
 // ============ POS ORDERS LIST FOR BILLING COUNTER & REPORTS ============
 app.get('/api/pos/orders', (req, res) => {
   try {
     const { status } = req.query
     const includeCancelled = req.query.includeCancelled === 'true' || req.query.report === 'kot-cancelled'
 
-    // Use central date filtering logic (guarantees 100% exact date matching across all report screens)
     let list = getFilteredOrdersForPeriod(req.query, true)
 
     if (!includeCancelled) {
@@ -5083,7 +5121,7 @@ app.get('/api/pos/orders', (req, res) => {
     if (status) {
       const normStatus = status.toLowerCase()
       if (normStatus === 'completed') {
-        list = list.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
+        list = getCompletedSales(req.query)
       } else {
         list = list.filter(o => (o.status || '').toLowerCase() === normStatus)
       }
