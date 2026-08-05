@@ -58,7 +58,9 @@ try {
   cpSync(join(root, 'package-lock.json'), join(stage, 'package-lock.json'))
   if (existsSync(join(root, 'index.js'))) cpSync(join(root, 'index.js'), join(stage, 'index.js'))
   if (existsSync(join(root, 'app.js'))) cpSync(join(root, 'app.js'), join(stage, 'app.js'))
-  console.log('   ✓ package.json + index.js + app.js')
+  if (existsSync(join(root, 'app.cjs'))) cpSync(join(root, 'app.cjs'), join(stage, 'app.cjs'))
+  if (existsSync(join(root, 'index.cjs'))) cpSync(join(root, 'index.cjs'), join(stage, 'index.cjs'))
+  console.log('   ✓ package.json + index.js + app.js + app.cjs + index.cjs')
 
   // 3. Create zip
   console.log('\n3. Creating deploy-hostinger.zip...')
