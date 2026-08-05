@@ -4912,6 +4912,37 @@ app.put('/api/pos/orders/:id/resettle', (req, res) => {
 
 // Check every 60 seconds for 12:00 AM IST rollover
 setInterval(runMidnightDayClosingCheck, 60000)
+
+// Auto-save state every 30 seconds to prevent data loss on unexpected restarts
+setInterval(() => {
+  try { saveState() } catch (e) { console.error('[AUTO-SAVE] Error:', e.message) }
+}, 30000)
+
+// Diagnostic endpoint — check live database state (admin only)
+app.get('/api/admin/db-diagnostics', (req, res) => {
+  try {
+    const db = readDb()
+    const dateCounts = {}
+    const allOrders = db.orders || orders
+    allOrders.forEach(o => {
+      const d = getOrderDate(o)
+      dateCounts[d] = (dateCounts[d] || 0) + 1
+    })
+    const sortedDates = Object.entries(dateCounts).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 10)
+    res.json({
+      totalOrders: allOrders.length,
+      latestOrderNumber: Math.max(...allOrders.map(o => o.orderNumber || 0)),
+      last10Dates: sortedDates,
+      vaultExists: existsSync(VAULT_PATH),
+      vaultSize: existsSync(VAULT_PATH) ? readFileSync(VAULT_PATH, 'utf-8').length : 0,
+      dbPath: DB_PATH,
+      serverUptime: Math.floor(process.uptime()),
+      memoryUsage: Math.round(process.memoryUsage().rss / 1024 / 1024) + 'MB'
+    })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
 // Run immediately on server initialization
 // ============ PAYMENT REPORT ENDPOINT ============
 // Reports only SETTLED (paid) bills as "collected". Pending/unsettled bills are returned as
