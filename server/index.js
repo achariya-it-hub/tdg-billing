@@ -3794,49 +3794,33 @@ app.post('/api/pos/orders', (req, res) => {
   const kotNum = getNextKotNumber()
   const now = new Date().toISOString()
   
-<<<<<<< HEAD
-  const rawSub = req.body.rawSubtotal || items?.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || 0) * (item.quantity || 1)), 0) || subtotal || 0
-  const discountVal = Number(req.body.discount || req.body.discountAmount || 0)
-  const isStaffBenefit = Boolean(req.body.staffBenefitOffer || req.body.employeeId || req.body.offerType === 'staff_family')
-  const discountLabel = req.body.discountName || (
-    isStaffBenefit ? (req.body.offerName || 'Achariya Family Week 2026') :
-    (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : 'Discount'))
-  )
-  
-=======
-  // SERVER-AUTHORITATIVE TOTALS:
-  // Never trust client-sent subtotal/tax/total — recompute from the actual line items so
-  // every stored bill is internally consistent: rawSubtotal - discount = subtotal,
-  // subtotal + tax = total. This is what makes all reports reconcile.
   const itemList = Array.isArray(items) ? items : []
-  const rawSub = Math.round(itemList.reduce((sum, item) => sum + (Number(item.totalPrice) || (Number(item.unitPrice || item.price || 0) * Number(item.quantity || item.qty || 1))), 0))
-  const orderDateStr = getOrderDate({ createdAt: now, date: req.body.date })
-  const offer = resolveCampaignOffer(orderDateStr, customerPhone, {
-    inaugurationOffer: req.body.inaugurationOffer,
-    specialOffer20: req.body.specialOffer20
-  })
+  const rawSub = req.body.rawSubtotal || Math.round(itemList.reduce((sum, item) => sum + (Number(item.totalPrice) || (Number(item.unitPrice || item.price || 0) * Number(item.quantity || item.qty || 1))), 0)) || subtotal || 0
+  const isStaffBenefit = Boolean(req.body.staffBenefitOffer || req.body.employeeId || req.body.offerType === 'staff_family')
   const clientDiscount = Number(req.body.discount || req.body.discountAmount || 0)
-  let discountVal = 0
-  if (offer.pct > 0) {
-    discountVal = Math.round(rawSub * offer.pct / 100)
-  } else if (clientDiscount > 0) {
-    discountVal = clientDiscount
-  } else if (Number(req.body.customerDiscountPct) > 0) {
+  
+  let discountVal = clientDiscount
+  if (!discountVal && isStaffBenefit) {
+    const pct = Number(req.body.discountPct || 50) / 100
+    discountVal = Math.round(rawSub * pct)
+  } else if (!discountVal && Number(req.body.customerDiscountPct) > 0) {
     const cpct = Math.min(90, Math.max(0, Number(req.body.customerDiscountPct)))
     discountVal = Math.round(rawSub * cpct / 100)
-  } else if (req.body.inaugurationOffer) {
+  } else if (!discountVal && req.body.inaugurationOffer) {
     discountVal = Math.round(rawSub * 0.5)
-  } else if (req.body.specialOffer20) {
+  } else if (!discountVal && req.body.specialOffer20) {
     discountVal = Math.round(rawSub * 0.2)
   }
   discountVal = Math.max(0, Math.min(Math.round(discountVal), rawSub))
-  const netSub = rawSub - discountVal
-  const taxVal = Math.round(netSub * 0.05)
-  const totalVal = netSub + taxVal
-  const customerPctLabel = Number(req.body.customerDiscountPct) > 0 ? `${Math.round(Number(req.body.customerDiscountPct))}% OFF` : ''
-  const discountLabel = offer.pct > 0 ? offer.label : (customerPctLabel || (req.body.discountName || (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'Discount' : '')))))
+  const netSub = subtotal || (rawSub - discountVal)
+  const taxVal = tax || Math.round(netSub * 0.05)
+  const totalVal = total || (netSub + taxVal)
+  
+  const discountLabel = req.body.discountName || (
+    isStaffBenefit ? (req.body.offerName || 'Achariya Family Week 2026') :
+    (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'Discount' : '')))
+  )
 
->>>>>>> origin/master
   const isDirectSettle = Boolean(req.body.settleDirectly || req.body.status === 'completed' || req.body.paymentStatus === 'paid')
 
   const order = {
@@ -3849,7 +3833,6 @@ app.post('/api/pos/orders', (req, res) => {
     rawSubtotal: rawSub,
     discount: discountVal,
     discountName: discountLabel,
-<<<<<<< HEAD
     offerName: req.body.offerName || (isStaffBenefit ? 'Achariya Family Week 2026' : undefined),
     offerType: req.body.offerType || (isStaffBenefit ? 'staff_family' : undefined),
     employeeId: req.body.employeeId || undefined,
@@ -3862,18 +3845,10 @@ app.post('/api/pos/orders', (req, res) => {
     terminal: req.body.terminal || 'POS-1',
     inaugurationOffer: req.body.inaugurationOffer || false,
     specialOffer20: req.body.specialOffer20 || false,
-    subtotal: subtotal || 0,
-    tax: tax || 0,
-    total: total || 0,
-=======
-    inaugurationOffer: offer.pct > 0 && offer.key === 'inauguration',
-    specialOffer20: offer.pct > 0 && offer.key === 'special20',
-    vip50: offer.pct > 0 && offer.key === 'vip50',
+    vip50: req.body.vip50 || false,
     subtotal: netSub,
     tax: taxVal,
     total: totalVal,
-    date: orderDateStr,
->>>>>>> origin/master
     paymentMethod: paymentMethod || 'cash',
     splitPayments: req.body.splitPayments || undefined,
     paymentStatus: isDirectSettle ? 'paid' : 'pending',
@@ -6197,7 +6172,6 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
 })
 
 // ============ POS ORDERS LIST FOR BILLING COUNTER & REPORTS ============
-<<<<<<< HEAD
 app.get('/api/pos/orders', (req, res) => {
   try {
     const { status, report } = req.query
@@ -6228,9 +6202,6 @@ app.get('/api/pos/orders', (req, res) => {
     res.status(500).json({ error: 'Failed to fetch orders' })
   }
 })
-
-=======
->>>>>>> origin/master
 // Purchase Orders Report
 app.get('/api/reports/purchase-orders', (req, res) => {
   const { from, to } = req.query
