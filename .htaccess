@@ -1,0 +1,17 @@
+# TDG Billing — Hostinger Node.js Web App Configuration
+# Required by Hostinger LiteSpeed / CloudLinux / Phusion Passenger
+
+<IfModule mod_passenger.c>
+  PassengerAppRoot "."
+  PassengerBaseURI "/"
+  PassengerAppType node
+  PassengerStartupFile server/index.js
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Pass API and web requests through to Node.js backend if passenger module is proxying
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ http://127.0.0.1:3001/$1 [P,L]
+</IfModule>

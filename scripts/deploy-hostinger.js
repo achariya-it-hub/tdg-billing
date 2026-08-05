@@ -60,7 +60,8 @@ try {
   if (existsSync(join(root, 'app.js'))) cpSync(join(root, 'app.js'), join(stage, 'app.js'))
   if (existsSync(join(root, 'app.cjs'))) cpSync(join(root, 'app.cjs'), join(stage, 'app.cjs'))
   if (existsSync(join(root, 'index.cjs'))) cpSync(join(root, 'index.cjs'), join(stage, 'index.cjs'))
-  console.log('   ✓ package.json + index.js + app.js + app.cjs + index.cjs')
+  if (existsSync(join(root, '.htaccess'))) cpSync(join(root, '.htaccess'), join(stage, '.htaccess'))
+  console.log('   ✓ package.json + index.js + app.js + app.cjs + index.cjs + .htaccess')
 
   // 3. Create zip
   console.log('\n3. Creating deploy-hostinger.zip...')
