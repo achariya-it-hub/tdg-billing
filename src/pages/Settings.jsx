@@ -98,14 +98,21 @@ export default function Settings() {
 
 function PaymentGatewaysTab({ pin, settings, onSaved }) {
   const ccConfig = settings?.paymentGateways?.ccavenue || {}
-  const [form, setForm] = useState({
+  const cfConfig = settings?.paymentGateways?.cashfree || {}
+  const [ccForm, setCcForm] = useState({
     merchantId: ccConfig.merchantId || '',
     workingKey: ccConfig.workingKey || '',
     accessCode: ccConfig.accessCode || '',
     isProduction: ccConfig.isProduction || false,
     isEnabled: ccConfig.isEnabled !== false,
-    enableAssetOtp: settings?.paymentGateways?.enableAssetOtp !== false
   })
+  const [cfForm, setCfForm] = useState({
+    appId: cfConfig.appId || '',
+    secretKey: cfConfig.secretKey || '',
+    isProduction: cfConfig.isProduction || false,
+    isEnabled: cfConfig.isEnabled !== false,
+  })
+  const [enableAssetOtp, setEnableAssetOtp] = useState(settings?.paymentGateways?.enableAssetOtp !== false)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
 
@@ -115,7 +122,7 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
       const res = await fetch(`${API_BASE}/api/settings/payment-gateways`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin, ccavenue: form, enableAssetOtp: form.enableAssetOtp })
+        body: JSON.stringify({ pin, ccavenue: ccForm, cashfree: cfForm, enableAssetOtp })
       })
       const data = await res.json()
       if (data.success) {
@@ -132,97 +139,93 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
   }
 
   return (
-    <div style={glassCard}>
-      <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <CreditCard size={22} color="#e63946" /> Payment Gateway & Verification
-      </h3>
-      <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '20px' }}>
-        Configure CCAvenue Merchant credentials and toggle phone OTP options.
-      </p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* CCAvenue */}
+      <div style={glassCard}>
+        <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <CreditCard size={22} color="#e63946" /> CCAvenue Gateway
+        </h3>
+        <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '20px' }}>
+          Configure CCAvenue Merchant credentials.
+        </p>
 
-      {msg && (
-        <div style={{
-          background: msg.includes('Saved') ? 'rgba(22,163,74,0.08)' : 'rgba(220,38,38,0.08)',
-          color: msg.includes('Saved') ? '#16a34a' : '#dc2626',
-          padding: '12px 16px', borderRadius: '10px', fontSize: '14px', marginBottom: '20px', fontWeight: 600
-        }}>
-          {msg}
-        </div>
-      )}
+        {msg && (
+          <div style={{
+            background: msg.includes('Saved') ? 'rgba(22,163,74,0.08)' : 'rgba(220,38,38,0.08)',
+            color: msg.includes('Saved') ? '#16a34a' : '#dc2626',
+            padding: '12px 16px', borderRadius: '10px', fontSize: '14px', marginBottom: '20px', fontWeight: 600
+          }}>
+            {msg}
+          </div>
+        )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-        <div>
-          <label style={labelStyle}>Merchant ID (Merchant Code)</label>
-          <input
-            style={inputStyle}
-            placeholder="e.g. 2389401"
-            value={form.merchantId}
-            onChange={e => setForm({ ...form, merchantId: e.target.value })}
-          />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+          <div>
+            <label style={labelStyle}>Merchant ID</label>
+            <input style={inputStyle} placeholder="e.g. 2389401" value={ccForm.merchantId} onChange={e => setCcForm({ ...ccForm, merchantId: e.target.value })} />
+          </div>
+          <div>
+            <label style={labelStyle}>Access Code</label>
+            <input style={inputStyle} placeholder="e.g. AVXX00XX00XX" value={ccForm.accessCode} onChange={e => setCcForm({ ...ccForm, accessCode: e.target.value })} />
+          </div>
         </div>
-        <div>
-          <label style={labelStyle}>Access Code</label>
-          <input
-            style={inputStyle}
-            placeholder="e.g. AVXX00XX00XX"
-            value={form.accessCode}
-            onChange={e => setForm({ ...form, accessCode: e.target.value })}
-          />
+        <div style={{ marginBottom: '16px' }}>
+          <label style={labelStyle}>Working Key</label>
+          <input type="password" style={inputStyle} placeholder="Encryption key" value={ccForm.workingKey} onChange={e => setCcForm({ ...ccForm, workingKey: e.target.value })} />
+        </div>
+        <div style={{ display: 'flex', gap: '24px', marginBottom: '16px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
+            <input type="checkbox" checked={ccForm.isEnabled} onChange={e => setCcForm({ ...ccForm, isEnabled: e.target.checked })} style={{ width: '18px', height: '18px', accentColor: '#e63946' }} />
+            Enable
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
+            <input type="checkbox" checked={ccForm.isProduction} onChange={e => setCcForm({ ...ccForm, isProduction: e.target.checked })} style={{ width: '18px', height: '18px', accentColor: '#e63946' }} />
+            Production Mode
+          </label>
         </div>
       </div>
 
-      <div style={{ marginBottom: '20px' }}>
-        <label style={labelStyle}>Working Key (Encryption Key)</label>
-        <input
-          type="password"
-          style={inputStyle}
-          placeholder="e.g. 32-character working key"
-          value={form.workingKey}
-          onChange={e => setForm({ ...form, workingKey: e.target.value })}
-        />
-      </div>
+      {/* Cashfree */}
+      <div style={glassCard}>
+        <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <CreditCard size={22} color="#0066ff" /> Cashfree Gateway
+        </h3>
+        <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '20px' }}>
+          Configure Cashfree API credentials. Get keys from merchant.cashfree.com
+        </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px', padding: '16px', background: 'rgba(0,0,0,0.02)', borderRadius: '12px' }}>
-        <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
-            <input
-              type="checkbox"
-              checked={form.isEnabled}
-              onChange={e => setForm({ ...form, isEnabled: e.target.checked })}
-              style={{ width: '18px', height: '18px', accentColor: '#e63946' }}
-            />
-            Enable CCAvenue Gateway
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+          <div>
+            <label style={labelStyle}>App ID</label>
+            <input style={inputStyle} placeholder="e.g. 12345abcde" value={cfForm.appId} onChange={e => setCfForm({ ...cfForm, appId: e.target.value })} />
+          </div>
+          <div>
+            <label style={labelStyle}>Secret Key</label>
+            <input type="password" style={inputStyle} placeholder="Cashfree secret key" value={cfForm.secretKey} onChange={e => setCfForm({ ...cfForm, secretKey: e.target.value })} />
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: '24px', marginBottom: '16px' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
+            <input type="checkbox" checked={cfForm.isEnabled} onChange={e => setCfForm({ ...cfForm, isEnabled: e.target.checked })} style={{ width: '18px', height: '18px', accentColor: '#0066ff' }} />
+            Enable
           </label>
-
-          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
-            <input
-              type="checkbox"
-              checked={form.isProduction}
-              onChange={e => setForm({ ...form, isProduction: e.target.checked })}
-              style={{ width: '18px', height: '18px', accentColor: '#e63946' }}
-            />
-            Production Mode (Live URL)
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px' }}>
+            <input type="checkbox" checked={cfForm.isProduction} onChange={e => setCfForm({ ...cfForm, isProduction: e.target.checked })} style={{ width: '18px', height: '18px', accentColor: '#0066ff' }} />
+            Production Mode
           </label>
         </div>
+      </div>
 
-        <div style={{ borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: '12px', marginTop: '4px' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 600, fontSize: '14px', color: '#1a1a2e' }}>
-            <input
-              type="checkbox"
-              checked={form.enableAssetOtp}
-              onChange={e => setForm({ ...form, enableAssetOtp: e.target.checked })}
-              style={{ width: '18px', height: '18px', accentColor: '#e63946' }}
-            />
-            Require Mobile OTP (Firebase SMS) for Adding Assets
-          </label>
-          <span style={{ fontSize: '11px', color: '#6b7280', marginLeft: '28px', display: 'block', marginTop: '2px' }}>
-            If disabled, new assets (referred friends) are verified and activated instantly without sending SMS validation codes.
-          </span>
+      {/* General */}
+      <div style={glassCard}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+          <input type="checkbox" checked={enableAssetOtp} onChange={e => setEnableAssetOtp(e.target.checked)} style={{ width: '18px', height: '18px', accentColor: '#e63946' }} />
+          <span style={{ fontWeight: 600, fontSize: '14px' }}>Require Mobile OTP for Adding Assets</span>
         </div>
       </div>
 
       <button onClick={handleSave} disabled={saving} style={btnPrimary}>
-        {saving ? 'Saving...' : <><Save size={16} /> Save Settings</>}
+        {saving ? 'Saving...' : <><Save size={16} /> Save All Settings</>}
       </button>
     </div>
   )

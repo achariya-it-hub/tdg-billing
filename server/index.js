@@ -197,6 +197,12 @@ let settings = {
       accessCode: process.env.CCAVENUE_ACCESS_CODE || '',
       isProduction: false,
       isEnabled: true
+    },
+    cashfree: {
+      appId: process.env.CASHFREE_APP_ID || '',
+      secretKey: process.env.CASHFREE_SECRET_KEY || '',
+      isProduction: false,
+      isEnabled: true
     }
   },
   offers: [
@@ -2194,18 +2200,183 @@ app.post('/api/ccavenue/response', express.urlencoded({ extended: true }), (req,
 app.put('/api/settings/payment-gateways', (req, res) => {
   const auth = verifySuperAdmin(req.body.pin)
   if (!auth.ok) return res.status(403).json({ error: auth.error })
+  if (!settings.paymentGateways) settings.paymentGateways = {}
   if (req.body.ccavenue) {
-    if (!settings.paymentGateways) settings.paymentGateways = {}
     settings.paymentGateways.ccavenue = {
       ...settings.paymentGateways.ccavenue,
       ...req.body.ccavenue
     }
-    if (req.body.enableAssetOtp !== undefined) {
-      settings.paymentGateways.enableAssetOtp = req.body.enableAssetOtp === true
-    }
-    saveState()
   }
+  if (req.body.cashfree) {
+    settings.paymentGateways.cashfree = {
+      ...settings.paymentGateways.cashfree,
+      ...req.body.cashfree
+    }
+  }
+  if (req.body.enableAssetOtp !== undefined) {
+    settings.paymentGateways.enableAssetOtp = req.body.enableAssetOtp === true
+  }
+  saveState()
   res.json({ success: true, paymentGateways: settings.paymentGateways })
+})
+
+// ============ CASHFREE PAYMENT GATEWAY ============
+const CASHFREE_API_VERSION = '2022-09-01'
+
+function getCashfreeConfig() {
+  const cf = settings.paymentGateways?.cashfree || {}
+  return {
+    appId: cf.appId || process.env.CASHFREE_APP_ID || '',
+    secretKey: cf.secretKey || process.env.CASHFREE_SECRET_KEY || '',
+    isProduction: cf.isProduction || false,
+    isEnabled: cf.isEnabled !== false
+  }
+}
+
+function getCashfreeBaseUrl() {
+  return getCashfreeConfig().isProduction
+    ? 'https://api.cashfree.com/pg'
+    : 'https://sandbox.cashfree.com/pg'
+}
+
+// Get Cashfree config status
+app.get('/api/cashfree/config', (req, res) => {
+  const cf = getCashfreeConfig()
+  res.json({
+    enabled: cf.isEnabled,
+    hasCredentials: Boolean(cf.appId && cf.secretKey),
+    isProduction: cf.isProduction,
+    appId: cf.appId ? cf.appId.slice(0, 8) + '...' : ''
+  })
+})
+
+// Create Cashfree order
+app.post('/api/cashfree/create-order', async (req, res) => {
+  try {
+    const cf = getCashfreeConfig()
+    if (!cf.isEnabled) return res.status(400).json({ error: 'Cashfree is disabled' })
+    if (!cf.appId || !cf.secretKey) return res.status(400).json({ error: 'Cashfree credentials not configured' })
+
+    const { orderId, amount, customerName, customerPhone, customerEmail, returnUrl } = req.body
+    if (!orderId || !amount) return res.status(400).json({ error: 'orderId and amount required' })
+
+    const baseUrl = getCashfreeBaseUrl()
+    const return_url = returnUrl || `${req.protocol}://${req.get('host')}/api/cashfree/return?order_id={order_id}`
+    const notify_url = `${req.protocol}://${req.get('host')}/api/cashfree/webhook`
+
+    const payload = {
+      order_id: orderId,
+      order_amount: Number(amount),
+      order_currency: 'INR',
+      customer_details: {
+        customer_id: customerPhone || 'guest_' + Date.now(),
+        customer_phone: customerPhone || '9999999999',
+        customer_email: customerEmail || 'guest@tdg.com'
+      },
+      order_meta: {
+        return_url,
+        notify_url,
+        payment_methods: 'cc,dc,upi,nb'
+      },
+      order_note: `TDG Billing Order #${orderId}`
+    }
+
+    const resp = await fetch(`${baseUrl}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-client-id': cf.appId,
+        'x-client-secret': cf.secretKey,
+        'x-api-version': CASHFREE_API_VERSION,
+        'x-idempotency-key': orderId
+      },
+      body: JSON.stringify(payload)
+    })
+
+    const data = await resp.json()
+    if (!resp.ok) {
+      console.error('[CASHFREE CREATE ORDER ERROR]', data)
+      return res.status(resp.status).json({ error: data.message || 'Failed to create Cashfree order' })
+    }
+
+    res.json({
+      success: true,
+      cfOrderId: data.cf_order_id,
+      paymentSessionId: data.payment_session_id,
+      orderId: data.order_id,
+      orderStatus: data.order_status
+    })
+  } catch (err) {
+    console.error('[CASHFREE CREATE ORDER ERROR]', err.message)
+    res.status(500).json({ error: 'Failed to create Cashfree order: ' + err.message })
+  }
+})
+
+// Fetch Cashfree order status
+app.get('/api/cashfree/order-status/:orderId', async (req, res) => {
+  try {
+    const cf = getCashfreeConfig()
+    if (!cf.appId || !cf.secretKey) return res.status(400).json({ error: 'Cashfree not configured' })
+
+    const baseUrl = getCashfreeBaseUrl()
+    const resp = await fetch(`${baseUrl}/orders/${req.params.orderId}`, {
+      headers: {
+        'x-client-id': cf.appId,
+        'x-client-secret': cf.secretKey,
+        'x-api-version': CASHFREE_API_VERSION
+      }
+    })
+
+    const data = await resp.json()
+    if (!resp.ok) return res.status(resp.status).json({ error: data.message || 'Failed to fetch order' })
+
+    res.json({
+      orderId: data.order_id,
+      cfOrderId: data.cf_order_id,
+      orderStatus: data.order_status,
+      orderAmount: data.order_amount,
+      paymentSessionId: data.payment_session_id
+    })
+  } catch (err) {
+    console.error('[CASHFREE ORDER STATUS ERROR]', err.message)
+    res.status(500).json({ error: 'Failed to fetch order status' })
+  }
+})
+
+// Cashfree webhook handler
+app.post('/api/cashfree/webhook', express.json(), async (req, res) => {
+  try {
+    const { type, data } = req.body
+    console.log(`[CASHFREE WEBHOOK] ${type}`, JSON.stringify(data?.order || {}).slice(0, 200))
+
+    if (type === 'PAYMENT_SUCCESS_WEBHOOK' && data?.order?.order_id) {
+      const orderId = data.order.order_id
+      const order = orders.find(o => String(o.id) === String(orderId) || String(o.orderNumber) === String(orderId))
+      if (order) {
+        order.paymentStatus = 'paid'
+        order.status = 'completed'
+        order.paidAt = new Date().toISOString()
+        order.completedAt = new Date().toISOString()
+        order.paymentMethod = 'online'
+        order.cfPaymentId = data.payment?.cf_payment_id || ''
+        order.cfOrderId = data.order?.cf_order_id || ''
+        saveState()
+        io.emit('order:updated', order)
+        console.log(`[CASHFREE WEBHOOK] Order #${order.orderNumber || orderId} marked as paid`)
+      }
+    }
+
+    res.status(200).json({ status: 'ok' })
+  } catch (err) {
+    console.error('[CASHFREE WEBHOOK ERROR]', err.message)
+    res.status(200).json({ status: 'ok' })
+  }
+})
+
+// Cashfree return URL handler (redirect after payment)
+app.get('/api/cashfree/return', (req, res) => {
+  const { order_id } = req.query
+  res.redirect(`${req.protocol}://${req.get('host')}/billing?payment=success&order_id=${order_id || ''}`)
 })
 
 // Menu (mobile format)
