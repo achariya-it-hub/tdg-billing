@@ -8683,7 +8683,12 @@ export default function MenuManagement() {
         }
         const created = await r.json()
         if (imageFile) await uploadItemImage(created.id)
-        setMenuItems(prev => prev.map(i => String(i.id) === String(created.id) ? { ...created, image: imagePreview ? `/uploads/menu/${created.id}.jpg` : null } : [...prev, created]))
+        setMenuItems(prev => {
+          if (prev.some(i => String(i.id) === String(created.id))) {
+            return prev.map(i => String(i.id) === String(created.id) ? { ...created, image: imagePreview ? `/uploads/menu/${created.id}.jpg` : null } : i)
+          }
+          return [...prev, { ...created, image: imagePreview ? `/uploads/menu/${created.id}.jpg` : null }]
+        })
         try { useMenuStore.getState().fetchMenuItems() } catch (e) {}
         toast.success('Item added')
       }

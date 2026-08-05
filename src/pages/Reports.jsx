@@ -436,9 +436,15 @@ export default function Reports() {
                       <span style={{ fontWeight: 700, color: '#dc2626' }}>- ₹{(displayClosing.totalDiscountGiven || 0).toLocaleString()}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', borderTop: '1px dashed #e5e7eb', paddingTop: '8px', fontSize: '13px' }}>
-                      <span style={{ color: '#059669', fontWeight: 700 }}>Net Paid Collected</span>
-                      <span style={{ fontWeight: 800, color: '#10b981' }}>₹{(displayClosing.totalSales || 0).toLocaleString()}</span>
+                      <span style={{ color: '#059669', fontWeight: 700 }}>Net Paid Collected (Settled)</span>
+                      <span style={{ fontWeight: 800, color: '#10b981' }}>₹{((displayClosing.settledSales || 0)).toLocaleString()}</span>
                     </div>
+                    {((displayClosing.pendingSales || 0) > 0) && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '12.5px' }}>
+                        <span style={{ color: '#b45309', fontWeight: 600 }}>Unsettled (Pending)</span>
+                        <span style={{ fontWeight: 700, color: '#b45309' }}>₹{(displayClosing.pendingSales || 0).toLocaleString()}</span>
+                      </div>
+                    )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12.5px' }}>
                       <span style={{ color: '#6b7280' }}>Purchases</span>
                       <span style={{ fontWeight: 700, color: '#dc2626' }}>- ₹{(displayClosing.totalPurchases || 0).toLocaleString()}</span>

@@ -201,9 +201,14 @@ let settings = {
   },
   offers: [
     { id: '1', title: 'Golden Gyro Feast (50% OFF)', desc: '1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink', tag: '50% OFF', price: '₹199', origPrice: '₹398', image: '/uploads/menu/m1.jpg' },
-    { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2 Garlic Dips + Fries', tag: 'SAVE ₹151', price: '₹299', origPrice: '₹450', image: '/uploads/menu/m2.jpg' },
-    { id: '3', title: 'BOGO Thick Shake Delight', desc: 'Buy 1 Kunafa Pistachio Shake & get Vanilla Shake Free', tag: 'BUY 1 GET 1', price: '₹149', origPrice: '₹298', image: '/uploads/menu/m3.jpg' }
-  ]
+    { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2x Dip + Sauce', tag: 'Save ₹151', price: '₹299', origPrice: '₹450', image: '/uploads/menu/m2.jpg' },
+    { id: '3', title: 'BOGO Thick Shake Delight', desc: 'Buy 1 Shake & get Vanilla Shake Free', tag: 'BUY 1 GET 1', price: '₹149', origPrice: '₹298', image: '/uploads/menu/m3.jpg' }
+  ],
+  campaigns: {
+    inauguration: { active: true, date: '2026-07-27', pct: 50, label: 'Inauguration Offer 50%' },
+    special20: { active: true, from: '2026-07-29', to: '2026-08-02', pct: 20, label: 'Special Offer 20%' },
+    vip50: { active: true, pct: 50, label: 'VIP 50% OFF' }
+  }
 }
 let aggregators = [
   { id: 'swiggy', name: 'Swiggy', displayName: 'Swiggy', isActive: true, defaultPrepTime: 25, color: '#ff5200' },
@@ -1777,22 +1782,78 @@ app.post('/api/settings/upload-customers', (req, res) => {
   })
 })
 
-// Lookup customer discount by phone number
+// Search customers by phone number or name (name is case-insensitive, phone is digit-normalized).
+// Returns matching customers that have a stored discount tier so cashiers can attach the right
+// discount when raising an order.
+app.get('/api/customers/search', (req, res) => {
+  const q = String(req.query.q || req.query.term || '').trim().toLowerCase()
+  if (!q) return res.json({ customers: [] })
+
+  const allCustomers = [
+    ...(loyaltyUsers || []).map(u => ({ source: 'loyalty', ...u })),
+    ...(mobileAppUsers || []).map(u => ({ source: 'mobile', ...u }))
+  ]
+
+  const cleanPhone = (p) => String(p || '').replace(/\D/g, '')
+  const qPhone = cleanPhone(q)
+
+  const results = []
+  const seen = new Set()
+  for (const u of allCustomers) {
+    const name = (u.name || '').toLowerCase()
+    const phone = cleanPhone(u.phone)
+    const matched =
+      (qPhone && phone && phone.includes(qPhone)) ||
+      (name && name.includes(q))
+    if (!matched) continue
+
+    const key = phone || (u.name || '') + (u.id || '')
+    if (seen.has(key)) continue
+    seen.add(key)
+
+    const discountPct = Number(u.discountPct) > 0 ? Math.min(90, Math.round(Number(u.discountPct))) : 0
+    if (discountPct <= 0) continue // only surface customers with a discount
+
+    results.push({
+      id: u.id,
+      source: u.source,
+      customerName: u.name || 'Customer',
+      phone: u.phone || '',
+      discountPct,
+      tier: u.tier || '',
+      isVip50: !!u.isVip50 || discountPct === 50
+    })
+  }
+
+  results.sort((a, b) => b.discountPct - a.discountPct)
+  res.json({ customers: results.slice(0, 20) })
+})
+
+// Lookup customer discount by phone number or name. Returns any stored discount pct (not just 50%).
 app.get('/api/customers/check-discount', (req, res) => {
   const rawPhone = (req.query.phone || '').replace(/\D/g, '')
-  if (!rawPhone) return res.json({ hasDiscount: false, discountPct: 0 })
+  const rawName = String(req.query.name || req.query.q || '').trim().toLowerCase()
 
-  const user = loyaltyUsers.find(u => (u.phone || '').replace(/\D/g, '') === rawPhone) ||
-               mobileAppUsers.find(u => (u.phone || '').replace(/\D/g, '') === rawPhone)
+  if (!rawPhone && !rawName) return res.json({ hasDiscount: false, discountPct: 0 })
 
-  if (user && (user.discountPct === 50 || (user.tier && user.tier.includes('50%')) || user.isVip50)) {
-    return res.json({
-      hasDiscount: true,
-      discountPct: 50,
-      customerName: user.name || 'VIP Customer',
-      phone: rawPhone,
-      tier: user.tier || 'VIP 50% OFF'
-    })
+  const matchByPhone = (u) => (u.phone || '').replace(/\D/g, '') === rawPhone
+  const matchByName = (u) => (u.name || '').toLowerCase() === rawName
+
+  const user = loyaltyUsers.find(u => (rawPhone && matchByPhone(u)) || (rawName && matchByName(u))) ||
+               mobileAppUsers.find(u => (rawPhone && matchByPhone(u)) || (rawName && matchByName(u)))
+
+  if (user) {
+    const discountPct = Number(user.discountPct) > 0 ? Math.min(90, Math.round(Number(user.discountPct))) : 0
+    if (discountPct > 0) {
+      return res.json({
+        hasDiscount: true,
+        discountPct,
+        customerName: user.name || 'Customer',
+        phone: (user.phone || rawPhone || '').replace(/\D/g, ''),
+        tier: user.tier || (discountPct === 50 ? 'VIP 50% OFF' : `${discountPct}% OFF`),
+        isVip50: !!user.isVip50 || discountPct === 50
+      })
+    }
   }
 
   res.json({ hasDiscount: false, discountPct: 0 })
@@ -2734,61 +2795,36 @@ app.delete('/api/inventory/:id', (req, res) => {
 
 // POS Orders (no auth)
 app.get('/api/pos/orders', (req, res) => {
-  const { status, source, date, from, to } = req.query
-  let inMemory = [...orders]
+  try {
+    const { status, source } = req.query
+    const includeCancelled = req.query.includeCancelled === 'true' || req.query.report === 'kot-cancelled'
 
-  if (status) {
-    if (status === 'completed') {
-      inMemory = inMemory.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
-    } else {
-      inMemory = inMemory.filter(o => (o.status || '').toLowerCase() === (status || '').toLowerCase())
+    // Use central date filtering logic (guarantees 100% exact date matching across all report screens)
+    let inMemory = getFilteredOrdersForPeriod(req.query, true)
+
+    if (!includeCancelled) {
+      inMemory = inMemory.filter(o => {
+        if (!o) return false
+        const s = (o.status || '').toLowerCase()
+        return s !== 'cancelled' && s !== 'canceled' && s !== 'void' && !o.isCancelled && !o.isVoid
+      })
     }
-  }
 
-  if (source) inMemory = inMemory.filter(o => (o.source || '').toLowerCase() === (source || '').toLowerCase())
-
-  const today = new Date()
-  const todayStr = getLocalDateStr(today)
-  const yesterday = new Date(today)
-  yesterday.setDate(yesterday.getDate() - 1)
-  const yesterdayStr = getLocalDateStr(yesterday)
-
-  if (from && to) {
-    const normFrom = normalizeDateStr(from)
-    const normTo = normalizeDateStr(to)
-    inMemory = inMemory.filter(o => {
-      const dStr = getOrderDate(o)
-      return dStr >= normFrom && dStr <= normTo
-    })
-  } else if (from) {
-    const normFrom = normalizeDateStr(from)
-    inMemory = inMemory.filter(o => getOrderDate(o) >= normFrom)
-  } else if (date) {
-    const norm = normalizeDateStr(date)
-
-    if (norm === 'latest') {
-      const latestDate = getLatestOrderDate(orders)
-      inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
-    } else if (norm === 'today' || norm === todayStr) {
-      inMemory = inMemory.filter(o => getOrderDate(o) === todayStr)
-    } else if (norm === 'yesterday' || norm === yesterdayStr) {
-      inMemory = inMemory.filter(o => getOrderDate(o) === yesterdayStr)
-    } else if (norm === 'week' || date === 'week') {
-      const pastWeek = new Date(today)
-      pastWeek.setDate(pastWeek.getDate() - 7)
-      const pastWeekStr = getLocalDateStr(pastWeek)
-      inMemory = inMemory.filter(o => getOrderDate(o) >= pastWeekStr)
-    } else if (norm === 'month' || date === 'month') {
-      const pastMonth = new Date(today)
-      pastMonth.setDate(pastMonth.getDate() - 30)
-      const pastMonthStr = getLocalDateStr(pastMonth)
-      inMemory = inMemory.filter(o => getOrderDate(o) >= pastMonthStr)
-    } else if (norm !== 'all') {
-      inMemory = inMemory.filter(o => getOrderDate(o) === norm)
+    if (status) {
+      if (status === 'completed') {
+        inMemory = inMemory.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
+      } else {
+        inMemory = inMemory.filter(o => (o.status || '').toLowerCase() === (status || '').toLowerCase())
+      }
     }
-  }
 
-  res.json(inMemory.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)))
+    if (source) inMemory = inMemory.filter(o => (o.source || '').toLowerCase() === (source || '').toLowerCase())
+
+    res.json(inMemory.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)))
+  } catch (err) {
+    console.error('[POS ORDERS API ERROR]', err)
+    res.status(500).json({ error: 'Failed to fetch orders' })
+  }
 })
 
 function deductInventoryForOrder(order) {
@@ -2870,6 +2906,44 @@ function restoreInventoryForOrder(order) {
   }
 }
 
+// ============ OFFER VALIDATION ============
+// Resolve the effective discount a bill is entitled to. Campaigns are validated
+// against their date windows, and 50%-tier VIP customers (matched by phone) always
+// get their exclusive 50% off. Returns { pct, label, key } or { pct: 0 }.
+function resolveCampaignOffer(orderDateStr, customerPhone, flags) {
+  const c = settings.campaigns || {}
+  const date = orderDateStr || ''
+
+  // 1. Customer-specific discount by phone. Any stored discountPct is honoured, so a 50% VIP
+  //    customer gets 50% and a 20% campaign customer gets exactly their stored 20%.
+  const cleanPhone = String(customerPhone || '').replace(/\D/g, '')
+  if (cleanPhone.length >= 10) {
+    const cust = (loyaltyUsers || []).find(u => String(u.phone || '').replace(/\D/g, '') === cleanPhone && Number(u.discountPct) > 0) ||
+                 mobileAppUsers.find(u => String(u.phone || '').replace(/\D/g, '') === cleanPhone && Number(u.discountPct) > 0)
+    if (cust) {
+      const pct = Math.min(90, Math.round(Number(cust.discountPct)))
+      if (pct === 50) {
+        return { pct: 50, label: c.vip50 && c.vip50.label ? c.vip50.label : 'VIP 50% OFF', key: 'vip50' }
+      }
+      return { pct, label: cust.tier || `${pct}% OFF`, key: 'customer' }
+    }
+  }
+
+  // 2. Inauguration 50% — only on its configured date
+  const ina = c.inauguration
+  if (ina && ina.active && ina.date && date === ina.date) return validOffer('inauguration', ina)
+
+  // 3. Special 20% — within its from..to date window
+  const s20 = c.special20
+  if (s20 && s20.active && s20.from && s20.to && date >= s20.from && date <= s20.to) return validOffer('special20', s20)
+
+  return { pct: 0, label: '', key: '' }
+
+  function validOffer(key, cfg) {
+    return { pct: Number(cfg.pct) || 0, label: cfg.label || (key === 'inauguration' ? 'Inauguration Offer 50%' : 'Special Offer 20%'), key }
+  }
+}
+
 app.post('/api/pos/orders', (req, res) => {
   const { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod, complimentary, complimentaryType, specialRemarks } = req.body
   
@@ -2878,10 +2952,38 @@ app.post('/api/pos/orders', (req, res) => {
   const kotNum = getNextKotNumber()
   const now = new Date().toISOString()
   
-  const rawSub = req.body.rawSubtotal || items?.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || 0) * (item.quantity || 1)), 0) || subtotal || 0
-  const discountVal = Number(req.body.discount || req.body.discountAmount || 0)
-  const discountLabel = req.body.discountName || (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : 'Discount'))
-  
+  // SERVER-AUTHORITATIVE TOTALS:
+  // Never trust client-sent subtotal/tax/total — recompute from the actual line items so
+  // every stored bill is internally consistent: rawSubtotal - discount = subtotal,
+  // subtotal + tax = total. This is what makes all reports reconcile.
+  const itemList = Array.isArray(items) ? items : []
+  const rawSub = Math.round(itemList.reduce((sum, item) => sum + (Number(item.totalPrice) || (Number(item.unitPrice || item.price || 0) * Number(item.quantity || item.qty || 1))), 0))
+  const orderDateStr = getOrderDate({ createdAt: now, date: req.body.date })
+  const offer = resolveCampaignOffer(orderDateStr, customerPhone, {
+    inaugurationOffer: req.body.inaugurationOffer,
+    specialOffer20: req.body.specialOffer20
+  })
+  const clientDiscount = Number(req.body.discount || req.body.discountAmount || 0)
+  let discountVal = 0
+  if (offer.pct > 0) {
+    discountVal = Math.round(rawSub * offer.pct / 100)
+  } else if (clientDiscount > 0) {
+    discountVal = clientDiscount
+  } else if (Number(req.body.customerDiscountPct) > 0) {
+    const cpct = Math.min(90, Math.max(0, Number(req.body.customerDiscountPct)))
+    discountVal = Math.round(rawSub * cpct / 100)
+  } else if (req.body.inaugurationOffer) {
+    discountVal = Math.round(rawSub * 0.5)
+  } else if (req.body.specialOffer20) {
+    discountVal = Math.round(rawSub * 0.2)
+  }
+  discountVal = Math.max(0, Math.min(Math.round(discountVal), rawSub))
+  const netSub = rawSub - discountVal
+  const taxVal = Math.round(netSub * 0.05)
+  const totalVal = netSub + taxVal
+  const customerPctLabel = Number(req.body.customerDiscountPct) > 0 ? `${Math.round(Number(req.body.customerDiscountPct))}% OFF` : ''
+  const discountLabel = offer.pct > 0 ? offer.label : (customerPctLabel || (req.body.discountName || (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'Discount' : '')))))
+
   const isDirectSettle = Boolean(req.body.settleDirectly || req.body.status === 'completed' || req.body.paymentStatus === 'paid')
 
   const order = {
@@ -2894,11 +2996,13 @@ app.post('/api/pos/orders', (req, res) => {
     rawSubtotal: rawSub,
     discount: discountVal,
     discountName: discountLabel,
-    inaugurationOffer: req.body.inaugurationOffer || false,
-    specialOffer20: req.body.specialOffer20 || false,
-    subtotal: subtotal || 0,
-    tax: tax || 0,
-    total: total || 0,
+    inaugurationOffer: offer.pct > 0 && offer.key === 'inauguration',
+    specialOffer20: offer.pct > 0 && offer.key === 'special20',
+    vip50: offer.pct > 0 && offer.key === 'vip50',
+    subtotal: netSub,
+    tax: taxVal,
+    total: totalVal,
+    date: orderDateStr,
     paymentMethod: paymentMethod || 'cash',
     splitPayments: req.body.splitPayments || undefined,
     paymentStatus: isDirectSettle ? 'paid' : 'pending',
@@ -2945,6 +3049,10 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
     order.status = status || order.status
     order.paymentStatus = paymentStatus || order.paymentStatus
     order.paymentMethod = req.body.paymentMethod || order.paymentMethod
+    if ((status === 'completed' || status === 'served') && paymentStatus === 'paid') {
+      if (!order.paidAt) order.paidAt = new Date().toISOString()
+      if (!order.completedAt) order.completedAt = new Date().toISOString()
+    }
     if (req.body.splitPayments) order.splitPayments = req.body.splitPayments
     if (status === 'cancelled') {
       if (cancelReason) order.cancelReason = cancelReason
@@ -4424,7 +4532,10 @@ app.put('/api/pos/orders/:id/resettle', (req, res) => {
     else if (paymentMethod !== 'split') targetOrder.splitPayments = undefined
     if (paymentStatus) targetOrder.paymentStatus = paymentStatus
     if (status) targetOrder.status = status
-    targetOrder.resettledAt = new Date().toISOString()
+    const nowStamp = new Date().toISOString()
+    if ((paymentStatus === 'paid' || status === 'completed') && !targetOrder.paidAt) targetOrder.paidAt = nowStamp
+    if ((paymentStatus === 'paid' || status === 'completed') && !targetOrder.completedAt) targetOrder.completedAt = nowStamp
+    targetOrder.resettledAt = nowStamp
     targetOrder.resettledBy = req.body.resettledBy || 'Admin'
     if (notes) targetOrder.resettleNotes = notes
 
@@ -4441,27 +4552,66 @@ app.put('/api/pos/orders/:id/resettle', (req, res) => {
 setInterval(runMidnightDayClosingCheck, 60000)
 // Run immediately on server initialization
 // ============ PAYMENT REPORT ENDPOINT ============
+// Reports only SETTLED (paid) bills as "collected". Pending/unsettled bills are returned as
+// separate pending fields so this report reflects actual money collected, consistent with the
+// Billing counter, instead of including unsettled invoices like the Daily Closing does.
 app.get('/api/reports/payment-report', (req, res) => {
   try {
-    const completed = getCompletedSales(req.query)
-    const metrics = calculateSalesMetrics(completed)
+    const dayOrders = getFilteredOrdersForPeriod(req.query)
+    const validOrders = dayOrders.filter(isValidSalesOrder)
+
+    const isSettled = (o) => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt
+    const settledOrders = validOrders.filter(isSettled)
+    const pendingOrders = validOrders.filter(o => !isSettled(o))
+
+    let totalRevenue = 0
+    const byMethod = {
+      cash: { total: 0, count: 0, percentage: 0 },
+      upi: { total: 0, count: 0, percentage: 0 },
+      card: { total: 0, count: 0, percentage: 0 },
+      wallet: { total: 0, count: 0, percentage: 0 },
+      other: { total: 0, count: 0, percentage: 0 }
+    }
+
+    const addToMethod = (mKey, amt) => {
+      let m = (mKey || 'cash').toLowerCase()
+      if (m.includes('card') || m.includes('credit') || m.includes('debit')) m = 'card'
+      else if (m.includes('upi') || m.includes('gpay') || m.includes('phonepe') || m.includes('paytm') || m.includes('online')) m = 'upi'
+      else if (m.includes('wallet')) m = 'wallet'
+      else if (m.includes('cash')) m = 'cash'
+      else m = 'other'
+      byMethod[m].total += amt
+      byMethod[m].count += 1
+    }
+
+    settledOrders.forEach(o => {
+      const amt = getOrderAmount(o)
+      totalRevenue += amt
+      if (o.splitPayments && typeof o.splitPayments === 'object') {
+        Object.entries(o.splitPayments).forEach(([mKey, mVal]) => {
+          const val = Number(mVal) || 0
+          if (val > 0) addToMethod(mKey, val)
+        })
+      } else {
+        addToMethod(o.paymentMethod, amt)
+      }
+    })
+
+    // Calculate percentages
+    Object.keys(byMethod).forEach(m => {
+      byMethod[m].total = Math.round(byMethod[m].total * 100) / 100
+      byMethod[m].percentage = totalRevenue > 0 ? Number(((byMethod[m].total / totalRevenue) * 100).toFixed(1)) : 0
+    })
 
     res.json({
-      totalRevenue: metrics.netSalesCollected,
-      totalSales: metrics.netSalesCollected,
-      totalBills: metrics.totalInvoices,
-      totalInvoices: metrics.totalInvoices,
-      byMethod: metrics.byPaymentMethod,
-      methodCounts: metrics.paymentCounts,
-      byDiscountType: metrics.byDiscountType,
-      orders: completed.map(o => ({
-        id: o.id || o.orderNumber,
-        orderNumber: o.orderNumber || o.id,
-        date: getOrderDate(o),
-        type: o.type || 'dine-in',
-        paymentMethod: o.paymentMethod || 'cash',
-        amount: getOrderAmount(o)
-      }))
+      totalRevenue: Math.round(totalRevenue * 100) / 100,
+      totalBills: settledOrders.length,
+      byMethod,
+      orders: settledOrders,
+      invoicedRevenue: Math.round(validOrders.reduce((s, o) => s + getOrderAmount(o), 0) * 100) / 100,
+      invoicedBills: validOrders.length,
+      pendingRevenue: Math.round(pendingOrders.reduce((s, o) => s + getOrderAmount(o), 0) * 100) / 100,
+      pendingBills: pendingOrders.length
     })
   } catch (err) {
     console.error('[PAYMENT REPORT API ERROR]', err)
@@ -4582,7 +4732,7 @@ function computeThreeHourSales(orderList) {
     const amt = isValid ? getOrderAmount(o) : 0
     totalRev += amt
 
-    const dtVal = o.createdAt || o.paidAt || o.completedAt || o.timestamp || o.date
+    const dtVal = o.paidAt || o.completedAt || o.createdAt || o.timestamp || o.date
     if (dtVal) {
       const hour24 = getLocalHourIST(dtVal)
       if (hour24 >= 0 && hour24 <= 23) {
@@ -4644,7 +4794,7 @@ function computeHourlySales(orderList) {
     const amt = isValid ? getOrderAmount(o) : 0
     totalRev += amt
 
-    const dtVal = o.createdAt || o.paidAt || o.completedAt || o.timestamp || o.date
+    const dtVal = o.paidAt || o.completedAt || o.createdAt || o.timestamp || o.date
     if (dtVal) {
       const hour24 = getLocalHourIST(dtVal)
       if (hour24 >= 0 && hour24 <= 23) {
@@ -4847,11 +4997,11 @@ app.get('/api/reports/pnl', (req, res) => {
   // Net Profit
   const netProfit = grossProfit - totalExpenses
 
-  // Cancelled orders
-  const cancelledOrders = orders.filter(o =>
-    o.createdAt && o.createdAt.slice(0, 10) >= fromStr && o.createdAt.slice(0, 10) <= toStr &&
-    o.status === 'cancelled'
-  )
+  // Cancelled orders (bucketed by the same IST-normalized order date used by every other report)
+  const cancelledOrders = orders.filter(o => {
+    const dStr = getOrderDate(o)
+    return o.status === 'cancelled' && dStr >= fromStr && dStr <= toStr
+  })
   const cancelledRevenue = cancelledOrders.reduce((sum, o) => sum + (o.total || 0), 0)
 
   res.json({
@@ -5061,37 +5211,6 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
 })
 
 // ============ POS ORDERS LIST FOR BILLING COUNTER & REPORTS ============
-app.get('/api/pos/orders', (req, res) => {
-  try {
-    const { status } = req.query
-    const includeCancelled = req.query.includeCancelled === 'true' || req.query.report === 'kot-cancelled'
-
-    let list = getFilteredOrdersForPeriod(req.query, true)
-
-    if (!includeCancelled) {
-      list = list.filter(o => {
-        if (!o) return false
-        const s = (o.status || '').toLowerCase()
-        return s !== 'cancelled' && s !== 'canceled' && s !== 'void' && !o.isCancelled && !o.isVoid
-      })
-    }
-
-    if (status) {
-      const normStatus = status.toLowerCase()
-      if (normStatus === 'completed') {
-        list = getCompletedSales(req.query)
-      } else {
-        list = list.filter(o => (o.status || '').toLowerCase() === normStatus)
-      }
-    }
-
-    res.json(list || [])
-  } catch (err) {
-    console.error('[POS ORDERS API ERROR]', err)
-    res.status(500).json({ error: 'Failed to fetch orders' })
-  }
-})
-
 // Purchase Orders Report
 app.get('/api/reports/purchase-orders', (req, res) => {
   const { from, to } = req.query

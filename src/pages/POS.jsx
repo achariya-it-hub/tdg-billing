@@ -92,9 +92,10 @@ export default function POS() {
   const { categories, menuItems, fetchCategories, fetchMenuItems } = useMenuStore()
   const {
     currentOrder, addItem, updateItemQuantity, removeItem,
-    setOrderType, setTableNumber, setCustomerName, setCustomerPhone, setComplimentary, setSpecialRemarks, clearOrder,
-    setInaugurationOffer, setSpecialOffer20, getDiscount,
-    holdOrder, recallOrder, heldOrders, getSubtotal, getTax, getTotal, placeOrder
+    setOrderType, setTableNumber, setCustomerName, setCustomerPhone, setCustomer, setCustomerDiscountPct, clearCustomer, setComplimentary, setSpecialRemarks, clearOrder,
+    setInaugurationOffer, setSpecialOffer20, setVip50, getDiscount,
+    holdOrder, recallOrder, heldOrders, getSubtotal, getTax, getTotal, placeOrder,
+    loadCampaigns, campaigns
   } = useOrderStore()
 
   const [selectedCategory, setSelectedCategory] = useState(null)
@@ -124,6 +125,14 @@ export default function POS() {
   const [selectedVeggies, setSelectedVeggies] = useState(['Lettuce', 'Onion'])
   const [gyroNotes, setGyroNotes] = useState('')
   const [deliveryEnabled, setDeliveryEnabled] = useState(true)
+  const [vipChecking, setVipChecking] = useState(false)
+  const [vipStatus, setVipStatus] = useState('') // '', 'vip', 'notvip'
+
+  // Customer search (by phone or name) with stored discount
+  const [customerSearch, setCustomerSearch] = useState('')
+  const [customerResults, setCustomerResults] = useState([])
+  const [searchingCustomer, setSearchingCustomer] = useState(false)
+  const [showCustomerDropdown, setShowCustomerDropdown] = useState(false)
 
   // 2-Gyro Dual Customizer State for Combos (Duo Gyro Feast, Double Crunch Box, Den's Party Meal)
   const [selectedGyro1Protein, setSelectedGyro1Protein] = useState('Chicken')
@@ -147,7 +156,73 @@ export default function POS() {
         }
       })
       .catch(() => {})
+    loadCampaigns()
   }, [])
+
+  const handlePhoneChange = async (e) => {
+    const phone = e.target.value
+    await setCustomerPhone(phone)
+    const clean = String(phone || '').replace(/\D/g, '')
+    if (clean.length >= 10) {
+      setVipChecking(true)
+      setVipStatus('')
+      try {
+        const res = await fetch(`${API_BASE}/api/customers/check-discount?phone=${clean}`)
+        if (res.ok) {
+          const data = await res.json()
+          if (data.hasDiscount && Number(data.discountPct || 0) > 0) {
+            setVipStatus(Number(data.discountPct) === 50 ? 'vip' : 'discount')
+          } else {
+            setVipStatus('notvip')
+          }
+        } else {
+          setVipStatus('notvip')
+        }
+      } catch (err) {
+        setVipStatus('notvip')
+      } finally {
+        setVipChecking(false)
+      }
+    } else {
+      setVipStatus('')
+    }
+  }
+
+  // Search customers by phone or name (debounced)
+  useEffect(() => {
+    const q = customerSearch.trim()
+    if (q.length < 2) {
+      setCustomerResults([])
+      setShowCustomerDropdown(false)
+      return
+    }
+    const t = setTimeout(async () => {
+      setSearchingCustomer(true)
+      try {
+        const res = await fetch(`${API_BASE}/api/customers/search?q=${encodeURIComponent(q)}`)
+        if (res.ok) {
+          const data = await res.json()
+          setCustomerResults(data.customers || [])
+          setShowCustomerDropdown(true)
+        }
+      } catch (err) {
+        console.warn('Customer search failed', err)
+      } finally {
+        setSearchingCustomer(false)
+      }
+    }, 350)
+    return () => clearTimeout(t)
+  }, [customerSearch])
+
+  const selectCustomer = (cust) => {
+    setCustomer({ ...cust, customerName: cust.customerName, phone: cust.phone, discountPct: cust.discountPct })
+    setCustomerSearch('')
+    setCustomerResults([])
+    setShowCustomerDropdown(false)
+    if (cust.discountPct === 50) setVipStatus('vip')
+    else if (cust.discountPct > 0) setVipStatus('discount')
+    else setVipStatus('notvip')
+  }
 
   const handleSelectOrderType = (type) => {
     if (type === 'delivery' && !deliveryEnabled) {
@@ -344,6 +419,12 @@ export default function POS() {
   const [lastPlacedOrder, setLastPlacedOrder] = useState(null)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
 
+  // Pay Mode popup state (#2 - settle bill at the moment of raising the order)
+  const [showPayModal, setShowPayModal] = useState(false)
+  const [splitCash, setSplitCash] = useState('')
+  const [splitUpi, setSplitUpi] = useState('')
+  const [splitCard, setSplitCard] = useState('')
+
   const handlePlaceOrder = async () => {
     if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place order'); return }
     setProcessing(true)
@@ -363,6 +444,50 @@ export default function POS() {
     setProcessing(false)
   }
 
+  const openPayModal = () => {
+    if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place order'); return }
+    setSplitCash('')
+    setSplitUpi('')
+    setSplitCard('')
+    setShowPayModal(true)
+  }
+
+  const confirmPay = async (method) => {
+    setShowPayModal(false)
+    setProcessing(true)
+    try {
+      let splitPayments
+      let finalMethod = method
+      if (method === 'split') {
+        const c = Number(splitCash) || 0
+        const u = Number(splitUpi) || 0
+        const cd = Number(splitCard) || 0
+        const sum = c + u + cd
+        const totalAmt = currentOrder.complimentary ? 0 : Math.round(getTotal())
+        if (sum !== totalAmt) {
+          toast.error(`Split amounts total ₹${sum} does not match bill total ₹${totalAmt}. Please adjust!`)
+          setProcessing(false)
+          setShowPayModal(true)
+          return
+        }
+        splitPayments = { cash: c, upi: u, card: cd }
+        finalMethod = 'split'
+      }
+      const settleMethod = currentOrder.complimentary ? 'complimentary' : finalMethod
+      const newOrder = await placeOrder(settleMethod, true, splitPayments)
+      toast.success(`Order #${newOrder.orderNumber || newOrder.id} settled via ${currentOrder.complimentary ? 'COMPLIMENTARY' : settleMethod.toUpperCase()}!`)
+      setShowCart(false)
+      if (newOrder) {
+        setLastPlacedOrder(newOrder)
+        setShowSuccessModal(true)
+        if (newOrder.id) printedOrderIdsRef.current.add(String(newOrder.id))
+        if (newOrder.orderNumber) printedOrderIdsRef.current.add(String(newOrder.orderNumber))
+        PrintService.printKOTAndBill(newOrder, true)
+      }
+    }
+    catch (err) { console.error('Settle error:', err); toast.error('Failed: ' + err.message); setShowPayModal(true) }
+    setProcessing(false)
+  }
   const handleDirectSettle = async (method) => {
     if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place and settle order'); return }
     setProcessing(true)
@@ -575,7 +700,26 @@ export default function POS() {
               )
             })}
           </div>
-          <input type="tel" placeholder="Customer Phone" value={currentOrder.customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} style={{ ...inputStyle, marginBottom: '12px' }} />
+          <div style={{ position: 'relative', marginBottom: '12px' }}>
+            <input type="text" placeholder="🔍 Search Customer by Phone or Name (auto discount)" value={customerSearch} onChange={e => setCustomerSearch(e.target.value)} style={inputStyle} />
+            {showCustomerDropdown && customerResults.length > 0 && (
+              <div style={{ position: 'absolute', zIndex: 60, top: '100%', left: 0, right: 0, maxHeight: '170px', overflow: 'auto', borderRadius: '10px', background: 'white', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.12)' }}>
+                {customerResults.map((c, idx) => (
+                  <button key={idx} onClick={() => selectCustomer(c)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '10px', border: 'none', borderBottom: '1px solid #f1f5f9', background: 'white', cursor: 'pointer', textAlign: 'left' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#1e293b' }}>{c.customerName}</span>
+                    <span style={{ fontSize: '11px', fontWeight: 800, color: c.discountPct >= 50 ? '#7c3aed' : '#dc2626', background: c.discountPct >= 50 ? '#f5f3ff' : '#fef2f2', padding: '2px 8px', borderRadius: '12px' }}>{c.discountPct}% OFF</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          {searchingCustomer && <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '8px' }}>Searching customers...</div>}
+          {currentOrder.customerName && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12px', fontWeight: 700, color: '#1e293b', background: '#f8fafc', padding: '8px 10px', borderRadius: '8px' }}>
+              <span>👤 {currentOrder.customerName}{currentOrder.customerDiscountPct > 0 && <span style={{ color: currentOrder.customerDiscountPct >= 50 ? '#7c3aed' : '#dc2626' }}> — {currentOrder.customerDiscountPct}% OFF</span>}</span>
+              <button onClick={clearCustomer} style={{ fontSize: '10px', fontWeight: 700, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
+            </div>
+          )}
           <div style={{ maxHeight: '300px', overflow: 'auto', marginBottom: '16px' }}>
             {currentOrder.items.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '40px', color: '#9ca3af' }}>No items yet</div>
@@ -598,14 +742,21 @@ export default function POS() {
                 }}>{type || 'Chargeable'}</button>
               ))}
             </div>
-            <button onClick={handlePlaceOrder} disabled={processing || currentOrder.items.length === 0} style={{
+            <button onClick={openPayModal} disabled={processing || currentOrder.items.length === 0} style={{
               width: '100%', padding: '16px', border: 'none', borderRadius: '14px', fontSize: '16px', fontWeight: 700,
               background: processing ? '#9ca3af' : currentOrder.complimentary ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #e63946, #c1121f)',
               color: 'white', cursor: processing || currentOrder.items.length === 0 ? 'not-allowed' : 'pointer',
               boxShadow: processing ? 'none' : currentOrder.complimentary ? '0 4px 16px rgba(245,158,11,0.3)' : '0 4px 16px rgba(230,57,70,0.35)',
+              marginBottom: '6px'
+            }}>
+              {processing ? 'Placing...' : currentOrder.complimentary ? `Place & Settle (FREE)` : `⚡ Place & Settle • ₹${getTotal().toFixed(0)}`}
+            </button>
+            <button onClick={handlePlaceOrder} disabled={processing || currentOrder.items.length === 0} style={{
+              width: '100%', padding: '10px', border: '1px dashed #cbd5e1', borderRadius: '12px', fontSize: '12px', fontWeight: 700,
+              background: '#f1f5f9', color: '#64748b', cursor: processing || currentOrder.items.length === 0 ? 'not-allowed' : 'pointer',
               marginBottom: '10px'
             }}>
-              {processing ? 'Placing...' : currentOrder.complimentary ? `Place (Complimentary)` : `Place Order (Pending) • ₹${getTotal().toFixed(0)}`}
+              Place as Pending (Kitchen Only)
             </button>
 
             {/* Quick Settle & Pay Buttons Mobile */}
@@ -769,7 +920,32 @@ export default function POS() {
 
         {(currentOrder.type === 'dine-in' || currentOrder.type === 'takeaway' || currentOrder.type === 'delivery') && (
           <div style={{ padding: '8px 12px', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-            <input type="tel" placeholder="Customer Phone" value={currentOrder.customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} style={{ ...inputStyle, padding: '6px 10px', fontSize: '12px' }} />
+            <input type="text" placeholder="🔍 Search Customer by Phone or Name (auto discount)" value={customerSearch} onChange={e => setCustomerSearch(e.target.value)} style={{ ...inputStyle, padding: '6px 10px', fontSize: '12px' }} />
+            {showCustomerDropdown && customerResults.length > 0 && (
+              <div style={{ marginTop: '4px', maxHeight: '160px', overflow: 'auto', borderRadius: '10px', background: 'white', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', zIndex: 50, position: 'relative' }}>
+                {customerResults.map((c, idx) => (
+                  <button key={idx} onClick={() => selectCustomer(c)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '8px 10px', border: 'none', borderBottom: '1px solid #f1f5f9', background: 'white', cursor: 'pointer', textAlign: 'left' }}>
+                    <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#1e293b' }}>{c.customerName}</span>
+                    <span style={{ fontSize: '10.5px', fontWeight: 800, color: c.discountPct >= 50 ? '#7c3aed' : '#dc2626', background: c.discountPct >= 50 ? '#f5f3ff' : '#fef2f2', padding: '2px 8px', borderRadius: '12px' }}>
+                      {c.discountPct}% OFF{c.phone ? ` • ${c.phone}` : ''}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+            {searchingCustomer && <div style={{ fontSize: '10px', color: '#64748b', marginTop: '4px' }}>Searching customers...</div>}
+            {currentOrder.customerName && (
+              <div style={{ fontSize: '10.5px', fontWeight: 700, color: '#1e293b', marginTop: '4px' }}>
+                👤 {currentOrder.customerName}{currentOrder.customerPhone ? ` • ${currentOrder.customerPhone}` : ''}
+                {currentOrder.customerDiscountPct > 0 && <span style={{ color: currentOrder.customerDiscountPct >= 50 ? '#7c3aed' : '#dc2626' }}> — {currentOrder.customerDiscountPct}% OFF auto-applied</span>}
+              </div>
+            )}
+            {currentOrder.customerName && (
+              <button onClick={() => { clearCustomer() }} style={{ fontSize: '10px', fontWeight: 600, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0' }}>
+                ✕ Remove customer / discount
+              </button>
+            )}
+            {vipStatus === 'notvip' && !currentOrder.customerName && <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>No discount customer found for this entry</div>}
           </div>
         )}
         <div style={{
@@ -838,6 +1014,12 @@ export default function POS() {
                 <span>-₹{getDiscount().toFixed(2)}</span>
               </div>
             )}
+            {currentOrder.vip50 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#7c3aed', fontWeight: 700 }}>
+                <span>👑 VIP Offer (50% OFF):</span>
+                <span>-₹{getDiscount().toFixed(2)}</span>
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>GST (5%):</span>
               <span>₹{getTax().toFixed(2)}</span>
@@ -882,6 +1064,19 @@ export default function POS() {
             >
               🎉 {currentOrder.inaugurationOffer ? '50% OFF ACTIVE' : '50% OFF Offer'}
             </button>
+            <button
+              type="button"
+              onClick={() => setVip50(!currentOrder.vip50)}
+              style={{
+                flex: 1, padding: '6px 4px', borderRadius: '8px',
+                border: currentOrder.vip50 ? '2px solid #7c3aed' : '1px solid #cbd5e1',
+                background: currentOrder.vip50 ? '#7c3aed' : '#f8fafc',
+                color: currentOrder.vip50 ? '#ffffff' : '#334155',
+                fontWeight: 700, fontSize: '10.5px', cursor: 'pointer', textAlign: 'center'
+              }}
+            >
+              👑 {currentOrder.vip50 ? 'VIP 50% ACTIVE' : 'VIP 50%'}
+            </button>
           </div>
 
           {/* Remarks & Complimentary Compact */}
@@ -902,13 +1097,19 @@ export default function POS() {
             <Button variant="secondary" size="sm" onClick={clearOrder} style={{ flex: 1, borderRadius: '8px', padding: '6px', fontSize: '12px' }}>Clear</Button>
           </div>
 
-          <Button fullWidth size="lg" onClick={handlePlaceOrder} disabled={currentOrder.items.length === 0 || processing}
+          <Button fullWidth size="lg" onClick={openPayModal} disabled={currentOrder.items.length === 0 || processing}
             variant={currentOrder.complimentary ? 'warning' : 'primary'}
-            style={{ borderRadius: '10px', padding: '10px', fontSize: '14px', fontWeight: 800, boxShadow: '0 4px 14px rgba(230,57,70,0.3)', marginBottom: '8px' }}
+            style={{ borderRadius: '10px', padding: '10px', fontSize: '14px', fontWeight: 800, boxShadow: '0 4px 14px rgba(230,57,70,0.3)', marginBottom: '6px' }}
           >
-            {processing ? 'Placing...' : currentOrder.complimentary ? `Place Order (Free)` : `Place Order (Pending) • ₹${getTotal().toFixed(0)}`}
+            {processing ? 'Placing...' : currentOrder.complimentary ? `Place & Settle (FREE) • ₹0` : `⚡ Place & Settle • ${getTotal().toFixed(0)}`}
           </Button>
 
+          <Button fullWidth size="sm" onClick={handlePlaceOrder} disabled={currentOrder.items.length === 0 || processing}
+            variant="secondary"
+            style={{ borderRadius: '8px', padding: '6px', fontSize: '11px', backgroundColor: '#f1f5f9', color: '#64748b', marginBottom: '8px', border: '1px dashed #cbd5e1' }}
+          >
+            Place as Pending (Kitchen Only)
+          </Button>
           {/* Quick Direct Settle Buttons */}
           <div style={{ background: '#f8fafc', padding: '8px', borderRadius: '10px', border: '1.5px dashed #cbd5e1' }}>
             <div style={{ fontSize: '10.5px', fontWeight: 800, color: '#047857', marginBottom: '6px', textAlign: 'center', letterSpacing: '0.5px' }}>
@@ -1390,6 +1591,87 @@ export default function POS() {
             </Button>
           </div>
 
+        </div>
+      </Modal>
+
+      {/* Pay Mode Popup (#2) — settle bill immediately */}
+      <Modal isOpen={showPayModal} onClose={() => setShowPayModal(false)} title={currentOrder.complimentary ? '🎁 Confirm Complimentary Order' : '💳 Select Pay Mode & Settle'} size="md">
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderRadius: '12px', background: '#1e293b', color: '#fff', marginBottom: '16px' }}>
+            <span style={{ fontSize: '13px', fontWeight: 700 }}>Bill Total</span>
+            <span style={{ fontSize: '22px', fontWeight: 900, color: '#f87171' }}>{currentOrder.complimentary ? '₹0.00' : `₹${getTotal().toFixed(2)}`}</span>
+          </div>
+          {currentOrder.complimentary && (
+            <div style={{ fontSize: '12px', color: '#92400e', background: '#fffbeb', border: '1px solid #fcd34d', padding: '10px', borderRadius: '10px', marginBottom: '16px', fontWeight: 600 }}>
+              🎁 Complimentary ({currentOrder.complimentaryType || 'Complimentary'}) — this bill will be marked free, no payment collected.
+            </div>
+          )}
+
+          {currentOrder.complimentary ? (
+            <button onClick={() => confirmPay('complimentary')} disabled={processing} style={{ width: '100%', padding: '16px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', fontWeight: 800, fontSize: '15px', cursor: 'pointer', marginBottom: '10px' }}>
+              {processing ? 'Placing...' : 'Confirm Free Complimentary Bill'}
+            </button>
+          ) : (
+            <>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '12px' }}>
+                <button onClick={() => confirmPay('cash')} disabled={processing} style={{ padding: '16px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', fontWeight: 800, fontSize: '15px', cursor: 'pointer', boxShadow: '0 4px 14px rgba(16,185,129,0.3)' }}>
+                  💵 Cash
+                </button>
+                <button onClick={() => confirmPay('upi')} disabled={processing} style={{ padding: '16px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', color: 'white', fontWeight: 800, fontSize: '15px', cursor: 'pointer', boxShadow: '0 4px 14px rgba(37,99,235,0.3)' }}>
+                  📱 UPI
+                </button>
+                <button onClick={() => confirmPay('card')} disabled={processing} style={{ padding: '16px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', color: 'white', fontWeight: 800, fontSize: '15px', cursor: 'pointer', boxShadow: '0 4px 14px rgba(139,92,246,0.3)' }}>
+                  💳 Card
+                </button>
+                <button onClick={() => confirmPay('split')} disabled={processing} style={{ padding: '16px', borderRadius: '12px', border: '2px solid #e2e8f0', background: '#f8fafc', color: '#334155', fontWeight: 800, fontSize: '15px', cursor: 'pointer' }}>
+                  ➗ Split
+                </button>
+              </div>
+
+              {(() => {
+                const ssum = (Number(splitCash) || 0) + (Number(splitUpi) || 0) + (Number(splitCard) || 0)
+                const totalAmt = Math.round(getTotal())
+                return (
+                  <div style={{ background: '#f8fafc', border: '1.5px dashed #cbd5e1', borderRadius: '12px', padding: '12px' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 800, color: '#334155', marginBottom: '8px' }}>➗ Split Payment (amounts must equal ₹{totalAmt})</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '8px' }}>
+                      {[['Cash', 'cash', '#10b981'], ['UPI', 'upi', '#2563eb'], ['Card', 'card', '#8b5cf6']].map(([label, key, color]) => (
+                        <div key={key}>
+                          <div style={{ fontSize: '10px', fontWeight: 700, color, marginBottom: '4px', textAlign: 'center' }}>{label}</div>
+                          <input
+                            type="number"
+                            placeholder="0"
+                            value={key === 'cash' ? splitCash : key === 'upi' ? splitUpi : splitCard}
+                            onChange={e => key === 'cash' ? setSplitCash(e.target.value) : key === 'upi' ? setSplitUpi(e.target.value) : setSplitCard(e.target.value)}
+                            min="0"
+                            style={{ width: '100%', boxSizing: 'border-box', padding: '8px', borderRadius: '8px', border: '1.5px solid #cbd5e1', textAlign: 'center', fontSize: '14px', fontWeight: 700, outline: 'none' }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ fontSize: '11px', fontWeight: 700, color: ssum === totalAmt ? '#059669' : '#dc2626', textAlign: 'center' }}>
+                      {ssum === totalAmt ? '✓ Matches bill total' : `Total entered: ₹${ssum} (needs ₹${totalAmt})`}
+                    </div>
+                  </div>
+                )
+              })()}
+
+              <button onClick={() => confirmPay('split')} disabled={processing}
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', fontWeight: 800, fontSize: '14px', cursor: processing ? 'not-allowed' : 'pointer', marginTop: '10px' }}>
+                ➗ Confirm Split & Settle
+              </button>
+            </>
+          )}
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', borderTop: '1px solid #f1f5f9', paddingTop: '12px' }}>
+            <button onClick={() => { setShowPayModal(false); handlePlaceOrder() }} disabled={processing}
+              style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '12.5px', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>
+              Place as Pending (Kitchen Only)
+            </button>
+            <button onClick={() => setShowPayModal(false)} style={{ background: 'none', border: 'none', color: '#6b7280', fontSize: '13px', cursor: 'pointer', fontWeight: 600 }}>
+              Cancel
+            </button>
+          </div>
         </div>
       </Modal>
 

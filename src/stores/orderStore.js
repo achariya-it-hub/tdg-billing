@@ -1,14 +1,29 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-const isSpecial20Active = () => {
+const IST_DATE_STR = () => {
   try {
     const now = new Date()
-    const endDate = new Date('2026-08-02T23:59:59+05:30')
-    return now <= endDate
+    const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now).split('-')
+    return `${parts[0]}-${parts[1]}-${parts[2]}`
   } catch (e) {
-    return true
+    return new Date().toISOString().slice(0, 10)
   }
+}
+
+const DEFAULT_CAMPAIGNS = {
+  inauguration: { active: true, date: '2026-07-27', pct: 50, label: 'Inauguration Offer 50%' },
+  special20: { active: true, from: '2026-07-29', to: '2026-08-02', pct: 20, label: 'Special Offer 20%' },
+  vip50: { active: true, pct: 50, label: 'VIP 50% OFF' }
+}
+
+// Is a campaign window active today (IST)?
+function campaignWindowActive(cfg) {
+  if (!cfg || !cfg.active) return false
+  const today = IST_DATE_STR()
+  if (cfg.date) return today === cfg.date
+  if (cfg.from && cfg.to) return today >= cfg.from && today <= cfg.to
+  return true
 }
 
 export const useOrderStore = create(
@@ -20,14 +35,48 @@ export const useOrderStore = create(
     tableNumber: '',
     customerName: '',
     customerPhone: '',
+    customerDiscountPct: 0,
     notes: '',
     complimentary: false,
     complimentaryType: '',
     inaugurationOffer: false,
-    specialOffer20: isSpecial20Active()
+    specialOffer20: false,
+    vip50: false
   },
   orders: [],
   heldOrders: [],
+  campaigns: DEFAULT_CAMPAIGNS,
+
+  loadCampaigns: async () => {
+    try {
+      const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
+      const res = await fetch(`${apiUrl}/api/settings`)
+      if (res.ok) {
+        const settings = await res.json()
+        if (settings && settings.campaigns) {
+          set({ campaigns: { ...DEFAULT_CAMPAIGNS, ...settings.campaigns } })
+          get().refreshActiveOffers()
+        }
+      }
+    } catch (e) {
+      console.warn('Campaign config fetch failed, using defaults', e)
+    }
+  },
+
+  // Recompute which offers are legitimately active based on date windows + VIP phone
+  refreshActiveOffers: () => {
+    const order = get().currentOrder
+    const c = get().campaigns || DEFAULT_CAMPAIGNS
+    const inaActive = campaignWindowActive(c.inauguration)
+    const s20Active = campaignWindowActive(c.special20)
+    set(state => ({
+      currentOrder: {
+        ...state.currentOrder,
+        inaugurationOffer: order.inaugurationOffer && inaActive,
+        specialOffer20: order.specialOffer20 && s20Active
+      }
+    }))
+  },
 
   addItem: (item) => {
     set(state => {
@@ -86,9 +135,79 @@ export const useOrderStore = create(
   setCustomerName: (customerName) => {
     set(state => ({ currentOrder: { ...state.currentOrder, customerName } }))
   },
-  
-  setCustomerPhone: (customerPhone) => {
+
+  // Attach a known customer (matched by phone or name) with their stored discount %.
+  // Setting a customer discount drives both the POS totals display and the placed bill.
+  setCustomer: (customer) => {
+    set(state => ({
+      currentOrder: {
+        ...state.currentOrder,
+        customerName: (customer && customer.customerName) || (customer && customer.name) || state.currentOrder.customerName,
+        customerPhone: (customer && customer.phone) || state.currentOrder.customerPhone,
+        customerDiscountPct: customer ? Math.min(90, Math.round(Number(customer.discountPct) || 0)) : 0
+      }
+    }))
+  },
+
+  setCustomerPhone: async (customerPhone) => {
     set(state => ({ currentOrder: { ...state.currentOrder, customerPhone } }))
+    // Look up the customer discount (any %) by phone; auto-fill their name too
+    const clean = String(customerPhone || '').replace(/\D/g, '')
+    if (clean.length >= 10) {
+      try {
+        const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
+        const res = await fetch(`${apiUrl}/api/customers/check-discount?phone=${clean}`)
+        if (res.ok) {
+          const data = await res.json()
+          if (data.hasDiscount && Number(data.discountPct || 0) > 0) {
+            get().setCustomer({
+              customerName: data.customerName,
+              phone: data.phone,
+              discountPct: data.discountPct
+            })
+          } else {
+            get().setCustomerDiscountPct(0)
+          }
+        } else {
+          get().setCustomerDiscountPct(0)
+        }
+      } catch (e) {
+        console.warn('Customer discount check failed', e)
+      }
+    } else {
+      get().setCustomerDiscountPct(0)
+    }
+  },
+
+  setCustomerDiscountPct: (pct) => {
+    set(state => ({
+      currentOrder: {
+        ...state.currentOrder,
+        customerDiscountPct: Math.min(90, Math.max(0, Math.round(Number(pct) || 0)))
+      }
+    }))
+  },
+
+  clearCustomer: () => {
+    set(state => ({
+      currentOrder: {
+        ...state.currentOrder,
+        customerName: '',
+        customerPhone: '',
+        customerDiscountPct: 0
+      }
+    }))
+  },
+
+  setVip50: (enabled) => {
+    set(state => ({
+      currentOrder: {
+        ...state.currentOrder,
+        vip50: !!enabled,
+        inaugurationOffer: false,
+        specialOffer20: false
+      }
+    }))
   },
   
   setNotes: (notes) => {
@@ -117,12 +236,14 @@ export const useOrderStore = create(
         tableNumber: '',
         customerName: '',
         customerPhone: '',
+        customerDiscountPct: 0,
         notes: '',
         complimentary: false,
         complimentaryType: '',
         specialRemarks: '',
         inaugurationOffer: false,
-        specialOffer20: isSpecial20Active()
+        specialOffer20: false,
+        vip50: false
       }
     })
   },
@@ -150,7 +271,8 @@ export const useOrderStore = create(
       currentOrder: {
         ...state.currentOrder,
         inaugurationOffer: !!enabled,
-        specialOffer20: enabled ? false : state.currentOrder.specialOffer20
+        specialOffer20: enabled ? false : state.currentOrder.specialOffer20,
+        vip50: enabled ? false : state.currentOrder.vip50
       }
     }))
   },
@@ -160,7 +282,8 @@ export const useOrderStore = create(
       currentOrder: {
         ...state.currentOrder,
         specialOffer20: !!enabled,
-        inaugurationOffer: enabled ? false : state.currentOrder.inaugurationOffer
+        inaugurationOffer: enabled ? false : state.currentOrder.inaugurationOffer,
+        vip50: enabled ? false : state.currentOrder.vip50
       }
     }))
   },
@@ -171,8 +294,11 @@ export const useOrderStore = create(
 
   getDiscount: () => {
     const raw = get().getRawSubtotal()
-    if (get().currentOrder.inaugurationOffer) return Math.round(raw * 0.5)
-    if (get().currentOrder.specialOffer20) return Math.round(raw * 0.2)
+    const order = get().currentOrder
+    if (order.customerDiscountPct > 0) return Math.round(raw * order.customerDiscountPct / 100)
+    if (order.vip50) return Math.round(raw * 0.5)
+    if (order.inaugurationOffer) return Math.round(raw * 0.5)
+    if (order.specialOffer20) return Math.round(raw * 0.2)
     return 0
   },
   
@@ -223,6 +349,9 @@ export const useOrderStore = create(
             total,
             inaugurationOffer: order.inaugurationOffer || false,
             specialOffer20: order.specialOffer20 || false,
+            vip50: order.vip50 || false,
+            customerDiscountPct: order.customerDiscountPct || 0,
+            date: IST_DATE_STR(),
             paymentMethod: paymentMethod || 'cash',
             settleDirectly: Boolean(settleDirectly),
             splitPayments,
@@ -274,7 +403,7 @@ export const useOrderStore = create(
       set(state => ({ orders: [newOrder, ...state.orders] }))
       
       set({
-        currentOrder: { items: [], type: 'dine-in', tableNumber: '', customerName: '', customerPhone: '', notes: '', complimentary: false, complimentaryType: '', specialRemarks: '' }
+        currentOrder: { items: [], type: 'dine-in', tableNumber: '', customerName: '', customerPhone: '', customerDiscountPct: 0, notes: '', complimentary: false, complimentaryType: '', specialRemarks: '', inaugurationOffer: false, specialOffer20: false, vip50: false }
       })
       
       console.log('Order placed:', newOrder)
