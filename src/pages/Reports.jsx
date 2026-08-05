@@ -116,7 +116,11 @@ export default function Reports() {
   const [loading, setLoading] = useState(false)
   const [showExportMenu, setShowExportMenu] = useState(false)
 
-  const [customDate, setCustomDate] = useState(() => {
+  const [customFromDate, setCustomFromDate] = useState(() => {
+    const today = new Date()
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+  })
+  const [customToDate, setCustomToDate] = useState(() => {
     const today = new Date()
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
   })
@@ -132,7 +136,7 @@ export default function Reports() {
 
   const getQueryParams = () => {
     if (dateRange === 'custom') {
-      return `from=${customDate}&to=${customDate}&date=${customDate}&strict=true`
+      return `from=${customFromDate}&to=${customToDate}`
     }
     if (dateRange === 'today') {
       const tStr = formatLocalYYYYMMDD(new Date())
@@ -191,7 +195,7 @@ export default function Reports() {
       setLoading(false)
     }
     fetchData()
-  }, [activeReport, dateRange, customDate])
+  }, [activeReport, dateRange, customFromDate, customToDate])
 
   const getReportTitle = () => {
     switch (activeReport) {
@@ -1888,25 +1892,43 @@ export default function Reports() {
             <option value="week">🗓️ This Week</option>
             <option value="month">📅 This Month</option>
             <option value="all">🌐 All Time</option>
-            <option value="custom">📅 Select Specific Date...</option>
+            <option value="custom">📅 Specific Date Range...</option>
           </select>
 
           {dateRange === 'custom' && (
-            <input
-              type="date"
-              value={customDate}
-              onChange={(e) => setCustomDate(e.target.value)}
-              style={{
-                padding: '9px 14px',
-                borderRadius: '8px',
-                border: '1px solid #e63946',
-                fontSize: '14px',
-                fontWeight: 600,
-                outline: 'none',
-                color: '#1a1a2e',
-                background: '#fff'
-              }}
-            />
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <input
+                type="date"
+                value={customFromDate}
+                onChange={(e) => setCustomFromDate(e.target.value)}
+                style={{
+                  padding: '9px 14px',
+                  borderRadius: '8px',
+                  border: '1px solid #e63946',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  outline: 'none',
+                  color: '#1a1a2e',
+                  background: '#fff'
+                }}
+              />
+              <span style={{ fontWeight: 600, color: '#6b7280' }}>to</span>
+              <input
+                type="date"
+                value={customToDate}
+                onChange={(e) => setCustomToDate(e.target.value)}
+                style={{
+                  padding: '9px 14px',
+                  borderRadius: '8px',
+                  border: '1px solid #e63946',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  outline: 'none',
+                  color: '#1a1a2e',
+                  background: '#fff'
+                }}
+              />
+            </div>
           )}
           
           <div style={{ position: 'relative' }}>
