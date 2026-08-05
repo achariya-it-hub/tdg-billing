@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="./tdg-logo.png" />
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#e63946" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Ten Den Gyros" />
+    <link rel="apple-touch-icon" href="./icon-192.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="./icon-512.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <title>Ten Den Gyros</title>
+    <meta name="description" content="Premium Restaurant Management System - POS, Kitchen Display, Online Orders" />
+    <style>
+      body {
+        margin: 0;
+        background: #0f0f1a;
+        color: #1a1a2e;
+        font-family: 'Lexend Deca', 'Inter', -apple-system, sans-serif;
+      }
+      #root {
+        min-height: 100vh;
+      }
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        flex-direction: column;
+        gap: 24px;
+        background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
+      }
+      .loading-logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, rgba(230,57,70,0.15), rgba(230,57,70,0.05));
+        border: 1px solid rgba(230,57,70,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+      }
+      .loading-spinner {
+        width: 36px;
+        height: 36px;
+        border: 2px solid rgba(255,255,255,0.06);
+        border-top-color: #e63946;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      .loading-text {
+        color: rgba(255,255,255,0.3);
+        font-size: 14px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    <script type="module" crossorigin src="./assets/index-CPB44ZEm.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DKFSEZoQ.css">
+  </head>
+  <body>
+    <div id="root">
+      <div class="loading">
+        <div class="loading-logo">🍽️</div>
+        <div class="loading-spinner"></div>
+        <span class="loading-text">Loading Ten Den Gyros...</span>
+      </div>
+    </div>
+  </body>
+</html>
