@@ -15,9 +15,40 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 const JWT_SECRET = process.env.JWT_SECRET || 'tdg_secret_key_123'
-const DATA_DIR = process.env.DATA_DIR || __dirname
+
+// ─── Persistent Data Directory ──────────────────────────────────────────────
+// On Linux/Hostinger: use ~/tdg-data/ which is OUTSIDE public_html
+//   → never touched by git pull / redeploy → data survives forever
+// On Windows (local dev): keep using server/ folder as before
+const DEFAULT_DATA_DIR = process.env.DATA_DIR
+  ? process.env.DATA_DIR
+  : process.platform === 'linux'
+    ? join(process.env.HOME || '/home', 'tdg-data')
+    : __dirname
+
+const DATA_DIR = DEFAULT_DATA_DIR
+
+// Ensure the data directory exists
+if (!existsSync(DATA_DIR)) {
+  mkdirSync(DATA_DIR, { recursive: true })
+  console.log('[DATA] Created persistent data directory:', DATA_DIR)
+}
+
 const DB_PATH = join(DATA_DIR, 'db.json')
 const ORDER_LOG_PATH = join(DATA_DIR, 'order_log.jsonl')
+
+// ─── One-time migration: move db.json from old location to safe location ─────
+const OLD_DB_PATH = join(__dirname, 'db.json')
+if (!existsSync(DB_PATH) && existsSync(OLD_DB_PATH)) {
+  try {
+    const oldData = readFileSync(OLD_DB_PATH)
+    writeFileSync(DB_PATH, oldData)
+    console.log('[DATA MIGRATION] ✅ Moved db.json from', OLD_DB_PATH, '→', DB_PATH)
+    console.log('[DATA MIGRATION] Your data is now stored safely outside the Git folder.')
+  } catch (me) {
+    console.error('[DATA MIGRATION] ❌ Failed to migrate db.json:', me.message)
+  }
+}
 function appendOrderLog(order) {
   try {
     const line = JSON.stringify({ ts: new Date().toISOString(), id: order.id, orderNumber: order.orderNumber, total: order.total, date: order.date, paymentMethod: order.paymentMethod })
