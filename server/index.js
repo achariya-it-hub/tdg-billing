@@ -6731,15 +6731,20 @@ try {
 
 // Start server
 const PORT = process.env.PORT || 3001
-httpServer.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`)
+const onListen = () => {
+  console.log(`Server running on ${PORT}`)
   console.log(`Restored: ${orders.length} orders, ${loyaltyUsers.length} loyalty users, ${dens.length} dens, ${inventory.length} inventory items`)
-  // Schedule daily backup check every hour
   performDailyBackup()
   const DAILY_BACKUP_INTERVAL = 60 * 60 * 1000 // 1 hour
   setInterval(performDailyBackup, DAILY_BACKUP_INTERVAL)
   console.log('Daily backup scheduler active (checks every hour)')
-})
+}
+
+if (typeof PORT === 'string' && (PORT.startsWith('/') || PORT.startsWith('\\\\.\\pipe\\'))) {
+  httpServer.listen(PORT, onListen)
+} else {
+  httpServer.listen(Number(PORT) || 3001, '0.0.0.0', onListen)
+}
 
 // Graceful shutdown — save state before process exits (prevents data loss on deploy/restart)
 let isShuttingDown = false
