@@ -6704,9 +6704,17 @@ app.use((req, res, next) => {
 })
 
 if (resolvedDistPath) {
-  app.use(express.static(resolvedDistPath))
+  // Serve static assets with proper MIME types
+  app.use(express.static(resolvedDistPath, { index: false }))
+  app.use('/assets', express.static(join(resolvedDistPath, 'assets')))
+
+  // SPA navigation fallback: serve index.html ONLY for page routes (not for missing .js/.css files)
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api/') || req.path.startsWith('/socket.io/')) return next()
+    // If request has a file extension (.js, .css, .png, .svg, .json, etc.), return 404 instead of HTML
+    if (/\.[a-zA-Z0-9]+$/.test(req.path)) {
+      return res.status(404).send('Asset not found')
+    }
     const indexPath = join(resolvedDistPath, 'index.html')
     if (existsSync(indexPath)) {
       return res.sendFile(indexPath)
