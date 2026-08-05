@@ -6696,7 +6696,23 @@ async function seedAdmin() {
 seedAdmin()
 
 // Serve built frontend in production
-const distPath = join(__dirname, '..', 'dist')
+const possibleDistPaths = [
+  join(__dirname, '..', 'dist'),
+  join(process.cwd(), 'dist'),
+  join(__dirname, 'dist'),
+  join(process.cwd(), 'public_html', 'dist')
+]
+
+let resolvedDistPath = null
+for (const p of possibleDistPaths) {
+  try {
+    if (existsSync(p) && statSync(p).isDirectory()) {
+      resolvedDistPath = p
+      break
+    }
+  } catch (e) {}
+}
+
 const flutterWebPath = join(__dirname, '..', 'ttt', 'build', 'web')
 
 // Serve Flutter Web App for den.tendengyros.com subdomain
@@ -6707,7 +6723,6 @@ app.use((req, res, next) => {
       statSync(flutterWebPath)
       return express.static(flutterWebPath)(req, res, (err) => {
         if (err) return next(err)
-        // SPA fallback — serve Flutter web's index.html for non-asset routing
         res.sendFile(join(flutterWebPath, 'index.html'))
       })
     } catch (e) {
@@ -6717,16 +6732,22 @@ app.use((req, res, next) => {
   next()
 })
 
-try {
-  statSync(distPath)
-  app.use(express.static(distPath))
-  // SPA fallback — serve index.html for any non-API path
-  app.get(/^\/(?!api\/).*/, (req, res) => {
-    res.sendFile(join(distPath, 'index.html'))
+if (resolvedDistPath) {
+  app.use(express.static(resolvedDistPath))
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/socket.io/')) return next()
+    const indexPath = join(resolvedDistPath, 'index.html')
+    if (existsSync(indexPath)) {
+      return res.sendFile(indexPath)
+    }
+    next()
   })
-  console.log('Serving frontend from:', distPath)
-} catch {
-  console.log('No dist folder — frontend not served by server')
+  console.log('Serving frontend from:', resolvedDistPath)
+} else {
+  console.log('No dist folder found — registering root status handler')
+  app.get('/', (req, res) => {
+    res.status(200).json({ status: 'active', message: 'TDG Billing POS Server Online', ordersCount: orders.length })
+  })
 }
 
 // Start server
