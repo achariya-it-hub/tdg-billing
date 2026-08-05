@@ -28,8 +28,9 @@ try {
   const distSrc = join(root, 'dist')
   if (!existsSync(distSrc)) throw new Error('dist/ not found — build may have failed')
   cpSync(distSrc, join(stage, 'dist'), { recursive: true })
+  cpSync(distSrc, stage, { recursive: true })
   const distSize = countSize(distSrc)
-  console.log(`   ✓ dist/  (${distSize} files)`)
+  console.log(`   ✓ dist/  (${distSize} files copied to root & dist/)`)
 
   // Copy server/ — remove local-only files after copy
   const serverSrc = join(root, 'server')

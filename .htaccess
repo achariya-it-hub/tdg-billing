@@ -10,6 +10,9 @@
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  # Map /assets requests to dist/assets if requested at root level
+  RewriteRule ^assets/(.*)$ dist/assets/$1 [L]
+
   # Pass API and web requests through to Node.js backend if passenger module is proxying
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
