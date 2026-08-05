@@ -5,7 +5,7 @@ import { Server } from 'socket.io'
 import { v4 as uuid } from 'uuid'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync, renameSync } from 'fs'
+import { readFileSync, writeFileSync, appendFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync, renameSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import XLSX from 'xlsx'
@@ -17,6 +17,15 @@ const __dirname = dirname(__filename)
 const JWT_SECRET = process.env.JWT_SECRET || 'tdg_secret_key_123'
 const DATA_DIR = process.env.DATA_DIR || __dirname
 const DB_PATH = join(DATA_DIR, 'db.json')
+const ORDER_LOG_PATH = join(DATA_DIR, 'order_log.jsonl')
+function appendOrderLog(order) {
+  try {
+    const line = JSON.stringify({ ts: new Date().toISOString(), id: order.id, orderNumber: order.orderNumber, total: order.total, date: order.date, paymentMethod: order.paymentMethod })
+    appendFileSync(ORDER_LOG_PATH, line + '\n')
+  } catch (e) {
+    console.error('[ORDER LOG] Failed to append:', e.message)
+  }
+}
 
 process.on('uncaughtException', (err) => {
   console.error('CRITICAL: Uncaught Exception:', err)
@@ -3406,7 +3415,30 @@ app.post('/api/pos/orders', (req, res) => {
   
   orders.unshift(order)
   deductInventoryForOrder(order)
-  saveState()
+  
+  // EMERGENCY: Append to order log IMMEDIATELY (survives crashes)
+  appendOrderLog(order)
+  
+  // CRITICAL: Write order to disk IMMEDIATELY before responding
+  // This prevents data loss if server restarts before next saveState()
+  try {
+    saveState()
+  } catch (e) {
+    console.error('[ORDER PERSIST ERROR] saveState failed:', e.message)
+  }
+  
+  // Double-check: verify order is in db.json
+  try {
+    const verifyDb = readDb()
+    if (!verifyDb.orders || !verifyDb.orders.find(o => o.id === order.id)) {
+      console.error('[ORDER PERSIST] Order not in db.json, forcing write...')
+      const forceDb = readDb() || {}
+      forceDb.orders = [order, ...(forceDb.orders || [])]
+      writeDb(forceDb)
+    }
+  } catch (e) {
+    console.error('[ORDER PERSIST] Verify/force write failed:', e.message)
+  }
   
   // Emit to connected clients
   io.emit('order:created', order)
@@ -3438,7 +3470,13 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
     }
     order.updatedAt = new Date().toISOString()
     io.emit('order:updated', order)
-    saveState()
+    
+    // CRITICAL: Persist status change immediately
+    try {
+      saveState()
+    } catch (e) {
+      console.error('[ORDER STATUS PERSIST ERROR]:', e.message)
+    }
 
     // ASSET SYSTEM: When order completed, handle cashback + asset dined tracking
     if ((status === 'completed' || status === 'served') && order.customerPhone) {
