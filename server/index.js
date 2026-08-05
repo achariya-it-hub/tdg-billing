@@ -6731,7 +6731,7 @@ try {
 
 // Start server
 const PORT = process.env.PORT || 3001
-httpServer.listen(PORT, () => {
+httpServer.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`)
   console.log(`Restored: ${orders.length} orders, ${loyaltyUsers.length} loyalty users, ${dens.length} dens, ${inventory.length} inventory items`)
   // Schedule daily backup check every hour
