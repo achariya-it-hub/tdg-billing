@@ -360,10 +360,30 @@ let aggregators = [
   { id: 'direct', name: 'Direct', displayName: 'Direct Order', isActive: true, defaultPrepTime: 20, color: '#4895ef' }
 ]
 
-const VAULT_PATH = join(__dirname, 'sales_vault_LOCK.json')
-const MENU_VAULT_PATH = join(__dirname, 'menu_backup_LOCK.json')
-const INVENTORY_VAULT_PATH = join(__dirname, 'inventory_vault_LOCK.json')
-const SETTINGS_VAULT_PATH = join(__dirname, 'settings_vault_LOCK.json')
+// Vault files stored in DATA_DIR (~/tdg-data on Hostinger) — OUTSIDE Git folder
+// so they are NEVER overwritten by git pull / redeploy
+const VAULT_PATH = join(DATA_DIR, 'sales_vault_LOCK.json')
+const MENU_VAULT_PATH = join(DATA_DIR, 'menu_backup_LOCK.json')
+const INVENTORY_VAULT_PATH = join(DATA_DIR, 'inventory_vault_LOCK.json')
+const SETTINGS_VAULT_PATH = join(DATA_DIR, 'settings_vault_LOCK.json')
+
+// One-time migration: copy vault files from old server/ location to new DATA_DIR
+const OLD_VAULT_FILES = [
+  { old: join(__dirname, 'sales_vault_LOCK.json'), new: VAULT_PATH },
+  { old: join(__dirname, 'menu_backup_LOCK.json'), new: MENU_VAULT_PATH },
+  { old: join(__dirname, 'inventory_vault_LOCK.json'), new: INVENTORY_VAULT_PATH },
+  { old: join(__dirname, 'settings_vault_LOCK.json'), new: SETTINGS_VAULT_PATH }
+]
+for (const vf of OLD_VAULT_FILES) {
+  if (!existsSync(vf.new) && existsSync(vf.old)) {
+    try {
+      writeFileSync(vf.new, readFileSync(vf.old))
+      console.log('[VAULT MIGRATION] Moved', vf.old, '→', vf.new)
+    } catch (e) {
+      console.error('[VAULT MIGRATION] Failed for', vf.old, ':', e.message)
+    }
+  }
+}
 
 function syncSalesVault(currentOrders) {
   try {
@@ -592,8 +612,11 @@ function restoreState() {
     } catch (e) {}
   }
 
-  // Safety: if db.json is completely missing or empty
-  const isDbMissing = !existsSync(DB_PATH) || !db || !db.orders || db.orders.length === 0
+  // Safety: only fall back to seed if BOTH menu items AND orders are missing
+  // Do NOT treat 'no orders yet' as a broken database — that would wipe the user-saved menu
+  const hasMenuData = (db.menuItems && db.menuItems.length > 0) || (db.categories && db.categories.length > 0)
+  const hasOrderData = db.orders && db.orders.length > 0
+  const isDbMissing = !existsSync(DB_PATH) || !db || (!hasMenuData && !hasOrderData)
   if (isDbMissing) {
     let foundBackup = null
     if (existsSync(SEED_PATH)) {
@@ -602,10 +625,13 @@ function restoreState() {
         if (seedContent) foundBackup = JSON.parse(seedContent)
       } catch (e) {}
     }
-    if (!foundBackup || !foundBackup.orders || !foundBackup.orders.length) {
+    if (!foundBackup || (!foundBackup.orders?.length && !foundBackup.menuItems?.length)) {
       foundBackup = findLatestValidBackup()
     }
-    if (foundBackup) db = foundBackup
+    if (foundBackup) {
+      console.log('[RESTORE] DB was empty — loaded from seed/backup.')
+      db = foundBackup
+    }
   }
 
   // Sync with Vault Locks for absolute 100% data retention
