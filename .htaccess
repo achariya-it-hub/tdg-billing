@@ -1,6 +1,27 @@
 # TDG Billing — Hostinger Node.js Web App Configuration
 # Required by Hostinger LiteSpeed / CloudLinux / Phusion Passenger
 
+# Explicit MIME Types for ES Modules and Web Assets
+<IfModule mod_mime.c>
+  AddType application/javascript .js .mjs
+  AddType text/css .css
+  AddType image/svg+xml .svg
+  AddType application/json .json
+  AddType application/manifest+json .webmanifest
+</IfModule>
+
+# Enable CORS and prevent browser HTML caching
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+  <FilesMatch "\.(js|css|svg|json)$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+</IfModule>
+
 <IfModule mod_passenger.c>
   PassengerAppRoot "."
   PassengerBaseURI "/"
@@ -11,6 +32,7 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   # Map /assets requests to dist/assets if requested at root level
+  RewriteCond %{REQUEST_FILENAME} !-f
   RewriteRule ^assets/(.*)$ dist/assets/$1 [L]
 
   # Pass API and web requests through to Node.js backend if passenger module is proxying
