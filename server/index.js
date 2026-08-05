@@ -5,7 +5,7 @@ import { Server } from 'socket.io'
 import { v4 as uuid } from 'uuid'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { readFileSync, writeFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync, renameSync } from 'fs'
+import { readFileSync, writeFileSync, appendFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync, renameSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import XLSX from 'xlsx'
@@ -17,6 +17,15 @@ const __dirname = dirname(__filename)
 const JWT_SECRET = process.env.JWT_SECRET || 'tdg_secret_key_123'
 const DATA_DIR = process.env.DATA_DIR || __dirname
 const DB_PATH = join(DATA_DIR, 'db.json')
+const ORDER_LOG_PATH = join(DATA_DIR, 'order_log.jsonl')
+function appendOrderLog(order) {
+  try {
+    const line = JSON.stringify({ ts: new Date().toISOString(), id: order.id, orderNumber: order.orderNumber, total: order.total, date: order.date, paymentMethod: order.paymentMethod })
+    appendFileSync(ORDER_LOG_PATH, line + '\n')
+  } catch (e) {
+    console.error('[ORDER LOG] Failed to append:', e.message)
+  }
+}
 
 process.on('uncaughtException', (err) => {
   console.error('CRITICAL: Uncaught Exception:', err)
@@ -27,6 +36,22 @@ process.on('unhandledRejection', (reason, promise) => {
 
 function readDb() {
   try {
+    // Recover orphaned temp file (from interrupted writeDb)
+    const tmpPath = `${DB_PATH}.tmp`
+    if (existsSync(tmpPath)) {
+      try {
+        const tmpContent = readFileSync(tmpPath, 'utf-8').trim()
+        if (tmpContent) {
+          const tmpParsed = JSON.parse(tmpContent)
+          if (tmpParsed && typeof tmpParsed === 'object' && (tmpParsed.orders?.length || tmpParsed.menuItems?.length)) {
+            console.log('[DATA RECOVERY] Found orphaned tmp file, recovering...')
+            renameSync(tmpPath, DB_PATH)
+          }
+        }
+      } catch (re) {
+        console.error('[DATA RECOVERY] Failed to recover tmp file:', re.message)
+      }
+    }
     if (existsSync(DB_PATH)) {
       const content = readFileSync(DB_PATH, 'utf-8').trim()
       if (content && content !== '{}') {
@@ -271,13 +296,31 @@ let settings = {
       accessCode: process.env.CCAVENUE_ACCESS_CODE || '',
       isProduction: false,
       isEnabled: true
+    },
+    cashfree: {
+      appId: process.env.CASHFREE_APP_ID || '',
+      secretKey: process.env.CASHFREE_SECRET_KEY || '',
+      isProduction: false,
+      isEnabled: true
     }
+  },
+  msg91: {
+    authKey: process.env.MSG91_AUTH_KEY || '',
+    senderId: process.env.MSG91_SENDER_ID || 'TDGBIL',
+    templateId: process.env.MSG91_TEMPLATE_ID || '',
+    otpExpiry: 300,
+    isEnabled: true
   },
   offers: [
     { id: '1', title: 'Golden Gyro Feast (50% OFF)', desc: '1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink', tag: '50% OFF', price: '₹199', origPrice: '₹398', image: '/uploads/menu/m1.jpg' },
-    { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2 Garlic Dips + Fries', tag: 'SAVE ₹151', price: '₹299', origPrice: '₹450', image: '/uploads/menu/m2.jpg' },
-    { id: '3', title: 'BOGO Thick Shake Delight', desc: 'Buy 1 Kunafa Pistachio Shake & get Vanilla Shake Free', tag: 'BUY 1 GET 1', price: '₹149', origPrice: '₹298', image: '/uploads/menu/m3.jpg' }
-  ]
+    { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2x Dip + Sauce', tag: 'Save ₹151', price: '₹299', origPrice: '₹450', image: '/uploads/menu/m2.jpg' },
+    { id: '3', title: 'BOGO Thick Shake Delight', desc: 'Buy 1 Shake & get Vanilla Shake Free', tag: 'BUY 1 GET 1', price: '₹149', origPrice: '₹298', image: '/uploads/menu/m3.jpg' }
+  ],
+  campaigns: {
+    inauguration: { active: true, date: '2026-07-27', pct: 50, label: 'Inauguration Offer 50%' },
+    special20: { active: true, from: '2026-07-29', to: '2026-08-02', pct: 20, label: 'Special Offer 20%' },
+    vip50: { active: true, pct: 50, label: 'VIP 50% OFF' }
+  }
 }
 let aggregators = [
   { id: 'swiggy', name: 'Swiggy', displayName: 'Swiggy', isActive: true, defaultPrepTime: 25, color: '#ff5200' },
@@ -798,6 +841,46 @@ app.post('/api/assets/verify-otp', (req, res) => {
   res.status(400).json({ message: 'Pending asset not found for this phone number' })
 })
 
+// Resend OTP for asset verification
+app.post('/api/assets/resend-otp', async (req, res) => {
+  const { phone } = req.body
+  if (!phone) return res.status(400).json({ message: 'Phone required' })
+
+  const db = readDb()
+  for (const master of db.users || mobileAppUsers) {
+    const assets = master.assets || []
+    const asset = assets.find(a => a.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, '') && a.status === 'pending')
+    if (asset) {
+      const otp = generateOTP()
+      asset.otp = otp
+      asset.otpExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      writeDb(db)
+      const result = await sendMSG91OTP(phone, otp)
+      return res.json({ success: true, message: 'OTP resent', method: result.method })
+    }
+  }
+  res.status(400).json({ message: 'Pending asset not found' })
+})
+
+// Resend OTP for forgot password
+app.post('/api/auth/resend-otp', async (req, res) => {
+  const { phone } = req.body
+  if (!phone) return res.status(400).json({ message: 'Phone required' })
+
+  const db = readDb()
+  const user = db.users.find(u => u.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''))
+  if (!user) return res.status(404).json({ message: 'No account found with this phone number' })
+
+  const otp = generateOTP()
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString()
+  user.forgotPasswordOtp = otp
+  user.forgotPasswordOtpExpiry = otpExpiry
+  writeDb(db)
+
+  const result = await sendMSG91OTP(phone, otp)
+  res.json({ success: true, message: 'OTP resent', method: result.method })
+})
+
 // Auth - Signup
 app.post('/api/auth/signup', async (req, res) => {
   try {
@@ -920,8 +1003,59 @@ app.post('/api/auth/login', async (req, res) => {
   }
 })
 
+// ============ MSG91 OTP SERVICE ============
+async function sendMSG91OTP(phone, otp) {
+  const cfg = settings.msg91 || {}
+  if (!cfg.isEnabled || !cfg.authKey) {
+    console.log(`[MSG91] OTP for ${phone}: ${otp} (MSG91 not configured, logged only)`)
+    return { success: false, method: 'console' }
+  }
+  const cleanPhone = phone.replace(/[^0-9]/g, '')
+  const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
+
+  try {
+    const payload = {
+      mobile: formattedPhone,
+      otp: otp,
+      sender: cfg.senderId || 'TDGBIL',
+      otp_expiry: cfg.otpExpiry || 300
+    }
+    if (cfg.templateId) payload.template_id = cfg.templateId
+
+    const resp = await fetch('https://api.msg91.com/api/v5/otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'authkey': cfg.authKey
+      },
+      body: JSON.stringify(payload)
+    })
+    const data = await resp.json()
+    console.log(`[MSG91] OTP sent to ${formattedPhone}: ${resp.status}`, JSON.stringify(data))
+    return { success: resp.ok, data, method: 'msg91' }
+  } catch (err) {
+    console.error(`[MSG91] Failed to send OTP to ${formattedPhone}:`, err.message)
+    return { success: false, error: err.message, method: 'msg91' }
+  }
+}
+
+function generateOTP() {
+  return String(Math.floor(1000 + Math.random() * 9000))
+}
+
+// MSG91 config endpoint
+app.get('/api/msg91/config', (req, res) => {
+  const cfg = settings.msg91 || {}
+  res.json({
+    enabled: cfg.isEnabled !== false,
+    hasAuthKey: Boolean(cfg.authKey),
+    senderId: cfg.senderId || 'TDGBIL',
+    templateId: cfg.templateId || ''
+  })
+})
+
 // Auth - Forgot Password (send OTP)
-app.post('/api/auth/forgot-password', (req, res) => {
+app.post('/api/auth/forgot-password', async (req, res) => {
   const { phone } = req.body
   if (!phone) return res.status(400).json({ message: 'Phone number required' })
 
@@ -929,14 +1063,14 @@ app.post('/api/auth/forgot-password', (req, res) => {
   const user = db.users.find(u => u.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''))
   if (!user) return res.status(404).json({ message: 'No account found with this phone number' })
 
-  const otp = String(Math.floor(1000 + Math.random() * 9000))
-  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString() // 10 minutes
+  const otp = generateOTP()
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString()
   user.forgotPasswordOtp = otp
   user.forgotPasswordOtpExpiry = otpExpiry
   writeDb(db)
 
-  console.log(`[FORGOT PASSWORD] OTP for ${phone}: ${otp}`)
-  res.json({ success: true, message: 'OTP sent successfully' })
+  const result = await sendMSG91OTP(phone, otp)
+  res.json({ success: true, message: 'OTP sent successfully', method: result.method })
 })
 
 // Auth - Forgot Password (send OTP to Email)
@@ -978,10 +1112,10 @@ app.post('/api/auth/reset-password', async (req, res) => {
   
   if (!user) return res.status(404).json({ message: 'User not found' })
 
-  if (otp !== '1234' && (!user.forgotPasswordOtp || user.forgotPasswordOtp !== otp)) {
+  if (!user.forgotPasswordOtp || user.forgotPasswordOtp !== otp) {
     return res.status(400).json({ message: 'Invalid OTP' })
   }
-  if (otp !== '1234' && user.forgotPasswordOtpExpiry && new Date(user.forgotPasswordOtpExpiry) < new Date()) {
+  if (user.forgotPasswordOtpExpiry && new Date(user.forgotPasswordOtpExpiry) < new Date()) {
     return res.status(400).json({ message: 'OTP expired. Please request a new one.' })
   }
 
@@ -1495,10 +1629,10 @@ app.delete('/api/billing/users/:id', (req, res) => {
   res.json({ success: true })
 })
 
-// Get all mobile app customers
+// Get all mobile app customers + loyalty/staff users
 app.get('/api/customers', (req, res) => {
   const db = readDb()
-  const customers = (db.users || mobileAppUsers || []).map(u => ({
+  const mobileList = (db.users || mobileAppUsers || []).map(u => ({
     id: u.id,
     name: u.name || '',
     phone: u.phone || '',
@@ -1507,9 +1641,34 @@ app.get('/api/customers', (req, res) => {
     totalOrders: (u.orderHistory || []).length,
     totalSpent: (u.orderHistory || []).reduce((s, o) => s + (o.total || 0), 0),
     createdAt: u.createdAt || u.signupAt || '',
-    lastVisit: u.lastVisit || u.updatedAt || u.createdAt || ''
+    lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
+    type: u.type || 'customer',
+    partnerCode: u.partnerCode || '',
+    discountPct: u.discountPct || 0
   }))
-  res.json(customers)
+  const loyaltyList = (db.loyaltyUsers || loyaltyUsers || []).map(u => ({
+    id: u.id,
+    name: u.name || '',
+    phone: u.phone || '',
+    email: u.email || '',
+    points: u.points || 0,
+    totalOrders: (u.orderHistory || []).length,
+    totalSpent: (u.orderHistory || []).reduce((s, o) => s + (o.total || 0), 0),
+    createdAt: u.createdAt || u.signupAt || '',
+    lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
+    type: u.type || 'customer',
+    partnerCode: u.partnerCode || '',
+    discountPct: u.discountPct || 0
+  }))
+  const seen = new Set()
+  const all = []
+  for (const c of [...loyaltyList, ...mobileList]) {
+    const key = c.phone || c.id
+    if (seen.has(key)) continue
+    seen.add(key)
+    all.push(c)
+  }
+  res.json(all)
 })
 
 // Delete single customer by ID or phone
@@ -1585,6 +1744,68 @@ app.post('/api/billing/customers', async (req, res) => {
   res.json({ success: true, customer: { id: newUser.id, name, email, phone, points: 500, createdAt: now }, password: phone.slice(-6) })
 })
 
+// Quick-add customer: end customer (phone only) or staff (EMP ID + name + phone)
+app.post('/api/customers/quick-add', (req, res) => {
+  const { type, phone, name, partnerCode } = req.body
+
+  const cleanPhone = String(phone || '').replace(/\D/g, '')
+  if (!cleanPhone || cleanPhone.length < 8) return res.status(400).json({ error: 'Valid phone number required' })
+
+  const db = readDb()
+  const allUsers = [...(db.users || []), ...(db.loyaltyUsers || [])]
+  const phoneExists = allUsers.find(u => (u.phone || '').replace(/\D/g, '') === cleanPhone)
+  if (phoneExists) return res.status(400).json({ error: 'Phone number already registered' })
+
+  const now = new Date().toISOString()
+  const isStaff = type === 'staff'
+
+  if (isStaff) {
+    if (!partnerCode || !name) return res.status(400).json({ error: 'EMP ID and Name required for staff' })
+  }
+
+  const newUser = {
+    id: 'u_' + Date.now(),
+    name: name || (isStaff ? '' : 'Customer'),
+    phone: cleanPhone,
+    email: '',
+    role: 'user',
+    type: isStaff ? 'staff' : 'customer',
+    partnerCode: isStaff ? partnerCode : undefined,
+    discountPct: 0,
+    points: 0,
+    assets: [],
+    totalDistributed: 0,
+    cashbackEarned: 0,
+    assetsDinedCount: 0,
+    allAssetsActive: false,
+    bonusClaimed: false,
+    referredBy: null,
+    referredByName: null,
+    createdAt: now
+  }
+
+  if (isStaff) {
+    db.loyaltyUsers = db.loyaltyUsers || []
+    db.loyaltyUsers.push(newUser)
+  } else {
+    db.users = db.users || []
+    db.users.push(newUser)
+  }
+  writeDb(db)
+
+  res.json({
+    success: true,
+    customer: {
+      id: newUser.id,
+      name: newUser.name,
+      phone: newUser.phone,
+      type: newUser.type,
+      partnerCode: newUser.partnerCode,
+      createdAt: now
+    }
+  })
+})
+
 // Get a customer's den/assets from billing app
 app.get('/api/billing/customer-assets/:phone', (req, res) => {
   const pin = req.query.pin
@@ -1653,12 +1874,9 @@ app.post('/api/billing/assets', async (req, res) => {
   writeDb(db)
 
   const cleanPhone = phone.replace(/[^0-9]/g, '')
-  const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
-  const message = `Hello ${name}! Your 4-digit WhatsApp verification OTP is: ${otp}. Valid for 24 hours.`
-  const waLink = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`
-  console.log(`[WHATSAPP OTP] Sent 4-digit OTP ${otp} via WhatsApp to ${name} (${formattedPhone})`)
+  const result = await sendMSG91OTP(phone, otp)
 
-  res.json({ success: true, asset: newAsset, assets: customer.assets, message: `WhatsApp OTP sent to ${phone}`, waLink, otp })
+  res.json({ success: true, asset: newAsset, assets: customer.assets, message: `OTP sent to ${phone}`, method: result.method, otp: result.method === 'console' ? otp : undefined })
 })
 
 // ============ SETTINGS API ============
@@ -1870,22 +2088,78 @@ app.post('/api/settings/upload-customers', (req, res) => {
   })
 })
 
-// Lookup customer discount by phone number
+// Search customers by phone number or name (name is case-insensitive, phone is digit-normalized).
+// Returns matching customers that have a stored discount tier so cashiers can attach the right
+// discount when raising an order.
+app.get('/api/customers/search', (req, res) => {
+  const q = String(req.query.q || req.query.term || '').trim().toLowerCase()
+  if (!q) return res.json({ customers: [] })
+
+  const allCustomers = [
+    ...(loyaltyUsers || []).map(u => ({ source: 'loyalty', ...u })),
+    ...(mobileAppUsers || []).map(u => ({ source: 'mobile', ...u }))
+  ]
+
+  const cleanPhone = (p) => String(p || '').replace(/\D/g, '')
+  const qPhone = cleanPhone(q)
+
+  const results = []
+  const seen = new Set()
+  for (const u of allCustomers) {
+    const name = (u.name || '').toLowerCase()
+    const phone = cleanPhone(u.phone)
+    const matched =
+      (qPhone && phone && phone.includes(qPhone)) ||
+      (name && name.includes(q))
+    if (!matched) continue
+
+    const key = phone || (u.name || '') + (u.id || '')
+    if (seen.has(key)) continue
+    seen.add(key)
+
+    const discountPct = Number(u.discountPct) > 0 ? Math.min(90, Math.round(Number(u.discountPct))) : 0
+    if (discountPct <= 0) continue // only surface customers with a discount
+
+    results.push({
+      id: u.id,
+      source: u.source,
+      customerName: u.name || 'Customer',
+      phone: u.phone || '',
+      discountPct,
+      tier: u.tier || '',
+      isVip50: !!u.isVip50 || discountPct === 50
+    })
+  }
+
+  results.sort((a, b) => b.discountPct - a.discountPct)
+  res.json({ customers: results.slice(0, 20) })
+})
+
+// Lookup customer discount by phone number or name. Returns any stored discount pct (not just 50%).
 app.get('/api/customers/check-discount', (req, res) => {
   const rawPhone = (req.query.phone || '').replace(/\D/g, '')
-  if (!rawPhone) return res.json({ hasDiscount: false, discountPct: 0 })
+  const rawName = String(req.query.name || req.query.q || '').trim().toLowerCase()
 
-  const user = loyaltyUsers.find(u => (u.phone || '').replace(/\D/g, '') === rawPhone) ||
-               mobileAppUsers.find(u => (u.phone || '').replace(/\D/g, '') === rawPhone)
+  if (!rawPhone && !rawName) return res.json({ hasDiscount: false, discountPct: 0 })
 
-  if (user && (user.discountPct === 50 || (user.tier && user.tier.includes('50%')) || user.isVip50)) {
-    return res.json({
-      hasDiscount: true,
-      discountPct: 50,
-      customerName: user.name || 'VIP Customer',
-      phone: rawPhone,
-      tier: user.tier || 'VIP 50% OFF'
-    })
+  const matchByPhone = (u) => (u.phone || '').replace(/\D/g, '') === rawPhone
+  const matchByName = (u) => (u.name || '').toLowerCase() === rawName
+
+  const user = loyaltyUsers.find(u => (rawPhone && matchByPhone(u)) || (rawName && matchByName(u))) ||
+               mobileAppUsers.find(u => (rawPhone && matchByPhone(u)) || (rawName && matchByName(u)))
+
+  if (user) {
+    const discountPct = Number(user.discountPct) > 0 ? Math.min(90, Math.round(Number(user.discountPct))) : 0
+    if (discountPct > 0) {
+      return res.json({
+        hasDiscount: true,
+        discountPct,
+        customerName: user.name || 'Customer',
+        phone: (user.phone || rawPhone || '').replace(/\D/g, ''),
+        tier: user.tier || (discountPct === 50 ? 'VIP 50% OFF' : `${discountPct}% OFF`),
+        isVip50: !!user.isVip50 || discountPct === 50
+      })
+    }
   }
 
   res.json({ hasDiscount: false, discountPct: 0 })
@@ -2136,18 +2410,189 @@ app.post('/api/ccavenue/response', express.urlencoded({ extended: true }), (req,
 app.put('/api/settings/payment-gateways', (req, res) => {
   const auth = verifySuperAdmin(req.body.pin)
   if (!auth.ok) return res.status(403).json({ error: auth.error })
+  if (!settings.paymentGateways) settings.paymentGateways = {}
   if (req.body.ccavenue) {
-    if (!settings.paymentGateways) settings.paymentGateways = {}
     settings.paymentGateways.ccavenue = {
       ...settings.paymentGateways.ccavenue,
       ...req.body.ccavenue
     }
-    if (req.body.enableAssetOtp !== undefined) {
-      settings.paymentGateways.enableAssetOtp = req.body.enableAssetOtp === true
-    }
-    saveState()
   }
+  if (req.body.cashfree) {
+    settings.paymentGateways.cashfree = {
+      ...settings.paymentGateways.cashfree,
+      ...req.body.cashfree
+    }
+  }
+  if (req.body.msg91) {
+    settings.msg91 = {
+      ...settings.msg91,
+      ...req.body.msg91
+    }
+  }
+  if (req.body.enableAssetOtp !== undefined) {
+    settings.paymentGateways.enableAssetOtp = req.body.enableAssetOtp === true
+  }
+  saveState()
   res.json({ success: true, paymentGateways: settings.paymentGateways })
+})
+
+// ============ CASHFREE PAYMENT GATEWAY ============
+const CASHFREE_API_VERSION = '2022-09-01'
+
+function getCashfreeConfig() {
+  const cf = settings.paymentGateways?.cashfree || {}
+  return {
+    appId: cf.appId || process.env.CASHFREE_APP_ID || '',
+    secretKey: cf.secretKey || process.env.CASHFREE_SECRET_KEY || '',
+    isProduction: cf.isProduction || false,
+    isEnabled: cf.isEnabled !== false
+  }
+}
+
+function getCashfreeBaseUrl() {
+  return getCashfreeConfig().isProduction
+    ? 'https://api.cashfree.com/pg'
+    : 'https://sandbox.cashfree.com/pg'
+}
+
+// Get Cashfree config status
+app.get('/api/cashfree/config', (req, res) => {
+  const cf = getCashfreeConfig()
+  res.json({
+    enabled: cf.isEnabled,
+    hasCredentials: Boolean(cf.appId && cf.secretKey),
+    isProduction: cf.isProduction,
+    appId: cf.appId ? cf.appId.slice(0, 8) + '...' : ''
+  })
+})
+
+// Create Cashfree order
+app.post('/api/cashfree/create-order', async (req, res) => {
+  try {
+    const cf = getCashfreeConfig()
+    if (!cf.isEnabled) return res.status(400).json({ error: 'Cashfree is disabled' })
+    if (!cf.appId || !cf.secretKey) return res.status(400).json({ error: 'Cashfree credentials not configured' })
+
+    const { orderId, amount, customerName, customerPhone, customerEmail, returnUrl } = req.body
+    if (!orderId || !amount) return res.status(400).json({ error: 'orderId and amount required' })
+
+    const baseUrl = getCashfreeBaseUrl()
+    const return_url = returnUrl || `${req.protocol}://${req.get('host')}/api/cashfree/return?order_id={order_id}`
+    const notify_url = `${req.protocol}://${req.get('host')}/api/cashfree/webhook`
+
+    const payload = {
+      order_id: orderId,
+      order_amount: Number(amount),
+      order_currency: 'INR',
+      customer_details: {
+        customer_id: customerPhone || 'guest_' + Date.now(),
+        customer_phone: customerPhone || '9999999999',
+        customer_email: customerEmail || 'guest@tdg.com'
+      },
+      order_meta: {
+        return_url,
+        notify_url,
+        payment_methods: 'cc,dc,upi,nb'
+      },
+      order_note: `TDG Billing Order #${orderId}`
+    }
+
+    const resp = await fetch(`${baseUrl}/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-client-id': cf.appId,
+        'x-client-secret': cf.secretKey,
+        'x-api-version': CASHFREE_API_VERSION,
+        'x-idempotency-key': orderId
+      },
+      body: JSON.stringify(payload)
+    })
+
+    const data = await resp.json()
+    if (!resp.ok) {
+      console.error('[CASHFREE CREATE ORDER ERROR]', data)
+      return res.status(resp.status).json({ error: data.message || 'Failed to create Cashfree order' })
+    }
+
+    res.json({
+      success: true,
+      cfOrderId: data.cf_order_id,
+      paymentSessionId: data.payment_session_id,
+      orderId: data.order_id,
+      orderStatus: data.order_status
+    })
+  } catch (err) {
+    console.error('[CASHFREE CREATE ORDER ERROR]', err.message)
+    res.status(500).json({ error: 'Failed to create Cashfree order: ' + err.message })
+  }
+})
+
+// Fetch Cashfree order status
+app.get('/api/cashfree/order-status/:orderId', async (req, res) => {
+  try {
+    const cf = getCashfreeConfig()
+    if (!cf.appId || !cf.secretKey) return res.status(400).json({ error: 'Cashfree not configured' })
+
+    const baseUrl = getCashfreeBaseUrl()
+    const resp = await fetch(`${baseUrl}/orders/${req.params.orderId}`, {
+      headers: {
+        'x-client-id': cf.appId,
+        'x-client-secret': cf.secretKey,
+        'x-api-version': CASHFREE_API_VERSION
+      }
+    })
+
+    const data = await resp.json()
+    if (!resp.ok) return res.status(resp.status).json({ error: data.message || 'Failed to fetch order' })
+
+    res.json({
+      orderId: data.order_id,
+      cfOrderId: data.cf_order_id,
+      orderStatus: data.order_status,
+      orderAmount: data.order_amount,
+      paymentSessionId: data.payment_session_id
+    })
+  } catch (err) {
+    console.error('[CASHFREE ORDER STATUS ERROR]', err.message)
+    res.status(500).json({ error: 'Failed to fetch order status' })
+  }
+})
+
+// Cashfree webhook handler
+app.post('/api/cashfree/webhook', express.json(), async (req, res) => {
+  try {
+    const { type, data } = req.body
+    console.log(`[CASHFREE WEBHOOK] ${type}`, JSON.stringify(data?.order || {}).slice(0, 200))
+
+    if (type === 'PAYMENT_SUCCESS_WEBHOOK' && data?.order?.order_id) {
+      const orderId = data.order.order_id
+      const order = orders.find(o => String(o.id) === String(orderId) || String(o.orderNumber) === String(orderId))
+      if (order) {
+        order.paymentStatus = 'paid'
+        order.status = 'completed'
+        order.paidAt = new Date().toISOString()
+        order.completedAt = new Date().toISOString()
+        order.paymentMethod = 'online'
+        order.cfPaymentId = data.payment?.cf_payment_id || ''
+        order.cfOrderId = data.order?.cf_order_id || ''
+        saveState()
+        io.emit('order:updated', order)
+        console.log(`[CASHFREE WEBHOOK] Order #${order.orderNumber || orderId} marked as paid`)
+      }
+    }
+
+    res.status(200).json({ status: 'ok' })
+  } catch (err) {
+    console.error('[CASHFREE WEBHOOK ERROR]', err.message)
+    res.status(200).json({ status: 'ok' })
+  }
+})
+
+// Cashfree return URL handler (redirect after payment)
+app.get('/api/cashfree/return', (req, res) => {
+  const { order_id } = req.query
+  res.redirect(`${req.protocol}://${req.get('host')}/billing?payment=success&order_id=${order_id || ''}`)
 })
 
 // Menu (mobile format)
@@ -3192,67 +3637,36 @@ app.get('/api/staff/audit-logs', (req, res) => {
 
 // POS Orders (no auth)
 app.get('/api/pos/orders', (req, res) => {
-  const { status, source, date, from, to } = req.query
-  let inMemory = [...orders]
+  try {
+    const { status, source } = req.query
+    const includeCancelled = req.query.includeCancelled === 'true' || req.query.report === 'kot-cancelled'
 
-  if (status) {
-    if (status === 'completed') {
-      inMemory = inMemory.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
-    } else {
-      inMemory = inMemory.filter(o => (o.status || '').toLowerCase() === (status || '').toLowerCase())
+    // Use central date filtering logic (guarantees 100% exact date matching across all report screens)
+    let inMemory = getFilteredOrdersForPeriod(req.query, true)
+
+    if (!includeCancelled) {
+      inMemory = inMemory.filter(o => {
+        if (!o) return false
+        const s = (o.status || '').toLowerCase()
+        return s !== 'cancelled' && s !== 'canceled' && s !== 'void' && !o.isCancelled && !o.isVoid
+      })
     }
-  }
 
-  if (source) inMemory = inMemory.filter(o => (o.source || '').toLowerCase() === (source || '').toLowerCase())
-
-  const today = new Date()
-  const todayStr = getLocalDateStr(today)
-  const yesterday = new Date(today)
-  yesterday.setDate(yesterday.getDate() - 1)
-  const yesterdayStr = getLocalDateStr(yesterday)
-
-  if (from && to) {
-    const normFrom = normalizeDateStr(from)
-    const normTo = normalizeDateStr(to)
-    inMemory = inMemory.filter(o => {
-      const dStr = getOrderDate(o)
-      return dStr >= normFrom && dStr <= normTo
-    })
-  } else if (from) {
-    const normFrom = normalizeDateStr(from)
-    inMemory = inMemory.filter(o => getOrderDate(o) >= normFrom)
-  } else if (date) {
-    const norm = normalizeDateStr(date)
-
-    if (norm === 'latest') {
-      const latestDate = getLatestOrderDate(orders)
-      inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
-    } else if (norm === 'today' || norm === todayStr) {
-      const todayOrders = inMemory.filter(o => getOrderDate(o) === todayStr)
-      if (todayOrders.length > 0) {
-        inMemory = todayOrders
+    if (status) {
+      if (status === 'completed') {
+        inMemory = inMemory.filter(o => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt)
       } else {
-        const latestDate = getLatestOrderDate(inMemory)
-        inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
+        inMemory = inMemory.filter(o => (o.status || '').toLowerCase() === (status || '').toLowerCase())
       }
-    } else if (norm === 'yesterday' || norm === yesterdayStr) {
-      inMemory = inMemory.filter(o => getOrderDate(o) === yesterdayStr)
-    } else if (norm === 'week' || date === 'week') {
-      const pastWeek = new Date(today)
-      pastWeek.setDate(pastWeek.getDate() - 7)
-      const pastWeekStr = getLocalDateStr(pastWeek)
-      inMemory = inMemory.filter(o => getOrderDate(o) >= pastWeekStr)
-    } else if (norm === 'month' || date === 'month') {
-      const pastMonth = new Date(today)
-      pastMonth.setDate(pastMonth.getDate() - 30)
-      const pastMonthStr = getLocalDateStr(pastMonth)
-      inMemory = inMemory.filter(o => getOrderDate(o) >= pastMonthStr)
-    } else if (norm !== 'all') {
-      inMemory = inMemory.filter(o => getOrderDate(o) === norm)
     }
-  }
 
-  res.json(inMemory.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)))
+    if (source) inMemory = inMemory.filter(o => (o.source || '').toLowerCase() === (source || '').toLowerCase())
+
+    res.json(inMemory.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)))
+  } catch (err) {
+    console.error('[POS ORDERS API ERROR]', err)
+    res.status(500).json({ error: 'Failed to fetch orders' })
+  }
 })
 
 function deductInventoryForOrder(order) {
@@ -3334,6 +3748,44 @@ function restoreInventoryForOrder(order) {
   }
 }
 
+// ============ OFFER VALIDATION ============
+// Resolve the effective discount a bill is entitled to. Campaigns are validated
+// against their date windows, and 50%-tier VIP customers (matched by phone) always
+// get their exclusive 50% off. Returns { pct, label, key } or { pct: 0 }.
+function resolveCampaignOffer(orderDateStr, customerPhone, flags) {
+  const c = settings.campaigns || {}
+  const date = orderDateStr || ''
+
+  // 1. Customer-specific discount by phone. Any stored discountPct is honoured, so a 50% VIP
+  //    customer gets 50% and a 20% campaign customer gets exactly their stored 20%.
+  const cleanPhone = String(customerPhone || '').replace(/\D/g, '')
+  if (cleanPhone.length >= 10) {
+    const cust = (loyaltyUsers || []).find(u => String(u.phone || '').replace(/\D/g, '') === cleanPhone && Number(u.discountPct) > 0) ||
+                 mobileAppUsers.find(u => String(u.phone || '').replace(/\D/g, '') === cleanPhone && Number(u.discountPct) > 0)
+    if (cust) {
+      const pct = Math.min(90, Math.round(Number(cust.discountPct)))
+      if (pct === 50) {
+        return { pct: 50, label: c.vip50 && c.vip50.label ? c.vip50.label : 'VIP 50% OFF', key: 'vip50' }
+      }
+      return { pct, label: cust.tier || `${pct}% OFF`, key: 'customer' }
+    }
+  }
+
+  // 2. Inauguration 50% — only on its configured date
+  const ina = c.inauguration
+  if (ina && ina.active && ina.date && date === ina.date) return validOffer('inauguration', ina)
+
+  // 3. Special 20% — within its from..to date window
+  const s20 = c.special20
+  if (s20 && s20.active && s20.from && s20.to && date >= s20.from && date <= s20.to) return validOffer('special20', s20)
+
+  return { pct: 0, label: '', key: '' }
+
+  function validOffer(key, cfg) {
+    return { pct: Number(cfg.pct) || 0, label: cfg.label || (key === 'inauguration' ? 'Inauguration Offer 50%' : 'Special Offer 20%'), key }
+  }
+}
+
 app.post('/api/pos/orders', (req, res) => {
   const { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod, complimentary, complimentaryType, specialRemarks } = req.body
   
@@ -3342,6 +3794,7 @@ app.post('/api/pos/orders', (req, res) => {
   const kotNum = getNextKotNumber()
   const now = new Date().toISOString()
   
+<<<<<<< HEAD
   const rawSub = req.body.rawSubtotal || items?.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || 0) * (item.quantity || 1)), 0) || subtotal || 0
   const discountVal = Number(req.body.discount || req.body.discountAmount || 0)
   const isStaffBenefit = Boolean(req.body.staffBenefitOffer || req.body.employeeId || req.body.offerType === 'staff_family')
@@ -3350,6 +3803,40 @@ app.post('/api/pos/orders', (req, res) => {
     (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : 'Discount'))
   )
   
+=======
+  // SERVER-AUTHORITATIVE TOTALS:
+  // Never trust client-sent subtotal/tax/total — recompute from the actual line items so
+  // every stored bill is internally consistent: rawSubtotal - discount = subtotal,
+  // subtotal + tax = total. This is what makes all reports reconcile.
+  const itemList = Array.isArray(items) ? items : []
+  const rawSub = Math.round(itemList.reduce((sum, item) => sum + (Number(item.totalPrice) || (Number(item.unitPrice || item.price || 0) * Number(item.quantity || item.qty || 1))), 0))
+  const orderDateStr = getOrderDate({ createdAt: now, date: req.body.date })
+  const offer = resolveCampaignOffer(orderDateStr, customerPhone, {
+    inaugurationOffer: req.body.inaugurationOffer,
+    specialOffer20: req.body.specialOffer20
+  })
+  const clientDiscount = Number(req.body.discount || req.body.discountAmount || 0)
+  let discountVal = 0
+  if (offer.pct > 0) {
+    discountVal = Math.round(rawSub * offer.pct / 100)
+  } else if (clientDiscount > 0) {
+    discountVal = clientDiscount
+  } else if (Number(req.body.customerDiscountPct) > 0) {
+    const cpct = Math.min(90, Math.max(0, Number(req.body.customerDiscountPct)))
+    discountVal = Math.round(rawSub * cpct / 100)
+  } else if (req.body.inaugurationOffer) {
+    discountVal = Math.round(rawSub * 0.5)
+  } else if (req.body.specialOffer20) {
+    discountVal = Math.round(rawSub * 0.2)
+  }
+  discountVal = Math.max(0, Math.min(Math.round(discountVal), rawSub))
+  const netSub = rawSub - discountVal
+  const taxVal = Math.round(netSub * 0.05)
+  const totalVal = netSub + taxVal
+  const customerPctLabel = Number(req.body.customerDiscountPct) > 0 ? `${Math.round(Number(req.body.customerDiscountPct))}% OFF` : ''
+  const discountLabel = offer.pct > 0 ? offer.label : (customerPctLabel || (req.body.discountName || (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'Discount' : '')))))
+
+>>>>>>> origin/master
   const isDirectSettle = Boolean(req.body.settleDirectly || req.body.status === 'completed' || req.body.paymentStatus === 'paid')
 
   const order = {
@@ -3362,6 +3849,7 @@ app.post('/api/pos/orders', (req, res) => {
     rawSubtotal: rawSub,
     discount: discountVal,
     discountName: discountLabel,
+<<<<<<< HEAD
     offerName: req.body.offerName || (isStaffBenefit ? 'Achariya Family Week 2026' : undefined),
     offerType: req.body.offerType || (isStaffBenefit ? 'staff_family' : undefined),
     employeeId: req.body.employeeId || undefined,
@@ -3377,6 +3865,15 @@ app.post('/api/pos/orders', (req, res) => {
     subtotal: subtotal || 0,
     tax: tax || 0,
     total: total || 0,
+=======
+    inaugurationOffer: offer.pct > 0 && offer.key === 'inauguration',
+    specialOffer20: offer.pct > 0 && offer.key === 'special20',
+    vip50: offer.pct > 0 && offer.key === 'vip50',
+    subtotal: netSub,
+    tax: taxVal,
+    total: totalVal,
+    date: orderDateStr,
+>>>>>>> origin/master
     paymentMethod: paymentMethod || 'cash',
     splitPayments: req.body.splitPayments || undefined,
     paymentStatus: isDirectSettle ? 'paid' : 'pending',
@@ -3423,7 +3920,30 @@ app.post('/api/pos/orders', (req, res) => {
 
   orders.unshift(order)
   deductInventoryForOrder(order)
-  saveState()
+  
+  // EMERGENCY: Append to order log IMMEDIATELY (survives crashes)
+  appendOrderLog(order)
+  
+  // CRITICAL: Write order to disk IMMEDIATELY before responding
+  // This prevents data loss if server restarts before next saveState()
+  try {
+    saveState()
+  } catch (e) {
+    console.error('[ORDER PERSIST ERROR] saveState failed:', e.message)
+  }
+  
+  // Double-check: verify order is in db.json
+  try {
+    const verifyDb = readDb()
+    if (!verifyDb.orders || !verifyDb.orders.find(o => o.id === order.id)) {
+      console.error('[ORDER PERSIST] Order not in db.json, forcing write...')
+      const forceDb = readDb() || {}
+      forceDb.orders = [order, ...(forceDb.orders || [])]
+      writeDb(forceDb)
+    }
+  } catch (e) {
+    console.error('[ORDER PERSIST] Verify/force write failed:', e.message)
+  }
   
   // Emit to connected clients
   io.emit('order:created', order)
@@ -3441,6 +3961,10 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
     order.status = status || order.status
     order.paymentStatus = paymentStatus || order.paymentStatus
     order.paymentMethod = req.body.paymentMethod || order.paymentMethod
+    if ((status === 'completed' || status === 'served') && paymentStatus === 'paid') {
+      if (!order.paidAt) order.paidAt = new Date().toISOString()
+      if (!order.completedAt) order.completedAt = new Date().toISOString()
+    }
     if (req.body.splitPayments) order.splitPayments = req.body.splitPayments
     if (status === 'cancelled') {
       if (cancelReason) order.cancelReason = cancelReason
@@ -3451,7 +3975,13 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
     }
     order.updatedAt = new Date().toISOString()
     io.emit('order:updated', order)
-    saveState()
+    
+    // CRITICAL: Persist status change immediately
+    try {
+      saveState()
+    } catch (e) {
+      console.error('[ORDER STATUS PERSIST ERROR]:', e.message)
+    }
 
     // ASSET SYSTEM: When order completed, handle cashback + asset dined tracking
     if ((status === 'completed' || status === 'served') && order.customerPhone) {
@@ -4957,7 +5487,10 @@ app.put('/api/pos/orders/:id/resettle', (req, res) => {
     else if (paymentMethod !== 'split') targetOrder.splitPayments = undefined
     if (paymentStatus) targetOrder.paymentStatus = paymentStatus
     if (status) targetOrder.status = status
-    targetOrder.resettledAt = new Date().toISOString()
+    const nowStamp = new Date().toISOString()
+    if ((paymentStatus === 'paid' || status === 'completed') && !targetOrder.paidAt) targetOrder.paidAt = nowStamp
+    if ((paymentStatus === 'paid' || status === 'completed') && !targetOrder.completedAt) targetOrder.completedAt = nowStamp
+    targetOrder.resettledAt = nowStamp
     targetOrder.resettledBy = req.body.resettledBy || 'Admin'
     if (notes) targetOrder.resettleNotes = notes
 
@@ -4972,29 +5505,99 @@ app.put('/api/pos/orders/:id/resettle', (req, res) => {
 
 // Check every 60 seconds for 12:00 AM IST rollover
 setInterval(runMidnightDayClosingCheck, 60000)
+
+// Auto-save state every 30 seconds to prevent data loss on unexpected restarts
+setInterval(() => {
+  try { saveState() } catch (e) { console.error('[AUTO-SAVE] Error:', e.message) }
+}, 30000)
+
+// Diagnostic endpoint — check live database state (admin only)
+app.get('/api/admin/db-diagnostics', (req, res) => {
+  try {
+    const db = readDb()
+    const dateCounts = {}
+    const allOrders = db.orders || orders
+    allOrders.forEach(o => {
+      const d = getOrderDate(o)
+      dateCounts[d] = (dateCounts[d] || 0) + 1
+    })
+    const sortedDates = Object.entries(dateCounts).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 10)
+    res.json({
+      totalOrders: allOrders.length,
+      latestOrderNumber: Math.max(...allOrders.map(o => o.orderNumber || 0)),
+      last10Dates: sortedDates,
+      vaultExists: existsSync(VAULT_PATH),
+      vaultSize: existsSync(VAULT_PATH) ? readFileSync(VAULT_PATH, 'utf-8').length : 0,
+      dbPath: DB_PATH,
+      serverUptime: Math.floor(process.uptime()),
+      memoryUsage: Math.round(process.memoryUsage().rss / 1024 / 1024) + 'MB'
+    })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
 // Run immediately on server initialization
 // ============ PAYMENT REPORT ENDPOINT ============
+// Reports only SETTLED (paid) bills as "collected". Pending/unsettled bills are returned as
+// separate pending fields so this report reflects actual money collected, consistent with the
+// Billing counter, instead of including unsettled invoices like the Daily Closing does.
 app.get('/api/reports/payment-report', (req, res) => {
   try {
-    const completed = getCompletedSales(req.query)
-    const metrics = calculateSalesMetrics(completed)
+    const dayOrders = getFilteredOrdersForPeriod(req.query)
+    const validOrders = dayOrders.filter(isValidSalesOrder)
+
+    const isSettled = (o) => (o.status || '').toLowerCase() === 'completed' || (o.paymentStatus || '').toLowerCase() === 'paid' || o.paidAt
+    const settledOrders = validOrders.filter(isSettled)
+    const pendingOrders = validOrders.filter(o => !isSettled(o))
+
+    let totalRevenue = 0
+    const byMethod = {
+      cash: { total: 0, count: 0, percentage: 0 },
+      upi: { total: 0, count: 0, percentage: 0 },
+      card: { total: 0, count: 0, percentage: 0 },
+      wallet: { total: 0, count: 0, percentage: 0 },
+      other: { total: 0, count: 0, percentage: 0 }
+    }
+
+    const addToMethod = (mKey, amt) => {
+      let m = (mKey || 'cash').toLowerCase()
+      if (m.includes('card') || m.includes('credit') || m.includes('debit')) m = 'card'
+      else if (m.includes('upi') || m.includes('gpay') || m.includes('phonepe') || m.includes('paytm') || m.includes('online')) m = 'upi'
+      else if (m.includes('wallet')) m = 'wallet'
+      else if (m.includes('cash')) m = 'cash'
+      else m = 'other'
+      byMethod[m].total += amt
+      byMethod[m].count += 1
+    }
+
+    settledOrders.forEach(o => {
+      const amt = getOrderAmount(o)
+      totalRevenue += amt
+      if (o.splitPayments && typeof o.splitPayments === 'object') {
+        Object.entries(o.splitPayments).forEach(([mKey, mVal]) => {
+          const val = Number(mVal) || 0
+          if (val > 0) addToMethod(mKey, val)
+        })
+      } else {
+        addToMethod(o.paymentMethod, amt)
+      }
+    })
+
+    // Calculate percentages
+    Object.keys(byMethod).forEach(m => {
+      byMethod[m].total = Math.round(byMethod[m].total * 100) / 100
+      byMethod[m].percentage = totalRevenue > 0 ? Number(((byMethod[m].total / totalRevenue) * 100).toFixed(1)) : 0
+    })
 
     res.json({
-      totalRevenue: metrics.netSalesCollected,
-      totalSales: metrics.netSalesCollected,
-      totalBills: metrics.totalInvoices,
-      totalInvoices: metrics.totalInvoices,
-      byMethod: metrics.byPaymentMethod,
-      methodCounts: metrics.paymentCounts,
-      byDiscountType: metrics.byDiscountType,
-      orders: completed.map(o => ({
-        id: o.id || o.orderNumber,
-        orderNumber: o.orderNumber || o.id,
-        date: getOrderDate(o),
-        type: o.type || 'dine-in',
-        paymentMethod: o.paymentMethod || 'cash',
-        amount: getOrderAmount(o)
-      }))
+      totalRevenue: Math.round(totalRevenue * 100) / 100,
+      totalBills: settledOrders.length,
+      byMethod,
+      orders: settledOrders,
+      invoicedRevenue: Math.round(validOrders.reduce((s, o) => s + getOrderAmount(o), 0) * 100) / 100,
+      invoicedBills: validOrders.length,
+      pendingRevenue: Math.round(pendingOrders.reduce((s, o) => s + getOrderAmount(o), 0) * 100) / 100,
+      pendingBills: pendingOrders.length
     })
   } catch (err) {
     console.error('[PAYMENT REPORT API ERROR]', err)
@@ -5115,7 +5718,7 @@ function computeThreeHourSales(orderList) {
     const amt = isValid ? getOrderAmount(o) : 0
     totalRev += amt
 
-    const dtVal = o.createdAt || o.paidAt || o.completedAt || o.timestamp || o.date
+    const dtVal = o.paidAt || o.completedAt || o.createdAt || o.timestamp || o.date
     if (dtVal) {
       const hour24 = getLocalHourIST(dtVal)
       if (hour24 >= 0 && hour24 <= 23) {
@@ -5177,7 +5780,7 @@ function computeHourlySales(orderList) {
     const amt = isValid ? getOrderAmount(o) : 0
     totalRev += amt
 
-    const dtVal = o.createdAt || o.paidAt || o.completedAt || o.timestamp || o.date
+    const dtVal = o.paidAt || o.completedAt || o.createdAt || o.timestamp || o.date
     if (dtVal) {
       const hour24 = getLocalHourIST(dtVal)
       if (hour24 >= 0 && hour24 <= 23) {
@@ -5380,11 +5983,11 @@ app.get('/api/reports/pnl', (req, res) => {
   // Net Profit
   const netProfit = grossProfit - totalExpenses
 
-  // Cancelled orders
-  const cancelledOrders = orders.filter(o =>
-    o.createdAt && o.createdAt.slice(0, 10) >= fromStr && o.createdAt.slice(0, 10) <= toStr &&
-    o.status === 'cancelled'
-  )
+  // Cancelled orders (bucketed by the same IST-normalized order date used by every other report)
+  const cancelledOrders = orders.filter(o => {
+    const dStr = getOrderDate(o)
+    return o.status === 'cancelled' && dStr >= fromStr && dStr <= toStr
+  })
   const cancelledRevenue = cancelledOrders.reduce((sum, o) => sum + (o.total || 0), 0)
 
   res.json({
@@ -5594,6 +6197,7 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
 })
 
 // ============ POS ORDERS LIST FOR BILLING COUNTER & REPORTS ============
+<<<<<<< HEAD
 app.get('/api/pos/orders', (req, res) => {
   try {
     const { status, report } = req.query
@@ -5625,6 +6229,8 @@ app.get('/api/pos/orders', (req, res) => {
   }
 })
 
+=======
+>>>>>>> origin/master
 // Purchase Orders Report
 app.get('/api/reports/purchase-orders', (req, res) => {
   const { from, to } = req.query
@@ -6134,5 +6740,22 @@ httpServer.listen(PORT, () => {
   setInterval(performDailyBackup, DAILY_BACKUP_INTERVAL)
   console.log('Daily backup scheduler active (checks every hour)')
 })
+
+// Graceful shutdown — save state before process exits (prevents data loss on deploy/restart)
+let isShuttingDown = false
+function gracefulShutdown(signal) {
+  if (isShuttingDown) return
+  isShuttingDown = true
+  console.log(`[SHUTDOWN] Received ${signal}. Saving state before exit...`)
+  try {
+    saveState()
+    console.log('[SHUTDOWN] State saved successfully')
+  } catch (e) {
+    console.error('[SHUTDOWN] Error saving state:', e.message)
+  }
+  process.exit(0)
+}
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'))
+process.on('SIGINT', () => gracefulShutdown('SIGINT'))
 
 export default app

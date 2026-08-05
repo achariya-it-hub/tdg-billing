@@ -105,6 +105,10 @@ export default function Billing() {
   const visiblePendingKOTs = filterByDate(pendingKOTs)
   const visibleComplimentary = filterByDate(complimentaryOrders)
   const visiblePaidBills = filterByDate(paidBills)
+  // All chargeable (non-cancelled, non-complimentary) bills in the current period — same
+  // definition the Daily Closing / reports use, so the counters always reconcile.
+  const visibleAllBills = [...visibleNewKOTs, ...visiblePendingKOTs, ...visiblePaidBills]
+  const visibleAllBillsTotal = visibleAllBills.reduce((s, b) => s + (b.total !== undefined && b.total !== null ? Number(b.total) : calculateTotal(b) + calculateTax(calculateTotal(b))), 0)
 
   const getApiUrl = () => {
     return window.location.hostname === 'localhost'
@@ -595,14 +599,14 @@ export default function Billing() {
           { value: visiblePendingKOTs.length, label: 'Ready for Billing', color: '#e63946', bg: '#fef2f2' },
           { value: visibleComplimentary.length, label: 'Complimentary', color: '#8b5cf6', bg: '#f5f3ff' },
           { 
-            value: visiblePaidBills.length, 
-            label: dateFilter === 'today' ? 'Bills Today' : (dateFilter === 'yesterday' ? 'Bills Yesterday' : 'All Bills'), 
+            value: visibleAllBills.length, 
+            label: dateFilter === 'today' ? 'Total Bills Today' : (dateFilter === 'yesterday' ? 'Total Bills Yesterday' : 'Total Bills (All Time)'), 
             color: '#10b981', 
             bg: '#ecfdf5' 
           },
           { 
-            value: `₹${Math.round(visiblePaidBills.reduce((s, b) => s + (b.total !== undefined && b.total !== null ? Number(b.total) : calculateTotal(b) + calculateTax(calculateTotal(b))), 0))}`, 
-            label: 'Total Collected', 
+            value: `₹${Math.round(visibleAllBillsTotal)}`, 
+            label: 'Total Sales (Bills)', 
             color: '#2563eb', 
             bg: '#eff6ff' 
           }

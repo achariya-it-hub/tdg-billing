@@ -68,7 +68,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'quantity': int.parse(item['qty'].toString()),
       }).toList();
 
-      // Initiate CCAvenue redirect only if selected
+      // Initiate payment gateway redirect if selected
       if (_selectedPayment == 'ccavenue') {
         final ccResponse = await ApiService().initiateCCavenuePayment(
           amount: _finalTotal.toDouble(),
@@ -83,7 +83,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           final String accessCode = ccResponse['accessCode'] ?? '';
 
           if (ccUrl.isNotEmpty) {
-            // Parse url components properly using Uri object constructor to prevent encoding corruption of encRequest or access_code
             final baseUri = Uri.parse(ccUrl);
             final fullUri = Uri(
               scheme: baseUri.scheme,
@@ -100,11 +99,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             }
           }
         }
+      } else if (_selectedPayment == 'cashfree') {
+        final cfResponse = await ApiService().initiateCashfreePayment(
+          amount: _finalTotal.toDouble(),
+          customerName: ApiService().currentUser?['name'],
+          customerPhone: ApiService().currentUser?['phone'],
+          customerEmail: ApiService().currentUser?['email'],
+        );
+
+        if (cfResponse['success'] == true) {
+          final String sessionId = cfResponse['paymentSessionId'] ?? '';
+          final String cfOrderId = cfResponse['orderId'] ?? '';
+          if (sessionId.isNotEmpty) {
+            final checkoutUrl = Uri.parse(
+              'https://checkout.cashfree.com/pg?payment_session_id=$sessionId&mode=PROD',
+            );
+            if (await canLaunchUrl(checkoutUrl)) {
+              await launchUrl(checkoutUrl, mode: LaunchMode.externalApplication);
+            }
+          }
+        }
       }
 
       final String paymentMethodName = _selectedPayment == 'counter'
           ? 'Pay at Counter'
-          : (_selectedPayment == 'wallet' ? 'Points Wallet' : 'CCAvenue Gateway');
+          : (_selectedPayment == 'wallet' ? 'Points Wallet'
+          : (_selectedPayment == 'cashfree' ? 'Cashfree Gateway' : 'CCAvenue Gateway'));
 
       await ApiService().createOrder(
         items: itemsForApi,
@@ -281,6 +301,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         ),
         const SizedBox(height: 8),
         _paymentOption('counter', Icons.storefront_rounded, 'Pay at Counter', 'Pay with Cash, Card, or UPI at the Billing Counter'),
+        const SizedBox(height: 8),
+        _paymentOption('cashfree', Icons.credit_card_rounded, 'Cashfree Gateway', 'UPI, Cards, NetBanking, Wallets'),
         const SizedBox(height: 8),
         _paymentOption('ccavenue', Icons.payment_rounded, 'CCAvenue Gateway', 'Credit/Debit Cards, NetBanking, UPI, Wallets'),
       ],

@@ -120,15 +120,20 @@ export default function Reports() {
   const [loading, setLoading] = useState(false)
   const [showExportMenu, setShowExportMenu] = useState(false)
 
-  const [customDate, setCustomDate] = useState(() => {
+  const [customFromDate, setCustomFromDate] = useState(() => {
+    const today = new Date()
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+  })
+  const [customToDate, setCustomToDate] = useState(() => {
     const today = new Date()
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
   })
 
-  const formatLocalYYYYMMDD = (d) => {
-    const year = d.getFullYear()
-    const month = String(d.getMonth() + 1).padStart(2, '0')
-    const day = String(d.getDate()).padStart(2, '0')
+  const formatISTDate = (d) => {
+    const ist = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
+    const year = ist.getFullYear()
+    const month = String(ist.getMonth() + 1).padStart(2, '0')
+    const day = String(ist.getDate()).padStart(2, '0')
     return `${year}-${month}-${day}`
   }
 
@@ -136,16 +141,16 @@ export default function Reports() {
 
   const getQueryParams = () => {
     if (dateRange === 'custom') {
-      return `from=${customDate}&to=${customDate}&date=${customDate}&strict=true`
+      return `from=${customFromDate}&to=${customToDate}`
     }
     if (dateRange === 'today') {
-      const tStr = formatLocalYYYYMMDD(new Date())
+      const tStr = formatISTDate(new Date())
       return `date=today&from=${tStr}&to=${tStr}`
     }
     if (dateRange === 'yesterday') {
       const y = new Date()
       y.setDate(y.getDate() - 1)
-      const yStr = formatLocalYYYYMMDD(y)
+      const yStr = formatISTDate(y)
       return `date=yesterday&from=${yStr}&to=${yStr}`
     }
     return `date=${dateRange}`
@@ -201,7 +206,7 @@ export default function Reports() {
       setLoading(false)
     }
     fetchData()
-  }, [activeReport, dateRange, customDate])
+  }, [activeReport, dateRange, customFromDate, customToDate])
 
   const getReportTitle = () => {
     switch (activeReport) {
@@ -446,9 +451,15 @@ export default function Reports() {
                       <span style={{ fontWeight: 700, color: '#dc2626' }}>- ₹{(displayClosing.totalDiscountGiven || 0).toLocaleString()}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', borderTop: '1px dashed #e5e7eb', paddingTop: '8px', fontSize: '13px' }}>
-                      <span style={{ color: '#059669', fontWeight: 700 }}>Net Paid Collected</span>
-                      <span style={{ fontWeight: 800, color: '#10b981' }}>₹{(displayClosing.totalSales || 0).toLocaleString()}</span>
+                      <span style={{ color: '#059669', fontWeight: 700 }}>Net Paid Collected (Settled)</span>
+                      <span style={{ fontWeight: 800, color: '#10b981' }}>₹{((displayClosing.settledSales || 0)).toLocaleString()}</span>
                     </div>
+                    {((displayClosing.pendingSales || 0) > 0) && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '12.5px' }}>
+                        <span style={{ color: '#b45309', fontWeight: 600 }}>Unsettled (Pending)</span>
+                        <span style={{ fontWeight: 700, color: '#b45309' }}>₹{(displayClosing.pendingSales || 0).toLocaleString()}</span>
+                      </div>
+                    )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12.5px' }}>
                       <span style={{ color: '#6b7280' }}>Purchases</span>
                       <span style={{ fontWeight: 700, color: '#dc2626' }}>- ₹{(displayClosing.totalPurchases || 0).toLocaleString()}</span>
@@ -2063,26 +2074,44 @@ export default function Reports() {
             <option value="yesterday">🕒 Yesterday's Shift</option>
             <option value="week">🗓️ This Week</option>
             <option value="month">📅 This Month</option>
-            <option value="all">🌐 All Time</option>
-            <option value="custom">📅 Select Specific Date...</option>
+
+            <option value="custom">📅 Specific Date Range...</option>
           </select>
 
           {dateRange === 'custom' && (
-            <input
-              type="date"
-              value={customDate}
-              onChange={(e) => setCustomDate(e.target.value)}
-              style={{
-                padding: '9px 14px',
-                borderRadius: '8px',
-                border: '1px solid #e63946',
-                fontSize: '14px',
-                fontWeight: 600,
-                outline: 'none',
-                color: '#1a1a2e',
-                background: '#fff'
-              }}
-            />
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <input
+                type="date"
+                value={customFromDate}
+                onChange={(e) => setCustomFromDate(e.target.value)}
+                style={{
+                  padding: '9px 14px',
+                  borderRadius: '8px',
+                  border: '1px solid #e63946',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  outline: 'none',
+                  color: '#1a1a2e',
+                  background: '#fff'
+                }}
+              />
+              <span style={{ fontWeight: 600, color: '#6b7280' }}>to</span>
+              <input
+                type="date"
+                value={customToDate}
+                onChange={(e) => setCustomToDate(e.target.value)}
+                style={{
+                  padding: '9px 14px',
+                  borderRadius: '8px',
+                  border: '1px solid #e63946',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  outline: 'none',
+                  color: '#1a1a2e',
+                  background: '#fff'
+                }}
+              />
+            </div>
           )}
           
           <div style={{ position: 'relative' }}>
