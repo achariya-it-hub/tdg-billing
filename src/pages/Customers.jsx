@@ -28,6 +28,12 @@ export default function Customers() {
   const [formResult, setFormResult] = useState(null)
   const [formError, setFormError] = useState('')
 
+  const [quickType, setQuickType] = useState('customer')
+  const [quickForm, setQuickForm] = useState({ phone: '', name: '', partnerCode: '' })
+  const [quickLoading, setQuickLoading] = useState(false)
+  const [quickResult, setQuickResult] = useState(null)
+  const [quickError, setQuickError] = useState('')
+
   const [assetForm, setAssetForm] = useState({ name: '', phone: '' })
   const [assetLoading, setAssetLoading] = useState(false)
   const [assetOtp, setAssetOtp] = useState(null)
@@ -103,7 +109,8 @@ export default function Customers() {
   const filteredCustomers = customers.filter(c =>
     (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (c.phone || '').includes(searchTerm) ||
-    (c.email || '').toLowerCase().includes(searchTerm.toLowerCase())
+    (c.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (c.partnerCode || '').toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const searchCustomer = async () => {
@@ -145,6 +152,35 @@ export default function Customers() {
       setFormError('Connection error')
     }
     setFormLoading(false)
+  }
+
+  const handleQuickAdd = async () => {
+    if (quickType === 'customer') {
+      if (!quickForm.phone) { setQuickError('Phone number required'); return }
+    } else {
+      if (!quickForm.partnerCode || !quickForm.name || !quickForm.phone) { setQuickError('EMP ID, Name, and Mobile required'); return }
+    }
+    setQuickLoading(true)
+    setQuickError('')
+    setQuickResult(null)
+    try {
+      const res = await fetch(`${API_BASE}/api/customers/quick-add`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: getPin(), type: quickType, ...quickForm })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setQuickResult(data)
+        setQuickForm({ phone: '', name: '', partnerCode: '' })
+        fetchCustomers()
+      } else {
+        setQuickError(data.error || 'Failed to add')
+      }
+    } catch {
+      setQuickError('Connection error')
+    }
+    setQuickLoading(false)
   }
 
   const handleAddAsset = async () => {
@@ -240,7 +276,8 @@ export default function Customers() {
         {[
           { id: 'customers', label: 'Customers', icon: Users },
           { id: 'den', label: 'Den Members', icon: Users2 },
-          { id: 'create', label: 'Create Customer', icon: UserPlus },
+          { id: 'add-customer', label: 'Add Customer', icon: UserPlus },
+          { id: 'add-staff', label: 'Add Staff', icon: Users },
           { id: 'tiers', label: 'Tier Benefits', icon: Crown },
         ].map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
@@ -300,6 +337,11 @@ export default function Customers() {
                           <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 600, background: tier.bg, color: tier.color, display: 'flex', alignItems: 'center', gap: '4px' }}>
                             <TierIcon size={12} /> {tier.label}
                           </span>
+                          {customer.type === 'staff' && (
+                            <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700, background: '#dbeafe', color: '#1d4ed8' }}>
+                              STAFF
+                            </span>
+                          )}
                         </div>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleDeleteCustomer(customer.id, customer.name); }}
@@ -313,7 +355,10 @@ export default function Customers() {
                           <Trash2 size={16} />
                         </button>
                       </div>
-                      <div style={{ fontSize: '13px', color: '#6b7280' }}>{customer.phone || 'No phone'}</div>
+                      <div style={{ fontSize: '13px', color: '#6b7280' }}>
+                        {customer.phone || 'No phone'}
+                        {customer.partnerCode && <span style={{ marginLeft: '8px', color: '#1d4ed8', fontWeight: 600 }}>EMP: {customer.partnerCode}</span>}
+                      </div>
                     </div>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '16px' }}>
@@ -507,49 +552,90 @@ export default function Customers() {
         </div>
       )}
 
-      {activeTab === 'create' && (
+      {activeTab === 'add-customer' && (
         <div style={{ maxWidth: '500px' }}>
           <div style={{ background: 'white', borderRadius: '16px', padding: '32px', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '4px' }}>Register New Customer</h3>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '4px' }}>Add End Customer</h3>
             <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '24px' }}>
-              Creates a mobile app account with 500 starting points. Default password is last 6 digits of phone.
+              Quick-add a walk-in customer using their mobile number.
             </p>
 
-            {formResult && (
+            {quickResult && (
               <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#166534', fontSize: '16px', fontWeight: 600, marginBottom: '12px' }}>
-                  <Check size={20} /> Customer Created
+                  <Check size={20} /> Customer Added
                 </div>
                 <div style={{ fontSize: '14px', color: '#374151', marginBottom: '8px' }}>
-                  <div><strong>Name:</strong> {formResult.customer.name}</div>
-                  <div><strong>Email:</strong> {formResult.customer.email}</div>
-                  <div><strong>Phone:</strong> {formResult.customer.phone}</div>
-                  <div><strong>Password:</strong> <code style={{ background: '#fef3c7', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>{formResult.password}</code></div>
+                  <div><strong>Phone:</strong> {quickResult.customer.phone}</div>
+                  <div><strong>Name:</strong> {quickResult.customer.name || 'Customer'}</div>
                 </div>
-                <Button size="sm" onClick={() => setFormResult(null)}><UserPlus size={14} /> Add Another</Button>
+                <Button size="sm" onClick={() => setQuickResult(null)}><UserPlus size={14} /> Add Another</Button>
               </div>
             )}
 
-            {formError && (
+            {quickError && (
               <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', padding: '12px', color: '#dc2626', fontSize: '14px', marginBottom: '16px' }}>
-                {formError}
+                {quickError}
               </div>
             )}
 
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontSize: '13px', fontWeight: 500, color: '#374151', display: 'block', marginBottom: '4px' }}>Full Name</label>
-              <input type="text" placeholder="e.g. John Smith" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={inputStyle} />
-            </div>
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontSize: '13px', fontWeight: 500, color: '#374151', display: 'block', marginBottom: '4px' }}>Email Address</label>
-              <input type="email" placeholder="e.g. john@email.com" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} style={inputStyle} />
+              <label style={{ fontSize: '13px', fontWeight: 500, color: '#374151', display: 'block', marginBottom: '4px' }}>Mobile Number *</label>
+              <input type="tel" placeholder="e.g. 9876543210" value={quickForm.phone} onChange={(e) => setQuickForm({ ...quickForm, phone: e.target.value })} style={inputStyle} />
             </div>
             <div style={{ marginBottom: '24px' }}>
-              <label style={{ fontSize: '13px', fontWeight: 500, color: '#374151', display: 'block', marginBottom: '4px' }}>Phone Number</label>
-              <input type="tel" placeholder="e.g. 9876543210" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} style={inputStyle} />
+              <label style={{ fontSize: '13px', fontWeight: 500, color: '#374151', display: 'block', marginBottom: '4px' }}>Name (optional)</label>
+              <input type="text" placeholder="Customer name" value={quickForm.name} onChange={(e) => setQuickForm({ ...quickForm, name: e.target.value })} style={inputStyle} />
             </div>
-            <Button onClick={handleCreateCustomer} loading={formLoading} fullWidth>
-              <UserPlus size={18} /> Create Customer
+            <Button onClick={handleQuickAdd} loading={quickLoading} fullWidth>
+              <UserPlus size={18} /> Add Customer
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'add-staff' && (
+        <div style={{ maxWidth: '500px' }}>
+          <div style={{ background: 'white', borderRadius: '16px', padding: '32px', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '4px' }}>Add Staff Member</h3>
+            <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '24px' }}>
+              Register a staff partner with EMP ID for tracking and discounts.
+            </p>
+
+            {quickResult && (
+              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#166534', fontSize: '16px', fontWeight: 600, marginBottom: '12px' }}>
+                  <Check size={20} /> Staff Added
+                </div>
+                <div style={{ fontSize: '14px', color: '#374151', marginBottom: '8px' }}>
+                  <div><strong>EMP ID:</strong> {quickResult.customer.partnerCode}</div>
+                  <div><strong>Name:</strong> {quickResult.customer.name}</div>
+                  <div><strong>Phone:</strong> {quickResult.customer.phone}</div>
+                </div>
+                <Button size="sm" onClick={() => setQuickResult(null)}><Users size={14} /> Add Another</Button>
+              </div>
+            )}
+
+            {quickError && (
+              <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', padding: '12px', color: '#dc2626', fontSize: '14px', marginBottom: '16px' }}>
+                {quickError}
+              </div>
+            )}
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 500, color: '#374151', display: 'block', marginBottom: '4px' }}>EMP ID (Partner Code) *</label>
+              <input type="text" placeholder="e.g. EMP001" value={quickForm.partnerCode} onChange={(e) => setQuickForm({ ...quickForm, partnerCode: e.target.value })} style={inputStyle} />
+            </div>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 500, color: '#374151', display: 'block', marginBottom: '4px' }}>Full Name *</label>
+              <input type="text" placeholder="Staff member name" value={quickForm.name} onChange={(e) => setQuickForm({ ...quickForm, name: e.target.value })} style={inputStyle} />
+            </div>
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 500, color: '#374151', display: 'block', marginBottom: '4px' }}>Mobile Number *</label>
+              <input type="tel" placeholder="e.g. 9876543210" value={quickForm.phone} onChange={(e) => setQuickForm({ ...quickForm, phone: e.target.value })} style={inputStyle} />
+            </div>
+            <Button onClick={handleQuickAdd} loading={quickLoading} fullWidth>
+              <Users size={18} /> Add Staff
             </Button>
           </div>
         </div>

@@ -1407,10 +1407,10 @@ app.delete('/api/billing/users/:id', (req, res) => {
   res.json({ success: true })
 })
 
-// Get all mobile app customers
+// Get all mobile app customers + loyalty/staff users
 app.get('/api/customers', (req, res) => {
   const db = readDb()
-  const customers = (db.users || mobileAppUsers || []).map(u => ({
+  const mobileList = (db.users || mobileAppUsers || []).map(u => ({
     id: u.id,
     name: u.name || '',
     phone: u.phone || '',
@@ -1419,9 +1419,34 @@ app.get('/api/customers', (req, res) => {
     totalOrders: (u.orderHistory || []).length,
     totalSpent: (u.orderHistory || []).reduce((s, o) => s + (o.total || 0), 0),
     createdAt: u.createdAt || u.signupAt || '',
-    lastVisit: u.lastVisit || u.updatedAt || u.createdAt || ''
+    lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
+    type: u.type || 'customer',
+    partnerCode: u.partnerCode || '',
+    discountPct: u.discountPct || 0
   }))
-  res.json(customers)
+  const loyaltyList = (db.loyaltyUsers || loyaltyUsers || []).map(u => ({
+    id: u.id,
+    name: u.name || '',
+    phone: u.phone || '',
+    email: u.email || '',
+    points: u.points || 0,
+    totalOrders: (u.orderHistory || []).length,
+    totalSpent: (u.orderHistory || []).reduce((s, o) => s + (o.total || 0), 0),
+    createdAt: u.createdAt || u.signupAt || '',
+    lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
+    type: u.type || 'customer',
+    partnerCode: u.partnerCode || '',
+    discountPct: u.discountPct || 0
+  }))
+  const seen = new Set()
+  const all = []
+  for (const c of [...loyaltyList, ...mobileList]) {
+    const key = c.phone || c.id
+    if (seen.has(key)) continue
+    seen.add(key)
+    all.push(c)
+  }
+  res.json(all)
 })
 
 // Delete single customer by ID or phone
@@ -1495,6 +1520,71 @@ app.post('/api/billing/customers', async (req, res) => {
   db.users.push(newUser)
   writeDb(db)
   res.json({ success: true, customer: { id: newUser.id, name, email, phone, points: 500, createdAt: now }, password: phone.slice(-6) })
+})
+
+// Quick-add customer: end customer (phone only) or staff (EMP ID + name + phone)
+app.post('/api/customers/quick-add', (req, res) => {
+  const { pin, type, phone, name, partnerCode } = req.body
+  if (!pin || pin.length !== 4) return res.status(400).json({ error: 'Valid billing PIN required' })
+  const billingUser = billingUsers.find(u => bcrypt.compareSync(pin, u.pin))
+  if (!billingUser) return res.status(403).json({ error: 'Invalid PIN' })
+
+  const cleanPhone = String(phone || '').replace(/\D/g, '')
+  if (!cleanPhone || cleanPhone.length < 8) return res.status(400).json({ error: 'Valid phone number required' })
+
+  const db = readDb()
+  const allUsers = [...(db.users || []), ...(db.loyaltyUsers || [])]
+  const phoneExists = allUsers.find(u => (u.phone || '').replace(/\D/g, '') === cleanPhone)
+  if (phoneExists) return res.status(400).json({ error: 'Phone number already registered' })
+
+  const now = new Date().toISOString()
+  const isStaff = type === 'staff'
+
+  if (isStaff) {
+    if (!partnerCode || !name) return res.status(400).json({ error: 'EMP ID and Name required for staff' })
+  }
+
+  const newUser = {
+    id: 'u_' + Date.now(),
+    name: name || (isStaff ? '' : 'Customer'),
+    phone: cleanPhone,
+    email: '',
+    role: 'user',
+    type: isStaff ? 'staff' : 'customer',
+    partnerCode: isStaff ? partnerCode : undefined,
+    discountPct: 0,
+    points: 0,
+    assets: [],
+    totalDistributed: 0,
+    cashbackEarned: 0,
+    assetsDinedCount: 0,
+    allAssetsActive: false,
+    bonusClaimed: false,
+    referredBy: null,
+    referredByName: null,
+    createdAt: now
+  }
+
+  if (isStaff) {
+    db.loyaltyUsers = db.loyaltyUsers || []
+    db.loyaltyUsers.push(newUser)
+  } else {
+    db.users = db.users || []
+    db.users.push(newUser)
+  }
+  writeDb(db)
+
+  res.json({
+    success: true,
+    customer: {
+      id: newUser.id,
+      name: newUser.name,
+      phone: newUser.phone,
+      type: newUser.type,
+      partnerCode: newUser.partnerCode,
+      createdAt: now
+    }
+  })
 })
 
 // Get a customer's den/assets from billing app
