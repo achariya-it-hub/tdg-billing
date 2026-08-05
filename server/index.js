@@ -1644,10 +1644,7 @@ app.post('/api/billing/customers', async (req, res) => {
 
 // Quick-add customer: end customer (phone only) or staff (EMP ID + name + phone)
 app.post('/api/customers/quick-add', (req, res) => {
-  const { pin, type, phone, name, partnerCode } = req.body
-  if (!pin || pin.length !== 4) return res.status(400).json({ error: 'Valid billing PIN required' })
-  const billingUser = billingUsers.find(u => bcrypt.compareSync(pin, u.pin))
-  if (!billingUser) return res.status(403).json({ error: 'Invalid PIN' })
+  const { type, phone, name, partnerCode } = req.body
 
   const cleanPhone = String(phone || '').replace(/\D/g, '')
   if (!cleanPhone || cleanPhone.length < 8) return res.status(400).json({ error: 'Valid phone number required' })

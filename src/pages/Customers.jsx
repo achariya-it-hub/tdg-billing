@@ -167,7 +167,7 @@ export default function Customers() {
       const res = await fetch(`${API_BASE}/api/customers/quick-add`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: getPin(), type: quickType, ...quickForm })
+        body: JSON.stringify({ type: quickType, ...quickForm })
       })
       const data = await res.json()
       if (res.ok) {
