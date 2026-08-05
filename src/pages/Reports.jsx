@@ -1891,7 +1891,7 @@ export default function Reports() {
             <option value="yesterday">🕒 Yesterday's Shift</option>
             <option value="week">🗓️ This Week</option>
             <option value="month">📅 This Month</option>
-            <option value="all">🌐 All Time</option>
+
             <option value="custom">📅 Specific Date Range...</option>
           </select>
 
