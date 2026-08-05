@@ -24,6 +24,7 @@ server-update/
 deploy.zip
 dist.zip
 server-update.zip
+tmp-deploy-*/
 check-server.js
 playwright-*.mjs
 playwright-*.cjs

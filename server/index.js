@@ -83,40 +83,50 @@ function performDailyBackup() {
   }
 }
 
+let isStateRestored = false
+
 function writeDb(data = {}) {
   try {
+    const diskDb = readDb() || {}
     const completeData = {
+      ...diskDb,
       ...data,
-      orders: typeof orders !== 'undefined' && orders !== undefined ? orders : (data.orders || []),
-      loyaltyUsers: typeof loyaltyUsers !== 'undefined' && loyaltyUsers !== undefined ? loyaltyUsers : (data.loyaltyUsers || []),
-      dens: typeof dens !== 'undefined' && dens !== undefined ? dens : (data.dens || []),
-      pointTransactions: typeof pointTransactions !== 'undefined' && pointTransactions !== undefined ? pointTransactions : (data.pointTransactions || []),
-      inventory: typeof inventory !== 'undefined' && inventory !== undefined ? inventory : (data.inventory || []),
-      orderNumber: typeof orderNumber !== 'undefined' && orderNumber !== undefined ? orderNumber : (data.orderNumber || 1000),
-      usedReferralCodes: typeof usedReferralCodes !== 'undefined' && usedReferralCodes !== undefined ? [...usedReferralCodes] : (data.usedReferralCodes || []),
-      expenses: typeof expenses !== 'undefined' && expenses !== undefined ? expenses : (data.expenses || []),
-      purchases: typeof purchases !== 'undefined' && purchases !== undefined ? purchases : (data.purchases || []),
-      onlineOrders: typeof onlineOrders !== 'undefined' && onlineOrders !== undefined ? onlineOrders : (data.onlineOrders || []),
-      aggregators: typeof aggregators !== 'undefined' && aggregators !== undefined ? aggregators : (data.aggregators || []),
-      billingUsers: typeof billingUsers !== 'undefined' && billingUsers !== undefined ? billingUsers : (data.billingUsers || []),
-      categories: typeof categories !== 'undefined' && categories !== undefined ? categories : (data.categories || []),
-      menuItems: typeof menuItems !== 'undefined' && menuItems !== undefined ? menuItems : (data.menuItems || []),
-      recipes: typeof recipes !== 'undefined' && recipes !== undefined ? recipes : (data.recipes || []),
-      users: typeof mobileAppUsers !== 'undefined' && mobileAppUsers !== undefined ? mobileAppUsers : (data.users || []),
-      suppliers: typeof suppliers !== 'undefined' && suppliers !== undefined ? suppliers : (data.suppliers || []),
-      purchaseOrders: typeof purchaseOrders !== 'undefined' && purchaseOrders !== undefined ? purchaseOrders : (data.purchaseOrders || []),
-      poItems: typeof poItems !== 'undefined' && poItems !== undefined ? poItems : (data.poItems || []),
-      grns: typeof grns !== 'undefined' && grns !== undefined ? grns : (data.grns || []),
-      vendorPayments: typeof vendorPayments !== 'undefined' && vendorPayments !== undefined ? vendorPayments : (data.vendorPayments || []),
-      employees: typeof employees !== 'undefined' && employees !== undefined ? employees : (data.employees || []),
-      staffAuditLogs: typeof staffAuditLogs !== 'undefined' && staffAuditLogs !== undefined ? staffAuditLogs : (data.staffAuditLogs || []),
-      staffPromotionSettings: typeof staffPromotionSettings !== 'undefined' && staffPromotionSettings !== undefined ? staffPromotionSettings : (data.staffPromotionSettings || {}),
-      settings: typeof settings !== 'undefined' && settings !== undefined ? settings : (data.settings || {})
+      orders: typeof orders !== 'undefined' && orders.length > 0 ? orders : (data.orders && data.orders.length > 0 ? data.orders : (diskDb.orders || [])),
+      loyaltyUsers: typeof loyaltyUsers !== 'undefined' && loyaltyUsers.length > 0 ? loyaltyUsers : (data.loyaltyUsers && data.loyaltyUsers.length > 0 ? data.loyaltyUsers : (diskDb.loyaltyUsers || [])),
+      dens: typeof dens !== 'undefined' && dens.length > 0 ? dens : (data.dens || diskDb.dens || []),
+      pointTransactions: typeof pointTransactions !== 'undefined' && pointTransactions.length > 0 ? pointTransactions : (data.pointTransactions || diskDb.pointTransactions || []),
+      inventory: typeof inventory !== 'undefined' && inventory.length > 0 ? inventory : (data.inventory && data.inventory.length > 0 ? data.inventory : (diskDb.inventory || [])),
+      orderNumber: Math.max(typeof orderNumber !== 'undefined' ? (orderNumber || 0) : 0, data.orderNumber || 0, diskDb.orderNumber || 0),
+      usedReferralCodes: typeof usedReferralCodes !== 'undefined' ? [...usedReferralCodes] : (data.usedReferralCodes || diskDb.usedReferralCodes || []),
+      expenses: typeof expenses !== 'undefined' && expenses.length > 0 ? expenses : (data.expenses && data.expenses.length > 0 ? data.expenses : (diskDb.expenses || [])),
+      purchases: typeof purchases !== 'undefined' && purchases.length > 0 ? purchases : (data.purchases && data.purchases.length > 0 ? data.purchases : (diskDb.purchases || [])),
+      onlineOrders: typeof onlineOrders !== 'undefined' && onlineOrders.length > 0 ? onlineOrders : (data.onlineOrders && data.onlineOrders.length > 0 ? data.onlineOrders : (diskDb.onlineOrders || [])),
+      aggregators: typeof aggregators !== 'undefined' && aggregators.length > 0 ? aggregators : (data.aggregators || diskDb.aggregators || []),
+      billingUsers: typeof billingUsers !== 'undefined' && billingUsers.length > 0 ? billingUsers : (data.billingUsers && data.billingUsers.length > 0 ? data.billingUsers : (diskDb.billingUsers || [])),
+      categories: typeof categories !== 'undefined' && categories.length > 0 ? categories : (data.categories && data.categories.length > 0 ? data.categories : (diskDb.categories || [])),
+      menuItems: typeof menuItems !== 'undefined' && menuItems.length > 0 ? menuItems : (data.menuItems && data.menuItems.length > 0 ? data.menuItems : (diskDb.menuItems || [])),
+      recipes: typeof recipes !== 'undefined' && recipes.length > 0 ? recipes : (data.recipes && data.recipes.length > 0 ? data.recipes : (diskDb.recipes || [])),
+      users: typeof mobileAppUsers !== 'undefined' && mobileAppUsers.length > 0 ? mobileAppUsers : (data.users && data.users.length > 0 ? data.users : (diskDb.users || [])),
+      suppliers: typeof suppliers !== 'undefined' && suppliers.length > 0 ? suppliers : (data.suppliers && data.suppliers.length > 0 ? data.suppliers : (diskDb.suppliers || [])),
+      purchaseOrders: typeof purchaseOrders !== 'undefined' && purchaseOrders.length > 0 ? purchaseOrders : (data.purchaseOrders && data.purchaseOrders.length > 0 ? data.purchaseOrders : (diskDb.purchaseOrders || [])),
+      poItems: typeof poItems !== 'undefined' && poItems.length > 0 ? poItems : (data.poItems && data.poItems.length > 0 ? data.poItems : (diskDb.poItems || [])),
+      grns: typeof grns !== 'undefined' && grns.length > 0 ? grns : (data.grns && data.grns.length > 0 ? data.grns : (diskDb.grns || [])),
+      vendorPayments: typeof vendorPayments !== 'undefined' && vendorPayments.length > 0 ? vendorPayments : (data.vendorPayments && data.vendorPayments.length > 0 ? data.vendorPayments : (diskDb.vendorPayments || [])),
+      employees: typeof employees !== 'undefined' && employees.length > 0 ? employees : (data.employees && data.employees.length > 0 ? data.employees : (diskDb.employees || [])),
+      staffAuditLogs: typeof staffAuditLogs !== 'undefined' && staffAuditLogs.length > 0 ? staffAuditLogs : (data.staffAuditLogs || diskDb.staffAuditLogs || []),
+      staffPromotionSettings: typeof staffPromotionSettings !== 'undefined' ? staffPromotionSettings : (data.staffPromotionSettings || diskDb.staffPromotionSettings || {}),
+      settings: typeof settings !== 'undefined' ? settings : (data.settings || diskDb.settings || {})
     }
 
     const tempPath = `${DB_PATH}.tmp`
     writeFileSync(tempPath, JSON.stringify(completeData, null, 2))
     renameSync(tempPath, DB_PATH)
+
+    // Sync live seed-db.json
+    try {
+      const seedPath = join(__dirname, 'seed-db.json')
+      writeFileSync(seedPath, JSON.stringify(completeData, null, 2))
+    } catch (se) {}
 
     // Auto-backup on every write (keeps last 20 copies)
     try {
@@ -277,6 +287,9 @@ let aggregators = [
 ]
 
 const VAULT_PATH = join(__dirname, 'sales_vault_LOCK.json')
+const MENU_VAULT_PATH = join(__dirname, 'menu_backup_LOCK.json')
+const INVENTORY_VAULT_PATH = join(__dirname, 'inventory_vault_LOCK.json')
+const SETTINGS_VAULT_PATH = join(__dirname, 'settings_vault_LOCK.json')
 
 function syncSalesVault(currentOrders) {
   try {
@@ -286,45 +299,80 @@ function syncSalesVault(currentOrders) {
       if (content) {
         try {
           const parsed = JSON.parse(content)
-          if (Array.isArray(parsed)) {
-            vaultOrders = parsed
-          } else if (parsed && Array.isArray(parsed.orders)) {
-            vaultOrders = parsed.orders
-          }
+          vaultOrders = Array.isArray(parsed) ? parsed : (parsed.orders || [])
         } catch (err) {}
       }
     }
-    if (!Array.isArray(vaultOrders)) {
-      vaultOrders = []
-    }
-
     const orderMap = new Map()
-    // Load vault orders
-    vaultOrders.forEach(o => {
-      if (o && (o.id || o.orderNumber)) {
-        orderMap.set(o.id || String(o.orderNumber), o)
-      }
-    })
-    // Merge active orders
+    vaultOrders.forEach(o => { if (o && (o.id || o.orderNumber)) orderMap.set(String(o.id || o.orderNumber), o) })
     if (Array.isArray(currentOrders)) {
-      currentOrders.forEach(o => {
-        if (o && (o.id || o.orderNumber)) {
-          orderMap.set(o.id || String(o.orderNumber), o)
-        }
-      })
+      currentOrders.forEach(o => { if (o && (o.id || o.orderNumber)) orderMap.set(String(o.id || o.orderNumber), o) })
     }
-
     const mergedOrders = Array.from(orderMap.values())
-    // Save back to vault
     writeFileSync(VAULT_PATH, JSON.stringify({ orders: mergedOrders, count: mergedOrders.length }, null, 2))
     return mergedOrders
   } catch (e) {
-    console.error('[SALES VAULT] Error syncing vault:', e.message)
-    return Array.isArray(currentOrders) ? currentOrders : []
+    console.error('[SALES VAULT] Error:', e.message)
+    return Array.isArray(currentOrders) && currentOrders.length ? currentOrders : []
   }
 }
 
-const SETTINGS_VAULT_PATH = join(__dirname, 'settings_vault_LOCK.json')
+function syncMenuVault(curCategories, curMenuItems, curRecipes) {
+  try {
+    let vaultData = { categories: [], menuItems: [], recipes: [] }
+    if (existsSync(MENU_VAULT_PATH)) {
+      const content = readFileSync(MENU_VAULT_PATH, 'utf-8').trim()
+      if (content) {
+        try { vaultData = JSON.parse(content) } catch (e) {}
+      }
+    }
+    const catMap = new Map()
+    ;(vaultData.categories || []).forEach(c => { if (c && c.id) catMap.set(c.id, c) })
+    ;(curCategories || []).forEach(c => { if (c && c.id) catMap.set(c.id, c) })
+    const mergedCategories = Array.from(catMap.values())
+
+    const menuMap = new Map()
+    ;(vaultData.menuItems || []).forEach(m => { if (m && (m.id || m.name)) menuMap.set(m.id || m.name, m) })
+    ;(curMenuItems || []).forEach(m => { if (m && (m.id || m.name)) menuMap.set(m.id || m.name, m) })
+    const mergedMenuItems = Array.from(menuMap.values())
+
+    const recipeMap = new Map()
+    ;(vaultData.recipes || []).forEach(r => { if (r && (r.id || r.menuItemId)) recipeMap.set(r.id || r.menuItemId, r) })
+    ;(curRecipes || []).forEach(r => { if (r && (r.id || r.menuItemId)) recipeMap.set(r.id || r.menuItemId, r) })
+    const mergedRecipes = Array.from(recipeMap.values())
+
+    const finalVault = { categories: mergedCategories, menuItems: mergedMenuItems, recipes: mergedRecipes }
+    writeFileSync(MENU_VAULT_PATH, JSON.stringify(finalVault, null, 2))
+    return finalVault
+  } catch (e) {
+    console.error('[MENU VAULT] Error:', e.message)
+    return { categories: curCategories || [], menuItems: curMenuItems || [], recipes: curRecipes || [] }
+  }
+}
+
+function syncInventoryVault(curInventory) {
+  try {
+    let vaultInv = []
+    if (existsSync(INVENTORY_VAULT_PATH)) {
+      const content = readFileSync(INVENTORY_VAULT_PATH, 'utf-8').trim()
+      if (content) {
+        try {
+          const parsed = JSON.parse(content)
+          vaultInv = Array.isArray(parsed) ? parsed : (parsed.inventory || [])
+        } catch (e) {}
+      }
+    }
+    const invMap = new Map()
+    vaultInv.forEach(i => { if (i && (i.id || i.name)) invMap.set(i.id || i.name, i) })
+    ;(curInventory || []).forEach(i => { if (i && (i.id || i.name)) invMap.set(i.id || i.name, i) })
+    const mergedInv = Array.from(invMap.values())
+    writeFileSync(INVENTORY_VAULT_PATH, JSON.stringify({ inventory: mergedInv, count: mergedInv.length }, null, 2))
+    return mergedInv
+  } catch (e) {
+    console.error('[INVENTORY VAULT] Error:', e.message)
+    return curInventory || []
+  }
+}
 
 function syncSettingsVault(currentSettings) {
   try {
@@ -338,8 +386,6 @@ function syncSettingsVault(currentSettings) {
     }
 
     const currentCompany = currentSettings?.company || {}
-
-    // Helper: pick non-empty value, prioritizing currentCompany if non-empty, else vaultCompany
     const pickBest = (currVal, vaultVal) => {
       const c = (currVal || '').toString().trim()
       const v = (vaultVal || '').toString().trim()
@@ -371,7 +417,7 @@ function syncSettingsVault(currentSettings) {
     writeFileSync(SETTINGS_VAULT_PATH, JSON.stringify(finalSettings, null, 2))
     return finalSettings
   } catch (e) {
-    console.error('[SETTINGS VAULT] Error syncing settings vault:', e.message)
+    console.error('[SETTINGS VAULT] Error:', e.message)
     return currentSettings
   }
 }
@@ -379,33 +425,32 @@ function syncSettingsVault(currentSettings) {
 function saveState() {
   orders = syncSalesVault(orders)
   settings = syncSettingsVault(settings)
-  const currentDb = readDb() || {}
+  
+  const menuVault = syncMenuVault(categories, menuItems, recipes)
+  categories = menuVault.categories
+  menuItems = menuVault.menuItems
+  recipes = menuVault.recipes
+
+  inventory = syncInventoryVault(inventory)
+
   writeDb({
-    orders: orders,
-    loyaltyUsers: loyaltyUsers && loyaltyUsers.length ? loyaltyUsers : (currentDb.loyaltyUsers || []),
-    dens: dens && dens.length ? dens : (currentDb.dens || []),
-    pointTransactions: pointTransactions && pointTransactions.length ? pointTransactions : (currentDb.pointTransactions || []),
-    inventory: inventory && inventory.length ? inventory : (currentDb.inventory || []),
-    orderNumber: Math.max(orderNumber || 0, currentDb.orderNumber || 0),
-    usedReferralCodes: [...usedReferralCodes],
-    expenses: expenses && expenses.length ? expenses : (currentDb.expenses || []),
-    purchases: purchases && purchases.length ? purchases : (currentDb.purchases || []),
-    onlineOrders: onlineOrders && onlineOrders.length ? onlineOrders : (currentDb.onlineOrders || []),
-    aggregators: aggregators && aggregators.length ? aggregators : (currentDb.aggregators || []),
-    billingUsers: billingUsers && billingUsers.length ? billingUsers : (currentDb.billingUsers || []),
-    categories: categories && categories.length ? categories : (currentDb.categories || []),
-    menuItems: menuItems && menuItems.length ? menuItems : (currentDb.menuItems || []),
-    recipes: recipes && recipes.length ? recipes : (currentDb.recipes || []),
-    users: mobileAppUsers && mobileAppUsers.length ? mobileAppUsers : (currentDb.users || []),
-    suppliers: suppliers && suppliers.length ? suppliers : (currentDb.suppliers || []),
-    purchaseOrders: purchaseOrders && purchaseOrders.length ? purchaseOrders : (currentDb.purchaseOrders || []),
-    poItems: poItems && poItems.length ? poItems : (currentDb.poItems || []),
-    grns: grns && grns.length ? grns : (currentDb.grns || []),
-    vendorPayments: vendorPayments && vendorPayments.length ? vendorPayments : (currentDb.vendorPayments || []),
-    employees: employees,
-    staffAuditLogs: staffAuditLogs,
-    staffPromotionSettings: staffPromotionSettings,
-    settings: settings
+    orders,
+    settings,
+    categories,
+    menuItems,
+    recipes,
+    inventory,
+    billingUsers,
+    users: mobileAppUsers,
+    loyaltyUsers,
+    employees,
+    expenses,
+    purchases,
+    suppliers,
+    purchaseOrders,
+    poItems,
+    grns,
+    vendorPayments
   })
 }
 
@@ -460,91 +505,67 @@ function findLatestValidBackup() {
 }
 
 // Safe Data Protection & State Restoration
-// Safe Data Protection & State Restoration
 function restoreState() {
-  let db = readDb()
+  let db = readDb() || {}
   const SEED_PATH = join(__dirname, 'seed-db.json')
 
-  // Create an automatic Data Shield Backup on every server launch
+  // Create Data Shield Backup
   if (db && (db.orders?.length || db.purchases?.length || db.grns?.length || db.users?.length)) {
     try {
       if (!existsSync(BACKUP_DIR)) mkdirSync(BACKUP_DIR, { recursive: true })
       const ts = new Date().toISOString().replace(/[:.]/g, '-')
       writeFileSync(join(BACKUP_DIR, `db-shield-${ts}.json`), JSON.stringify(db, null, 2))
-      console.log(`[DATA PROTECTION] Safety shield backup created: db-shield-${ts}.json`)
-    } catch (e) {
-      console.error('[DATA PROTECTION] Shield backup error:', e.message)
-    }
+    } catch (e) {}
   }
 
-  // Safety: if db.json is completely missing, seed on initial installation only
-  const isDbMissing = !existsSync(DB_PATH) || !db
-
+  // Safety: if db.json is completely missing or empty
+  const isDbMissing = !existsSync(DB_PATH) || !db || !db.orders || db.orders.length === 0
   if (isDbMissing) {
-    console.log('[DATA PROTECTION] db.json missing. Initializing on first installation from seed-db.json...')
     let foundBackup = null
     if (existsSync(SEED_PATH)) {
       try {
         const seedContent = readFileSync(SEED_PATH, 'utf-8').trim()
         if (seedContent) foundBackup = JSON.parse(seedContent)
-      } catch (e) { console.error('Error reading seed-db.json:', e.message) }
+      } catch (e) {}
     }
-    if (!foundBackup) foundBackup = findLatestValidBackup()
-
-    if (foundBackup) {
-      db = foundBackup
-      try {
-        writeFileSync(DB_PATH, JSON.stringify(foundBackup, null, 2))
-        console.log('[DATA PROTECTION] Auto-restored business database successfully!')
-      } catch (e) {
-        console.error('[DATA PROTECTION] Failed to write restored database:', e.message)
-      }
+    if (!foundBackup || !foundBackup.orders || !foundBackup.orders.length) {
+      foundBackup = findLatestValidBackup()
     }
+    if (foundBackup) db = foundBackup
   }
 
-  // Preserve 100% of operational business data and menu items from db.json (db.json is the single source of truth)
-  if (db.categories && Array.isArray(db.categories)) categories = db.categories
-  if (db.menuItems && Array.isArray(db.menuItems)) menuItems = db.menuItems
-  if (db.recipes && Array.isArray(db.recipes)) recipes = db.recipes
+  // Sync with Vault Locks for absolute 100% data retention
+  orders = syncSalesVault(db.orders || [])
+  settings = syncSettingsVault(db.settings || settings)
 
-  if (db.orders && Array.isArray(db.orders)) orders = db.orders
-  orders = syncSalesVault(orders)
-  if (db.loyaltyUsers && Array.isArray(db.loyaltyUsers)) loyaltyUsers = db.loyaltyUsers
-  if (db.dens && Array.isArray(db.dens)) dens = db.dens
-  if (db.pointTransactions && Array.isArray(db.pointTransactions)) pointTransactions = db.pointTransactions
-  if (db.inventory && Array.isArray(db.inventory)) inventory = db.inventory
-  if (db.orderNumber) orderNumber = db.orderNumber
+  const menuVault = syncMenuVault(db.categories || categories, db.menuItems || menuItems, db.recipes || recipes)
+  categories = menuVault.categories
+  menuItems = menuVault.menuItems
+  recipes = menuVault.recipes
+
+  inventory = syncInventoryVault(db.inventory || inventory)
+
+  if (db.loyaltyUsers && Array.isArray(db.loyaltyUsers) && db.loyaltyUsers.length) loyaltyUsers = db.loyaltyUsers
+  if (db.dens && Array.isArray(db.dens) && db.dens.length) dens = db.dens
+  if (db.pointTransactions && Array.isArray(db.pointTransactions) && db.pointTransactions.length) pointTransactions = db.pointTransactions
+  if (db.orderNumber) orderNumber = Math.max(orderNumber || 0, db.orderNumber || 0)
   if (db.usedReferralCodes && Array.isArray(db.usedReferralCodes)) usedReferralCodes = new Set(db.usedReferralCodes)
-  if (db.expenses && Array.isArray(db.expenses)) expenses = db.expenses
-  if (db.purchases && Array.isArray(db.purchases)) purchases = db.purchases
-  if (db.onlineOrders && Array.isArray(db.onlineOrders)) onlineOrders = db.onlineOrders
-  if (db.aggregators && Array.isArray(db.aggregators)) aggregators = db.aggregators
-  if (db.users && Array.isArray(db.users)) mobileAppUsers = db.users
-  if (db.suppliers && Array.isArray(db.suppliers)) suppliers = db.suppliers
-  if (db.purchaseOrders && Array.isArray(db.purchaseOrders)) purchaseOrders = db.purchaseOrders
-  if (db.poItems && Array.isArray(db.poItems)) poItems = db.poItems
-  if (db.grns && Array.isArray(db.grns)) grns = db.grns
-  if (db.vendorPayments && Array.isArray(db.vendorPayments)) vendorPayments = db.vendorPayments
+  if (db.expenses && Array.isArray(db.expenses) && db.expenses.length) expenses = db.expenses
+  if (db.purchases && Array.isArray(db.purchases) && db.purchases.length) purchases = db.purchases
+  if (db.onlineOrders && Array.isArray(db.onlineOrders) && db.onlineOrders.length) onlineOrders = db.onlineOrders
+  if (db.aggregators && Array.isArray(db.aggregators) && db.aggregators.length) aggregators = db.aggregators
+  if (db.users && Array.isArray(db.users) && db.users.length) mobileAppUsers = db.users
+  if (db.suppliers && Array.isArray(db.suppliers) && db.suppliers.length) suppliers = db.suppliers
+  if (db.purchaseOrders && Array.isArray(db.purchaseOrders) && db.purchaseOrders.length) purchaseOrders = db.purchaseOrders
+  if (db.poItems && Array.isArray(db.poItems) && db.poItems.length) poItems = db.poItems
+  if (db.grns && Array.isArray(db.grns) && db.grns.length) grns = db.grns
+  if (db.vendorPayments && Array.isArray(db.vendorPayments) && db.vendorPayments.length) vendorPayments = db.vendorPayments
   if (db.employees && Array.isArray(db.employees) && db.employees.length > 0) employees = db.employees
   else employees = defaultEmployees
   if (db.staffAuditLogs && Array.isArray(db.staffAuditLogs)) staffAuditLogs = db.staffAuditLogs
   if (db.staffPromotionSettings) staffPromotionSettings = { ...staffPromotionSettings, ...db.staffPromotionSettings }
-  if (db.settings) {
-    settings = {
-      ...settings,
-      ...db.settings,
-      company: {
-        ...settings.company,
-        ...(db.settings.company || {})
-      },
-      theme: {
-        ...settings.theme,
-        ...(db.settings.theme || {})
-      }
-    }
-  }
-  settings = syncSettingsVault(settings)
-  if (db.billingUsers && Array.isArray(db.billingUsers)) {
+
+  if (db.billingUsers && Array.isArray(db.billingUsers) && db.billingUsers.length) {
     billingUsers = db.billingUsers
     billingUsers.forEach(u => {
       if (u.pin && u.pin.length === 4 && /^\d{4}$/.test(u.pin)) {
@@ -555,7 +576,7 @@ function restoreState() {
 
   // Seed demo login credentials if missing
   const demoEmail = 'demo'
-  const hasDemo = mobileAppUsers.some(u => u.email.toLowerCase() === demoEmail)
+  const hasDemo = mobileAppUsers.some(u => u.email && u.email.toLowerCase() === demoEmail)
   if (!hasDemo) {
     const hashed = bcrypt.hashSync('demo123', 10)
     const demoUser = {
@@ -572,7 +593,8 @@ function restoreState() {
     db.users = mobileAppUsers
   }
 
-  console.log('[DATA PROTECTION] Database initialized. db.json is the single source of truth for all menu items and operational data!')
+  isStateRestored = true
+  console.log(`[DATA PROTECTION] Database initialized. Single source of truth restored: ${orders.length} orders, ${menuItems.length} menu items, ${inventory.length} inventory items!`)
 }
 
 const app = express()
@@ -3206,7 +3228,13 @@ app.get('/api/pos/orders', (req, res) => {
       const latestDate = getLatestOrderDate(orders)
       inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
     } else if (norm === 'today' || norm === todayStr) {
-      inMemory = inMemory.filter(o => getOrderDate(o) === todayStr)
+      const todayOrders = inMemory.filter(o => getOrderDate(o) === todayStr)
+      if (todayOrders.length > 0) {
+        inMemory = todayOrders
+      } else {
+        const latestDate = getLatestOrderDate(inMemory)
+        inMemory = inMemory.filter(o => getOrderDate(o) === latestDate)
+      }
     } else if (norm === 'yesterday' || norm === yesterdayStr) {
       inMemory = inMemory.filter(o => getOrderDate(o) === yesterdayStr)
     } else if (norm === 'week' || date === 'week') {
@@ -4843,7 +4871,10 @@ function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
 
   const normDate = normalizeDateStr(date)
   if (normDate === 'today' || normDate === todayStr) {
-    return targetOrders.filter(o => getOrderDate(o) === todayStr)
+    const todayOrders = targetOrders.filter(o => getOrderDate(o) === todayStr)
+    if (todayOrders.length > 0) return todayOrders
+    const latestDate = getLatestOrderDate(targetOrders)
+    return targetOrders.filter(o => getOrderDate(o) === latestDate)
   }
 
   if (normDate === 'yesterday' || normDate === yesterdayStr) {
@@ -4851,10 +4882,16 @@ function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
   }
 
   if (normDate && normDate !== 'all' && normDate !== 'latest') {
-    return targetOrders.filter(o => getOrderDate(o) === normDate)
+    const matched = targetOrders.filter(o => getOrderDate(o) === normDate)
+    if (matched.length > 0) return matched
+    const latestDate = getLatestOrderDate(targetOrders)
+    return targetOrders.filter(o => getOrderDate(o) === latestDate)
   }
 
-  return targetOrders.filter(o => getOrderDate(o) === todayStr)
+  const todayOrders = targetOrders.filter(o => getOrderDate(o) === todayStr)
+  if (todayOrders.length > 0) return todayOrders
+  const latestDate = getLatestOrderDate(targetOrders)
+  return targetOrders.filter(o => getOrderDate(o) === latestDate)
 }
 
 // ============ AUTOMATIC MIDNIGHT 12:00 AM IST DAY CLOSING ENGINE ============

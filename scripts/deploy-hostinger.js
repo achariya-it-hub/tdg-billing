@@ -35,18 +35,19 @@ try {
   const serverSrc = join(root, 'server')
   const serverDst = join(stage, 'server')
   cpSync(serverSrc, serverDst, { recursive: true })
-  const removeFromServer = ['node_modules', 'db.json', 'billing.db', 'backups']
+  const removeFromServer = ['node_modules', 'billing.db', 'backups']
   for (const f of readdirSync(serverDst)) {
-    if (removeFromServer.includes(f) || (f.startsWith('db.') && f.endsWith('.json'))) {
+    if (removeFromServer.includes(f)) {
       rmSync(join(serverDst, f), { recursive: true, force: true })
     }
   }
 
-  // Package seed-db.json so Hostinger automatically seeds all store data on first run
+  // Package db.json, seed-db.json, and lock vaults so Hostinger has 100% live sales data
   const localDbPath = join(root, 'server', 'db.json')
   if (existsSync(localDbPath)) {
     cpSync(localDbPath, join(serverDst, 'seed-db.json'))
-    console.log('   ✓ Auto-seed database (seed-db.json) packaged')
+    cpSync(localDbPath, join(serverDst, 'db.json'))
+    console.log('   ✓ Auto-seed database (db.json & seed-db.json & lock vaults) packaged')
   }
 
   const serverSize = countSize(serverDst)
