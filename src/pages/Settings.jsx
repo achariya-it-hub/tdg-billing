@@ -99,6 +99,7 @@ export default function Settings() {
 function PaymentGatewaysTab({ pin, settings, onSaved }) {
   const ccConfig = settings?.paymentGateways?.ccavenue || {}
   const cfConfig = settings?.paymentGateways?.cashfree || {}
+  const msg91Config = settings?.msg91 || {}
   const [ccForm, setCcForm] = useState({
     merchantId: ccConfig.merchantId || '',
     workingKey: ccConfig.workingKey || '',
@@ -113,6 +114,13 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
     isEnabled: cfConfig.isEnabled !== false,
   })
   const [enableAssetOtp, setEnableAssetOtp] = useState(settings?.paymentGateways?.enableAssetOtp !== false)
+  const [msg91Form, setMsg91Form] = useState({
+    authKey: msg91Config.authKey || '',
+    senderId: msg91Config.senderId || 'TDGBIL',
+    templateId: msg91Config.templateId || '',
+    otpExpiry: msg91Config.otpExpiry || 300,
+    isEnabled: msg91Config.isEnabled !== false
+  })
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
 
@@ -122,7 +130,7 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
       const res = await fetch(`${API_BASE}/api/settings/payment-gateways`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin, ccavenue: ccForm, cashfree: cfForm, enableAssetOtp })
+        body: JSON.stringify({ pin, ccavenue: ccForm, cashfree: cfForm, msg91: msg91Form, enableAssetOtp })
       })
       const data = await res.json()
       if (data.success) {
@@ -214,6 +222,40 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
             Production Mode
           </label>
         </div>
+      </div>
+
+      {/* General */}
+      <div style={glassCard}>
+        <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <CreditCard size={22} color="#10b981" /> MSG91 OTP Service
+        </h3>
+        <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '20px' }}>
+          Configure MSG91 for sending OTP via SMS. Used for forgot password and asset verification.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+          <div>
+            <label style={labelStyle}>Auth Key</label>
+            <input type="password" style={inputStyle} placeholder="MSG91 Auth Key" value={msg91Form.authKey} onChange={e => setMsg91Form({ ...msg91Form, authKey: e.target.value })} />
+          </div>
+          <div>
+            <label style={labelStyle}>Sender ID</label>
+            <input style={inputStyle} placeholder="e.g. TDGBIL" value={msg91Form.senderId} onChange={e => setMsg91Form({ ...msg91Form, senderId: e.target.value })} />
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+          <div>
+            <label style={labelStyle}>Template ID (optional)</label>
+            <input style={inputStyle} placeholder="MSG91 template ID" value={msg91Form.templateId} onChange={e => setMsg91Form({ ...msg91Form, templateId: e.target.value })} />
+          </div>
+          <div>
+            <label style={labelStyle}>OTP Expiry (seconds)</label>
+            <input type="number" style={inputStyle} value={msg91Form.otpExpiry} onChange={e => setMsg91Form({ ...msg91Form, otpExpiry: Number(e.target.value) })} />
+          </div>
+        </div>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px', marginBottom: '16px' }}>
+          <input type="checkbox" checked={msg91Form.isEnabled} onChange={e => setMsg91Form({ ...msg91Form, isEnabled: e.target.checked })} style={{ width: '18px', height: '18px', accentColor: '#10b981' }} />
+          Enable MSG91 SMS OTP
+        </label>
       </div>
 
       {/* General */}

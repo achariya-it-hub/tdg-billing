@@ -125,10 +125,11 @@ export default function Reports() {
     return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
   })
 
-  const formatLocalYYYYMMDD = (d) => {
-    const year = d.getFullYear()
-    const month = String(d.getMonth() + 1).padStart(2, '0')
-    const day = String(d.getDate()).padStart(2, '0')
+  const formatISTDate = (d) => {
+    const ist = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
+    const year = ist.getFullYear()
+    const month = String(ist.getMonth() + 1).padStart(2, '0')
+    const day = String(ist.getDate()).padStart(2, '0')
     return `${year}-${month}-${day}`
   }
 
@@ -139,13 +140,13 @@ export default function Reports() {
       return `from=${customFromDate}&to=${customToDate}`
     }
     if (dateRange === 'today') {
-      const tStr = formatLocalYYYYMMDD(new Date())
+      const tStr = formatISTDate(new Date())
       return `date=today&from=${tStr}&to=${tStr}`
     }
     if (dateRange === 'yesterday') {
       const y = new Date()
       y.setDate(y.getDate() - 1)
-      const yStr = formatLocalYYYYMMDD(y)
+      const yStr = formatISTDate(y)
       return `date=yesterday&from=${yStr}&to=${yStr}`
     }
     return `date=${dateRange}`

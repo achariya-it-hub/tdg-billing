@@ -205,6 +205,13 @@ let settings = {
       isEnabled: true
     }
   },
+  msg91: {
+    authKey: process.env.MSG91_AUTH_KEY || '',
+    senderId: process.env.MSG91_SENDER_ID || 'TDGBIL',
+    templateId: process.env.MSG91_TEMPLATE_ID || '',
+    otpExpiry: 300,
+    isEnabled: true
+  },
   offers: [
     { id: '1', title: 'Golden Gyro Feast (50% OFF)', desc: '1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink', tag: '50% OFF', price: '₹199', origPrice: '₹398', image: '/uploads/menu/m1.jpg' },
     { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2x Dip + Sauce', tag: 'Save ₹151', price: '₹299', origPrice: '₹450', image: '/uploads/menu/m2.jpg' },
@@ -716,6 +723,46 @@ app.post('/api/assets/verify-otp', (req, res) => {
   res.status(400).json({ message: 'Pending asset not found for this phone number' })
 })
 
+// Resend OTP for asset verification
+app.post('/api/assets/resend-otp', async (req, res) => {
+  const { phone } = req.body
+  if (!phone) return res.status(400).json({ message: 'Phone required' })
+
+  const db = readDb()
+  for (const master of db.users || mobileAppUsers) {
+    const assets = master.assets || []
+    const asset = assets.find(a => a.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, '') && a.status === 'pending')
+    if (asset) {
+      const otp = generateOTP()
+      asset.otp = otp
+      asset.otpExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      writeDb(db)
+      const result = await sendMSG91OTP(phone, otp)
+      return res.json({ success: true, message: 'OTP resent', method: result.method })
+    }
+  }
+  res.status(400).json({ message: 'Pending asset not found' })
+})
+
+// Resend OTP for forgot password
+app.post('/api/auth/resend-otp', async (req, res) => {
+  const { phone } = req.body
+  if (!phone) return res.status(400).json({ message: 'Phone required' })
+
+  const db = readDb()
+  const user = db.users.find(u => u.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''))
+  if (!user) return res.status(404).json({ message: 'No account found with this phone number' })
+
+  const otp = generateOTP()
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString()
+  user.forgotPasswordOtp = otp
+  user.forgotPasswordOtpExpiry = otpExpiry
+  writeDb(db)
+
+  const result = await sendMSG91OTP(phone, otp)
+  res.json({ success: true, message: 'OTP resent', method: result.method })
+})
+
 // Auth - Signup
 app.post('/api/auth/signup', async (req, res) => {
   try {
@@ -838,8 +885,59 @@ app.post('/api/auth/login', async (req, res) => {
   }
 })
 
+// ============ MSG91 OTP SERVICE ============
+async function sendMSG91OTP(phone, otp) {
+  const cfg = settings.msg91 || {}
+  if (!cfg.isEnabled || !cfg.authKey) {
+    console.log(`[MSG91] OTP for ${phone}: ${otp} (MSG91 not configured, logged only)`)
+    return { success: false, method: 'console' }
+  }
+  const cleanPhone = phone.replace(/[^0-9]/g, '')
+  const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
+
+  try {
+    const payload = {
+      mobile: formattedPhone,
+      otp: otp,
+      sender: cfg.senderId || 'TDGBIL',
+      otp_expiry: cfg.otpExpiry || 300
+    }
+    if (cfg.templateId) payload.template_id = cfg.templateId
+
+    const resp = await fetch('https://api.msg91.com/api/v5/otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'authkey': cfg.authKey
+      },
+      body: JSON.stringify(payload)
+    })
+    const data = await resp.json()
+    console.log(`[MSG91] OTP sent to ${formattedPhone}: ${resp.status}`, JSON.stringify(data))
+    return { success: resp.ok, data, method: 'msg91' }
+  } catch (err) {
+    console.error(`[MSG91] Failed to send OTP to ${formattedPhone}:`, err.message)
+    return { success: false, error: err.message, method: 'msg91' }
+  }
+}
+
+function generateOTP() {
+  return String(Math.floor(1000 + Math.random() * 9000))
+}
+
+// MSG91 config endpoint
+app.get('/api/msg91/config', (req, res) => {
+  const cfg = settings.msg91 || {}
+  res.json({
+    enabled: cfg.isEnabled !== false,
+    hasAuthKey: Boolean(cfg.authKey),
+    senderId: cfg.senderId || 'TDGBIL',
+    templateId: cfg.templateId || ''
+  })
+})
+
 // Auth - Forgot Password (send OTP)
-app.post('/api/auth/forgot-password', (req, res) => {
+app.post('/api/auth/forgot-password', async (req, res) => {
   const { phone } = req.body
   if (!phone) return res.status(400).json({ message: 'Phone number required' })
 
@@ -847,14 +945,14 @@ app.post('/api/auth/forgot-password', (req, res) => {
   const user = db.users.find(u => u.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, ''))
   if (!user) return res.status(404).json({ message: 'No account found with this phone number' })
 
-  const otp = String(Math.floor(1000 + Math.random() * 9000))
-  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString() // 10 minutes
+  const otp = generateOTP()
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString()
   user.forgotPasswordOtp = otp
   user.forgotPasswordOtpExpiry = otpExpiry
   writeDb(db)
 
-  console.log(`[FORGOT PASSWORD] OTP for ${phone}: ${otp}`)
-  res.json({ success: true, message: 'OTP sent successfully' })
+  const result = await sendMSG91OTP(phone, otp)
+  res.json({ success: true, message: 'OTP sent successfully', method: result.method })
 })
 
 // Auth - Forgot Password (send OTP to Email)
@@ -896,10 +994,10 @@ app.post('/api/auth/reset-password', async (req, res) => {
   
   if (!user) return res.status(404).json({ message: 'User not found' })
 
-  if (otp !== '1234' && (!user.forgotPasswordOtp || user.forgotPasswordOtp !== otp)) {
+  if (!user.forgotPasswordOtp || user.forgotPasswordOtp !== otp) {
     return res.status(400).json({ message: 'Invalid OTP' })
   }
-  if (otp !== '1234' && user.forgotPasswordOtpExpiry && new Date(user.forgotPasswordOtpExpiry) < new Date()) {
+  if (user.forgotPasswordOtpExpiry && new Date(user.forgotPasswordOtpExpiry) < new Date()) {
     return res.status(400).json({ message: 'OTP expired. Please request a new one.' })
   }
 
@@ -1661,12 +1759,9 @@ app.post('/api/billing/assets', async (req, res) => {
   writeDb(db)
 
   const cleanPhone = phone.replace(/[^0-9]/g, '')
-  const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
-  const message = `Hello ${name}! Your 4-digit WhatsApp verification OTP is: ${otp}. Valid for 24 hours.`
-  const waLink = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`
-  console.log(`[WHATSAPP OTP] Sent 4-digit OTP ${otp} via WhatsApp to ${name} (${formattedPhone})`)
+  const result = await sendMSG91OTP(phone, otp)
 
-  res.json({ success: true, asset: newAsset, assets: customer.assets, message: `WhatsApp OTP sent to ${phone}`, waLink, otp })
+  res.json({ success: true, asset: newAsset, assets: customer.assets, message: `OTP sent to ${phone}`, method: result.method, otp: result.method === 'console' ? otp : undefined })
 })
 
 // ============ SETTINGS API ============
@@ -2211,6 +2306,12 @@ app.put('/api/settings/payment-gateways', (req, res) => {
     settings.paymentGateways.cashfree = {
       ...settings.paymentGateways.cashfree,
       ...req.body.cashfree
+    }
+  }
+  if (req.body.msg91) {
+    settings.msg91 = {
+      ...settings.msg91,
+      ...req.body.msg91
     }
   }
   if (req.body.enableAssetOtp !== undefined) {

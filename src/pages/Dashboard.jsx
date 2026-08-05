@@ -62,27 +62,32 @@ export default function Dashboard() {
       return `date=${dateRange}`
     }
     const today = new Date()
-    const formatLocalYYYYMMDD = (d) => {
-      const year = d.getFullYear()
-      const month = String(d.getMonth() + 1).padStart(2, '0')
-      const day = String(d.getDate()).padStart(2, '0')
+    const formatISTDate = (d) => {
+      const ist = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
+      const year = ist.getFullYear()
+      const month = String(ist.getMonth() + 1).padStart(2, '0')
+      const day = String(ist.getDate()).padStart(2, '0')
       return `${year}-${month}-${day}`
     }
     if (dateRange === 'today') {
-      return 'date=today'
+      const tStr = formatISTDate(today)
+      return `date=today&from=${tStr}&to=${tStr}`
     }
     if (dateRange === 'yesterday') {
-      return 'date=yesterday'
+      const y = new Date(today)
+      y.setDate(y.getDate() - 1)
+      const yStr = formatISTDate(y)
+      return `date=yesterday&from=${yStr}&to=${yStr}`
     }
     if (dateRange === 'week') {
       const w = new Date(today)
       w.setDate(w.getDate() - 7)
-      return `from=${formatLocalYYYYMMDD(w)}&to=${formatLocalYYYYMMDD(today)}&strict=true`
+      return `from=${formatISTDate(w)}&to=${formatISTDate(today)}&strict=true`
     }
     if (dateRange === 'month') {
       const m = new Date(today)
       m.setDate(m.getDate() - 30)
-      return `from=${formatLocalYYYYMMDD(m)}&to=${formatLocalYYYYMMDD(today)}&strict=true`
+      return `from=${formatISTDate(m)}&to=${formatISTDate(today)}&strict=true`
     }
     return `date=${dateRange}`
   }
