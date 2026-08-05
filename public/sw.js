@@ -1,5 +1,5 @@
-const STATIC_CACHE = 'tdg-static-v3';
-const API_CACHE = 'tdg-api-v3';
+const STATIC_CACHE = 'tdg-static-v4';
+const API_CACHE = 'tdg-api-v4';
 const OFFLINE_STORE = 'tdg-offline-queue';
 
 self.addEventListener('install', () => self.skipWaiting());
