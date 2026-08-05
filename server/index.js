@@ -27,6 +27,22 @@ process.on('unhandledRejection', (reason, promise) => {
 
 function readDb() {
   try {
+    // Recover orphaned temp file (from interrupted writeDb)
+    const tmpPath = `${DB_PATH}.tmp`
+    if (existsSync(tmpPath)) {
+      try {
+        const tmpContent = readFileSync(tmpPath, 'utf-8').trim()
+        if (tmpContent) {
+          const tmpParsed = JSON.parse(tmpContent)
+          if (tmpParsed && typeof tmpParsed === 'object' && (tmpParsed.orders?.length || tmpParsed.menuItems?.length)) {
+            console.log('[DATA RECOVERY] Found orphaned tmp file, recovering...')
+            renameSync(tmpPath, DB_PATH)
+          }
+        }
+      } catch (re) {
+        console.error('[DATA RECOVERY] Failed to recover tmp file:', re.message)
+      }
+    }
     if (existsSync(DB_PATH)) {
       const content = readFileSync(DB_PATH, 'utf-8').trim()
       if (content && content !== '{}') {
@@ -6113,5 +6129,22 @@ httpServer.listen(PORT, () => {
   setInterval(performDailyBackup, DAILY_BACKUP_INTERVAL)
   console.log('Daily backup scheduler active (checks every hour)')
 })
+
+// Graceful shutdown — save state before process exits (prevents data loss on deploy/restart)
+let isShuttingDown = false
+function gracefulShutdown(signal) {
+  if (isShuttingDown) return
+  isShuttingDown = true
+  console.log(`[SHUTDOWN] Received ${signal}. Saving state before exit...`)
+  try {
+    saveState()
+    console.log('[SHUTDOWN] State saved successfully')
+  } catch (e) {
+    console.error('[SHUTDOWN] Error saving state:', e.message)
+  }
+  process.exit(0)
+}
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'))
+process.on('SIGINT', () => gracefulShutdown('SIGINT'))
 
 export default app
