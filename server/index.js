@@ -734,21 +734,12 @@ app.get('/api/version', (req, res) => {
   const todayStr = getLocalDateStr(new Date())
   res.json({
     version: '1.0.6-shift-fix',
-    commit: '72467eb-fix',
     serverTimeIST: nowIST,
     todayStr: todayStr,
     ordersCount: (orders || []).length
   })
 })
 
-// Endpoint to force-restart Passenger Node worker
-app.get('/api/admin/restart', (req, res) => {
-  const key = req.query.key || req.headers['x-backup-key']
-  if (key !== LOCAL_BACKUP_KEY) return res.status(403).json({ error: 'Invalid key' })
-
-  res.json({ success: true, message: 'Restarting Passenger process...' })
-  setTimeout(() => process.exit(0), 300)
-})
 
 
 // In-memory database
