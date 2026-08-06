@@ -479,35 +479,107 @@ export default function Kiosk() {
           </div>
         )}
 
-        {/* Customer Name */}
+        {/* Customer Details: Name & Phone (Required) */}
         {step === 4 && (
           <div
             style={{
-              maxWidth: '500px',
+              maxWidth: '520px',
               margin: '0 auto',
-              textAlign: 'center'
+              background: 'var(--bg-card)',
+              borderRadius: '24px',
+              padding: '32px 24px',
+              border: '1px solid var(--border)',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.06)'
             }}
           >
-            <h2 style={{ fontFamily: 'Bebas Neue', fontSize: '48px', marginBottom: '24px' }}>
-              Your Name (Optional)
+            <h2 style={{ fontFamily: 'Bebas Neue', fontSize: '42px', marginBottom: '8px', textAlign: 'center', color: 'var(--text-primary)' }}>
+              Guest Details
             </h2>
-            <input
-              type="text"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-              placeholder="Enter your name"
-              style={{
-                width: '100%',
-                padding: '24px',
-                fontSize: '24px',
-                textAlign: 'center',
-                borderRadius: '16px',
-                marginBottom: '24px'
-              }}
-            />
-            <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>
-              We'll call your name when your order is ready
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', textAlign: 'center', fontSize: '14px' }}>
+              Please enter your Name and Mobile Number to receive your order token & status updates
             </p>
+
+            {discountStatusMsg && (
+              <div style={{
+                background: customerDiscountPct > 0 ? '#f0fdf4' : '#fffbeb',
+                border: `1.5px solid ${customerDiscountPct > 0 ? '#86efac' : '#fde68a'}`,
+                color: customerDiscountPct > 0 ? '#15803d' : '#b45309',
+                borderRadius: '12px', padding: '12px 16px', fontSize: '13px', fontWeight: 800,
+                marginBottom: '20px', textAlign: 'center'
+              }}>
+                {discountStatusMsg}
+              </div>
+            )}
+
+            <div style={{ marginBottom: '18px', textAlign: 'left' }}>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', display: 'block', marginBottom: '6px' }}>
+                👤 Full Name *
+              </label>
+              <input
+                type="text"
+                required
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="Enter your name (e.g. Rahul Sharma)"
+                style={{
+                  width: '100%',
+                  padding: '16px',
+                  fontSize: '16px',
+                  borderRadius: '12px',
+                  border: '1px solid var(--border)',
+                  outline: 'none',
+                  background: 'var(--bg-primary)',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '24px', textAlign: 'left' }}>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', display: 'block', marginBottom: '6px' }}>
+                📱 Mobile Phone Number *
+              </label>
+              <input
+                type="tel"
+                required
+                maxLength={10}
+                value={customerPhone}
+                onChange={(e) => {
+                  const p = e.target.value.replace(/\D/g, '')
+                  setCustomerPhone(p)
+                  if (p.length >= 10) {
+                    fetch(`${API_BASE}/api/customers/check-discount?phone=${p}`)
+                      .then(r => r.json())
+                      .then(data => {
+                        if (data.offerRedeemed) {
+                          setCustomerDiscountPct(0)
+                          setDiscountStatusMsg('⚠️ Offer Already Redeemed for this phone number (1-Time Limit Used)')
+                        } else if (data.hasDiscount && data.discountPct > 0) {
+                          setCustomerDiscountPct(data.discountPct)
+                          setDiscountStatusMsg(`👑 VIP ${data.discountPct}% OFF Discount Auto-Applied!`)
+                          if (data.customerName && data.customerName !== 'Customer') setCustomerName(data.customerName)
+                        } else {
+                          setCustomerDiscountPct(0)
+                          setDiscountStatusMsg('')
+                        }
+                      }).catch(() => {})
+                  } else {
+                    setCustomerDiscountPct(0)
+                    setDiscountStatusMsg('')
+                  }
+                }}
+                placeholder="10-digit mobile number"
+                style={{
+                  width: '100%',
+                  padding: '16px',
+                  fontSize: '16px',
+                  borderRadius: '12px',
+                  border: '1px solid var(--border)',
+                  outline: 'none',
+                  background: 'var(--bg-primary)',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
           </div>
         )}
 
@@ -620,7 +692,11 @@ export default function Kiosk() {
         {step === 4 && (
           <Button
             size="lg"
-            onClick={() => setShowPayment(true)}
+            onClick={() => {
+              if (!customerName.trim()) { alert('Please enter your Full Name'); return }
+              if (customerPhone.replace(/\D/g, '').length < 8) { alert('Please enter a valid 10-digit Mobile Phone Number'); return }
+              setShowPayment(true)
+            }}
             style={{ flex: 2 }}
           >
             Pay ₹{getTotal().toFixed(2)}

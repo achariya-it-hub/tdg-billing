@@ -1,44 +1,32 @@
 import { useState } from 'react'
-import { QrCode, Printer, Table, Check, ExternalLink, Sparkles } from 'lucide-react'
+import { QrCode, Printer, Check, Copy, Sparkles, ExternalLink } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 
 export default function TableQRGenerator() {
-  const [tableCount, setTableCount] = useState(12)
-  const [customTableNames, setCustomTableNames] = useState('Table 1, Table 2, Table 3, Table 4, Table 5, Table 6, Table 7, Table 8, Table 9, Table 10, Table 11, Table 12')
-  const [mode, setMode] = useState('numeric') // numeric | custom
   const baseUrl = typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.host}` : 'https://tendengyros.com'
-
-  const getTables = () => {
-    if (mode === 'numeric') {
-      const list = []
-      for (let i = 1; i <= Math.max(1, Math.min(50, tableCount)); i++) {
-        list.push({ id: `table_${i}`, name: `Table ${i}`, number: i })
-      }
-      return list
-    } else {
-      return customTableNames.split(/[\n,]+/).map((t, idx) => {
-        const name = t.trim() || `Table ${idx + 1}`
-        return { id: `table_custom_${idx + 1}`, name, number: idx + 1 }
-      }).filter(t => t.name)
-    }
-  }
-
-  const tables = getTables()
+  const selfOrderUrl = `${baseUrl}/order`
+  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(selfOrderUrl)}`
+  const [copied, setCopied] = useState(false)
 
   const handlePrint = () => {
     window.print()
   }
 
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(selfOrderUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-      {/* Hide controls during printing */}
+    <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
       <style>{`
         @media print {
           body { background: white !important; color: black !important; }
           .no-print { display: none !important; }
           .print-area { display: block !important; }
-          .table-standee { break-inside: avoid; page-break-inside: avoid; margin-bottom: 20px !important; border: 2px solid #000 !important; }
+          .qr-standee-card { break-inside: avoid; page-break-inside: avoid; border: 3px solid #000 !important; }
         }
       `}</style>
 
@@ -47,147 +35,120 @@ export default function TableQRGenerator() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#1a1a2e', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <QrCode size={30} color="#e63946" /> Table QR Standee Generator
+              <QrCode size={30} color="#e63946" /> Universal Self-Ordering QR Standee
             </h2>
             <p style={{ color: '#6b7280', fontSize: '14px', margin: 0 }}>
-              Generate & print QR code acrylic standees for guests to Self-Order & Pay directly from their table!
+              Print & display this QR Standee at counter & tables so guests can Self-Order & Pay using their Name & Phone Number!
             </p>
           </div>
 
-          <Button onClick={handlePrint} style={{ padding: '12px 24px', fontSize: '15px', fontWeight: 800 }}>
-            <Printer size={18} /> Print All Table QR Standees
-          </Button>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <Button variant="secondary" onClick={handleCopyLink} style={{ padding: '12px 20px', fontSize: '14px', fontWeight: 700 }}>
+              {copied ? <Check size={18} color="#10b981" /> : <Copy size={18} />} {copied ? 'Link Copied!' : 'Copy Self-Order Link'}
+            </Button>
+            <Button onClick={handlePrint} style={{ padding: '12px 24px', fontSize: '15px', fontWeight: 800 }}>
+              <Printer size={18} /> Print QR Standee
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Controls Card (no-print) */}
+      {/* Instructions Card (no-print) */}
       <Card className="no-print" style={{ marginBottom: '24px' }}>
-        <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#111827' }}>Configure Tables</h3>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-          <div>
-            <label style={{ fontSize: '13px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '8px' }}>
-              Number of Restaurant Tables
-            </label>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              {[6, 10, 12, 15, 20, 30].map(count => (
-                <button
-                  key={count}
-                  onClick={() => { setTableCount(count); setMode('numeric') }}
-                  style={{
-                    flex: 1, padding: '8px', borderRadius: '8px',
-                    border: tableCount === count && mode === 'numeric' ? '2px solid #e63946' : '1px solid #d1d5db',
-                    background: tableCount === count && mode === 'numeric' ? '#fff5f5' : 'white',
-                    color: tableCount === count && mode === 'numeric' ? '#e63946' : '#374151',
-                    fontWeight: 700, fontSize: '13px', cursor: 'pointer'
-                  }}
-                >
-                  {count} Tables
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label style={{ fontSize: '13px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '8px' }}>
-              Self-Ordering Base Web URL
-            </label>
-            <input
-              type="text"
-              readOnly
-              value={`${baseUrl}/kiosk?table=`}
-              style={{
-                width: '100%', padding: '10px 14px', borderRadius: '8px',
-                border: '1px solid #d1d5db', background: '#f8fafc', fontSize: '13px', fontFamily: 'monospace'
-              }}
-            />
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+          <Sparkles size={22} color="#e63946" />
+          <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0, color: '#111827' }}>How Guest Self-Ordering Works (No Tables Required)</h3>
         </div>
+        <p style={{ fontSize: '13.5px', color: '#4b5563', lineHeight: 1.5, margin: 0 }}>
+          Guests scan the QR code using their smartphone camera, select their favorite Gyros & Combos, enter their <strong>Full Name & Mobile Phone Number</strong>, pay via UPI (GPay/PhonePe) or at the counter, and receive their <strong>Order Token Number</strong> on screen. The POS and Kitchen display receive the order instantly!
+        </p>
       </Card>
 
-      {/* Standees Printable Grid */}
-      <div className="print-area" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
-        {tables.map(table => {
-          const qrTargetUrl = `${baseUrl}/kiosk?table=${encodeURIComponent(table.name)}&mode=dine-in`
-          const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrTargetUrl)}`
-
-          return (
-            <div
-              key={table.id}
-              className="table-standee"
-              style={{
-                background: 'linear-gradient(180deg, #1a1a2e 0%, #111827 100%)',
-                color: 'white',
-                borderRadius: '24px',
-                padding: '28px 24px',
-                textAlign: 'center',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
-                border: '2px solid rgba(255,255,255,0.1)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                minHeight: '440px',
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-            >
-              {/* Brand Header */}
-              <div>
-                <div style={{ fontSize: '24px', fontWeight: 900, fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '2px', color: '#ffffff', marginBottom: '2px' }}>
-                  TEN DEN GYROS 🌯
-                </div>
-                <div style={{ fontSize: '11px', color: '#f87171', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>
-                  Self-Order & Pay from Table
-                </div>
+      {/* Standee Printable Preview Container */}
+      <div className="print-area" style={{ display: 'flex', justifyContent: 'center', gap: '32px', flexWrap: 'wrap' }}>
+        {[1, 2].map((idx) => (
+          <div
+            key={idx}
+            className="qr-standee-card"
+            style={{
+              width: '360px',
+              background: 'linear-gradient(180deg, #1a1a2e 0%, #111827 100%)',
+              color: 'white',
+              borderRadius: '28px',
+              padding: '32px 24px',
+              textAlign: 'center',
+              boxShadow: '0 12px 30px rgba(0,0,0,0.2)',
+              border: '2px solid rgba(255,255,255,0.12)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              minHeight: '480px',
+              boxSizing: 'border-box'
+            }}
+          >
+            {/* Header */}
+            <div>
+              <div style={{ fontSize: '32px', fontWeight: 900, fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '2px', color: '#ffffff', marginBottom: '4px' }}>
+                TEN DEN GYROS 🌯
               </div>
-
-              {/* Table Pill */}
               <div style={{
                 background: 'linear-gradient(135deg, #e63946, #c1121f)',
                 color: 'white',
-                padding: '8px 24px',
+                padding: '6px 18px',
                 borderRadius: '50px',
-                fontSize: '18px',
+                fontSize: '13px',
                 fontWeight: 900,
-                boxShadow: '0 4px 14px rgba(230,57,70,0.4)',
-                marginTop: '12px',
-                marginBottom: '14px',
-                letterSpacing: '0.5px'
+                display: 'inline-block',
+                letterSpacing: '1px',
+                textTransform: 'uppercase',
+                boxShadow: '0 4px 12px rgba(230,57,70,0.3)',
+                marginBottom: '16px'
               }}>
-                📍 {table.name.toUpperCase()}
-              </div>
-
-              {/* QR Code Container */}
-              <div style={{
-                background: 'white',
-                padding: '16px',
-                borderRadius: '20px',
-                boxShadow: '0 8px 20px rgba(0,0,0,0.3)',
-                marginBottom: '14px'
-              }}>
-                <img
-                  src={qrImageUrl}
-                  alt={`QR Code for ${table.name}`}
-                  style={{ width: '170px', height: '170px', display: 'block' }}
-                />
-              </div>
-
-              {/* Instructions */}
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: '#f3f4f6', marginBottom: '4px' }}>
-                  1. Scan QR Code & View Menu
-                </div>
-                <div style={{ fontSize: '12px', color: '#9ca3af', marginBottom: '8px' }}>
-                  2. Select Items & Pay via UPI / Card
-                </div>
-                <div style={{ fontSize: '10.5px', color: '#9ca3af', opacity: 0.8, fontFamily: 'monospace' }}>
-                  {qrTargetUrl}
-                </div>
+                SCAN TO SELF-ORDER & PAY
               </div>
             </div>
-          )
-        })}
+
+            {/* QR Code Container */}
+            <div style={{
+              background: 'white',
+              padding: '18px',
+              borderRadius: '24px',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.35)',
+              marginBottom: '16px'
+            }}>
+              <img
+                src={qrImageUrl}
+                alt="Ten Den Gyros Self Order QR"
+                style={{ width: '200px', height: '200px', display: 'block' }}
+              />
+            </div>
+
+            {/* Instructions Steps */}
+            <div style={{ width: '100%' }}>
+              <div style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '16px',
+                padding: '12px 16px',
+                marginBottom: '12px',
+                fontSize: '12.5px',
+                color: '#f3f4f6',
+                lineHeight: 1.6,
+                textAlign: 'left'
+              }}>
+                <div>1️⃣ <strong>Scan QR</strong> with Phone Camera</div>
+                <div>2️⃣ <strong>Select Gyros & Combos</strong></div>
+                <div>3️⃣ <strong>Enter Name & Mobile Number</strong></div>
+                <div>4️⃣ <strong>Pay via UPI</strong> & Get Order Token</div>
+              </div>
+
+              <div style={{ fontSize: '11px', color: '#9ca3af', opacity: 0.8, fontFamily: 'monospace' }}>
+                {selfOrderUrl}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )
