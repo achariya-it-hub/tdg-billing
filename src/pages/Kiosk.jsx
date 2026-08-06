@@ -31,6 +31,8 @@ export default function Kiosk() {
   const [tableNumber, setTableNumber] = useState(tableParam)
   const [customerName, setCustomerName] = useState('')
   const [customerPhone, setCustomerPhone] = useState('')
+  const [customerDiscountPct, setCustomerDiscountPct] = useState(0)
+  const [discountStatusMsg, setDiscountStatusMsg] = useState('')
   const [orderNumber, setOrderNumber] = useState(null)
   const [showPayment, setShowPayment] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState('upi')
@@ -86,8 +88,10 @@ export default function Kiosk() {
   }
 
   const getSubtotal = () => cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
-  const getTax = () => getSubtotal() * 0.05
-  const getTotal = () => getSubtotal() + getTax()
+  const getDiscountAmount = () => customerDiscountPct > 0 ? Math.round(getSubtotal() * (customerDiscountPct / 100)) : 0
+  const getNetSubtotal = () => getSubtotal() - getDiscountAmount()
+  const getTax = () => getNetSubtotal() * 0.05
+  const getTotal = () => getNetSubtotal() + getTax()
 
   const placeOrder = async (selectedMethod = 'upi') => {
     if (cart.length === 0) return
@@ -105,6 +109,7 @@ export default function Kiosk() {
         tableNumber: tableNumber || 'Table 1',
         customerName: customerName || 'Self Order Guest',
         customerPhone: customerPhone || '',
+        customerDiscountPct: customerDiscountPct || 0,
         paymentMethod: selectedMethod,
         status: isPaid ? 'completed' : 'pending',
         paymentStatus: isPaid ? 'paid' : 'pending',
