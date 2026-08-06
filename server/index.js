@@ -58,17 +58,19 @@ function appendOrderLog(order) {
   }
 }
 
-process.on('uncaughtException', (err) => {
-  console.error('CRITICAL: Uncaught Exception:', err)
-  // Emergency save — attempt to flush all in-memory data before crash
-  try {
-    if (typeof saveState === 'function') saveState()
-    else if (typeof writeDb === 'function') writeDb({})
-    console.error('[EMERGENCY SAVE] Data flushed after uncaughtException')
-  } catch (se) {
-    console.error('[EMERGENCY SAVE] Failed:', se.message)
-  }
+// Version & Diagnostics endpoint
+app.get('/api/version', (req, res) => {
+  const nowIST = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+  const todayStr = getLocalDateStr(new Date())
+  res.json({
+    version: '1.0.5-date-fix',
+    commit: '52b4df6-check',
+    serverTimeIST: nowIST,
+    todayStr: todayStr,
+    ordersCount: (orders || []).length
+  })
 })
+
 process.on('unhandledRejection', (reason, promise) => {
   console.error('CRITICAL: Unhandled Rejection at:', promise, 'reason:', reason)
   try {
