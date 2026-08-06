@@ -2178,80 +2178,115 @@ app.post('/api/settings/upload-customers', (req, res) => {
 })
 
 // Search customers by phone number or name (name is case-insensitive, phone is digit-normalized).
-// Returns matching customers that have a stored discount tier so cashiers can attach the right
-// discount when raising an order.
+// Searches across loyaltyUsers, mobileAppUsers, and past orders so cashiers can easily select any existing customer.
 app.get('/api/customers/search', (req, res) => {
   const q = String(req.query.q || req.query.term || '').trim().toLowerCase()
   if (!q) return res.json({ customers: [] })
-
-  const allCustomers = [
-    ...(loyaltyUsers || []).map(u => ({ source: 'loyalty', ...u })),
-    ...(mobileAppUsers || []).map(u => ({ source: 'mobile', ...u }))
-  ]
 
   const cleanPhone = (p) => String(p || '').replace(/\D/g, '')
   const qPhone = cleanPhone(q)
 
   const results = []
   const seen = new Set()
-  for (const u of allCustomers) {
-    const name = (u.name || '').toLowerCase()
-    const phone = cleanPhone(u.phone)
-    const matched =
-      (qPhone && phone && phone.includes(qPhone)) ||
-      (name && name.includes(q))
-    if (!matched) continue
 
-    const key = phone || (u.name || '') + (u.id || '')
-    if (seen.has(key)) continue
+  const addCustomer = (name, phone, source, discountPct = 0, tier = '', isVip50 = false, id = '') => {
+    const pClean = cleanPhone(phone)
+    if (!pClean && !name) return
+    const key = pClean || String(name).trim().toLowerCase()
+    if (seen.has(key)) return
     seen.add(key)
 
-    const discountPct = Number(u.discountPct) > 0 ? Math.min(90, Math.round(Number(u.discountPct))) : 0
-    if (discountPct <= 0) continue // only surface customers with a discount
+    const disc = Number(discountPct) > 0 ? Math.min(90, Math.round(Number(discountPct))) : 0
 
     results.push({
-      id: u.id,
-      source: u.source,
-      customerName: u.name || 'Customer',
-      phone: u.phone || '',
-      discountPct,
-      tier: u.tier || '',
-      isVip50: !!u.isVip50 || discountPct === 50
+      id: id || `cust_${key}`,
+      source,
+      customerName: name || 'Customer',
+      phone: pClean || phone || '',
+      discountPct: disc,
+      tier: tier || (disc === 50 ? 'VIP 50% OFF' : (disc > 0 ? `${disc}% OFF` : 'Regular')),
+      isVip50: Boolean(isVip50 || disc === 50)
     })
+  }
+
+  // 1. Search loyalty users
+  for (const u of (loyaltyUsers || [])) {
+    const name = (u.name || '').toLowerCase()
+    const phone = cleanPhone(u.phone)
+    if ((qPhone && phone.includes(qPhone)) || (name && name.includes(q))) {
+      addCustomer(u.name, u.phone, 'loyalty', u.discountPct, u.tier, u.isVip50, u.id)
+    }
+  }
+
+  // 2. Search mobile app users
+  for (const u of (mobileAppUsers || [])) {
+    const name = (u.name || '').toLowerCase()
+    const phone = cleanPhone(u.phone)
+    if ((qPhone && phone.includes(qPhone)) || (name && name.includes(q))) {
+      addCustomer(u.name, u.phone, 'mobile', u.discountPct, u.tier, u.isVip50, u.id)
+    }
+  }
+
+  // 3. Search past order customers
+  for (const o of (orders || [])) {
+    if (!o.customerPhone && !o.customerName) continue
+    const name = (o.customerName || '').toLowerCase()
+    const phone = cleanPhone(o.customerPhone)
+    if ((qPhone && phone.includes(qPhone)) || (name && name.includes(q))) {
+      addCustomer(o.customerName, o.customerPhone, 'orders', 0, 'Regular', false, o.id)
+    }
   }
 
   results.sort((a, b) => b.discountPct - a.discountPct)
   res.json({ customers: results.slice(0, 20) })
 })
 
-// Lookup customer discount by phone number or name. Returns any stored discount pct (not just 50%).
+// Lookup customer by phone number or name. Returns stored customer details & any discount pct.
 app.get('/api/customers/check-discount', (req, res) => {
   const rawPhone = (req.query.phone || '').replace(/\D/g, '')
   const rawName = String(req.query.name || req.query.q || '').trim().toLowerCase()
 
-  if (!rawPhone && !rawName) return res.json({ hasDiscount: false, discountPct: 0 })
+  if (!rawPhone && !rawName) return res.json({ found: false, hasDiscount: false, discountPct: 0, customerName: '', phone: '' })
 
-  const matchByPhone = (u) => (u.phone || '').replace(/\D/g, '') === rawPhone
-  const matchByName = (u) => (u.name || '').toLowerCase() === rawName
+  const matchByPhone = (p) => (p || '').replace(/\D/g, '') === rawPhone
+  const matchByName = (n) => (n || '').toLowerCase() === rawName
 
-  const user = loyaltyUsers.find(u => (rawPhone && matchByPhone(u)) || (rawName && matchByName(u))) ||
-               mobileAppUsers.find(u => (rawPhone && matchByPhone(u)) || (rawName && matchByName(u)))
+  let user = (loyaltyUsers || []).find(u => (rawPhone && matchByPhone(u.phone)) || (rawName && matchByName(u.name)))
+  if (!user) {
+    user = (mobileAppUsers || []).find(u => (rawPhone && matchByPhone(u.phone)) || (rawName && matchByName(u.name)))
+  }
+
+  let pastOrder
+  if (!user) {
+    pastOrder = (orders || []).find(o => (rawPhone && matchByPhone(o.customerPhone)) || (rawName && matchByName(o.customerName)))
+  }
 
   if (user) {
     const discountPct = Number(user.discountPct) > 0 ? Math.min(90, Math.round(Number(user.discountPct))) : 0
-    if (discountPct > 0) {
-      return res.json({
-        hasDiscount: true,
-        discountPct,
-        customerName: user.name || 'Customer',
-        phone: (user.phone || rawPhone || '').replace(/\D/g, ''),
-        tier: user.tier || (discountPct === 50 ? 'VIP 50% OFF' : `${discountPct}% OFF`),
-        isVip50: !!user.isVip50 || discountPct === 50
-      })
-    }
+    return res.json({
+      found: true,
+      hasDiscount: discountPct > 0,
+      discountPct,
+      customerName: user.name || 'Customer',
+      phone: (user.phone || rawPhone || '').replace(/\D/g, ''),
+      tier: user.tier || (discountPct === 50 ? 'VIP 50% OFF' : (discountPct > 0 ? `${discountPct}% OFF` : 'Regular')),
+      isVip50: Boolean(user.isVip50 || discountPct === 50)
+    })
   }
 
-  res.json({ hasDiscount: false, discountPct: 0 })
+  if (pastOrder) {
+    return res.json({
+      found: true,
+      hasDiscount: false,
+      discountPct: 0,
+      customerName: pastOrder.customerName || 'Customer',
+      phone: (pastOrder.customerPhone || rawPhone || '').replace(/\D/g, ''),
+      tier: 'Regular',
+      isVip50: false
+    })
+  }
+
+  res.json({ found: false, hasDiscount: false, discountPct: 0, customerName: '', phone: rawPhone })
 })
 
 // ─── Local PC Backup Endpoint ──────────────────────────────────────────────

@@ -163,11 +163,11 @@ export const useOrderStore = create(
         const res = await fetch(`${apiUrl}/api/customers/check-discount?phone=${clean}`)
         if (res.ok) {
           const data = await res.json()
-          if (data.hasDiscount && Number(data.discountPct || 0) > 0) {
+          if (data.found || (data.customerName && data.customerName !== 'Customer')) {
             get().setCustomer({
               customerName: data.customerName,
-              phone: data.phone,
-              discountPct: data.discountPct
+              phone: data.phone || clean,
+              discountPct: data.discountPct || 0
             })
           } else {
             get().setCustomerDiscountPct(0)

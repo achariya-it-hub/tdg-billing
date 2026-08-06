@@ -973,12 +973,15 @@ export default function POS() {
           <div style={{ padding: '8px 12px', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
             <input type="text" placeholder="🔍 Search Customer by Phone or Name (auto discount)" value={customerSearch} onChange={e => setCustomerSearch(e.target.value)} style={{ ...inputStyle, padding: '6px 10px', fontSize: '12px' }} />
             {showCustomerDropdown && customerResults.length > 0 && (
-              <div style={{ marginTop: '4px', maxHeight: '160px', overflow: 'auto', borderRadius: '10px', background: 'white', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', zIndex: 50, position: 'relative' }}>
+              <div style={{ marginTop: '4px', maxHeight: '180px', overflow: 'auto', borderRadius: '10px', background: 'white', border: '1px solid #cbd5e1', boxShadow: '0 4px 14px rgba(0,0,0,0.12)', zIndex: 50, position: 'relative' }}>
                 {customerResults.map((c, idx) => (
-                  <button key={idx} onClick={() => selectCustomer(c)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '8px 10px', border: 'none', borderBottom: '1px solid #f1f5f9', background: 'white', cursor: 'pointer', textAlign: 'left' }}>
-                    <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#1e293b' }}>{c.customerName}</span>
-                    <span style={{ fontSize: '10.5px', fontWeight: 800, color: c.discountPct >= 50 ? '#7c3aed' : '#dc2626', background: c.discountPct >= 50 ? '#f5f3ff' : '#fef2f2', padding: '2px 8px', borderRadius: '12px' }}>
-                      {c.discountPct}% OFF{c.phone ? ` • ${c.phone}` : ''}
+                  <button key={idx} onClick={() => selectCustomer(c)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '9px 10px', border: 'none', borderBottom: '1px solid #f1f5f9', background: 'white', cursor: 'pointer', textAlign: 'left' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}>👤 {c.customerName}</span>
+                      {c.phone && <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: 600 }}>📱 {c.phone}</span>}
+                    </div>
+                    <span style={{ fontSize: '10.5px', fontWeight: 800, color: c.discountPct > 0 ? (c.discountPct >= 50 ? '#7c3aed' : '#be123c') : '#047857', background: c.discountPct > 0 ? (c.discountPct >= 50 ? '#f5f3ff' : '#ffe4e6') : '#ecfdf5', padding: '3px 8px', borderRadius: '12px' }}>
+                      {c.discountPct > 0 ? `👑 ${c.discountPct}% OFF` : '✓ Customer'}
                     </span>
                   </button>
                 ))}
