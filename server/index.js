@@ -736,9 +736,10 @@ app.get('/api/version', (req, res) => {
     version: '1.0.6-shift-fix',
     serverTimeIST: nowIST,
     todayStr: todayStr,
-    ordersCount: (orders || []).length
+    ordersCount: typeof orders !== 'undefined' && Array.isArray(orders) ? orders.length : 0
   })
 })
+
 
 
 
