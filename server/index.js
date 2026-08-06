@@ -58,6 +58,8 @@ function appendOrderLog(order) {
   }
 }
 
+const LOCAL_BACKUP_KEY = process.env.BACKUP_SECRET_KEY || 'tdg-local-backup-2026'
+
 // Version & Diagnostics endpoint
 app.get('/api/version', (req, res) => {
   const nowIST = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
@@ -75,6 +77,7 @@ app.get('/api/version', (req, res) => {
 app.get('/api/admin/restart', (req, res) => {
   const key = req.query.key || req.headers['x-backup-key']
   if (key !== LOCAL_BACKUP_KEY) return res.status(403).json({ error: 'Invalid key' })
+
   res.json({ success: true, message: 'Restarting Passenger process...' })
   setTimeout(() => process.exit(0), 300)
 })
@@ -2260,7 +2263,6 @@ app.get('/api/customers/check-discount', (req, res) => {
 // ─── Local PC Backup Endpoint ──────────────────────────────────────────────
 // Called by the PowerShell auto-backup script on the billing PC.
 // Authenticated by BACKUP_SECRET_KEY env var (no PIN needed for headless use).
-const LOCAL_BACKUP_KEY = process.env.BACKUP_SECRET_KEY || 'tdg-local-backup-2026'
 app.get('/api/backup/local', (req, res) => {
   const key = req.query.key || req.headers['x-backup-key']
   if (key !== LOCAL_BACKUP_KEY) return res.status(403).json({ error: 'Invalid backup key' })
