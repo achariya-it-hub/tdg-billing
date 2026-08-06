@@ -9340,6 +9340,48 @@ app.post('/api/settings/upload-customers', (req, res) => {
 
 // Search customers by phone number or name (name is case-insensitive, phone is digit-normalized).
 // Searches across loyaltyUsers, mobileAppUsers, and past orders so cashiers can easily select any existing customer.
+
+// Bulk import contacts via plain text list (e.g. 121 phone numbers / names)
+app.post('/api/admin/customers/bulk-import-text', (req, res) => {
+  const { contactsText, discountPct = 50, offerName = 'Special VIP Offer' } = req.body || {}
+  if (!contactsText) return res.status(400).json({ error: 'contactsText is required' })
+
+  const rawLines = String(contactsText).split(/[\n\r;,]+/)
+  let imported = 0, updated = 0, skipped = 0
+  const disc = Number(discountPct) > 0 ? Math.min(90, Math.round(Number(discountPct))) : 50
+
+  for (let line of rawLines) {
+    line = line.trim()
+    if (!line) continue
+    const phone = line.replace(/\D/g, '')
+    const nameMatch = line.replace(/[\d\s,;\-\+]/g, ' ').trim()
+    const name = nameMatch || 'VIP Customer'
+    if (phone.length < 8) { skipped++; continue }
+
+    let existing = loyaltyUsers.find(u => (u.phone || '').replace(/\D/g, '') === phone)
+    if (existing) {
+      existing.discountPct = disc
+      existing.tier = `${disc}% OFF (${offerName})`
+      if (name && name !== 'VIP Customer') existing.name = name
+      updated++
+    } else {
+      loyaltyUsers.push({
+        id: 'lu_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        name: name || 'VIP Customer',
+        phone,
+        email: '',
+        rubyPoints: 0,
+        tier: `${disc}% OFF (${offerName})`,
+        discountPct: disc,
+        createdAt: new Date().toISOString()
+      })
+      imported++
+    }
+  }
+  saveState()
+  res.json({ success: true, imported, updated, skipped, totalProcessed: imported + updated })
+})
+
 app.get('/api/customers/search', (req, res) => {
   const q = String(req.query.q || req.query.term || '').trim().toLowerCase()
   if (!q) return res.json({ customers: [] })

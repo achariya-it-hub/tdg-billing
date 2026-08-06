@@ -42,6 +42,15 @@ export default function Customers() {
   const [verifyLoading, setVerifyLoading] = useState(false)
   const [waLink, setWaLink] = useState('')
 
+  // Bulk Offer Validation state for contacts list (e.g. 121 contacts)
+  const [bulkOfferText, setBulkOfferText] = useState('')
+  const [bulkOfferPct, setBulkOfferPct] = useState(50)
+  const [bulkOfferName, setBulkOfferName] = useState('VIP Offer 50% OFF')
+  const [bulkLoading, setBulkLoading] = useState(false)
+  const [bulkResult, setBulkResult] = useState(null)
+  const [bulkError, setBulkError] = useState('')
+
+
   useEffect(() => {
     try {
       const u = JSON.parse(localStorage.getItem('user') || '{}')
@@ -236,6 +245,34 @@ export default function Customers() {
     setVerifyLoading(false)
   }
 
+  const handleBulkImport = async () => {
+    if (!bulkOfferText.trim()) { setBulkError('Please paste at least one phone number / contact'); return }
+    setBulkLoading(true)
+    setBulkError('')
+    setBulkResult(null)
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/customers/bulk-import-text`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contactsText: bulkOfferText,
+          discountPct: bulkOfferPct,
+          offerName: bulkOfferName
+        })
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setBulkResult(data)
+        fetchCustomers()
+      } else {
+        setBulkError(data.error || 'Failed to import contacts')
+      }
+    } catch {
+      setBulkError('Connection error')
+    }
+    setBulkLoading(false)
+  }
+
   const copyOtp = (text) => {
     navigator.clipboard.writeText(text).catch(() => {})
   }
@@ -278,6 +315,7 @@ export default function Customers() {
           { id: 'den', label: 'Den Members', icon: Users2 },
           { id: 'add-customer', label: 'Add Customer', icon: UserPlus },
           { id: 'add-staff', label: 'Add Staff', icon: Users },
+          { id: 'bulk-offer', label: 'Validate Offer Contacts (121)', icon: Gift },
           { id: 'tiers', label: 'Tier Benefits', icon: Crown },
         ].map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
@@ -636,6 +674,125 @@ export default function Customers() {
             </div>
             <Button onClick={handleQuickAdd} loading={quickLoading} fullWidth>
               <Users size={18} /> Add Staff
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'bulk-offer' && (
+        <div style={{ maxWidth: '680px' }}>
+          <div style={{ background: 'white', borderRadius: '16px', padding: '32px', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#ffe4e6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Gift size={22} color="#be123c" />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#1a1a2e', margin: 0 }}>Validate & Dispatch Offer for Contacts List</h3>
+                <p style={{ color: '#6b7280', fontSize: '13px', margin: '2px 0 0 0' }}>
+                  Paste your 121 contacts list below to register & validate them for instant POS auto-discounting!
+                </p>
+              </div>
+            </div>
+
+            {bulkResult && (
+              <div style={{ background: '#f0fdf4', border: '1.5px solid #bbf7d0', borderRadius: '12px', padding: '16px 20px', marginBottom: '20px', marginTop: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#15803d', fontSize: '15px', fontWeight: 800, marginBottom: '6px' }}>
+                  <Check size={20} /> Success! {bulkResult.totalProcessed} Contacts Validated for POS & Online Orders
+                </div>
+                <div style={{ fontSize: '13px', color: '#166534', lineHeight: 1.4 }}>
+                  • <strong>{bulkResult.imported}</strong> new contacts added to VIP offer database.<br/>
+                  • <strong>{bulkResult.updated}</strong> existing customers updated with active offer.<br/>
+                  • When any of these customers visit or enter their phone number at POS, their <strong>{bulkOfferPct}% OFF</strong> offer is automatically validated & applied!
+                </div>
+
+                <div style={{ marginTop: '14px', background: '#ffffff', padding: '12px', borderRadius: '10px', border: '1px solid #86efac' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 800, color: '#047857', marginBottom: '4px', letterSpacing: '0.5px' }}>💬 READY-TO-SEND WHATSAPP MESSAGE TEMPLATE:</div>
+                  <div style={{ fontSize: '12px', color: '#1f2937', background: '#f8fafc', padding: '10px', borderRadius: '8px', fontFamily: 'monospace', whiteSpace: 'pre-wrap', border: '1px solid #cbd5e1' }}>
+{`🎉 Special Offer Alert from Ten Den Gyros! 🎉
+
+You have unlocked a Special ${bulkOfferPct}% OFF Offer on your next order! 🌯
+
+📍 How to Redeem:
+Simply share your registered phone number at our Billing Counter, Self-Order Kiosk, or Online Website to claim your ${bulkOfferPct}% OFF instantly!
+
+🌐 Order Online: https://tendengyros.com`}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const msg = `🎉 Special Offer Alert from Ten Den Gyros! 🎉\n\nYou have unlocked a Special ${bulkOfferPct}% OFF Offer on your next order! 🌯\n\n📍 How to Redeem:\nSimply share your registered phone number at our Billing Counter, Self-Order Kiosk, or Online Website to claim your ${bulkOfferPct}% OFF instantly!\n\n🌐 Order Online: https://tendengyros.com`
+                      navigator.clipboard.writeText(msg)
+                      alert('WhatsApp offer message copied to clipboard!')
+                    }}
+                    style={{
+                      marginTop: '8px', padding: '8px 14px', background: '#25D366', color: 'white', border: 'none',
+                      borderRadius: '8px', fontSize: '12px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px'
+                    }}
+                  >
+                    <Copy size={14} /> Copy WhatsApp Offer Campaign Text
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {bulkError && (
+              <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', padding: '12px', color: '#dc2626', fontSize: '13px', marginBottom: '16px', marginTop: '16px' }}>
+                {bulkError}
+              </div>
+            )}
+
+            {/* Offer Discount Selector */}
+            <div style={{ marginTop: '20px', marginBottom: '16px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#374151', display: 'block', marginBottom: '6px' }}>1. SELECT OFFER DISCOUNT VALUE</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {[20, 30, 50, 70].map(pct => (
+                  <button
+                    key={pct}
+                    type="button"
+                    onClick={() => { setBulkOfferPct(pct); setBulkOfferName(`Special Offer ${pct}% OFF`) }}
+                    style={{
+                      flex: 1, padding: '10px', borderRadius: '10px',
+                      border: bulkOfferPct === pct ? '2px solid #e63946' : '1px solid #cbd5e1',
+                      background: bulkOfferPct === pct ? '#fff5f5' : '#ffffff',
+                      color: bulkOfferPct === pct ? '#e63946' : '#334155',
+                      fontWeight: 800, fontSize: '13px', cursor: 'pointer'
+                    }}
+                  >
+                    {pct}% OFF
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Offer Name Input */}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#374151', display: 'block', marginBottom: '4px' }}>2. OFFER CAMPAIGN NAME</label>
+              <input
+                type="text"
+                value={bulkOfferName}
+                onChange={(e) => setBulkOfferName(e.target.value)}
+                placeholder="e.g. VIP Family Offer 50% OFF"
+                style={inputStyle}
+              />
+            </div>
+
+            {/* Contacts Text Area */}
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#374151' }}>3. PASTE 121 CONTACTS LIST (PHONE NUMBERS & NAMES)</label>
+                <span style={{ fontSize: '11px', color: '#6b7280' }}>One contact per line</span>
+              </div>
+              <textarea
+                rows={8}
+                value={bulkOfferText}
+                onChange={(e) => setBulkOfferText(e.target.value)}
+                placeholder={`Paste your list of 121 contacts here, for example:\n\n9876543210, John Doe\n9988776655, Sarah\n9123456789\n9876500000, Ramesh`}
+                style={{ ...inputStyle, fontFamily: 'monospace', fontSize: '12.5px', lineHeight: 1.4, resize: 'vertical' }}
+              />
+            </div>
+
+            <Button onClick={handleBulkImport} loading={bulkLoading} fullWidth style={{ padding: '14px', fontSize: '15px', fontWeight: 800 }}>
+              <Gift size={20} /> Validate & Save All Contacts to POS
             </Button>
           </div>
         </div>
