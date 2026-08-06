@@ -60,9 +60,33 @@ function appendOrderLog(order) {
 
 process.on('uncaughtException', (err) => {
   console.error('CRITICAL: Uncaught Exception:', err)
+  // Emergency save — attempt to flush all in-memory data before crash
+  try {
+    if (typeof saveState === 'function') saveState()
+    else if (typeof writeDb === 'function') writeDb({})
+    console.error('[EMERGENCY SAVE] Data flushed after uncaughtException')
+  } catch (se) {
+    console.error('[EMERGENCY SAVE] Failed:', se.message)
+  }
 })
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('CRITICAL: Unhandled Rejection:', reason)
+  console.error('CRITICAL: Unhandled Rejection at:', promise, 'reason:', reason)
+  try {
+    if (typeof saveState === 'function') saveState()
+    console.error('[EMERGENCY SAVE] Data flushed after unhandledRejection')
+  } catch (se) {}
+})
+// Final safety net: fires just before process actually exits (any reason)
+process.on('exit', (code) => {
+  try {
+    if (typeof saveState === 'function') saveState()
+  } catch (e) {}
+  console.log(`[EXIT] Process exiting with code ${code}. Final save attempted.`)
+})
+process.on('beforeExit', (code) => {
+  try {
+    if (typeof saveState === 'function') saveState()
+  } catch (e) {}
 })
 
 function readDb() {
@@ -5538,10 +5562,10 @@ app.put('/api/pos/orders/:id/resettle', (req, res) => {
 // Check every 60 seconds for 12:00 AM IST rollover
 setInterval(runMidnightDayClosingCheck, 60000)
 
-// Auto-save state every 30 seconds to prevent data loss on unexpected restarts
+// Auto-save state every 10 seconds — tightened from 30s for maximum transaction safety
 setInterval(() => {
   try { saveState() } catch (e) { console.error('[AUTO-SAVE] Error:', e.message) }
-}, 30000)
+}, 10000)
 
 // Diagnostic endpoint — check live database state (admin only)
 app.get('/api/admin/db-diagnostics', (req, res) => {
@@ -6818,6 +6842,8 @@ function gracefulShutdown(signal) {
   process.exit(0)
 }
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'))
-process.on('SIGINT', () => gracefulShutdown('SIGINT'))
+process.on('SIGINT',  () => gracefulShutdown('SIGINT'))
+// SIGUSR2: sent by nodemon and some Linux process managers on graceful restart
+process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2'))
 
 export default app
