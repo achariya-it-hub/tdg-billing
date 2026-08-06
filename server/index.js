@@ -3626,11 +3626,15 @@ app.put('/api/staff/settings', (req, res) => {
 
 // 8. Staff Benefit & Promotion Summary Reports
 app.get('/api/reports/staff-benefit', (req, res) => {
-  const { startDate, endDate } = req.query
+  const { startDate, endDate, from, to } = req.query
+  // getCompletedSales(req.query) already applies from/to filtering
   let filteredOrders = getCompletedSales(req.query).filter(o => o.employeeId || o.offerType === 'staff_family')
 
-  if (startDate) filteredOrders = filteredOrders.filter(o => o.createdAt.slice(0, 10) >= startDate)
-  if (endDate) filteredOrders = filteredOrders.filter(o => o.createdAt.slice(0, 10) <= endDate)
+  // Support both startDate/endDate (legacy) and from/to (new date picker)
+  const dateFrom = startDate || from
+  const dateTo = endDate || to
+  if (dateFrom) filteredOrders = filteredOrders.filter(o => (o.createdAt || '').slice(0, 10) >= dateFrom)
+  if (dateTo)   filteredOrders = filteredOrders.filter(o => (o.createdAt || '').slice(0, 10) <= dateTo)
 
   const employeeWise = {}
   const deptWise = {}
@@ -6004,28 +6008,38 @@ app.get('/api/reports/daily-closing', (req, res) => {
 
 // P&L (Profit & Loss) Report
 app.get('/api/reports/pnl', (req, res) => {
-  const dateInput = req.query.date || getLocalDateStr(new Date())
-  const period = req.query.period || 'day'
-  const normDate = normalizeDateStr(dateInput)
+  const { from, to, date, period } = req.query
 
   let fromStr, toStr
-  if (period === 'week') {
-    const d = new Date(normDate)
-    const dayOfWeek = d.getDay()
-    const fromDate = new Date(d); fromDate.setDate(d.getDate() - dayOfWeek)
-    const toDate = new Date(fromDate); toDate.setDate(toDate.getDate() + 6)
-    fromStr = getLocalDateStr(fromDate)
-    toStr = getLocalDateStr(toDate)
-  } else if (period === 'month') {
-    const d = new Date(normDate)
-    const fromDate = new Date(d.getFullYear(), d.getMonth(), 1)
-    const toDate = new Date(d.getFullYear(), d.getMonth() + 1, 0)
-    fromStr = getLocalDateStr(fromDate)
-    toStr = getLocalDateStr(toDate)
+
+  // Prefer from/to (sent by the new date picker UI)
+  if (from && to) {
+    fromStr = normalizeDateStr(from)
+    toStr = normalizeDateStr(to)
   } else {
-    fromStr = normDate
-    toStr = normDate
+    // Fallback: legacy date/period params
+    const dateInput = date || getLocalDateStr(new Date())
+    const normDate = normalizeDateStr(dateInput)
+    const periodMode = period || 'day'
+    if (periodMode === 'week') {
+      const d = new Date(normDate)
+      const dayOfWeek = d.getDay()
+      const fromDate = new Date(d); fromDate.setDate(d.getDate() - dayOfWeek)
+      const toDate = new Date(fromDate); toDate.setDate(toDate.getDate() + 6)
+      fromStr = getLocalDateStr(fromDate)
+      toStr = getLocalDateStr(toDate)
+    } else if (periodMode === 'month') {
+      const d = new Date(normDate)
+      const fromDate = new Date(d.getFullYear(), d.getMonth(), 1)
+      const toDate = new Date(d.getFullYear(), d.getMonth() + 1, 0)
+      fromStr = getLocalDateStr(fromDate)
+      toStr = getLocalDateStr(toDate)
+    } else {
+      fromStr = normDate
+      toStr = normDate
+    }
   }
+
 
   // Revenue: valid sales orders
   const periodOrders = orders.filter(o => {
