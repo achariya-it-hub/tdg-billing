@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { ShoppingCart, Plus, Minus, Trash2, CreditCard, Banknote, Smartphone, Check, ArrowRight } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
+import { ShoppingCart, Plus, Minus, Trash2, CreditCard, Banknote, Smartphone, Check, ArrowRight, QrCode } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import { useMenuStore } from '../stores/menuStore'
+import API_BASE from '../lib/apiConfig'
+
 
 const categoryIcons = {
   'Burgers': '🍔',
@@ -16,27 +18,42 @@ const categoryIcons = {
 }
 
 export default function Kiosk() {
+  const location = useLocation()
   const { categories, menuItems, fetchCategories, fetchMenuItems } = useMenuStore()
+  
+  // Table detection from URL query params (e.g. ?table=5 or /table/5)
+  const queryParams = new URLSearchParams(location.search)
+  const urlTable = queryParams.get('table') || queryParams.get('t') || ''
+  const tableParam = urlTable ? (urlTable.toLowerCase().includes('table') ? urlTable : `Table ${urlTable}`) : 'Table 1'
+
   const [cart, setCart] = useState([])
   const [step, setStep] = useState(0)
+  const [tableNumber, setTableNumber] = useState(tableParam)
   const [customerName, setCustomerName] = useState('')
+  const [customerPhone, setCustomerPhone] = useState('')
   const [orderNumber, setOrderNumber] = useState(null)
   const [showPayment, setShowPayment] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState('upi')
   const [processing, setProcessing] = useState(false)
 
   useEffect(() => {
     fetchCategories()
     fetchMenuItems()
     
+    if (urlTable) {
+      setTableNumber(urlTable.toLowerCase().includes('table') ? urlTable : `Table ${urlTable}`)
+    }
+
     const resetTimer = setTimeout(() => {
       if (step === 0 || step === 5) return
       setStep(0)
       setCart([])
       setCustomerName('')
-    }, 60000)
+      setCustomerPhone('')
+    }, 90000)
     
     return () => clearTimeout(resetTimer)
-  }, [step])
+  }, [step, location.search])
 
   const addToCart = (item) => {
     const existing = cart.find(c => c.menuItemId === item.id)
@@ -72,16 +89,57 @@ export default function Kiosk() {
   const getTax = () => getSubtotal() * 0.05
   const getTotal = () => getSubtotal() + getTax()
 
-  const placeOrder = async (paymentMethod) => {
+  const placeOrder = async (selectedMethod = 'upi') => {
+    if (cart.length === 0) return
     setProcessing(true)
     try {
-      // Demo mode - create local order
-      const orderNumber = Math.floor(Math.random() * 9000) + 1000
-      setOrderNumber(orderNumber)
-      setStep(5)
-      setShowPayment(false)
+      const subtotal = getSubtotal()
+      const tax = getTax()
+      const total = getTotal()
+      const now = new Date().toISOString()
+      const isPaid = selectedMethod === 'upi' || selectedMethod === 'card' || selectedMethod === 'cashfree'
+
+      const orderPayload = {
+        type: tableNumber ? 'dine-in' : 'takeaway',
+        source: 'qr_self_order',
+        tableNumber: tableNumber || 'Table 1',
+        customerName: customerName || 'Self Order Guest',
+        customerPhone: customerPhone || '',
+        paymentMethod: selectedMethod,
+        status: isPaid ? 'completed' : 'pending',
+        paymentStatus: isPaid ? 'paid' : 'pending',
+        settleDirectly: isPaid,
+        paidAt: isPaid ? now : null,
+        subtotal: subtotal,
+        tax: tax,
+        total: total,
+        items: cart.map(item => ({
+          menuItemId: item.menuItemId || item.id,
+          menuItemName: item.menuItemName || item.name,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice || item.price,
+          totalPrice: (item.unitPrice || item.price) * item.quantity,
+          customization: item.customization || null
+        }))
+      }
+
+      const res = await fetch(`${API_BASE}/api/pos/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload)
+      })
+
+      const data = await res.json()
+      if (res.ok && (data.orderNumber || data.id)) {
+        setOrderNumber(data.orderNumber || data.id)
+        setStep(5)
+        setShowPayment(false)
+      } else {
+        alert(data.error || 'Failed to place self order. Please try again.')
+      }
     } catch (err) {
-      console.error('Order failed')
+      console.error('Order placement failed:', err)
+      alert('Network error while placing order.')
     }
     setProcessing(false)
   }
@@ -580,41 +638,91 @@ export default function Kiosk() {
         )}
       </div>
 
-      {/* Payment Modal */}
+      {/* Payment Modal with Dynamic Instant UPI QR Code & Gateways */}
       <Modal
         isOpen={showPayment}
         onClose={() => setShowPayment(false)}
-        title="Select Payment Method"
+        title={`Complete Payment & Place Order (${tableNumber})`}
         size="md"
       >
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-          {[
-            { method: 'counter', icon: Banknote, label: 'Pay at Counter' },
-            { method: 'upi', icon: Smartphone, label: 'UPI' },
-            { method: 'card', icon: CreditCard, label: 'Card' },
-            { method: 'cash', icon: Banknote, label: 'Cash' },
-            { method: 'wallet', icon: Smartphone, label: 'Wallet' }
-          ].map(({ method, icon: Icon, label }) => (
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>
+            Total Bill: <strong style={{ fontSize: '20px', color: '#e63946' }}>₹{getTotal().toFixed(2)}</strong> (Includes GST)
+          </div>
+
+          {/* Dynamic UPI QR Section */}
+          <div style={{
+            background: 'white', border: '2px solid #e63946', borderRadius: '16px',
+            padding: '20px', marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center'
+          }}>
+            <div style={{ fontSize: '14px', fontWeight: 800, color: '#1a1a2e', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Smartphone size={18} color="#e63946" /> Instant Scan & Pay via UPI (GPay / PhonePe / Paytm)
+            </div>
+            <div style={{ fontSize: '11.5px', color: '#6b7280', marginBottom: '14px' }}>
+              Scan the QR below with any UPI App on your phone:
+            </div>
+
+            <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', border: '1px solid #cbd5e1', marginBottom: '12px' }}>
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(`upi://pay?pa=tendengyros@upi&pn=Ten%20Den%20Gyros&am=${getTotal().toFixed(2)}&tn=${encodeURIComponent(tableNumber + '_SelfOrder')}`)}`}
+                alt="UPI Payment QR Code"
+                style={{ width: '190px', height: '190px', display: 'block' }}
+              />
+            </div>
+
+            <Button
+              onClick={() => placeOrder('upi')}
+              loading={processing}
+              style={{ padding: '12px 28px', fontSize: '15px', fontWeight: 800, background: '#10b981', borderColor: '#059669', width: '100%' }}
+            >
+              <Check size={18} /> I Have Paid ₹{getTotal().toFixed(2)} — Submit Order
+            </Button>
+          </div>
+
+          {/* Alternative Payment Options */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
             <button
-              key={method}
-              onClick={() => placeOrder(method)}
+              onClick={() => placeOrder('counter')}
               disabled={processing}
               style={{
-                padding: '32px',
-                background: 'var(--bg-card)',
-                border: '2px solid var(--border)',
-                borderRadius: '16px',
+                padding: '16px',
+                background: '#f8fafc',
+                border: '1.5px solid #cbd5e1',
+                borderRadius: '12px',
                 display: 'flex',
-                flexDirection: 'column',
                 alignItems: 'center',
-                gap: '12px',
-                cursor: 'pointer'
+                justifyContent: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '13px',
+                color: '#334155'
               }}
             >
-              <Icon size={48} />
-              <span style={{ fontSize: '20px', fontWeight: 600 }}>{label}</span>
+              <Banknote size={20} color="#059669" /> Pay Cash at Counter
             </button>
-          ))}
+
+            <button
+              onClick={() => placeOrder('card')}
+              disabled={processing}
+              style={{
+                padding: '16px',
+                background: '#f8fafc',
+                border: '1.5px solid #cbd5e1',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '13px',
+                color: '#334155'
+              }}
+            >
+              <CreditCard size={20} color="#3b82f6" /> Pay via Card / Netbanking
+            </button>
+          </div>
         </div>
       </Modal>
     </div>

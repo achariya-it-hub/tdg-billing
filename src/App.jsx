@@ -26,6 +26,7 @@ import Customizer from './pages/Customizer'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import MobilePreview from './pages/MobilePreview'
 import DenWebApp from './pages/DenWebApp'
+import TableQRGenerator from './pages/TableQRGenerator'
 import Layout from './components/Layout'
 import { SettingsProvider } from './lib/settingsContext'
 import { useState, useEffect, Component } from 'react'
@@ -252,6 +253,8 @@ export default function App() {
           <Route path="/app-preview" element={<MobilePreview />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/kiosk" element={<Kiosk />} />
+          <Route path="/order" element={<Kiosk />} />
+          <Route path="/table/:tableNum" element={<Kiosk />} />
           <Route path="/customizer" element={<Customizer />} />
           <Route path="/login" element={<CustomerAuth />} />
           <Route path="/staff-login" element={<Login />} />
@@ -274,6 +277,7 @@ export default function App() {
               <Route path="/users" element={<Users />} />
               <Route path="/expenses" element={<Expenses />} />
               <Route path="/accounts" element={<Accounts />} />
+              <Route path="/table-qr" element={<TableQRGenerator />} />
               <Route path="/settings" element={<Settings />} />
             </Route>
           </Route>

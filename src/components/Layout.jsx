@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { 
   Monitor, ChefHat, Tablet, ShoppingCart, LayoutDashboard, 
-  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, FileText, Receipt, Gem, Shield, KeyRound, X, DollarSign, Settings, Landmark
+  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, FileText, Receipt, Gem, Shield, KeyRound, X, DollarSign, Settings, Landmark, QrCode
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import API_BASE from '../lib/apiConfig'
@@ -11,6 +11,7 @@ const navItems = [
   { path: '/kitchen', icon: ChefHat, label: 'Kitchen', module: 'kitchen' },
   { path: '/billing', icon: Receipt, label: 'Billing', module: 'billing' },
   { path: '/kot', icon: Tablet, label: 'KOT', module: 'kot' },
+  { path: '/table-qr', icon: QrCode, label: 'Table QR', module: 'pos' },
   { path: '/purchase', icon: Package, label: 'Purchase', module: 'purchase' },
   { path: '/inventory', icon: Box, label: 'Inventory', module: 'inventory' },
   { path: '/menu', icon: BookOpen, label: 'Menu', module: 'menu' },
