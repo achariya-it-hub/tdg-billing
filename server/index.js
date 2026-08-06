@@ -2274,6 +2274,73 @@ app.get('/api/backup/local', (req, res) => {
   }
 })
 
+// Endpoint to merge recovered sales orders (e.g. Aug 4 orders) into live DB
+app.post('/api/admin/merge-recovered-orders', (req, res) => {
+  const key = req.query.key || req.headers['x-backup-key']
+  if (key !== LOCAL_BACKUP_KEY) return res.status(403).json({ error: 'Invalid backup key' })
+
+  try {
+    const newOrders = Array.isArray(req.body) ? req.body : (req.body.orders || [])
+    if (!Array.isArray(newOrders) || newOrders.length === 0) {
+      return res.status(400).json({ error: 'Expected non-empty array of orders' })
+    }
+
+    const currentDb = readDb()
+    const existingOrders = currentDb.orders || []
+
+    const orderMap = new Map()
+    existingOrders.forEach(o => {
+      if (o.id) orderMap.set(o.id, o)
+    })
+
+    let addedCount = 0
+    let updatedCount = 0
+
+    newOrders.forEach(rawOrder => {
+      const order = { ...rawOrder }
+      // Ensure status is completed & paid so it reflects in all reports
+      order.status = 'completed'
+      order.paymentStatus = 'paid'
+      if (Array.isArray(order.items)) {
+        order.items = order.items.map(item => ({ ...item, status: 'completed' }))
+      }
+
+      if (orderMap.has(order.id)) {
+        orderMap.set(order.id, order)
+        updatedCount++
+      } else {
+        orderMap.set(order.id, order)
+        addedCount++
+      }
+    })
+
+    currentDb.orders = Array.from(orderMap.values()).sort((a, b) => {
+      const da = new Date(a.createdAt || a.date || 0)
+      const dbTime = new Date(b.createdAt || b.date || 0)
+      return da - dbTime
+    })
+
+    // Update in-memory orders array and save
+    orders = currentDb.orders
+    writeDb(currentDb)
+    saveState()
+
+    console.log(`[MERGE RECOVERED] Merged ${newOrders.length} orders. Added: ${addedCount}, Updated: ${updatedCount}. Total orders now: ${orders.length}`)
+
+    res.json({
+      success: true,
+      message: `Merged ${newOrders.length} recovered orders successfully.`,
+      addedCount,
+      updatedCount,
+      totalOrders: orders.length
+    })
+  } catch (e) {
+    console.error('[MERGE RECOVERED ERROR]', e)
+    res.status(500).json({ error: 'Merge failed: ' + e.message })
+  }
+})
+
+
 // Download backup
 app.get('/api/settings/export-backup', (req, res) => {
   const pin = req.query.pin
