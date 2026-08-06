@@ -5556,10 +5556,7 @@ function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
 
   const normDate = normalizeDateStr(date)
   if (normDate === 'today' || normDate === todayStr) {
-    const todayOrders = targetOrders.filter(o => getOrderDate(o) === todayStr)
-    if (todayOrders.length > 0) return todayOrders
-    const latestDate = getLatestOrderDate(targetOrders)
-    return targetOrders.filter(o => getOrderDate(o) === latestDate)
+    return targetOrders.filter(o => getOrderDate(o) === todayStr)
   }
 
   if (normDate === 'yesterday' || normDate === yesterdayStr) {
@@ -5567,16 +5564,10 @@ function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
   }
 
   if (normDate && normDate !== 'all' && normDate !== 'latest') {
-    const matched = targetOrders.filter(o => getOrderDate(o) === normDate)
-    if (matched.length > 0) return matched
-    const latestDate = getLatestOrderDate(targetOrders)
-    return targetOrders.filter(o => getOrderDate(o) === latestDate)
+    return targetOrders.filter(o => getOrderDate(o) === normDate)
   }
 
-  const todayOrders = targetOrders.filter(o => getOrderDate(o) === todayStr)
-  if (todayOrders.length > 0) return todayOrders
-  const latestDate = getLatestOrderDate(targetOrders)
-  return targetOrders.filter(o => getOrderDate(o) === latestDate)
+  return targetOrders.filter(o => getOrderDate(o) === todayStr)
 }
 
 // ============ AUTOMATIC MIDNIGHT 12:00 AM IST DAY CLOSING ENGINE ============
