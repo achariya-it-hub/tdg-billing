@@ -180,7 +180,7 @@ export default function POS() {
   const [searchingCustomer, setSearchingCustomer] = useState(false)
   const [showCustomerDropdown, setShowCustomerDropdown] = useState(false)
 
-  // 2-Gyro Dual Customizer State for Combos (Duo Gyro Feast, Double Crunch Box, Den's Party Meal)
+  // 2-Gyro Dual Customizer State for Combos (Mega Feast Meal, Duo Gyro Feast, Den's Party Meal, Double Crunch Box, Super 5 Bucket)
   const [selectedGyro1Protein, setSelectedGyro1Protein] = useState('Chicken')
   const [selectedGyro1Bread, setSelectedGyro1Bread] = useState('Baked')
   const [selectedGyro1Flavor, setSelectedGyro1Flavor] = useState('Spicy')
@@ -192,6 +192,9 @@ export default function POS() {
   const [selectedGyro2Flavor, setSelectedGyro2Flavor] = useState('Spicy')
   const [selectedGyro2Sauces, setSelectedGyro2Sauces] = useState(['Spicy Mayo'])
   const [selectedGyro2Veggies, setSelectedGyro2Veggies] = useState(['Lettuce', 'Onion'])
+
+  const [selectedDrink1, setSelectedDrink1] = useState('Coca-Cola')
+  const [selectedDrink2, setSelectedDrink2] = useState('Sprite')
 
   useEffect(() => {
     fetch(`${API_BASE}/api/settings`)
@@ -299,7 +302,9 @@ export default function POS() {
       name.includes('duo') ||
       name.includes('double crunch') ||
       name.includes('party meal') ||
-      name.includes('mega feast')
+      name.includes('mega feast') ||
+      name.includes('super 5') ||
+      name.includes('bucket')
     )
   }
 
@@ -310,6 +315,8 @@ export default function POS() {
       setSelectedBread('Baked')
       setSelectedProtein('Chicken')
       setSelectedDrink('Coca-Cola')
+      setSelectedDrink1('Coca-Cola')
+      setSelectedDrink2('Sprite')
       setSelectedSpread('Tzatziki')
       setSelectedSauces(['Garlic Mayo'])
       setSelectedVeggies(['Lettuce', 'Onion'])
@@ -353,7 +360,9 @@ export default function POS() {
       customization = {
         gyro1: `Gyro 1: ${selectedGyro1Protein} Gyro (${selectedGyro1Flavor}, ${selectedGyro1Bread} Pita, Sauces: ${selectedGyro1Sauces.join(', ') || 'None'}, Veggies: ${selectedGyro1Veggies.join(', ') || 'None'})`,
         gyro2: `Gyro 2: ${selectedGyro2Protein} Gyro (${selectedGyro2Flavor}, ${selectedGyro2Bread} Pita, Sauces: ${selectedGyro2Sauces.join(', ') || 'None'}, Veggies: ${selectedGyro2Veggies.join(', ') || 'None'})`,
-        drink: selectedDrink,
+        drink1: selectedDrink1,
+        drink2: selectedDrink2,
+        drink: `${selectedDrink1} & ${selectedDrink2}`,
         notes: gyroNotes
       }
     } else {
@@ -1285,7 +1294,7 @@ export default function POS() {
                 <div style={{ marginBottom: '10px' }}>
                   <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>2. Flavor / Style</div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
-                    {['Spicy', 'Creamy', 'BBQ', 'Peri Peri'].map(f => (
+                    {['Spicy', 'Creamy', 'BBQ', 'Signature'].map(f => (
                       <button key={f} type="button" onClick={() => setSelectedGyro1Flavor(f)} style={{
                         padding: '8px', borderRadius: '8px',
                         border: selectedGyro1Flavor === f ? '2px solid #e63946' : '1px solid #cbd5e1',
@@ -1393,7 +1402,7 @@ export default function POS() {
                 <div style={{ marginBottom: '10px' }}>
                   <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>2. Flavor / Style</div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
-                    {['Spicy', 'Creamy', 'BBQ', 'Peri Peri'].map(f => (
+                    {['Spicy', 'Creamy', 'BBQ', 'Signature'].map(f => (
                       <button key={f} type="button" onClick={() => setSelectedGyro2Flavor(f)} style={{
                         padding: '8px', borderRadius: '8px',
                         border: selectedGyro2Flavor === f ? '2px solid #2563eb' : '1px solid #cbd5e1',
@@ -1472,23 +1481,46 @@ export default function POS() {
                 </div>
               </div>
 
-              {/* Drink Selection */}
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  🥤 Choose Drink / Beverage
+              {/* 2 Drinks Selection for Combo */}
+              <div style={{ background: '#f0fdf4', padding: '16px', borderRadius: '16px', border: '2px solid #bbf7d0' }}>
+                <div style={{ fontSize: '14px', fontWeight: 800, color: '#15803d', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>🥤 CHOOSE YOUR 2 DRINKS INCLUDED IN COMBO</span>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                  {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea'].map(d => (
-                    <button key={d} type="button" onClick={() => setSelectedDrink(d)} style={{
-                      padding: '10px', borderRadius: '10px',
-                      border: selectedDrink === d ? '2px solid #06b6d4' : '1px solid #e5e7eb',
-                      background: selectedDrink === d ? '#ecfeff' : '#f9fafb',
-                      color: selectedDrink === d ? '#0891b2' : '#374151',
-                      fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'center', transition: 'all 0.15s'
-                    }}>
-                      {selectedDrink === d ? '✓ ' : ''}{d}
-                    </button>
-                  ))}
+
+                {/* Drink Choice 1 */}
+                <div style={{ marginBottom: '12px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#166534', marginBottom: '6px' }}>1. First Drink</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                    {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea'].map(d => (
+                      <button key={d} type="button" onClick={() => setSelectedDrink1(d)} style={{
+                        padding: '8px', borderRadius: '8px',
+                        border: selectedDrink1 === d ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                        background: selectedDrink1 === d ? '#16a34a' : '#ffffff',
+                        color: selectedDrink1 === d ? '#ffffff' : '#334155',
+                        fontWeight: 700, fontSize: '11.5px', cursor: 'pointer', textAlign: 'center'
+                      }}>
+                        {selectedDrink1 === d ? '✓ ' : ''}{d}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Drink Choice 2 */}
+                <div>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#166534', marginBottom: '6px' }}>2. Second Drink</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                    {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea'].map(d => (
+                      <button key={d} type="button" onClick={() => setSelectedDrink2(d)} style={{
+                        padding: '8px', borderRadius: '8px',
+                        border: selectedDrink2 === d ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                        background: selectedDrink2 === d ? '#16a34a' : '#ffffff',
+                        color: selectedDrink2 === d ? '#ffffff' : '#334155',
+                        fontWeight: 700, fontSize: '11.5px', cursor: 'pointer', textAlign: 'center'
+                      }}>
+                        {selectedDrink2 === d ? '✓ ' : ''}{d}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
