@@ -295,7 +295,12 @@ export default function POS() {
   const isDualGyroCombo = (item) => {
     if (!item) return false
     const name = (item.name || '').toLowerCase()
-    return name.includes('duo') || name.includes('double crunch') || name.includes('party meal')
+    return (
+      name.includes('duo') ||
+      name.includes('double crunch') ||
+      name.includes('party meal') ||
+      name.includes('mega feast')
+    )
   }
 
   const handleItemClick = (item) => {
