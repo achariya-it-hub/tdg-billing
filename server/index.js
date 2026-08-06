@@ -5256,25 +5256,29 @@ app.post('/api/purchases', (req, res) => {
   res.status(201).json(purchase)
 })
 
-// Helper for IST timezone-safe local date string (YYYY-MM-DD)
+// Helper for IST timezone & business shift safe local date string (YYYY-MM-DD)
+// Applies 5:00 AM IST shift cutoff so late-night bills (12:00 AM - 04:59 AM IST) belong to yesterday's shift.
 const getLocalDateStr = (val) => {
   if (!val) return ''
   const str = String(val).trim()
   if (!str) return ''
 
-  // 1. If already YYYY-MM-DD format
+  // 1. If already plain YYYY-MM-DD date string without time
   if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str
 
-  // 2. If YYYY-MM-DD... ISO string (e.g. 2026-07-31T14:20:00.000Z)
-  if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
-    try {
-      const d = new Date(str)
-      if (!isNaN(d.getTime())) {
-        return d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
+  // 2. Parse Date objects or ISO strings (e.g. 2026-08-05T18:35:00.000Z)
+  try {
+    const d = typeof val === 'number' ? new Date(val) : new Date(str)
+    if (!isNaN(d.getTime())) {
+      // 5:00 AM IST shift cutoff: 12:00 AM to 04:59 AM IST is part of previous day's shift
+      const istHours = Number(d.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour12: false }).split(':')[0])
+      if (istHours < 5) {
+        const shifted = new Date(d.getTime() - 5 * 3600 * 1000)
+        return shifted.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
       }
-    } catch (e) {}
-    return str.slice(0, 10)
-  }
+      return d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
+    }
+  } catch (e) {}
 
   // 3. Match DD.MM.YYYY, DD.MM.YY, DD/MM/YYYY, DD/MM/YY, DD-MM-YYYY, DD-MM-YY
   const dmyMatch = str.match(/^(\d{1,2})[\.\/\-](\d{1,2})[\.\/\-](\d{2,4})/)
@@ -5286,15 +5290,7 @@ const getLocalDateStr = (val) => {
     return `${year}-${month}-${day}`
   }
 
-  // 4. Try parsing as ISO date or Date object in Asia/Kolkata IST
-  try {
-    const d = typeof val === 'number' ? new Date(val) : new Date(str)
-    if (!isNaN(d.getTime())) {
-      return d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
-    }
-  } catch (e) {}
-
-  return str
+  return str.slice(0, 10)
 }
 
 // Helper to safely extract date field from an order (checks date first, then createdAt, paidAt, completedAt, timestamp)
