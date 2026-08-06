@@ -733,7 +733,7 @@ app.get('/api/version', (req, res) => {
   const nowIST = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
   const todayStr = getLocalDateStr(new Date())
   res.json({
-    version: '1.0.6-shift-fix',
+    version: '1.0.7-cust-search',
     serverTimeIST: nowIST,
     todayStr: todayStr,
     ordersCount: typeof orders !== 'undefined' && Array.isArray(orders) ? orders.length : 0
