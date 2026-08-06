@@ -980,8 +980,8 @@ export default function POS() {
                       <span style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}>👤 {c.customerName}</span>
                       {c.phone && <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: 600 }}>📱 {c.phone}</span>}
                     </div>
-                    <span style={{ fontSize: '10.5px', fontWeight: 800, color: c.discountPct > 0 ? (c.discountPct >= 50 ? '#7c3aed' : '#be123c') : '#047857', background: c.discountPct > 0 ? (c.discountPct >= 50 ? '#f5f3ff' : '#ffe4e6') : '#ecfdf5', padding: '3px 8px', borderRadius: '12px' }}>
-                      {c.discountPct > 0 ? `👑 ${c.discountPct}% OFF` : '✓ Customer'}
+                    <span style={{ fontSize: '10.5px', fontWeight: 800, color: c.offerRedeemed ? '#b45309' : (c.discountPct > 0 ? (c.discountPct >= 50 ? '#7c3aed' : '#be123c') : '#047857'), background: c.offerRedeemed ? '#fef3c7' : (c.discountPct > 0 ? (c.discountPct >= 50 ? '#f5f3ff' : '#ffe4e6') : '#ecfdf5'), padding: '3px 8px', borderRadius: '12px' }}>
+                      {c.offerRedeemed ? '⚠️ Offer Redeemed (Used)' : (c.discountPct > 0 ? `👑 ${c.discountPct}% OFF` : '✓ Customer')}
                     </span>
                   </button>
                 ))}
@@ -991,7 +991,11 @@ export default function POS() {
             {currentOrder.customerName && (
               <div style={{ fontSize: '10.5px', fontWeight: 700, color: '#1e293b', marginTop: '4px' }}>
                 👤 {currentOrder.customerName}{currentOrder.customerPhone ? ` • ${currentOrder.customerPhone}` : ''}
-                {currentOrder.customerDiscountPct > 0 && <span style={{ color: currentOrder.customerDiscountPct >= 50 ? '#7c3aed' : '#dc2626' }}> — {currentOrder.customerDiscountPct}% OFF auto-applied</span>}
+                {currentOrder.customerDiscountPct > 0 ? (
+                  <span style={{ color: currentOrder.customerDiscountPct >= 50 ? '#7c3aed' : '#dc2626' }}> — {currentOrder.customerDiscountPct}% OFF auto-applied</span>
+                ) : (
+                  currentOrder.customerPhone && <span style={{ color: '#b45309', marginLeft: '6px' }}> (⚠️ Offer Redeemed / Regular Price)</span>
+                )}
               </div>
             )}
             {currentOrder.customerName && (

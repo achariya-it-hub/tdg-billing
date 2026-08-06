@@ -9382,116 +9382,6 @@ app.post('/api/admin/customers/bulk-import-text', (req, res) => {
   res.json({ success: true, imported, updated, skipped, totalProcessed: imported + updated })
 })
 
-app.get('/api/customers/search', (req, res) => {
-  const q = String(req.query.q || req.query.term || '').trim().toLowerCase()
-  if (!q) return res.json({ customers: [] })
-
-  const cleanPhone = (p) => String(p || '').replace(/\D/g, '')
-  const qPhone = cleanPhone(q)
-
-  const results = []
-  const seen = new Set()
-
-  const addCustomer = (name, phone, source, discountPct = 0, tier = '', isVip50 = false, id = '') => {
-    const pClean = cleanPhone(phone)
-    if (!pClean && !name) return
-    const key = pClean || String(name).trim().toLowerCase()
-    if (seen.has(key)) return
-    seen.add(key)
-
-    const disc = Number(discountPct) > 0 ? Math.min(90, Math.round(Number(discountPct))) : 0
-
-    results.push({
-      id: id || `cust_${key}`,
-      source,
-      customerName: name || 'Customer',
-      phone: pClean || phone || '',
-      discountPct: disc,
-      tier: tier || (disc === 50 ? 'VIP 50% OFF' : (disc > 0 ? `${disc}% OFF` : 'Regular')),
-      isVip50: Boolean(isVip50 || disc === 50)
-    })
-  }
-
-  // 1. Search loyalty users
-  for (const u of (loyaltyUsers || [])) {
-    const name = (u.name || '').toLowerCase()
-    const phone = cleanPhone(u.phone)
-    if ((qPhone && phone.includes(qPhone)) || (name && name.includes(q))) {
-      addCustomer(u.name, u.phone, 'loyalty', u.discountPct, u.tier, u.isVip50, u.id)
-    }
-  }
-
-  // 2. Search mobile app users
-  for (const u of (mobileAppUsers || [])) {
-    const name = (u.name || '').toLowerCase()
-    const phone = cleanPhone(u.phone)
-    if ((qPhone && phone.includes(qPhone)) || (name && name.includes(q))) {
-      addCustomer(u.name, u.phone, 'mobile', u.discountPct, u.tier, u.isVip50, u.id)
-    }
-  }
-
-  // 3. Search past order customers
-  for (const o of (orders || [])) {
-    if (!o.customerPhone && !o.customerName) continue
-    const name = (o.customerName || '').toLowerCase()
-    const phone = cleanPhone(o.customerPhone)
-    if ((qPhone && phone.includes(qPhone)) || (name && name.includes(q))) {
-      addCustomer(o.customerName, o.customerPhone, 'orders', 0, 'Regular', false, o.id)
-    }
-  }
-
-  results.sort((a, b) => b.discountPct - a.discountPct)
-  res.json({ customers: results.slice(0, 20) })
-})
-
-// Lookup customer by phone number or name. Returns stored customer details & any discount pct.
-app.get('/api/customers/check-discount', (req, res) => {
-  const rawPhone = (req.query.phone || '').replace(/\D/g, '')
-  const rawName = String(req.query.name || req.query.q || '').trim().toLowerCase()
-
-  if (!rawPhone && !rawName) return res.json({ found: false, hasDiscount: false, discountPct: 0, customerName: '', phone: '' })
-
-  const matchByPhone = (p) => (p || '').replace(/\D/g, '') === rawPhone
-  const matchByName = (n) => (n || '').toLowerCase() === rawName
-
-  let user = (loyaltyUsers || []).find(u => (rawPhone && matchByPhone(u.phone)) || (rawName && matchByName(u.name)))
-  if (!user) {
-    user = (mobileAppUsers || []).find(u => (rawPhone && matchByPhone(u.phone)) || (rawName && matchByName(u.name)))
-  }
-
-  let pastOrder
-  if (!user) {
-    pastOrder = (orders || []).find(o => (rawPhone && matchByPhone(o.customerPhone)) || (rawName && matchByName(o.customerName)))
-  }
-
-  if (user) {
-    const discountPct = Number(user.discountPct) > 0 ? Math.min(90, Math.round(Number(user.discountPct))) : 0
-    return res.json({
-      found: true,
-      hasDiscount: discountPct > 0,
-      discountPct,
-      customerName: user.name || 'Customer',
-      phone: (user.phone || rawPhone || '').replace(/\D/g, ''),
-      tier: user.tier || (discountPct === 50 ? 'VIP 50% OFF' : (discountPct > 0 ? `${discountPct}% OFF` : 'Regular')),
-      isVip50: Boolean(user.isVip50 || discountPct === 50)
-    })
-  }
-
-  if (pastOrder) {
-    return res.json({
-      found: true,
-      hasDiscount: false,
-      discountPct: 0,
-      customerName: pastOrder.customerName || 'Customer',
-      phone: (pastOrder.customerPhone || rawPhone || '').replace(/\D/g, ''),
-      tier: 'Regular',
-      isVip50: false
-    })
-  }
-
-  res.json({ found: false, hasDiscount: false, discountPct: 0, customerName: '', phone: rawPhone })
-})
-
 // ─── Local PC Backup Endpoint ──────────────────────────────────────────────
 // Called by the PowerShell auto-backup script on the billing PC.
 // Authenticated by BACKUP_SECRET_KEY env var (no PIN needed for headless use).
@@ -11319,6 +11209,23 @@ app.post('/api/pos/orders', (req, res) => {
   }
 
   orders.unshift(order)
+  // 1-Time Offer Limit Enforcement: Mark customer offer as redeemed on order creation
+  if (customerPhone && discountVal > 0) {
+    const cleanP = String(customerPhone).replace(/\D/g, '')
+    if (cleanP.length >= 8) {
+      const u = (loyaltyUsers || []).find(x => String(x.phone || '').replace(/\D/g, '') === cleanP) ||
+                (mobileAppUsers || []).find(x => String(x.phone || '').replace(/\D/g, '') === cleanP)
+      if (u) {
+        u.offerRedeemed = true
+        u.redeemedAt = now
+        u.redeemedOrderNumber = orderNum
+        u.discountPct = 0
+        u.tier = 'Offer Redeemed (1-Time Limit Used)'
+      }
+    }
+  }
+
+
   deductInventoryForOrder(order)
   
   // EMERGENCY: Append to order log IMMEDIATELY (survives crashes)
