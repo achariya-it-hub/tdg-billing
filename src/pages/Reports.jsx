@@ -103,7 +103,7 @@ const reportTypes = [
 
 export default function Reports() {
   const [activeReport, setActiveReport] = useState('daily-closing')
-  const [dateRange, setDateRange] = useState('today')
+  const [dateRange, setDateRange] = useState('custom')
   const [closing, setClosing] = useState(null)
   const [paymentReport, setPaymentReport] = useState(null)
   const [pnlData, setPnlData] = useState(null)
@@ -140,20 +140,7 @@ export default function Reports() {
   const getApiUrl = () => window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
 
   const getQueryParams = () => {
-    if (dateRange === 'custom') {
-      return `from=${customFromDate}&to=${customToDate}`
-    }
-    if (dateRange === 'today') {
-      const tStr = formatISTDate(new Date())
-      return `date=today&from=${tStr}&to=${tStr}`
-    }
-    if (dateRange === 'yesterday') {
-      const y = new Date()
-      y.setDate(y.getDate() - 1)
-      const yStr = formatISTDate(y)
-      return `date=yesterday&from=${yStr}&to=${yStr}`
-    }
-    return `date=${dateRange}`
+    return `from=${customFromDate}&to=${customToDate}`
   }
 
   useEffect(() => {
@@ -2055,65 +2042,106 @@ export default function Reports() {
         boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
       }}>
         <h3 style={{ fontSize: '20px', fontWeight: 700 }}>{getReportTitle()}</h3>
-        
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <select
-            value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
-            style={{
-              padding: '10px 16px',
-              borderRadius: '8px',
-              border: '1px solid #e5e7eb',
-              fontSize: '14px',
-              fontWeight: 600,
-              cursor: 'pointer'
-            }}
-          >
-            <option value="latest">⚡ Latest Active Shift</option>
-            <option value="today">⭐ Today's Shift</option>
-            <option value="yesterday">🕒 Yesterday's Shift</option>
-            <option value="week">🗓️ This Week</option>
-            <option value="month">📅 This Month</option>
 
-            <option value="custom">📅 Specific Date Range...</option>
-          </select>
+        {/* Right side: date controls + export */}
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
 
-          {dateRange === 'custom' && (
-            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-              <input
-                type="date"
-                value={customFromDate}
-                onChange={(e) => setCustomFromDate(e.target.value)}
-                style={{
-                  padding: '9px 14px',
-                  borderRadius: '8px',
-                  border: '1px solid #e63946',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  outline: 'none',
-                  color: '#1a1a2e',
-                  background: '#fff'
-                }}
-              />
-              <span style={{ fontWeight: 600, color: '#6b7280' }}>to</span>
-              <input
-                type="date"
-                value={customToDate}
-                onChange={(e) => setCustomToDate(e.target.value)}
-                style={{
-                  padding: '9px 14px',
-                  borderRadius: '8px',
-                  border: '1px solid #e63946',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  outline: 'none',
-                  color: '#1a1a2e',
-                  background: '#fff'
-                }}
-              />
-            </div>
-          )}
-          
+          {/* Quick shortcut buttons */}
+          {[{
+            label: '⭐ Today',
+            onClick: () => {
+              const t = formatISTDate(new Date())
+              setCustomFromDate(t)
+              setCustomToDate(t)
+            }
+          }, {
+            label: '🕒 Yesterday',
+            onClick: () => {
+              const y = new Date(); y.setDate(y.getDate() - 1)
+              const yStr = formatISTDate(y)
+              setCustomFromDate(yStr)
+              setCustomToDate(yStr)
+            }
+          }, {
+            label: '🗓️ This Week',
+            onClick: () => {
+              const now = new Date()
+              const day = now.getDay()
+              const from = new Date(now); from.setDate(now.getDate() - day)
+              const to = new Date(from); to.setDate(from.getDate() + 6)
+              setCustomFromDate(formatISTDate(from))
+              setCustomToDate(formatISTDate(to))
+            }
+          }, {
+            label: '📅 This Month',
+            onClick: () => {
+              const now = new Date()
+              const from = new Date(now.getFullYear(), now.getMonth(), 1)
+              const to = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+              setCustomFromDate(formatISTDate(from))
+              setCustomToDate(formatISTDate(to))
+            }
+          }].map(btn => (
+            <button
+              key={btn.label}
+              onClick={btn.onClick}
+              style={{
+                padding: '8px 12px',
+                borderRadius: '8px',
+                border: '1px solid #e5e7eb',
+                background: '#f9fafb',
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                color: '#374151',
+                whiteSpace: 'nowrap'
+              }}
+            >{btn.label}</button>
+          ))}
+
+          {/* From date */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280' }}>From</span>
+            <input
+              type="date"
+              value={customFromDate}
+              onChange={(e) => setCustomFromDate(e.target.value)}
+              style={{
+                padding: '9px 14px',
+                borderRadius: '8px',
+                border: '1.5px solid #e63946',
+                fontSize: '14px',
+                fontWeight: 600,
+                outline: 'none',
+                color: '#1a1a2e',
+                background: '#fff',
+                cursor: 'pointer'
+              }}
+            />
+          </div>
+
+          {/* To date */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: '#6b7280' }}>To</span>
+            <input
+              type="date"
+              value={customToDate}
+              onChange={(e) => setCustomToDate(e.target.value)}
+              style={{
+                padding: '9px 14px',
+                borderRadius: '8px',
+                border: '1.5px solid #e63946',
+                fontSize: '14px',
+                fontWeight: 600,
+                outline: 'none',
+                color: '#1a1a2e',
+                background: '#fff',
+                cursor: 'pointer'
+              }}
+            />
+          </div>
+
+          {/* Export button */}
           <div style={{ position: 'relative' }}>
             <button onClick={() => setShowExportMenu(!showExportMenu)}
               style={{
@@ -2153,11 +2181,13 @@ export default function Reports() {
               </>
             )}
           </div>
-        </div>
-      </div>
+
+        </div>{/* end right side */}
+
+      </div>{/* end report header card */}
 
       {/* Report Content */}
       {renderReport()}
     </div>
   )
-}
+}
