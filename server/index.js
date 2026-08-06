@@ -6033,7 +6033,9 @@ app.get('/api/reports/daily-closing', (req, res) => {
   if (normDate && normDate !== 'all' && normDate !== 'latest') {
     displayDateStr = normDate
   } else if (normFrom && normTo) {
-    displayDateStr = `${normFrom} to ${normTo}`
+    displayDateStr = normFrom === normTo ? normFrom : `${normFrom} to ${normTo}`
+  } else if (normFrom) {
+    displayDateStr = `From ${normFrom}`
   } else if (completedOrders.length > 0) {
     displayDateStr = getOrderDate(completedOrders[0]) || todayStr
   }
