@@ -2246,6 +2246,34 @@ app.get('/api/customers/check-discount', (req, res) => {
   res.json({ hasDiscount: false, discountPct: 0 })
 })
 
+// ─── Local PC Backup Endpoint ──────────────────────────────────────────────
+// Called by the PowerShell auto-backup script on the billing PC.
+// Authenticated by BACKUP_SECRET_KEY env var (no PIN needed for headless use).
+const LOCAL_BACKUP_KEY = process.env.BACKUP_SECRET_KEY || 'tdg-local-backup-2026'
+app.get('/api/backup/local', (req, res) => {
+  const key = req.query.key || req.headers['x-backup-key']
+  if (key !== LOCAL_BACKUP_KEY) return res.status(403).json({ error: 'Invalid backup key' })
+  try {
+    const db = readDb()
+    const date = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Kolkata' }).slice(0, 10)
+    const time = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Kolkata' }).slice(11, 19).replace(/:/g, '-')
+    res.setHeader('Content-Type', 'application/json')
+    res.setHeader('Content-Disposition', `attachment; filename="tdg-backup-${date}_${time}.json"`)
+    res.json({
+      ...db,
+      _backupMeta: {
+        exportedAt: new Date().toISOString(),
+        exportedAtIST: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+        ordersCount: (db.orders || []).length,
+        menuItemsCount: (db.menuItems || []).length,
+        server: 'tendengyros.com'
+      }
+    })
+  } catch (e) {
+    res.status(500).json({ error: 'Backup failed: ' + e.message })
+  }
+})
+
 // Download backup
 app.get('/api/settings/export-backup', (req, res) => {
   const pin = req.query.pin
