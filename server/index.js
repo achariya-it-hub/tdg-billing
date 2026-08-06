@@ -60,27 +60,6 @@ function appendOrderLog(order) {
 
 const LOCAL_BACKUP_KEY = process.env.BACKUP_SECRET_KEY || 'tdg-local-backup-2026'
 
-// Version & Diagnostics endpoint
-app.get('/api/version', (req, res) => {
-  const nowIST = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
-  const todayStr = getLocalDateStr(new Date())
-  res.json({
-    version: '1.0.5-date-fix',
-    commit: '0b38705-check',
-    serverTimeIST: nowIST,
-    todayStr: todayStr,
-    ordersCount: (orders || []).length
-  })
-})
-
-// Endpoint to force-restart Passenger Node worker
-app.get('/api/admin/restart', (req, res) => {
-  const key = req.query.key || req.headers['x-backup-key']
-  if (key !== LOCAL_BACKUP_KEY) return res.status(403).json({ error: 'Invalid key' })
-
-  res.json({ success: true, message: 'Restarting Passenger process...' })
-  setTimeout(() => process.exit(0), 300)
-})
 
 
 process.on('unhandledRejection', (reason, promise) => {
@@ -748,6 +727,29 @@ app.use(express.json({ limit: '10mb' }))
 const UPLOADS_DIR = join(__dirname, 'uploads')
 if (!existsSync(UPLOADS_DIR)) mkdirSync(UPLOADS_DIR, { recursive: true })
 app.use('/uploads', express.static(UPLOADS_DIR))
+
+// Version & Diagnostics endpoint
+app.get('/api/version', (req, res) => {
+  const nowIST = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+  const todayStr = getLocalDateStr(new Date())
+  res.json({
+    version: '1.0.6-shift-fix',
+    commit: '72467eb-fix',
+    serverTimeIST: nowIST,
+    todayStr: todayStr,
+    ordersCount: (orders || []).length
+  })
+})
+
+// Endpoint to force-restart Passenger Node worker
+app.get('/api/admin/restart', (req, res) => {
+  const key = req.query.key || req.headers['x-backup-key']
+  if (key !== LOCAL_BACKUP_KEY) return res.status(403).json({ error: 'Invalid key' })
+
+  res.json({ success: true, message: 'Restarting Passenger process...' })
+  setTimeout(() => process.exit(0), 300)
+})
+
 
 // In-memory database
 let mobileAppUsers = []
