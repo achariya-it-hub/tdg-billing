@@ -382,6 +382,7 @@ let aggregators = [
 // so they are NEVER overwritten by git pull / redeploy
 const VAULT_PATH = join(DATA_DIR, 'sales_vault_LOCK.json')
 const MENU_VAULT_PATH = join(DATA_DIR, 'menu_backup_LOCK.json')
+const FROZEN_MENU_PATH = join(DATA_DIR, 'frozen_menu_LOCK.json')
 const INVENTORY_VAULT_PATH = join(DATA_DIR, 'inventory_vault_LOCK.json')
 const SETTINGS_VAULT_PATH = join(DATA_DIR, 'settings_vault_LOCK.json')
 
@@ -389,6 +390,7 @@ const SETTINGS_VAULT_PATH = join(DATA_DIR, 'settings_vault_LOCK.json')
 const OLD_VAULT_FILES = [
   { old: join(__dirname, 'sales_vault_LOCK.json'), new: VAULT_PATH },
   { old: join(__dirname, 'menu_backup_LOCK.json'), new: MENU_VAULT_PATH },
+  { old: join(__dirname, 'frozen_menu_LOCK.json'), new: FROZEN_MENU_PATH },
   { old: join(__dirname, 'inventory_vault_LOCK.json'), new: INVENTORY_VAULT_PATH },
   { old: join(__dirname, 'settings_vault_LOCK.json'), new: SETTINGS_VAULT_PATH }
 ]
@@ -432,12 +434,32 @@ function syncSalesVault(currentOrders) {
 function syncMenuVault(curCategories, curMenuItems, curRecipes) {
   try {
     let vaultData = { categories: [], menuItems: [], recipes: [] }
-    if (existsSync(MENU_VAULT_PATH)) {
-      const content = readFileSync(MENU_VAULT_PATH, 'utf-8').trim()
-      if (content) {
-        try { vaultData = JSON.parse(content) } catch (e) {}
+
+    // 1. Primary lock: check frozen_menu_LOCK.json
+    if (existsSync(FROZEN_MENU_PATH)) {
+      try {
+        const frozenContent = readFileSync(FROZEN_MENU_PATH, 'utf-8').trim()
+        if (frozenContent) {
+          const parsedFrozen = JSON.parse(frozenContent)
+          if (parsedFrozen && Array.isArray(parsedFrozen.menuItems) && parsedFrozen.menuItems.length > 0) {
+            console.log('[MENU FREEZE LOCK] Loaded frozen menu with', parsedFrozen.menuItems.length, 'items and', parsedFrozen.categories?.length || 0, 'categories.')
+            vaultData = parsedFrozen
+          }
+        }
+      } catch (fe) {
+        console.error('[MENU FREEZE ERROR]', fe.message)
       }
     }
+
+    if (!vaultData.menuItems || vaultData.menuItems.length === 0) {
+      if (existsSync(MENU_VAULT_PATH)) {
+        const content = readFileSync(MENU_VAULT_PATH, 'utf-8').trim()
+        if (content) {
+          try { vaultData = JSON.parse(content) } catch (e) {}
+        }
+      }
+    }
+
     const catMap = new Map()
     ;(vaultData.categories || []).forEach(c => { if (c && c.id) catMap.set(c.id, c) })
     ;(curCategories || []).forEach(c => { if (c && c.id) catMap.set(c.id, c) })
@@ -453,8 +475,11 @@ function syncMenuVault(curCategories, curMenuItems, curRecipes) {
     ;(curRecipes || []).forEach(r => { if (r && (r.id || r.menuItemId)) recipeMap.set(r.id || r.menuItemId, r) })
     const mergedRecipes = Array.from(recipeMap.values())
 
-    const finalVault = { categories: mergedCategories, menuItems: mergedMenuItems, recipes: mergedRecipes }
+    const finalVault = { categories: mergedCategories, menuItems: mergedMenuItems, recipes: mergedRecipes, frozenAt: vaultData.frozenAt || new Date().toISOString() }
     writeFileSync(MENU_VAULT_PATH, JSON.stringify(finalVault, null, 2))
+    if (!existsSync(FROZEN_MENU_PATH)) {
+      writeFileSync(FROZEN_MENU_PATH, JSON.stringify(finalVault, null, 2))
+    }
     return finalVault
   } catch (e) {
     console.error('[MENU VAULT] Error:', e.message)
@@ -9379,102 +9404,92 @@ app.post('/api/admin/customers/bulk-import-text', (req, res) => {
     }
   }
   saveState()
-  res.json({ success: true, imported, updated, skipped, totalProcessed: imported + updated })
+  res.json({ success: true, imported, updated, totalProcessed: imported + updated })
 })
 
-// ─── Local PC Backup Endpoint ──────────────────────────────────────────────
-// Called by the PowerShell auto-backup script on the billing PC.
-// Authenticated by BACKUP_SECRET_KEY env var (no PIN needed for headless use).
 app.get('/api/backup/local', (req, res) => {
-  const key = req.query.key || req.headers['x-backup-key']
-  if (key !== LOCAL_BACKUP_KEY) return res.status(403).json({ error: 'Invalid backup key' })
-  try {
-    const db = readDb()
-    const date = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Kolkata' }).slice(0, 10)
-    const time = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Kolkata' }).slice(11, 19).replace(/:/g, '-')
-    res.setHeader('Content-Type', 'application/json')
-    res.setHeader('Content-Disposition', `attachment; filename="tdg-backup-${date}_${time}.json"`)
-    res.json({
-      ...db,
-      _backupMeta: {
-        exportedAt: new Date().toISOString(),
-        exportedAtIST: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
-        ordersCount: (db.orders || []).length,
-        menuItemsCount: (db.menuItems || []).length,
-        server: 'tendengyros.com'
-      }
-    })
-  } catch (e) {
-    res.status(500).json({ error: 'Backup failed: ' + e.message })
-  }
-})
-
-// Endpoint to merge recovered sales orders (e.g. Aug 4 orders) into live DB
-app.post('/api/admin/merge-recovered-orders', (req, res) => {
-  const key = req.query.key || req.headers['x-backup-key']
-  if (key !== LOCAL_BACKUP_KEY) return res.status(403).json({ error: 'Invalid backup key' })
-
-  try {
-    const newOrders = Array.isArray(req.body) ? req.body : (req.body.orders || [])
-    if (!Array.isArray(newOrders) || newOrders.length === 0) {
-      return res.status(400).json({ error: 'Expected non-empty array of orders' })
+    const key = req.query.key || req.headers['x-backup-key']
+    if (key !== LOCAL_BACKUP_KEY) return res.status(403).json({ error: 'Invalid backup key' })
+    try {
+      const db = readDb()
+      const date = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Kolkata' }).slice(0, 10)
+      const time = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Kolkata' }).slice(11, 19).replace(/:/g, '-')
+      res.setHeader('Content-Type', 'application/json')
+      res.setHeader('Content-Disposition', `attachment; filename="tdg-backup-${date}_${time}.json"`)
+      res.json({
+        ...db,
+        _backupMeta: {
+          exportedAt: new Date().toISOString(),
+          exportedAtIST: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+          ordersCount: (db.orders || []).length,
+          menuItemsCount: (db.menuItems || []).length,
+          server: 'tendengyros.com'
+        }
+      })
+    } catch (e) {
+      res.status(500).json({ error: 'Backup failed: ' + e.message })
     }
+  })
 
-    const currentDb = readDb()
-    const existingOrders = currentDb.orders || []
-
-    const orderMap = new Map()
-    existingOrders.forEach(o => {
-      if (o.id) orderMap.set(o.id, o)
-    })
-
-    let addedCount = 0
-    let updatedCount = 0
-
-    newOrders.forEach(rawOrder => {
-      const order = { ...rawOrder }
-      // Ensure status is completed & paid so it reflects in all reports
-      order.status = 'completed'
-      order.paymentStatus = 'paid'
-      if (Array.isArray(order.items)) {
-        order.items = order.items.map(item => ({ ...item, status: 'completed' }))
+  // Endpoint to freeze current menu state permanently
+  app.post('/api/admin/freeze-menu', (req, res) => {
+    try {
+      const currentDb = readDb() || {}
+      const frozenPayload = {
+        menuItems: menuItems && menuItems.length > 0 ? menuItems : (currentDb.menuItems || []),
+        categories: categories && categories.length > 0 ? categories : (currentDb.categories || []),
+        recipes: recipes && recipes.length > 0 ? recipes : (currentDb.recipes || []),
+        frozenAt: new Date().toISOString(),
+        frozenAtIST: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+        isFrozen: true
       }
 
-      if (orderMap.has(order.id)) {
-        orderMap.set(order.id, order)
-        updatedCount++
-      } else {
-        orderMap.set(order.id, order)
-        addedCount++
+      writeFileSync(FROZEN_MENU_PATH, JSON.stringify(frozenPayload, null, 2))
+      writeFileSync(MENU_VAULT_PATH, JSON.stringify(frozenPayload, null, 2))
+      
+      // Also save in root server folder for git persistence
+      const localFrozenPath = join(__dirname, 'frozen-menu.json')
+      writeFileSync(localFrozenPath, JSON.stringify(frozenPayload, null, 2))
+
+      currentDb.menuItems = frozenPayload.menuItems
+      currentDb.categories = frozenPayload.categories
+      currentDb.recipes = frozenPayload.recipes
+      writeDb(currentDb)
+      saveState()
+
+      console.log(`[MENU FREEZE] Menu permanently frozen with ${frozenPayload.menuItems.length} items & ${frozenPayload.categories.length} categories.`)
+
+      res.json({
+        success: true,
+        message: `Menu successfully frozen! ${frozenPayload.menuItems.length} items & ${frozenPayload.categories.length} categories locked permanently.`
+      })
+    } catch (e) {
+      console.error('[MENU FREEZE ERROR]', e)
+      res.status(500).json({ error: 'Failed to freeze menu: ' + e.message })
+    }
+  })
+
+  // Check menu freeze status
+  app.get('/api/admin/menu-freeze-status', (req, res) => {
+    try {
+      const isFrozen = existsSync(FROZEN_MENU_PATH)
+      let details = {}
+      if (isFrozen) {
+        try {
+          const content = readFileSync(FROZEN_MENU_PATH, 'utf-8')
+          details = JSON.parse(content)
+        } catch (e) {}
       }
-    })
-
-    currentDb.orders = Array.from(orderMap.values()).sort((a, b) => {
-      const da = new Date(a.createdAt || a.date || 0)
-      const dbTime = new Date(b.createdAt || b.date || 0)
-      return da - dbTime
-    })
-
-    // Update in-memory orders array and save
-    orders = currentDb.orders
-    writeDb(currentDb)
-    saveState()
-
-    console.log(`[MERGE RECOVERED] Merged ${newOrders.length} orders. Added: ${addedCount}, Updated: ${updatedCount}. Total orders now: ${orders.length}`)
-
-    res.json({
-      success: true,
-      message: `Merged ${newOrders.length} recovered orders successfully.`,
-      addedCount,
-      updatedCount,
-      totalOrders: orders.length
-    })
-  } catch (e) {
-    console.error('[MERGE RECOVERED ERROR]', e)
-    res.status(500).json({ error: 'Merge failed: ' + e.message })
-  }
-})
-
+      res.json({
+        isFrozen,
+        itemCount: details.menuItems?.length || (typeof menuItems !== 'undefined' ? menuItems.length : 0),
+        categoryCount: details.categories?.length || (typeof categories !== 'undefined' ? categories.length : 0),
+        frozenAt: details.frozenAtIST || details.frozenAt || null
+      })
+    } catch (e) {
+      res.status(500).json({ error: e.message })
+    }
+  })
 
 // Download backup
 app.get('/api/settings/export-backup', (req, res) => {
