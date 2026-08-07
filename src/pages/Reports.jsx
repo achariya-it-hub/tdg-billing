@@ -1091,7 +1091,7 @@ export default function Reports() {
                         ₹{(Number(item.total) || 0).toLocaleString('en-IN')}
                       </td>
                       <td style={{ padding: '16px', fontSize: '12.5px', color: '#6b7280', fontStyle: 'italic' }}>
-                        {item.reason || 'Cancelled by Store Staff'}
+                        {item.cancelReason || item.reason || 'Cancelled by Store Staff'} {item.cancelledBy ? `(By ${item.cancelledBy})` : ''}
                       </td>
                     </tr>
                   ))}

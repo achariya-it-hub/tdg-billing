@@ -44,6 +44,14 @@ export default function Billing() {
   const [resettleSplitUpi, setResettleSplitUpi] = useState('')
   const [resettleSplitCard, setResettleSplitCard] = useState('')
 
+  // Bill Cancellation State
+  const [cancelBillOrder, setCancelBillOrder] = useState(null)
+  const [cancelReasonPreset, setCancelReasonPreset] = useState('Customer Changed Mind')
+  const [cancelReasonCustom, setCancelReasonCustom] = useState('')
+  const [cancelPin, setCancelPin] = useState('')
+  const [cancelError, setCancelError] = useState('')
+  const [cancelProcessing, setCancelProcessing] = useState(false)
+
   const getLocalDateString = (val) => {
     if (!val) return ''
     try {
@@ -918,6 +926,32 @@ export default function Billing() {
                       Resettle
                     </button>
                     <button 
+                      onClick={() => {
+                        setCancelBillOrder(bill)
+                        setCancelReasonPreset('Customer Changed Mind')
+                        setCancelReasonCustom('')
+                        setCancelPin('')
+                        setCancelError('')
+                      }}
+                      style={{
+                        background: '#fef2f2',
+                        border: '1px solid #fecaca',
+                        borderRadius: '8px',
+                        padding: '6px 10px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        color: '#dc2626'
+                      }}
+                      title="Cancel Bill with Reason"
+                    >
+                      <X size={14} color="#dc2626" />
+                      Cancel Bill
+                    </button>
+                    <button 
                       onClick={() => printInvoice(bill)}
                       style={{
                         background: '#f3f4f6',
@@ -1294,6 +1328,172 @@ export default function Billing() {
                 }}
               >
                 {resettling ? 'Resettling...' : 'Confirm Resettlement'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bill Cancellation Modal */}
+      {cancelBillOrder && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+          backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100
+        }}>
+          <div style={{
+            background: 'white', borderRadius: '24px', padding: '28px',
+            width: '90%', maxWidth: '440px', border: '1px solid rgba(0,0,0,0.1)',
+            boxShadow: '0 24px 60px rgba(0,0,0,0.2)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div>
+                <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#dc2626', margin: 0 }}>
+                  🚫 Cancel Bill #{cancelBillOrder.orderNumber || cancelBillOrder.id}
+                </h3>
+                <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
+                  Amount: <strong>₹{Math.round(cancelBillOrder.total || calculateTotal(cancelBillOrder))}</strong> • {cancelBillOrder.customerName || 'Dine-In/Takeaway'}
+                </div>
+              </div>
+              <button onClick={() => setCancelBillOrder(null)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                <X size={24} color="#9ca3af" />
+              </button>
+            </div>
+
+            {/* Select Cancellation Reason */}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', display: 'block', marginBottom: '8px' }}>
+                1. Select Cancellation Reason *
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', marginBottom: '10px' }}>
+                {[
+                  'Customer Changed Mind',
+                  'Kitchen Delay',
+                  'Wrong Items Entered',
+                  'Payment Failed',
+                  'Quality / Taste Issue',
+                  'Other Reason'
+                ].map((reason) => (
+                  <button
+                    key={reason}
+                    type="button"
+                    onClick={() => setCancelReasonPreset(reason)}
+                    style={{
+                      padding: '8px 10px',
+                      borderRadius: '8px',
+                      border: cancelReasonPreset === reason ? '2px solid #dc2626' : '1px solid #cbd5e1',
+                      background: cancelReasonPreset === reason ? '#fef2f2' : '#ffffff',
+                      color: cancelReasonPreset === reason ? '#dc2626' : '#334155',
+                      fontWeight: 700,
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      textAlign: 'center'
+                    }}
+                  >
+                    {cancelReasonPreset === reason ? '✓ ' : ''}{reason}
+                  </button>
+                ))}
+              </div>
+
+              <input
+                type="text"
+                placeholder="Additional notes / details (Optional)"
+                value={cancelReasonCustom}
+                onChange={e => setCancelReasonCustom(e.target.value)}
+                style={{
+                  width: '100%', padding: '10px 12px', borderRadius: '10px',
+                  border: '1.5px solid #cbd5e1', fontSize: '13px', boxSizing: 'border-box', outline: 'none'
+                }}
+              />
+            </div>
+
+            {/* Authorize Manager PIN */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', display: 'block', marginBottom: '6px' }}>
+                2. Enter Staff / Manager PIN *
+              </label>
+              <input
+                type="password"
+                maxLength={4}
+                placeholder="Enter 4-digit PIN"
+                value={cancelPin}
+                onChange={e => setCancelPin(e.target.value)}
+                style={{
+                  width: '100%', padding: '12px', borderRadius: '10px',
+                  border: '1.5px solid #cbd5e1', fontSize: '18px', textAlign: 'center',
+                  letterSpacing: '4px', boxSizing: 'border-box', outline: 'none', fontWeight: 800
+                }}
+              />
+              {cancelError && (
+                <div style={{ color: '#dc2626', fontSize: '12.5px', marginTop: '6px', fontWeight: 700 }}>
+                  ⚠️ {cancelError}
+                </div>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                type="button"
+                onClick={() => setCancelBillOrder(null)}
+                style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', background: '#f1f5f9', fontWeight: 700, cursor: 'pointer', color: '#475569' }}
+              >
+                Keep Bill
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!cancelBillOrder) return
+                  const finalReason = (cancelReasonPreset + (cancelReasonCustom ? ` - ${cancelReasonCustom}` : '')).trim()
+                  if (!cancelPin || cancelPin.length < 4) { setCancelError('Please enter a 4-digit Manager PIN'); return }
+
+                  setCancelProcessing(true)
+                  setCancelError('')
+                  try {
+                    const resPin = await fetch(`${getApiUrl()}/api/billing/login`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ pin: cancelPin })
+                    })
+                    const pinData = await resPin.json()
+                    if (!resPin.ok || !pinData.user) {
+                      setCancelError('Invalid Manager PIN')
+                      setCancelProcessing(false)
+                      return
+                    }
+
+                    const res = await fetch(`${getApiUrl()}/api/pos/orders/${cancelBillOrder.id || cancelBillOrder.orderNumber}/status`, {
+                      method: 'PATCH',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        status: 'cancelled',
+                        cancelReason: finalReason,
+                        cancelledBy: pinData.user.name || 'Staff'
+                      })
+                    })
+
+                    if (res.ok) {
+                      setCancelBillOrder(null)
+                      setCancelPin('')
+                      setCancelReasonCustom('')
+                      fetchOrders()
+                    } else {
+                      const errData = await res.json()
+                      setCancelError(errData.error || 'Failed to cancel bill')
+                    }
+                  } catch (e) {
+                    setCancelError('Network error while cancelling bill')
+                  }
+                  setCancelProcessing(false)
+                }}
+                disabled={cancelProcessing}
+                style={{
+                  flex: 2, padding: '12px', borderRadius: '10px', border: 'none',
+                  background: 'linear-gradient(135deg, #dc2626, #b91c1c)', color: 'white',
+                  fontWeight: 800, cursor: cancelProcessing ? 'not-allowed' : 'pointer', fontSize: '14px',
+                  boxShadow: '0 4px 12px rgba(220,38,38,0.3)'
+                }}
+              >
+                {cancelProcessing ? 'Cancelling...' : 'Confirm Cancel Bill'}
               </button>
             </div>
           </div>

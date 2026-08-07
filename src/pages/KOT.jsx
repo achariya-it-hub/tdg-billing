@@ -467,12 +467,46 @@ export default function KOT() {
               </button>
             </div>
 
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', display: 'block', marginBottom: '6px' }}>
+                Select Cancellation Reason:
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px', marginBottom: '8px' }}>
+                {[
+                  'Customer Changed Mind',
+                  'Kitchen Delay',
+                  'Wrong Items Entered',
+                  'Payment Issue',
+                  'Quality / Taste Issue',
+                  'Other Reason'
+                ].map(r => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setCancelReason(r)}
+                    style={{
+                      padding: '6px 8px',
+                      borderRadius: '8px',
+                      border: cancelReason === r ? '2px solid #e63946' : '1px solid #cbd5e1',
+                      background: cancelReason === r ? '#fff5f5' : '#ffffff',
+                      color: cancelReason === r ? '#e63946' : '#334155',
+                      fontWeight: 700,
+                      fontSize: '11.5px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {cancelReason === r ? '✓ ' : ''}{r}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <textarea
-              placeholder="Enter reason for cancellation..."
+              placeholder="Additional notes / reason details..."
               value={cancelReason}
               onChange={e => setCancelReason(e.target.value)}
               style={{
-                width: '100%', minHeight: '100px', padding: '12px',
+                width: '100%', minHeight: '80px', padding: '12px',
                 border: '1.5px solid #e5e7eb', borderRadius: '12px',
                 fontSize: '14px', background: 'white',
                 color: '#1a1a2e', outline: 'none',
