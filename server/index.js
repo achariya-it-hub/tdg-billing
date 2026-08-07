@@ -335,7 +335,7 @@ let grns = []
 let vendorPayments = []
 let onlineOrders = []
 let settings = {
-  company: { name: 'Tendens Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '8877661150', email: 'info@tendengyros.com', gst: '33FJSPA2544H1Z9', gstNo: '33FJSPA2544H1Z9', gstin: '33FJSPA2544H1Z9', logo: null, upiId: '', deliveryEnabled: true },
+  company: { name: 'Tendens Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '7548808877', email: 'info@tendengyros.com', gst: '33FJSPA2544H1Z9', gstNo: '33FJSPA2544H1Z9', gstin: '33FJSPA2544H1Z9', logo: null, upiId: '', deliveryEnabled: true },
   theme: { accentPrimary: '#e63946', accentPrimaryDark: '#c1121f', bgPrimary: '#f5f5f7' },
   printers: [{ id: 'default', name: 'Default Printer', ip: '', type: 'browser', isDefault: true }],
   paymentGateways: {

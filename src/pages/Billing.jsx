@@ -521,7 +521,7 @@ export default function Billing() {
           <div class="brand-tagline">Restaurant Management System</div>
           <div class="brand-details">
             ${company.address ? company.address.replace(/,\s*/g, ',<br/>') + '<br/>' : 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram<br/>'}
-            Ph: <strong>${company.phone || '8877661150'}</strong><br/>
+            Ph: <strong>${company.phone || '7548808877'}</strong><br/>
             GSTIN: <strong>${company.gstNo || company.gst || company.gstin || '33FJSPA2544H1Z9'}</strong><br/>
             Email: <strong>${company.email || company.mailId || 'info@tendengyros.com'}</strong>
           </div>

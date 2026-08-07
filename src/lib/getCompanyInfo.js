@@ -38,7 +38,7 @@ export function getCompanyInfoSync() {
   return {
     name: 'Tendens Gyros',
     address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram',
-    phone: '8877661150',
+    phone: '7548808877',
     email: 'info@tendengyros.com',
     gst: '33FJSPA2544H1Z9',
     gstNo: '33FJSPA2544H1Z9',
