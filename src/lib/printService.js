@@ -349,6 +349,79 @@ const PrintService = {
     `
   },
 
+  // Generate Guest Order Token HTML (Displays ONLY the Order/Token Number for the guest)
+  generateGuestTokenHTML: (kot) => {
+    const company = getCompanyInfoSync()
+    const orderNum = kot.orderNumber || kot.id || '1001'
+    const orderType = (kot.type || 'dine-in').toUpperCase()
+    const tableNum = kot.tableNumber || kot.table || ''
+    const custName = kot.customerName || ''
+    const custPhone = kot.customerPhone || ''
+    const dateStr = kot.createdAt ? new Date(kot.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+    const timeStr = kot.createdAt ? new Date(kot.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
+
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Order Token #${orderNum}</title>
+          <style>
+            @page { margin: 0; size: 80mm auto; }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+              font-family: 'Helvetica Neue', Arial, sans-serif;
+              width: 76mm;
+              margin: 0 auto;
+              padding: 8px;
+              font-size: 13px;
+              color: #000;
+              text-align: center;
+              -webkit-print-color-adjust: exact;
+            }
+            .header { padding-bottom: 6px; border-bottom: 2px solid #000; margin-bottom: 8px; }
+            .brand-name { font-size: 18px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+            .token-badge { display: inline-block; font-size: 11px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; background: #000; color: #fff; padding: 3px 12px; border-radius: 3px; margin: 4px 0; }
+            .token-box { border: 3px solid #000; border-radius: 10px; padding: 14px 6px; margin: 8px 0; background: #fff; }
+            .token-label { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #000; margin-bottom: 2px; }
+            .token-number { font-size: 48px; font-weight: 900; line-height: 1; letter-spacing: 2px; color: #000; }
+            .order-meta { font-size: 11px; font-weight: 900; margin-top: 6px; text-transform: uppercase; border-top: 1px dashed #000; padding-top: 5px; }
+            .customer-box { margin: 6px 0; font-size: 12px; font-weight: 800; text-align: left; border: 1px solid #000; padding: 6px; border-radius: 4px; }
+            .footer { margin-top: 10px; padding-top: 6px; border-top: 2px solid #000; font-size: 10px; font-weight: 900; text-transform: uppercase; line-height: 1.3; }
+            @media print { body { width: 76mm; } }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="brand-name">${company.name || 'Ten Dens Gyros'}</div>
+            <div><span class="token-badge">GUEST ORDER TOKEN</span></div>
+          </div>
+
+          <div class="token-box">
+            <div class="token-label">ORDER TOKEN NUMBER</div>
+            <div class="token-number">#${orderNum}</div>
+            <div class="order-meta">
+              MODE: ${orderType} ${tableNum ? `• TABLE ${tableNum}` : ''}<br/>
+              DATE: ${dateStr} • TIME: ${timeStr}
+            </div>
+          </div>
+
+          ${(custName || custPhone) ? `
+            <div class="customer-box">
+              ${custName ? `<div>Customer: <strong>${custName}</strong></div>` : ''}
+              ${custPhone ? `<div>Phone: <strong>${custPhone}</strong></div>` : ''}
+            </div>
+          ` : ''}
+
+          <div class="footer">
+            <div>Please keep this order token number</div>
+            <div>Thank You for Dining with Us!</div>
+          </div>
+        </body>
+      </html>
+    `
+  },
+
   // Print Bill ticket
   printBill: (bill, force = false) => {
     if (!force && isAlreadyPrintedJob('bill', bill)) return
@@ -361,22 +434,22 @@ const PrintService = {
     }
   },
 
-  // Automatically print BOTH KOT ticket and Bill ticket
+  // Automatically print Guest Order Token + Bill ticket (Combined First Printout)
   printKOTAndBill: (order, force = false) => {
     if (!order) return
     if (!force && isAlreadyPrintedJob('kot_and_bill', order)) return
-    console.log('Printing KOT + Bill for Order:', order)
+    console.log('Printing Guest Token + Bill for Order:', order)
     try {
-      const kotHtml = PrintService.generateKOTHTML(order)
+      const tokenHtml = PrintService.generateGuestTokenHTML(order)
       const billHtml = PrintService.generateBillHTML(order)
       const combinedHtml = `
-        ${kotHtml}
+        ${tokenHtml}
         <div style="page-break-before: always; break-before: page; margin-top: 20px;"></div>
         ${billHtml}
       `
       PrintService.executePrintHTML(combinedHtml, `Order #${order.orderNumber || order.id || ''}`)
     } catch (err) {
-      console.error('KOT + Bill combined print error:', err)
+      console.error('Guest Token + Bill combined print error:', err)
     }
   },
 
