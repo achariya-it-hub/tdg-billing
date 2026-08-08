@@ -207,6 +207,10 @@ export default function App() {
           <Route path="/" element={<Navigate to="/pos" replace />} />
           <Route path="/staff-login" element={<Login />} />
           <Route path="/login" element={<Navigate to="/staff-login" replace />} />
+          <Route path="/order" element={<Kiosk />} />
+          <Route path="/table/:tableNum" element={<Kiosk />} />
+          <Route path="/kiosk" element={<Kiosk />} />
+          <Route path="/customizer" element={<Customizer />} />
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
               <Route path="/pos" element={<POS />} />
