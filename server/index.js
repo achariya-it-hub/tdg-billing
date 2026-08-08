@@ -166,7 +166,7 @@ function writeDb(data = {}) {
       ...diskDb,
       ...data,
       orders: typeof orders !== 'undefined' && orders.length > 0 ? orders : (data.orders && data.orders.length > 0 ? data.orders : (diskDb.orders || [])),
-      loyaltyUsers: typeof loyaltyUsers !== 'undefined' && loyaltyUsers.length > 0 ? loyaltyUsers : (data.loyaltyUsers && data.loyaltyUsers.length > 0 ? data.loyaltyUsers : (diskDb.loyaltyUsers || [])),
+      loyaltyUsers: typeof loyaltyUsers !== 'undefined' ? loyaltyUsers : (data.loyaltyUsers || diskDb.loyaltyUsers || []),
       dens: typeof dens !== 'undefined' && dens.length > 0 ? dens : (data.dens || diskDb.dens || []),
       pointTransactions: typeof pointTransactions !== 'undefined' && pointTransactions.length > 0 ? pointTransactions : (data.pointTransactions || diskDb.pointTransactions || []),
       inventory: typeof inventory !== 'undefined' && inventory.length > 0 ? inventory : (data.inventory && data.inventory.length > 0 ? data.inventory : (diskDb.inventory || [])),
@@ -688,7 +688,7 @@ function restoreState() {
 
   inventory = syncInventoryVault(db.inventory || inventory)
 
-  if (db.loyaltyUsers && Array.isArray(db.loyaltyUsers) && db.loyaltyUsers.length) loyaltyUsers = db.loyaltyUsers
+  if (db.loyaltyUsers && Array.isArray(db.loyaltyUsers)) loyaltyUsers = db.loyaltyUsers
   if (db.dens && Array.isArray(db.dens) && db.dens.length) dens = db.dens
   if (db.pointTransactions && Array.isArray(db.pointTransactions) && db.pointTransactions.length) pointTransactions = db.pointTransactions
   if (db.orderNumber) orderNumber = Math.max(orderNumber || 0, db.orderNumber || 0)
@@ -697,7 +697,7 @@ function restoreState() {
   if (db.purchases && Array.isArray(db.purchases) && db.purchases.length) purchases = db.purchases
   if (db.onlineOrders && Array.isArray(db.onlineOrders) && db.onlineOrders.length) onlineOrders = db.onlineOrders
   if (db.aggregators && Array.isArray(db.aggregators) && db.aggregators.length) aggregators = db.aggregators
-  if (db.users && Array.isArray(db.users) && db.users.length) mobileAppUsers = db.users
+  if (db.users && Array.isArray(db.users)) mobileAppUsers = db.users
   if (db.suppliers && Array.isArray(db.suppliers) && db.suppliers.length) suppliers = db.suppliers
   if (db.purchaseOrders && Array.isArray(db.purchaseOrders) && db.purchaseOrders.length) purchaseOrders = db.purchaseOrders
   if (db.poItems && Array.isArray(db.poItems) && db.poItems.length) poItems = db.poItems
@@ -8944,6 +8944,78 @@ app.get('/api/customers', (req, res) => {
     all.push(c)
   }
   res.json(all)
+})
+
+// Check customer discount by phone number (for POS auto-discount & Kiosk validation)
+app.get('/api/customers/check-discount', (req, res) => {
+  const phone = String(req.query.phone || '').replace(/\D/g, '')
+  if (!phone || phone.length < 8) return res.json({ found: false, hasDiscount: false, discountPct: 0 })
+
+  const db = readDb()
+  const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
+  const user = allUsers.find(u => u && (String(u.phone || '').replace(/\D/g, '') === phone || String(u.phone || '').replace(/\D/g, '').endsWith(phone)))
+
+  if (user) {
+    if (user.offerRedeemed) {
+      return res.json({
+        found: true,
+        hasDiscount: false,
+        discountPct: 0,
+        offerRedeemed: true,
+        customerName: user.name || 'Customer'
+      })
+    }
+    const discountPct = Number(user.discountPct) || (user.tier && user.tier.includes('50%') ? 50 : 0)
+    return res.json({
+      found: true,
+      hasDiscount: discountPct > 0,
+      discountPct: discountPct,
+      customerName: user.name || user.customerName || 'Customer',
+      phone: user.phone || phone,
+      offerRedeemed: false
+    })
+  }
+
+  return res.json({ found: false, hasDiscount: false, discountPct: 0 })
+})
+
+// Search customers by phone or name (for POS customer lookup & auto-completion)
+app.get('/api/customers/search', (req, res) => {
+  const q = String(req.query.q || '').trim().toLowerCase()
+  if (!q) return res.json({ customers: [] })
+
+  const cleanQPhone = q.replace(/\D/g, '')
+  const db = readDb()
+  const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
+
+  const seen = new Set()
+  const results = []
+
+  for (const u of allUsers) {
+    if (!u) continue
+    const uPhone = String(u.phone || '').replace(/\D/g, '')
+    const uName = String(u.name || u.customerName || '').toLowerCase()
+
+    const matchesPhone = cleanQPhone.length >= 2 && uPhone.includes(cleanQPhone)
+    const matchesName = q.length >= 2 && uName.includes(q)
+
+    if (matchesPhone || matchesName) {
+      const key = uPhone || u.id
+      if (!seen.has(key)) {
+        seen.add(key)
+        results.push({
+          id: u.id,
+          customerName: u.name || u.customerName || 'Customer',
+          phone: u.phone || '',
+          discountPct: Number(u.discountPct) || (u.tier && u.tier.includes('50%') ? 50 : 0),
+          offerRedeemed: Boolean(u.offerRedeemed),
+          tier: u.tier || 'Standard'
+        })
+      }
+    }
+  }
+
+  res.json({ customers: results.slice(0, 25) })
 })
 
 // Delete single customer by ID or phone
