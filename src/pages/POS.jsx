@@ -46,12 +46,12 @@ const orderPanel = {
 
 const orderTypeBtn = (active) => ({
   flex: 1,
-  padding: '10px',
-  borderRadius: '10px',
+  padding: '6px 4px',
+  borderRadius: '8px',
   background: active ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'rgba(0,0,0,0.03)',
   color: active ? 'white' : '#6b7280',
-  fontWeight: 600,
-  fontSize: '12px',
+  fontWeight: 700,
+  fontSize: '11px',
   border: 'none',
   cursor: 'pointer',
   textTransform: 'uppercase',
@@ -1133,49 +1133,6 @@ export default function POS() {
             🎓 {currentOrder.staffBenefitOffer ? `ACHARIYA STAFF 50% ACTIVE (${currentOrder.familyMemberName || currentOrder.employeeName})` : 'Achariya Staff & Family Benefit (50% OFF)'}
           </button>
 
-          {/* Offer Buttons - Side by Side Compact Flex */}
-          <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
-            <button
-              type="button"
-              onClick={() => setSpecialOffer20(!currentOrder.specialOffer20)}
-              style={{
-                flex: 1, padding: '6px 4px', borderRadius: '8px',
-                border: currentOrder.specialOffer20 ? '2px solid #dc2626' : '1px solid #cbd5e1',
-                background: currentOrder.specialOffer20 ? '#dc2626' : '#f8fafc',
-                color: currentOrder.specialOffer20 ? '#ffffff' : '#334155',
-                fontWeight: 700, fontSize: '10.5px', cursor: 'pointer', textAlign: 'center'
-              }}
-            >
-              🔥 {currentOrder.specialOffer20 ? '20% OFF ACTIVE' : '20% OFF Offer'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setInaugurationOffer(!currentOrder.inaugurationOffer)}
-              style={{
-                flex: 1, padding: '6px 4px', borderRadius: '8px',
-                border: currentOrder.inaugurationOffer ? '2px solid #059669' : '1px solid #cbd5e1',
-                background: currentOrder.inaugurationOffer ? '#059669' : '#f8fafc',
-                color: currentOrder.inaugurationOffer ? '#ffffff' : '#334155',
-                fontWeight: 700, fontSize: '10.5px', cursor: 'pointer', textAlign: 'center'
-              }}
-            >
-              🎉 {currentOrder.inaugurationOffer ? '50% OFF ACTIVE' : '50% OFF Offer'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setVip50(!currentOrder.vip50)}
-              style={{
-                flex: 1, padding: '6px 4px', borderRadius: '8px',
-                border: currentOrder.vip50 ? '2px solid #7c3aed' : '1px solid #cbd5e1',
-                background: currentOrder.vip50 ? '#7c3aed' : '#f8fafc',
-                color: currentOrder.vip50 ? '#ffffff' : '#334155',
-                fontWeight: 700, fontSize: '10.5px', cursor: 'pointer', textAlign: 'center'
-              }}
-            >
-              👑 {currentOrder.vip50 ? 'VIP 50% ACTIVE' : 'VIP 50%'}
-            </button>
-          </div>
-
           {/* Remarks & Complimentary Compact */}
           <input placeholder="Special remarks for kitchen..." value={currentOrder.specialRemarks || ''} onChange={e => setSpecialRemarks(e.target.value)} style={{ ...inputStyle, fontSize: '11px', padding: '5px 8px', marginBottom: '6px' }} />
           
@@ -1194,19 +1151,22 @@ export default function POS() {
             <Button variant="secondary" size="sm" onClick={clearOrder} style={{ flex: 1, borderRadius: '8px', padding: '6px', fontSize: '12px' }}>Clear</Button>
           </div>
 
-          <Button fullWidth size="lg" onClick={openPayModal} disabled={currentOrder.items.length === 0 || processing}
-            variant={currentOrder.complimentary ? 'warning' : 'primary'}
-            style={{ borderRadius: '10px', padding: '10px', fontSize: '14px', fontWeight: 800, boxShadow: '0 4px 14px rgba(230,57,70,0.3)', marginBottom: '6px' }}
-          >
-            {processing ? 'Placing...' : currentOrder.complimentary ? `Place & Settle (FREE) • ₹0` : `⚡ Place & Settle • ${getTotal().toFixed(0)}`}
-          </Button>
+          {/* Side-by-side Place & Settle and Place as Pending */}
+          <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
+            <Button onClick={openPayModal} disabled={currentOrder.items.length === 0 || processing}
+              variant={currentOrder.complimentary ? 'warning' : 'primary'}
+              style={{ flex: 1.2, borderRadius: '10px', padding: '8px 4px', fontSize: '12.5px', fontWeight: 800, boxShadow: '0 3px 10px rgba(230,57,70,0.25)', whiteSpace: 'nowrap' }}
+            >
+              {processing ? 'Placing...' : currentOrder.complimentary ? `Place & Settle (FREE)` : `⚡ Place & Settle • ₹${getTotal().toFixed(0)}`}
+            </Button>
 
-          <Button fullWidth size="sm" onClick={handlePlaceOrder} disabled={currentOrder.items.length === 0 || processing}
-            variant="secondary"
-            style={{ borderRadius: '8px', padding: '6px', fontSize: '11px', backgroundColor: '#f1f5f9', color: '#64748b', marginBottom: '8px', border: '1px dashed #cbd5e1' }}
-          >
-            Place as Pending (Kitchen Only)
-          </Button>
+            <Button onClick={handlePlaceOrder} disabled={currentOrder.items.length === 0 || processing}
+              variant="secondary"
+              style={{ flex: 1, borderRadius: '10px', padding: '8px 4px', fontSize: '11px', fontWeight: 700, backgroundColor: '#f1f5f9', color: '#475569', border: '1.5px dashed #cbd5e1', whiteSpace: 'nowrap' }}
+            >
+              Place as Pending
+            </Button>
+          </div>
           {/* Quick Direct Settle Buttons */}
           <div style={{ background: '#f8fafc', padding: '8px', borderRadius: '10px', border: '1.5px dashed #cbd5e1' }}>
             <div style={{ fontSize: '10.5px', fontWeight: 800, color: '#047857', marginBottom: '6px', textAlign: 'center', letterSpacing: '0.5px' }}>

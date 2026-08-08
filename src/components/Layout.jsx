@@ -688,12 +688,12 @@ export default function Layout({ user, onLogout }) {
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <header
           style={{
-            height: isPosPage ? '40px' : '64px',
+            height: isPosPage ? '0px' : '64px',
             background: 'rgba(255, 255, 255, 0.75)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
-            borderBottom: '1px solid rgba(0, 0, 0, 0.04)',
-            display: 'flex',
+            borderBottom: isPosPage ? 'none' : '1px solid rgba(0, 0, 0, 0.04)',
+            display: isPosPage ? 'none' : 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: isPosPage ? '0 16px' : '0 32px',
