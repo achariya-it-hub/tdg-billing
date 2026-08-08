@@ -13,7 +13,7 @@ const IST_DATE_STR = () => {
 
 const DEFAULT_CAMPAIGNS = {
   inauguration: { active: true, date: '2026-07-27', pct: 50, label: 'Inauguration Offer 50%' },
-  special20: { active: true, from: '2026-07-29', to: '2026-08-02', pct: 20, label: 'Special Offer 20%' },
+  special20: { active: true, pct: 20, label: 'Special Offer 20%' },
   vip50: { active: true, pct: 50, label: 'VIP 50% OFF' }
 }
 

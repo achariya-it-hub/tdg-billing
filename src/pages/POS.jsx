@@ -1150,29 +1150,48 @@ export default function POS() {
             <span style={{ fontSize: '20px', fontWeight: 900, color: '#f87171' }}>₹{getTotal().toFixed(2)}</span>
           </div>
 
-          {/* Achariya Staff Benefit Button */}
-          <button
-            type="button"
-            onClick={() => {
-              if (currentOrder.staffBenefitOffer) {
-                handleRemoveStaffBenefit()
-              } else {
-                setShowStaffModal(true)
-              }
-            }}
-            style={{
-              width: '100%', padding: '7px 8px', borderRadius: '8px', marginBottom: '6px',
-              border: currentOrder.staffBenefitOffer ? '2px solid #7c3aed' : '1px dashed #7c3aed',
-              background: currentOrder.staffBenefitOffer ? '#7c3aed' : '#f5f3ff',
-              color: currentOrder.staffBenefitOffer ? '#ffffff' : '#5b21b6',
-              fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center',
-              boxShadow: currentOrder.staffBenefitOffer ? '0 2px 8px rgba(124,58,237,0.3)' : 'none',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-              transition: 'all 0.15s'
-            }}
-          >
-            🎓 {currentOrder.staffBenefitOffer ? `ACHARIYA STAFF 50% ACTIVE (${currentOrder.familyMemberName || currentOrder.employeeName})` : 'Achariya Staff & Family Benefit (50% OFF)'}
-          </button>
+          {/* Offers Row (20% OFF & Staff Benefit 50%) */}
+          <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
+            <button
+              type="button"
+              onClick={() => setSpecialOffer20(!currentOrder.specialOffer20)}
+              style={{
+                flex: 1, padding: '7px 8px', borderRadius: '8px',
+                border: currentOrder.specialOffer20 ? '2px solid #dc2626' : '1px dashed #dc2626',
+                background: currentOrder.specialOffer20 ? '#dc2626' : '#fef2f2',
+                color: currentOrder.specialOffer20 ? '#ffffff' : '#991b1b',
+                fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center',
+                boxShadow: currentOrder.specialOffer20 ? '0 2px 8px rgba(220,38,38,0.3)' : 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                transition: 'all 0.15s'
+              }}
+            >
+              🔥 {currentOrder.specialOffer20 ? '20% OFF ACTIVE' : '20% OFF Offer'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (currentOrder.staffBenefitOffer) {
+                  handleRemoveStaffBenefit()
+                } else {
+                  setShowStaffModal(true)
+                }
+              }}
+              style={{
+                flex: 1.4, padding: '7px 8px', borderRadius: '8px',
+                border: currentOrder.staffBenefitOffer ? '2px solid #7c3aed' : '1px dashed #7c3aed',
+                background: currentOrder.staffBenefitOffer ? '#7c3aed' : '#f5f3ff',
+                color: currentOrder.staffBenefitOffer ? '#ffffff' : '#5b21b6',
+                fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center',
+                boxShadow: currentOrder.staffBenefitOffer ? '0 2px 8px rgba(124,58,237,0.3)' : 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                transition: 'all 0.15s'
+              }}
+            >
+              🎓 {currentOrder.staffBenefitOffer ? `STAFF 50% ACTIVE` : 'Staff Benefit (50%)'}
+            </button>
+          </div>
 
           {/* Remarks & Complimentary Compact */}
           <input placeholder="Special remarks for kitchen..." value={currentOrder.specialRemarks || ''} onChange={e => setSpecialRemarks(e.target.value)} style={{ ...inputStyle, fontSize: '11px', padding: '5px 8px', marginBottom: '6px' }} />
