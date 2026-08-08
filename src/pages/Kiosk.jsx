@@ -1,20 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { ShoppingCart, Plus, Minus, Trash2, CreditCard, Banknote, Smartphone, Check, ArrowRight, Search, Sparkles, X, ChevronRight, User, Phone, Tag } from 'lucide-react'
+import { ShoppingCart, Plus, Minus, Trash2, Smartphone, Check, Search, Sparkles, X, ChevronRight, User, Banknote } from 'lucide-react'
 import Modal from '../components/ui/Modal'
 import { useMenuStore } from '../stores/menuStore'
 import API_BASE from '../lib/apiConfig'
-
-const categoryIcons = {
-  'Burgers': '🍔',
-  'Chicken': '🍗',
-  'Sides': '🍟',
-  'Beverages': '🥤',
-  'Desserts': '🍰',
-  'Combos': '📦',
-  'Gyros': '🌯',
-  'Salads': '🥗'
-}
 
 const getItemImage = (item) => {
   if (item.image) return item.image
@@ -47,10 +36,10 @@ export default function Kiosk() {
   const location = useLocation()
   const { categories, menuItems, fetchCategories, fetchMenuItems } = useMenuStore()
 
-  // Table detection from URL query params (e.g. ?table=5 or /table/5)
+  // Table / Kiosk Order detection
   const queryParams = new URLSearchParams(location.search)
   const urlTable = queryParams.get('table') || queryParams.get('t') || ''
-  const tableParam = urlTable ? (urlTable.toLowerCase().includes('table') ? urlTable : `Table ${urlTable}`) : 'Table 1'
+  const tableParam = urlTable ? (urlTable.toLowerCase().includes('table') ? urlTable : `Table ${urlTable}`) : 'Kiosk Orders'
 
   const [cart, setCart] = useState([])
   const [selectedCategoryId, setSelectedCategoryId] = useState('all')
@@ -69,7 +58,7 @@ export default function Kiosk() {
   const [processing, setProcessing] = useState(false)
   const [orderSuccess, setOrderSuccess] = useState(false)
 
-  // Customizer State
+  // Full Gyro & Combo Customizer State
   const [selectedProtein, setSelectedProtein] = useState('Chicken')
   const [selectedBread, setSelectedBread] = useState('Baked')
   const [selectedSpread, setSelectedSpread] = useState('Tzatziki')
@@ -80,12 +69,10 @@ export default function Kiosk() {
   const [selectedGyro1Protein, setSelectedGyro1Protein] = useState('Chicken')
   const [selectedGyro1Bread, setSelectedGyro1Bread] = useState('Baked')
   const [selectedGyro1Flavor, setSelectedGyro1Flavor] = useState('Spicy')
-  const [selectedGyro1Sauces, setSelectedGyro1Sauces] = useState(['Garlic Mayo'])
 
   const [selectedGyro2Protein, setSelectedGyro2Protein] = useState('Paneer')
   const [selectedGyro2Bread, setSelectedGyro2Bread] = useState('Baked')
   const [selectedGyro2Flavor, setSelectedGyro2Flavor] = useState('Spicy')
-  const [selectedGyro2Sauces, setSelectedGyro2Sauces] = useState(['Spicy Mayo'])
 
   const [selectedDrink1, setSelectedDrink1] = useState('Coca-Cola')
   const [selectedDrink2, setSelectedDrink2] = useState('Sprite')
@@ -150,6 +137,10 @@ export default function Kiosk() {
       setCustomizingItem(item)
       setSelectedBread('Baked')
       setSelectedProtein('Chicken')
+      setSelectedSpread('Tzatziki')
+      setSelectedSauces(['Garlic Mayo'])
+      setSelectedVeggies(['Lettuce', 'Onion'])
+
       setSelectedDrink1('Coca-Cola')
       setSelectedDrink2('Sprite')
       setSelectedDrink3('Fanta')
@@ -160,19 +151,13 @@ export default function Kiosk() {
       setSelectedDip2('Spicy Mayo Dip')
       setSelectedDip3('Tzatziki Dip')
 
-      setSelectedSpread('Tzatziki')
-      setSelectedSauces(['Garlic Mayo'])
-      setSelectedVeggies(['Lettuce', 'Onion'])
-
       setSelectedGyro1Protein('Chicken')
       setSelectedGyro1Bread('Baked')
       setSelectedGyro1Flavor('Spicy')
-      setSelectedGyro1Sauces(['Garlic Mayo'])
 
       setSelectedGyro2Protein('Paneer')
       setSelectedGyro2Bread('Baked')
       setSelectedGyro2Flavor('Spicy')
-      setSelectedGyro2Sauces(['Spicy Mayo'])
 
       setGyroNotes('')
     } else {
@@ -232,7 +217,12 @@ export default function Kiosk() {
       }
     } else {
       customization = {
-        ...(hasGyro ? { bread: selectedBread, spread: selectedSpread, sauces: selectedSauces, veggies: selectedVeggies } : {}),
+        ...(hasGyro ? {
+          bread: selectedBread,
+          spread: selectedSpread,
+          sauces: selectedSauces.join(', ') || 'None',
+          veggies: selectedVeggies.join(', ') || 'None'
+        } : {}),
         ...((hasGyro || hasRice) ? { protein: selectedProtein } : {}),
         ...(drinkSummary ? { drink: drinkSummary } : {}),
         ...(dipSummary ? { dips: dipSummary } : {}),
@@ -244,12 +234,16 @@ export default function Kiosk() {
     setCustomizingItem(null)
   }
 
-  const updateQuantity = (cartItemId, delta) => {
+  const updateQuantity = (targetId, delta) => {
     setCart(cart.map(item => {
-      if (item.cartItemId !== cartItemId && item.menuItemId !== cartItemId) return item
+      if (item.cartItemId !== targetId && item.menuItemId !== targetId) return item
       const newQty = item.quantity + delta
       return newQty <= 0 ? null : { ...item, quantity: newQty }
     }).filter(Boolean))
+  }
+
+  const removeItem = (targetId) => {
+    setCart(cart.filter(item => item.cartItemId !== targetId && item.menuItemId !== targetId))
   }
 
   const getSubtotal = () => cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
@@ -273,9 +267,9 @@ export default function Kiosk() {
       const isPaid = selectedMethod === 'upi' || selectedMethod === 'card' || selectedMethod === 'cashfree'
 
       const orderPayload = {
-        type: tableNumber ? 'dine-in' : 'takeaway',
+        type: tableNumber && tableNumber !== 'Kiosk Orders' ? 'dine-in' : 'takeaway',
         source: 'qr_self_order',
-        tableNumber: tableNumber || 'Table 1',
+        tableNumber: tableNumber || 'Kiosk Orders',
         customerName: customerName.trim(),
         customerPhone: customerPhone.replace(/\D/g, ''),
         customerDiscountPct: customerDiscountPct || 0,
@@ -344,7 +338,7 @@ export default function Kiosk() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
+        background: '#18191c',
         color: 'white',
         display: 'flex',
         flexDirection: 'column',
@@ -354,38 +348,38 @@ export default function Kiosk() {
         textAlign: 'center'
       }}>
         <div style={{
-          width: '100px', height: '100px', borderRadius: '50%',
-          background: 'linear-gradient(135deg, #10b981, #059669)',
+          width: '90px', height: '90px', borderRadius: '50%',
+          background: 'linear-gradient(135deg, #ffd100, #ffcc00)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 0 40px rgba(16,185,129,0.5)', marginBottom: '24px'
+          boxShadow: '0 0 30px rgba(255,209,0,0.4)', marginBottom: '20px'
         }}>
-          <Check size={54} color="white" />
+          <Check size={48} color="#18191c" />
         </div>
 
-        <h1 style={{ fontSize: '36px', fontWeight: 900, marginBottom: '8px', letterSpacing: '-0.5px' }}>
-          Order Successfully Placed! 🎉
+        <h1 style={{ fontSize: '32px', fontWeight: 900, marginBottom: '8px', color: '#ffffff' }}>
+          Order Placed Successfully!
         </h1>
-        <p style={{ color: '#94a3b8', fontSize: '15px', marginBottom: '24px' }}>
-          Thank you <strong>{customerName}</strong>! Your order is sent to our kitchen.
+        <p style={{ color: '#ffd100', fontSize: '15px', fontWeight: 700, marginBottom: '24px' }}>
+          Thank you {customerName}! Your order is sent to our kitchen.
         </p>
 
         {/* Token Card */}
         <div style={{
-          background: 'rgba(255,255,255,0.06)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255,255,255,0.15)',
+          background: '#232428',
+          border: '2px solid #ffd100',
           borderRadius: '24px',
-          padding: '32px 48px',
-          marginBottom: '32px',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
+          padding: '28px 40px',
+          marginBottom: '28px',
+          boxShadow: '0 12px 30px rgba(0,0,0,0.4)',
+          width: '100%', maxWidth: '340px', boxSizing: 'border-box'
         }}>
-          <div style={{ fontSize: '13px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700, marginBottom: '8px' }}>
+          <div style={{ fontSize: '12px', color: '#a0a0a0', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700, marginBottom: '6px' }}>
             YOUR ORDER TOKEN
           </div>
-          <div style={{ fontSize: '72px', fontWeight: 900, color: '#e63946', letterSpacing: '-1px', lineHeight: 1 }}>
+          <div style={{ fontSize: '64px', fontWeight: 900, color: '#e63946', lineHeight: 1 }}>
             #{orderNumber}
           </div>
-          <div style={{ marginTop: '12px', fontSize: '13px', color: '#cbd5e1', background: 'rgba(255,255,255,0.08)', padding: '6px 16px', borderRadius: '20px' }}>
+          <div style={{ marginTop: '12px', fontSize: '13px', color: '#ffffff', background: '#2a2b2e', padding: '6px 14px', borderRadius: '20px', fontWeight: 700 }}>
             📍 {tableNumber} • {cart.length} Items
           </div>
         </div>
@@ -393,13 +387,13 @@ export default function Kiosk() {
         <button
           onClick={resetOrder}
           style={{
-            padding: '16px 40px', borderRadius: '16px', border: 'none',
-            background: 'linear-gradient(135deg, #e63946, #c1121f)',
-            color: 'white', fontWeight: 800, fontSize: '16px', cursor: 'pointer',
-            boxShadow: '0 4px 20px rgba(230,57,70,0.4)', transition: 'all 0.2s'
+            padding: '14px 36px', borderRadius: '16px', border: 'none',
+            background: 'linear-gradient(135deg, #ffd100, #ffcc00)',
+            color: '#18191c', fontWeight: 900, fontSize: '16px', cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(255,209,0,0.3)', transition: 'all 0.2s'
           }}
         >
-          Place Another Order 🌯
+          Place Another Order
         </button>
       </div>
     )
@@ -408,36 +402,37 @@ export default function Kiosk() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#0f172a',
-      color: '#f8fafc',
+      background: '#18191c',
+      color: '#ffffff',
       fontFamily: 'system-ui, -apple-system, sans-serif',
       paddingBottom: '120px'
     }}>
-      {/* Dynamic Header */}
+      {/* Brand Header */}
       <header style={{
         position: 'sticky', top: 0, zIndex: 50,
-        background: 'rgba(15, 23, 42, 0.85)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255,255,255,0.08)',
-        padding: '16px 20px'
+        background: 'rgba(24, 25, 28, 0.95)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        borderBottom: '1px solid rgba(255, 209, 0, 0.2)',
+        padding: '12px 16px'
       }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-          <div>
-            <div style={{ fontSize: '22px', fontWeight: 900, letterSpacing: '-0.5px', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              TEN DEN GYROS 🌯
-            </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>
-              Greek Street Food & Gourmet Combos
-            </div>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+          {/* TDG Official Web Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <img
+              src="/tdg-logo.png"
+              alt="Ten Dens Gyros TDG Logo"
+              style={{ height: '42px', width: 'auto', objectFit: 'contain', display: 'block' }}
+            />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Kiosk Orders Badge */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <span style={{
-              background: 'linear-gradient(135deg, rgba(230,57,70,0.2), rgba(230,57,70,0.05))',
-              border: '1px solid rgba(230,57,70,0.4)',
-              color: '#ff6b6b', padding: '6px 14px', borderRadius: '20px',
-              fontSize: '12px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px'
+              background: '#232428',
+              border: '1.5px solid #ffd100',
+              color: '#ffd100', padding: '6px 14px', borderRadius: '20px',
+              fontSize: '12px', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '4px'
             }}>
               📍 {tableNumber}
             </span>
@@ -445,57 +440,59 @@ export default function Kiosk() {
         </div>
 
         {/* Search Bar */}
-        <div style={{ maxWidth: '1200px', margin: '14px auto 0 auto', position: 'relative' }}>
-          <Search size={18} color="#94a3b8" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)' }} />
+        <div style={{ maxWidth: '1200px', margin: '10px auto 0 auto', position: 'relative' }}>
+          <Search size={18} color="#ffd100" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
             placeholder="Search Gyros, Combos, Fries, Beverages..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
-              width: '100%', padding: '12px 14px 12px 42px', borderRadius: '14px',
-              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-              color: 'white', fontSize: '14px', outline: 'none', boxSizing: 'border-box'
+              width: '100%', padding: '10px 14px 10px 42px', borderRadius: '12px',
+              background: '#232428', border: '1px solid rgba(255,255,255,0.15)',
+              color: '#ffffff', fontSize: '13.5px', outline: 'none', boxSizing: 'border-box'
             }}
           />
           {searchQuery && (
-            <button onClick={() => setSearchQuery('')} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
+            <button onClick={() => setSearchQuery('')} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#ffd100', cursor: 'pointer' }}>
               <X size={16} />
             </button>
           )}
         </div>
 
-        {/* Category Pills Bar */}
+        {/* Category Pills Bar (100% Mobile Friendly & Visible) */}
         <div style={{
-          maxWidth: '1200px', margin: '14px auto 0 auto',
-          display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px'
+          maxWidth: '1200px', margin: '12px auto 0 auto',
+          display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '6px',
+          WebkitOverflowScrolling: 'touch'
         }}>
           <button
             onClick={() => setSelectedCategoryId('all')}
             style={{
-              padding: '8px 16px', borderRadius: '20px', border: 'none', whiteSpace: 'nowrap',
-              background: selectedCategoryId === 'all' ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'rgba(255,255,255,0.06)',
-              color: 'white', fontWeight: 700, fontSize: '12.5px', cursor: 'pointer',
-              boxShadow: selectedCategoryId === 'all' ? '0 4px 12px rgba(230,57,70,0.3)' : 'none', transition: 'all 0.2s'
+              padding: '8px 16px', borderRadius: '20px', border: 'none', whiteSpace: 'nowrap', flexShrink: 0,
+              background: selectedCategoryId === 'all' ? '#ffd100' : '#2a2b2e',
+              color: selectedCategoryId === 'all' ? '#18191c' : '#ffffff',
+              fontWeight: 900, fontSize: '13px', cursor: 'pointer',
+              boxShadow: selectedCategoryId === 'all' ? '0 4px 12px rgba(255,209,0,0.3)' : 'none', transition: 'all 0.2s'
             }}
           >
             🔥 All Items
           </button>
           {categories.map(cat => {
             const isSel = selectedCategoryId === cat.id
-            const icon = categoryIcons[cat.name] || '🍽️'
             return (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategoryId(cat.id)}
                 style={{
-                  padding: '8px 16px', borderRadius: '20px', border: 'none', whiteSpace: 'nowrap',
-                  background: isSel ? 'linear-gradient(135deg, #e63946, #c1121f)' : 'rgba(255,255,255,0.06)',
-                  color: isSel ? 'white' : '#cbd5e1', fontWeight: 700, fontSize: '12.5px', cursor: 'pointer',
-                  boxShadow: isSel ? '0 4px 12px rgba(230,57,70,0.3)' : 'none', transition: 'all 0.2s'
+                  padding: '8px 16px', borderRadius: '20px', border: 'none', whiteSpace: 'nowrap', flexShrink: 0,
+                  background: isSel ? '#ffd100' : '#2a2b2e',
+                  color: isSel ? '#18191c' : '#ffffff',
+                  fontWeight: 900, fontSize: '13px', cursor: 'pointer',
+                  boxShadow: isSel ? '0 4px 12px rgba(255,209,0,0.3)' : 'none', transition: 'all 0.2s'
                 }}
               >
-                {icon} {cat.name}
+                {cat.name}
               </button>
             )
           })}
@@ -503,18 +500,18 @@ export default function Kiosk() {
       </header>
 
       {/* Main 3D Food Cards Grid */}
-      <main style={{ maxWidth: '1200px', margin: '24px auto', padding: '0 20px' }}>
+      <main style={{ maxWidth: '1200px', margin: '20px auto', padding: '0 14px' }}>
         {filteredItems.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#94a3b8' }}>
-            <div style={{ fontSize: '48px', marginBottom: '12px' }}>🔍</div>
-            <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#f8fafc' }}>No matching food items found</h3>
-            <p style={{ fontSize: '13px' }}>Try searching for another keyword or category</p>
+          <div style={{ textAlign: 'center', padding: '50px 20px', color: '#a0a0a0' }}>
+            <div style={{ fontSize: '40px', marginBottom: '10px' }}>🔍</div>
+            <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>No matching items found</h3>
+            <p style={{ fontSize: '13px' }}>Try searching for another item or category</p>
           </div>
         ) : (
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gap: '20px'
+            gridTemplateColumns: 'repeat(auto-fill, minmax(155px, 1fr))',
+            gap: '14px'
           }}>
             {filteredItems.map(item => {
               const inCart = cart.find(c => c.menuItemId === item.id)
@@ -527,109 +524,104 @@ export default function Kiosk() {
                 <div
                   key={item.id}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    backdropFilter: 'blur(16px)',
-                    WebkitBackdropFilter: 'blur(16px)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '20px',
+                    background: '#232428',
+                    border: '1px solid rgba(255, 209, 0, 0.15)',
+                    borderRadius: '18px',
                     overflow: 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
-                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 8px 20px rgba(0,0,0,0.3)'
                   }}
                 >
                   {/* Image Header Container */}
-                  <div style={{ position: 'relative', height: '170px', width: '100%', overflow: 'hidden', background: '#1e293b' }}>
+                  <div style={{ position: 'relative', height: '140px', width: '100%', overflow: 'hidden', background: '#18191c' }}>
                     <img
                       src={imgUrl}
                       alt={item.name}
                       style={{
-                        width: '100%', height: '100%', objectFit: 'cover',
-                        transition: 'transform 0.4s ease'
+                        width: '100%', height: '100%', objectFit: 'cover'
                       }}
                     />
                     
-                    {/* Dark gradient overlay for text readability */}
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 50%, rgba(15,23,42,0.8) 100%)' }} />
+                    {/* Dark gradient overlay */}
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 50%, rgba(24,25,28,0.85) 100%)' }} />
 
                     {/* Veg/Non-Veg Badge */}
                     <div style={{
-                      position: 'absolute', top: '12px', left: '12px',
-                      background: 'rgba(15,23,42,0.8)', backdropFilter: 'blur(8px)',
-                      padding: '4px 10px', borderRadius: '12px',
-                      display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 800,
+                      position: 'absolute', top: '8px', left: '8px',
+                      background: 'rgba(24,25,28,0.85)', backdropFilter: 'blur(8px)',
+                      padding: '3px 8px', borderRadius: '10px',
+                      display: 'flex', alignItems: 'center', gap: '4px', fontSize: '10px', fontWeight: 900,
                       color: isVeg ? '#4ade80' : '#f87171', border: `1px solid ${isVeg ? 'rgba(74,222,128,0.3)' : 'rgba(248,113,113,0.3)'}`
                     }}>
-                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: isVeg ? '#22c55e' : '#ef4444' }} />
+                      <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: isVeg ? '#22c55e' : '#ef4444' }} />
                       {isVeg ? 'VEG' : 'NON-VEG'}
                     </div>
 
                     {/* Customizable Badge */}
                     {isCustom && (
                       <div style={{
-                        position: 'absolute', top: '12px', right: '12px',
-                        background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
-                        color: 'white', padding: '4px 10px', borderRadius: '12px',
-                        fontSize: '10.5px', fontWeight: 800, boxShadow: '0 2px 8px rgba(139,92,246,0.4)',
-                        display: 'flex', alignItems: 'center', gap: '4px'
+                        position: 'absolute', top: '8px', right: '8px',
+                        background: 'linear-gradient(135deg, #e63946, #c1121f)',
+                        color: 'white', padding: '3px 8px', borderRadius: '10px',
+                        fontSize: '9.5px', fontWeight: 900, boxShadow: '0 2px 6px rgba(230,57,70,0.4)',
+                        display: 'flex', alignItems: 'center', gap: '3px'
                       }}>
-                        <Sparkles size={12} /> CUSTOMIZABLE
+                        <Sparkles size={10} /> CUSTOM
                       </div>
                     )}
                   </div>
 
                   {/* Body Content */}
-                  <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div style={{ padding: '12px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
-                      <h4 style={{ fontSize: '16px', fontWeight: 800, color: '#ffffff', marginBottom: '6px', lineHeight: 1.3 }}>
+                      <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#ffffff', marginBottom: '4px', lineHeight: 1.3 }}>
                         {item.name}
                       </h4>
                       {item.description && (
-                        <p style={{ fontSize: '12px', color: '#94a3b8', margin: '0 0 12px 0', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        <p style={{ fontSize: '11px', color: '#a0a0a0', margin: '0 0 8px 0', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                           {item.description}
                         </p>
                       )}
                     </div>
 
                     {/* Price and Action Counter */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px', paddingTop: '10px', borderTop: '1px rgba(255,255,255,0.06) solid' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px', paddingTop: '8px', borderTop: '1px rgba(255,255,255,0.08) solid' }}>
                       <div>
-                        <div style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 600 }}>PRICE</div>
-                        <div style={{ fontSize: '20px', fontWeight: 900, color: '#38bdf8' }}>
+                        <div style={{ fontSize: '17px', fontWeight: 900, color: '#ffd100' }}>
                           ₹{item.price}
                         </div>
                       </div>
 
                       {qty > 0 ? (
                         <div style={{
-                          display: 'flex', alignItems: 'center', gap: '8px',
-                          background: 'rgba(255,255,255,0.08)', borderRadius: '12px', padding: '4px 8px',
-                          border: '1px solid rgba(255,255,255,0.15)'
+                          display: 'flex', alignItems: 'center', gap: '6px',
+                          background: '#2a2b2e', borderRadius: '10px', padding: '3px 6px',
+                          border: '1px solid rgba(255,209,0,0.3)'
                         }}>
                           <button
                             onClick={() => updateQuantity(item.id, -1)}
-                            style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#ef4444', border: 'none', color: 'white', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            style={{ width: '26px', height: '26px', borderRadius: '6px', background: '#e63946', border: 'none', color: 'white', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                           >
-                            <Minus size={14} />
+                            <Minus size={12} />
                           </button>
-                          <span style={{ fontWeight: 800, fontSize: '14px', minWidth: '18px', textAlign: 'center', color: '#ffffff' }}>{qty}</span>
+                          <span style={{ fontWeight: 900, fontSize: '13px', minWidth: '16px', textAlign: 'center', color: '#ffffff' }}>{qty}</span>
                           <button
                             onClick={() => isCustom ? handleItemClick(item) : addToCartDirect(item)}
-                            style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#10b981', border: 'none', color: 'white', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            style={{ width: '26px', height: '26px', borderRadius: '6px', background: '#ffd100', border: 'none', color: '#18191c', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                           >
-                            <Plus size={14} />
+                            <Plus size={12} />
                           </button>
                         </div>
                       ) : (
                         <button
                           onClick={() => handleItemClick(item)}
                           style={{
-                            padding: '8px 18px', borderRadius: '12px', border: 'none',
-                            background: isCustom ? 'linear-gradient(135deg, #8b5cf6, #6d28d9)' : 'linear-gradient(135deg, #e63946, #c1121f)',
-                            color: 'white', fontWeight: 800, fontSize: '13px', cursor: 'pointer',
-                            boxShadow: '0 4px 12px rgba(230,57,70,0.3)', transition: 'all 0.2s',
-                            display: 'flex', alignItems: 'center', gap: '4px'
+                            padding: '6px 14px', borderRadius: '10px', border: 'none',
+                            background: isCustom ? 'linear-gradient(135deg, #e63946, #c1121f)' : '#ffd100',
+                            color: isCustom ? '#ffffff' : '#18191c', fontWeight: 900, fontSize: '12px', cursor: 'pointer',
+                            boxShadow: '0 3px 10px rgba(0,0,0,0.2)', transition: 'all 0.2s'
                           }}
                         >
                           {isCustom ? 'CUSTOMIZE' : '+ ADD'}
@@ -644,32 +636,32 @@ export default function Kiosk() {
         )}
       </main>
 
-      {/* Floating 3D Animated Cart Bar (Bottom) */}
+      {/* Floating Cart Bar (Bottom) */}
       {cart.length > 0 && (
         <div style={{
-          position: 'fixed', bottom: '20px', left: '50%', transform: 'translateX(-50%)',
-          width: 'calc(100% - 40px)', maxWidth: '600px', zIndex: 100
+          position: 'fixed', bottom: '16px', left: '50%', transform: 'translateX(-50%)',
+          width: 'calc(100% - 32px)', maxWidth: '540px', zIndex: 100
         }}>
           <div style={{
-            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-            borderRadius: '20px', padding: '14px 20px',
-            boxShadow: '0 12px 35px rgba(16,185,129,0.4)',
+            background: 'linear-gradient(135deg, #ffd100 0%, #ffcc00 100%)',
+            borderRadius: '18px', padding: '12px 18px',
+            boxShadow: '0 10px 30px rgba(255,209,0,0.4)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            border: '1px solid rgba(255,255,255,0.2)'
+            border: '1.5px solid #ffffff'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div style={{
-                background: 'rgba(255,255,255,0.2)', padding: '10px', borderRadius: '14px',
+                background: '#18191c', padding: '9px', borderRadius: '12px',
                 display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}>
-                <ShoppingCart size={22} color="white" />
+                <ShoppingCart size={20} color="#ffd100" />
               </div>
               <div>
-                <div style={{ fontSize: '12px', color: '#e2e8f0', fontWeight: 600 }}>
+                <div style={{ fontSize: '11px', color: '#18191c', fontWeight: 800 }}>
                   {getTotalItemCount()} Item{getTotalItemCount() > 1 ? 's' : ''} in Cart
                 </div>
-                <div style={{ fontSize: '20px', fontWeight: 900, color: '#ffffff' }}>
-                  ₹{getTotal().toFixed(0)} <span style={{ fontSize: '11px', fontWeight: 500, color: '#a7f3d0' }}>(incl. tax)</span>
+                <div style={{ fontSize: '19px', fontWeight: 900, color: '#18191c' }}>
+                  ₹{getTotal().toFixed(0)} <span style={{ fontSize: '10px', fontWeight: 700, color: '#4a4000' }}>(incl. GST)</span>
                 </div>
               </div>
             </div>
@@ -677,65 +669,84 @@ export default function Kiosk() {
             <button
               onClick={() => setShowCartDrawer(true)}
               style={{
-                background: 'white', color: '#047857', border: 'none',
-                padding: '12px 24px', borderRadius: '14px', fontWeight: 900, fontSize: '14px',
-                cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,0,0,0.15)',
-                display: 'flex', alignItems: 'center', gap: '6px'
+                background: '#18191c', color: '#ffd100', border: 'none',
+                padding: '10px 20px', borderRadius: '12px', fontWeight: 900, fontSize: '13.5px',
+                cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                display: 'flex', alignItems: 'center', gap: '4px'
               }}
             >
-              View Cart & Pay <ChevronRight size={18} />
+              View Cart & Pay <ChevronRight size={16} />
             </button>
           </div>
         </div>
       )}
 
-      {/* Cart Drawer & Guest Info Modal */}
-      <Modal isOpen={showCartDrawer} onClose={() => setShowCartDrawer(false)} title="🛒 Your Self-Order Cart" size="lg">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '75vh', overflowY: 'auto' }}>
+      {/* Cart Drawer Modal */}
+      <Modal isOpen={showCartDrawer} onClose={() => setShowCartDrawer(false)} title="🛒 Your Cart Items" size="lg">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '75vh', overflowY: 'auto' }}>
           
-          {/* Cart Item List */}
+          {/* Cart Items List with Delete Action */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {cart.map((item, idx) => (
               <div key={idx} style={{
-                background: '#f8fafc', padding: '12px 14px', borderRadius: '14px',
-                border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '12px'
+                background: '#f8fafc', padding: '12px', borderRadius: '14px',
+                border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '10px'
               }}>
-                <img src={item.image} alt={item.menuItemName} style={{ width: '56px', height: '56px', borderRadius: '10px', objectFit: 'cover' }} />
+                <img src={item.image} alt={item.menuItemName} style={{ width: '52px', height: '52px', borderRadius: '10px', objectFit: 'cover' }} />
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 800, fontSize: '14px', color: '#0f172a' }}>{item.menuItemName}</div>
-                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#10b981' }}>₹{item.unitPrice}</div>
+                  <div style={{ fontWeight: 800, fontSize: '13.5px', color: '#0f172a' }}>{item.menuItemName}</div>
+                  <div style={{ fontSize: '12.5px', fontWeight: 800, color: '#e63946' }}>₹{item.unitPrice}</div>
                   {item.customization && (
-                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>
+                    <div style={{ fontSize: '10.5px', color: '#64748b', marginTop: '3px' }}>
                       {item.customization.gyro1 && <div>• {item.customization.gyro1}</div>}
                       {item.customization.gyro2 && <div>• {item.customization.gyro2}</div>}
-                      {item.customization.drink && <div>• 🥤 Drinks: {item.customization.drink}</div>}
+                      {item.customization.protein && <div>• Protein: {item.customization.protein}</div>}
+                      {item.customization.bread && <div>• Bread: {item.customization.bread}</div>}
+                      {item.customization.spread && <div>• Spread: {item.customization.spread}</div>}
+                      {item.customization.sauces && <div>• Sauces: {item.customization.sauces}</div>}
+                      {item.customization.veggies && <div>• Veggies: {item.customization.veggies}</div>}
+                      {item.customization.drink && <div>• 🥤 Drink: {item.customization.drink}</div>}
                       {item.customization.dips && <div>• 🧄 Dips: {item.customization.dips}</div>}
-                      {item.customization.protein && <div>• 🍗 Protein: {item.customization.protein}</div>}
+                      {item.customization.notes && <div>• Notes: {item.customization.notes}</div>}
                     </div>
                   )}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#ffffff', padding: '4px 8px', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
+                {/* Quantity Controls */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#ffffff', padding: '4px 6px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
                   <button onClick={() => updateQuantity(item.cartItemId || item.menuItemId, -1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
-                    <Minus size={14} color="#ef4444" />
+                    <Minus size={13} color="#ef4444" />
                   </button>
                   <span style={{ fontWeight: 800, fontSize: '13px', color: '#0f172a' }}>{item.quantity}</span>
                   <button onClick={() => updateQuantity(item.cartItemId || item.menuItemId, 1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
-                    <Plus size={14} color="#10b981" />
+                    <Plus size={13} color="#10b981" />
                   </button>
                 </div>
 
-                <div style={{ fontWeight: 900, fontSize: '14.5px', color: '#0f172a', minWidth: '55px', textAlign: 'right' }}>
+                <div style={{ fontWeight: 900, fontSize: '14px', color: '#0f172a', minWidth: '50px', textAlign: 'right' }}>
                   ₹{item.unitPrice * item.quantity}
                 </div>
+
+                {/* Delete Button */}
+                <button
+                  onClick={() => removeItem(item.cartItemId || item.menuItemId)}
+                  style={{
+                    background: '#fee2e2', border: '1px solid #fca5a5',
+                    borderRadius: '8px', padding: '6px', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}
+                  title="Remove Item from Cart"
+                >
+                  <Trash2 size={16} color="#dc2626" />
+                </button>
               </div>
             ))}
           </div>
 
-          {/* Guest Information Section */}
-          <div style={{ background: '#f1f5f9', padding: '16px', borderRadius: '16px', border: '1px solid #cbd5e1' }}>
-            <div style={{ fontSize: '14px', fontWeight: 800, color: '#0f172a', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <User size={18} color="#e63946" /> Enter Guest Information
+          {/* Guest Info Input */}
+          <div style={{ background: '#f1f5f9', padding: '14px', borderRadius: '14px', border: '1px solid #cbd5e1' }}>
+            <div style={{ fontSize: '13px', fontWeight: 800, color: '#0f172a', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <User size={16} color="#e63946" /> Enter Guest Information
             </div>
 
             {discountStatusMsg && (
@@ -749,7 +760,7 @@ export default function Kiosk() {
               </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               <div>
                 <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Full Name *</label>
                 <input
@@ -757,7 +768,7 @@ export default function Kiosk() {
                   placeholder="Rahul Sharma"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
                 />
               </div>
 
@@ -790,29 +801,29 @@ export default function Kiosk() {
                       setCustomerDiscountPct(0); setDiscountStatusMsg('')
                     }
                   }}
-                  style={{ width: '100%', padding: '10px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', outline: 'none', boxSizing: 'border-box' }}
                 />
               </div>
             </div>
           </div>
 
           {/* Subtotal & Bill Breakdown */}
-          <div style={{ background: '#ffffff', padding: '14px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#64748b', marginBottom: '6px' }}>
+          <div style={{ background: '#ffffff', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', color: '#64748b', marginBottom: '4px' }}>
               <span>Items Subtotal</span>
               <span>₹{getSubtotal().toFixed(2)}</span>
             </div>
             {customerDiscountPct > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#dc2626', fontWeight: 700, marginBottom: '6px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', color: '#dc2626', fontWeight: 700, marginBottom: '4px' }}>
                 <span>VIP Discount ({customerDiscountPct}%)</span>
                 <span>- ₹{getDiscountAmount().toFixed(2)}</span>
               </div>
             )}
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#64748b', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px', color: '#64748b', marginBottom: '6px' }}>
               <span>GST (5%)</span>
               <span>₹{getTax().toFixed(2)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', fontWeight: 900, color: '#0f172a', borderTop: '1px dashed #cbd5e1', paddingTop: '8px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '17px', fontWeight: 900, color: '#0f172a', borderTop: '1px dashed #cbd5e1', paddingTop: '6px' }}>
               <span>Total Payable</span>
               <span style={{ color: '#e63946' }}>₹{getTotal().toFixed(2)}</span>
             </div>
@@ -825,10 +836,9 @@ export default function Kiosk() {
               setShowPaymentModal(true)
             }}
             style={{
-              width: '100%', padding: '16px', borderRadius: '14px', border: 'none',
-              background: 'linear-gradient(135deg, #10b981, #059669)',
-              color: 'white', fontWeight: 900, fontSize: '16px', cursor: 'pointer',
-              boxShadow: '0 4px 15px rgba(16,185,129,0.3)'
+              width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+              background: '#e63946', color: 'white', fontWeight: 900, fontSize: '15px', cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(230,57,70,0.3)'
             }}
           >
             Proceed to Payment (₹{getTotal().toFixed(2)}) →
@@ -839,24 +849,24 @@ export default function Kiosk() {
       {/* Instant UPI Payment Modal */}
       <Modal isOpen={showPaymentModal} onClose={() => setShowPaymentModal(false)} title="💳 Select Payment Method & Place Order" size="md">
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>
+          <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '14px' }}>
             Total Amount: <strong style={{ fontSize: '20px', color: '#e63946' }}>₹{getTotal().toFixed(2)}</strong>
           </div>
 
           {/* Instant UPI QR */}
-          <div style={{ background: '#f0fdf4', border: '2px solid #10b981', borderRadius: '16px', padding: '18px', marginBottom: '16px' }}>
-            <div style={{ fontSize: '14px', fontWeight: 800, color: '#166534', marginBottom: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-              <Smartphone size={18} color="#10b981" /> Instant Scan & Pay via UPI (GPay / PhonePe / Paytm)
+          <div style={{ background: '#f0fdf4', border: '2px solid #10b981', borderRadius: '16px', padding: '16px', marginBottom: '14px' }}>
+            <div style={{ fontSize: '13.5px', fontWeight: 800, color: '#166534', marginBottom: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              <Smartphone size={18} color="#10b981" /> Instant Scan & Pay via UPI (GPay / PhonePe)
             </div>
-            <div style={{ fontSize: '11px', color: '#475569', marginBottom: '12px' }}>
+            <div style={{ fontSize: '11px', color: '#475569', marginBottom: '10px' }}>
               Scan with any UPI App on your phone to complete payment:
             </div>
 
-            <div style={{ background: 'white', padding: '12px', borderRadius: '12px', display: 'inline-block', border: '1px solid #cbd5e1', marginBottom: '14px' }}>
+            <div style={{ background: 'white', padding: '10px', borderRadius: '12px', display: 'inline-block', border: '1px solid #cbd5e1', marginBottom: '12px' }}>
               <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(`upi://pay?pa=tendengyros@upi&pn=Ten%20Den%20Gyros&am=${getTotal().toFixed(2)}&tn=${encodeURIComponent(tableNumber + '_SelfOrder')}`)}`}
                 alt="UPI Payment QR"
-                style={{ width: '180px', height: '180px', display: 'block' }}
+                style={{ width: '170px', height: '170px', display: 'block' }}
               />
             </div>
 
@@ -864,9 +874,9 @@ export default function Kiosk() {
               onClick={() => handlePlaceOrder('upi')}
               disabled={processing}
               style={{
-                width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-                background: '#10b981', color: 'white', fontWeight: 800, fontSize: '15px', cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(16,185,129,0.3)'
+                width: '100%', padding: '12px', borderRadius: '10px', border: 'none',
+                background: '#10b981', color: 'white', fontWeight: 900, fontSize: '14.5px', cursor: 'pointer',
+                boxShadow: '0 4px 10px rgba(16,185,129,0.3)'
               }}
             >
               {processing ? 'Processing Order...' : `✓ I Have Paid ₹${getTotal().toFixed(2)} — Submit Order`}
@@ -878,26 +888,26 @@ export default function Kiosk() {
             onClick={() => handlePlaceOrder('counter')}
             disabled={processing}
             style={{
-              width: '100%', padding: '14px', background: '#f8fafc', border: '1.5px solid #cbd5e1',
-              borderRadius: '12px', fontWeight: 700, fontSize: '13px', color: '#334155', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+              width: '100%', padding: '12px', background: '#f8fafc', border: '1.5px solid #cbd5e1',
+              borderRadius: '10px', fontWeight: 800, fontSize: '13px', color: '#334155', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
             }}
           >
-            <Banknote size={18} color="#059669" /> Pay Cash at Counter
+            <Banknote size={16} color="#059669" /> Pay Cash at Counter
           </button>
         </div>
       </Modal>
 
-      {/* Interactive Food Customizer Modal */}
-      <Modal isOpen={!!customizingItem} onClose={() => setCustomizingItem(null)} title={`🍱 Customize ${customizingItem?.name || 'Item'}`} size="lg">
+      {/* FULL Customizer Modal (Complete Gyro & Combo Options) */}
+      <Modal isOpen={!!customizingItem} onClose={() => setCustomizingItem(null)} title={`Customize ${customizingItem?.name || 'Item'}`} size="lg">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '75vh', overflowY: 'auto' }}>
           
           {/* Dual Gyro Combos Customizer */}
           {isDualGyroCombo(customizingItem) ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {/* Gyro 1 */}
-              <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '14px', border: '1.5px solid #e2e8f0' }}>
-                <div style={{ fontSize: '13.5px', fontWeight: 800, color: '#e63946', marginBottom: '10px' }}>🌯 GYRO 1 CUSTOMIZATION</div>
+              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', border: '1.5px solid #e2e8f0' }}>
+                <div style={{ fontSize: '13px', fontWeight: 900, color: '#e63946', marginBottom: '8px' }}>GYRO 1 CUSTOMIZATION</div>
                 <div style={{ marginBottom: '8px' }}>
                   <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Protein</label>
                   <div style={{ display: 'flex', gap: '6px' }}>
@@ -906,7 +916,7 @@ export default function Kiosk() {
                         flex: 1, padding: '8px', borderRadius: '8px',
                         border: selectedGyro1Protein === p ? '2px solid #e63946' : '1px solid #cbd5e1',
                         background: selectedGyro1Protein === p ? '#fff5f5' : '#ffffff',
-                        color: selectedGyro1Protein === p ? '#e63946' : '#334155', fontWeight: 700, fontSize: '12px', cursor: 'pointer'
+                        color: selectedGyro1Protein === p ? '#e63946' : '#334155', fontWeight: 800, fontSize: '12px', cursor: 'pointer'
                       }}>{p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}</button>
                     ))}
                   </div>
@@ -920,7 +930,7 @@ export default function Kiosk() {
                         padding: '6px', borderRadius: '8px',
                         border: selectedGyro1Flavor === f ? '2px solid #e63946' : '1px solid #cbd5e1',
                         background: selectedGyro1Flavor === f ? '#e63946' : '#ffffff',
-                        color: selectedGyro1Flavor === f ? '#ffffff' : '#334155', fontWeight: 700, fontSize: '11.5px', cursor: 'pointer'
+                        color: selectedGyro1Flavor === f ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
                       }}>{f}</button>
                     ))}
                   </div>
@@ -928,8 +938,8 @@ export default function Kiosk() {
               </div>
 
               {/* Gyro 2 */}
-              <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '14px', border: '1.5px solid #e2e8f0' }}>
-                <div style={{ fontSize: '13.5px', fontWeight: 800, color: '#2563eb', marginBottom: '10px' }}>🌯 GYRO 2 CUSTOMIZATION</div>
+              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', border: '1.5px solid #e2e8f0' }}>
+                <div style={{ fontSize: '13px', fontWeight: 900, color: '#2563eb', marginBottom: '8px' }}>GYRO 2 CUSTOMIZATION</div>
                 <div style={{ marginBottom: '8px' }}>
                   <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Protein</label>
                   <div style={{ display: 'flex', gap: '6px' }}>
@@ -938,7 +948,7 @@ export default function Kiosk() {
                         flex: 1, padding: '8px', borderRadius: '8px',
                         border: selectedGyro2Protein === p ? '2px solid #2563eb' : '1px solid #cbd5e1',
                         background: selectedGyro2Protein === p ? '#eff6ff' : '#ffffff',
-                        color: selectedGyro2Protein === p ? '#1e40af' : '#334155', fontWeight: 700, fontSize: '12px', cursor: 'pointer'
+                        color: selectedGyro2Protein === p ? '#1e40af' : '#334155', fontWeight: 800, fontSize: '12px', cursor: 'pointer'
                       }}>{p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}</button>
                     ))}
                   </div>
@@ -952,7 +962,7 @@ export default function Kiosk() {
                         padding: '6px', borderRadius: '8px',
                         border: selectedGyro2Flavor === f ? '2px solid #2563eb' : '1px solid #cbd5e1',
                         background: selectedGyro2Flavor === f ? '#2563eb' : '#ffffff',
-                        color: selectedGyro2Flavor === f ? '#ffffff' : '#334155', fontWeight: 700, fontSize: '11.5px', cursor: 'pointer'
+                        color: selectedGyro2Flavor === f ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
                       }}>{f}</button>
                     ))}
                   </div>
@@ -972,20 +982,20 @@ export default function Kiosk() {
                 ].slice(0, dCount)
 
                 return (
-                  <div style={{ background: '#f0fdf4', padding: '14px', borderRadius: '14px', border: '1.5px solid #bbf7d0' }}>
-                    <div style={{ fontSize: '13px', fontWeight: 800, color: '#15803d', marginBottom: '10px' }}>
+                  <div style={{ background: '#f0fdf4', padding: '12px', borderRadius: '12px', border: '1.5px solid #bbf7d0' }}>
+                    <div style={{ fontSize: '12.5px', fontWeight: 900, color: '#15803d', marginBottom: '8px' }}>
                       🥤 CHOOSE YOUR {dCount} REGULAR DRINK{dCount > 1 ? 'S' : ''}
                     </div>
                     {drinksArr.map((dItem, idx) => (
-                      <div key={idx} style={{ marginBottom: idx === drinksArr.length - 1 ? 0 : '10px' }}>
+                      <div key={idx} style={{ marginBottom: idx === drinksArr.length - 1 ? 0 : '8px' }}>
                         <div style={{ fontSize: '11px', fontWeight: 700, color: '#166534', marginBottom: '4px' }}>{idx + 1}. {dItem.label}</div>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
                           {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
                             <button key={d} onClick={() => dItem.set(d)} style={{
-                              padding: '6px', borderRadius: '8px',
+                              padding: '6px', borderRadius: '6px',
                               border: dItem.val === d ? '2px solid #16a34a' : '1px solid #cbd5e1',
                               background: dItem.val === d ? '#16a34a' : '#ffffff',
-                              color: dItem.val === d ? '#ffffff' : '#334155', fontWeight: 700, fontSize: '11px', cursor: 'pointer'
+                              color: dItem.val === d ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '10.5px', cursor: 'pointer'
                             }}>{dItem.val === d ? '✓ ' : ''}{d}</button>
                           ))}
                         </div>
@@ -1006,20 +1016,20 @@ export default function Kiosk() {
                 ].slice(0, dipCount)
 
                 return (
-                  <div style={{ background: '#fff7ed', padding: '14px', borderRadius: '14px', border: '1.5px solid #fed7aa' }}>
-                    <div style={{ fontSize: '13px', fontWeight: 800, color: '#c2410c', marginBottom: '10px' }}>
+                  <div style={{ background: '#fff7ed', padding: '12px', borderRadius: '12px', border: '1.5px solid #fed7aa' }}>
+                    <div style={{ fontSize: '12.5px', fontWeight: 900, color: '#c2410c', marginBottom: '8px' }}>
                       🧄 CHOOSE YOUR {dipCount} DIPS
                     </div>
                     {dipsArr.map((dItem, idx) => (
-                      <div key={idx} style={{ marginBottom: idx === dipsArr.length - 1 ? 0 : '10px' }}>
+                      <div key={idx} style={{ marginBottom: idx === dipsArr.length - 1 ? 0 : '8px' }}>
                         <div style={{ fontSize: '11px', fontWeight: 700, color: '#9a3412', marginBottom: '4px' }}>{idx + 1}. {dItem.label}</div>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
                           {['Garlic Mayo Dip', 'Spicy Mayo Dip', 'Tzatziki Dip', 'Peri Peri Dip', 'Jalapeno Cheese Dip', 'Turkish Chili Dip'].map(dp => (
                             <button key={dp} onClick={() => dItem.set(dp)} style={{
-                              padding: '6px', borderRadius: '8px',
+                              padding: '6px', borderRadius: '6px',
                               border: dItem.val === dp ? '2px solid #ea580c' : '1px solid #cbd5e1',
                               background: dItem.val === dp ? '#ea580c' : '#ffffff',
-                              color: dItem.val === dp ? '#ffffff' : '#334155', fontWeight: 700, fontSize: '11px', cursor: 'pointer'
+                              color: dItem.val === dp ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '10.5px', cursor: 'pointer'
                             }}>{dItem.val === dp ? '✓ ' : ''}{dp}</button>
                           ))}
                         </div>
@@ -1030,70 +1040,152 @@ export default function Kiosk() {
               })()}
             </div>
           ) : (
+            /* COMPLETE SINGLE GYRO CUSTOMIZER (Protein, Bread, Spread, Sauces, Veggies, Notes) */
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {/* Protein Choice */}
+              {/* 1. Protein Choice */}
               <div>
-                <label style={{ fontSize: '12px', fontWeight: 700, color: '#374151', display: 'block', marginBottom: '6px' }}>🍗 Choose Protein</label>
+                <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
+                  1. Choose Protein *
+                </label>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   {['Chicken', 'Paneer'].map(p => (
                     <button key={p} onClick={() => setSelectedProtein(p)} style={{
                       flex: 1, padding: '10px', borderRadius: '10px',
                       border: selectedProtein === p ? '2px solid #e63946' : '1px solid #cbd5e1',
                       background: selectedProtein === p ? '#fff5f5' : '#ffffff',
-                      color: selectedProtein === p ? '#e63946' : '#334155', fontWeight: 700, fontSize: '13px', cursor: 'pointer'
+                      color: selectedProtein === p ? '#e63946' : '#334155', fontWeight: 800, fontSize: '13px', cursor: 'pointer'
                     }}>{p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}</button>
                   ))}
                 </div>
               </div>
 
-              {/* Pita Bread */}
+              {/* 2. Pita Bread */}
               <div>
-                <label style={{ fontSize: '12px', fontWeight: 700, color: '#374151', display: 'block', marginBottom: '6px' }}>🫓 Pita Bread</label>
+                <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
+                  2. Choose Pita Bread *
+                </label>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   {['Baked', 'Fried'].map(b => (
                     <button key={b} onClick={() => setSelectedBread(b)} style={{
-                      flex: 1, padding: '8px', borderRadius: '8px',
+                      flex: 1, padding: '10px', borderRadius: '10px',
                       border: selectedBread === b ? '2px solid #2563eb' : '1px solid #cbd5e1',
                       background: selectedBread === b ? '#eff6ff' : '#ffffff',
-                      color: selectedBread === b ? '#1e40af' : '#334155', fontWeight: 700, fontSize: '12px', cursor: 'pointer'
-                    }}>{b === 'Baked' ? '🫓 Baked Pita' : '🥙 Fried Pita'}</button>
+                      color: selectedBread === b ? '#1e40af' : '#334155', fontWeight: 800, fontSize: '12.5px', cursor: 'pointer'
+                    }}>{b === 'Baked' ? 'Baked Pita' : 'Fried Pita'}</button>
                   ))}
                 </div>
               </div>
 
-              {/* Drink Choice */}
+              {/* 3. Signature Spread */}
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
+                  3. Choose Signature Spread *
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                  {['Hummus', 'Cheese', 'Tzatziki', 'Ricotta'].map(s => (
+                    <button key={s} onClick={() => setSelectedSpread(s)} style={{
+                      padding: '8px 4px', borderRadius: '8px',
+                      border: selectedSpread === s ? '2px solid #059669' : '1px solid #cbd5e1',
+                      background: selectedSpread === s ? '#ecfdf5' : '#ffffff',
+                      color: selectedSpread === s ? '#047857' : '#334155', fontWeight: 800, fontSize: '11.5px', cursor: 'pointer', textAlign: 'center'
+                    }}>{selectedSpread === s ? '✓ ' : ''}{s}</button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 4. Sauces (Select Multiple) */}
+              <div>
+                <div style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>4. Choose Sauces (Select Multiple)</span>
+                  <span style={{ fontSize: '10px', background: '#fee2e2', color: '#dc2626', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>MULTI</span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                  {['Turkish Chili', 'Jalapeno Cheese', 'Garlic Mayo', 'Spicy Mayo', 'Peri Peri', 'Honey Mustard', 'Tzatziki'].map(sauce => {
+                    const isSel = selectedSauces.includes(sauce)
+                    return (
+                      <button key={sauce} onClick={() => {
+                        if (isSel) setSelectedSauces(selectedSauces.filter(x => x !== sauce))
+                        else setSelectedSauces([...selectedSauces, sauce])
+                      }} style={{
+                        padding: '8px 4px', borderRadius: '8px',
+                        border: isSel ? '2px solid #e63946' : '1px solid #cbd5e1',
+                        background: isSel ? '#e63946' : '#ffffff',
+                        color: isSel ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center'
+                      }}>{isSel ? '✓ ' : ''}{sauce}</button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* 5. Fresh Veggies & Toppings (Select Multiple) */}
+              <div>
+                <div style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>5. Fresh Veggies & Toppings (Select Multiple)</span>
+                  <span style={{ fontSize: '10px', background: '#ecfdf5', color: '#047857', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>MULTI</span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                  {['Lettuce', 'Onion', 'Jalapeno', 'Olive', 'Capsicum', 'Tomato', 'Cucumber', 'Beans'].map(veg => {
+                    const isSel = selectedVeggies.includes(veg)
+                    return (
+                      <button key={veg} onClick={() => {
+                        if (isSel) setSelectedVeggies(selectedVeggies.filter(x => x !== veg))
+                        else setSelectedVeggies([...selectedVeggies, veg])
+                      }} style={{
+                        padding: '6px 4px', borderRadius: '8px',
+                        border: isSel ? '2px solid #10b981' : '1px solid #cbd5e1',
+                        background: isSel ? '#10b981' : '#ffffff',
+                        color: isSel ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center'
+                      }}>{isSel ? '✓ ' : ''}{veg}</button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Drink Choice Section */}
               {(() => {
                 const dCount = getMealDrinkCount(customizingItem?.name)
                 if (dCount <= 0) return null
                 return (
                   <div>
-                    <label style={{ fontSize: '12px', fontWeight: 700, color: '#374151', display: 'block', marginBottom: '6px' }}>🥤 Choose Beverage</label>
+                    <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>🥤 Choose Drink / Beverage</label>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
                       {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
                         <button key={d} onClick={() => setSelectedDrink1(d)} style={{
                           padding: '8px', borderRadius: '8px',
                           border: selectedDrink1 === d ? '2px solid #06b6d4' : '1px solid #cbd5e1',
                           background: selectedDrink1 === d ? '#ecfeff' : '#ffffff',
-                          color: selectedDrink1 === d ? '#0891b2' : '#334155', fontWeight: 700, fontSize: '11.5px', cursor: 'pointer'
+                          color: selectedDrink1 === d ? '#0891b2' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
                         }}>{selectedDrink1 === d ? '✓ ' : ''}{d}</button>
                       ))}
                     </div>
                   </div>
                 )
               })()}
+
+              {/* Special Cooking Notes */}
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '4px' }}>📝 Special Cooking Notes (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Extra sauce, no onions..."
+                  value={gyroNotes}
+                  onChange={(e) => setGyroNotes(e.target.value)}
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12.5px', outline: 'none', boxSizing: 'border-box' }}
+                />
+              </div>
             </div>
           )}
 
           <button
             onClick={confirmCustomization}
             style={{
-              width: '100%', padding: '16px', borderRadius: '14px', border: 'none',
-              background: 'linear-gradient(135deg, #e63946, #c1121f)',
-              color: 'white', fontWeight: 900, fontSize: '16px', cursor: 'pointer',
-              boxShadow: '0 4px 15px rgba(230,57,70,0.3)', marginTop: '8px'
+              width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+              background: 'linear-gradient(135deg, #ffd100, #ffcc00)',
+              color: '#18191c', fontWeight: 900, fontSize: '15px', cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(255,209,0,0.3)', marginTop: '6px'
             }}
           >
-            Add Customized Meal to Order 🛒
+            Add Customized Item to Cart 🛒
           </button>
         </div>
       </Modal>
