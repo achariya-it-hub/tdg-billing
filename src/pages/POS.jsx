@@ -1150,23 +1150,40 @@ export default function POS() {
             <span style={{ fontSize: '20px', fontWeight: 900, color: '#f87171' }}>₹{getTotal().toFixed(2)}</span>
           </div>
 
-          {/* Offers Row (20% OFF & Staff Benefit 50%) */}
-          <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
+          {/* Offers Row (20% OFF, 50% OFF & Staff Benefit 50%) */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.2fr', gap: '5px', marginBottom: '6px' }}>
             <button
               type="button"
               onClick={() => setSpecialOffer20(!currentOrder.specialOffer20)}
               style={{
-                flex: 1, padding: '7px 8px', borderRadius: '8px',
+                padding: '7px 4px', borderRadius: '8px',
                 border: currentOrder.specialOffer20 ? '2px solid #dc2626' : '1px dashed #dc2626',
                 background: currentOrder.specialOffer20 ? '#dc2626' : '#fef2f2',
                 color: currentOrder.specialOffer20 ? '#ffffff' : '#991b1b',
                 fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center',
                 boxShadow: currentOrder.specialOffer20 ? '0 2px 8px rgba(220,38,38,0.3)' : 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px',
                 transition: 'all 0.15s'
               }}
             >
-              🔥 {currentOrder.specialOffer20 ? '20% OFF ACTIVE' : '20% OFF Offer'}
+              🔥 {currentOrder.specialOffer20 ? '20% ON' : '20% OFF'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setVip50(!currentOrder.vip50)}
+              style={{
+                padding: '7px 4px', borderRadius: '8px',
+                border: currentOrder.vip50 ? '2px solid #16a34a' : '1px dashed #16a34a',
+                background: currentOrder.vip50 ? '#16a34a' : '#f0fdf4',
+                color: currentOrder.vip50 ? '#ffffff' : '#166534',
+                fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center',
+                boxShadow: currentOrder.vip50 ? '0 2px 8px rgba(22,163,74,0.3)' : 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px',
+                transition: 'all 0.15s'
+              }}
+            >
+              👑 {currentOrder.vip50 ? '50% ON' : '50% OFF'}
             </button>
 
             <button
@@ -1179,17 +1196,17 @@ export default function POS() {
                 }
               }}
               style={{
-                flex: 1.4, padding: '7px 8px', borderRadius: '8px',
+                padding: '7px 4px', borderRadius: '8px',
                 border: currentOrder.staffBenefitOffer ? '2px solid #7c3aed' : '1px dashed #7c3aed',
                 background: currentOrder.staffBenefitOffer ? '#7c3aed' : '#f5f3ff',
                 color: currentOrder.staffBenefitOffer ? '#ffffff' : '#5b21b6',
                 fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center',
                 boxShadow: currentOrder.staffBenefitOffer ? '0 2px 8px rgba(124,58,237,0.3)' : 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px',
                 transition: 'all 0.15s'
               }}
             >
-              🎓 {currentOrder.staffBenefitOffer ? `STAFF 50% ACTIVE` : 'Staff Benefit (50%)'}
+              🎓 {currentOrder.staffBenefitOffer ? `STAFF 50%` : 'Staff 50%'}
             </button>
           </div>
 
