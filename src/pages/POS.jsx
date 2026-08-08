@@ -195,6 +195,13 @@ export default function POS() {
 
   const [selectedDrink1, setSelectedDrink1] = useState('Coca-Cola')
   const [selectedDrink2, setSelectedDrink2] = useState('Sprite')
+  const [selectedDrink3, setSelectedDrink3] = useState('Fanta')
+  const [selectedDrink4, setSelectedDrink4] = useState('Peach Ice Tea')
+  const [selectedDrink5, setSelectedDrink5] = useState('Lime Ice Tea')
+
+  const [selectedDip1, setSelectedDip1] = useState('Garlic Mayo Dip')
+  const [selectedDip2, setSelectedDip2] = useState('Spicy Mayo Dip')
+  const [selectedDip3, setSelectedDip3] = useState('Tzatziki Dip')
 
   useEffect(() => {
     fetch(`${API_BASE}/api/settings`)
@@ -295,6 +302,21 @@ export default function POS() {
     )
   }
 
+  const getMealDrinkCount = (itemName) => {
+    const name = (itemName || '').toLowerCase()
+    if (name.includes('den\'s party') || name.includes('party meal')) return 3
+    if (name.includes('super 5')) return 5
+    if (name.includes('double crunch') || name.includes('duo gyro') || name.includes('mega feast')) return 2
+    if (name.includes('meal') || name.includes('box') || name.includes('feast') || name.includes('bucket') || name.includes('combo')) return 1
+    return 0
+  }
+
+  const getMealDipCount = (itemName) => {
+    const name = (itemName || '').toLowerCase()
+    if (name.includes('mega feast')) return 3
+    return 0
+  }
+
   const isDualGyroCombo = (item) => {
     if (!item) return false
     const name = (item.name || '').toLowerCase()
@@ -317,6 +339,14 @@ export default function POS() {
       setSelectedDrink('Coca-Cola')
       setSelectedDrink1('Coca-Cola')
       setSelectedDrink2('Sprite')
+      setSelectedDrink3('Fanta')
+      setSelectedDrink4('Peach Ice Tea')
+      setSelectedDrink5('Lime Ice Tea')
+
+      setSelectedDip1('Garlic Mayo Dip')
+      setSelectedDip2('Spicy Mayo Dip')
+      setSelectedDip3('Tzatziki Dip')
+
       setSelectedSpread('Tzatziki')
       setSelectedSauces(['Garlic Mayo'])
       setSelectedVeggies(['Lettuce', 'Onion'])
@@ -353,23 +383,34 @@ export default function POS() {
     const isDualCombo = isDualGyroCombo(customizingItem)
     const hasGyro = catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('box') || itemName.includes('meal')
     const hasRice = itemName.includes('rice')
-    const hasDrink = itemName.includes('meal') || itemName.includes('box') || itemName.includes('feast') || itemName.includes('bucket') || itemName.includes('drink') || catName.includes('meal')
+
+    const drinkCount = getMealDrinkCount(customizingItem.name)
+    const dipCount = getMealDipCount(customizingItem.name)
+
+    let drinkSummary = ''
+    if (drinkCount === 1) drinkSummary = selectedDrink1
+    else if (drinkCount === 2) drinkSummary = `${selectedDrink1}, ${selectedDrink2}`
+    else if (drinkCount === 3) drinkSummary = `${selectedDrink1}, ${selectedDrink2}, ${selectedDrink3}`
+    else if (drinkCount === 5) drinkSummary = `${selectedDrink1}, ${selectedDrink2}, ${selectedDrink3}, ${selectedDrink4}, ${selectedDrink5}`
+
+    let dipSummary = ''
+    if (dipCount === 3) dipSummary = `${selectedDip1}, ${selectedDip2}, ${selectedDip3}`
 
     let customization
     if (isDualCombo) {
       customization = {
-        gyro1: `Gyro 1: ${selectedGyro1Protein} Gyro (${selectedGyro1Flavor}, ${selectedGyro1Bread} Pita, Sauces: ${selectedGyro1Sauces.join(', ') || 'None'}, Veggies: ${selectedGyro1Veggies.join(', ') || 'None'})`,
-        gyro2: `Gyro 2: ${selectedGyro2Protein} Gyro (${selectedGyro2Flavor}, ${selectedGyro2Bread} Pita, Sauces: ${selectedGyro2Sauces.join(', ') || 'None'}, Veggies: ${selectedGyro2Veggies.join(', ') || 'None'})`,
-        drink1: selectedDrink1,
-        drink2: selectedDrink2,
-        drink: `${selectedDrink1} & ${selectedDrink2}`,
+        gyro1: `Gyro 1: ${selectedGyro1Protein} Gyro (${selectedGyro1Flavor}, ${selectedGyro1Bread} Pita, Sauces: ${selectedGyro1Sauces.join(', ') || 'None'})`,
+        gyro2: `Gyro 2: ${selectedGyro2Protein} Gyro (${selectedGyro2Flavor}, ${selectedGyro2Bread} Pita, Sauces: ${selectedGyro2Sauces.join(', ') || 'None'})`,
+        ...(drinkSummary ? { drink: drinkSummary } : {}),
+        ...(dipSummary ? { dips: dipSummary } : {}),
         notes: gyroNotes
       }
     } else {
       customization = {
         ...(hasGyro ? { bread: selectedBread, spread: selectedSpread, sauces: selectedSauces, veggies: selectedVeggies } : {}),
         ...((hasGyro || hasRice) ? { protein: selectedProtein } : {}),
-        ...(hasDrink ? { drink: selectedDrink } : {}),
+        ...(drinkSummary ? { drink: drinkSummary } : {}),
+        ...(dipSummary ? { dips: dipSummary } : {}),
         notes: gyroNotes
       }
     }
@@ -1441,48 +1482,83 @@ export default function POS() {
                 </div>
               </div>
 
-              {/* 2 Drinks Selection for Combo */}
-              <div style={{ background: '#f0fdf4', padding: '16px', borderRadius: '16px', border: '2px solid #bbf7d0' }}>
-                <div style={{ fontSize: '14px', fontWeight: 800, color: '#15803d', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>🥤 CHOOSE YOUR 2 DRINKS INCLUDED IN COMBO</span>
-                </div>
+              {/* Regular Drinks Selection for Combo */}
+              {(() => {
+                const dCount = getMealDrinkCount(customizingItem?.name)
+                if (dCount <= 0) return null
+                const drinksArr = [
+                  { label: '1st Drink', val: selectedDrink1, set: setSelectedDrink1 },
+                  { label: '2nd Drink', val: selectedDrink2, set: setSelectedDrink2 },
+                  { label: '3rd Drink', val: selectedDrink3, set: setSelectedDrink3 },
+                  { label: '4th Drink', val: selectedDrink4, set: setSelectedDrink4 },
+                  { label: '5th Drink', val: selectedDrink5, set: setSelectedDrink5 }
+                ].slice(0, dCount)
 
-                {/* Drink Choice 1 */}
-                <div style={{ marginBottom: '12px' }}>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#166534', marginBottom: '6px' }}>1. First Drink</div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-                    {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea'].map(d => (
-                      <button key={d} type="button" onClick={() => setSelectedDrink1(d)} style={{
-                        padding: '8px', borderRadius: '8px',
-                        border: selectedDrink1 === d ? '2px solid #16a34a' : '1px solid #cbd5e1',
-                        background: selectedDrink1 === d ? '#16a34a' : '#ffffff',
-                        color: selectedDrink1 === d ? '#ffffff' : '#334155',
-                        fontWeight: 700, fontSize: '11.5px', cursor: 'pointer', textAlign: 'center'
-                      }}>
-                        {selectedDrink1 === d ? '✓ ' : ''}{d}
-                      </button>
+                return (
+                  <div style={{ background: '#f0fdf4', padding: '16px', borderRadius: '16px', border: '2px solid #bbf7d0', marginTop: '12px' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 800, color: '#15803d', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>🥤 CHOOSE YOUR {dCount} REGULAR DRINK{dCount > 1 ? 'S' : ''} INCLUDED IN {customizingItem?.name?.toUpperCase()}</span>
+                    </div>
+
+                    {drinksArr.map((dItem, idx) => (
+                      <div key={idx} style={{ marginBottom: idx === drinksArr.length - 1 ? 0 : '12px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: 700, color: '#166534', marginBottom: '6px' }}>{idx + 1}. {dItem.label}</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                          {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
+                            <button key={d} type="button" onClick={() => dItem.set(d)} style={{
+                              padding: '8px', borderRadius: '8px',
+                              border: dItem.val === d ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                              background: dItem.val === d ? '#16a34a' : '#ffffff',
+                              color: dItem.val === d ? '#ffffff' : '#334155',
+                              fontWeight: 700, fontSize: '11.5px', cursor: 'pointer', textAlign: 'center'
+                            }}>
+                              {dItem.val === d ? '✓ ' : ''}{d}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     ))}
                   </div>
-                </div>
+                )
+              })()}
 
-                {/* Drink Choice 2 */}
-                <div>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#166534', marginBottom: '6px' }}>2. Second Drink</div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-                    {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea'].map(d => (
-                      <button key={d} type="button" onClick={() => setSelectedDrink2(d)} style={{
-                        padding: '8px', borderRadius: '8px',
-                        border: selectedDrink2 === d ? '2px solid #16a34a' : '1px solid #cbd5e1',
-                        background: selectedDrink2 === d ? '#16a34a' : '#ffffff',
-                        color: selectedDrink2 === d ? '#ffffff' : '#334155',
-                        fontWeight: 700, fontSize: '11.5px', cursor: 'pointer', textAlign: 'center'
-                      }}>
-                        {selectedDrink2 === d ? '✓ ' : ''}{d}
-                      </button>
+              {/* Dips Selection for Combo (e.g. Mega Feast Meal - 3 Dips) */}
+              {(() => {
+                const dipCount = getMealDipCount(customizingItem?.name)
+                if (dipCount <= 0) return null
+                const dipsArr = [
+                  { label: '1st Dip', val: selectedDip1, set: setSelectedDip1 },
+                  { label: '2nd Dip', val: selectedDip2, set: setSelectedDip2 },
+                  { label: '3rd Dip', val: selectedDip3, set: setSelectedDip3 }
+                ].slice(0, dipCount)
+
+                return (
+                  <div style={{ background: '#fff7ed', padding: '16px', borderRadius: '16px', border: '2px solid #fed7aa', marginTop: '12px' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 800, color: '#c2410c', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>🧄 CHOOSE YOUR {dipCount} DIPS INCLUDED IN {customizingItem?.name?.toUpperCase()}</span>
+                    </div>
+
+                    {dipsArr.map((dItem, idx) => (
+                      <div key={idx} style={{ marginBottom: idx === dipsArr.length - 1 ? 0 : '12px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: 700, color: '#9a3412', marginBottom: '6px' }}>{idx + 1}. {dItem.label}</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                          {['Garlic Mayo Dip', 'Spicy Mayo Dip', 'Tzatziki Dip', 'Peri Peri Dip', 'Jalapeno Cheese Dip', 'Turkish Chili Dip'].map(dp => (
+                            <button key={dp} type="button" onClick={() => dItem.set(dp)} style={{
+                              padding: '8px', borderRadius: '8px',
+                              border: dItem.val === dp ? '2px solid #ea580c' : '1px solid #cbd5e1',
+                              background: dItem.val === dp ? '#ea580c' : '#ffffff',
+                              color: dItem.val === dp ? '#ffffff' : '#334155',
+                              fontWeight: 700, fontSize: '11.5px', cursor: 'pointer', textAlign: 'center'
+                            }}>
+                              {dItem.val === dp ? '✓ ' : ''}{dp}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     ))}
                   </div>
-                </div>
-              </div>
+                )
+              })()}
 
             </div>
           ) : (
@@ -1515,34 +1591,31 @@ export default function POS() {
                 )
               })()}
 
-              {/* Drink Choice Section (Coca-Cola / Sprite / Fanta / Ice Tea) */}
+              {/* Drink Choice Section */}
               {(() => {
-                const cItemName = (customizingItem?.name || '').toLowerCase()
-                const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
-                const hasDrinkChoice = cItemName.includes('meal') || cItemName.includes('box') || cItemName.includes('feast') || cItemName.includes('bucket') || cItemName.includes('drink') || cCatName.includes('meal') || cCatName.includes('beverage')
-                if (!hasDrinkChoice) return null
+                const dCount = getMealDrinkCount(customizingItem?.name)
+                if (dCount <= 0) return null
                 return (
-                  <div>
+                  <div style={{ marginTop: '12px' }}>
                     <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       🥤 Choose Drink / Beverage
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                      {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea'].map(d => (
-                        <button key={d} type="button" onClick={() => setSelectedDrink(d)} style={{
+                      {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
+                        <button key={d} type="button" onClick={() => setSelectedDrink1(d)} style={{
                           padding: '10px', borderRadius: '10px',
-                          border: selectedDrink === d ? '2px solid #06b6d4' : '1px solid #e5e7eb',
-                          background: selectedDrink === d ? '#ecfeff' : '#f9fafb',
-                          color: selectedDrink === d ? '#0891b2' : '#374151',
+                          border: selectedDrink1 === d ? '2px solid #06b6d4' : '1px solid #e5e7eb',
+                          background: selectedDrink1 === d ? '#ecfeff' : '#f9fafb',
+                          color: selectedDrink1 === d ? '#0891b2' : '#374151',
                           fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'center', transition: 'all 0.15s'
                         }}>
-                          {selectedDrink === d ? '✓ ' : ''}{d}
+                          {selectedDrink1 === d ? '✓ ' : ''}{d}
                         </button>
                       ))}
                     </div>
                   </div>
                 )
               })()}
-
               {/* Gyro Pita Bread Section */}
               {(() => {
                 const cItemName = (customizingItem?.name || '').toLowerCase()
