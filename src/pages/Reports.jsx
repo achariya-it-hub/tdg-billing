@@ -363,6 +363,126 @@ export default function Reports() {
           </div>
         )
 
+      case 'payment-report':
+        return (
+          <div>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '60px 0', color: '#6b7280' }}>Loading...</div>
+            ) : !paymentReport ? (
+              <div style={{ textAlign: 'center', padding: '60px 0', color: '#6b7280' }}>
+                No payment data available for this date range.
+              </div>
+            ) : (
+              <>
+                {/* Summary Cards */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '20px' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', padding: '20px', textAlign: 'center' }}>
+                    <DollarSign size={22} color="#10b981" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '26px', fontWeight: 700, color: '#10b981' }}>₹{(paymentReport.summary?.totalRevenue || 0).toLocaleString()}</div>
+                    <div style={{ fontSize: '12px', color: '#166534', fontWeight: 600 }}>Total Collected Revenue</div>
+                  </div>
+
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', padding: '20px', textAlign: 'center' }}>
+                    <Wallet size={22} color="#2563eb" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '26px', fontWeight: 700, color: '#2563eb' }}>₹{(paymentReport.summary?.cashTotal || 0).toLocaleString()}</div>
+                    <div style={{ fontSize: '12px', color: '#1e40af', fontWeight: 600 }}>Cash Sales ({paymentReport.summary?.cashCount || 0} bills)</div>
+                  </div>
+
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', padding: '20px', textAlign: 'center' }}>
+                    <Tag size={22} color="#8b5cf6" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '26px', fontWeight: 700, color: '#8b5cf6' }}>₹{(paymentReport.summary?.upiTotal || 0).toLocaleString()}</div>
+                    <div style={{ fontSize: '12px', color: '#5b21b6', fontWeight: 600 }}>UPI / QR Sales ({paymentReport.summary?.upiCount || 0} bills)</div>
+                  </div>
+
+                  <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', padding: '20px', textAlign: 'center' }}>
+                    <Award size={22} color="#f59e0b" style={{ marginBottom: '8px' }} />
+                    <div style={{ fontSize: '26px', fontWeight: 700, color: '#f59e0b' }}>₹{(paymentReport.summary?.cardTotal || 0).toLocaleString()}</div>
+                    <div style={{ fontSize: '12px', color: '#92400e', fontWeight: 600 }}>Card Sales ({paymentReport.summary?.cardCount || 0} bills)</div>
+                  </div>
+                </div>
+
+                {/* Mode Breakdown Table */}
+                <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#1a1a2e', marginBottom: '12px' }}>Payment Mode Summary</h4>
+                <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', overflow: 'hidden', marginBottom: '24px' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
+                        <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Payment Mode</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Orders Count</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Total Amount (₹)</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280', width: '160px' }}>Share %</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(paymentReport.breakdown || []).map((row, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                          <td style={{ padding: '12px 16px', fontWeight: 700, color: '#1a1a2e', fontSize: '14px' }}>{row.mode}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 700, color: '#2563eb', fontSize: '14px' }}>{row.count}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 800, color: '#10b981', fontSize: '14.5px' }}>₹{row.amount.toLocaleString()}</td>
+                          <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <div style={{ flex: 1, height: '6px', background: '#f3f4f6', borderRadius: '3px', overflow: 'hidden' }}>
+                                <div style={{ height: '100%', width: `${Math.min(row.pct || 0, 100)}%`, background: '#10b981', borderRadius: '3px' }} />
+                              </div>
+                              <span style={{ fontSize: '11px', fontWeight: 700, color: '#374151', minWidth: '36px' }}>{row.pct}%</span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Detailed Transactions List */}
+                <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#1a1a2e', marginBottom: '12px' }}>Transactions Breakdown</h4>
+                <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', overflow: 'hidden' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
+                        <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Order #</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Customer</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Type</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Payment Mode</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Amount (₹)</th>
+                        <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Date & Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(paymentReport.orders || []).map((ord, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                          <td style={{ padding: '12px 16px', fontWeight: 800, color: '#1a1a2e', fontSize: '13.5px' }}>#{ord.orderNumber}</td>
+                          <td style={{ padding: '12px 16px', fontSize: '13px', color: '#374151' }}>
+                            <div style={{ fontWeight: 600 }}>{ord.customerName}</div>
+                            {ord.customerPhone && <div style={{ fontSize: '11px', color: '#6b7280' }}>{ord.customerPhone}</div>}
+                          </td>
+                          <td style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px', textTransform: 'uppercase' }}>
+                            <span style={{ background: '#f3f4f6', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>{ord.type}</span>
+                          </td>
+                          <td style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12.5px' }}>
+                            <span style={{
+                              background: ord.complimentary ? '#fef2f2' : '#ecfdf5',
+                              color: ord.complimentary ? '#dc2626' : '#047857',
+                              padding: '4px 12px', borderRadius: '14px', fontWeight: 700, textTransform: 'uppercase'
+                            }}>
+                              {ord.paymentMethod}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 800, color: ord.complimentary ? '#dc2626' : '#10b981', fontSize: '14px' }}>
+                            ₹{ord.amount.toLocaleString()}
+                          </td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontSize: '12px', color: '#6b7280' }}>
+                            {new Date(ord.createdAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true })}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
+          </div>
+        )
+
       case 'daily-closing': {
         const displayClosing = closing || {
           date: 'Today',

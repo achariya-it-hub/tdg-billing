@@ -9542,6 +9542,103 @@ app.put('/api/settings', (req, res) => {
   res.json({ success: true, settings })
 })
 
+// Payment Breakdown Report API
+app.get('/api/reports/payment-report', (req, res) => {
+  try {
+    const { from, to } = req.query
+    let filteredOrders = orders.filter(o => o.status !== 'cancelled' && !o.voided)
+
+    if (from || to) {
+      filteredOrders = filteredOrders.filter(o => {
+        if (!o.createdAt) return false
+        const orderDateStr = new Date(o.createdAt).toLocaleString('sv-SE', { timeZone: 'Asia/Kolkata' }).slice(0, 10)
+        if (from && orderDateStr < from) return false
+        if (to && orderDateStr > to) return false
+        return true
+      })
+    }
+
+    let cashTotal = 0, cashCount = 0
+    let upiTotal = 0, upiCount = 0
+    let cardTotal = 0, cardCount = 0
+    let splitTotal = 0, splitCount = 0
+    let complimentaryTotal = 0, complimentaryCount = 0
+    let otherTotal = 0, otherCount = 0
+
+    const orderList = []
+
+    filteredOrders.forEach(o => {
+      const isComp = !!o.complimentary || (o.paymentMethod || '').toLowerCase() === 'complimentary'
+      const amt = isComp ? 0 : Number(o.total || o.grandTotal || 0)
+      const method = (o.paymentMethod || 'cash').toLowerCase()
+
+      if (isComp) {
+        complimentaryTotal += Number(o.total || o.grandTotal || 0)
+        complimentaryCount++
+      } else if (method === 'split' || o.splitPayments) {
+        splitTotal += amt
+        splitCount++
+        if (o.splitPayments) {
+          cashTotal += Number(o.splitPayments.cash || 0)
+          upiTotal += Number(o.splitPayments.upi || 0)
+          cardTotal += Number(o.splitPayments.card || 0)
+        }
+      } else if (method === 'cash') {
+        cashTotal += amt
+        cashCount++
+      } else if (method === 'upi' || method === 'qr') {
+        upiTotal += amt
+        upiCount++
+      } else if (method === 'card') {
+        cardTotal += amt
+        cardCount++
+      } else {
+        otherTotal += amt
+        otherCount++
+      }
+
+      orderList.push({
+        id: o.id,
+        orderNumber: o.orderNumber || o.id,
+        customerName: o.customerName || 'Walk-in Guest',
+        customerPhone: o.customerPhone || '',
+        type: o.type || 'dine-in',
+        paymentMethod: isComp ? 'complimentary' : method,
+        splitPayments: o.splitPayments || null,
+        amount: isComp ? Number(o.total || o.grandTotal || 0) : amt,
+        complimentary: isComp,
+        createdAt: o.createdAt
+      })
+    })
+
+    const grandTotal = cashTotal + upiTotal + cardTotal + otherTotal
+
+    res.json({
+      summary: {
+        totalRevenue: grandTotal,
+        totalOrders: filteredOrders.length,
+        cashTotal, cashCount,
+        upiTotal, upiCount,
+        cardTotal, cardCount,
+        splitTotal, splitCount,
+        complimentaryTotal, complimentaryCount,
+        otherTotal, otherCount
+      },
+      breakdown: [
+        { mode: 'Cash', count: cashCount, amount: cashTotal, pct: grandTotal > 0 ? Number((cashTotal / grandTotal * 100).toFixed(1)) : 0 },
+        { mode: 'UPI / QR', count: upiCount, amount: upiTotal, pct: grandTotal > 0 ? Number((upiTotal / grandTotal * 100).toFixed(1)) : 0 },
+        { mode: 'Card', count: cardCount, amount: cardTotal, pct: grandTotal > 0 ? Number((cardTotal / grandTotal * 100).toFixed(1)) : 0 },
+        { mode: 'Split Payments', count: splitCount, amount: splitTotal, pct: grandTotal > 0 ? Number((splitTotal / grandTotal * 100).toFixed(1)) : 0 },
+        { mode: 'Complimentary / Non-Chargeable', count: complimentaryCount, amount: complimentaryTotal, pct: 0 }
+      ],
+      orders: orderList
+    })
+  } catch (e) {
+    console.error('Payment report error:', e)
+    res.status(500).json({ error: 'Failed to generate payment report: ' + e.message })
+  }
+})
+
 // --- CCAVENUE PAYMENT GATEWAY INTEGRATION ---
 
 function encryptCCAvenue(plainText, workingKey) {
