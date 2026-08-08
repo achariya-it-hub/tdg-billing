@@ -225,6 +225,7 @@ export default function App() {
               <Route path="/users" element={<Users />} />
               <Route path="/expenses" element={<Expenses />} />
               <Route path="/accounts" element={<Accounts />} />
+              <Route path="/table-qr" element={<TableQRGenerator />} />
               <Route path="/settings" element={<Settings />} />
             </Route>
           </Route>
