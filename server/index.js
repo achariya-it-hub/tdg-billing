@@ -13508,6 +13508,54 @@ app.get('/api/reports/offer-sales', (req, res) => {
   })
 })
 
+// Helper to resolve an ordered item's category name accurately
+function resolveItemCategory(item) {
+  if (!item) return 'General'
+
+  // 1. Direct valid category property on item
+  if (item.category && item.category !== 'General' && item.category !== 'Other' && item.category !== 'UNCATEGORIZED') {
+    return item.category
+  }
+  if (item.categoryName && item.categoryName !== 'General' && item.categoryName !== 'Other') {
+    return item.categoryName
+  }
+
+  // 2. Direct categoryId on item matching master categories array
+  if (item.categoryId) {
+    const cat = (categories || []).find(c => String(c.id) === String(item.categoryId))
+    if (cat && cat.name) return cat.name
+  }
+
+  // 3. Match against master menuItems array by ID or Name
+  const itemName = (item.menuItemName || item.name || '').trim().toLowerCase()
+  const itemId = String(item.menuItemId || item.id || '')
+
+  const masterItem = (menuItems || []).find(m => 
+    (itemId && String(m.id) === itemId) || 
+    (itemName && m.name && m.name.trim().toLowerCase() === itemName)
+  )
+
+  if (masterItem) {
+    if (masterItem.categoryName && masterItem.categoryName !== 'General') return masterItem.categoryName
+    if (masterItem.category && masterItem.category !== 'General') return masterItem.category
+    if (masterItem.categoryId) {
+      const cat = (categories || []).find(c => String(c.id) === String(masterItem.categoryId))
+      if (cat && cat.name) return cat.name
+    }
+  }
+
+  // 4. Name-based keyword heuristics fallback for legacy/customized combos
+  if (itemName.includes('gyro') || itemName.includes('feast')) return 'Gyros & Combos'
+  if (itemName.includes('burger')) return 'Burgers'
+  if (itemName.includes('wings') || itemName.includes('strips') || itemName.includes('leg') || itemName.includes('thigh')) return 'Wings & Strips'
+  if (itemName.includes('fries')) return 'Fries & Sides'
+  if (itemName.includes('salad')) return 'Salads'
+  if (itemName.includes('shake') || itemName.includes('brownie') || itemName.includes('cake') || itemName.includes('chocolate')) return 'Desserts & Shakes'
+  if (itemName.includes('pepsi') || itemName.includes('coca') || itemName.includes('sprite') || itemName.includes('chai') || itemName.includes('beverage')) return 'Beverages'
+
+  return 'General'
+}
+
 // ============ ITEMWISE SALES REPORT ============
 app.get('/api/reports/itemwise-sales', (req, res) => {
   const periodOrders = getCompletedSales(req.query)
@@ -13520,7 +13568,7 @@ app.get('/api/reports/itemwise-sales', (req, res) => {
     const items = o.items || []
     items.forEach(i => {
       const name = i.menuItemName || i.name || 'Unspecified Item'
-      const category = i.category || 'General'
+      const category = resolveItemCategory(i)
       const qty = Number(i.quantity || i.qty || 1)
       const unitPrice = Number(i.unitPrice || i.price || 0)
       const totalPrice = Number(i.totalPrice || unitPrice * qty)
@@ -13537,6 +13585,8 @@ app.get('/api/reports/itemwise-sales', (req, res) => {
           totalRevenue: 0,
           orderCount: 0
         }
+      } else if (itemMap[name].category === 'General' && category !== 'General') {
+        itemMap[name].category = category
       }
       itemMap[name].totalQty += qty
       itemMap[name].totalRevenue += totalPrice
@@ -13571,7 +13621,7 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
   periodOrders.forEach(o => {
     const items = o.items || []
     items.forEach(i => {
-      const category = i.category || 'General'
+      const category = resolveItemCategory(i)
       const qty = Number(i.quantity || i.qty || 1)
       const unitPrice = Number(i.unitPrice || i.price || 0)
       const totalPrice = Number(i.totalPrice || unitPrice * qty)
