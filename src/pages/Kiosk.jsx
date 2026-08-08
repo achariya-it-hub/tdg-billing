@@ -58,8 +58,9 @@ export default function Kiosk() {
   const [processing, setProcessing] = useState(false)
   const [orderSuccess, setOrderSuccess] = useState(false)
 
-  // Full Gyro & Combo Customizer State
+  // Single & Dual Gyro Customizer State
   const [selectedProtein, setSelectedProtein] = useState('Chicken')
+  const [selectedGyroFlavor, setSelectedGyroFlavor] = useState('Spicy')
   const [selectedBread, setSelectedBread] = useState('Baked')
   const [selectedSpread, setSelectedSpread] = useState('Tzatziki')
   const [selectedSauces, setSelectedSauces] = useState(['Garlic Mayo'])
@@ -135,8 +136,9 @@ export default function Kiosk() {
     if (!item || item.isAvailable === false) return
     if (isCustomizable(item)) {
       setCustomizingItem(item)
-      setSelectedBread('Baked')
       setSelectedProtein('Chicken')
+      setSelectedGyroFlavor('Spicy')
+      setSelectedBread('Baked')
       setSelectedSpread('Tzatziki')
       setSelectedSauces(['Garlic Mayo'])
       setSelectedVeggies(['Lettuce', 'Onion'])
@@ -218,12 +220,14 @@ export default function Kiosk() {
     } else {
       customization = {
         ...(hasGyro ? {
+          protein: selectedProtein,
+          flavor: selectedGyroFlavor,
           bread: selectedBread,
           spread: selectedSpread,
           sauces: selectedSauces.join(', ') || 'None',
           veggies: selectedVeggies.join(', ') || 'None'
         } : {}),
-        ...((hasGyro || hasRice) ? { protein: selectedProtein } : {}),
+        ...(!hasGyro && hasRice ? { protein: selectedProtein } : {}),
         ...(drinkSummary ? { drink: drinkSummary } : {}),
         ...(dipSummary ? { dips: dipSummary } : {}),
         notes: gyroNotes
@@ -499,7 +503,7 @@ export default function Kiosk() {
         </div>
       </header>
 
-      {/* Main 3D Food Cards Grid */}
+      {/* Main Food Cards Grid */}
       <main style={{ maxWidth: '1200px', margin: '20px auto', padding: '0 14px' }}>
         {filteredItems.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '50px 20px', color: '#a0a0a0' }}>
@@ -534,25 +538,25 @@ export default function Kiosk() {
                     boxShadow: '0 8px 20px rgba(0,0,0,0.3)'
                   }}
                 >
-                  {/* Image Header Container */}
-                  <div style={{ position: 'relative', height: '140px', width: '100%', overflow: 'hidden', background: '#18191c' }}>
+                  {/* Image Header Container (Fitted Full Image) */}
+                  <div style={{ position: 'relative', height: '115px', width: '100%', overflow: 'hidden', background: '#18191c', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <img
                       src={imgUrl}
                       alt={item.name}
                       style={{
-                        width: '100%', height: '100%', objectFit: 'cover'
+                        width: '100%', height: '100%', objectFit: 'contain', padding: '4px', boxSizing: 'border-box'
                       }}
                     />
                     
-                    {/* Dark gradient overlay */}
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 50%, rgba(24,25,28,0.85) 100%)' }} />
+                    {/* Dark subtle gradient overlay */}
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 60%, rgba(24,25,28,0.7) 100%)', pointerEvents: 'none' }} />
 
                     {/* Veg/Non-Veg Badge */}
                     <div style={{
-                      position: 'absolute', top: '8px', left: '8px',
-                      background: 'rgba(24,25,28,0.85)', backdropFilter: 'blur(8px)',
-                      padding: '3px 8px', borderRadius: '10px',
-                      display: 'flex', alignItems: 'center', gap: '4px', fontSize: '10px', fontWeight: 900,
+                      position: 'absolute', top: '6px', left: '6px',
+                      background: 'rgba(24,25,28,0.9)', backdropFilter: 'blur(8px)',
+                      padding: '3px 7px', borderRadius: '8px',
+                      display: 'flex', alignItems: 'center', gap: '4px', fontSize: '9.5px', fontWeight: 900,
                       color: isVeg ? '#4ade80' : '#f87171', border: `1px solid ${isVeg ? 'rgba(74,222,128,0.3)' : 'rgba(248,113,113,0.3)'}`
                     }}>
                       <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: isVeg ? '#22c55e' : '#ef4444' }} />
@@ -562,10 +566,10 @@ export default function Kiosk() {
                     {/* Customizable Badge */}
                     {isCustom && (
                       <div style={{
-                        position: 'absolute', top: '8px', right: '8px',
+                        position: 'absolute', top: '6px', right: '6px',
                         background: 'linear-gradient(135deg, #e63946, #c1121f)',
-                        color: 'white', padding: '3px 8px', borderRadius: '10px',
-                        fontSize: '9.5px', fontWeight: 900, boxShadow: '0 2px 6px rgba(230,57,70,0.4)',
+                        color: 'white', padding: '3px 7px', borderRadius: '8px',
+                        fontSize: '9px', fontWeight: 900, boxShadow: '0 2px 6px rgba(230,57,70,0.4)',
                         display: 'flex', alignItems: 'center', gap: '3px'
                       }}>
                         <Sparkles size={10} /> CUSTOM
@@ -574,22 +578,22 @@ export default function Kiosk() {
                   </div>
 
                   {/* Body Content */}
-                  <div style={{ padding: '12px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div style={{ padding: '10px 12px 12px 12px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
-                      <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#ffffff', marginBottom: '4px', lineHeight: 1.3 }}>
+                      <h4 style={{ fontSize: '13.5px', fontWeight: 800, color: '#ffffff', marginBottom: '4px', lineHeight: 1.3 }}>
                         {item.name}
                       </h4>
                       {item.description && (
-                        <p style={{ fontSize: '11px', color: '#a0a0a0', margin: '0 0 8px 0', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        <p style={{ fontSize: '10.5px', color: '#a0a0a0', margin: '0 0 6px 0', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                           {item.description}
                         </p>
                       )}
                     </div>
 
                     {/* Price and Action Counter */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px', paddingTop: '8px', borderTop: '1px rgba(255,255,255,0.08) solid' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '6px', paddingTop: '6px', borderTop: '1px rgba(255,255,255,0.08) solid' }}>
                       <div>
-                        <div style={{ fontSize: '17px', fontWeight: 900, color: '#ffd100' }}>
+                        <div style={{ fontSize: '16px', fontWeight: 900, color: '#ffd100' }}>
                           ₹{item.price}
                         </div>
                       </div>
@@ -597,30 +601,30 @@ export default function Kiosk() {
                       {qty > 0 ? (
                         <div style={{
                           display: 'flex', alignItems: 'center', gap: '6px',
-                          background: '#2a2b2e', borderRadius: '10px', padding: '3px 6px',
+                          background: '#2a2b2e', borderRadius: '8px', padding: '2px 5px',
                           border: '1px solid rgba(255,209,0,0.3)'
                         }}>
                           <button
                             onClick={() => updateQuantity(item.id, -1)}
-                            style={{ width: '26px', height: '26px', borderRadius: '6px', background: '#e63946', border: 'none', color: 'white', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            style={{ width: '24px', height: '24px', borderRadius: '5px', background: '#e63946', border: 'none', color: 'white', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                           >
-                            <Minus size={12} />
+                            <Minus size={11} />
                           </button>
-                          <span style={{ fontWeight: 900, fontSize: '13px', minWidth: '16px', textAlign: 'center', color: '#ffffff' }}>{qty}</span>
+                          <span style={{ fontWeight: 900, fontSize: '12.5px', minWidth: '14px', textAlign: 'center', color: '#ffffff' }}>{qty}</span>
                           <button
                             onClick={() => isCustom ? handleItemClick(item) : addToCartDirect(item)}
-                            style={{ width: '26px', height: '26px', borderRadius: '6px', background: '#ffd100', border: 'none', color: '#18191c', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            style={{ width: '24px', height: '24px', borderRadius: '5px', background: '#ffd100', border: 'none', color: '#18191c', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                           >
-                            <Plus size={12} />
+                            <Plus size={11} />
                           </button>
                         </div>
                       ) : (
                         <button
                           onClick={() => handleItemClick(item)}
                           style={{
-                            padding: '6px 14px', borderRadius: '10px', border: 'none',
+                            padding: '5px 12px', borderRadius: '8px', border: 'none',
                             background: isCustom ? 'linear-gradient(135deg, #e63946, #c1121f)' : '#ffd100',
-                            color: isCustom ? '#ffffff' : '#18191c', fontWeight: 900, fontSize: '12px', cursor: 'pointer',
+                            color: isCustom ? '#ffffff' : '#18191c', fontWeight: 900, fontSize: '11.5px', cursor: 'pointer',
                             boxShadow: '0 3px 10px rgba(0,0,0,0.2)', transition: 'all 0.2s'
                           }}
                         >
@@ -685,7 +689,7 @@ export default function Kiosk() {
       <Modal isOpen={showCartDrawer} onClose={() => setShowCartDrawer(false)} title="🛒 Your Cart Items" size="lg">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '75vh', overflowY: 'auto' }}>
           
-          {/* Cart Items List with Delete Action */}
+          {/* Cart Items List */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {cart.map((item, idx) => (
               <div key={idx} style={{
@@ -701,6 +705,7 @@ export default function Kiosk() {
                       {item.customization.gyro1 && <div>• {item.customization.gyro1}</div>}
                       {item.customization.gyro2 && <div>• {item.customization.gyro2}</div>}
                       {item.customization.protein && <div>• Protein: {item.customization.protein}</div>}
+                      {item.customization.flavor && <div>• Flavor: {item.customization.flavor}</div>}
                       {item.customization.bread && <div>• Bread: {item.customization.bread}</div>}
                       {item.customization.spread && <div>• Spread: {item.customization.spread}</div>}
                       {item.customization.sauces && <div>• Sauces: {item.customization.sauces}</div>}
@@ -898,295 +903,303 @@ export default function Kiosk() {
         </div>
       </Modal>
 
-      {/* FULL Customizer Modal (Complete Gyro & Combo Options) */}
+      {/* FULL Customizer Modal (POS-Matching Steps & Sticky Fully-Visible Action Button) */}
       <Modal isOpen={!!customizingItem} onClose={() => setCustomizingItem(null)} title={`Customize ${customizingItem?.name || 'Item'}`} size="lg">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '75vh', overflowY: 'auto' }}>
-          
-          {/* Dual Gyro Combos Customizer */}
-          {isDualGyroCombo(customizingItem) ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {/* Gyro 1 */}
-              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', border: '1.5px solid #e2e8f0' }}>
-                <div style={{ fontSize: '13px', fontWeight: 900, color: '#e63946', marginBottom: '8px' }}>GYRO 1 CUSTOMIZATION</div>
-                <div style={{ marginBottom: '8px' }}>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Protein</label>
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    {['Chicken', 'Paneer'].map(p => (
-                      <button key={p} onClick={() => setSelectedGyro1Protein(p)} style={{
-                        flex: 1, padding: '8px', borderRadius: '8px',
-                        border: selectedGyro1Protein === p ? '2px solid #e63946' : '1px solid #cbd5e1',
-                        background: selectedGyro1Protein === p ? '#fff5f5' : '#ffffff',
-                        color: selectedGyro1Protein === p ? '#e63946' : '#334155', fontWeight: 800, fontSize: '12px', cursor: 'pointer'
-                      }}>{p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}</button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Flavor</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
-                    {['Spicy', 'Creamy', 'BBQ', 'Signature'].map(f => (
-                      <button key={f} onClick={() => setSelectedGyro1Flavor(f)} style={{
-                        padding: '6px', borderRadius: '8px',
-                        border: selectedGyro1Flavor === f ? '2px solid #e63946' : '1px solid #cbd5e1',
-                        background: selectedGyro1Flavor === f ? '#e63946' : '#ffffff',
-                        color: selectedGyro1Flavor === f ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
-                      }}>{f}</button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Gyro 2 */}
-              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', border: '1.5px solid #e2e8f0' }}>
-                <div style={{ fontSize: '13px', fontWeight: 900, color: '#2563eb', marginBottom: '8px' }}>GYRO 2 CUSTOMIZATION</div>
-                <div style={{ marginBottom: '8px' }}>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Protein</label>
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    {['Chicken', 'Paneer'].map(p => (
-                      <button key={p} onClick={() => setSelectedGyro2Protein(p)} style={{
-                        flex: 1, padding: '8px', borderRadius: '8px',
-                        border: selectedGyro2Protein === p ? '2px solid #2563eb' : '1px solid #cbd5e1',
-                        background: selectedGyro2Protein === p ? '#eff6ff' : '#ffffff',
-                        color: selectedGyro2Protein === p ? '#1e40af' : '#334155', fontWeight: 800, fontSize: '12px', cursor: 'pointer'
-                      }}>{p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}</button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Flavor</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
-                    {['Spicy', 'Creamy', 'BBQ', 'Signature'].map(f => (
-                      <button key={f} onClick={() => setSelectedGyro2Flavor(f)} style={{
-                        padding: '6px', borderRadius: '8px',
-                        border: selectedGyro2Flavor === f ? '2px solid #2563eb' : '1px solid #cbd5e1',
-                        background: selectedGyro2Flavor === f ? '#2563eb' : '#ffffff',
-                        color: selectedGyro2Flavor === f ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
-                      }}>{f}</button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Regular Drinks Selection */}
-              {(() => {
-                const dCount = getMealDrinkCount(customizingItem?.name)
-                if (dCount <= 0) return null
-                const drinksArr = [
-                  { label: '1st Drink', val: selectedDrink1, set: setSelectedDrink1 },
-                  { label: '2nd Drink', val: selectedDrink2, set: setSelectedDrink2 },
-                  { label: '3rd Drink', val: selectedDrink3, set: setSelectedDrink3 },
-                  { label: '4th Drink', val: selectedDrink4, set: setSelectedDrink4 },
-                  { label: '5th Drink', val: selectedDrink5, set: setSelectedDrink5 }
-                ].slice(0, dCount)
-
-                return (
-                  <div style={{ background: '#f0fdf4', padding: '12px', borderRadius: '12px', border: '1.5px solid #bbf7d0' }}>
-                    <div style={{ fontSize: '12.5px', fontWeight: 900, color: '#15803d', marginBottom: '8px' }}>
-                      🥤 CHOOSE YOUR {dCount} REGULAR DRINK{dCount > 1 ? 'S' : ''}
-                    </div>
-                    {drinksArr.map((dItem, idx) => (
-                      <div key={idx} style={{ marginBottom: idx === drinksArr.length - 1 ? 0 : '8px' }}>
-                        <div style={{ fontSize: '11px', fontWeight: 700, color: '#166534', marginBottom: '4px' }}>{idx + 1}. {dItem.label}</div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-                          {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
-                            <button key={d} onClick={() => dItem.set(d)} style={{
-                              padding: '6px', borderRadius: '6px',
-                              border: dItem.val === d ? '2px solid #16a34a' : '1px solid #cbd5e1',
-                              background: dItem.val === d ? '#16a34a' : '#ffffff',
-                              color: dItem.val === d ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '10.5px', cursor: 'pointer'
-                            }}>{dItem.val === d ? '✓ ' : ''}{d}</button>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )
-              })()}
-
-              {/* Dips Selection */}
-              {(() => {
-                const dipCount = getMealDipCount(customizingItem?.name)
-                if (dipCount <= 0) return null
-                const dipsArr = [
-                  { label: '1st Dip', val: selectedDip1, set: setSelectedDip1 },
-                  { label: '2nd Dip', val: selectedDip2, set: setSelectedDip2 },
-                  { label: '3rd Dip', val: selectedDip3, set: setSelectedDip3 }
-                ].slice(0, dipCount)
-
-                return (
-                  <div style={{ background: '#fff7ed', padding: '12px', borderRadius: '12px', border: '1.5px solid #fed7aa' }}>
-                    <div style={{ fontSize: '12.5px', fontWeight: 900, color: '#c2410c', marginBottom: '8px' }}>
-                      🧄 CHOOSE YOUR {dipCount} DIPS
-                    </div>
-                    {dipsArr.map((dItem, idx) => (
-                      <div key={idx} style={{ marginBottom: idx === dipsArr.length - 1 ? 0 : '8px' }}>
-                        <div style={{ fontSize: '11px', fontWeight: 700, color: '#9a3412', marginBottom: '4px' }}>{idx + 1}. {dItem.label}</div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-                          {['Garlic Mayo Dip', 'Spicy Mayo Dip', 'Tzatziki Dip', 'Peri Peri Dip', 'Jalapeno Cheese Dip', 'Turkish Chili Dip'].map(dp => (
-                            <button key={dp} onClick={() => dItem.set(dp)} style={{
-                              padding: '6px', borderRadius: '6px',
-                              border: dItem.val === dp ? '2px solid #ea580c' : '1px solid #cbd5e1',
-                              background: dItem.val === dp ? '#ea580c' : '#ffffff',
-                              color: dItem.val === dp ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '10.5px', cursor: 'pointer'
-                            }}>{dItem.val === dp ? '✓ ' : ''}{dp}</button>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )
-              })()}
-            </div>
-          ) : (
-            /* COMPLETE SINGLE GYRO CUSTOMIZER (Protein, Bread, Spread, Sauces, Veggies, Notes) */
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {/* 1. Protein Choice */}
-              <div>
-                <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
-                  1. Choose Protein *
-                </label>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  {['Chicken', 'Paneer'].map(p => (
-                    <button key={p} onClick={() => setSelectedProtein(p)} style={{
-                      flex: 1, padding: '10px', borderRadius: '10px',
-                      border: selectedProtein === p ? '2px solid #e63946' : '1px solid #cbd5e1',
-                      background: selectedProtein === p ? '#fff5f5' : '#ffffff',
-                      color: selectedProtein === p ? '#e63946' : '#334155', fontWeight: 800, fontSize: '13px', cursor: 'pointer'
-                    }}>{p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}</button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 2. Pita Bread */}
-              <div>
-                <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
-                  2. Choose Pita Bread *
-                </label>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  {['Baked', 'Fried'].map(b => (
-                    <button key={b} onClick={() => setSelectedBread(b)} style={{
-                      flex: 1, padding: '10px', borderRadius: '10px',
-                      border: selectedBread === b ? '2px solid #2563eb' : '1px solid #cbd5e1',
-                      background: selectedBread === b ? '#eff6ff' : '#ffffff',
-                      color: selectedBread === b ? '#1e40af' : '#334155', fontWeight: 800, fontSize: '12.5px', cursor: 'pointer'
-                    }}>{b === 'Baked' ? 'Baked Pita' : 'Fried Pita'}</button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 3. Signature Spread */}
-              <div>
-                <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
-                  3. Choose Signature Spread *
-                </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
-                  {['Hummus', 'Cheese', 'Tzatziki', 'Ricotta'].map(s => (
-                    <button key={s} onClick={() => setSelectedSpread(s)} style={{
-                      padding: '8px 4px', borderRadius: '8px',
-                      border: selectedSpread === s ? '2px solid #059669' : '1px solid #cbd5e1',
-                      background: selectedSpread === s ? '#ecfdf5' : '#ffffff',
-                      color: selectedSpread === s ? '#047857' : '#334155', fontWeight: 800, fontSize: '11.5px', cursor: 'pointer', textAlign: 'center'
-                    }}>{selectedSpread === s ? '✓ ' : ''}{s}</button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 4. Sauces (Select Multiple) */}
-              <div>
-                <div style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span>4. Choose Sauces (Select Multiple)</span>
-                  <span style={{ fontSize: '10px', background: '#fee2e2', color: '#dc2626', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>MULTI</span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-                  {['Turkish Chili', 'Jalapeno Cheese', 'Garlic Mayo', 'Spicy Mayo', 'Peri Peri', 'Honey Mustard', 'Tzatziki'].map(sauce => {
-                    const isSel = selectedSauces.includes(sauce)
-                    return (
-                      <button key={sauce} onClick={() => {
-                        if (isSel) setSelectedSauces(selectedSauces.filter(x => x !== sauce))
-                        else setSelectedSauces([...selectedSauces, sauce])
-                      }} style={{
-                        padding: '8px 4px', borderRadius: '8px',
-                        border: isSel ? '2px solid #e63946' : '1px solid #cbd5e1',
-                        background: isSel ? '#e63946' : '#ffffff',
-                        color: isSel ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center'
-                      }}>{isSel ? '✓ ' : ''}{sauce}</button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* 5. Fresh Veggies & Toppings (Select Multiple) */}
-              <div>
-                <div style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span>5. Fresh Veggies & Toppings (Select Multiple)</span>
-                  <span style={{ fontSize: '10px', background: '#ecfdf5', color: '#047857', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>MULTI</span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
-                  {['Lettuce', 'Onion', 'Jalapeno', 'Olive', 'Capsicum', 'Tomato', 'Cucumber', 'Beans'].map(veg => {
-                    const isSel = selectedVeggies.includes(veg)
-                    return (
-                      <button key={veg} onClick={() => {
-                        if (isSel) setSelectedVeggies(selectedVeggies.filter(x => x !== veg))
-                        else setSelectedVeggies([...selectedVeggies, veg])
-                      }} style={{
-                        padding: '6px 4px', borderRadius: '8px',
-                        border: isSel ? '2px solid #10b981' : '1px solid #cbd5e1',
-                        background: isSel ? '#10b981' : '#ffffff',
-                        color: isSel ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center'
-                      }}>{isSel ? '✓ ' : ''}{veg}</button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Drink Choice Section */}
-              {(() => {
-                const dCount = getMealDrinkCount(customizingItem?.name)
-                if (dCount <= 0) return null
-                return (
-                  <div>
-                    <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>🥤 Choose Drink / Beverage</label>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-                      {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
-                        <button key={d} onClick={() => setSelectedDrink1(d)} style={{
-                          padding: '8px', borderRadius: '8px',
-                          border: selectedDrink1 === d ? '2px solid #06b6d4' : '1px solid #cbd5e1',
-                          background: selectedDrink1 === d ? '#ecfeff' : '#ffffff',
-                          color: selectedDrink1 === d ? '#0891b2' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
-                        }}>{selectedDrink1 === d ? '✓ ' : ''}{d}</button>
+        <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '75vh', position: 'relative' }}>
+          <div style={{ overflowY: 'auto', flex: 1, paddingRight: '4px', paddingBottom: '12px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            
+            {/* Dual Gyro Combos Customizer */}
+            {isDualGyroCombo(customizingItem) ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {/* Gyro 1 */}
+                <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', border: '1.5px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 900, color: '#e63946', marginBottom: '8px' }}>GYRO 1 CUSTOMIZATION</div>
+                  <div style={{ marginBottom: '8px' }}>
+                    <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Protein</label>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      {['Chicken', 'Paneer'].map(p => (
+                        <button key={p} onClick={() => setSelectedGyro1Protein(p)} style={{
+                          flex: 1, padding: '8px', borderRadius: '8px',
+                          border: selectedGyro1Protein === p ? '2px solid #e63946' : '1px solid #cbd5e1',
+                          background: selectedGyro1Protein === p ? '#fff5f5' : '#ffffff',
+                          color: selectedGyro1Protein === p ? '#e63946' : '#334155', fontWeight: 800, fontSize: '12px', cursor: 'pointer'
+                        }}>{p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}</button>
                       ))}
                     </div>
                   </div>
-                )
-              })()}
 
-              {/* Special Cooking Notes */}
-              <div>
-                <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '4px' }}>📝 Special Cooking Notes (Optional)</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Extra sauce, no onions..."
-                  value={gyroNotes}
-                  onChange={(e) => setGyroNotes(e.target.value)}
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12.5px', outline: 'none', boxSizing: 'border-box' }}
-                />
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Flavor / Style</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                      {['Spicy', 'Creamy', 'BBQ', 'Signature'].map(f => (
+                        <button key={f} onClick={() => setSelectedGyro1Flavor(f)} style={{
+                          padding: '6px', borderRadius: '8px',
+                          border: selectedGyro1Flavor === f ? '2px solid #e63946' : '1px solid #cbd5e1',
+                          background: selectedGyro1Flavor === f ? '#e63946' : '#ffffff',
+                          color: selectedGyro1Flavor === f ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
+                        }}>{f}</button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Gyro 2 */}
+                <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', border: '1.5px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 900, color: '#2563eb', marginBottom: '8px' }}>GYRO 2 CUSTOMIZATION</div>
+                  <div style={{ marginBottom: '8px' }}>
+                    <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Protein</label>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      {['Chicken', 'Paneer'].map(p => (
+                        <button key={p} onClick={() => setSelectedGyro2Protein(p)} style={{
+                          flex: 1, padding: '8px', borderRadius: '8px',
+                          border: selectedGyro2Protein === p ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                          background: selectedGyro2Protein === p ? '#eff6ff' : '#ffffff',
+                          color: selectedGyro2Protein === p ? '#1e40af' : '#334155', fontWeight: 800, fontSize: '12px', cursor: 'pointer'
+                        }}>{p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}</button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Flavor / Style</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                      {['Spicy', 'Creamy', 'BBQ', 'Signature'].map(f => (
+                        <button key={f} onClick={() => setSelectedGyro2Flavor(f)} style={{
+                          padding: '6px', borderRadius: '8px',
+                          border: selectedGyro2Flavor === f ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                          background: selectedGyro2Flavor === f ? '#2563eb' : '#ffffff',
+                          color: selectedGyro2Flavor === f ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
+                        }}>{f}</button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Regular Drinks Selection */}
+                {(() => {
+                  const dCount = getMealDrinkCount(customizingItem?.name)
+                  if (dCount <= 0) return null
+                  const drinksArr = [
+                    { label: '1st Drink', val: selectedDrink1, set: setSelectedDrink1 },
+                    { label: '2nd Drink', val: selectedDrink2, set: setSelectedDrink2 },
+                    { label: '3rd Drink', val: selectedDrink3, set: setSelectedDrink3 },
+                    { label: '4th Drink', val: selectedDrink4, set: setSelectedDrink4 },
+                    { label: '5th Drink', val: selectedDrink5, set: setSelectedDrink5 }
+                  ].slice(0, dCount)
+
+                  return (
+                    <div style={{ background: '#f0fdf4', padding: '12px', borderRadius: '12px', border: '1.5px solid #bbf7d0' }}>
+                      <div style={{ fontSize: '12.5px', fontWeight: 900, color: '#15803d', marginBottom: '8px' }}>
+                        🥤 CHOOSE YOUR {dCount} REGULAR DRINK{dCount > 1 ? 'S' : ''}
+                      </div>
+                      {drinksArr.map((dItem, idx) => (
+                        <div key={idx} style={{ marginBottom: idx === drinksArr.length - 1 ? 0 : '8px' }}>
+                          <div style={{ fontSize: '11px', fontWeight: 700, color: '#166534', marginBottom: '4px' }}>{idx + 1}. {dItem.label}</div>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                            {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
+                              <button key={d} onClick={() => dItem.set(d)} style={{
+                                padding: '6px', borderRadius: '6px',
+                                border: dItem.val === d ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                                background: dItem.val === d ? '#16a34a' : '#ffffff',
+                                color: dItem.val === d ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '10.5px', cursor: 'pointer'
+                              }}>{dItem.val === d ? '✓ ' : ''}{d}</button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                })()}
+
+                {/* Dips Selection */}
+                {(() => {
+                  const dipCount = getMealDipCount(customizingItem?.name)
+                  if (dipCount <= 0) return null
+                  const dipsArr = [
+                    { label: '1st Dip', val: selectedDip1, set: setSelectedDip1 },
+                    { label: '2nd Dip', val: selectedDip2, set: setSelectedDip2 },
+                    { label: '3rd Dip', val: selectedDip3, set: setSelectedDip3 }
+                  ].slice(0, dipCount)
+
+                  return (
+                    <div style={{ background: '#fff7ed', padding: '12px', borderRadius: '12px', border: '1.5px solid #fed7aa' }}>
+                      <div style={{ fontSize: '12.5px', fontWeight: 900, color: '#c2410c', marginBottom: '8px' }}>
+                        🧄 CHOOSE YOUR {dipCount} DIPS
+                      </div>
+                      {dipsArr.map((dItem, idx) => (
+                        <div key={idx} style={{ marginBottom: idx === dipsArr.length - 1 ? 0 : '8px' }}>
+                          <div style={{ fontSize: '11px', fontWeight: 700, color: '#9a3412', marginBottom: '4px' }}>{idx + 1}. {dItem.label}</div>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                            {['Garlic Mayo Dip', 'Spicy Mayo Dip', 'Tzatziki Dip', 'Peri Peri Dip', 'Jalapeno Cheese Dip', 'Turkish Chili Dip'].map(dp => (
+                              <button key={dp} onClick={() => dItem.set(dp)} style={{
+                                padding: '6px', borderRadius: '6px',
+                                border: dItem.val === dp ? '2px solid #ea580c' : '1px solid #cbd5e1',
+                                background: dItem.val === dp ? '#ea580c' : '#ffffff',
+                                color: dItem.val === dp ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '10.5px', cursor: 'pointer'
+                              }}>{dItem.val === dp ? '✓ ' : ''}{dp}</button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                })()}
               </div>
-            </div>
-          )}
+            ) : (
+              /* POS MATCHING GYRO CUSTOMIZER STEPS (1. Protein, 2. Flavor, 3. Bread, 4. Sauces, 5. Veggies) */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {/* 1. Choose Protein */}
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
+                    1. Choose Protein *
+                  </label>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {['Chicken', 'Paneer'].map(p => (
+                      <button key={p} onClick={() => setSelectedProtein(p)} style={{
+                        flex: 1, padding: '10px', borderRadius: '10px',
+                        border: selectedProtein === p ? '2px solid #e63946' : '1px solid #cbd5e1',
+                        background: selectedProtein === p ? '#fff5f5' : '#ffffff',
+                        color: selectedProtein === p ? '#e63946' : '#334155', fontWeight: 800, fontSize: '13px', cursor: 'pointer'
+                      }}>{p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}</button>
+                    ))}
+                  </div>
+                </div>
 
-          <button
-            onClick={confirmCustomization}
-            style={{
-              width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
-              background: 'linear-gradient(135deg, #ffd100, #ffcc00)',
-              color: '#18191c', fontWeight: 900, fontSize: '15px', cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(255,209,0,0.3)', marginTop: '6px'
-            }}
-          >
-            Add Customized Item to Cart 🛒
-          </button>
+                {/* 2. Flavor / Style */}
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
+                    2. Flavor / Style *
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                    {['Spicy', 'Creamy', 'BBQ', 'Signature'].map(f => (
+                      <button key={f} onClick={() => setSelectedGyroFlavor(f)} style={{
+                        padding: '8px 4px', borderRadius: '8px',
+                        border: selectedGyroFlavor === f ? '2px solid #e63946' : '1px solid #cbd5e1',
+                        background: selectedGyroFlavor === f ? '#e63946' : '#ffffff',
+                        color: selectedGyroFlavor === f ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11.5px', cursor: 'pointer', textAlign: 'center'
+                      }}>{selectedGyroFlavor === f ? '✓ ' : ''}{f}</button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Choose Pita Bread */}
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
+                    3. Choose Pita Bread *
+                  </label>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {['Baked', 'Fried'].map(b => (
+                      <button key={b} onClick={() => setSelectedBread(b)} style={{
+                        flex: 1, padding: '10px', borderRadius: '10px',
+                        border: selectedBread === b ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                        background: selectedBread === b ? '#eff6ff' : '#ffffff',
+                        color: selectedBread === b ? '#1e40af' : '#334155', fontWeight: 800, fontSize: '12.5px', cursor: 'pointer'
+                      }}>{b === 'Baked' ? 'Baked Pita' : 'Fried Pita'}</button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 4. Sauces (Select Multiple) */}
+                <div>
+                  <div style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>4. Choose Sauces (Select Multiple)</span>
+                    <span style={{ fontSize: '10px', background: '#fee2e2', color: '#dc2626', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>MULTI</span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                    {['Turkish Chili', 'Jalapeno Cheese', 'Garlic Mayo', 'Spicy Mayo', 'Peri Peri', 'Honey Mustard', 'Tzatziki'].map(sauce => {
+                      const isSel = selectedSauces.includes(sauce)
+                      return (
+                        <button key={sauce} onClick={() => {
+                          if (isSel) setSelectedSauces(selectedSauces.filter(x => x !== sauce))
+                          else setSelectedSauces([...selectedSauces, sauce])
+                        }} style={{
+                          padding: '8px 4px', borderRadius: '8px',
+                          border: isSel ? '2px solid #e63946' : '1px solid #cbd5e1',
+                          background: isSel ? '#e63946' : '#ffffff',
+                          color: isSel ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center'
+                        }}>{isSel ? '✓ ' : ''}{sauce}</button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* 5. Fresh Veggies & Toppings (Select Multiple) */}
+                <div>
+                  <div style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>5. Fresh Veggies & Toppings (Select Multiple)</span>
+                    <span style={{ fontSize: '10px', background: '#ecfdf5', color: '#047857', padding: '1px 6px', borderRadius: '4px', fontWeight: 800 }}>MULTI</span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                    {['Lettuce', 'Onion', 'Jalapeno', 'Olive', 'Capsicum', 'Tomato', 'Cucumber', 'Beans'].map(veg => {
+                      const isSel = selectedVeggies.includes(veg)
+                      return (
+                        <button key={veg} onClick={() => {
+                          if (isSel) setSelectedVeggies(selectedVeggies.filter(x => x !== veg))
+                          else setSelectedVeggies([...selectedVeggies, veg])
+                        }} style={{
+                          padding: '6px 4px', borderRadius: '8px',
+                          border: isSel ? '2px solid #10b981' : '1px solid #cbd5e1',
+                          background: isSel ? '#10b981' : '#ffffff',
+                          color: isSel ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center'
+                        }}>{isSel ? '✓ ' : ''}{veg}</button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Drink Choice Section */}
+                {(() => {
+                  const dCount = getMealDrinkCount(customizingItem?.name)
+                  if (dCount <= 0) return null
+                  return (
+                    <div>
+                      <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>🥤 Choose Drink / Beverage</label>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                        {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
+                          <button key={d} onClick={() => setSelectedDrink1(d)} style={{
+                            padding: '8px', borderRadius: '8px',
+                            border: selectedDrink1 === d ? '2px solid #06b6d4' : '1px solid #cbd5e1',
+                            background: selectedDrink1 === d ? '#ecfeff' : '#ffffff',
+                            color: selectedDrink1 === d ? '#0891b2' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
+                          }}>{selectedDrink1 === d ? '✓ ' : ''}{d}</button>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })()}
+
+                {/* Special Cooking Notes */}
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '4px' }}>📝 Special Cooking Notes (Optional)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Extra sauce, no onions..."
+                    value={gyroNotes}
+                    onChange={(e) => setGyroNotes(e.target.value)}
+                    style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12.5px', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Sticky Bottom Fully-Visible Action Button */}
+          <div style={{
+            position: 'sticky', bottom: 0, zIndex: 30, background: '#ffffff',
+            paddingTop: '10px', paddingBottom: '4px', borderTop: '1px solid #e2e8f0', marginTop: '4px'
+          }}>
+            <button
+              onClick={confirmCustomization}
+              style={{
+                width: '100%', padding: '14px', borderRadius: '12px', border: 'none',
+                background: 'linear-gradient(135deg, #ffd100, #ffcc00)',
+                color: '#18191c', fontWeight: 900, fontSize: '15px', cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(255,209,0,0.3)', display: 'block'
+              }}
+            >
+              Add Customized Item to Cart 🛒
+            </button>
+          </div>
         </div>
       </Modal>
     </div>
