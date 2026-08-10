@@ -12753,13 +12753,16 @@ function calculateSalesMetrics(salesOrders = []) {
     const amt = getOrderAmount(o)
     netSalesCollected += amt
 
-    const rawSub = Number(o.rawSubtotal || o.subtotal) || (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
+    const rawSub = Number(o.rawSubtotal) || (Number(o.subtotal) + (Number(o.discount) || 0)) || Number(o.subtotal) || 0
+    const { discount: disc, name: dName } = getOrderDiscountInfo(o)
+    const netSub = Number(o.subtotal) || Math.max(0, rawSub - disc)
+
     grossMenuSubtotal += rawSub
 
-    const tax = o.tax !== undefined && o.tax !== null ? Number(o.tax) : Math.round(rawSub * 0.05)
+    // GST Tax (5%) is calculated strictly on Net Subtotal (discounted offer price)
+    const tax = o.tax !== undefined && o.tax !== null ? Number(o.tax) : Math.round(netSub * 0.05)
     totalTaxGST += tax
 
-    const { discount: disc, name: dName } = getOrderDiscountInfo(o)
     if (disc > 0) {
       totalDiscountGiven += disc
       if (!byDiscountType[dName]) {
