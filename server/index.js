@@ -9370,6 +9370,160 @@ app.post(['/api/auth/verify-otp', '/api/assets/verify-otp', '/api/auth/reset-pas
   }
 })
 
+// ============ CASHFREE PAYMENT GATEWAY ENGINE ============
+
+// 1. Get Cashfree Config for Client App
+app.get('/api/cashfree/config', (req, res) => {
+  const cfConfig = settings?.cashfree || {}
+  const appId = cfConfig.appId || process.env.CASHFREE_APP_ID || ''
+  const env = cfConfig.environment || process.env.CASHFREE_ENV || 'TEST'
+  const isEnabled = cfConfig.isEnabled !== false
+
+  res.json({
+    enabled: isEnabled,
+    environment: env,
+    appId: appId ? `${appId.slice(0, 6)}...` : '',
+    hasCredentials: Boolean(appId)
+  })
+})
+
+// 2. Create Cashfree Payment Order (PG API v3)
+app.post('/api/cashfree/create-order', async (req, res) => {
+  try {
+    const { amount, orderId, customerName, customerPhone, customerEmail } = req.body
+    if (!amount || amount <= 0) return res.status(400).json({ error: 'Valid payment amount is required' })
+
+    const cfConfig = settings?.cashfree || {}
+    const appId = cfConfig.appId || process.env.CASHFREE_APP_ID || ''
+    const secretKey = cfConfig.secretKey || process.env.CASHFREE_SECRET_KEY || ''
+    const env = (cfConfig.environment || process.env.CASHFREE_ENV || 'TEST').toUpperCase()
+
+    const cleanPhone = String(customerPhone || '9876543210').replace(/\D/g, '')
+    const formattedPhone = cleanPhone.length === 10 ? cleanPhone : '9876543210'
+    const generatedOrderId = orderId || `order_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
+    const baseUrl = env === 'PRODUCTION' ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg'
+
+    if (appId && secretKey && cfConfig.isEnabled !== false) {
+      const payload = {
+        order_id: generatedOrderId,
+        order_amount: Number(Number(amount).toFixed(2)),
+        order_currency: 'INR',
+        customer_details: {
+          customer_id: `cust_${cleanPhone.slice(-6)}`,
+          customer_name: customerName || 'TDG Guest',
+          customer_email: customerEmail || 'guest@tendengyros.com',
+          customer_phone: formattedPhone
+        },
+        order_meta: {
+          return_url: `https://pos.tendengyros.com/api/cashfree/callback?order_id=${generatedOrderId}`
+        }
+      }
+
+      const response = await fetch(`${baseUrl}/orders`, {
+        method: 'POST',
+        headers: {
+          'x-client-id': appId,
+          'x-client-secret': secretKey,
+          'x-api-version': '2023-08-01',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+
+      const data = await response.json()
+      console.log(`[CASHFREE ORDER CREATED] OrderID: ${generatedOrderId}, Status: ${response.status}, Session:`, data.payment_session_id)
+
+      if (response.ok && data.payment_session_id) {
+        return res.json({
+          success: true,
+          paymentSessionId: data.payment_session_id,
+          orderId: data.order_id,
+          cfOrderId: data.cf_order_id,
+          environment: env
+        })
+      } else {
+        console.error('[CASHFREE API ERROR]', data)
+        return res.status(400).json({ error: data.message || 'Cashfree payment session creation failed', details: data })
+      }
+    } else {
+      // Dev Simulation / Sandbox Mode when live keys are pending
+      console.log(`[CASHFREE DEV SIMULATION] OrderID: ${generatedOrderId}, Amount: ₹${amount}`)
+      return res.json({
+        success: true,
+        paymentSessionId: `session_sim_${Date.now()}`,
+        orderId: generatedOrderId,
+        environment: 'SIMULATION',
+        message: 'Cashfree payment session created in simulation mode (Add Cashfree API credentials in Admin Settings to process real payments).'
+      })
+    }
+  } catch (err) {
+    console.error('[CASHFREE CREATE ORDER ERROR]', err)
+    res.status(500).json({ error: 'Cashfree payment initialization failed: ' + err.message })
+  }
+})
+
+// 3. Verify Cashfree Payment Status
+app.post(['/api/cashfree/verify-payment', '/api/cashfree/verify'], async (req, res) => {
+  try {
+    const { orderId } = req.body
+    if (!orderId) return res.status(400).json({ error: 'orderId is required' })
+
+    const cfConfig = settings?.cashfree || {}
+    const appId = cfConfig.appId || process.env.CASHFREE_APP_ID || ''
+    const secretKey = cfConfig.secretKey || process.env.CASHFREE_SECRET_KEY || ''
+    const env = (cfConfig.environment || process.env.CASHFREE_ENV || 'TEST').toUpperCase()
+    const baseUrl = env === 'PRODUCTION' ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg'
+
+    if (appId && secretKey) {
+      const response = await fetch(`${baseUrl}/orders/${orderId}`, {
+        method: 'GET',
+        headers: {
+          'x-client-id': appId,
+          'x-client-secret': secretKey,
+          'x-api-version': '2023-08-01'
+        }
+      })
+      const data = await response.json()
+      console.log(`[CASHFREE VERIFY] OrderID: ${orderId}, Status:`, data.order_status)
+
+      const isPaid = data.order_status === 'PAID'
+      if (isPaid) {
+        const order = orders.find(o => o.orderNumber === orderId || o.id === orderId)
+        if (order) {
+          order.paymentStatus = 'paid'
+          order.status = 'completed'
+          order.paidAt = new Date().toISOString()
+          saveState()
+        }
+      }
+
+      return res.json({
+        success: isPaid,
+        orderStatus: data.order_status,
+        orderId: data.order_id,
+        amount: data.order_amount
+      })
+    } else {
+      return res.json({
+        success: true,
+        orderStatus: 'PAID',
+        orderId,
+        environment: 'SIMULATION'
+      })
+    }
+  } catch (err) {
+    console.error('[CASHFREE VERIFY ERROR]', err)
+    res.status(500).json({ error: 'Cashfree verification failed: ' + err.message })
+  }
+})
+
+// 4. Cashfree Callback Handler
+app.all('/api/cashfree/callback', (req, res) => {
+  const orderId = req.query.order_id || req.body?.order_id || ''
+  console.log('[CASHFREE CALLBACK RECEIVED] OrderID:', orderId)
+  res.redirect(`https://pos.tendengyros.com/?payment=success&order_id=${orderId}`)
+})
+
 // ============ BILLING CUSTOMER / ASSET MANAGEMENT ============
 
 // Create a mobile app customer from billing app
