@@ -12822,16 +12822,19 @@ const getOrderDiscountInfo = (o) => {
   let name = o.discountName || o.offerName || ''
 
   if (disc === 0) {
-    const dStr = getOrderDate(o)
-    const net = Number(o.total) || 0
-    const rawSub = o.rawSubtotal || (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
-
-    if (dStr === '2026-07-27' || o.inaugurationOffer) {
-      disc = net > 0 ? Math.round(net * 0.5) : Math.round(rawSub * 0.5)
+    const rawSub = Number(o.rawSubtotal) || (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
+    if (o.inaugurationOffer) {
+      disc = Math.round(rawSub * 0.5)
       name = 'Inauguration Offer 50% OFF'
-    } else if ((dStr >= '2026-07-30' && dStr <= '2026-08-02') || o.specialOffer20) {
-      disc = net > 0 ? Math.round(net * 0.25) : Math.round(rawSub * 0.2)
+    } else if (o.specialOffer20) {
+      disc = Math.round(rawSub * 0.2)
       name = 'Special Campaign 20% OFF'
+    } else if (o.vip50 || o.customerDiscountPct === 50) {
+      disc = Math.round(rawSub * 0.5)
+      name = 'VIP 50% OFF'
+    } else if (Number(o.customerDiscountPct) > 0) {
+      disc = Math.round(rawSub * (Number(o.customerDiscountPct) / 100))
+      name = `Customer ${o.customerDiscountPct}% OFF`
     }
   }
 
@@ -12839,7 +12842,7 @@ const getOrderDiscountInfo = (o) => {
     name = o.inaugurationOffer ? 'Inauguration Offer 50% OFF' : (o.specialOffer20 ? 'Special Campaign 20% OFF' : 'Discount Given')
   }
 
-  return { discount: Math.round(disc), name: name || 'Discount' }
+  return { discount: Math.max(0, Math.round(disc)), name: name || 'Discount' }
 }
 
 function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
