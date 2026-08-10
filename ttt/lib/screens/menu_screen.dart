@@ -67,7 +67,9 @@ class _MenuScreenState extends State<MenuScreen> {
           grouped[cat]!.add({
             'name': item['name'] ?? '',
             'desc': item['desc'] ?? '',
-            'price': '₹${item['price']}',
+            'price': '₹${item['price'] ?? item['rate'] ?? 0}',
+            'image': item['image'] ?? item['imageUrl'] ?? '',
+            'rate': item['price'] ?? item['rate'] ?? 0,
           });
         }
 
@@ -277,7 +279,9 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   Widget _buildMenuItem(Map<String, dynamic> item) {
-    final String imagePath = _getAssetImagePath(item['name'] ?? '', _selectedCategory);
+    final String serverImage = item['image'] ?? item['imageUrl'] ?? '';
+    final String fallbackAsset = _getAssetImagePath(item['name'] ?? '', _selectedCategory);
+    final bool hasServerImage = serverImage.isNotEmpty && (serverImage.startsWith('http://') || serverImage.startsWith('https://'));
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -289,7 +293,7 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
       child: Row(
         children: [
-          // Food image
+          // Food image (Live POS image with asset fallback)
           Container(
             width: 90,
             height: 90,
@@ -298,10 +302,16 @@ class _MenuScreenState extends State<MenuScreen> {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
-              ),
+              child: hasServerImage
+                  ? Image.network(
+                      serverImage,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Image.asset(fallbackAsset, fit: BoxFit.cover),
+                    )
+                  : Image.asset(
+                      fallbackAsset,
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
           SizedBox(width: 12),

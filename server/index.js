@@ -10565,21 +10565,32 @@ app.get('/api/cashfree/return', (req, res) => {
   res.redirect(`${req.protocol}://${req.get('host')}/billing?payment=success&order_id=${order_id || ''}`)
 })
 
-// Menu (mobile format)
+// Menu (mobile format - live POS rates and images)
 app.get('/api/menu', (req, res) => {
-  // Build from existing categories + menuItems dynamically so POS updates are reflected
+  const host = req.get('host') || 'pos.tendengyros.com'
+  const protocol = req.protocol || 'https'
+  const baseUrl = `${protocol}://${host}`
+
   res.json({
-    categories: categories.map(c => c.name),
-    items: menuItems.map(item => ({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      desc: item.description || '',
-      category: categories.find(c => c.id === item.categoryId)?.name || 'Other',
-      tag: item.isAvailable ? 'Popular' : '',
-      image: item.image || null,
-      isAvailable: item.isAvailable !== false
-    }))
+    categories: (categories || []).map(c => c.name),
+    items: (menuItems || []).map(item => {
+      let img = item.image || item.imageUrl || ''
+      if (img && img.startsWith('/')) {
+        img = `${baseUrl}${img}`
+      }
+      return {
+        id: item.id,
+        name: item.name,
+        price: Number(item.price || 0),
+        rate: Number(item.price || 0),
+        desc: item.description || '',
+        category: (categories || []).find(c => c.id === item.categoryId)?.name || 'Other',
+        tag: item.isAvailable ? 'Popular' : '',
+        image: img,
+        imageUrl: img,
+        isAvailable: item.isAvailable !== false
+      }
+    })
   })
 })
 
