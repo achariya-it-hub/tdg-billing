@@ -12702,6 +12702,23 @@ const getOrderAmount = (o) => {
   return Math.round(subtotal + tax)
 }
 
+function isDemoOrderBeforeOpening(o) {
+  if (!o) return false
+  const dStr = getOrderDate(o)
+  if (dStr === '2026-07-27') {
+    const ts = o.createdAt || o.paidAt || o.completedAt || ''
+    if (ts) {
+      try {
+        const dateObj = new Date(ts)
+        const istTimeStr = dateObj.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' })
+        const hour = parseInt(istTimeStr.split(':')[0], 10)
+        if (hour < 12) return true // Exclude demo bills raised before 12:00 PM Noon IST on July 27
+      } catch (e) {}
+    }
+  }
+  return false
+}
+
 const isCompletedSale = (o) => {
   if (!o) return false
   const s = (o.status || '').toLowerCase()
@@ -12713,6 +12730,9 @@ const isCompletedSale = (o) => {
     return false
   }
   if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') {
+    return false
+  }
+  if (isDemoOrderBeforeOpening(o)) {
     return false
   }
 
