@@ -132,10 +132,16 @@ class ReferralScreen extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'How it Works?',
+                      'Referral & Loyalty Benefits',
                       style: GoogleFonts.outfit(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  _buildRuleRow('🎁 Referred Friend 1st Visit:', '20% OFF'),
+                  _buildRuleRow('🔁 Referred Friend Repeat Visits:', '10% OFF'),
+                  _buildRuleRow('💰 Your Referrer Commission:', '5% Wallet Cashback'),
+                  _buildRuleRow('⭐ Primary Member Initial Discount:', '30% OFF'),
+                  _buildRuleRow('🚀 Partner Level Target:', '₹5,000 Spend'),
                   const SizedBox(height: 18),
 
                   // Horizontal Steps Section
@@ -143,9 +149,9 @@ class ReferralScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildStepItem(Icons.edit_note_rounded, 'Share', 'your code'),
-                      _buildStepItem(Icons.shopping_bag_outlined, 'Friend Orders', 'using your code'),
-                      _buildStepItem(Icons.workspace_premium_rounded, 'You Earn', 'Exciting Rewards'),
+                      _buildStepItem(Icons.edit_note_rounded, 'Share Link', 'your code'),
+                      _buildStepItem(Icons.shopping_bag_outlined, 'Friend Orders', '20% 1st / 10% repeat'),
+                      _buildStepItem(Icons.workspace_premium_rounded, 'Earn 5%', 'Wallet Points'),
                     ],
                   ),
                 ],
@@ -177,6 +183,19 @@ class ReferralScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildRuleRow(String label, String val) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: GoogleFonts.outfit(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w500)),
+          Text(val, style: GoogleFonts.outfit(color: TDGColors.gold, fontSize: 11, fontWeight: FontWeight.w800)),
+        ],
       ),
     );
   }
