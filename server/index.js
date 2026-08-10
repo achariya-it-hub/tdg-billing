@@ -167,27 +167,27 @@ function writeDb(data = {}) {
       ...data,
       orders: typeof orders !== 'undefined' && orders.length > 0 ? orders : (data.orders && data.orders.length > 0 ? data.orders : (diskDb.orders || [])),
       loyaltyUsers: typeof loyaltyUsers !== 'undefined' ? loyaltyUsers : (data.loyaltyUsers || diskDb.loyaltyUsers || []),
-      dens: typeof dens !== 'undefined' && dens.length > 0 ? dens : (data.dens || diskDb.dens || []),
-      pointTransactions: typeof pointTransactions !== 'undefined' && pointTransactions.length > 0 ? pointTransactions : (data.pointTransactions || diskDb.pointTransactions || []),
-      inventory: typeof inventory !== 'undefined' && inventory.length > 0 ? inventory : (data.inventory && data.inventory.length > 0 ? data.inventory : (diskDb.inventory || [])),
+      dens: typeof dens !== 'undefined' ? dens : (data.dens || diskDb.dens || []),
+      pointTransactions: typeof pointTransactions !== 'undefined' ? pointTransactions : (data.pointTransactions || diskDb.pointTransactions || []),
+      inventory: typeof inventory !== 'undefined' ? inventory : (data.inventory || diskDb.inventory || []),
       orderNumber: Math.max(typeof orderNumber !== 'undefined' ? (orderNumber || 0) : 0, data.orderNumber || 0, diskDb.orderNumber || 0),
       usedReferralCodes: typeof usedReferralCodes !== 'undefined' ? [...usedReferralCodes] : (data.usedReferralCodes || diskDb.usedReferralCodes || []),
-      expenses: typeof expenses !== 'undefined' && expenses.length > 0 ? expenses : (data.expenses && data.expenses.length > 0 ? data.expenses : (diskDb.expenses || [])),
-      purchases: typeof purchases !== 'undefined' && purchases.length > 0 ? purchases : (data.purchases && data.purchases.length > 0 ? data.purchases : (diskDb.purchases || [])),
-      onlineOrders: typeof onlineOrders !== 'undefined' && onlineOrders.length > 0 ? onlineOrders : (data.onlineOrders && data.onlineOrders.length > 0 ? data.onlineOrders : (diskDb.onlineOrders || [])),
-      aggregators: typeof aggregators !== 'undefined' && aggregators.length > 0 ? aggregators : (data.aggregators || diskDb.aggregators || []),
-      billingUsers: typeof billingUsers !== 'undefined' && billingUsers.length > 0 ? billingUsers : (data.billingUsers && data.billingUsers.length > 0 ? data.billingUsers : (diskDb.billingUsers || [])),
-      categories: typeof categories !== 'undefined' && categories.length > 0 ? categories : (data.categories && data.categories.length > 0 ? data.categories : (diskDb.categories || [])),
-      menuItems: typeof menuItems !== 'undefined' && menuItems.length > 0 ? menuItems : (data.menuItems && data.menuItems.length > 0 ? data.menuItems : (diskDb.menuItems || [])),
-      recipes: typeof recipes !== 'undefined' && recipes.length > 0 ? recipes : (data.recipes && data.recipes.length > 0 ? data.recipes : (diskDb.recipes || [])),
-      users: typeof mobileAppUsers !== 'undefined' && mobileAppUsers.length > 0 ? mobileAppUsers : (data.users && data.users.length > 0 ? data.users : (diskDb.users || [])),
-      suppliers: typeof suppliers !== 'undefined' && suppliers.length > 0 ? suppliers : (data.suppliers && data.suppliers.length > 0 ? data.suppliers : (diskDb.suppliers || [])),
-      purchaseOrders: typeof purchaseOrders !== 'undefined' && purchaseOrders.length > 0 ? purchaseOrders : (data.purchaseOrders && data.purchaseOrders.length > 0 ? data.purchaseOrders : (diskDb.purchaseOrders || [])),
-      poItems: typeof poItems !== 'undefined' && poItems.length > 0 ? poItems : (data.poItems && data.poItems.length > 0 ? data.poItems : (diskDb.poItems || [])),
-      grns: typeof grns !== 'undefined' && grns.length > 0 ? grns : (data.grns && data.grns.length > 0 ? data.grns : (diskDb.grns || [])),
-      vendorPayments: typeof vendorPayments !== 'undefined' && vendorPayments.length > 0 ? vendorPayments : (data.vendorPayments && data.vendorPayments.length > 0 ? data.vendorPayments : (diskDb.vendorPayments || [])),
-      employees: typeof employees !== 'undefined' && employees.length > 0 ? employees : (data.employees && data.employees.length > 0 ? data.employees : (diskDb.employees || [])),
-      staffAuditLogs: typeof staffAuditLogs !== 'undefined' && staffAuditLogs.length > 0 ? staffAuditLogs : (data.staffAuditLogs || diskDb.staffAuditLogs || []),
+      expenses: typeof expenses !== 'undefined' ? expenses : (data.expenses || diskDb.expenses || []),
+      purchases: typeof purchases !== 'undefined' ? purchases : (data.purchases || diskDb.purchases || []),
+      onlineOrders: typeof onlineOrders !== 'undefined' ? onlineOrders : (data.onlineOrders || diskDb.onlineOrders || []),
+      aggregators: typeof aggregators !== 'undefined' ? aggregators : (data.aggregators || diskDb.aggregators || []),
+      billingUsers: typeof billingUsers !== 'undefined' ? billingUsers : (data.billingUsers || diskDb.billingUsers || []),
+      categories: typeof categories !== 'undefined' ? categories : (data.categories || diskDb.categories || []),
+      menuItems: typeof menuItems !== 'undefined' ? menuItems : (data.menuItems || diskDb.menuItems || []),
+      recipes: typeof recipes !== 'undefined' ? recipes : (data.recipes || diskDb.recipes || []),
+      users: typeof mobileAppUsers !== 'undefined' ? mobileAppUsers : (data.users || diskDb.users || []),
+      suppliers: typeof suppliers !== 'undefined' ? suppliers : (data.suppliers || diskDb.suppliers || []),
+      purchaseOrders: typeof purchaseOrders !== 'undefined' ? purchaseOrders : (data.purchaseOrders || diskDb.purchaseOrders || []),
+      poItems: typeof poItems !== 'undefined' ? poItems : (data.poItems || diskDb.poItems || []),
+      grns: typeof grns !== 'undefined' ? grns : (data.grns || diskDb.grns || []),
+      vendorPayments: typeof vendorPayments !== 'undefined' ? vendorPayments : (data.vendorPayments || diskDb.vendorPayments || []),
+      employees: typeof employees !== 'undefined' ? employees : (data.employees || diskDb.employees || []),
+      staffAuditLogs: typeof staffAuditLogs !== 'undefined' ? staffAuditLogs : (data.staffAuditLogs || diskDb.staffAuditLogs || []),
       staffPromotionSettings: typeof staffPromotionSettings !== 'undefined' ? staffPromotionSettings : (data.staffPromotionSettings || diskDb.staffPromotionSettings || {}),
       settings: typeof settings !== 'undefined' ? settings : (data.settings || diskDb.settings || {})
     }
@@ -433,51 +433,19 @@ function syncSalesVault(currentOrders) {
 
 function syncMenuVault(curCategories, curMenuItems, curRecipes) {
   try {
-    let vaultData = { categories: [], menuItems: [], recipes: [] }
+    const finalCategories = Array.isArray(curCategories) && curCategories.length > 0 ? curCategories : (categories || [])
+    const finalMenuItems = Array.isArray(curMenuItems) && curMenuItems.length > 0 ? curMenuItems : (menuItems || [])
+    const finalRecipes = Array.isArray(curRecipes) && curRecipes.length > 0 ? curRecipes : (recipes || [])
 
-    // 1. Primary lock: check frozen_menu_LOCK.json
-    if (existsSync(FROZEN_MENU_PATH)) {
-      try {
-        const frozenContent = readFileSync(FROZEN_MENU_PATH, 'utf-8').trim()
-        if (frozenContent) {
-          const parsedFrozen = JSON.parse(frozenContent)
-          if (parsedFrozen && Array.isArray(parsedFrozen.menuItems) && parsedFrozen.menuItems.length > 0) {
-            console.log('[MENU FREEZE LOCK] Loaded frozen menu with', parsedFrozen.menuItems.length, 'items and', parsedFrozen.categories?.length || 0, 'categories.')
-            vaultData = parsedFrozen
-          }
-        }
-      } catch (fe) {
-        console.error('[MENU FREEZE ERROR]', fe.message)
-      }
+    const finalVault = {
+      categories: finalCategories,
+      menuItems: finalMenuItems,
+      recipes: finalRecipes,
+      updatedAt: new Date().toISOString()
     }
 
-    if (!vaultData.menuItems || vaultData.menuItems.length === 0) {
-      if (existsSync(MENU_VAULT_PATH)) {
-        const content = readFileSync(MENU_VAULT_PATH, 'utf-8').trim()
-        if (content) {
-          try { vaultData = JSON.parse(content) } catch (e) {}
-        }
-      }
-    }
-
-    const catMap = new Map()
-    ;(vaultData.categories || []).forEach(c => { if (c && c.id) catMap.set(c.id, c) })
-    ;(curCategories || []).forEach(c => { if (c && c.id) catMap.set(c.id, c) })
-    const mergedCategories = Array.from(catMap.values())
-
-    const menuMap = new Map()
-    ;(vaultData.menuItems || []).forEach(m => { if (m && (m.id || m.name)) menuMap.set(m.id || m.name, m) })
-    ;(curMenuItems || []).forEach(m => { if (m && (m.id || m.name)) menuMap.set(m.id || m.name, m) })
-    const mergedMenuItems = Array.from(menuMap.values())
-
-    const recipeMap = new Map()
-    ;(vaultData.recipes || []).forEach(r => { if (r && (r.id || r.menuItemId)) recipeMap.set(r.id || r.menuItemId, r) })
-    ;(curRecipes || []).forEach(r => { if (r && (r.id || r.menuItemId)) recipeMap.set(r.id || r.menuItemId, r) })
-    const mergedRecipes = Array.from(recipeMap.values())
-
-    const finalVault = { categories: mergedCategories, menuItems: mergedMenuItems, recipes: mergedRecipes, frozenAt: vaultData.frozenAt || new Date().toISOString() }
-    writeFileSync(MENU_VAULT_PATH, JSON.stringify(finalVault, null, 2))
-    if (!existsSync(FROZEN_MENU_PATH)) {
+    if (finalVault.menuItems.length > 0 || finalVault.categories.length > 0) {
+      writeFileSync(MENU_VAULT_PATH, JSON.stringify(finalVault, null, 2))
       writeFileSync(FROZEN_MENU_PATH, JSON.stringify(finalVault, null, 2))
     }
     return finalVault
