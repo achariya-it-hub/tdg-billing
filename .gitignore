@@ -35,3 +35,5 @@ ttt/linux/
 ttt/macos/
 ttt/windows/
 ttt/web/
+*.apk
+build/
