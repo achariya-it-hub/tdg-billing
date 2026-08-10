@@ -8924,22 +8924,62 @@ app.get('/api/customers/check-discount', (req, res) => {
   const user = allUsers.find(u => u && (String(u.phone || '').replace(/\D/g, '') === phone || String(u.phone || '').replace(/\D/g, '').endsWith(phone)))
 
   if (user) {
-    if (user.offerRedeemed) {
-      return res.json({
-        found: true,
-        hasDiscount: false,
-        discountPct: 0,
-        offerRedeemed: true,
-        customerName: user.name || 'Customer'
-      })
+    // Past completed sales for visit & spend tracking
+    const userOrders = (orders || []).filter(o => o && isValidSalesOrder(o) && (String(o.customerPhone || '').replace(/\D/g, '') === phone))
+    const visitCount = user.visitCount !== undefined ? Number(user.visitCount) : userOrders.length
+    const totalSpend = userOrders.reduce((sum, o) => sum + Number(o.total || 0), 0)
+
+    // Gamification Partner Level Upgrade: Cumulative spend >= ₹5,000 upgrades to Partner
+    if (totalSpend >= 5000 && user.tier !== 'Partner') {
+      user.tier = 'Partner'
+      saveState()
     }
-    const discountPct = Number(user.discountPct) || (user.tier && user.tier.includes('50%') ? 50 : 0)
+
+    let discountPct = Number(user.discountPct) || 0
+    let discountReason = 'Customer Discount'
+
+    // Rule 1: Staff 50% Discount (Achariya Direct Reimbursement Log)
+    if (user.isStaff || (user.tier && user.tier.toLowerCase().includes('staff'))) {
+      discountPct = 50
+      discountReason = 'Achariya Staff 50% OFF'
+    }
+    // Rule 2: Primary User (30% Initial Discount)
+    else if (user.isPrimaryUser || user.type === 'primary' || (user.tier && user.tier.includes('30%'))) {
+      discountPct = 30
+      discountReason = 'Primary User 30% OFF'
+    }
+    // Rule 3: Tiered Discount Structure for Referred Guests
+    else if (user.isReferred || user.referredBy || user.referralCodeUsed || (user.tier && user.tier.toLowerCase().includes('referred'))) {
+      if (visitCount === 0) {
+        discountPct = 20 // 1st Visit: 20% OFF
+        discountReason = 'Referred Guest 1st Visit 20% OFF'
+      } else {
+        discountPct = 10 // Repeat Visits: 10% OFF on every subsequent visit
+        discountReason = 'Referred Guest Repeat Visit 10% OFF'
+      }
+    }
+    // Rule 4: Fallback explicit VIP 50% OFF
+    else if (!discountPct && user.tier && user.tier.includes('50%')) {
+      discountPct = 50
+      discountReason = 'VIP 50% OFF'
+    }
+
+    const referredCount = user.referredFriendsCount || (Array.isArray(user.referredFriends) ? user.referredFriends.length : 0)
+    const isQualifiedAsset = referredCount >= 10 // Network threshold: 10 friends required
+
     return res.json({
       found: true,
       hasDiscount: discountPct > 0,
-      discountPct: discountPct,
+      discountPct,
+      discountReason,
       customerName: user.name || user.customerName || 'Customer',
       phone: user.phone || phone,
+      tier: user.tier || 'Asset',
+      visitCount,
+      totalSpend,
+      walletBalance: Number(user.walletBalance || user.rubyPoints || 0),
+      referredFriendsCount: referredCount,
+      isQualifiedAsset,
       offerRedeemed: false
     })
   }
@@ -9019,6 +9059,142 @@ app.post('/api/customers/clear-all', (req, res) => {
   writeDb(db)
   saveState()
   res.json({ success: true, message: 'All customers removed successfully' })
+})
+
+// ============ MOBILE APP & LOYALTY ENGINE ENDPOINTS ============
+
+// 1. Mobile App Customer Profile
+app.get('/api/mobile/profile/:phone', (req, res) => {
+  const phone = String(req.params.phone || '').replace(/\D/g, '')
+  if (!phone || phone.length < 8) return res.status(400).json({ error: 'Valid phone required' })
+
+  const db = readDb()
+  const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
+  let user = allUsers.find(u => u && (String(u.phone || '').replace(/\D/g, '') === phone || String(u.phone || '').replace(/\D/g, '').endsWith(phone)))
+
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' })
+  }
+
+  const userOrders = (orders || []).filter(o => o && isValidSalesOrder(o) && (String(o.customerPhone || '').replace(/\D/g, '') === phone))
+  const visitCount = user.visitCount !== undefined ? Number(user.visitCount) : userOrders.length
+  const totalSpend = userOrders.reduce((sum, o) => sum + Number(o.total || 0), 0)
+
+  // Find referred friends
+  const referredFriends = allUsers.filter(u => u && String(u.referredBy || u.referrerPhone || '').replace(/\D/g, '') === phone)
+
+  res.json({
+    id: user.id,
+    name: user.name || 'Customer',
+    phone: user.phone || phone,
+    email: user.email || '',
+    tier: user.tier || (totalSpend >= 5000 ? 'Partner' : 'Asset'),
+    isPrimaryUser: Boolean(user.isPrimaryUser || user.type === 'primary'),
+    isReferred: Boolean(user.isReferred || user.referredBy),
+    visitCount,
+    totalSpend,
+    walletBalance: Number(user.walletBalance || user.rubyPoints || 0),
+    referralCode: user.referralCode || `TDG${phone.slice(-4)}`,
+    referredFriendsCount: referredFriends.length,
+    isQualifiedAsset: referredFriends.length >= 10,
+    referredFriendsList: referredFriends.map(f => ({
+      name: f.name || 'Friend',
+      phone: f.phone || '',
+      joinedAt: f.createdAt || '',
+      visitCount: f.visitCount || 0
+    }))
+  })
+})
+
+// 2. Register Referred Customer or Primary Customer
+app.post('/api/mobile/register', (req, res) => {
+  const { name, phone, email, referralCode, isPrimary } = req.body
+  const cleanPhone = String(phone || '').replace(/\D/g, '')
+  if (!cleanPhone || cleanPhone.length < 8) return res.status(400).json({ error: 'Valid phone number required' })
+
+  const db = readDb()
+  const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
+  let existing = allUsers.find(u => u && String(u.phone || '').replace(/\D/g, '') === cleanPhone)
+
+  if (existing) {
+    return res.json({ success: true, message: 'User already exists', user: existing })
+  }
+
+  // Find referrer by referral code or phone
+  let referrer = null
+  if (referralCode) {
+    const codeClean = String(referralCode).trim().toUpperCase()
+    referrer = allUsers.find(u => u && (String(u.referralCode || '').toUpperCase() === codeClean || String(u.phone || '').endsWith(codeClean.slice(-4))))
+  }
+
+  const now = new Date().toISOString()
+  const newUser = {
+    id: 'lu_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+    name: name || 'New Customer',
+    phone: cleanPhone,
+    email: email || '',
+    rubyPoints: 0,
+    walletBalance: 0,
+    visitCount: 0,
+    totalSpend: 0,
+    referralCode: `TDG${cleanPhone.slice(-4)}`,
+    isPrimaryUser: Boolean(isPrimary),
+    isReferred: Boolean(referrer),
+    referredBy: referrer ? referrer.phone : null,
+    tier: isPrimary ? 'Primary Member (30% OFF)' : (referrer ? 'Referred Guest (20% 1st Visit)' : 'Bronze'),
+    discountPct: isPrimary ? 30 : (referrer ? 20 : 0),
+    createdAt: now
+  }
+
+  if (referrer) {
+    if (!referrer.referredFriends) referrer.referredFriends = []
+    referrer.referredFriends.push(newUser.phone)
+    referrer.referredFriendsCount = (referrer.referredFriendsCount || 0) + 1
+  }
+
+  loyaltyUsers.push(newUser)
+  saveState()
+
+  res.status(201).json({ success: true, message: 'User registered successfully', user: newUser })
+})
+
+// 3. Point & Wallet Redemption (Allows redeeming 20%-50% of bill total)
+app.post('/api/mobile/redeem-points', (req, res) => {
+  const { phone, billTotal, pointsToRedeem } = req.body
+  const cleanP = String(phone || '').replace(/\D/g, '')
+  if (!cleanP || !billTotal) return res.status(400).json({ error: 'phone and billTotal required' })
+
+  const db = readDb()
+  const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
+  const user = allUsers.find(u => u && String(u.phone || '').replace(/\D/g, '') === cleanP)
+
+  if (!user) return res.status(404).json({ error: 'User not found' })
+
+  const availablePoints = Number(user.walletBalance || user.rubyPoints || 0)
+  if (availablePoints <= 0) return res.status(400).json({ error: 'No wallet points available' })
+
+  const maxRedeemableAmount = Math.round(Number(billTotal) * 0.50)
+  const actualRedeemPoints = Math.min(availablePoints, Number(pointsToRedeem || availablePoints), maxRedeemableAmount)
+
+  user.walletBalance = availablePoints - actualRedeemPoints
+  user.rubyPoints = user.walletBalance
+
+  pointTransactions.push({
+    id: 'pt_' + Date.now(),
+    phone: cleanP,
+    points: -actualRedeemPoints,
+    type: 'redemption',
+    description: `Redeemed ${actualRedeemPoints} points on bill total ₹${billTotal}`,
+    createdAt: new Date().toISOString()
+  })
+
+  saveState()
+  res.json({
+    success: true,
+    redeemedAmount: actualRedeemPoints,
+    remainingWalletBalance: user.walletBalance,
+    discountedBillTotal: Number(billTotal) - actualRedeemPoints
+  })
 })
 
 // ============ BILLING CUSTOMER / ASSET MANAGEMENT ============
@@ -11361,18 +11537,55 @@ app.post('/api/pos/orders', (req, res) => {
   }
 
   orders.unshift(order)
-  // 1-Time Offer Limit Enforcement: Mark customer offer as redeemed on order creation
-  if (customerPhone && discountVal > 0) {
+
+  // Customer Visit Tracking & 5% Referral Commission Engine
+  if (customerPhone) {
     const cleanP = String(customerPhone).replace(/\D/g, '')
     if (cleanP.length >= 8) {
       const u = (loyaltyUsers || []).find(x => String(x.phone || '').replace(/\D/g, '') === cleanP) ||
                 (mobileAppUsers || []).find(x => String(x.phone || '').replace(/\D/g, '') === cleanP)
       if (u) {
-        u.offerRedeemed = true
-        u.redeemedAt = now
-        u.redeemedOrderNumber = orderNum
-        u.discountPct = 0
-        u.tier = 'Offer Redeemed (1-Time Limit Used)'
+        // Increment visit count and total spend
+        u.visitCount = (u.visitCount || 0) + 1
+        u.totalSpend = (u.totalSpend || 0) + totalVal
+        u.lastVisit = now
+
+        // Partner Gamification: Auto-upgrade to Partner level if spend >= ₹5,000
+        if (u.totalSpend >= 5000) {
+          u.tier = 'Partner'
+        }
+
+        // 5% Referrer Commission Points Engine
+        const referrerPhone = (u.referredBy || u.referrerPhone || '').replace(/\D/g, '')
+        if (referrerPhone && referrerPhone !== cleanP) {
+          const referrer = (loyaltyUsers || []).find(x => String(x.phone || '').replace(/\D/g, '') === referrerPhone) ||
+                           (mobileAppUsers || []).find(x => String(x.phone || '').replace(/\D/g, '') === referrerPhone)
+          if (referrer) {
+            const commission = Math.round(totalVal * 0.05)
+            if (commission > 0) {
+              referrer.walletBalance = (Number(referrer.walletBalance || referrer.rubyPoints) || 0) + commission
+              referrer.rubyPoints = referrer.walletBalance
+              pointTransactions.push({
+                id: 'pt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+                phone: referrerPhone,
+                customerName: referrer.name || 'Referrer',
+                points: commission,
+                type: 'earn_commission',
+                description: `5% Commission (₹${commission}) from referred friend (${customerName || cleanP}) order #${orderNum}`,
+                createdAt: now
+              })
+              console.log(`[REFERRAL COMMISSION] Credited 5% (₹${commission}) to Referrer ${referrerPhone} from order #${orderNum}`)
+            }
+          }
+        }
+
+        // Only one-time promo codes reset discountPct, referred users keep 10% repeat visit rule
+        if (u.oneTimePromo && discountVal > 0) {
+          u.offerRedeemed = true
+          u.redeemedAt = now
+          u.redeemedOrderNumber = orderNum
+          u.discountPct = 0
+        }
       }
     }
   }
