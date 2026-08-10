@@ -125,7 +125,7 @@ class _AssetScreenState extends State<AssetScreen> {
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: TDGColors.gold),
         ),
-        title: Text('ADD ASSET', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold)),
+        title: Text('ADD ASSET (OTP VERIFICATION)', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 14)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -133,7 +133,7 @@ class _AssetScreenState extends State<AssetScreen> {
               controller: nameCtrl,
               style: TextStyle(color: TDGColors.white),
               decoration: InputDecoration(
-                labelText: 'Name',
+                labelText: 'Asset Friend Name',
                 labelStyle: TextStyle(color: TDGColors.greyLight),
                 filled: true,
                 fillColor: TDGColors.cardDark,
@@ -146,7 +146,7 @@ class _AssetScreenState extends State<AssetScreen> {
               keyboardType: TextInputType.phone,
               style: TextStyle(color: TDGColors.white),
               decoration: InputDecoration(
-                labelText: 'Phone',
+                labelText: 'Phone Number',
                 labelStyle: TextStyle(color: TDGColors.greyLight),
                 filled: true,
                 fillColor: TDGColors.cardDark,
@@ -155,7 +155,7 @@ class _AssetScreenState extends State<AssetScreen> {
             ),
             SizedBox(height: 8),
             Text(
-              'Max 10 assets. An SMS OTP will be sent to verify.',
+              'A 4-digit MSG91 OTP will be sent to verify this phone number.',
               style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
             ),
           ],
@@ -169,13 +169,78 @@ class _AssetScreenState extends State<AssetScreen> {
               final phone = phoneCtrl.text.trim();
               Navigator.pop(ctx);
               try {
-                final result = await ApiService().addAsset(name, phone);
+                final result = await ApiService().sendAssetOtp(phone);
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(result['message'] ?? 'MSG91 OTP sent to $phone'),
+                      backgroundColor: Colors.blue.shade700,
+                    ),
+                  );
+                  _showVerifyAssetOtpDialog(name, phone);
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+                  );
+                }
+              }
+            },
+            child: Text('Send OTP', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showVerifyAssetOtpDialog(String name, String phone) {
+    final otpCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: TDGColors.cardMid,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: TDGColors.gold),
+        ),
+        title: Text('ENTER MSG91 OTP', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Enter the 4-digit OTP sent to $phone to verify and add $name.', style: TextStyle(color: Colors.white70, fontSize: 12)),
+            SizedBox(height: 14),
+            TextField(
+              controller: otpCtrl,
+              keyboardType: TextInputType.number,
+              maxLength: 6,
+              style: TextStyle(color: TDGColors.white, fontSize: 20, letterSpacing: 4, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                hintText: '• • • •',
+                hintStyle: TextStyle(color: Colors.white30),
+                filled: true,
+                fillColor: TDGColors.cardDark,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text('Cancel', style: TextStyle(color: TDGColors.greyLight))),
+          TextButton(
+            onPressed: () async {
+              final otp = otpCtrl.text.trim();
+              if (otp.isEmpty) return;
+              Navigator.pop(ctx);
+              try {
+                final result = await ApiService().verifyAssetOtp(phone, otp, name);
                 _fetchAssets();
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(result['message'] ?? '$name added — awaiting their acceptance.'),
-                      backgroundColor: Colors.orange.shade700,
+                      content: Text(result['message'] ?? '$name verified & added successfully!'),
+                      backgroundColor: Colors.green.shade700,
                     ),
                   );
                 }
@@ -187,7 +252,7 @@ class _AssetScreenState extends State<AssetScreen> {
                 }
               }
             },
-            child: Text('Add', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold)),
+            child: Text('Verify & Add', style: TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold)),
           ),
         ],
       ),

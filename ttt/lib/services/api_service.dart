@@ -350,6 +350,44 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> sendAssetOtp(String phone) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/assets/send-otp');
+    try {
+      final response = await http.post(
+        url,
+        headers: _getHeaders(),
+        body: jsonEncode({'phone': phone, 'purpose': 'asset_verification'}),
+      );
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) return data;
+      throw Exception(data['error'] ?? 'Failed to send MSG91 OTP');
+    } catch (e) {
+      _handleError(e);
+    }
+  }
+
+  Future<Map<String, dynamic>> verifyAssetOtp(String phone, String otp, String assetName) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/assets/verify-otp');
+    final masterPhone = currentUser?['phone'] ?? '';
+    try {
+      final response = await http.post(
+        url,
+        headers: _getHeaders(),
+        body: jsonEncode({
+          'phone': phone,
+          'otp': otp,
+          'assetName': assetName,
+          'masterPhone': masterPhone,
+        }),
+      );
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) return data;
+      throw Exception(data['error'] ?? 'Invalid or expired OTP');
+    } catch (e) {
+      _handleError(e);
+    }
+  }
+
   Future<Map<String, dynamic>> replaceAsset(String assetId, String name, String phone) async {
     final url = Uri.parse('${AppConfig.baseUrl}/assets/$assetId');
     try {
