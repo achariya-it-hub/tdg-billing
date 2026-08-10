@@ -12706,13 +12706,16 @@ function isDemoOrderBeforeOpening(o) {
   if (!o) return false
   const dStr = getOrderDate(o)
   if (dStr === '2026-07-27') {
+    if (o.orderNumber && Number(o.orderNumber) < 1036) {
+      return true
+    }
     const ts = o.createdAt || o.paidAt || o.completedAt || ''
     if (ts) {
       try {
         const dateObj = new Date(ts)
-        const istTimeStr = dateObj.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' })
-        const hour = parseInt(istTimeStr.split(':')[0], 10)
-        if (hour < 12) return true // Exclude demo bills raised before 12:00 PM Noon IST on July 27
+        if (dateObj.getTime() < new Date('2026-07-27T11:05:00.000Z').getTime()) {
+          return true
+        }
       } catch (e) {}
     }
   }
