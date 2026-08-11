@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Minus, Trash2, ShoppingBag, X, Volume2, VolumeX, Search } from 'lucide-react'
+import { Plus, Minus, Trash2, ShoppingBag, X, Volume2, VolumeX, Search, Banknote, Lock, Unlock } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import { useToast } from '../components/ui/Toaster'
@@ -202,6 +202,142 @@ export default function POS() {
   const [selectedDip1, setSelectedDip1] = useState('Garlic Mayo Dip')
   const [selectedDip2, setSelectedDip2] = useState('Spicy Mayo Dip')
   const [selectedDip3, setSelectedDip3] = useState('Tzatziki Dip')
+
+  // Cash Counter & Shift Management State
+  const [activeCounterSession, setActiveCounterSession] = useState(null)
+  const [counterLoading, setCounterLoading] = useState(true)
+
+  // Open Counter Modal State
+  const [showOpenCounterModal, setShowOpenCounterModal] = useState(false)
+  const [openingCashInput, setOpeningCashInput] = useState('2000')
+  const [openingNotes, setOpeningNotes] = useState('')
+  const [openingSubmitting, setOpeningSubmitting] = useState(false)
+
+  // Close Counter Modal State
+  const [showCloseCounterModal, setShowCloseCounterModal] = useState(false)
+  const [closingCashInput, setClosingCashInput] = useState('')
+  const [closingNotes, setClosingNotes] = useState('')
+  const [closingSubmitting, setClosingSubmitting] = useState(false)
+
+  const fetchActiveCounter = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/cash-counter/active`)
+      if (res.ok) {
+        const data = await res.json()
+        if (data.active && data.session) {
+          setActiveCounterSession(data.session)
+        } else {
+          setActiveCounterSession(null)
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch active counter session', err)
+    } finally {
+      setCounterLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchActiveCounter()
+  }, [])
+
+  useEffect(() => {
+    const socket = getSocket()
+    const handleCounterUpdated = () => {
+      fetchActiveCounter()
+    }
+    socket.on('cash-counter:updated', handleCounterUpdated)
+    return () => {
+      socket.off('cash-counter:updated', handleCounterUpdated)
+    }
+  }, [])
+
+  const requireOpenCounter = () => {
+    if (!activeCounterSession) {
+      toast.error('Cash Counter is NOT open! Please enter opening cash in hand to start.')
+      setShowOpenCounterModal(true)
+      return false
+    }
+    return true
+  }
+
+  const handleOpenCounterSubmit = async (e) => {
+    if (e) e.preventDefault()
+    const amt = Number(openingCashInput)
+    if (isNaN(amt) || amt < 0) {
+      toast.error('Please enter a valid opening cash float')
+      return
+    }
+    setOpeningSubmitting(true)
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}')
+      const res = await fetch(`${API_BASE}/api/cash-counter/open`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          openingCash: amt,
+          openedBy: user.name || user.email || 'Cashier',
+          openedById: user.id || '',
+          notes: openingNotes
+        })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        toast.success(`Cash Counter OPENED with ₹${amt.toLocaleString()} float!`)
+        setActiveCounterSession(data.session)
+        setShowOpenCounterModal(false)
+        setOpeningNotes('')
+      } else {
+        toast.error(data.error || 'Failed to open cash counter')
+      }
+    } catch (err) {
+      toast.error('Network error opening cash counter')
+    } finally {
+      setOpeningSubmitting(false)
+    }
+  }
+
+  const handleOpenCloseModal = async () => {
+    await fetchActiveCounter()
+    setClosingCashInput('')
+    setClosingNotes('')
+    setShowCloseCounterModal(true)
+  }
+
+  const handleCloseCounterSubmit = async (e) => {
+    if (e) e.preventDefault()
+    const amt = Number(closingCashInput)
+    if (isNaN(amt) || amt < 0) {
+      toast.error('Please enter actual cash handed over')
+      return
+    }
+    setClosingSubmitting(true)
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}')
+      const res = await fetch(`${API_BASE}/api/cash-counter/close`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          closingCash: amt,
+          closedBy: user.name || user.email || 'Cashier',
+          notes: closingNotes
+        })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        toast.success('Shift closed successfully! Cash handover recorded.')
+        PrintService.printShiftHandover(data.session)
+        setActiveCounterSession(null)
+        setShowCloseCounterModal(false)
+      } else {
+        toast.error(data.error || 'Failed to close shift')
+      }
+    } catch (err) {
+      toast.error('Network error closing shift')
+    } finally {
+      setClosingSubmitting(false)
+    }
+  }
 
   useEffect(() => {
     fetch(`${API_BASE}/api/settings`)
@@ -527,6 +663,7 @@ export default function POS() {
   const [splitCard, setSplitCard] = useState('')
 
   const handlePlaceOrder = async () => {
+    if (!requireOpenCounter()) return
     if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place order'); return }
     setProcessing(true)
     try {
@@ -546,6 +683,7 @@ export default function POS() {
   }
 
   const openPayModal = () => {
+    if (!requireOpenCounter()) return
     if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place order'); return }
     setSplitCash('')
     setSplitUpi('')
@@ -554,6 +692,7 @@ export default function POS() {
   }
 
   const confirmPay = async (method) => {
+    if (!requireOpenCounter()) return
     setShowPayModal(false)
     setProcessing(true)
     try {
@@ -590,6 +729,7 @@ export default function POS() {
     setProcessing(false)
   }
   const handleDirectSettle = async (method) => {
+    if (!requireOpenCounter()) return
     if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place and settle order'); return }
     setProcessing(true)
     try {
@@ -729,6 +869,51 @@ export default function POS() {
   if (isMobile) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 160px)' }}>
+        {/* Cash Counter Status Badge Mobile */}
+        <div style={{
+          padding: '8px 12px',
+          borderRadius: '12px',
+          background: activeCounterSession ? 'linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.06))' : 'linear-gradient(135deg, rgba(239,68,68,0.12), rgba(220,38,38,0.06))',
+          border: `1px solid ${activeCounterSession ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '8px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{
+              width: '8px', height: '8px', borderRadius: '50%',
+              background: activeCounterSession ? '#10b981' : '#ef4444',
+              boxShadow: activeCounterSession ? '0 0 8px #10b981' : '0 0 8px #ef4444'
+            }} />
+            <span style={{ fontSize: '11px', fontWeight: 700, color: activeCounterSession ? '#047857' : '#b91c1c' }}>
+              {activeCounterSession ? `Counter OPEN • Float: ₹${Number(activeCounterSession.openingCash || 0).toLocaleString()}` : 'Counter CLOSED'}
+            </span>
+          </div>
+          {activeCounterSession ? (
+            <button
+              onClick={handleOpenCloseModal}
+              style={{
+                padding: '4px 10px', borderRadius: '8px', border: 'none',
+                background: '#ef4444', color: 'white', fontSize: '11px', fontWeight: 700,
+                cursor: 'pointer', boxShadow: '0 2px 4px rgba(239,68,68,0.3)'
+              }}
+            >
+              Shift Close
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowOpenCounterModal(true)}
+              style={{
+                padding: '4px 10px', borderRadius: '8px', border: 'none',
+                background: '#10b981', color: 'white', fontSize: '11px', fontWeight: 700,
+                cursor: 'pointer', boxShadow: '0 2px 4px rgba(16,185,129,0.3)'
+              }}
+            >
+              Open Counter
+            </button>
+          )}
+        </div>
         <CategoryPills />
         {/* Mobile Item Search Bar */}
         <div style={{
@@ -918,6 +1103,56 @@ export default function POS() {
     <div style={{ display: 'flex', gap: '14px', height: 'calc(100vh - 56px)' }}>
       {/* Categories Sidebar */}
       <div style={{ width: '170px', display: 'flex', flexDirection: 'column', gap: '6px', overflow: 'auto' }}>
+        {/* Cash Counter Status Badge Desktop */}
+        <div style={{
+          padding: '8px 10px',
+          borderRadius: '12px',
+          background: activeCounterSession ? 'linear-gradient(135deg, rgba(16,185,129,0.12), rgba(5,150,105,0.06))' : 'linear-gradient(135deg, rgba(239,68,68,0.12), rgba(220,38,38,0.06))',
+          border: `1px solid ${activeCounterSession ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+          marginBottom: '4px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{
+              width: '8px', height: '8px', borderRadius: '50%',
+              background: activeCounterSession ? '#10b981' : '#ef4444',
+              boxShadow: activeCounterSession ? '0 0 8px #10b981' : '0 0 8px #ef4444'
+            }} />
+            <span style={{ fontSize: '10px', fontWeight: 700, color: activeCounterSession ? '#047857' : '#b91c1c' }}>
+              {activeCounterSession ? 'Counter OPEN' : 'Counter CLOSED'}
+            </span>
+          </div>
+          {activeCounterSession ? (
+            <>
+              <div style={{ fontSize: '10px', fontWeight: 800, color: '#047857' }}>
+                Float: ₹{Number(activeCounterSession.openingCash || 0).toLocaleString()}
+              </div>
+              <button
+                onClick={handleOpenCloseModal}
+                style={{
+                  width: '100%', padding: '5px 8px', borderRadius: '8px', border: 'none',
+                  background: '#ef4444', color: 'white', fontSize: '10px', fontWeight: 700,
+                  cursor: 'pointer', boxShadow: '0 2px 4px rgba(239,68,68,0.3)'
+                }}
+              >
+                🔒 Shift Close
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setShowOpenCounterModal(true)}
+              style={{
+                width: '100%', padding: '5px 8px', borderRadius: '8px', border: 'none',
+                background: '#10b981', color: 'white', fontSize: '10px', fontWeight: 700,
+                cursor: 'pointer', boxShadow: '0 2px 4px rgba(16,185,129,0.3)'
+              }}
+            >
+              🔓 Open Counter
+            </button>
+          )}
+        </div>
         <button onClick={toggleSound} style={{
           padding: '10px 14px', borderRadius: '12px',
           background: soundOn ? '#ecfdf5' : '#fef2f2',
@@ -2025,6 +2260,188 @@ export default function POS() {
             </div>
           )}
         </div>
+      </Modal>
+
+      {/* Open Cash Counter Modal */}
+      <Modal isOpen={showOpenCounterModal} onClose={() => setShowOpenCounterModal(false)} title="🔑 Open Cash Counter (Morning / Shift Start)">
+        <form onSubmit={handleOpenCounterSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '4px' }}>
+          <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '12px', padding: '12px', color: '#065f46', fontSize: '13px', lineHeight: 1.4 }}>
+            <strong>📢 Starting First Bill / New Shift:</strong> Please enter the starting cash float currently inside the cash drawer before accepting orders.
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>
+              Opening Cash Float (Cash in Hand ₹) *
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              required
+              value={openingCashInput}
+              onChange={e => setOpeningCashInput(e.target.value)}
+              placeholder="e.g. 2000"
+              style={{ ...inputStyle, fontSize: '18px', fontWeight: 800, color: '#047857' }}
+            />
+            <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+              {['500', '1000', '2000', '5000'].map(val => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => setOpeningCashInput(val)}
+                  style={{
+                    flex: 1, padding: '6px', borderRadius: '8px', border: '1px solid #cbd5e1',
+                    background: openingCashInput === val ? '#10b981' : '#f8fafc',
+                    color: openingCashInput === val ? 'white' : '#334155',
+                    fontWeight: 700, fontSize: '12px', cursor: 'pointer'
+                  }}
+                >
+                  ₹{val}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>
+              Cashier Notes (Optional)
+            </label>
+            <input
+              type="text"
+              value={openingNotes}
+              onChange={e => setOpeningNotes(e.target.value)}
+              placeholder="e.g. Starting morning shift with float"
+              style={inputStyle}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={openingSubmitting}
+            style={{
+              padding: '14px', borderRadius: '12px', border: 'none',
+              background: openingSubmitting ? '#9ca3af' : 'linear-gradient(135deg, #10b981, #059669)',
+              color: 'white', fontWeight: 800, fontSize: '15px', cursor: openingSubmitting ? 'not-allowed' : 'pointer',
+              boxShadow: openingSubmitting ? 'none' : '0 4px 14px rgba(16,185,129,0.3)'
+            }}
+          >
+            {openingSubmitting ? 'Opening Counter...' : '🚀 Start Shift & Open Cash Counter'}
+          </button>
+        </form>
+      </Modal>
+
+      {/* Shift Close & Cash Handover Modal */}
+      <Modal isOpen={showCloseCounterModal} onClose={() => setShowCloseCounterModal(false)} title="🔒 Shift Close & Cash Handover">
+        {activeCounterSession ? (
+          <form onSubmit={handleCloseCounterSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px', padding: '4px' }}>
+            <div style={{ background: '#f8fafc', borderRadius: '12px', padding: '12px', border: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>
+                <span>Opened By: <strong>{activeCounterSession.openedBy || 'Cashier'}</strong></span>
+                <span>Bills Settled: <strong>{activeCounterSession.billCount || 0}</strong></span>
+              </div>
+              <div style={{ fontSize: '11px', color: '#64748b' }}>
+                Opened: {activeCounterSession.openedAt ? new Date(activeCounterSession.openedAt).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) : '-'}
+              </div>
+            </div>
+
+            {/* Sales Summary Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+              <div style={{ background: '#ecfdf5', padding: '8px', borderRadius: '10px', textAlign: 'center', border: '1px solid #a7f3d0' }}>
+                <div style={{ fontSize: '10px', fontWeight: 700, color: '#047857' }}>CASH SALES</div>
+                <div style={{ fontSize: '16px', fontWeight: 800, color: '#065f46' }}>₹{(activeCounterSession.cashSales || 0).toLocaleString()}</div>
+              </div>
+              <div style={{ background: '#eff6ff', padding: '8px', borderRadius: '10px', textAlign: 'center', border: '1px solid #bfdbfe' }}>
+                <div style={{ fontSize: '10px', fontWeight: 700, color: '#1d4ed8' }}>UPI SALES</div>
+                <div style={{ fontSize: '16px', fontWeight: 800, color: '#1e40af' }}>₹{(activeCounterSession.upiSales || 0).toLocaleString()}</div>
+              </div>
+              <div style={{ background: '#f5f3ff', padding: '8px', borderRadius: '10px', textAlign: 'center', border: '1px solid #ddd6fe' }}>
+                <div style={{ fontSize: '10px', fontWeight: 700, color: '#6d28d9' }}>CARD SALES</div>
+                <div style={{ fontSize: '16px', fontWeight: 800, color: '#5b21b6' }}>₹{(activeCounterSession.cardSales || 0).toLocaleString()}</div>
+              </div>
+            </div>
+
+            {/* Reconciliation Box */}
+            <div style={{ background: '#fffbe6', border: '1.5px solid #ffe58f', borderRadius: '12px', padding: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 600, color: '#722ed1', marginBottom: '4px' }}>
+                <span>Opening Float:</span>
+                <span>₹{(activeCounterSession.openingCash || 0).toLocaleString()}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 600, color: '#722ed1', marginBottom: '6px' }}>
+                <span>+ Cash Sales:</span>
+                <span>₹{(activeCounterSession.cashSales || 0).toLocaleString()}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', fontWeight: 800, color: '#1a1a2e', paddingTop: '6px', borderTop: '1.5px solid #d9d9d9' }}>
+                <span>Expected Cash in Hand:</span>
+                <span style={{ color: '#096dd9' }}>₹{(activeCounterSession.expectedCash || 0).toLocaleString()}</span>
+              </div>
+            </div>
+
+            {/* Actual Cash Input */}
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>
+                Actual Cash Handing Over (Counted Cash ₹) *
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                required
+                value={closingCashInput}
+                onChange={e => setClosingCashInput(e.target.value)}
+                placeholder={`Enter actual counted cash (Expected: ₹${activeCounterSession.expectedCash || 0})`}
+                style={{ ...inputStyle, fontSize: '18px', fontWeight: 800, color: '#1e293b' }}
+              />
+              {closingCashInput !== '' && (
+                <div style={{ marginTop: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', borderRadius: '8px', background: (Number(closingCashInput) - activeCounterSession.expectedCash) === 0 ? '#ecfdf5' : ((Number(closingCashInput) - activeCounterSession.expectedCash) > 0 ? '#eff6ff' : '#fef2f2'), border: `1px solid ${(Number(closingCashInput) - activeCounterSession.expectedCash) === 0 ? '#a7f3d0' : ((Number(closingCashInput) - activeCounterSession.expectedCash) > 0 ? '#bfdbfe' : '#fecaca')}` }}>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#334155' }}>Variance / Difference:</span>
+                  <span style={{ fontSize: '13px', fontWeight: 800, color: (Number(closingCashInput) - activeCounterSession.expectedCash) === 0 ? '#047857' : ((Number(closingCashInput) - activeCounterSession.expectedCash) > 0 ? '#1d4ed8' : '#dc2626') }}>
+                    {(Number(closingCashInput) - activeCounterSession.expectedCash) === 0 ? '₹0 (EXACT MATCH ✓)' : ((Number(closingCashInput) - activeCounterSession.expectedCash) > 0 ? `+₹${Number(closingCashInput) - activeCounterSession.expectedCash} (EXCESS)` : `-₹${Math.abs(Number(closingCashInput) - activeCounterSession.expectedCash)} (SHORTAGE)`)}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px' }}>
+                Handover Notes / Comments
+              </label>
+              <input
+                type="text"
+                value={closingNotes}
+                onChange={e => setClosingNotes(e.target.value)}
+                placeholder="e.g. Handed over to manager Rajesh"
+                style={inputStyle}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
+              <button
+                type="button"
+                onClick={() => PrintService.printShiftHandover({ ...activeCounterSession, closingCash: Number(closingCashInput) || activeCounterSession.expectedCash, difference: (Number(closingCashInput) || activeCounterSession.expectedCash) - activeCounterSession.expectedCash })}
+                style={{
+                  flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #cbd5e1',
+                  background: '#f8fafc', color: '#1e293b', fontWeight: 700, fontSize: '13px', cursor: 'pointer'
+                }}
+              >
+                🖨️ Print Slip Preview
+              </button>
+              <button
+                type="submit"
+                disabled={closingSubmitting}
+                style={{
+                  flex: 2, padding: '12px', borderRadius: '12px', border: 'none',
+                  background: closingSubmitting ? '#9ca3af' : 'linear-gradient(135deg, #dc2626, #b91c1c)',
+                  color: 'white', fontWeight: 800, fontSize: '14px', cursor: closingSubmitting ? 'not-allowed' : 'pointer',
+                  boxShadow: closingSubmitting ? 'none' : '0 4px 14px rgba(220,38,38,0.3)'
+                }}
+              >
+                {closingSubmitting ? 'Closing Shift...' : '🔒 Confirm & Hand In Cash'}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>No active cash counter session found.</div>
+        )}
       </Modal>
 
     </div>

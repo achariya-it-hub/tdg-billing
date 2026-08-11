@@ -189,6 +189,7 @@ function writeDb(data = {}) {
       employees: typeof employees !== 'undefined' ? employees : (data.employees || diskDb.employees || []),
       staffAuditLogs: typeof staffAuditLogs !== 'undefined' ? staffAuditLogs : (data.staffAuditLogs || diskDb.staffAuditLogs || []),
       staffPromotionSettings: typeof staffPromotionSettings !== 'undefined' ? staffPromotionSettings : (data.staffPromotionSettings || diskDb.staffPromotionSettings || {}),
+      cashCounterSessions: typeof cashCounterSessions !== 'undefined' ? cashCounterSessions : (data.cashCounterSessions || diskDb.cashCounterSessions || []),
       settings: typeof settings !== 'undefined' ? settings : (data.settings || diskDb.settings || {})
     }
 
@@ -325,8 +326,9 @@ function getDefaultPermissions(role) {
   return perms
 }
 
-// Daily expense tracking
+// Daily expense & cash counter tracking
 let expenses = []
+let cashCounterSessions = []
 let purchases = []
 let suppliers = []
 let purchaseOrders = []
@@ -550,6 +552,7 @@ function saveState() {
     loyaltyUsers,
     employees,
     expenses,
+    cashCounterSessions,
     purchases,
     suppliers,
     purchaseOrders,
@@ -662,6 +665,7 @@ function restoreState() {
   if (db.orderNumber) orderNumber = Math.max(orderNumber || 0, db.orderNumber || 0)
   if (db.usedReferralCodes && Array.isArray(db.usedReferralCodes)) usedReferralCodes = new Set(db.usedReferralCodes)
   if (db.expenses && Array.isArray(db.expenses) && db.expenses.length) expenses = db.expenses
+  if (db.cashCounterSessions && Array.isArray(db.cashCounterSessions)) cashCounterSessions = db.cashCounterSessions
   if (db.purchases && Array.isArray(db.purchases) && db.purchases.length) purchases = db.purchases
   if (db.onlineOrders && Array.isArray(db.onlineOrders) && db.onlineOrders.length) onlineOrders = db.onlineOrders
   if (db.aggregators && Array.isArray(db.aggregators) && db.aggregators.length) aggregators = db.aggregators
@@ -10089,42 +10093,154 @@ app.get('/api/reports/payment-report', (req, res) => {
       const method = (o.paymentMethod || 'cash').toLowerCase()
 
       if (isComp) {
-        complimentaryTotal += Number(o.total || o.grandTotal || 0)
+        const compAmt = Number(o.total || o.grandTotal || 0)
+        complimentaryTotal += compAmt
         complimentaryCount++
-      } else if (method === 'split' || o.splitPayments) {
+        orderList.push({
+          id: o.id,
+          orderNumber: o.orderNumber || o.id,
+          customerName: o.customerName || 'Walk-in Guest',
+          customerPhone: o.customerPhone || '',
+          type: o.type || 'dine-in',
+          paymentMethod: 'complimentary',
+          splitPayments: null,
+          amount: compAmt,
+          complimentary: true,
+          createdAt: o.createdAt
+        })
+      } else if ((method === 'split' || o.splitPayments) && o.splitPayments && typeof o.splitPayments === 'object') {
+        const c = Number(o.splitPayments.cash || 0)
+        const u = Number(o.splitPayments.upi || 0)
+        const cd = Number(o.splitPayments.card || 0)
+        const hasParts = c > 0 || u > 0 || cd > 0
+        
         splitTotal += amt
         splitCount++
-        if (o.splitPayments) {
-          cashTotal += Number(o.splitPayments.cash || 0)
-          upiTotal += Number(o.splitPayments.upi || 0)
-          cardTotal += Number(o.splitPayments.card || 0)
+
+        if (hasParts) {
+          if (c > 0) {
+            cashTotal += c
+            cashCount++
+            orderList.push({
+              id: `${o.id}_cash`,
+              orderNumber: o.orderNumber || o.id,
+              customerName: o.customerName || 'Walk-in Guest',
+              customerPhone: o.customerPhone || '',
+              type: o.type || 'dine-in',
+              paymentMethod: 'cash (split)',
+              isSplit: true,
+              splitPayments: o.splitPayments,
+              amount: c,
+              complimentary: false,
+              createdAt: o.createdAt
+            })
+          }
+          if (u > 0) {
+            upiTotal += u
+            upiCount++
+            orderList.push({
+              id: `${o.id}_upi`,
+              orderNumber: o.orderNumber || o.id,
+              customerName: o.customerName || 'Walk-in Guest',
+              customerPhone: o.customerPhone || '',
+              type: o.type || 'dine-in',
+              paymentMethod: 'upi (split)',
+              isSplit: true,
+              splitPayments: o.splitPayments,
+              amount: u,
+              complimentary: false,
+              createdAt: o.createdAt
+            })
+          }
+          if (cd > 0) {
+            cardTotal += cd
+            cardCount++
+            orderList.push({
+              id: `${o.id}_card`,
+              orderNumber: o.orderNumber || o.id,
+              customerName: o.customerName || 'Walk-in Guest',
+              customerPhone: o.customerPhone || '',
+              type: o.type || 'dine-in',
+              paymentMethod: 'card (split)',
+              isSplit: true,
+              splitPayments: o.splitPayments,
+              amount: cd,
+              complimentary: false,
+              createdAt: o.createdAt
+            })
+          }
+        } else {
+          otherTotal += amt
+          otherCount++
+          orderList.push({
+            id: o.id,
+            orderNumber: o.orderNumber || o.id,
+            customerName: o.customerName || 'Walk-in Guest',
+            customerPhone: o.customerPhone || '',
+            type: o.type || 'dine-in',
+            paymentMethod: 'split',
+            amount: amt,
+            complimentary: false,
+            createdAt: o.createdAt
+          })
         }
       } else if (method === 'cash') {
         cashTotal += amt
         cashCount++
+        orderList.push({
+          id: o.id,
+          orderNumber: o.orderNumber || o.id,
+          customerName: o.customerName || 'Walk-in Guest',
+          customerPhone: o.customerPhone || '',
+          type: o.type || 'dine-in',
+          paymentMethod: 'cash',
+          amount: amt,
+          complimentary: false,
+          createdAt: o.createdAt
+        })
       } else if (method === 'upi' || method === 'qr') {
         upiTotal += amt
         upiCount++
+        orderList.push({
+          id: o.id,
+          orderNumber: o.orderNumber || o.id,
+          customerName: o.customerName || 'Walk-in Guest',
+          customerPhone: o.customerPhone || '',
+          type: o.type || 'dine-in',
+          paymentMethod: 'upi',
+          amount: amt,
+          complimentary: false,
+          createdAt: o.createdAt
+        })
       } else if (method === 'card') {
         cardTotal += amt
         cardCount++
+        orderList.push({
+          id: o.id,
+          orderNumber: o.orderNumber || o.id,
+          customerName: o.customerName || 'Walk-in Guest',
+          customerPhone: o.customerPhone || '',
+          type: o.type || 'dine-in',
+          paymentMethod: 'card',
+          amount: amt,
+          complimentary: false,
+          createdAt: o.createdAt
+        })
       } else {
         otherTotal += amt
         otherCount++
+        orderList.push({
+          id: o.id,
+          orderNumber: o.orderNumber || o.id,
+          customerName: o.customerName || 'Walk-in Guest',
+          customerPhone: o.customerPhone || '',
+          type: o.type || 'dine-in',
+          paymentMethod: method,
+          amount: amt,
+          complimentary: false,
+          createdAt: o.createdAt
+        })
       }
-
-      orderList.push({
-        id: o.id,
-        orderNumber: o.orderNumber || o.id,
-        customerName: o.customerName || 'Walk-in Guest',
-        customerPhone: o.customerPhone || '',
-        type: o.type || 'dine-in',
-        paymentMethod: isComp ? 'complimentary' : method,
-        splitPayments: o.splitPayments || null,
-        amount: isComp ? Number(o.total || o.grandTotal || 0) : amt,
-        complimentary: isComp,
-        createdAt: o.createdAt
-      })
     })
 
     const grandTotal = cashTotal + upiTotal + cardTotal + otherTotal
@@ -10144,7 +10260,6 @@ app.get('/api/reports/payment-report', (req, res) => {
         { mode: 'Cash', count: cashCount, amount: cashTotal, pct: grandTotal > 0 ? Number((cashTotal / grandTotal * 100).toFixed(1)) : 0 },
         { mode: 'UPI / QR', count: upiCount, amount: upiTotal, pct: grandTotal > 0 ? Number((upiTotal / grandTotal * 100).toFixed(1)) : 0 },
         { mode: 'Card', count: cardCount, amount: cardTotal, pct: grandTotal > 0 ? Number((cardTotal / grandTotal * 100).toFixed(1)) : 0 },
-        { mode: 'Split Payments', count: splitCount, amount: splitTotal, pct: grandTotal > 0 ? Number((splitTotal / grandTotal * 100).toFixed(1)) : 0 },
         { mode: 'Complimentary / Non-Chargeable', count: complimentaryCount, amount: complimentaryTotal, pct: 0 }
       ],
       orders: orderList
@@ -12597,6 +12712,149 @@ app.post('/api/expenses', (req, res) => {
   expenses.unshift(expense)
   saveState()
   res.status(201).json(expense)
+})
+
+// ============ CASH COUNTER & SHIFT MANAGEMENT ============
+function calculateSessionSummary(session) {
+  if (!session) return null
+  const startTime = new Date(session.openedAt).getTime()
+  const endTime = session.closedAt ? new Date(session.closedAt).getTime() : Date.now()
+
+  // Filter valid paid orders created during the session window
+  const sessionOrders = (orders || []).filter(o => {
+    if (!o || o.status === 'cancelled' || o.status === 'voided') return false
+    const ot = new Date(o.createdAt || o.date || 0).getTime()
+    return ot >= startTime && ot <= endTime
+  })
+
+  let cashSales = 0
+  let upiSales = 0
+  let cardSales = 0
+  let billCount = sessionOrders.length
+
+  sessionOrders.forEach(o => {
+    const payMethod = (o.paymentMethod || o.payment || '').toLowerCase()
+    if (payMethod === 'split' && o.splitPayments) {
+      cashSales += Number(o.splitPayments.cash || 0)
+      upiSales += Number(o.splitPayments.upi || 0)
+      cardSales += Number(o.splitPayments.card || 0)
+    } else if (payMethod === 'cash') {
+      cashSales += Number(o.total || o.amount || 0)
+    } else if (payMethod === 'upi') {
+      upiSales += Number(o.total || o.amount || 0)
+    } else if (payMethod === 'card') {
+      cardSales += Number(o.total || o.amount || 0)
+    } else {
+      if (!o.complimentary) {
+        cashSales += Number(o.total || o.amount || 0)
+      }
+    }
+  })
+
+  const openingCash = Number(session.openingCash || 0)
+  const expectedCash = openingCash + cashSales
+  const totalSales = cashSales + upiSales + cardSales
+
+  return {
+    ...session,
+    cashSales,
+    upiSales,
+    cardSales,
+    totalSales,
+    billCount,
+    expectedCash
+  }
+}
+
+app.get('/api/cash-counter/active', (req, res) => {
+  const active = cashCounterSessions.find(s => s.status === 'OPEN')
+  if (!active) {
+    return res.json({ active: false, session: null })
+  }
+  const summary = calculateSessionSummary(active)
+  res.json({ active: true, session: summary })
+})
+
+app.post('/api/cash-counter/open', (req, res) => {
+  const existingOpen = cashCounterSessions.find(s => s.status === 'OPEN')
+  if (existingOpen) {
+    return res.status(400).json({ error: 'A cash counter session is already open', session: calculateSessionSummary(existingOpen) })
+  }
+  const { openingCash, openedBy, openedById, notes } = req.body
+  const openingCashNum = Number(openingCash)
+  if (isNaN(openingCashNum) || openingCashNum < 0) {
+    return res.status(400).json({ error: 'Valid opening cash amount is required' })
+  }
+
+  const now = new Date()
+  const newSession = {
+    id: 'cs_' + uuid().substring(0, 8),
+    date: getLocalDateStr(now),
+    openedAt: now.toISOString(),
+    openedBy: openedBy || 'Cashier',
+    openedById: openedById || '',
+    openingCash: openingCashNum,
+    status: 'OPEN',
+    closedAt: null,
+    closedBy: null,
+    closingCash: null,
+    expectedCash: openingCashNum,
+    cashSales: 0,
+    upiSales: 0,
+    cardSales: 0,
+    totalSales: 0,
+    billCount: 0,
+    difference: 0,
+    notes: notes || ''
+  }
+
+  cashCounterSessions.unshift(newSession)
+  saveState()
+  io.emit('cash-counter:updated', { status: 'OPEN', session: newSession })
+  res.status(201).json({ success: true, session: newSession })
+})
+
+app.post('/api/cash-counter/close', (req, res) => {
+  const activeSessionIndex = cashCounterSessions.findIndex(s => s.status === 'OPEN')
+  if (activeSessionIndex === -1) {
+    return res.status(400).json({ error: 'No active open cash counter session found' })
+  }
+  const { closingCash, closedBy, notes } = req.body
+  const closingCashNum = Number(closingCash)
+  if (isNaN(closingCashNum) || closingCashNum < 0) {
+    return res.status(400).json({ error: 'Valid actual handed over cash amount is required' })
+  }
+
+  const activeSession = cashCounterSessions[activeSessionIndex]
+  const now = new Date()
+  activeSession.closedAt = now.toISOString()
+  activeSession.closedBy = closedBy || activeSession.openedBy || 'Cashier'
+
+  const summary = calculateSessionSummary(activeSession)
+
+  activeSession.cashSales = summary.cashSales
+  activeSession.upiSales = summary.upiSales
+  activeSession.cardSales = summary.cardSales
+  activeSession.totalSales = summary.totalSales
+  activeSession.billCount = summary.billCount
+  activeSession.expectedCash = summary.expectedCash
+  activeSession.closingCash = closingCashNum
+  activeSession.difference = closingCashNum - summary.expectedCash
+  activeSession.status = 'CLOSED'
+  if (notes) activeSession.notes = activeSession.notes ? `${activeSession.notes} | ${notes}` : notes
+
+  cashCounterSessions[activeSessionIndex] = activeSession
+  saveState()
+  io.emit('cash-counter:updated', { status: 'CLOSED', session: activeSession })
+  res.json({ success: true, session: activeSession })
+})
+
+app.get('/api/cash-counter/history', (req, res) => {
+  const history = cashCounterSessions.map(s => {
+    if (s.status === 'OPEN') return calculateSessionSummary(s)
+    return s
+  })
+  res.json(history)
 })
 
 // ============ SUPPLIER CRUD ============

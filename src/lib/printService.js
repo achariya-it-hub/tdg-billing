@@ -456,6 +456,121 @@ const PrintService = {
   // Print directly to POS printer
   printToPOSPrinter: (kot, force = false) => {
     return PrintService.printKOTAndBill(kot, force);
+  },
+
+  // Generate Shift Handover / Cash Counter Close HTML Receipt
+  generateShiftHandoverHTML: (session) => {
+    const company = getCompanyInfoSync()
+    const openedAtStr = session.openedAt ? new Date(session.openedAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }) : '-'
+    const closedAtStr = session.closedAt ? new Date(session.closedAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }) : '-'
+    const openingCash = Number(session.openingCash || 0)
+    const cashSales = Number(session.cashSales || 0)
+    const upiSales = Number(session.upiSales || 0)
+    const cardSales = Number(session.cardSales || 0)
+    const totalSales = Number(session.totalSales || 0)
+    const billCount = Number(session.billCount || 0)
+    const expectedCash = Number(session.expectedCash || 0)
+    const closingCash = Number(session.closingCash || 0)
+    const diff = Number(session.difference || 0)
+
+    let diffText = '₹0 (MATCH)'
+    if (diff > 0) {
+      diffText = `+₹${diff} (EXCESS)`
+    } else if (diff < 0) {
+      diffText = `-₹${Math.abs(diff)} (SHORTAGE)`
+    }
+
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Shift Handover Summary</title>
+        <style>
+          @page { margin: 0; size: 80mm auto; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            width: 76mm;
+            margin: 0 auto;
+            padding: 6px 8px;
+            font-size: 12px;
+            color: #000;
+            line-height: 1.3;
+            -webkit-print-color-adjust: exact;
+          }
+          .header { text-align: center; padding-bottom: 6px; border-bottom: 2px solid #000; margin-bottom: 6px; }
+          .brand-name { font-size: 18px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+          .badge { display: inline-block; font-size: 11px; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; background: #000; color: #fff; padding: 3px 10px; border-radius: 3px; margin-top: 4px; }
+          .meta-section { margin: 6px 0; font-size: 11px; font-weight: 800; border-bottom: 1px dashed #000; padding-bottom: 6px; }
+          .meta-row { display: flex; justify-content: space-between; margin: 2px 0; }
+          .section-title { font-size: 12px; font-weight: 900; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 2px; margin: 8px 0 4px 0; }
+          .row { display: flex; justify-content: space-between; padding: 3px 0; font-weight: 800; border-bottom: 1px dotted #ccc; }
+          .highlight-box { border: 2px solid #000; border-radius: 6px; padding: 8px; margin: 8px 0; background: #f9f9f9; }
+          .footer { text-align: center; margin-top: 12px; padding-top: 8px; border-top: 2px solid #000; font-size: 10px; font-weight: 900; text-transform: uppercase; }
+          .sig-space { display: flex; justify-content: space-between; margin-top: 25px; font-size: 10px; font-weight: 900; }
+          @media print { body { width: 76mm; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="brand-name">${company.name || 'Ten Dens Gyros'}</div>
+          <div><span class="badge">SHIFT CLOSE & CASH HANDOVER</span></div>
+        </div>
+
+        <div class="meta-section">
+          <div class="meta-row"><span>Cashier (Open): <strong>${session.openedBy || 'Cashier'}</strong></span></div>
+          <div class="meta-row"><span>Cashier (Close): <strong>${session.closedBy || session.openedBy || 'Cashier'}</strong></span></div>
+          <div class="meta-row"><span>Opened At: <strong>${openedAtStr}</strong></span></div>
+          <div class="meta-row"><span>Closed At: <strong>${closedAtStr}</strong></span></div>
+          <div class="meta-row"><span>Total Bills Settled: <strong>${billCount}</strong></span></div>
+        </div>
+
+        <div class="section-title">Sales Summary</div>
+        <div class="row"><span>Cash Sales:</span><span>₹${cashSales.toFixed(0)}</span></div>
+        <div class="row"><span>UPI Sales:</span><span>₹${upiSales.toFixed(0)}</span></div>
+        <div class="row"><span>Card Sales:</span><span>₹${cardSales.toFixed(0)}</span></div>
+        <div class="row" style="font-size: 13px; font-weight: 900; border-top: 1px solid #000;"><span>TOTAL SALES:</span><span>₹${totalSales.toFixed(0)}</span></div>
+
+        <div class="section-title">Cash Counter Reconciliation</div>
+        <div class="row"><span>(+) Opening Cash Float:</span><span>₹${openingCash.toFixed(0)}</span></div>
+        <div class="row"><span>(+) Cash Sales Collected:</span><span>₹${cashSales.toFixed(0)}</span></div>
+        <div class="row" style="font-size: 13px; font-weight: 900; background: #eee; padding: 4px;"><span>(=) EXPECTED CASH IN HAND:</span><span>₹${expectedCash.toFixed(0)}</span></div>
+        
+        <div class="highlight-box">
+          <div class="meta-row" style="font-size: 14px; font-weight: 900;">
+            <span>CASH HANDED OVER:</span>
+            <span>₹${closingCash.toFixed(0)}</span>
+          </div>
+          <div class="meta-row" style="font-size: 12px; font-weight: 900; margin-top: 4px;">
+            <span>VARIANCE:</span>
+            <span>${diffText}</span>
+          </div>
+        </div>
+
+        ${session.notes ? `<div style="font-size:10px; font-weight:800; border:1px solid #000; padding:4px; margin-top:6px;">NOTES: ${session.notes}</div>` : ''}
+
+        <div class="sig-space">
+          <div>___________________<br/>Cashier Signature</div>
+          <div>___________________<br/>Manager Signature</div>
+        </div>
+
+        <div class="footer">
+          --- END OF HANDOVER RECEIPT ---
+        </div>
+      </body>
+      </html>
+    `
+  },
+
+  printShiftHandover: (session) => {
+    if (!session) return
+    try {
+      const html = PrintService.generateShiftHandoverHTML(session)
+      PrintService.executePrintHTML(html, `Shift Handover - ${session.openedBy || 'Cashier'}`)
+    } catch (err) {
+      console.error('Shift handover print error:', err)
+    }
   }
 };
 

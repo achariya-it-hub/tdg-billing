@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BarChart3, FileText, Package, Utensils, Receipt, XCircle, TrendingDown, TrendingUp, Download, Sun, DollarSign, ShoppingCart, TrendingUp as TrendingUpIcon, ReceiptText, BarChart, ClipboardList, ClipboardCheck, Users, Wallet, Truck, Tag, PieChart, Layers, Award } from 'lucide-react'
+import { BarChart3, FileText, Package, Utensils, Receipt, XCircle, TrendingDown, TrendingUp, Download, Sun, DollarSign, ShoppingCart, TrendingUp as TrendingUpIcon, ReceiptText, BarChart, ClipboardList, ClipboardCheck, Users, Wallet, Truck, Tag, PieChart, Layers, Award, Clock } from 'lucide-react'
 
 
 const sampleKOTData = [
@@ -79,6 +79,7 @@ const sampleRecipeData = [
 
 const reportTypes = [
   { id: 'daily-closing', name: 'Daily Closing', icon: Sun, desc: 'Day Summary & Profit' },
+  { id: 'cash-counter-history', name: 'Shift & Cash Counter', icon: Clock, desc: 'Opening Cash & Shift Handover Logs' },
   { id: 'staff-benefit', name: 'Staff Benefit Report', icon: Award, desc: 'Employee, Family & Department Benefits' },
   { id: 'promotion-summary', name: 'Promotion Summary', icon: Tag, desc: 'Total Sales, Discounts & Net Revenue' },
   { id: 'payment-report', name: 'Payment Report', icon: Wallet, desc: 'Bills Settled with Cash/UPI/Card/Wallet' },
@@ -105,6 +106,7 @@ export default function Reports() {
   const [activeReport, setActiveReport] = useState('daily-closing')
   const [dateRange, setDateRange] = useState('custom')
   const [closing, setClosing] = useState(null)
+  const [cashCounterHistory, setCashCounterHistory] = useState([])
   const [paymentReport, setPaymentReport] = useState(null)
   const [pnlData, setPnlData] = useState(null)
   const [poReport, setPoReport] = useState(null)
@@ -152,6 +154,9 @@ export default function Reports() {
         if (activeReport === 'daily-closing') {
           const r = await fetch(`${baseUrl}/api/reports/daily-closing?${q}`)
           if (r.ok) setClosing(await r.json())
+        } else if (activeReport === 'cash-counter-history') {
+          const r = await fetch(`${baseUrl}/api/cash-counter/history`)
+          if (r.ok) setCashCounterHistory(await r.json())
         } else if (activeReport === 'staff-benefit') {
           const r = await fetch(`${baseUrl}/api/reports/staff-benefit?${q}`)
           if (r.ok) setStaffBenefitReport(await r.json())
@@ -198,6 +203,7 @@ export default function Reports() {
   const getReportTitle = () => {
     switch (activeReport) {
       case 'daily-closing': return 'Daily Closing Report'
+      case 'cash-counter-history': return 'Shift & Cash Counter Handover Report'
       case 'payment-report': return 'Payment Breakdown Report'
       case 'itemwise-sales': return 'Itemwise Sales Report'
       case 'categorywise-sales': return 'Categorywise Sales Report'
@@ -221,6 +227,88 @@ export default function Reports() {
 
   const renderReport = () => {
     switch (activeReport) {
+      case 'cash-counter-history':
+        return (
+          <div>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '60px 0', color: '#6b7280' }}>Loading shift history...</div>
+            ) : !cashCounterHistory || cashCounterHistory.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '60px 0', color: '#6b7280' }}>
+                No cash counter shift logs recorded yet.
+              </div>
+            ) : (
+              <div style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.3)', overflow: 'hidden' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: 'rgba(0,0,0,0.02)' }}>
+                      <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Status</th>
+                      <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Shift Opened</th>
+                      <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Shift Closed</th>
+                      <th style={{ padding: '14px 16px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Cashier</th>
+                      <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Opening Float</th>
+                      <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Cash Sales</th>
+                      <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Total Sales</th>
+                      <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Expected Cash</th>
+                      <th style={{ padding: '14px 16px', textAlign: 'right', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Actual Handed Over</th>
+                      <th style={{ padding: '14px 16px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>Variance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cashCounterHistory.map((s, idx) => {
+                      const isClosed = s.status === 'CLOSED'
+                      const diff = Number(s.difference || 0)
+                      let diffBadge = <span style={{ color: '#047857', fontWeight: 700 }}>₹0 (Match)</span>
+                      if (diff > 0) diffBadge = <span style={{ color: '#1d4ed8', fontWeight: 800 }}>+₹{diff} (Excess)</span>
+                      else if (diff < 0) diffBadge = <span style={{ color: '#dc2626', fontWeight: 800 }}>-₹{Math.abs(diff)} (Shortage)</span>
+
+                      return (
+                        <tr key={idx} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                          <td style={{ padding: '12px 16px' }}>
+                            <span style={{
+                              padding: '3px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 700,
+                              background: isClosed ? '#f1f5f9' : '#ecfdf5',
+                              color: isClosed ? '#475569' : '#047857'
+                            }}>
+                              {isClosed ? 'CLOSED' : '🟢 ACTIVE OPEN'}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px 16px', fontSize: '12.5px', color: '#1e293b' }}>
+                            {s.openedAt ? new Date(s.openedAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true }) : '-'}
+                          </td>
+                          <td style={{ padding: '12px 16px', fontSize: '12.5px', color: '#64748b' }}>
+                            {s.closedAt ? new Date(s.closedAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true }) : 'In Progress'}
+                          </td>
+                          <td style={{ padding: '12px 16px', fontWeight: 700, color: '#0f172a', fontSize: '13px' }}>
+                            {s.closedBy || s.openedBy || 'Cashier'}
+                          </td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, color: '#0f172a' }}>
+                            ₹{Number(s.openingCash || 0).toLocaleString()}
+                          </td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, color: '#047857' }}>
+                            ₹{Number(s.cashSales || 0).toLocaleString()}
+                          </td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 800, color: '#2563eb' }}>
+                            ₹{Number(s.totalSales || 0).toLocaleString()} ({s.billCount || 0} bills)
+                          </td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 800, color: '#7c3aed' }}>
+                            ₹{Number(s.expectedCash || 0).toLocaleString()}
+                          </td>
+                          <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 800, color: '#0f172a' }}>
+                            {isClosed ? `₹${Number(s.closingCash || 0).toLocaleString()}` : '-'}
+                          </td>
+                          <td style={{ padding: '12px 16px', textAlign: 'center', fontSize: '12px' }}>
+                            {isClosed ? diffBadge : '-'}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )
+
       case 'itemwise-sales':
         return (
           <div>
