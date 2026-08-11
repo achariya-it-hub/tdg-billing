@@ -9201,37 +9201,6 @@ app.post('/api/mobile/redeem-points', (req, res) => {
 
 const otpStore = new Map()
 
-async function sendMSG91OTP(phone, otp) {
-  try {
-    const cleanPhone = String(phone).replace(/\D/g, '')
-    const formattedPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone
-
-    const msg91Config = settings?.msg91 || {}
-    const authKey = msg91Config.authKey || process.env.MSG91_AUTH_KEY || ''
-    const templateId = msg91Config.templateId || process.env.MSG91_TEMPLATE_ID || ''
-
-    if (authKey && templateId && msg91Config.isEnabled !== false) {
-      const url = `https://control.msg91.com/api/v5/otp?template_id=${templateId}&mobile=${formattedPhone}&otp=${otp}`
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'authkey': authKey,
-          'content-type': 'application/json'
-        }
-      })
-      const data = await response.json()
-      console.log(`[MSG91 OTP SENT] Mobile: ${formattedPhone}, Response:`, data)
-      return { success: data.type === 'success', method: 'msg91', response: data }
-    } else {
-      console.log(`[MSG91 OTP DEV SIMULATION] Mobile: ${formattedPhone}, OTP Code: ${otp}`)
-      return { success: true, method: 'console', otp }
-    }
-  } catch (e) {
-    console.error('[MSG91 OTP ERROR]', e.message)
-    return { success: false, error: e.message }
-  }
-}
-
 async function verifyMSG91OTP(phone, otp) {
   try {
     const cleanPhone = String(phone).replace(/\D/g, '')
