@@ -99,7 +99,7 @@
       "price": 280,
       "description": "4 Pc Crispy Fried Chicken Leg & Thigh + 2 Dips",
       "isAvailable": true,
-      "image": "/images/menu/Leg& Thigh.png",
+      "image": "/images/menu/leg_thigh.png",
       "category": "Leg & Thigh"
     },
     {
@@ -109,7 +109,7 @@
       "price": 560,
       "description": "8 Pc Crispy Fried Chicken Leg & Thigh + 4 Dips",
       "isAvailable": true,
-      "image": "/images/menu/Leg& Thigh.png",
+      "image": "/images/menu/leg_thigh.png",
       "category": "Leg & Thigh"
     },
     {
@@ -119,7 +119,7 @@
       "price": 840,
       "description": "12 Pc Crispy Fried Chicken Leg & Thigh + 6 Dips",
       "isAvailable": true,
-      "image": "/images/menu/Leg& Thigh.png",
+      "image": "/images/menu/leg_thigh.png",
       "category": "Leg & Thigh"
     },
     {
@@ -805,6 +805,26 @@
       "description": "High protein double wrap (Chicken or Paneer)",
       "isAvailable": true,
       "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m11_leg",
+      "categoryId": "c5_legthigh",
+      "name": "1 Pc Leg & Thigh (1 Dip)",
+      "price": 70,
+      "description": "1 Pc Leg & Thigh",
+      "isAvailable": true,
+      "image": "/images/menu/leg_thigh.png",
+      "category": "Leg & Thigh"
+    },
+    {
+      "id": "m12_leg",
+      "categoryId": "c5_legthigh",
+      "name": "2 PC Leg & Thigh (1Dip)",
+      "price": 140,
+      "description": "2 PC Leg & Thigh (1Dip)",
+      "isAvailable": true,
+      "image": "/images/menu/leg_thigh.png",
+      "category": "Leg & Thigh"
     }
   ],
   "recipes": [
@@ -7240,6 +7260,92 @@
           "unit": "unit",
           "costPerUnit": 1,
           "cost": 1
+        }
+      ]
+    },
+    {
+      "id": "r_m11_leg",
+      "menuItemId": "m11_leg",
+      "menuItemName": "1 Pc Leg & Thigh (1 Dip)",
+      "name": "1 Pc Leg & Thigh",
+      "description": "Standard recipe for 1 Pc Leg & Thigh (Price ₹70/-)",
+      "yieldQty": 1,
+      "prepTime": 5,
+      "rmCost": 28,
+      "pmCost": 5,
+      "labourCost": 5,
+      "calculatedCost": 38,
+      "sellingPrice": 70,
+      "ingredients": [
+        {
+          "id": "ri_m11_leg_1",
+          "inventoryItemId": "inv_chicken_leg_thigh",
+          "inventoryName": "Chicken Leg & Thigh Raw",
+          "quantity": 1,
+          "unit": "pc",
+          "costPerUnit": 28,
+          "cost": 28
+        },
+        {
+          "id": "ri_m11_leg_2",
+          "inventoryItemId": "inv_dip_sauce",
+          "inventoryName": "Dip Sauce",
+          "quantity": 1,
+          "unit": "pc",
+          "costPerUnit": 5,
+          "cost": 5
+        },
+        {
+          "id": "ri_m11_leg_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1,
+          "unit": "unit",
+          "costPerUnit": 5,
+          "cost": 5
+        }
+      ]
+    },
+    {
+      "id": "r_m12_leg",
+      "menuItemId": "m12_leg",
+      "menuItemName": "2 PC Leg & Thigh (1Dip)",
+      "name": "2 PC Leg & Thigh (1Dip)",
+      "description": "Standard recipe for 2 PC Leg & Thigh (Price ₹140/-)",
+      "yieldQty": 1,
+      "prepTime": 5,
+      "rmCost": 56,
+      "pmCost": 5,
+      "labourCost": 5,
+      "calculatedCost": 66,
+      "sellingPrice": 140,
+      "ingredients": [
+        {
+          "id": "ri_m12_leg_1",
+          "inventoryItemId": "inv_chicken_leg_thigh",
+          "inventoryName": "Chicken Leg & Thigh Raw",
+          "quantity": 2,
+          "unit": "pc",
+          "costPerUnit": 28,
+          "cost": 56
+        },
+        {
+          "id": "ri_m12_leg_2",
+          "inventoryItemId": "inv_dip_sauce",
+          "inventoryName": "Dip Sauce",
+          "quantity": 1,
+          "unit": "pc",
+          "costPerUnit": 5,
+          "cost": 5
+        },
+        {
+          "id": "ri_m12_leg_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1,
+          "unit": "unit",
+          "costPerUnit": 5,
+          "cost": 5
         }
       ]
     }

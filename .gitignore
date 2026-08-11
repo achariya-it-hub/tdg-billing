@@ -8,16 +8,21 @@ node_modules/
 android/
 capacitor/
 
-# Database & Persistent Data files (Never push to Git)
+# Database & Persistent Data files (Never push to Git or deploy ZIP)
 db.json
+seed-db.json
 *.db
 *.json.tmp
 **/db.json
+**/seed-db.json
 **/db.json.tmp
 **/billing.db
 **/backups/
 **/daily-backups/
 server/db.pre-deploy-backup.json
+*_LOCK.json
+*_vault_LOCK.json
+server/*_LOCK.json
 
 server-update/
 *.zip

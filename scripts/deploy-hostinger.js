@@ -32,27 +32,24 @@ try {
   const distSize = countSize(distSrc)
   console.log(`   ✓ dist/  (${distSize} files copied to root & dist/)`)
 
-  // Copy server/ — remove local-only files after copy
+  // Copy server/ — exclude runtime database & lock vaults so live Hostinger data is NEVER overwritten
   const serverSrc = join(root, 'server')
   const serverDst = join(stage, 'server')
   cpSync(serverSrc, serverDst, { recursive: true })
-  const removeFromServer = ['node_modules', 'billing.db', 'backups']
+  const removeFromServer = [
+    'node_modules', 'billing.db', 'backups', 'daily-backups',
+    'db.json', 'seed-db.json', 'db.pre-deploy-backup.json',
+    'sales_vault_LOCK.json', 'menu_backup_LOCK.json', 'frozen_menu_LOCK.json',
+    'inventory_vault_LOCK.json', 'settings_vault_LOCK.json'
+  ]
   for (const f of readdirSync(serverDst)) {
-    if (removeFromServer.includes(f)) {
+    if (removeFromServer.includes(f) || f.endsWith('_LOCK.json')) {
       rmSync(join(serverDst, f), { recursive: true, force: true })
     }
   }
 
-  // Package db.json, seed-db.json, and lock vaults so Hostinger has 100% live sales data
-  const localDbPath = join(root, 'server', 'db.json')
-  if (existsSync(localDbPath)) {
-    cpSync(localDbPath, join(serverDst, 'seed-db.json'))
-    cpSync(localDbPath, join(serverDst, 'db.json'))
-    console.log('   ✓ Auto-seed database (db.json & seed-db.json & lock vaults) packaged')
-  }
-
   const serverSize = countSize(serverDst)
-  console.log(`   ✓ server/  (${serverSize} files, db.json seeded as seed-db.json)`)
+  console.log(`   ✓ server/  (${serverSize} code files, preserving live Hostinger db & lock vaults)`)
 
   // Copy package & root entry files
   cpSync(join(root, 'package.json'), join(stage, 'package.json'))
