@@ -13268,8 +13268,9 @@ function calculateSalesMetrics(salesOrders = []) {
     const amt = getOrderAmount(o)
     netSalesCollected += amt
 
-    const rawSub = Number(o.rawSubtotal) || (Number(o.subtotal) + (Number(o.discount) || 0)) || Number(o.subtotal) || 0
     const { discount: disc, name: dName } = getOrderDiscountInfo(o)
+    const itemSub = (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
+    const rawSub = Number(o.rawSubtotal) || (disc > 0 ? (Number(o.subtotal) + disc) : (itemSub || Number(o.subtotal) || 0))
     const netSub = Number(o.subtotal) || Math.max(0, rawSub - disc)
 
     grossMenuSubtotal += rawSub
@@ -13336,12 +13337,15 @@ const getOrderDiscountInfo = (o) => {
   let disc = Number(o.discount || o.discountGiven || o.discountAmount || 0)
   let name = o.discountName || o.offerName || ''
 
+  const dStr = getOrderDate(o)
+
   if (disc === 0) {
-    const rawSub = Number(o.rawSubtotal) || (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
-    if (o.inaugurationOffer) {
+    const itemSub = (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
+    const rawSub = Number(o.rawSubtotal) || itemSub || Number(o.subtotal) || 0
+    if (o.inaugurationOffer || dStr === '2026-07-27' || dStr === '2026-07-28') {
       disc = Math.round(rawSub * 0.5)
       name = 'Inauguration Offer 50% OFF'
-    } else if (o.specialOffer20) {
+    } else if (o.specialOffer20 || (dStr >= '2026-07-29' && dStr <= '2026-08-02')) {
       disc = Math.round(rawSub * 0.2)
       name = 'Special Campaign 20% OFF'
     } else if (o.vip50 || o.customerDiscountPct === 50) {
@@ -13354,7 +13358,7 @@ const getOrderDiscountInfo = (o) => {
   }
 
   if (!name && disc > 0) {
-    name = o.inaugurationOffer ? 'Inauguration Offer 50% OFF' : (o.specialOffer20 ? 'Special Campaign 20% OFF' : 'Discount Given')
+    name = (o.inaugurationOffer || dStr === '2026-07-27' || dStr === '2026-07-28') ? 'Inauguration Offer 50% OFF' : ((o.specialOffer20 || (dStr >= '2026-07-29' && dStr <= '2026-08-02')) ? 'Special Campaign 20% OFF' : 'Discount Given')
   }
 
   return { discount: Math.max(0, Math.round(disc)), name: name || 'Discount' }

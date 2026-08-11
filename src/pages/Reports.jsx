@@ -1019,8 +1019,9 @@ export default function Reports() {
           let disc = Number(o.discount || o.discountGiven || o.discountAmount || 0)
           if (disc === 0) {
             const rawSub = o.rawSubtotal || (o.items || []).reduce((s, i) => s + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
-            if (o.inaugurationOffer) disc = rawSub * 0.5
-            else if (o.specialOffer20) disc = rawSub * 0.2
+            const dStr = o.date || (o.createdAt ? String(o.createdAt).slice(0, 10) : '')
+            if (o.inaugurationOffer || dStr === '2026-07-27' || dStr === '2026-07-28') disc = rawSub * 0.5
+            else if (o.specialOffer20 || (dStr >= '2026-07-29' && dStr <= '2026-08-02')) disc = rawSub * 0.2
           }
           totalDiscountsGiven += disc
         })
@@ -1067,12 +1068,13 @@ export default function Reports() {
                     </tr>
                   ) : ordersReport.map(order => {
                     let discAmt = Number(order.discount || order.discountGiven || order.discountAmount || 0)
+                    const dStr = order.date || (order.createdAt ? String(order.createdAt).slice(0, 10) : '')
                     if (discAmt === 0) {
                       const rawSub = order.rawSubtotal || (order.items || []).reduce((sum, i) => sum + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
-                      if (order.inaugurationOffer) discAmt = rawSub * 0.5
-                      else if (order.specialOffer20) discAmt = rawSub * 0.2
+                      if (order.inaugurationOffer || dStr === '2026-07-27' || dStr === '2026-07-28') discAmt = rawSub * 0.5
+                      else if (order.specialOffer20 || (dStr >= '2026-07-29' && dStr <= '2026-08-02')) discAmt = rawSub * 0.2
                     }
-                    const discName = order.discountName || (order.inaugurationOffer ? 'Inauguration 50%' : (order.specialOffer20 ? 'Special 20%' : 'Discount'))
+                    const discName = order.discountName || (order.inaugurationOffer || dStr === '2026-07-27' || dStr === '2026-07-28' ? 'Inauguration 50%' : ((order.specialOffer20 || (dStr >= '2026-07-29' && dStr <= '2026-08-02')) ? 'Special 20%' : 'Discount'))
                     const netPaid = Number(order.total) || 0
                     const origAmt = Math.round(order.rawSubtotal || (netPaid + discAmt))
 
