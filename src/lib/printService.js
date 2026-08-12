@@ -340,6 +340,13 @@ const PrintService = {
           <span>₹${Math.round(total).toFixed(0)}</span>
         </div>
 
+        ${(bill.cashTendered && Number(bill.cashTendered) > 0) ? `
+          <div class="totals-section" style="border-top: 1px dashed #000; padding-top: 4px; margin-top: 4px;">
+            <div class="total-row-sub"><span>Cash Received:</span><span>₹${Number(bill.cashTendered).toFixed(0)}</span></div>
+            <div class="total-row-sub" style="font-weight:900;"><span>Change Returned:</span><span>₹${Number(bill.changeReturned !== undefined ? bill.changeReturned : (bill.cashTendered - Math.round(total))).toFixed(0)}</span></div>
+          </div>
+        ` : ''}
+
         <div class="footer">
           <div><strong>Thank You for Dining at Ten Dens Gyros!</strong></div>
           <div>Visit Us Again • www.tendengyros.com</div>

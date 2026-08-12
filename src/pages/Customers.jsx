@@ -381,17 +381,42 @@ export default function Customers() {
                             </span>
                           )}
                         </div>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleDeleteCustomer(customer.id, customer.name); }}
-                          title="Delete Customer"
-                          style={{
-                            border: 'none', background: 'rgba(239, 68, 68, 0.08)', color: '#dc2626',
-                            padding: '8px', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.2s',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center'
-                          }}
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        <div style={{ display: 'flex' }}>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDeleteCustomer(customer.id, customer.name); }}
+                            title="Delete Customer"
+                            style={{
+                              border: 'none', background: 'rgba(239, 68, 68, 0.08)', color: '#dc2626',
+                              padding: '8px', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.2s',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center'
+                            }}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const msg = `Hi ${customer.name || 'there'}, check our new offers!`;
+                              const link = `https://wa.me/${customer.phone}?text=${encodeURIComponent(msg)}`;
+                              window.open(link, '_blank');
+                            }}
+                            title="Message on WhatsApp"
+                            style={{
+                              border: 'none',
+                              background: '#25D366',
+                              color: 'white',
+                              padding: '8px',
+                              borderRadius: '10px',
+                              cursor: 'pointer',
+                              marginLeft: '8px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <Copy size={16} />
+                          </button>
+                        </div>
                       </div>
                       <div style={{ fontSize: '13px', color: '#6b7280' }}>
                         {customer.phone || 'No phone'}

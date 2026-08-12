@@ -658,6 +658,8 @@ export default function POS() {
 
   // Pay Mode popup state (#2 - settle bill at the moment of raising the order)
   const [showPayModal, setShowPayModal] = useState(false)
+  const [posPayMode, setPosPayMode] = useState('cash')
+  const [posCashTendered, setPosCashTendered] = useState('')
   const [splitCash, setSplitCash] = useState('')
   const [splitUpi, setSplitUpi] = useState('')
   const [splitCard, setSplitCard] = useState('')
@@ -685,6 +687,8 @@ export default function POS() {
   const openPayModal = () => {
     if (!requireOpenCounter()) return
     if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place order'); return }
+    setPosPayMode('cash')
+    setPosCashTendered('')
     setSplitCash('')
     setSplitUpi('')
     setSplitCard('')
@@ -698,6 +702,20 @@ export default function POS() {
     try {
       let splitPayments
       let finalMethod = method
+      let tenderVal
+      let changeVal
+
+      if (method === 'cash') {
+        const billTotal = currentOrder.complimentary ? 0 : Math.round(getTotal())
+        if (posCashTendered && Number(posCashTendered) > 0) {
+          tenderVal = Number(posCashTendered)
+          changeVal = tenderVal >= billTotal ? tenderVal - billTotal : 0
+        } else {
+          tenderVal = billTotal
+          changeVal = 0
+        }
+      }
+
       if (method === 'split') {
         const c = Number(splitCash) || 0
         const u = Number(splitUpi) || 0
@@ -714,7 +732,7 @@ export default function POS() {
         finalMethod = 'split'
       }
       const settleMethod = currentOrder.complimentary ? 'complimentary' : finalMethod
-      const newOrder = await placeOrder(settleMethod, true, splitPayments)
+      const newOrder = await placeOrder(settleMethod, true, splitPayments, tenderVal, changeVal)
       toast.success(`Order #${newOrder.orderNumber || newOrder.id} settled via ${currentOrder.complimentary ? 'COMPLIMENTARY' : settleMethod.toUpperCase()}!`)
       setShowCart(false)
       if (newOrder) {
@@ -2037,27 +2055,216 @@ export default function POS() {
             </button>
           ) : (
             <>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '12px' }}>
-                <button onClick={() => confirmPay('cash')} disabled={processing} style={{ padding: '16px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', fontWeight: 800, fontSize: '15px', cursor: 'pointer', boxShadow: '0 4px 14px rgba(16,185,129,0.3)' }}>
-                  💵 Cash
-                </button>
-                <button onClick={() => confirmPay('upi')} disabled={processing} style={{ padding: '16px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', color: 'white', fontWeight: 800, fontSize: '15px', cursor: 'pointer', boxShadow: '0 4px 14px rgba(37,99,235,0.3)' }}>
-                  📱 UPI
-                </button>
-                <button onClick={() => confirmPay('card')} disabled={processing} style={{ padding: '16px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', color: 'white', fontWeight: 800, fontSize: '15px', cursor: 'pointer', boxShadow: '0 4px 14px rgba(139,92,246,0.3)' }}>
-                  💳 Card
-                </button>
-                <button onClick={() => confirmPay('split')} disabled={processing} style={{ padding: '16px', borderRadius: '12px', border: '2px solid #e2e8f0', background: '#f8fafc', color: '#334155', fontWeight: 800, fontSize: '15px', cursor: 'pointer' }}>
-                  ➗ Split
-                </button>
+              {/* Payment Mode Selection Tabs */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '14px' }}>
+                {[
+                  ['cash', '💵 Cash', '#10b981'],
+                  ['upi', '📱 UPI', '#2563eb'],
+                  ['card', '💳 Card', '#8b5cf6'],
+                  ['split', '➗ Split', '#f59e0b']
+                ].map(([modeKey, modeLabel, color]) => {
+                  const isSelected = posPayMode === modeKey
+                  return (
+                    <button
+                      key={modeKey}
+                      type="button"
+                      onClick={() => setPosPayMode(modeKey)}
+                      style={{
+                        padding: '12px 6px',
+                        borderRadius: '10px',
+                        border: isSelected ? `2px solid ${color}` : '1.5px solid #cbd5e1',
+                        background: isSelected ? `${color}15` : '#f8fafc',
+                        color: isSelected ? color : '#475569',
+                        fontWeight: 800,
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s'
+                      }}
+                    >
+                      {modeLabel}
+                    </button>
+                  )
+                })}
               </div>
 
-              {(() => {
+              {/* CASH MODE: Change Calculator */}
+              {posPayMode === 'cash' && (() => {
+                const totalAmt = Math.round(getTotal())
+                const tendered = Number(posCashTendered) || 0
+                const changeAmt = tendered > 0 ? (tendered - totalAmt) : 0
+
+                return (
+                  <div style={{ background: '#f0fdf4', border: '1.5px solid #86efac', borderRadius: '16px', padding: '16px', marginBottom: '12px' }}>
+                    <label style={{ fontSize: '12px', fontWeight: 800, color: '#166534', display: 'block', marginBottom: '6px' }}>
+                      💵 Cash Received / Tendered (₹)
+                    </label>
+                    <input
+                      type="number"
+                      placeholder={`Enter cash given by customer (e.g. 500)`}
+                      value={posCashTendered}
+                      onChange={e => setPosCashTendered(e.target.value)}
+                      min="0"
+                      autoFocus
+                      style={{
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        padding: '12px',
+                        borderRadius: '10px',
+                        border: '2px solid #10b981',
+                        fontSize: '18px',
+                        fontWeight: 800,
+                        color: '#065f46',
+                        textAlign: 'center',
+                        outline: 'none',
+                        background: '#ffffff',
+                        marginBottom: '10px'
+                      }}
+                    />
+
+                    {/* Quick Denomination Chips */}
+                    <div style={{ fontSize: '11px', fontWeight: 700, color: '#15803d', marginBottom: '6px' }}>Quick Cash Notes:</div>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                      {[
+                        { label: `Exact (₹${totalAmt})`, val: String(totalAmt) },
+                        { label: '₹100', val: '100' },
+                        { label: '₹200', val: '200' },
+                        { label: '₹500', val: '500' },
+                        { label: '₹1000', val: '1000' },
+                        { label: '₹2000', val: '2000' }
+                      ].map(chip => (
+                        <button
+                          key={chip.label}
+                          type="button"
+                          onClick={() => setPosCashTendered(chip.val)}
+                          style={{
+                            padding: '6px 10px',
+                            borderRadius: '8px',
+                            border: posCashTendered === chip.val ? '2px solid #059669' : '1px solid #a7f3d0',
+                            background: posCashTendered === chip.val ? '#059669' : '#ffffff',
+                            color: posCashTendered === chip.val ? '#ffffff' : '#047857',
+                            fontWeight: 700,
+                            fontSize: '12px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {chip.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Live Change Return Calculation Display */}
+                    {tendered > 0 && (
+                      changeAmt >= 0 ? (
+                        <div style={{ background: '#ffffff', border: '2px solid #10b981', borderRadius: '12px', padding: '12px', textAlign: 'center', boxShadow: '0 2px 8px rgba(16,185,129,0.15)' }}>
+                          <div style={{ fontSize: '11px', fontWeight: 800, color: '#047857', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            💵 RETURN CHANGE TO CUSTOMER
+                          </div>
+                          <div style={{ fontSize: '32px', fontWeight: 900, color: '#059669', margin: '2px 0' }}>
+                            ₹{changeAmt.toLocaleString('en-IN')}
+                          </div>
+                          <div style={{ fontSize: '12px', fontWeight: 700, color: '#065f46' }}>
+                            Customer paid ₹{tendered.toLocaleString('en-IN')} • Give ₹{changeAmt.toLocaleString('en-IN')} back
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ background: '#fef2f2', border: '2px solid #ef4444', borderRadius: '12px', padding: '10px', textAlign: 'center' }}>
+                          <div style={{ fontSize: '11px', fontWeight: 800, color: '#b91c1c', textTransform: 'uppercase' }}>
+                            ⚠️ CASH SHORTAGE
+                          </div>
+                          <div style={{ fontSize: '20px', fontWeight: 900, color: '#dc2626' }}>
+                            ₹{Math.abs(changeAmt).toLocaleString('en-IN')}
+                          </div>
+                          <div style={{ fontSize: '11px', fontWeight: 700, color: '#991b1b' }}>
+                            Customer owes ₹{Math.abs(changeAmt).toLocaleString('en-IN')} more
+                          </div>
+                        </div>
+                      )
+                    )}
+
+                    <button
+                      onClick={() => confirmPay('cash')}
+                      disabled={processing || (tendered > 0 && changeAmt < 0)}
+                      style={{
+                        width: '100%',
+                        padding: '14px',
+                        borderRadius: '12px',
+                        border: 'none',
+                        background: (tendered > 0 && changeAmt < 0) ? '#9ca3af' : 'linear-gradient(135deg, #10b981, #059669)',
+                        color: 'white',
+                        fontWeight: 800,
+                        fontSize: '15px',
+                        cursor: (tendered > 0 && changeAmt < 0) ? 'not-allowed' : 'pointer',
+                        boxShadow: '0 4px 14px rgba(16,185,129,0.3)',
+                        marginTop: '12px'
+                      }}
+                    >
+                      {processing ? 'Processing...' : (tendered > totalAmt ? `💵 Confirm Cash (Return ₹${changeAmt})` : `💵 Confirm Cash Payment (₹${totalAmt})`)}
+                    </button>
+                  </div>
+                )
+              })()}
+
+              {/* UPI MODE */}
+              {posPayMode === 'upi' && (
+                <div style={{ padding: '16px', background: '#eff6ff', borderRadius: '16px', border: '1.5px solid #93c5fd', textAlign: 'center', marginBottom: '12px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#1e40af', marginBottom: '12px' }}>
+                    📱 Confirm UPI / QR Payment of ₹{Math.round(getTotal())}
+                  </div>
+                  <button
+                    onClick={() => confirmPay('upi')}
+                    disabled={processing}
+                    style={{
+                      width: '100%',
+                      padding: '14px',
+                      borderRadius: '12px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                      color: 'white',
+                      fontWeight: 800,
+                      fontSize: '15px',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 14px rgba(37,99,235,0.3)'
+                    }}
+                  >
+                    {processing ? 'Processing...' : `📱 Confirm UPI Payment (₹${Math.round(getTotal())})`}
+                  </button>
+                </div>
+              )}
+
+              {/* CARD MODE */}
+              {posPayMode === 'card' && (
+                <div style={{ padding: '16px', background: '#f5f3ff', borderRadius: '16px', border: '1.5px solid #c4b5fd', textAlign: 'center', marginBottom: '12px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#5b21b6', marginBottom: '12px' }}>
+                    💳 Confirm Card Machine Payment of ₹{Math.round(getTotal())}
+                  </div>
+                  <button
+                    onClick={() => confirmPay('card')}
+                    disabled={processing}
+                    style={{
+                      width: '100%',
+                      padding: '14px',
+                      borderRadius: '12px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
+                      color: 'white',
+                      fontWeight: 800,
+                      fontSize: '15px',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 14px rgba(139,92,246,0.3)'
+                    }}
+                  >
+                    {processing ? 'Processing...' : `💳 Confirm Card Payment (₹${Math.round(getTotal())})`}
+                  </button>
+                </div>
+              )}
+
+              {/* SPLIT MODE */}
+              {posPayMode === 'split' && (() => {
                 const ssum = (Number(splitCash) || 0) + (Number(splitUpi) || 0) + (Number(splitCard) || 0)
                 const totalAmt = Math.round(getTotal())
                 return (
-                  <div style={{ background: '#f8fafc', border: '1.5px dashed #cbd5e1', borderRadius: '12px', padding: '12px' }}>
-                    <div style={{ fontSize: '12px', fontWeight: 800, color: '#334155', marginBottom: '8px' }}>➗ Split Payment (amounts must equal ₹{totalAmt})</div>
+                  <div style={{ background: '#fffbeb', border: '1.5px dashed #fcd34d', borderRadius: '16px', padding: '14px', marginBottom: '12px' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 800, color: '#92400e', marginBottom: '8px' }}>➗ Split Payment Breakdown (total must equal ₹{totalAmt})</div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginBottom: '8px' }}>
                       {[['Cash', 'cash', '#10b981'], ['UPI', 'upi', '#2563eb'], ['Card', 'card', '#8b5cf6']].map(([label, key, color]) => (
                         <div key={key}>
@@ -2073,17 +2280,29 @@ export default function POS() {
                         </div>
                       ))}
                     </div>
-                    <div style={{ fontSize: '11px', fontWeight: 700, color: ssum === totalAmt ? '#059669' : '#dc2626', textAlign: 'center' }}>
+                    <div style={{ fontSize: '11px', fontWeight: 700, color: ssum === totalAmt ? '#059669' : '#dc2626', textAlign: 'center', marginBottom: '10px' }}>
                       {ssum === totalAmt ? '✓ Matches bill total' : `Total entered: ₹${ssum} (needs ₹${totalAmt})`}
                     </div>
+                    <button
+                      onClick={() => confirmPay('split')}
+                      disabled={processing || ssum !== totalAmt}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '12px',
+                        border: 'none',
+                        background: ssum === totalAmt ? 'linear-gradient(135deg, #f59e0b, #d97706)' : '#cbd5e1',
+                        color: 'white',
+                        fontWeight: 800,
+                        fontSize: '14px',
+                        cursor: (processing || ssum !== totalAmt) ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      ➗ Confirm Split & Settle
+                    </button>
                   </div>
                 )
               })()}
-
-              <button onClick={() => confirmPay('split')} disabled={processing}
-                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: 'none', background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white', fontWeight: 800, fontSize: '14px', cursor: processing ? 'not-allowed' : 'pointer', marginTop: '10px' }}>
-                ➗ Confirm Split & Settle
-              </button>
             </>
           )}
 

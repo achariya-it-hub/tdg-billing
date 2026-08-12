@@ -245,6 +245,11 @@ export default function Billing() {
 
   const handleGenerateBill = (kot) => {
     setSelectedKOT(kot)
+    setSelectedPayment('cash')
+    setCashTendered('')
+    setSplitCash('')
+    setSplitUpi('')
+    setSplitCard('')
     setShowPayment(true)
   }
 
@@ -254,6 +259,18 @@ export default function Billing() {
 
     const totalBillAmt = Math.round(selectedKOT.total || (calculateTotal(selectedKOT) + calculateTax(calculateTotal(selectedKOT))))
     let splitData = undefined
+    let tenderVal
+    let changeVal
+
+    if (selectedPayment === 'cash') {
+      if (cashTendered && Number(cashTendered) > 0) {
+        tenderVal = Number(cashTendered)
+        changeVal = tenderVal >= totalBillAmt ? tenderVal - totalBillAmt : 0
+      } else {
+        tenderVal = totalBillAmt
+        changeVal = 0
+      }
+    }
 
     if (selectedPayment === 'split') {
       const c = Number(splitCash) || 0
@@ -306,15 +323,18 @@ export default function Billing() {
           status: 'completed',
           paymentStatus: 'paid',
           paymentMethod: selectedPayment,
-          splitPayments: splitData
+          splitPayments: splitData,
+          cashTendered: tenderVal,
+          changeReturned: changeVal
         })
       })
       if (res.ok) {
-        setPaidBills(prev => [{ ...selectedKOT, status: 'completed', paymentStatus: 'paid', paymentMethod: selectedPayment, splitPayments: splitData }, ...prev])
+        setPaidBills(prev => [{ ...selectedKOT, status: 'completed', paymentStatus: 'paid', paymentMethod: selectedPayment, splitPayments: splitData, cashTendered: tenderVal, changeReturned: changeVal }, ...prev])
         setPendingKOTs(prev => prev.filter(o => o.id !== selectedKOT.id))
       }
       setShowPayment(false)
       setSelectedKOT(null)
+      setCashTendered('')
       setSplitCash('')
       setSplitUpi('')
       setSplitCard('')
@@ -1073,6 +1093,101 @@ export default function Billing() {
                 ))}
               </div>
             </div>
+
+            {selectedPayment === 'cash' && (() => {
+              const totalAmt = Math.round(selectedKOT.total || (calculateTotal(selectedKOT) + calculateTax(calculateTotal(selectedKOT))))
+              const tendered = Number(cashTendered) || 0
+              const changeAmt = tendered > 0 ? (tendered - totalAmt) : 0
+
+              return (
+                <div style={{ marginBottom: '20px', padding: '16px', background: '#f0fdf4', borderRadius: '16px', border: '1.5px solid #86efac' }}>
+                  <label style={{ fontSize: '13px', fontWeight: 800, color: '#166534', display: 'block', marginBottom: '6px' }}>
+                    💵 Cash Received / Tendered (₹)
+                  </label>
+                  <input
+                    type="number"
+                    placeholder={`Enter cash given by customer (e.g. 500)`}
+                    value={cashTendered}
+                    onChange={e => setCashTendered(e.target.value)}
+                    min="0"
+                    style={{
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      padding: '12px',
+                      borderRadius: '10px',
+                      border: '2px solid #10b981',
+                      fontSize: '18px',
+                      fontWeight: 800,
+                      color: '#065f46',
+                      textAlign: 'center',
+                      outline: 'none',
+                      background: '#ffffff',
+                      marginBottom: '10px'
+                    }}
+                  />
+
+                  {/* Quick Denomination Chips */}
+                  <div style={{ fontSize: '11px', fontWeight: 700, color: '#15803d', marginBottom: '6px' }}>Quick Cash Notes:</div>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                    {[
+                      { label: `Exact (₹${totalAmt})`, val: String(totalAmt) },
+                      { label: '₹100', val: '100' },
+                      { label: '₹200', val: '200' },
+                      { label: '₹500', val: '500' },
+                      { label: '₹1000', val: '1000' },
+                      { label: '₹2000', val: '2000' }
+                    ].map(chip => (
+                      <button
+                        key={chip.label}
+                        type="button"
+                        onClick={() => setCashTendered(chip.val)}
+                        style={{
+                          padding: '6px 10px',
+                          borderRadius: '8px',
+                          border: cashTendered === chip.val ? '2px solid #059669' : '1px solid #a7f3d0',
+                          background: cashTendered === chip.val ? '#059669' : '#ffffff',
+                          color: cashTendered === chip.val ? '#ffffff' : '#047857',
+                          fontWeight: 700,
+                          fontSize: '12px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {chip.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Live Change Return Calculation Display */}
+                  {tendered > 0 && (
+                    changeAmt >= 0 ? (
+                      <div style={{ background: '#ffffff', border: '2px solid #10b981', borderRadius: '12px', padding: '12px', textAlign: 'center', boxShadow: '0 2px 8px rgba(16,185,129,0.15)' }}>
+                        <div style={{ fontSize: '11px', fontWeight: 800, color: '#047857', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          💵 RETURN CHANGE TO CUSTOMER
+                        </div>
+                        <div style={{ fontSize: '30px', fontWeight: 900, color: '#059669', margin: '2px 0' }}>
+                          ₹{changeAmt.toLocaleString('en-IN')}
+                        </div>
+                        <div style={{ fontSize: '12px', fontWeight: 700, color: '#065f46' }}>
+                          Customer paid ₹{tendered.toLocaleString('en-IN')} • Give ₹{changeAmt.toLocaleString('en-IN')} back
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ background: '#fef2f2', border: '2px solid #ef4444', borderRadius: '12px', padding: '10px', textAlign: 'center' }}>
+                        <div style={{ fontSize: '11px', fontWeight: 800, color: '#b91c1c', textTransform: 'uppercase' }}>
+                          ⚠️ CASH SHORTAGE
+                        </div>
+                        <div style={{ fontSize: '20px', fontWeight: 900, color: '#dc2626' }}>
+                          ₹{Math.abs(changeAmt).toLocaleString('en-IN')}
+                        </div>
+                        <div style={{ fontSize: '11px', fontWeight: 700, color: '#991b1b' }}>
+                          Customer owes ₹{Math.abs(changeAmt).toLocaleString('en-IN')} more
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+              )
+            })()}
 
             {selectedPayment === 'split' && (
               <div style={{ marginBottom: '20px', padding: '16px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>

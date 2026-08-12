@@ -1,5 +1,6 @@
 // TDG Server v1.0.7 - Customer Search & Auto-Fetch Update (2026-08-06)
 import express from 'express'
+import whatsappRouter from './routes/whatsapp.js'
 import cors from 'cors'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
@@ -725,6 +726,7 @@ app.use(express.json({ limit: '10mb' }))
 const UPLOADS_DIR = join(__dirname, 'uploads')
 if (!existsSync(UPLOADS_DIR)) mkdirSync(UPLOADS_DIR, { recursive: true })
 app.use('/uploads', express.static(UPLOADS_DIR))
+app.use('/api/whatsapp', whatsappRouter)
 
 // Version & Diagnostics endpoint
 app.get('/api/version', (req, res) => {
@@ -11920,6 +11922,8 @@ app.post('/api/pos/orders', (req, res) => {
     total: totalVal,
     paymentMethod: paymentMethod || 'cash',
     splitPayments: req.body.splitPayments || undefined,
+    cashTendered: req.body.cashTendered !== undefined ? Number(req.body.cashTendered) : undefined,
+    changeReturned: req.body.changeReturned !== undefined ? Number(req.body.changeReturned) : undefined,
     paymentStatus: isDirectSettle ? 'paid' : 'pending',
     paidAt: isDirectSettle ? now : undefined,
     completedAt: isDirectSettle ? now : undefined,
@@ -12064,6 +12068,8 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
       if (!order.completedAt) order.completedAt = new Date().toISOString()
     }
     if (req.body.splitPayments) order.splitPayments = req.body.splitPayments
+    if (req.body.cashTendered !== undefined) order.cashTendered = Number(req.body.cashTendered)
+    if (req.body.changeReturned !== undefined) order.changeReturned = Number(req.body.changeReturned)
     if (status === 'cancelled') {
       if (cancelReason) order.cancelReason = cancelReason
       if (req.body.cancelledBy) order.cancelledBy = req.body.cancelledBy
