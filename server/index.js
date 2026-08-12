@@ -15094,10 +15094,10 @@ const onListen = () => {
   console.log('Daily backup scheduler active (checks every hour)')
 }
 
-if (typeof PORT === 'string' && (PORT.startsWith('/') || PORT.startsWith('\\\\.\\pipe\\'))) {
-  httpServer.listen(PORT, onListen)
+if (process.env.PORT) {
+  httpServer.listen(process.env.PORT, onListen)
 } else {
-  httpServer.listen(Number(PORT) || 3001, '0.0.0.0', onListen)
+  httpServer.listen(3001, '0.0.0.0', onListen)
 }
 
 // Graceful shutdown — save state before process exits (prevents data loss on deploy/restart)
