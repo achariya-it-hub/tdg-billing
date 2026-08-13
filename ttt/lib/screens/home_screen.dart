@@ -786,7 +786,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text('Add 10 assets. Earn 500 bonus.', style: TextStyle(color: TDGColors.greyLight, fontSize: 12)),
+                  Text('20% 1st visit • 10% repeat • 5% cashback', style: TextStyle(color: TDGColors.greyLight, fontSize: 12)),
                   const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),

@@ -122,20 +122,20 @@ class _OffersScreenState extends State<OffersScreen> {
                 ShaderMask(
                   shaderCallback: (b) => TDGColors.goldGradient.createShader(b),
                   child: const Text(
-                    'ASSET BONUS',
+                    'REFERRAL & REWARDS',
                     style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800, letterSpacing: 0.5),
                   ),
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  'Add 10 assets & earn',
+                  'Friends get 20% 1st visit & 10% repeat visit',
                   style: TextStyle(color: Colors.white70, fontSize: 12),
                 ),
                 const SizedBox(height: 6),
                 ShaderMask(
                   shaderCallback: (b) => TDGColors.goldGradient.createShader(b),
                   child: const Text(
-                    '+500 pts',
+                    '5% EARN',
                     style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900),
                   ),
                 ),

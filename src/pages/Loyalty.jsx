@@ -67,8 +67,8 @@ function StepBox({ num, title, desc }) {
         flexShrink: 0
       }}>{num}</div>
       <div>
-        <div style={{ fontWeight: 600, color: '#1a1a2e', marginBottom: '4px' }}>{title}</div>
-        <div style={{ fontSize: '13px', color: '#6b7280', lineHeight: 1.4 }}>{desc}</div>
+        <div style={{ fontWeight: 700, fontSize: '16px', color: '#1a1a2e', marginBottom: '4px' }}>{title}</div>
+        <div style={{ fontSize: '15px', color: '#4b5563', lineHeight: 1.5 }}>{desc}</div>
       </div>
     </div>
   )
@@ -361,10 +361,10 @@ export default function Loyalty() {
             <div style={{ marginTop: '24px', padding: '20px', background: '#fef2f2', borderRadius: '16px' }}>
               <div style={{ fontSize: '14px', fontWeight: 600, color: '#991b1b', marginBottom: '8px' }}>How it works</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <StepBox num={1} title="Sign Up" desc="Create your account with referral code for bonus points" />
-                <StepBox num={2} title="Earn Ruby Points" desc="Get 400 bonus points on signup + 50 for each friend you refer" />
-                <StepBox num={3} title="Build Your Den" desc="Create a den with up to 10 members and earn Pride Lion status" />
-                <StepBox num={4} title="Redeem Rewards" desc="Redeem 3000+ points for real rewards" />
+                <StepBox num={1} title="Sign Up" desc="Create your account with referral code for instant rewards" />
+                <StepBox num={2} title="Referred Guest Discounts" desc="Get 15% OFF on your 1st visit & 10% OFF on every repeat visit" />
+                <StepBox num={3} title="Primary & Staff Benefits" desc="Primary users get 30% OFF (10 friends threshold), Staff get 50% OFF" />
+                <StepBox num={4} title="5% Cashback & Partner Unlock" desc="Earn 5% referrer commission and reach ₹5,000 spend to unlock Partner level!" />
               </div>
             </div>
           </div>

@@ -157,7 +157,7 @@ export const useOrderStore = create(
   setCustomerPhone: async (customerPhone) => {
     set(state => ({ currentOrder: { ...state.currentOrder, customerPhone } }))
     const clean = String(customerPhone || '').replace(/\D/g, '')
-    if (clean.length >= 10) {
+    if (clean.length >= 8) {
       try {
         const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
         const res = await fetch(`${apiUrl}/api/customers/check-discount?phone=${clean}`)
@@ -167,7 +167,10 @@ export const useOrderStore = create(
             get().setCustomer({
               customerName: data.customerName,
               phone: data.phone || clean,
-              discountPct: data.discountPct || 0
+              discountPct: data.discountPct || 0,
+              tier: data.tier,
+              discountReason: data.discountReason,
+              discountName: data.discountReason
             })
           } else {
             get().setCustomerDiscountPct(0)

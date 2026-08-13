@@ -485,6 +485,28 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> checkCustomerDiscount(String phone) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/customers/check-discount?phone=$phone');
+    try {
+      final response = await http.get(url, headers: _getHeaders());
+      if (response.statusCode == 200) return jsonDecode(response.body);
+      return {'found': false, 'hasDiscount': false, 'discountPct': 0};
+    } catch (e) {
+      return {'found': false, 'hasDiscount': false, 'discountPct': 0};
+    }
+  }
+
+  Future<Map<String, dynamic>> getMarketingConfig() async {
+    final url = Uri.parse('${AppConfig.baseUrl}/config/marketing-phase');
+    try {
+      final response = await http.get(url, headers: _getHeaders());
+      if (response.statusCode == 200) return jsonDecode(response.body);
+      return {'earlyMarketingPhase': true, 'hidePointsSystem': true};
+    } catch (e) {
+      return {'earlyMarketingPhase': true, 'hidePointsSystem': true};
+    }
+  }
+
   Future<Map<String, dynamic>> redeemPoints(int amount) async {
     final url = Uri.parse('${AppConfig.baseUrl}/wallet/redeem');
     try {

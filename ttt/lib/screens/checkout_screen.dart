@@ -373,18 +373,46 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildPointsRedeem() {
-    if (_userPoints <= 0) return const SizedBox.shrink();
-    final maxRedeem = _userPoints < _finalTotal ? _userPoints : _finalTotal;
+    if (_userPoints < 100) {
+      return Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: TDGColors.cardDark,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: TDGColors.border),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.lock_clock_rounded, color: TDGColors.gold, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Points Redemption Threshold (100 Pts)', style: TextStyle(color: TDGColors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 2),
+                  Text('Points can only be redeemed after reaching 100 points. You currently have $_userPoints pts.', style: TextStyle(color: TDGColors.greyLight, fontSize: 11)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    final billBase = widget.total - _discountAmount;
+    final maxCap = (billBase * 0.50).round();
+    final maxRedeem = _userPoints < maxCap ? _userPoints : maxCap;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'REDEEM POINTS',
+          'REDEEM POINTS (MIN 100 PTS • MAX 1 PER DAY)',
           style: TextStyle(
             color: TDGColors.gold,
             fontSize: 11,
             fontWeight: FontWeight.w700,
-            letterSpacing: 1.5,
+            letterSpacing: 1.2,
           ),
         ),
         const SizedBox(height: 10),
@@ -409,7 +437,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Use Points', style: TextStyle(color: TDGColors.white, fontSize: 14, fontWeight: FontWeight.w600)),
-                        Text('1 pt = ₹1  •  Available: $_userPoints pts', style: TextStyle(color: TDGColors.grey, fontSize: 11)),
+                        Text('1 pt = ₹1  •  Min 100 pts  •  Strictly 1 redemption/day (Max: ₹$maxCap)', style: TextStyle(color: TDGColors.grey, fontSize: 11)),
                       ],
                     ),
                   ),
@@ -432,9 +460,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     Text('Points to redeem: ', style: TextStyle(color: TDGColors.grey, fontSize: 12)),
                     Expanded(
                       child: Slider(
-                        value: _pointsToRedeem.toDouble(),
+                        value: _pointsToRedeem.toDouble().clamp(0.0, maxRedeem.toDouble() > 0 ? maxRedeem.toDouble() : 1.0),
                         min: 0,
-                        max: maxRedeem.toDouble(),
+                        max: maxRedeem > 0 ? maxRedeem.toDouble() : 1.0,
                         divisions: maxRedeem > 0 ? (maxRedeem > 50 ? 50 : maxRedeem) : 1,
                         activeColor: TDGColors.gold,
                         inactiveColor: TDGColors.border,

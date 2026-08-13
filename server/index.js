@@ -8222,6 +8222,11 @@ app.post('/api/auth/signup', async (req, res) => {
     mobileAppUsers.push(newUser)
     saveState()
 
+    if (io) {
+      io.emit('customer:registered', { id: newUser.id, name: newUser.name, phone: newUser.phone, email: newUser.email, tier: newUser.tier })
+      io.emit('customers:updated')
+    }
+
     const token = jwt.sign({ userId: newUser.id }, JWT_SECRET, { expiresIn: '7d' })
     const { password: _, ...userWithoutPassword } = newUser
     res.status(201).json({ token, user: userWithoutPassword })
@@ -8725,6 +8730,23 @@ app.get('/api/assets/discount/:phone', (req, res) => {
   })
 })
 
+// Dynamic Early Marketing & Display Rules API Config
+app.get('/api/config/marketing-phase', (req, res) => {
+  res.json({
+    earlyMarketingPhase: true,
+    hidePointsSystem: true,
+    primaryDiscountPct: 30,
+    firstVisitDiscountPct: 20,
+    repeatVisitDiscountPct: 10,
+    staffDiscountPct: 50,
+    networkThreshold: 10,
+    partnerSpendThreshold: 5000,
+    commissionPct: 5,
+    minRedemptionPct: 20,
+    maxRedemptionPct: 50
+  })
+})
+
 // Get master user for cashback when asset pays bill
 app.get('/api/assets/master/:phone', (req, res) => {
   const db = readDb()
@@ -8957,8 +8979,8 @@ app.get('/api/customers/check-discount', (req, res) => {
     // Rule 3: Tiered Discount Structure for Referred Guests
     else if (user.isReferred || user.referredBy || user.referralCodeUsed || (user.tier && user.tier.toLowerCase().includes('referred'))) {
       if (visitCount === 0) {
-        discountPct = 20 // 1st Visit: 20% OFF
-        discountReason = 'Referred Guest 1st Visit 20% OFF'
+        discountPct = 15 // 1st Visit: 15% OFF
+        discountReason = 'Referred Guest 1st Visit 15% OFF'
       } else {
         discountPct = 10 // Repeat Visits: 10% OFF on every subsequent visit
         discountReason = 'Referred Guest Repeat Visit 10% OFF'
@@ -9139,16 +9161,16 @@ app.post('/api/mobile/register', (req, res) => {
     name: name || 'New Customer',
     phone: cleanPhone,
     email: email || '',
-    rubyPoints: 0,
-    walletBalance: 0,
+    rubyPoints: 500,
+    walletBalance: 500,
     visitCount: 0,
     totalSpend: 0,
     referralCode: `TDG${cleanPhone.slice(-4)}`,
     isPrimaryUser: Boolean(isPrimary),
     isReferred: Boolean(referrer),
     referredBy: referrer ? referrer.phone : null,
-    tier: isPrimary ? 'Primary Member (30% OFF)' : (referrer ? 'Referred Guest (20% 1st Visit)' : 'Bronze'),
-    discountPct: isPrimary ? 30 : (referrer ? 20 : 0),
+    tier: isPrimary ? 'Primary Member (30% OFF)' : (referrer ? 'Referred Guest (15% 1st Visit)' : 'Bronze'),
+    discountPct: isPrimary ? 30 : (referrer ? 15 : 0),
     createdAt: now
   }
 
@@ -9160,6 +9182,11 @@ app.post('/api/mobile/register', (req, res) => {
 
   loyaltyUsers.push(newUser)
   saveState()
+
+  if (io) {
+    io.emit('customer:registered', { id: newUser.id, name: newUser.name, phone: newUser.phone, email: newUser.email, tier: newUser.tier, discountPct: newUser.discountPct })
+    io.emit('customers:updated')
+  }
 
   res.status(201).json({ success: true, message: 'User registered successfully', user: newUser })
 })
@@ -9177,13 +9204,21 @@ app.post('/api/mobile/redeem-points', (req, res) => {
   if (!user) return res.status(404).json({ error: 'User not found' })
 
   const availablePoints = Number(user.walletBalance || user.rubyPoints || 0)
-  if (availablePoints <= 0) return res.status(400).json({ error: 'No wallet points available' })
+  if (availablePoints < 100) {
+    return res.status(400).json({ error: 'Points can only be redeemed after reaching 100 points.' })
+  }
+
+  const todayStr = new Date().toISOString().slice(0, 10)
+  if (user.lastRedemptionDate === todayStr) {
+    return res.status(400).json({ error: 'Strict limit: Only 1 redemption allowed per customer per day. You have already redeemed points today.' })
+  }
 
   const maxRedeemableAmount = Math.round(Number(billTotal) * 0.50)
   const actualRedeemPoints = Math.min(availablePoints, Number(pointsToRedeem || availablePoints), maxRedeemableAmount)
 
   user.walletBalance = availablePoints - actualRedeemPoints
   user.rubyPoints = user.walletBalance
+  user.lastRedemptionDate = todayStr
 
   pointTransactions.push({
     id: 'pt_' + Date.now(),
@@ -9927,6 +9962,109 @@ app.post('/api/admin/customers/bulk-import-text', (req, res) => {
   }
   saveState()
   res.json({ success: true, imported, updated, totalProcessed: imported + updated })
+})
+
+// Universal Bulk Upload Customers
+app.post('/api/admin/bulk-upload/customers', (req, res) => {
+  const { items, discountPct = 50, offerName = 'VIP Bulk Upload' } = req.body || {}
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'No items provided for bulk upload' })
+  }
+
+  let imported = 0, updated = 0
+  items.forEach(item => {
+    const phone = String(item.phone || '').replace(/\D/g, '')
+    if (phone.length < 8) return
+
+    const name = item.name || 'VIP Customer'
+    const email = item.email || ''
+    const partnerCode = item.partnerCode || ''
+    const disc = Number(item.discountPct) || Number(discountPct) || 50
+
+    let existing = loyaltyUsers.find(u => (u.phone || '').replace(/\D/g, '') === phone)
+    if (existing) {
+      if (name && name !== 'VIP Customer') existing.name = name
+      if (email) existing.email = email
+      if (partnerCode) existing.partnerCode = partnerCode
+      existing.discountPct = disc
+      existing.tier = `${disc}% OFF (${offerName})`
+      updated++
+    } else {
+      const newUser = {
+        id: 'lu_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        name,
+        phone,
+        email,
+        partnerCode,
+        rubyPoints: 500,
+        walletBalance: 500,
+        tier: `${disc}% OFF (${offerName})`,
+        discountPct: disc,
+        createdAt: new Date().toISOString()
+      }
+      loyaltyUsers.push(newUser)
+      imported++
+    }
+  })
+
+  saveState()
+
+  if (io) {
+    io.emit('customers:updated')
+  }
+
+  res.json({ success: true, imported, updated, total: loyaltyUsers.length })
+})
+
+// Universal Bulk Upload Staff Master
+app.post('/api/admin/bulk-upload/staff', (req, res) => {
+  const { items } = req.body || {}
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ error: 'No staff items provided for bulk upload' })
+  }
+
+  let imported = 0, updated = 0
+  items.forEach(item => {
+    if (!item.id || !item.name) return
+    const empId = String(item.id).trim().toUpperCase()
+    const idx = employees.findIndex(e => String(e.id || '').toLowerCase() === empId.toLowerCase())
+
+    if (idx >= 0) {
+      employees[idx] = {
+        ...employees[idx],
+        name: item.name || employees[idx].name,
+        department: item.department || employees[idx].department,
+        designation: item.designation || employees[idx].designation,
+        mobile: item.mobile || employees[idx].mobile,
+        email: item.email || employees[idx].email,
+        status: item.statusVal || item.status || employees[idx].status,
+        id: empId
+      }
+      updated++
+    } else {
+      employees.push({
+        id: empId,
+        name: item.name,
+        department: item.department || 'General',
+        designation: item.designation || 'Staff',
+        mobile: item.mobile || '',
+        email: item.email || '',
+        status: item.statusVal || item.status || 'Active',
+        joiningDate: new Date().toISOString().slice(0, 10),
+        qrCode: empId,
+        familyMembers: []
+      })
+      imported++
+    }
+  })
+
+  saveState()
+
+  if (io) {
+    io.emit('staff:updated')
+  }
+
+  res.json({ success: true, imported, updated, total: employees.length })
 })
 
 app.get('/api/backup/local', (req, res) => {
@@ -12407,6 +12545,11 @@ app.post('/api/loyalty/register', (req, res) => {
     writeDb(db)
   }
   
+  if (io) {
+    io.emit('customer:registered', { id: user.id, name: user.name, phone: user.phone, email: user.email, tier: user.tier })
+    io.emit('customers:updated')
+  }
+
   res.status(201).json({ user, isFreeAccount })
 })
 

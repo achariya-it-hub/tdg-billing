@@ -433,7 +433,7 @@ class _AssetScreenState extends State<AssetScreen> {
         centerTitle: true,
         title: Text(
           'MY ASSETS',
-          style: TextStyle(color: TDGColors.white, fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 1),
+          style: TextStyle(color: TDGColors.white, fontSize: 18, fontWeight: FontWeight.w800, letterSpacing: 1.5),
         ),
       ),
       body: _isLoading
@@ -460,16 +460,16 @@ class _AssetScreenState extends State<AssetScreen> {
                     ),
                     child: Column(
                       children: [
-                        Text('YOUR POINTS', style: TextStyle(color: TDGColors.greyLight, fontSize: 11, letterSpacing: 2)),
+                        Text('YOUR POINTS', style: TextStyle(color: TDGColors.greyLight, fontSize: 13, fontWeight: FontWeight.bold, letterSpacing: 2)),
                         SizedBox(height: 10),
                         ShaderMask(
                           shaderCallback: (b) => TDGColors.goldGradient.createShader(b),
                           child: Text(
                             '$_points',
-                            style: TextStyle(color: TDGColors.white, fontSize: 42, fontWeight: FontWeight.w900),
+                            style: TextStyle(color: TDGColors.white, fontSize: 48, fontWeight: FontWeight.w900),
                           ),
                         ),
-                        Text('1 Point = ₹1', style: TextStyle(color: TDGColors.greyLight, fontSize: 12)),
+                        Text('1 Point = ₹1', style: TextStyle(color: TDGColors.greyLight, fontSize: 14, fontWeight: FontWeight.w600)),
                         SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -484,7 +484,7 @@ class _AssetScreenState extends State<AssetScreen> {
                   ),
                   // Referral Code & Invite Sharing Card
                   Container(
-                    padding: const EdgeInsets.all(18),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: TDGColors.cardDark,
                       borderRadius: BorderRadius.circular(16),
@@ -495,19 +495,19 @@ class _AssetScreenState extends State<AssetScreen> {
                       children: [
                         Text(
                           'INVITE FRIENDS TO YOUR DEN',
-                          style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1),
+                          style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold, fontSize: 14, letterSpacing: 1),
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 8),
                         Text(
                           'Share your phone or email to invite friends. When they sign up using your info as their referral, they get added to your den assets list and you both get points!',
-                          style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.4),
+                          style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
                         ),
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 16),
                         Row(
                           children: [
                             Expanded(
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                                 decoration: BoxDecoration(
                                   color: Colors.black38,
                                   borderRadius: BorderRadius.circular(10),
@@ -515,7 +515,7 @@ class _AssetScreenState extends State<AssetScreen> {
                                 ),
                                 child: Text(
                                   ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'No referral details',
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                                 ),
                               ),
                             ),
@@ -536,10 +536,10 @@ class _AssetScreenState extends State<AssetScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: TDGColors.gold,
                                 foregroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                               ),
-                              child: Text('Share', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                              child: Text('Share', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                             ),
                           ],
                         ),
@@ -548,13 +548,13 @@ class _AssetScreenState extends State<AssetScreen> {
                   ),
                   SizedBox(height: 20),
 
-                  // Progress Bar
+                  // Network Threshold & Level Unlock Progress Bar
                   Container(
-                    padding: EdgeInsets.all(16),
+                    padding: EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       color: TDGColors.cardDark,
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: TDGColors.border),
+                      border: Border.all(color: TDGColors.gold.withOpacity(0.3)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -562,26 +562,52 @@ class _AssetScreenState extends State<AssetScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Assets Progress', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w700, fontSize: 14)),
-                            Text('${_assets.length}/10', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w700)),
+                            Text('Network Threshold (Referrer Asset)', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w700, fontSize: 15)),
+                            Text('${_assets.length}/10 Friends', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w800, fontSize: 15)),
                           ],
                         ),
                         SizedBox(height: 10),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(6),
                           child: LinearProgressIndicator(
-                            value: _assets.length / 10,
+                            value: (_assets.length / 10).clamp(0.0, 1.0),
                             backgroundColor: TDGColors.cardMid,
-                            valueColor: AlwaysStoppedAnimation(TDGColors.gold),
-                            minHeight: 8,
+                            valueColor: AlwaysStoppedAnimation(_assets.length >= 10 ? Colors.greenAccent : TDGColors.gold),
+                            minHeight: 10,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        SizedBox(height: 10),
                         Text(
-                          _allAssetsActive
-                              ? 'All 10 assets dined! +500 bonus earned'
-                              : '$_assetsDinedCount of 10 assets have dined',
-                          style: TextStyle(color: _allAssetsActive ? TDGColors.gold : TDGColors.greyLight, fontSize: 12),
+                          _assets.length >= 10
+                              ? '⭐ Active Referrer Qualified! Network threshold reached.'
+                              : 'Add ${10 - _assets.length} more friend${10 - _assets.length == 1 ? '' : 's'} to qualify as an active Referrer Asset.',
+                          style: TextStyle(color: _assets.length >= 10 ? Colors.greenAccent : TDGColors.greyLight, fontSize: 13, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 16),
+                        Divider(color: Colors.white10),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('🚀 Level Status', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: TDGColors.gold.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: TDGColors.gold, width: 1),
+                              ),
+                              child: Text(
+                                ApiService().currentUser?['tier'] ?? 'Asset',
+                                style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w900, fontSize: 13),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Reach ₹5,000 cumulative spend to auto-upgrade from Asset to Partner level!',
+                          style: TextStyle(color: TDGColors.greyLight, fontSize: 12),
                         ),
                       ],
                     ),
@@ -599,19 +625,19 @@ class _AssetScreenState extends State<AssetScreen> {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.person_pin_rounded, color: Colors.green, size: 22),
+                          Icon(Icons.person_pin_rounded, color: Colors.green, size: 26),
                           SizedBox(width: 12),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Added to profile by',
-                                style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
+                                style: TextStyle(color: TDGColors.greyLight, fontSize: 13),
                               ),
                               SizedBox(height: 2),
                               Text(
                                 _referredByName!,
-                                style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w700, fontSize: 14),
+                                style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w700, fontSize: 16),
                               ),
                             ],
                           ),
@@ -626,7 +652,7 @@ class _AssetScreenState extends State<AssetScreen> {
                     GestureDetector(
                       onTap: _showAddAssetDialog,
                       child: Container(
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.all(18),
                         decoration: BoxDecoration(
                           color: TDGColors.cardDark,
                           borderRadius: BorderRadius.circular(14),
@@ -635,9 +661,9 @@ class _AssetScreenState extends State<AssetScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.add_circle_outline, color: TDGColors.gold, size: 22),
+                            Icon(Icons.add_circle_outline, color: TDGColors.gold, size: 24),
                             SizedBox(width: 8),
-                            Text('Add Asset', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w700, fontSize: 15)),
+                            Text('Add Asset', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w700, fontSize: 17)),
                           ],
                         ),
                       ),
@@ -656,9 +682,9 @@ class _AssetScreenState extends State<AssetScreen> {
   Widget _statItem(String label, String value) {
     return Column(
       children: [
-        Text(value, style: TextStyle(color: TDGColors.white, fontSize: 18, fontWeight: FontWeight.w800)),
+        Text(value, style: TextStyle(color: TDGColors.white, fontSize: 22, fontWeight: FontWeight.w800)),
         SizedBox(height: 4),
-        Text(label, style: TextStyle(color: TDGColors.greyLight, fontSize: 11)),
+        Text(label, style: TextStyle(color: TDGColors.greyLight, fontSize: 13)),
       ],
     );
   }
@@ -682,7 +708,7 @@ class _AssetScreenState extends State<AssetScreen> {
 
     return Container(
       margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: TDGColors.cardDark,
         borderRadius: BorderRadius.circular(14),
@@ -691,8 +717,8 @@ class _AssetScreenState extends State<AssetScreen> {
       child: Row(
         children: [
           Container(
-            width: 44,
-            height: 44,
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
               color: isDined ? TDGColors.gold.withOpacity(0.2) : TDGColors.cardMid,
               shape: BoxShape.circle,
@@ -700,33 +726,33 @@ class _AssetScreenState extends State<AssetScreen> {
             child: Icon(
               isDined ? Icons.check_circle_rounded : Icons.person_outline_rounded,
               color: isDined ? TDGColors.gold : TDGColors.greyLight,
-              size: 22,
+              size: 26,
             ),
           ),
-          SizedBox(width: 12),
+          SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(asset['name'] ?? '', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w600, fontSize: 15)),
-                SizedBox(height: 2),
+                Text(asset['name'] ?? '', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w700, fontSize: 17)),
+                SizedBox(height: 4),
                 Row(
                   children: [
                     Text(
                       '${asset['phone'] ?? ''} • $statusText',
-                      style: TextStyle(color: statusColor, fontSize: 12),
+                      style: TextStyle(color: statusColor, fontSize: 14, fontWeight: FontWeight.w600),
                     ),
                     SizedBox(width: 6),
                     Text(
                       '• Added by you',
-                      style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
+                      style: TextStyle(color: TDGColors.greyLight, fontSize: 13),
                     ),
                   ],
                 ),
                     if (distributed > 0)
                       Text(
                         '$distributed pts distributed',
-                        style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
+                        style: TextStyle(color: TDGColors.greyLight, fontSize: 13),
                       ),
                   ],
                 ),

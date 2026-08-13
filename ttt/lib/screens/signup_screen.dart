@@ -187,12 +187,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 
                                 const SizedBox(height: 24),
                                 
-                                // Referral Code (Optional)
+                                // Partner / Referral Code (Optional)
                                 _buildTextField(
-                                  label: 'REFERRAL CODE (OPTIONAL)',
+                                  label: 'PARTNER / REFERRAL CODE (OPTIONAL)',
                                   controller: _referralController,
-                                  hint: 'Enter code for asset linking',
-                                  icon: Icons.card_giftcard_rounded,
+                                  hint: 'Enter Partner or Referral code for enrollment',
+                                  icon: Icons.badge_outlined,
                                 ),
                                 
                                 const SizedBox(height: 16),

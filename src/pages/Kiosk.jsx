@@ -796,7 +796,7 @@ export default function Kiosk() {
                             setDiscountStatusMsg('⚠️ Offer Already Redeemed for this phone number')
                           } else if (data.hasDiscount && data.discountPct > 0) {
                             setCustomerDiscountPct(data.discountPct)
-                            setDiscountStatusMsg(`👑 VIP ${data.discountPct}% OFF Discount Auto-Applied!`)
+                            setDiscountStatusMsg(`👑 ${data.discountReason || `VIP ${data.discountPct}% OFF Discount Auto-Applied!`}`)
                             if (data.customerName && data.customerName !== 'Customer') setCustomerName(data.customerName)
                           } else {
                             setCustomerDiscountPct(0); setDiscountStatusMsg('')

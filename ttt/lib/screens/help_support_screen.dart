@@ -30,20 +30,20 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
 
   final List<Map<String, String>> _faqs = [
     {
-      'question': 'How do I earn points?',
-      'answer': 'You earn points with every order. Add assets to your team and earn 10% cashback when they dine. Complete all 10 assets for a +500 point bonus!'
+      'question': 'How do I earn points & rewards?',
+      'answer': 'You get 500 bonus points on app installation! Referred friends receive 15% OFF on 1st visit and 10% OFF on repeat visits. Plus, referrers earn 5% in points on every friend\'s bill!'
     },
     {
-      'question': 'What is the minimum balance for redemption?',
-      'answer': 'You can redeem points directly from your wallet. Points are worth ₹1 each for discounts on your bills.'
+      'question': 'What are the point redemption rules & limits?',
+      'answer': 'Points can be redeemed after reaching 100 points. Strictly 1 offer/bill redemption allowed per customer per day, up to 50% of the bill total. 1 Point = ₹1 discount!'
     },
     {
-      'question': 'How does the Den tier progression work?',
-      'answer': 'Members start at Bronze and progress through Silver, Gold, Platinum, Diamond, and Emerald tiers by building and active participation in Dens. Completing 10 full Dens rewards you with the "Pride Lion" status.'
+      'question': 'How does the Partner level unlock work?',
+      'answer': 'You can enter a Partner / Referral Code during signup or login. Reaching ₹5,000 cumulative order spend automatically unlocks Partner level status!'
     },
     {
-      'question': 'How do assets work?',
-      'answer': 'Add up to 10 people as your assets. They get 20-25% discount on bills. When they dine, you earn 10% cashback. When all 10 dine, you get a +500 point bonus!'
+      'question': 'How do referred guests & network thresholds work?',
+      'answer': 'Referred friends receive 15% OFF on 1st visit & 10% OFF on repeat visits. Primary users earn 5% in points on all referred orders and qualify as active referrer assets upon adding 10 friends.'
     }
   ];
 

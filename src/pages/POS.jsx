@@ -642,14 +642,22 @@ export default function POS() {
       fetchMenuItems(selectedCategory || undefined)
     }
 
+    const handleCustomerRegistered = (customer) => {
+      if (customer && customer.name) {
+        toast.success(`🎉 New Mobile Customer Enrolled: ${customer.name} (${customer.phone})!`)
+      }
+    }
+
     socket.on('order:created', handleNewOrder)
     socket.on('online-order:new', handleOnlineOrder)
     socket.on('menu:updated', handleMenuUpdated)
+    socket.on('customer:registered', handleCustomerRegistered)
 
     return () => {
       socket.off('order:created', handleNewOrder)
       socket.off('online-order:new', handleOnlineOrder)
       socket.off('menu:updated', handleMenuUpdated)
+      socket.off('customer:registered', handleCustomerRegistered)
     }
   }, [selectedCategory])
 

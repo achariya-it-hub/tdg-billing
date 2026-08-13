@@ -3,6 +3,7 @@ import { Users, Plus, Search, UserPlus, Calendar, Clock, CheckCircle, XCircle, A
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
+import BulkUploadModal from '../components/BulkUploadModal'
 import { useToast } from '../components/ui/Toaster'
 import API_BASE from '../lib/apiConfig'
 
@@ -69,6 +70,7 @@ export default function HR() {
   const [activeTab, setActiveTab] = useState('achariya-staff')
   const [showAddModal, setShowAddModal] = useState(false)
   const [showShiftModal, setShowShiftModal] = useState(false)
+  const [showBulkModal, setShowBulkModal] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
 
   // Achariya Staff & Family Master State
@@ -483,15 +485,9 @@ export default function HR() {
               <Button onClick={handleExportEmployeesCsv} variant="secondary" size="sm">
                 <Download size={16} /> Export CSV
               </Button>
-              <label style={{
-                display: 'inline-flex', alignItems: 'center', gap: '6px',
-                padding: '8px 16px', borderRadius: '10px', background: '#eff6ff',
-                color: '#2563eb', fontWeight: 600, fontSize: '13px', cursor: 'pointer',
-                border: '1px solid #bfdbfe'
-              }}>
-                <Upload size={16} /> Bulk Import CSV
-                <input ref={importFileRef} type="file" accept=".csv" style={{ display: 'none' }} onChange={handleImportEmployeesCsv} />
-              </label>
+              <Button onClick={() => setShowBulkModal(true)} size="sm">
+                <Upload size={16} /> Bulk Upload (CSV/Text)
+              </Button>
               <Button onClick={handleOpenAddEmployee} size="sm">
                 <Plus size={16} /> Add New Employee
               </Button>
@@ -1431,6 +1427,13 @@ export default function HR() {
           </Button>
         </div>
       </Modal>
+
+      <BulkUploadModal
+        isOpen={showBulkModal}
+        onClose={() => setShowBulkModal(false)}
+        defaultType="staff"
+        onSuccess={() => fetchEmployees()}
+      />
     </div>
   )
 }

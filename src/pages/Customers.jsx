@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Users, Search, UserPlus, Gift, Star, Crown, TrendingUp, Users2, Plus, Copy, X, Check, Trash2 } from 'lucide-react'
+import { Users, Search, UserPlus, Gift, Star, Crown, TrendingUp, Users2, Plus, Copy, X, Check, Trash2, Upload } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
+import BulkUploadModal from '../components/BulkUploadModal'
 import API_BASE from '../lib/apiConfig'
 
 const tierConfig = {
@@ -13,6 +14,8 @@ const tierConfig = {
 
 export default function Customers() {
   const [user, setUser] = useState(null)
+  const [showBulkUploadModal, setShowBulkUploadModal] = useState(false)
+  const [bulkUploadType, setBulkUploadType] = useState('customers')
   const [customers, setCustomers] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('customers')
@@ -57,6 +60,19 @@ export default function Customers() {
       setUser(u)
     } catch {}
     fetchCustomers()
+
+    try {
+      const socket = getSocket()
+      socket.connect()
+      socket.on('customer:registered', fetchCustomers)
+      socket.on('customers:updated', fetchCustomers)
+      return () => {
+        socket.off('customer:registered', fetchCustomers)
+        socket.off('customers:updated', fetchCustomers)
+      }
+    } catch (e) {
+      console.warn('Socket connect failed in Customers.jsx', e)
+    }
   }, [])
 
   const getPin = () => user?.pin || ''
@@ -333,13 +349,16 @@ export default function Customers() {
 
       {activeTab === 'customers' && (
         <>
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-            <div style={{ flex: 1, position: 'relative' }}>
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
+            <div style={{ flex: 1, minWidth: '260px', position: 'relative' }}>
               <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
               <input type="text" placeholder="Search by name, phone, or email..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ width: '100%', padding: '14px 16px 14px 48px', borderRadius: '12px', border: '1px solid var(--border)', background: 'white', fontSize: '14px' }} />
             </div>
-            <Button onClick={() => fetchCustomers()}><Search size={18} /> Refresh</Button>
+            <Button onClick={() => fetchCustomers()} variant="secondary"><Search size={18} /> Refresh</Button>
+            <Button onClick={() => { setBulkUploadType('customers'); setShowBulkUploadModal(true) }}>
+              <Upload size={18} /> Bulk Upload (CSV/Text)
+            </Button>
             {customers.length > 0 && (
               <button
                 onClick={handleClearAllCustomers}
@@ -852,6 +871,13 @@ Simply share your registered phone number at our Billing Counter, Self-Order Kio
           })}
         </div>
       )}
+
+      <BulkUploadModal
+        isOpen={showBulkUploadModal}
+        onClose={() => setShowBulkUploadModal(false)}
+        defaultType={bulkUploadType}
+        onSuccess={() => fetchCustomers()}
+      />
     </div>
   )
 }

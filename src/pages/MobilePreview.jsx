@@ -910,13 +910,34 @@ function renderMobileScreen(screenId, setScreen, cartCount, setCartCount) {
       return (
         <div style={{ padding: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div style={{ fontSize: '14px', fontWeight: 900, color: '#ffd700' }}>BUILD YOUR DEN</div>
-          <p style={{ fontSize: '10px', color: '#aaa', margin: 0 }}>Refer friends & food lovers to TDG. Earn 50 points per active signup + 10% lifetime rewards.</p>
+          <p style={{ fontSize: '10px', color: '#aaa', margin: 0 }}>Refer friends to TDG. New friends get 15% OFF on 1st visit & 10% OFF on repeat visits! You earn 5% wallet cashback.</p>
           <div style={{ backgroundColor: '#34393e', borderRadius: '10px', padding: '12px', textAlign: 'center', border: '1px dashed #ffd700' }}>
             <div style={{ fontSize: '9px', color: '#aaa' }}>YOUR REFERRAL CODE</div>
             <div style={{ fontSize: '18px', fontWeight: 900, color: '#ffd700', letterSpacing: '2px', margin: '4px 0' }}>TDG-GOLD-99</div>
             <button style={{ backgroundColor: 'rgba(255,215,0,0.15)', color: '#ffd700', border: '1px solid #ffd700', padding: '4px 12px', borderRadius: '4px', fontSize: '9px', fontWeight: 800 }}>
               COPY CODE
             </button>
+          </div>
+          <div style={{ backgroundColor: '#1a1c22', border: '1px solid rgba(255,215,0,0.2)', padding: '10px', borderRadius: '10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={{ fontSize: '10px', fontWeight: 800, color: '#ffd700', marginBottom: '2px' }}>BENEFITS & TIER RULES</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9.5px', color: '#fff' }}>
+              <span>🎁 Referred Friend 1st Visit</span><span style={{ color: '#ffd700', fontWeight: 800 }}>15% OFF</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9.5px', color: '#fff' }}>
+              <span>🔁 Referred Friend Repeat Visit</span><span style={{ color: '#ffd700', fontWeight: 800 }}>10% OFF</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9.5px', color: '#fff' }}>
+              <span>⭐ Primary User Initial Discount</span><span style={{ color: '#ffd700', fontWeight: 800 }}>30% OFF</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9.5px', color: '#fff' }}>
+              <span>👥 Network Threshold</span><span style={{ color: '#ffd700', fontWeight: 800 }}>Add 10 Friends</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9.5px', color: '#fff' }}>
+              <span>👔 Staff Discount & Reimbursement</span><span style={{ color: '#ffd700', fontWeight: 800 }}>50% OFF</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9.5px', color: '#fff' }}>
+              <span>🚀 Partner Level Unlock</span><span style={{ color: '#ffd700', fontWeight: 800 }}>₹5,000 Spend</span>
+            </div>
           </div>
         </div>
       );

@@ -18,6 +18,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _phoneController = TextEditingController();
+  final _partnerCodeController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
@@ -178,6 +179,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                   controller: _phoneController,
                                   hint: 'Enter your credentials',
                                   icon: Icons.person_outline,
+                                ),
+                                
+                                const SizedBox(height: 16),
+
+                                // Partner / Enrollment Code Field
+                                _buildTextField(
+                                  label: 'PARTNER CODE / ENROLLMENT CODE (OPTIONAL)',
+                                  controller: _partnerCodeController,
+                                  hint: 'Enter Partner or Referral code',
+                                  icon: Icons.badge_outlined,
                                 ),
                                 
                                 const SizedBox(height: 16),

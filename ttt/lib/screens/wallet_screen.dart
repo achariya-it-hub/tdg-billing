@@ -388,7 +388,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       onPressed: () {
                         final code = ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'TDG7890';
                         Share.share(
-                          'Join me at Ten Den Gyros! Use my referral code: $code to get 500 bonus points on signup! Download the app and start earning details: https://tendengyros.com',
+                          'Join me at Ten Den Gyros! Use my referral code: $code to get 15% OFF on your 1st visit & 10% OFF on repeat visits! Download the app: https://tendengyros.com',
                           subject: 'Ten Den Gyros Referral Invite',
                         );
                       },
@@ -421,9 +421,9 @@ class _WalletScreenState extends State<WalletScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildReferStepItem(Icons.edit_note_rounded, 'Share', 'your code'),
-                  _buildReferStepItem(Icons.shopping_bag_outlined, 'Friend Orders', 'using code'),
-                  _buildReferStepItem(Icons.workspace_premium_rounded, 'You Earn', 'Rewards'),
+                  _buildReferStepItem(Icons.edit_note_rounded, 'Share Code', 'with friends'),
+                  _buildReferStepItem(Icons.shopping_bag_outlined, 'Friend Orders', '15% 1st / 10% repeat'),
+                  _buildReferStepItem(Icons.workspace_premium_rounded, 'Earn 5%', 'Wallet Points'),
                 ],
               ),
             ],
@@ -471,16 +471,18 @@ class _WalletScreenState extends State<WalletScreen> {
                   Icon(Icons.info_outline_rounded, color: TDGColors.primaryRed, size: 18),
                   const SizedBox(width: 8),
                   Text(
-                    'POINT SHARING CONDITIONS',
+                    'LOYALTY & REDEMPTION RULES',
                     style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 12, letterSpacing: 0.8),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
-              _ruleBullet('You can share a maximum of 100 points to 1 den member/asset.'),
-              _ruleBullet('You can avail points redemption only after adding a minimum of 5 assets to your den.'),
-              _ruleBullet('Initial 500 sign-up points can be shared across up to 10 den assets.'),
-              _ruleBullet('When all 10 assets finish a meal, another 500 bonus points will be credited back!'),
+              _ruleBullet('500 welcome bonus points awarded upon app installation & registration.'),
+              _ruleBullet('Referred friends receive 15% OFF on 1st visit & 10% OFF on repeat visits.'),
+              _ruleBullet('Primary referrers earn 5% in wallet points on every referred friend\'s order.'),
+              _ruleBullet('Strict threshold set: Points can only be redeemed after reaching 100 points (1 Pt = ₹1).'),
+              _ruleBullet('Enforced strict single-use rules: Only 1 offer/bill redemption per customer per day.'),
+              _ruleBullet('Reach ₹5,000 cumulative spend to auto-upgrade to Partner level!'),
             ],
           ),
         ),

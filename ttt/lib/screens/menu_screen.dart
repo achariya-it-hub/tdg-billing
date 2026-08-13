@@ -279,9 +279,18 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   Widget _buildMenuItem(Map<String, dynamic> item) {
-    final String serverImage = item['image'] ?? item['imageUrl'] ?? '';
+    final String rawImage = item['image'] ?? item['imageUrl'] ?? '';
+    String fullImageUrl = '';
+    if (rawImage.isNotEmpty) {
+      if (rawImage.startsWith('http://') || rawImage.startsWith('https://')) {
+        fullImageUrl = rawImage;
+      } else {
+        final base = ApiService().baseUrl;
+        fullImageUrl = rawImage.startsWith('/') ? '$base$rawImage' : '$base/$rawImage';
+      }
+    }
     final String fallbackAsset = _getAssetImagePath(item['name'] ?? '', _selectedCategory);
-    final bool hasServerImage = serverImage.isNotEmpty && (serverImage.startsWith('http://') || serverImage.startsWith('https://'));
+    final bool hasServerImage = fullImageUrl.isNotEmpty;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -304,7 +313,7 @@ class _MenuScreenState extends State<MenuScreen> {
               borderRadius: BorderRadius.circular(10),
               child: hasServerImage
                   ? Image.network(
-                      serverImage,
+                      fullImageUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => Image.asset(fallbackAsset, fit: BoxFit.cover),
                     )
