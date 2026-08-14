@@ -11061,7 +11061,7 @@ app.post('/api/orders', auth, (req, res) => {
     type: 'delivery',
     status: 'pending',
     source: 'mobile',
-    orderSource: 'Mobile App',
+    orderSource: 'APP',
     subtotal: subtotal || 0,
     tax: tax || 0,
     total: total || 0,
@@ -12122,11 +12122,11 @@ app.post('/api/pos/orders', (req, res) => {
     type: type || 'dine-in',
     status: isDirectSettle ? 'completed' : 'pending',
     source: source || 'pos',
-    orderSource: (source === 'qr_self_order' || source === 'self_order')
-      ? 'Self-Ordering System'
-      : (source === 'mobile' || source === 'mobile_app')
-        ? 'Mobile App'
-        : 'POS Billing Counter',
+    orderSource: (source === 'qr_self_order' || source === 'self_order' || source === 'kiosk')
+      ? 'Kiosk'
+      : (source === 'mobile' || source === 'mobile_app' || source === 'app')
+        ? 'APP'
+        : 'POS',
     rawSubtotal: rawSub,
     discount: discountVal,
     discountName: discountLabel,

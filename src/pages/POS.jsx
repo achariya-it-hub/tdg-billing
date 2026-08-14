@@ -608,8 +608,10 @@ export default function POS() {
       if (order.id) printedOrderIdsRef.current.add(String(order.id))
 
       playOrderAlertSound('new_order')
-      const num = order?.orderNumber || order?.id || ''
-      const src = order?.source ? order.source.toUpperCase() : (order?.type ? order.type.toUpperCase() : 'WAITER')
+      const src = order?.orderSource || (
+        (order?.source === 'qr_self_order' || order?.source === 'self_order' || order?.source === 'kiosk') ? 'Kiosk' :
+        (order?.source === 'mobile' || order?.source === 'mobile_app' || order?.source === 'app') ? 'APP' : 'POS'
+      )
       toast.success(`🔔 New ${src} Order #${num} received! Printing KOT...`)
 
       try {

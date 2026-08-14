@@ -276,7 +276,7 @@ const PrintService = {
         <div class="meta-section">
           <div class="meta-row"><span>Bill No: <strong>#${String(orderNum).padStart(6, '0')}</strong></span><span>KOT No: <strong>${kotNum ? `KOT-${kotNum}` : `KOT-${orderNum}`}</strong></span></div>
           <div class="meta-row"><span>Date: ${dateStr}</span><span>Time: ${timeStr}</span></div>
-          <div class="meta-row"><span>Mode: <strong>${(bill.type || 'DINE-IN').toUpperCase()}</strong></span><span>Payment: <strong>${paymentMethod}</strong></span></div>
+          <div class="meta-row"><span>Source: <strong>${bill.orderSource || ((bill.source === 'qr_self_order' || bill.source === 'self_order' || bill.source === 'kiosk') ? 'Kiosk' : ((bill.source === 'mobile' || bill.source === 'mobile_app' || bill.source === 'app') ? 'APP' : 'POS'))}</strong></span><span>Mode: <strong>${(bill.type || 'DINE-IN').toUpperCase()}</strong></span><span>Payment: <strong>${paymentMethod}</strong></span></div>
           ${(bill.customerName || bill.customerPhone) ? `<div class="meta-row">${bill.customerName ? `<span>Cust: <strong>${bill.customerName}</strong></span>` : ''}${bill.customerPhone ? `<span>Mob: <strong>${bill.customerPhone}</strong></span>` : ''}</div>` : ''}
         </div>
 
