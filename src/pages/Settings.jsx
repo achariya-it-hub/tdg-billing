@@ -287,6 +287,7 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
   })
   const [enableAssetOtp, setEnableAssetOtp] = useState(settings?.paymentGateways?.enableAssetOtp !== false)
   const [msg91Form, setMsg91Form] = useState({
+    widgetId: msg91Config.widgetId || '36686e624b35303331383732',
     authKey: msg91Config.authKey || '',
     senderId: msg91Config.senderId || 'TDGBIL',
     templateId: msg91Config.templateId || '',
@@ -406,15 +407,19 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
           <div>
-            <label style={labelStyle}>Auth Key</label>
+            <label style={labelStyle}>SendOTP Widget ID</label>
+            <input style={inputStyle} placeholder="36686e624b35303331383732" value={msg91Form.widgetId || '36686e624b35303331383732'} onChange={e => setMsg91Form({ ...msg91Form, widgetId: e.target.value })} />
+          </div>
+          <div>
+            <label style={labelStyle}>Auth Key / Token</label>
             <input type="password" style={inputStyle} placeholder="MSG91 Auth Key" value={msg91Form.authKey} onChange={e => setMsg91Form({ ...msg91Form, authKey: e.target.value })} />
           </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '16px' }}>
           <div>
             <label style={labelStyle}>Sender ID</label>
             <input style={inputStyle} placeholder="e.g. TDGBIL" value={msg91Form.senderId} onChange={e => setMsg91Form({ ...msg91Form, senderId: e.target.value })} />
           </div>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
           <div>
             <label style={labelStyle}>Template ID (optional)</label>
             <input style={inputStyle} placeholder="MSG91 template ID" value={msg91Form.templateId} onChange={e => setMsg91Form({ ...msg91Form, templateId: e.target.value })} />

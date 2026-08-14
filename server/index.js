@@ -357,6 +357,7 @@ let settings = {
     }
   },
   msg91: {
+    widgetId: process.env.MSG91_WIDGET_ID || '36686e624b35303331383732',
     authKey: process.env.MSG91_AUTH_KEY || '',
     senderId: process.env.MSG91_SENDER_ID || 'TDGBIL',
     templateId: process.env.MSG91_TEMPLATE_ID || '',
@@ -8260,8 +8261,9 @@ app.post('/api/auth/login', async (req, res) => {
 // ============ MSG91 OTP SERVICE ============
 async function sendMSG91OTP(phone, otp) {
   const cfg = settings.msg91 || {}
-  if (!cfg.isEnabled || !cfg.authKey) {
-    console.log(`[MSG91] OTP for ${phone}: ${otp} (MSG91 not configured, logged only)`)
+  const widgetId = cfg.widgetId || '36686e624b35303331383732'
+  if (!cfg.isEnabled) {
+    console.log(`[MSG91] OTP for ${phone}: ${otp} (MSG91 disabled, logged only)`)
     return { success: false, method: 'console' }
   }
   const cleanPhone = phone.replace(/[^0-9]/g, '')
@@ -8274,19 +8276,20 @@ async function sendMSG91OTP(phone, otp) {
       sender: cfg.senderId || 'TDGBIL',
       otp_expiry: cfg.otpExpiry || 300
     }
+    if (widgetId) payload.widget_id = widgetId
     if (cfg.templateId) payload.template_id = cfg.templateId
+
+    const headers = { 'Content-Type': 'application/json' }
+    if (cfg.authKey) headers['authkey'] = cfg.authKey
 
     const resp = await fetch('https://api.msg91.com/api/v5/otp', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'authkey': cfg.authKey
-      },
+      headers,
       body: JSON.stringify(payload)
     })
     const data = await resp.json()
-    console.log(`[MSG91] OTP sent to ${formattedPhone}: ${resp.status}`, JSON.stringify(data))
-    return { success: resp.ok, data, method: 'msg91' }
+    console.log(`[MSG91] OTP sent to ${formattedPhone} (Widget: ${widgetId}): ${resp.status}`, JSON.stringify(data))
+    return { success: resp.ok || data.type === 'success', data, method: 'msg91' }
   } catch (err) {
     console.error(`[MSG91] Failed to send OTP to ${formattedPhone}:`, err.message)
     return { success: false, error: err.message, method: 'msg91' }
@@ -8303,6 +8306,7 @@ app.get('/api/msg91/config', (req, res) => {
   res.json({
     enabled: cfg.isEnabled !== false,
     hasAuthKey: Boolean(cfg.authKey),
+    widgetId: cfg.widgetId || '36686e624b35303331383732',
     senderId: cfg.senderId || 'TDGBIL',
     templateId: cfg.templateId || ''
   })
