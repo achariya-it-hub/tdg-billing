@@ -13553,7 +13553,7 @@ app.post('/api/sync/push', (req, res) => {
       return res.status(401).json({ error: 'Unauthorized sync token' })
     }
 
-    const { orders: incomingOrders, inventory: incomingInv, expenses: incomingExp, menuItems: incomingMenu, categories: incomingCat, recipes: incomingRec } = req.body
+    const { orders: incomingOrders, inventory: incomingInv, expenses: incomingExp, menuItems: incomingMenu, categories: incomingCat, recipes: incomingRec, users: incomingUsers, loyaltyUsers: incomingLoyalty } = req.body
 
     if (Array.isArray(incomingOrders)) {
       const orderMap = new Map()
@@ -13561,6 +13561,28 @@ app.post('/api/sync/push', (req, res) => {
       incomingOrders.forEach(o => orderMap.set(String(o.id), o))
       orders.length = 0
       orders.push(...Array.from(orderMap.values()))
+    }
+
+    if (Array.isArray(incomingUsers) && incomingUsers.length > 0) {
+      const userMap = new Map()
+      mobileAppUsers.forEach(u => u && userMap.set(String(u.id || u.phone), u))
+      incomingUsers.forEach(u => u && userMap.set(String(u.id || u.phone), u))
+      mobileAppUsers.length = 0
+      mobileAppUsers.push(...Array.from(userMap.values()))
+      const db = readDb()
+      db.users = mobileAppUsers
+      writeDb(db)
+    }
+
+    if (Array.isArray(incomingLoyalty) && incomingLoyalty.length > 0) {
+      const loyaltyMap = new Map()
+      loyaltyUsers.forEach(u => u && loyaltyMap.set(String(u.id || u.phone), u))
+      incomingLoyalty.forEach(u => u && loyaltyMap.set(String(u.id || u.phone), u))
+      loyaltyUsers.length = 0
+      loyaltyUsers.push(...Array.from(loyaltyMap.values()))
+      const db = readDb()
+      db.loyaltyUsers = loyaltyUsers
+      writeDb(db)
     }
 
     if (Array.isArray(incomingInv) && incomingInv.length > 0) {
