@@ -11014,6 +11014,24 @@ app.get('/api/orders', auth, (req, res) => {
 })
 
 // Mobile orders - create order (synced to billing system)
+// Public API to get targeted offers for Mobile App, POS Counter, or Self-Ordering Systems
+app.get('/api/offers', (req, res) => {
+  const channel = (req.query.channel || 'all').toLowerCase()
+  const dbOffers = settings.offers || []
+  
+  const filtered = dbOffers.filter(o => {
+    if (o.isActive === false) return false
+    const targets = Array.isArray(o.targetChannels) && o.targetChannels.length > 0 
+      ? o.targetChannels 
+      : ['mobile', 'pos', 'self_order']
+    
+    if (channel === 'all') return true
+    return targets.includes(channel) || targets.includes('all')
+  })
+  
+  res.json({ success: true, count: filtered.length, offers: filtered })
+})
+
 app.post('/api/orders', auth, (req, res) => {
   const { items, subtotal, tax, deliveryFee, total, paymentMethod, deliveryAddress } = req.body
   if (!items || !items.length || subtotal === undefined || total === undefined || !paymentMethod || !deliveryAddress) {
@@ -11043,6 +11061,7 @@ app.post('/api/orders', auth, (req, res) => {
     type: 'delivery',
     status: 'pending',
     source: 'mobile',
+    orderSource: 'Mobile App',
     subtotal: subtotal || 0,
     tax: tax || 0,
     total: total || 0,
@@ -12103,6 +12122,11 @@ app.post('/api/pos/orders', (req, res) => {
     type: type || 'dine-in',
     status: isDirectSettle ? 'completed' : 'pending',
     source: source || 'pos',
+    orderSource: (source === 'qr_self_order' || source === 'self_order')
+      ? 'Self-Ordering System'
+      : (source === 'mobile' || source === 'mobile_app')
+        ? 'Mobile App'
+        : 'POS Billing Counter',
     rawSubtotal: rawSub,
     discount: discountVal,
     discountName: discountLabel,

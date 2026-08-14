@@ -971,14 +971,28 @@ function OffersTab({ pin, settings, onSaved }) {
   const [offers, setOffers] = useState(settings?.offers || [])
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
-  const [newOffer, setNewOffer] = useState({ title: '', desc: '', tag: '', price: '', origPrice: '', image: '' })
+  const [newOffer, setNewOffer] = useState({
+    title: '', desc: '', tag: '', price: '', origPrice: '', image: '',
+    targetChannels: ['mobile', 'pos', 'self_order']
+  })
+
+  const toggleChannel = (ch) => {
+    setNewOffer(prev => {
+      const current = prev.targetChannels || []
+      const next = current.includes(ch) ? current.filter(x => x !== ch) : [...current, ch]
+      return { ...prev, targetChannels: next }
+    })
+  }
 
   const handleAdd = () => {
     if (!newOffer.title || !newOffer.desc) { setMsg('Title and description are required'); return }
     const item = { ...newOffer, id: Date.now().toString() }
     const updated = [...offers, item]
     setOffers(updated)
-    setNewOffer({ title: '', desc: '', tag: '', price: '', origPrice: '', image: '' })
+    setNewOffer({
+      title: '', desc: '', tag: '', price: '', origPrice: '', image: '',
+      targetChannels: ['mobile', 'pos', 'self_order']
+    })
     setMsg('')
   }
 
@@ -997,7 +1011,7 @@ function OffersTab({ pin, settings, onSaved }) {
       })
       const data = await res.json()
       if (data.success) {
-        setMsg('Offers Saved Successfully!')
+        setMsg('Offers Saved Successfully Across All Channels!')
         clearSettingsCache()
         onSaved()
       } else {
@@ -1012,10 +1026,10 @@ function OffersTab({ pin, settings, onSaved }) {
   return (
     <div style={glassCard}>
       <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <Tag size={22} color="#e63946" /> App Offers Management
+        <Tag size={22} color="#e63946" /> Omnichannel Offers Manager
       </h3>
       <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '20px' }}>
-        Manage custom offers displayed inside the mobile app banner slider.
+        Create & publish promotional offers targeted specifically for <strong>Mobile App Users</strong>, <strong>POS Billing Counter</strong>, and <strong>Self-Ordering Kiosks</strong>.
       </p>
 
       {msg && (
@@ -1029,8 +1043,8 @@ function OffersTab({ pin, settings, onSaved }) {
       )}
 
       {/* Add New Offer Panel */}
-      <div style={{ background: 'rgba(0,0,0,0.02)', padding: '16px', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.04)', marginBottom: '24px' }}>
-        <h4 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', color: '#1a1a2e' }}>Create Custom Offer Card</h4>
+      <div style={{ background: 'rgba(0,0,0,0.02)', padding: '18px', borderRadius: '14px', border: '1px solid rgba(0,0,0,0.06)', marginBottom: '24px' }}>
+        <h4 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', color: '#1a1a2e' }}>Create Targeted Offer Card</h4>
         
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
           <div>
@@ -1063,14 +1077,39 @@ function OffersTab({ pin, settings, onSaved }) {
           </div>
         </div>
 
+        {/* Target Audience Channels */}
+        <div style={{ marginBottom: '16px', padding: '12px 14px', background: '#ffffff', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+          <label style={{ ...labelStyle, color: '#1e293b', marginBottom: '8px' }}>🎯 Target Target Channels (Where will this offer show?):</label>
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            {[
+              { id: 'mobile', label: '📱 Mobile App Users' },
+              { id: 'pos', label: '🖥️ POS Billing Counter' },
+              { id: 'self_order', label: '📲 Self-Ordering Systems' },
+            ].map(ch => {
+              const active = (newOffer.targetChannels || []).includes(ch.id)
+              return (
+                <label key={ch.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, color: active ? '#1d4ed8' : '#64748b', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={active}
+                    onChange={() => toggleChannel(ch.id)}
+                    style={{ width: '16px', height: '16px', accentColor: '#e63946' }}
+                  />
+                  {ch.label}
+                </label>
+              )
+            })}
+          </div>
+        </div>
+
         <button onClick={handleAdd} style={{ padding: '10px 20px', border: '1px solid #dc2626', background: 'transparent', color: '#dc2626', fontWeight: 600, fontSize: '13px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Plus size={16} /> Add Offer to List
+          <Plus size={16} /> Add Offer to Targeted Channels
         </button>
       </div>
 
       {/* Offer Cards Table List */}
       <div style={{ marginBottom: '24px' }}>
-        <h4 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', color: '#1a1a2e' }}>Current Active Offers</h4>
+        <h4 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '12px', color: '#1a1a2e' }}>Current Active Targeted Offers</h4>
         {offers.length === 0 ? (
           <p style={{ fontSize: '13px', color: '#6b7280', textAlign: 'center', padding: '20px' }}>No promotional offers configured yet.</p>
         ) : (
@@ -1080,29 +1119,40 @@ function OffersTab({ pin, settings, onSaved }) {
                 <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
                   <th style={{ padding: '12px' }}>Tag / Badge</th>
                   <th style={{ padding: '12px' }}>Title & Description</th>
-                  <th style={{ padding: '12px' }}>Price details</th>
+                  <th style={{ padding: '12px' }}>Target Channels</th>
+                  <th style={{ padding: '12px' }}>Price Details</th>
                   <th style={{ padding: '12px', textAlign: 'center' }}>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {offers.map(o => (
-                  <tr key={o.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                    <td style={{ padding: '12px' }}><span style={{ padding: '3px 8px', background: 'rgba(230,57,70,0.1)', color: '#e63946', borderRadius: '6px', fontWeight: 700, fontSize: '11px' }}>{o.tag || 'PROMO'}</span></td>
-                    <td style={{ padding: '12px' }}>
-                      <div style={{ fontWeight: 600 }}>{o.title}</div>
-                      <div style={{ color: '#6b7280', fontSize: '12px' }}>{o.desc}</div>
-                    </td>
-                    <td style={{ padding: '12px' }}>
-                      <span style={{ fontWeight: 700 }}>{o.price}</span>
-                      {o.origPrice && <span style={{ textDecoration: 'line-through', color: '#9ca3af', marginLeft: '6px', fontSize: '11px' }}>{o.origPrice}</span>}
-                    </td>
-                    <td style={{ padding: '12px', textAlign: 'center' }}>
-                      <button onClick={() => handleDelete(o.id)} style={{ border: 'none', background: 'transparent', color: '#dc2626', cursor: 'pointer', padding: '6px' }}>
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {offers.map(o => {
+                  const targets = Array.isArray(o.targetChannels) && o.targetChannels.length > 0 ? o.targetChannels : ['mobile', 'pos', 'self_order']
+                  return (
+                    <tr key={o.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                      <td style={{ padding: '12px' }}><span style={{ padding: '3px 8px', background: 'rgba(230,57,70,0.1)', color: '#e63946', borderRadius: '6px', fontWeight: 700, fontSize: '11px' }}>{o.tag || 'PROMO'}</span></td>
+                      <td style={{ padding: '12px' }}>
+                        <div style={{ fontWeight: 600 }}>{o.title}</div>
+                        <div style={{ color: '#6b7280', fontSize: '12px' }}>{o.desc}</div>
+                      </td>
+                      <td style={{ padding: '12px' }}>
+                        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                          {targets.includes('mobile') && <span style={{ fontSize: '10px', padding: '2px 6px', borderRadius: '4px', background: '#eff6ff', color: '#2563eb', fontWeight: 700 }}>📱 MOBILE</span>}
+                          {targets.includes('pos') && <span style={{ fontSize: '10px', padding: '2px 6px', borderRadius: '4px', background: '#f0fdf4', color: '#16a34a', fontWeight: 700 }}>🖥️ POS</span>}
+                          {targets.includes('self_order') && <span style={{ fontSize: '10px', padding: '2px 6px', borderRadius: '4px', background: '#faf5ff', color: '#7c3aed', fontWeight: 700 }}>📲 SELF-ORDER</span>}
+                        </div>
+                      </td>
+                      <td style={{ padding: '12px' }}>
+                        <span style={{ fontWeight: 700 }}>{o.price}</span>
+                        {o.origPrice && <span style={{ textDecoration: 'line-through', color: '#9ca3af', marginLeft: '6px', fontSize: '11px' }}>{o.origPrice}</span>}
+                      </td>
+                      <td style={{ padding: '12px', textAlign: 'center' }}>
+                        <button onClick={() => handleDelete(o.id)} style={{ border: 'none', background: 'transparent', color: '#dc2626', cursor: 'pointer', padding: '6px' }}>
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
