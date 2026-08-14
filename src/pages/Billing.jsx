@@ -767,20 +767,48 @@ export default function Billing() {
                 <div style={{ fontSize: '20px', fontWeight: 700, color: '#f59e0b' }}>
                   ₹{calculateTotal(kot)}
                 </div>
-                <button
-                  onClick={() => acceptKOT(kot)}
-                  style={{
-                    padding: '10px 20px',
-                    ...gradientBtn('#f59e0b', '#d97706'),
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    fontSize: '13px'
-                  }}
-                >
-                  <Receipt size={16} />
-                  Accept & Bill
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button
+                    onClick={() => {
+                      setCancelBillOrder(kot)
+                      setCancelReasonPreset('Customer Changed Mind')
+                      setCancelReasonCustom('')
+                      setCancelPin('')
+                      setCancelError('')
+                    }}
+                    style={{
+                      padding: '8px 12px',
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      borderRadius: '10px',
+                      color: '#dc2626',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                    title="Cancel KOT"
+                  >
+                    <X size={14} color="#dc2626" />
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => acceptKOT(kot)}
+                    style={{
+                      padding: '10px 18px',
+                      ...gradientBtn('#f59e0b', '#d97706'),
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '13px'
+                    }}
+                  >
+                    <Receipt size={16} />
+                    Accept & Bill
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -831,9 +859,31 @@ export default function Billing() {
                   <div style={{ fontSize: '18px', fontWeight: 700, color: '#8b5cf6' }}>
                     ₹0
                   </div>
-                  <span style={{ fontSize: '12px', color: '#6b7280' }}>
-                    {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
+                  <button
+                    onClick={() => {
+                      setCancelBillOrder(order)
+                      setCancelReasonPreset('Customer Changed Mind')
+                      setCancelReasonCustom('')
+                      setCancelPin('')
+                      setCancelError('')
+                    }}
+                    style={{
+                      padding: '6px 12px',
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      borderRadius: '8px',
+                      color: '#dc2626',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <X size={14} color="#dc2626" />
+                    Cancel
+                  </button>
                 </div>
               </div>
             ))}
@@ -868,20 +918,48 @@ export default function Billing() {
                   <div style={{ fontSize: '20px', fontWeight: 700, color: '#10b981' }}>
                     ₹{calculateTotal(kot)}
                   </div>
-                  <button
-                    onClick={() => handleGenerateBill(kot)}
-                    style={{
-                      padding: '10px 20px',
-                      ...gradientBtn('#e63946', '#c1121f'),
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontSize: '13px'
-                    }}
-                  >
-                    <Receipt size={16} />
-                    Generate Bill
-                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button
+                      onClick={() => {
+                        setCancelBillOrder(kot)
+                        setCancelReasonPreset('Customer Changed Mind')
+                        setCancelReasonCustom('')
+                        setCancelPin('')
+                        setCancelError('')
+                      }}
+                      style={{
+                        padding: '8px 12px',
+                        background: '#fef2f2',
+                        border: '1px solid #fecaca',
+                        borderRadius: '10px',
+                        color: '#dc2626',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                      title="Cancel Order / KOT"
+                    >
+                      <X size={14} color="#dc2626" />
+                      Cancel KOT
+                    </button>
+                    <button
+                      onClick={() => handleGenerateBill(kot)}
+                      style={{
+                        padding: '10px 18px',
+                        ...gradientBtn('#e63946', '#c1121f'),
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        fontSize: '13px'
+                      }}
+                    >
+                      <Receipt size={16} />
+                      Generate Bill
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -1022,10 +1100,41 @@ export default function Billing() {
             boxShadow: '0 24px 60px rgba(0,0,0,0.15)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h3 style={{ fontSize: '24px', fontWeight: 700 }}>Generate Bill</h3>
-              <button onClick={() => setShowPayment(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                <X size={24} color="#6b7280" />
-              </button>
+              <h3 style={{ fontSize: '24px', fontWeight: 700, margin: 0 }}>Generate Bill</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <button
+                  onClick={() => {
+                    const orderToCancel = selectedKOT
+                    setShowPayment(false)
+                    setSelectedKOT(null)
+                    setCancelBillOrder(orderToCancel)
+                    setCancelReasonPreset('Customer Changed Mind')
+                    setCancelReasonCustom('')
+                    setCancelPin('')
+                    setCancelError('')
+                  }}
+                  style={{
+                    padding: '6px 12px',
+                    background: '#fef2f2',
+                    border: '1px solid #fecaca',
+                    borderRadius: '8px',
+                    color: '#dc2626',
+                    fontWeight: 700,
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                  title="Cancel Order / KOT"
+                >
+                  <X size={14} color="#dc2626" />
+                  Cancel Order
+                </button>
+                <button onClick={() => setShowPayment(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                  <X size={24} color="#6b7280" />
+                </button>
+              </div>
             </div>
 
             <div style={{ background: 'rgba(0,0,0,0.02)', borderRadius: '16px', padding: '16px', marginBottom: '20px' }}>
