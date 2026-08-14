@@ -9210,14 +9210,14 @@ app.get('/api/customers/search', (req, res) => {
 // Delete single customer by ID or phone
 app.delete('/api/customers/:id', (req, res) => {
   const targetId = req.params.id
-  mobileAppUsers = mobileAppUsers.filter(u => String(u.id) !== String(targetId) && String(u.phone) !== String(targetId))
-  loyaltyUsers = loyaltyUsers.filter(u => String(u.id) !== String(targetId) && String(u.phone) !== String(targetId))
-  dens = dens.filter(d => String(d.leaderId) !== String(targetId) && String(d.leaderPhone) !== String(targetId))
+  mobileAppUsers = mobileAppUsers.filter(u => u && String(u.id) !== String(targetId) && !phonesMatch(u.phone, targetId))
+  loyaltyUsers = loyaltyUsers.filter(u => u && String(u.id) !== String(targetId) && !phonesMatch(u.phone, targetId))
+  dens = dens.filter(d => d && String(d.leaderId) !== String(targetId) && !phonesMatch(d.leaderPhone, targetId))
 
   const db = readDb()
-  db.users = (db.users || []).filter(u => String(u.id) !== String(targetId) && String(u.phone) !== String(targetId))
-  db.loyaltyUsers = (db.loyaltyUsers || []).filter(u => String(u.id) !== String(targetId) && String(u.phone) !== String(targetId))
-  db.dens = (db.dens || []).filter(d => String(d.leaderId) !== String(targetId) && String(d.leaderPhone) !== String(targetId))
+  db.users = (db.users || []).filter(u => u && String(u.id) !== String(targetId) && !phonesMatch(u.phone, targetId))
+  db.loyaltyUsers = (db.loyaltyUsers || []).filter(u => u && String(u.id) !== String(targetId) && !phonesMatch(u.phone, targetId))
+  db.dens = (db.dens || []).filter(d => d && String(d.leaderId) !== String(targetId) && !phonesMatch(d.leaderPhone, targetId))
 
   writeDb(db)
   saveState()
