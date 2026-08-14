@@ -3,6 +3,8 @@ import '../theme/colors.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
 
+import 'main_nav_screen.dart';
+
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
 
@@ -68,7 +70,16 @@ class _OrdersScreenState extends State<OrdersScreen> {
       appBar: AppBar(
         backgroundColor: TDGColors.background,
         elevation: 0,
-        leading: BackButton(color: TDGColors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: TDGColors.white),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              MainNavScreen.navKey.currentState?.setTab(0);
+            }
+          },
+        ),
         centerTitle: true,
         title: Text(
           'ORDER HISTORY',

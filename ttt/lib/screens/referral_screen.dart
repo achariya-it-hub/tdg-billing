@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
 
+import 'main_nav_screen.dart';
+
 class ReferralScreen extends StatelessWidget {
   const ReferralScreen({super.key});
 
@@ -15,7 +17,16 @@ class ReferralScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF0F0F12),
         elevation: 0,
-        leading: BackButton(color: TDGColors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: TDGColors.white),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              MainNavScreen.navKey.currentState?.setTab(0);
+            }
+          },
+        ),
         centerTitle: true,
         title: Text(
           'REFERRAL CARD',

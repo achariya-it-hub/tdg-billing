@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Users, Search, UserPlus, Gift, Star, Crown, TrendingUp, Users2, Plus, Copy, X, Check, Trash2, Upload } from 'lucide-react'
+import { Users, Search, UserPlus, Gift, Star, Crown, TrendingUp, Users2, Plus, Copy, X, Check, Trash2, Upload, Download, RefreshCw, Smartphone, ShieldCheck } from 'lucide-react'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import BulkUploadModal from '../components/BulkUploadModal'
@@ -126,17 +126,70 @@ export default function Customers() {
     return 'bronze'
   }
 
+  const [filterSource, setFilterSource] = useState('all')
+
   const totalMembers = customers.length
   const totalPointsIssued = customers.reduce((s, c) => s + (c.points || 0), 0)
   const avgSpent = customers.length ? Math.round(customers.reduce((s, c) => s + (c.totalSpent || 0), 0) / customers.length) : 0
   const platinumCount = customers.filter(c => getTier(c.points) === 'platinum').length
 
-  const filteredCustomers = customers.filter(c =>
-    (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (c.phone || '').includes(searchTerm) ||
-    (c.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (c.partnerCode || '').toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const mobileAppCount = customers.filter(c => c.source === 'Mobile App' || (c.id && String(c.id).startsWith('u_'))).length
+  const denMembersCount = customers.filter(c => c.source === 'Den Member' || (c.id && String(c.id).startsWith('den_'))).length
+  const staffCount = customers.filter(c => c.type === 'staff' || c.partnerCode).length
+
+  const filteredCustomers = customers.filter(c => {
+    const matchesSearch =
+      (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (c.phone || '').includes(searchTerm) ||
+      (c.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (c.partnerCode || '').toLowerCase().includes(searchTerm.toLowerCase())
+
+    if (!matchesSearch) return false
+
+    if (filterSource === 'mobile') return c.source === 'Mobile App' || (c.id && String(c.id).startsWith('u_'))
+    if (filterSource === 'den') return c.source === 'Den Member' || (c.id && String(c.id).startsWith('den_'))
+    if (filterSource === 'staff') return c.type === 'staff' || c.partnerCode
+
+    return true
+  })
+
+  const handleExportCSV = () => {
+    if (!filteredCustomers.length) {
+      alert('No user details to export')
+      return
+    }
+    const headers = ['Name', 'Phone', 'Email', 'Source', 'Den Level / Tier', 'Rubies / Points', 'Total Orders', 'Total Spent (INR)', 'Joined Date']
+    const rows = filteredCustomers.map(c => [
+      `"${c.name || 'Unknown'}"`,
+      `"${c.phone || ''}"`,
+      `"${c.email || ''}"`,
+      `"${c.source || (c.type === 'staff' ? 'Staff' : 'Customer')}"`,
+      `"${c.denLevel || getTier(c.points || 0)}"`,
+      c.rubyBalance || c.points || 0,
+      c.totalOrders || 0,
+      c.totalSpent || 0,
+      `"${c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-IN') : '-'}"`
+    ])
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n')
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement('a')
+    link.setAttribute('href', encodedUri)
+    link.setAttribute('download', `tdg_dens_mobile_users_${new Date().toISOString().slice(0, 10)}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  const handleCopyPhones = () => {
+    const phones = filteredCustomers.map(c => c.phone).filter(Boolean)
+    if (!phones.length) {
+      alert('No phone numbers available')
+      return
+    }
+    navigator.clipboard.writeText(phones.join(', '))
+    alert(`Copied ${phones.length} phone numbers to clipboard!`)
+  }
 
   const searchCustomer = async () => {
     if (searchPhone.length < 8) { setDenError('Enter at least 8 digits'); return }
@@ -349,15 +402,23 @@ export default function Customers() {
 
       {activeTab === 'customers' && (
         <>
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
             <div style={{ flex: 1, minWidth: '260px', position: 'relative' }}>
               <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
               <input type="text" placeholder="Search by name, phone, or email..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ width: '100%', padding: '14px 16px 14px 48px', borderRadius: '12px', border: '1px solid var(--border)', background: 'white', fontSize: '14px' }} />
             </div>
-            <Button onClick={() => fetchCustomers()} variant="secondary"><Search size={18} /> Refresh</Button>
+            <Button onClick={() => fetchCustomers()} variant="secondary" style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', fontWeight: 700 }}>
+              <RefreshCw size={18} /> Fetch All Mobile App & Den Users ({customers.length})
+            </Button>
+            <Button onClick={handleExportCSV} variant="secondary" style={{ background: '#3b82f6', color: 'white', border: 'none', fontWeight: 700 }}>
+              <Download size={18} /> Export CSV
+            </Button>
+            <Button onClick={handleCopyPhones} variant="secondary">
+              <Copy size={18} /> Copy Phones
+            </Button>
             <Button onClick={() => { setBulkUploadType('customers'); setShowBulkUploadModal(true) }}>
-              <Upload size={18} /> Bulk Upload (CSV/Text)
+              <Upload size={18} /> Bulk Upload
             </Button>
             {customers.length > 0 && (
               <button
@@ -369,9 +430,32 @@ export default function Customers() {
                   transition: 'all 0.2s'
                 }}
               >
-                <Trash2 size={18} /> Clear All Customers
+                <Trash2 size={18} /> Clear All
               </button>
             )}
+          </div>
+
+          {/* Sub-Filter Tabs */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '4px' }}>
+            {[
+              { id: 'all', label: `🔥 All Users (${customers.length})` },
+              { id: 'mobile', label: `📱 Mobile App Users (${mobileAppCount})` },
+              { id: 'den', label: `🏰 Den Members (${denMembersCount})` },
+              { id: 'staff', label: `⭐ Staff & VIP (${staffCount})` },
+            ].map(f => (
+              <button
+                key={f.id}
+                onClick={() => setFilterSource(f.id)}
+                style={{
+                  padding: '8px 16px', borderRadius: '20px', border: 'none',
+                  background: filterSource === f.id ? '#1a1a2e' : '#e5e7eb',
+                  color: filterSource === f.id ? 'white' : '#374151',
+                  fontSize: '13px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s'
+                }}
+              >
+                {f.label}
+              </button>
+            ))}
           </div>
 
           {loading ? <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>Loading...</div> :
@@ -389,11 +473,20 @@ export default function Customers() {
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                           <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e' }}>{customer.name || 'Unknown'}</h3>
                           <span style={{ padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 600, background: tier.bg, color: tier.color, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <TierIcon size={12} /> {tier.label}
+                            <TierIcon size={12} /> {customer.denLevel || tier.label}
                           </span>
+                          {customer.source === 'Mobile App' || (customer.id && String(customer.id).startsWith('u_')) ? (
+                            <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 800, background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe' }}>
+                              📱 MOBILE APP
+                            </span>
+                          ) : customer.source === 'Den Member' || (customer.id && String(customer.id).startsWith('den_')) ? (
+                            <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 800, background: '#faf5ff', color: '#7c3aed', border: '1px solid #e9d5ff' }}>
+                              🏰 DEN MEMBER
+                            </span>
+                          ) : null}
                           {customer.type === 'staff' && (
                             <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700, background: '#dbeafe', color: '#1d4ed8' }}>
                               STAFF

@@ -6,6 +6,8 @@ import '../utils/responsive.dart';
 import 'asset_screen.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'main_nav_screen.dart';
+
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
 
@@ -103,7 +105,16 @@ class _WalletScreenState extends State<WalletScreen> {
       appBar: AppBar(
         backgroundColor: TDGColors.background,
         elevation: 0,
-        leading: BackButton(color: TDGColors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: TDGColors.white),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              MainNavScreen.navKey.currentState?.setTab(0);
+            }
+          },
+        ),
         centerTitle: true,
         title: Text(
           'POINTS WALLET',
@@ -530,15 +541,15 @@ class _WalletScreenState extends State<WalletScreen> {
 
   Widget _ruleBullet(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(bottom: 10.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('• ', style: TextStyle(color: TDGColors.gold, fontSize: 14)),
+          Text('• ', style: TextStyle(color: TDGColors.gold, fontSize: 16, fontWeight: FontWeight.bold)),
           Expanded(
             child: Text(
               text,
-              style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.4),
+              style: TextStyle(color: Colors.white.withOpacity(0.95), fontSize: 13.5, fontWeight: FontWeight.w500, height: 1.45),
             ),
           ),
         ],

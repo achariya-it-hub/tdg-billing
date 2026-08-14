@@ -65,7 +65,7 @@
         to { transform: rotate(360deg); }
       }
     </style>
-    <script type="module" crossorigin src="./assets/index-CPB44ZEm.js"></script>
+    <script type="module" crossorigin src="./assets/index-iD8rK3dx.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-DKFSEZoQ.css">
   </head>
   <body>
@@ -73,8 +73,19 @@
       <div class="loading">
         <div class="loading-logo">🍽️</div>
         <div class="loading-spinner"></div>
-        <span class="loading-text">Loading Ten Den Gyros...</span>
+        <span class="loading-text" id="loading-txt">Loading Ten Den Gyros...</span>
+        <button id="reload-btn" onclick="window.location.reload(true)" style="display:none;margin-top:16px;padding:10px 20px;background:#e63946;color:white;border:none;border-radius:10px;font-weight:700;cursor:pointer;">
+          Tap to Refresh App
+        </button>
       </div>
+      <script>
+        setTimeout(function() {
+          var btn = document.getElementById('reload-btn');
+          if (btn && document.getElementById('loading-txt')) {
+            btn.style.display = 'inline-block';
+          }
+        }, 3500);
+      </script>
     </div>
   </body>
 </html>

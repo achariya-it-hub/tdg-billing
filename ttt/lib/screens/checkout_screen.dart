@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import 'order_placed_screen.dart';
+import 'main_nav_screen.dart';
 import '../widgets/tdg_button.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
@@ -66,58 +67,112 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'name': item['name'],
         'price': double.parse(item['price'].toString()),
         'quantity': int.parse(item['qty'].toString()),
+        'customization': item['customization'],
+        'notes': item['customization']?['notes'] ?? '',
       }).toList();
 
-      // Initiate payment gateway redirect if selected
-      if (_selectedPayment == 'ccavenue') {
-        final ccResponse = await ApiService().initiateCCavenuePayment(
-          amount: _finalTotal.toDouble(),
-          customerName: ApiService().currentUser?['name'],
-          customerPhone: ApiService().currentUser?['phone'],
-          customerEmail: ApiService().currentUser?['email'],
-        );
+      // Handle online gateway payments
+      if (_selectedPayment == 'cashfree' || _selectedPayment == 'ccavenue') {
+        bool gatewayLaunched = false;
+        if (_selectedPayment == 'cashfree') {
+          final cfResponse = await ApiService().initiateCashfreePayment(
+            amount: _finalTotal.toDouble(),
+            customerName: ApiService().currentUser?['name'],
+            customerPhone: ApiService().currentUser?['phone'],
+            customerEmail: ApiService().currentUser?['email'],
+          );
 
-        if (ccResponse['success'] == true) {
-          final String ccUrl = ccResponse['ccavenueUrl'] ?? '';
-          final String encRequest = ccResponse['encRequest'] ?? '';
-          final String accessCode = ccResponse['accessCode'] ?? '';
-
-          if (ccUrl.isNotEmpty) {
-            final baseUri = Uri.parse(ccUrl);
-            final fullUri = Uri(
-              scheme: baseUri.scheme,
-              host: baseUri.host,
-              path: baseUri.path,
-              queryParameters: {
-                'command': 'initiateTransaction',
-                'encRequest': encRequest,
-                'access_code': accessCode,
-              },
-            );
-            if (await canLaunchUrl(fullUri)) {
-              await launchUrl(fullUri, mode: LaunchMode.externalApplication);
+          if (cfResponse['success'] == true) {
+            final String sessionId = cfResponse['paymentSessionId'] ?? '';
+            if (sessionId.isNotEmpty) {
+              final checkoutUrl = Uri.parse(
+                'https://checkout.cashfree.com/pg?payment_session_id=$sessionId&mode=PROD',
+              );
+              if (await canLaunchUrl(checkoutUrl)) {
+                await launchUrl(checkoutUrl, mode: LaunchMode.externalApplication);
+                gatewayLaunched = true;
+              }
             }
+          } else {
+            throw Exception(cfResponse['message'] ?? 'Failed to initiate Cashfree payment gateway');
+          }
+        } else if (_selectedPayment == 'ccavenue') {
+          final ccResponse = await ApiService().initiateCCavenuePayment(
+            amount: _finalTotal.toDouble(),
+            customerName: ApiService().currentUser?['name'],
+            customerPhone: ApiService().currentUser?['phone'],
+            customerEmail: ApiService().currentUser?['email'],
+          );
+
+          if (ccResponse['success'] == true) {
+            final String ccUrl = ccResponse['ccavenueUrl'] ?? '';
+            final String encRequest = ccResponse['encRequest'] ?? '';
+            final String accessCode = ccResponse['accessCode'] ?? '';
+
+            if (ccUrl.isNotEmpty) {
+              final baseUri = Uri.parse(ccUrl);
+              final fullUri = Uri(
+                scheme: baseUri.scheme,
+                host: baseUri.host,
+                path: baseUri.path,
+                queryParameters: {
+                  'command': 'initiateTransaction',
+                  'encRequest': encRequest,
+                  'access_code': accessCode,
+                },
+              );
+              if (await canLaunchUrl(fullUri)) {
+                await launchUrl(fullUri, mode: LaunchMode.externalApplication);
+                gatewayLaunched = true;
+              }
+            }
+          } else {
+            throw Exception(ccResponse['message'] ?? 'Failed to initiate CCAvenue payment gateway');
           }
         }
-      } else if (_selectedPayment == 'cashfree') {
-        final cfResponse = await ApiService().initiateCashfreePayment(
-          amount: _finalTotal.toDouble(),
-          customerName: ApiService().currentUser?['name'],
-          customerPhone: ApiService().currentUser?['phone'],
-          customerEmail: ApiService().currentUser?['email'],
-        );
 
-        if (cfResponse['success'] == true) {
-          final String sessionId = cfResponse['paymentSessionId'] ?? '';
-          final String cfOrderId = cfResponse['orderId'] ?? '';
-          if (sessionId.isNotEmpty) {
-            final checkoutUrl = Uri.parse(
-              'https://checkout.cashfree.com/pg?payment_session_id=$sessionId&mode=PROD',
-            );
-            if (await canLaunchUrl(checkoutUrl)) {
-              await launchUrl(checkoutUrl, mode: LaunchMode.externalApplication);
+        if (gatewayLaunched && mounted) {
+          setState(() => _isPaying = false);
+          final confirmPaid = await showDialog<bool>(
+            context: context,
+            barrierDismissible: false,
+            builder: (ctx) => AlertDialog(
+              backgroundColor: const Color(0xFF1E1E24),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide(color: TDGColors.gold)),
+              title: Row(
+                children: [
+                  Icon(Icons.payment_rounded, color: TDGColors.gold),
+                  const SizedBox(width: 10),
+                  Text('Complete Payment', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                ],
+              ),
+              content: Text(
+                'Payment gateway opened in external window.\n\nDid you successfully complete the payment transaction?',
+                style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: Text('Cancel', style: TextStyle(color: TDGColors.grey)),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  style: ElevatedButton.styleFrom(backgroundColor: TDGColors.gold, foregroundColor: Colors.black),
+                  child: const Text('I Have Paid', style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+          );
+
+          if (confirmPaid != true) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Payment not completed or cancelled.'), backgroundColor: Colors.orange),
+              );
             }
+            return;
           }
+          setState(() => _isPaying = true);
         }
       }
 
@@ -140,6 +195,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       if (_usePoints && _pointsToRedeem > 0) {
         await ApiService().redeemPoints(_pointsToRedeem);
       }
+
+      // Clear cart on successful order
+      ApiService().cart.clear();
 
       if (mounted) {
         Navigator.pushReplacement(
@@ -165,7 +223,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       appBar: AppBar(
         backgroundColor: TDGColors.background,
         elevation: 0,
-        leading: BackButton(color: TDGColors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: TDGColors.white),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              MainNavScreen.navKey.currentState?.setTab(0);
+            }
+          },
+        ),
         centerTitle: true,
         title: Text(
           'CHECKOUT',

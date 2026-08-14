@@ -8900,46 +8900,108 @@ app.delete('/api/billing/users/:id', (req, res) => {
   res.json({ success: true })
 })
 
-// Get all mobile app customers + loyalty/staff users
+// Get all mobile app customers + loyalty/den users
 app.get('/api/customers', (req, res) => {
   const db = readDb()
-  const mobileList = (db.users || mobileAppUsers || []).map(u => ({
-    id: u.id,
-    name: u.name || '',
-    phone: u.phone || '',
-    email: u.email || '',
-    points: u.points || 0,
-    totalOrders: (u.orderHistory || []).length,
-    totalSpent: (u.orderHistory || []).reduce((s, o) => s + (o.total || 0), 0),
-    createdAt: u.createdAt || u.signupAt || '',
-    lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
-    type: u.type || 'customer',
-    partnerCode: u.partnerCode || '',
-    discountPct: u.discountPct || 0
-  }))
-  const loyaltyList = (db.loyaltyUsers || loyaltyUsers || []).map(u => ({
-    id: u.id,
-    name: u.name || '',
-    phone: u.phone || '',
-    email: u.email || '',
-    points: u.points || 0,
-    totalOrders: (u.orderHistory || []).length,
-    totalSpent: (u.orderHistory || []).reduce((s, o) => s + (o.total || 0), 0),
-    createdAt: u.createdAt || u.signupAt || '',
-    lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
-    type: u.type || 'customer',
-    partnerCode: u.partnerCode || '',
-    discountPct: u.discountPct || 0
-  }))
+  const ordersList = db.orders || orders || []
+
+  const mobileList = (db.users || mobileAppUsers || []).map(u => {
+    const userOrders = ordersList.filter(o => o.userId === u.id || (u.phone && o.customerPhone === u.phone))
+    const totalSpent = userOrders.reduce((s, o) => s + (o.total || 0), 0)
+    return {
+      id: u.id,
+      name: u.name || 'Mobile App User',
+      phone: u.phone || '',
+      email: u.email || '',
+      points: u.rubyBalance || u.points || 0,
+      rubyBalance: u.rubyBalance || 0,
+      denLevel: u.denLevel || 'Bronze',
+      totalOrders: Math.max(userOrders.length, (u.orderHistory || []).length),
+      totalSpent: Math.max(totalSpent, (u.orderHistory || []).reduce((s, o) => s + (o.total || 0), 0)),
+      createdAt: u.createdAt || u.signupAt || '',
+      lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
+      type: u.type || 'customer',
+      source: 'Mobile App',
+      partnerCode: u.partnerCode || u.referralCode || '',
+      discountPct: u.discountPct || 0,
+      referralCode: u.referralCode || ''
+    }
+  })
+
+  const loyaltyList = (db.loyaltyUsers || loyaltyUsers || []).map(u => {
+    const userOrders = ordersList.filter(o => u.phone && o.customerPhone === u.phone)
+    const totalSpent = userOrders.reduce((s, o) => s + (o.total || 0), 0)
+    return {
+      id: u.id,
+      name: u.name || 'Den Member',
+      phone: u.phone || '',
+      email: u.email || '',
+      points: u.points || 0,
+      rubyBalance: u.points || 0,
+      denLevel: u.tier || 'Silver',
+      totalOrders: Math.max(userOrders.length, (u.orderHistory || []).length),
+      totalSpent: Math.max(totalSpent, (u.orderHistory || []).reduce((s, o) => s + (o.total || 0), 0)),
+      createdAt: u.createdAt || u.signupAt || '',
+      lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
+      type: u.type || 'customer',
+      source: 'Den Member',
+      partnerCode: u.partnerCode || '',
+      discountPct: u.discountPct || 0
+    }
+  })
+
   const seen = new Set()
   const all = []
-  for (const c of [...loyaltyList, ...mobileList]) {
+  for (const c of [...mobileList, ...loyaltyList]) {
     const key = c.phone || c.id
     if (seen.has(key)) continue
     seen.add(key)
     all.push(c)
   }
   res.json(all)
+})
+
+// Dedicated endpoint to fetch detailed summary of all Dens & Mobile App users list
+app.get('/api/customers/all-dens', (req, res) => {
+  const db = readDb()
+  const users = db.users || mobileAppUsers || []
+  const loyalty = db.loyaltyUsers || loyaltyUsers || []
+  const denAssets = db.denAssets || []
+  const ordersList = db.orders || orders || []
+
+  const mobileAppUsersList = users.map(u => ({
+    id: u.id,
+    name: u.name || 'Mobile App User',
+    phone: u.phone || '',
+    email: u.email || '',
+    rubyBalance: u.rubyBalance || 0,
+    denLevel: u.denLevel || 'Bronze',
+    source: 'Mobile App',
+    ordersCount: ordersList.filter(o => o.userId === u.id || (u.phone && o.customerPhone === u.phone)).length,
+    joinedAt: u.createdAt || u.signupAt || ''
+  }))
+
+  const denMembersList = loyalty.map(u => ({
+    id: u.id,
+    name: u.name || 'Den Member',
+    phone: u.phone || '',
+    email: u.email || '',
+    rubyBalance: u.points || 0,
+    denLevel: u.tier || 'Silver',
+    source: 'Den Member',
+    ordersCount: ordersList.filter(o => u.phone && o.customerPhone === u.phone).length,
+    joinedAt: u.createdAt || ''
+  }))
+
+  res.json({
+    success: true,
+    totalUsersCount: mobileAppUsersList.length + denMembersList.length,
+    mobileAppUsersCount: mobileAppUsersList.length,
+    denMembersCount: denMembersList.length,
+    denAssetsCount: denAssets.length,
+    mobileAppUsers: mobileAppUsersList,
+    denMembers: denMembersList
+  })
 })
 
 // Check customer discount by phone number (for POS auto-discount & Kiosk validation)
@@ -10995,11 +11057,13 @@ app.post('/api/orders', auth, (req, res) => {
     updatedAt: now,
     items: items.map(item => ({
       id: uuid(),
-      menuItemId: item.menuItemId,
+      menuItemId: item.menuItemId || item.id,
       menuItemName: item.name,
-      quantity: item.quantity,
+      quantity: item.quantity || 1,
       unitPrice: item.price,
       totalPrice: (item.price || 0) * (item.quantity || 1),
+      customization: item.customization || null,
+      notes: item.notes || (item.customization ? item.customization.notes : ''),
       status: 'pending'
     }))
   }

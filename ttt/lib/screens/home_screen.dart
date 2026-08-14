@@ -7,7 +7,9 @@ import 'asset_screen.dart';
 import 'offers_screen.dart';
 import 'notifications_screen.dart';
 import 'cart_screen.dart';
+import 'menu_screen.dart';
 import 'customizer_screen.dart';
+import '../widgets/gyro_customizer_modal.dart';
 import 'main_nav_screen.dart';
 import 'referral_screen.dart';
 import '../widgets/tdg_logo.dart';
@@ -315,6 +317,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _goToMenu() {
+    if (MainNavScreen.navKey.currentState != null) {
+      MainNavScreen.navKey.currentState!.setTab(2);
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => MenuScreen()),
+      );
+    }
+  }
+
   Widget _buildHeroSection() {
     // Select image based on carousel loop index (loop of 6 items)
     String heroImage = 'assets/images/hero_gyro.png';
@@ -330,100 +343,102 @@ class _HomeScreenState extends State<HomeScreen> {
       heroImage = 'assets/images/logo_header.png';
     }
 
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1F1500), Color(0xFF100B00), Colors.black],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return GestureDetector(
+      onTap: _goToMenu,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          gradient: const LinearGradient(
+            colors: [Color(0xFF1F1500), Color(0xFF100B00), Colors.black],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          border: Border.all(color: TDGColors.gold.withOpacity(0.4), width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: TDGColors.gold.withOpacity(0.12),
+              blurRadius: 30,
+              offset: const Offset(0, 12),
+            ),
+          ],
         ),
-        border: Border.all(color: TDGColors.gold.withOpacity(0.4), width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: TDGColors.gold.withOpacity(0.12),
-            blurRadius: 30,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: TDGColors.gold.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: TDGColors.gold.withOpacity(0.4)),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: TDGColors.gold.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: TDGColors.gold.withOpacity(0.4)),
+                    ),
+                    child: Text(
+                      '🌯 MEDITERRANEAN PRIDE',
+                      style: GoogleFonts.outfit(color: TDGColors.gold, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1),
+                    ),
                   ),
-                  child: Text(
-                    '🌯 MEDITERRANEAN PRIDE',
-                    style: GoogleFonts.outfit(color: TDGColors.gold, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1),
+                  const SizedBox(height: 12),
+                  ShaderMask(
+                    shaderCallback: (b) => TDGColors.goldGradient.createShader(b),
+                    child: Text(
+                      'THE DAILY GYRO',
+                      style: GoogleFonts.outfit(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w900, letterSpacing: 1),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                ShaderMask(
-                  shaderCallback: (b) => TDGColors.goldGradient.createShader(b),
-                  child: Text(
-                    'THE DAILY GYRO',
-                    style: GoogleFonts.outfit(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w900, letterSpacing: 1),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Indulge in fresh handcrafted Greek Gyros, premium golden fries, and thick delicious dessert shakes.',
+                    style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.35),
                   ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Indulge in fresh handcrafted Greek Gyros, premium golden fries, and thick delicious dessert shakes.',
-                  style: GoogleFonts.outfit(color: Colors.white70, fontSize: 13, height: 1.35),
-                ),
-                const SizedBox(height: 18),
-                ElevatedButton(
-                  onPressed: () {
-                    MainNavScreen.navKey.currentState?.setTab(2);
+                  const SizedBox(height: 18),
+                  ElevatedButton(
+                    onPressed: _goToMenu,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: TDGColors.gold,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: Text('ORDER NOW', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900)),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            Container(
+              width: 110,
+              height: 120,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(color: TDGColors.gold.withOpacity(0.3), blurRadius: 20),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 600),
+                  transitionBuilder: (Widget child, Animation<double> animation) {
+                    return FadeTransition(opacity: animation, child: child);
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: TDGColors.gold,
-                    foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: Image.asset(
+                    heroImage,
+                    key: ValueKey<String>(heroImage),
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
                   ),
-                  child: Text('ORDER NOW', style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900)),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 16),
-          Container(
-            width: 110,
-            height: 120,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(color: TDGColors.gold.withOpacity(0.3), blurRadius: 20),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 600),
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-                child: Image.asset(
-                  heroImage,
-                  key: ValueKey<String>(heroImage),
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -589,87 +604,111 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ];
 
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40, height: 4,
-                  decoration: BoxDecoration(color: Colors.grey[700], borderRadius: BorderRadius.circular(2)),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ShaderMask(
-                    shaderCallback: (b) => TDGColors.goldGradient.createShader(b),
-                    child: const Text('OFFERS OF THE DAY', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                  ),
-                  IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(ctx)),
-                ],
-              ),
-              const SizedBox(height: 12),
-              ...offerItems.map((item) => Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: TDGColors.cardDark,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: TDGColors.gold.withOpacity(0.3)),
-                ),
-                child: Row(
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.75,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          builder: (context, scrollController) {
+            return Container(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(item['image']!, width: 70, height: 70, fit: BoxFit.cover),
+                    Center(
+                      child: Container(
+                        width: 40, height: 4,
+                        decoration: BoxDecoration(color: Colors.grey[700], borderRadius: BorderRadius.circular(2)),
+                      ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ShaderMask(
+                          shaderCallback: (b) => TDGColors.goldGradient.createShader(b),
+                          child: const Text('OFFERS OF THE DAY', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                        ),
+                        IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(ctx)),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    ...offerItems.map((item) => Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: TDGColors.cardDark,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: TDGColors.gold.withOpacity(0.3)),
+                      ),
+                      child: Row(
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(color: TDGColors.red, borderRadius: BorderRadius.circular(4)),
-                                child: Text(item['tag']!, style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
-                              ),
-                            ],
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(item['image']!, width: 70, height: 70, fit: BoxFit.cover),
                           ),
-                          const SizedBox(height: 4),
-                          Text(item['name']!, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
-                          Text(item['desc']!, style: TextStyle(color: TDGColors.greyLight, fontSize: 11)),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Text(item['price']!, style: TextStyle(color: TDGColors.gold, fontSize: 15, fontWeight: FontWeight.w900)),
-                              const SizedBox(width: 6),
-                              Text(item['origPrice']!, style: TextStyle(color: TDGColors.grey, fontSize: 12, decoration: TextDecoration.lineThrough)),
-                            ],
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(color: TDGColors.red, borderRadius: BorderRadius.circular(4)),
+                                      child: Text(item['tag']!, style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(item['name']!, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+                                Text(item['desc']!, style: TextStyle(color: TDGColors.greyLight, fontSize: 11)),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Text(item['price']!, style: TextStyle(color: TDGColors.gold, fontSize: 15, fontWeight: FontWeight.w900)),
+                                    const SizedBox(width: 6),
+                                    Text(item['origPrice']!, style: TextStyle(color: TDGColors.grey, fontSize: 12, decoration: TextDecoration.lineThrough)),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(ctx);
+                              final cart = ApiService().cart;
+                              final existingIndex = cart.indexWhere((c) => c['name'] == item['name']);
+                              if (existingIndex >= 0) {
+                                cart[existingIndex]['qty'] = (cart[existingIndex]['qty'] ?? 1) + 1;
+                              } else {
+                                cart.add({
+                                  'name': item['name'],
+                                  'price': int.tryParse(item['price']!.replaceAll(RegExp(r'\D'), '')) ?? 199,
+                                  'qty': 1,
+                                  'icon': Icons.restaurant,
+                                });
+                              }
+                              if (mounted) setState(() {});
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('${item['name']} added to order!'), backgroundColor: Colors.green),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(backgroundColor: TDGColors.gold, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6)),
+                            child: const Text('ADD', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                           ),
                         ],
                       ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('${item['name']} added to order!'), backgroundColor: Colors.green),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(backgroundColor: TDGColors.gold, foregroundColor: Colors.black, padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6)),
-                      child: const Text('ADD', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                    ),
+                    )),
                   ],
                 ),
-              )),
-            ],
-          ),
+              ),
+            );
+          },
         );
       },
     );
@@ -992,7 +1031,58 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  String _getAssetImagePath(String itemName, String category) {
+    final name = itemName.toLowerCase();
+    final cat = category.toLowerCase();
+
+    if (name.contains('leg') || cat.contains('leg')) return 'assets/images/menu/Leg& Thigh.png';
+    if (name.contains('wing') || cat.contains('wing')) return 'assets/images/menu/wings.png';
+    if (name.contains('strip') || cat.contains('strip')) return 'assets/images/menu/strips.png';
+    if (name.contains('loaded fries')) return 'assets/images/menu/loaded fries.png';
+    if (name.contains('fries') || cat.contains('fries')) return 'assets/images/menu/fries.png';
+    if (name.contains('salad') || cat.contains('salad')) return 'assets/images/menu/signature salad.png';
+    if (name.contains('rice') || cat.contains('rice')) return 'assets/images/menu/lebanese rice bowl.png';
+    if (name.contains('express meal')) return 'assets/images/menu/express meal.png';
+    if (name.contains('classic gyro meal')) return 'assets/images/menu/classic gyro meal.png';
+    if (name.contains('signature gyro meal')) return 'assets/images/menu/signature gyro meal.png';
+    if (name.contains('lebanese rice box')) return 'assets/images/menu/lebanese rice box.png';
+    if (name.contains('duo gyro feast')) return 'assets/images/menu/duo gyro feast.png';
+    if (name.contains('double crunch box')) return 'assets/images/menu/double crunch box.png';
+    if (name.contains('mega feast meal')) return 'assets/images/menu/mega feast meal.png';
+    if (name.contains('den\'s party meal')) return 'assets/images/menu/den\'s party meal.png';
+    if (name.contains('super 5 bucket')) return 'assets/images/menu/super 5 bucket.png';
+    if (cat.contains('protein max')) return 'assets/images/menu/protein max.png';
+    if (name.contains('vanilla shake')) return 'assets/images/menu/vanilla shake.png';
+    if (name.contains('strawberry shake')) return 'assets/images/menu/strawberry shake.png';
+    if (name.contains('biscoff shake')) return 'assets/images/menu/biscoff shake.png';
+    if (name.contains('chocolate shake')) return 'assets/images/menu/chocolate shake.png';
+    if (name.contains('kunafa pistachio shake')) return 'assets/images/menu/kunafa pistachio shake.png';
+    if (name.contains('softy')) return 'assets/images/menu/vanilla softy.png';
+    if (name.contains('hot chocolate')) return 'assets/images/menu/Hot Chocolate.png';
+    if (name.contains('signature tea')) return 'assets/images/menu/Signature tea.png';
+    if (name.contains('kombucha')) return 'assets/images/menu/kombucha.png';
+    if (name.contains('brownie')) return 'assets/images/menu/chcolate brownie.png';
+    if (name.contains('blondie')) return 'assets/images/menu/blondie cake.png';
+    if (cat.contains('gyro') || name.contains('gyro')) return 'assets/images/menu/gyro.png';
+
+    return 'assets/images/menu/logo.png';
+  }
+
   Widget _buildItemCard(Map<String, dynamic> item) {
+    final String rawImg = (item['image'] ?? '').toString();
+    String fallbackAsset = _getAssetImagePath(item['name'] ?? '', item['category'] ?? '');
+    String fullNetUrl = '';
+    if (rawImg.isNotEmpty && (rawImg.startsWith('/') || rawImg.startsWith('http'))) {
+      if (rawImg.startsWith('http://') || rawImg.startsWith('https://')) {
+        fullNetUrl = rawImg;
+      } else {
+        final base = ApiService().baseUrl;
+        fullNetUrl = rawImg.startsWith('/') ? '$base$rawImg' : '$base/$rawImg';
+      }
+    } else if (rawImg.startsWith('assets/')) {
+      fallbackAsset = rawImg;
+    }
+
     return Container(
       width: 150,
       margin: const EdgeInsets.only(right: 12),
@@ -1012,10 +1102,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
-              child: Image.asset(
-                item['image'],
-                fit: BoxFit.cover,
-              ),
+              child: fullNetUrl.isNotEmpty
+                  ? Image.network(
+                      fullNetUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Image.asset(fallbackAsset, fit: BoxFit.cover),
+                    )
+                  : Image.asset(
+                      fallbackAsset,
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
           Padding(
@@ -1039,23 +1135,41 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        setState(() {
-                          final cart = ApiService().cart;
-                          final existingIndex = cart.indexWhere((c) => c['name'] == item['name']);
-                          if (existingIndex >= 0) {
-                            cart[existingIndex]['qty'] = (cart[existingIndex]['qty'] ?? 1) + 1;
-                          } else {
-                            cart.add({
-                              'name': item['name'],
-                              'price': item['price'],
-                              'qty': 1,
-                              'icon': Icons.restaurant,
-                            });
-                          }
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('${item['name']} added!'), backgroundColor: Colors.green),
-                        );
+                        if (isItemCustomizable(item)) {
+                          showGyroCustomizerModal(
+                            context: context,
+                            item: item,
+                            onAdd: (customizedItem) {
+                              setState(() {
+                                ApiService().cart.add(customizedItem);
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('${customizedItem['name']} customized & added!'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            },
+                          );
+                        } else {
+                          setState(() {
+                            final cart = ApiService().cart;
+                            final existingIndex = cart.indexWhere((c) => c['name'] == item['name']);
+                            if (existingIndex >= 0) {
+                              cart[existingIndex]['qty'] = (cart[existingIndex]['qty'] ?? 1) + 1;
+                            } else {
+                              cart.add({
+                                'name': item['name'],
+                                'price': item['price'],
+                                'qty': 1,
+                                'icon': Icons.restaurant,
+                              });
+                            }
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('${item['name']} added!'), backgroundColor: Colors.green),
+                          );
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: TDGColors.gold,

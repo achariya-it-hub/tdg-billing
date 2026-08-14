@@ -5,6 +5,8 @@ import '../services/api_service.dart';
 import 'asset_screen.dart';
 import '../utils/responsive.dart';
 
+import 'main_nav_screen.dart';
+
 class DenLevelScreen extends StatefulWidget {
   const DenLevelScreen({super.key});
 
@@ -200,7 +202,16 @@ class _DenLevelScreenState extends State<DenLevelScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF0F0F11),
         elevation: 0,
-        leading: BackButton(color: TDGColors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: TDGColors.white),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              MainNavScreen.navKey.currentState?.setTab(0);
+            }
+          },
+        ),
         centerTitle: true,
         title: Text(
           'DEN LEVEL',

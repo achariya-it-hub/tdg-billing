@@ -85,13 +85,24 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
 
-    final phone = _phoneController.text.trim();
+    String phone = _phoneController.text.trim();
     if (phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter your phone number.'), backgroundColor: Colors.redAccent),
       );
       return;
     }
+
+    // Auto-format phone number to E.164 format for Firebase Auth (e.g. +919442255279)
+    final digitsOnly = phone.replaceAll(RegExp(r'\D'), '');
+    if (!phone.startsWith('+')) {
+      if (digitsOnly.length == 10) {
+        phone = '+91$digitsOnly';
+      } else if (digitsOnly.isNotEmpty) {
+        phone = '+$digitsOnly';
+      }
+    }
+
     setState(() => _isLoading = true);
     try {
       await FirebaseAuth.instance.verifyPhoneNumber(
@@ -102,8 +113,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         verificationFailed: (FirebaseAuthException e) {
           if (mounted) {
             setState(() => _isLoading = false);
+            String message = e.message ?? 'Verification failed.';
+            if (e.code == 'invalid-phone-number' || message.contains('E.164')) {
+              message = 'Invalid phone number format. Please check the phone number and try again.';
+            }
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(e.message ?? 'Verification failed.'), backgroundColor: Colors.redAccent),
+              SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
             );
           }
         },
@@ -161,7 +176,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         final email = _emailController.text.trim();
         await ApiService().resetPassword(email: email, otp: otp, newPassword: newPassword);
       } else {
-        final phone = _phoneController.text.trim();
+        String phone = _phoneController.text.trim();
+        final digitsOnly = phone.replaceAll(RegExp(r'\D'), '');
+        if (!phone.startsWith('+')) {
+          if (digitsOnly.length == 10) {
+            phone = '+91$digitsOnly';
+          } else if (digitsOnly.isNotEmpty) {
+            phone = '+$digitsOnly';
+          }
+        }
         if (_verificationId == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Verification ID is missing. Please request OTP again.'), backgroundColor: Colors.redAccent),

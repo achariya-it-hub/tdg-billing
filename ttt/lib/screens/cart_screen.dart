@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import 'checkout_screen.dart';
+import 'main_nav_screen.dart';
 import '../widgets/tdg_button.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
@@ -17,20 +18,8 @@ class _CartScreenState extends State<CartScreen> {
 
   final TextEditingController _promoController = TextEditingController();
 
-  int get subtotal => _cartItems.fold(0, (sum, item) => sum + (int.parse(item['price'].toString())) * (int.parse(item['qty'].toString())));
+  int get subtotal => _cartItems.fold(0, (sum, item) => sum + (int.tryParse(item['price'].toString()) ?? 0) * (int.tryParse(item['qty'].toString()) ?? 1));
   int get total => subtotal;
-
-  @override
-  void initState() {
-    super.initState();
-    if (ApiService().cart.isEmpty) {
-      ApiService().cart.addAll([
-        {'name': 'The Classic Gyro', 'price': 199, 'qty': 1, 'icon': Icons.restaurant},
-        {'name': 'Loaded Fries', 'price': 149, 'qty': 1, 'icon': Icons.set_meal},
-        {'name': 'Coke Can', 'price': 60, 'qty': 1, 'icon': Icons.local_drink},
-      ]);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,38 +28,87 @@ class _CartScreenState extends State<CartScreen> {
       appBar: AppBar(
         backgroundColor: TDGColors.background,
         elevation: 0,
-        leading: BackButton(color: TDGColors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: TDGColors.white),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              MainNavScreen.navKey.currentState?.setTab(0);
+            }
+          },
+        ),
         centerTitle: true,
         title: Text(
           'MY CART',
           style: TextStyle(color: TDGColors.white, fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 3),
         ),
         actions: [
-          TextButton(
-            onPressed: () => setState(() => _cartItems.clear()),
-            child: Text('Clear', style: TextStyle(color: TDGColors.red, fontSize: 14)),
-          ),
+          if (_cartItems.isNotEmpty)
+            TextButton(
+              onPressed: () => setState(() => ApiService().cart.clear()),
+              child: Text('Clear', style: TextStyle(color: TDGColors.red, fontSize: 14, fontWeight: FontWeight.w700)),
+            ),
         ],
       ),
       body: ResponsiveWrapper(
         maxWidth: 800,
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(16),
+        child: _cartItems.isEmpty
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.shopping_cart_outlined, color: TDGColors.grey, size: 72),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Your Cart is Empty',
+                        style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Add handcrafted gyros, combos & sides to your cart.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: TDGColors.grey, fontSize: 13),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          }
+                          MainNavScreen.navKey.currentState?.setTab(2);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: TDGColors.gold,
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: const Text('EXPLORE MENU', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 0.5)),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : Column(
                 children: [
-                  ..._cartItems.asMap().entries.map((entry) => _buildCartItem(entry.key, entry.value)),
-                  const SizedBox(height: 16),
-                  _buildPromoSection(),
-                  const SizedBox(height: 16),
-                  _buildPriceSummary(),
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        ..._cartItems.asMap().entries.map((entry) => _buildCartItem(entry.key, entry.value)),
+                        const SizedBox(height: 16),
+                        _buildPromoSection(),
+                        const SizedBox(height: 16),
+                        _buildPriceSummary(),
+                      ],
+                    ),
+                  ),
+                  _buildCheckoutButton(),
                 ],
               ),
-            ),
-            _buildCheckoutButton(),
-          ],
-        ),
       ),
     );
   }
@@ -95,7 +133,7 @@ class _CartScreenState extends State<CartScreen> {
                 colors: [Color(0xFF2A1A00), Color(0xFF1A1000)],
               ),
             ),
-            child: Icon(item['icon'] as IconData, color: TDGColors.gold, size: 32),
+            child: Icon(item['icon'] as IconData? ?? Icons.restaurant, color: TDGColors.gold, size: 32),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -108,9 +146,45 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 if (item['customization'] != null) ...[
                   const SizedBox(height: 3),
-                  Text(
-                    '${item['customization']['protein']} • ${item['customization']['bread']}\nSpread: ${item['customization']['spread']}${item['customization']['sauces'] != null && (item['customization']['sauces'] as List).isNotEmpty ? "\nSauce: " + (item['customization']['sauces'] as List).join(", ") : ""}${item['customization']['veggies'] != null && (item['customization']['veggies'] as List).isNotEmpty ? "\nVeg: " + (item['customization']['veggies'] as List).join(", ") : ""}',
-                    style: TextStyle(color: TDGColors.grey, fontSize: 11, height: 1.3),
+                  Builder(
+                    builder: (context) {
+                      final c = item['customization'] as Map<String, dynamic>;
+                      final gyro1 = (c['gyro1'] ?? '').toString();
+                      final gyro2 = (c['gyro2'] ?? '').toString();
+                      final drink = (c['drink'] ?? '').toString();
+                      final dips = (c['dips'] ?? '').toString();
+
+                      final List<String> parts = [];
+                      if (c['protein'] != null) parts.add(c['protein'].toString());
+                      if (c['flavor'] != null) parts.add(c['flavor'].toString());
+                      if (c['bread'] != null) parts.add(c['bread'].toString());
+
+                      final saucesStr = c['sauces'] is List ? (c['sauces'] as List).join(', ') : (c['sauces'] ?? '').toString();
+                      final veggiesStr = c['veggies'] is List ? (c['veggies'] as List).join(', ') : (c['veggies'] ?? '').toString();
+                      final notesStr = (c['notes'] ?? '').toString();
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (gyro1.isNotEmpty)
+                            Text('• $gyro1', style: TextStyle(color: TDGColors.gold, fontSize: 10.5, fontWeight: FontWeight.w600)),
+                          if (gyro2.isNotEmpty)
+                            Text('• $gyro2', style: TextStyle(color: TDGColors.gold, fontSize: 10.5, fontWeight: FontWeight.w600)),
+                          if (parts.isNotEmpty)
+                            Text(parts.join(' • '), style: TextStyle(color: TDGColors.gold, fontSize: 11, fontWeight: FontWeight.w600)),
+                          if (saucesStr.isNotEmpty)
+                            Text('Sauces: $saucesStr', style: TextStyle(color: TDGColors.grey, fontSize: 10.5)),
+                          if (veggiesStr.isNotEmpty)
+                            Text('Veggies: $veggiesStr', style: TextStyle(color: TDGColors.grey, fontSize: 10.5)),
+                          if (drink.isNotEmpty)
+                            Text('🥤 Drink: $drink', style: const TextStyle(color: Colors.lightBlueAccent, fontSize: 10.5)),
+                          if (dips.isNotEmpty)
+                            Text('🧄 Dips: $dips', style: const TextStyle(color: Colors.orangeAccent, fontSize: 10.5)),
+                          if (notesStr.isNotEmpty)
+                            Text('Notes: $notesStr', style: const TextStyle(color: Colors.amber, fontSize: 10.5, fontStyle: FontStyle.italic)),
+                        ],
+                      );
+                    },
                   ),
                 ],
                 const SizedBox(height: 4),
@@ -123,7 +197,7 @@ class _CartScreenState extends State<CartScreen> {
                   children: [
                     _qtyButton(Icons.remove, () {
                       setState(() {
-                        if (item['qty'] > 1) {
+                        if ((item['qty'] ?? 1) > 1) {
                           item['qty']--;
                         } else {
                           _cartItems.removeAt(index);
@@ -224,32 +298,27 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  Widget _priceRow(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: TextStyle(color: TDGColors.grey, fontSize: 13)),
-        Text(value, style: TextStyle(color: TDGColors.greyLight, fontSize: 13)),
-      ],
-    );
-  }
-
   Widget _buildCheckoutButton() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-      decoration: BoxDecoration(
-        color: TDGColors.background,
-        border: Border(top: BorderSide(color: TDGColors.border)),
-      ),
-      child: TDGButton(
-        text: 'Checkout',
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => CheckoutScreen(total: total, items: _cartItems),
-          ),
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+        decoration: BoxDecoration(
+          color: TDGColors.background,
+          border: Border(top: BorderSide(color: TDGColors.border)),
         ),
-        icon: Icon(Icons.arrow_forward, size: 18, color: TDGColors.white),
+        child: TDGButton(
+          text: 'Checkout',
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => CheckoutScreen(total: total, items: _cartItems),
+            ),
+          ).then((_) {
+            if (mounted) setState(() {});
+          }),
+          icon: Icon(Icons.arrow_forward, size: 18, color: TDGColors.white),
+        ),
       ),
     );
   }

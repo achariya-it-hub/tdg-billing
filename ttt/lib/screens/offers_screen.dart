@@ -4,6 +4,8 @@ import '../theme/colors.dart';
 import 'asset_screen.dart';
 import '../utils/responsive.dart';
 
+import 'main_nav_screen.dart';
+
 class OffersScreen extends StatefulWidget {
   const OffersScreen({super.key});
 
@@ -21,7 +23,16 @@ class _OffersScreenState extends State<OffersScreen> {
       appBar: AppBar(
         backgroundColor: TDGColors.background,
         elevation: 0,
-        leading: BackButton(color: TDGColors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: TDGColors.white),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              MainNavScreen.navKey.currentState?.setTab(0);
+            }
+          },
+        ),
         centerTitle: true,
         title: Text(
           'OFFERS',

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import 'cart_screen.dart';
+import 'main_nav_screen.dart';
+import '../widgets/gyro_customizer_modal.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
 
@@ -101,6 +103,65 @@ class _MenuScreenState extends State<MenuScreen> {
     });
   }
 
+  int get _totalCartCount {
+    return ApiService().cart.fold(0, (sum, item) => sum + (int.tryParse(item['qty'].toString()) ?? 1));
+  }
+
+  void _onAddItemPressed(Map<String, dynamic> item) {
+    if (isItemCustomizable(item)) {
+      showGyroCustomizerModal(
+        context: context,
+        item: item,
+        onAdd: (customizedItem) {
+          setState(() {
+            ApiService().cart.add(customizedItem);
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${customizedItem['name']} customized & added to cart!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        },
+      );
+    } else {
+      _addItemToCart(item);
+    }
+  }
+
+  void _addItemToCart(Map<String, dynamic> item) {
+    setState(() {
+      final cart = ApiService().cart;
+      final idx = cart.indexWhere((c) => c['name'] == item['name']);
+      final num priceVal = item['rate'] ?? int.tryParse(item['price'].toString().replaceAll(RegExp(r'\D'), '')) ?? 99;
+      if (idx >= 0) {
+        cart[idx]['qty'] = (int.tryParse(cart[idx]['qty'].toString()) ?? 1) + 1;
+      } else {
+        cart.add({
+          'name': item['name'],
+          'price': priceVal,
+          'qty': 1,
+          'icon': Icons.restaurant,
+        });
+      }
+    });
+  }
+
+  void _removeItemFromCart(Map<String, dynamic> item) {
+    setState(() {
+      final cart = ApiService().cart;
+      final idx = cart.indexWhere((c) => c['name'] == item['name']);
+      if (idx >= 0) {
+        final currentQty = int.tryParse(cart[idx]['qty'].toString()) ?? 1;
+        if (currentQty > 1) {
+          cart[idx]['qty'] = currentQty - 1;
+        } else {
+          cart.removeAt(idx);
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,7 +169,16 @@ class _MenuScreenState extends State<MenuScreen> {
       appBar: AppBar(
         backgroundColor: TDGColors.background,
         elevation: 0,
-        leading: BackButton(color: TDGColors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: TDGColors.white),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              MainNavScreen.navKey.currentState?.setTab(0);
+            }
+          },
+        ),
         centerTitle: true,
         title: Text(
           'MENU',
@@ -130,23 +200,25 @@ class _MenuScreenState extends State<MenuScreen> {
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const CartScreen()),
-                ),
+                ).then((_) {
+                  if (mounted) setState(() {});
+                }),
               ),
-              if (_cartCount > 0)
+              if (_totalCartCount > 0)
                 Positioned(
                   top: 6,
                   right: 6,
                   child: Container(
-                    width: 16,
-                    height: 16,
+                    padding: const EdgeInsets.all(3),
                     decoration: BoxDecoration(
                       color: TDGColors.red,
                       shape: BoxShape.circle,
                     ),
+                    constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
                     child: Center(
                       child: Text(
-                        '$_cartCount',
-                        style: TextStyle(color: TDGColors.white, fontSize: 10, fontWeight: FontWeight.w700),
+                        '$_totalCartCount',
+                        style: TextStyle(color: TDGColors.white, fontSize: 9, fontWeight: FontWeight.w700),
                       ),
                     ),
                   ),
@@ -353,35 +425,82 @@ class _MenuScreenState extends State<MenuScreen> {
                         fontWeight: FontWeight.w800,
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () => setState(() => _cartCount++),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          gradient: TDGColors.embossedRedGradient,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              offset: const Offset(0, 2),
-                              blurRadius: 4,
+                    Builder(
+                      builder: (context) {
+                        final cart = ApiService().cart;
+                        final idx = cart.indexWhere((c) => c['name'] == item['name']);
+                        final int itemQty = idx >= 0 ? (int.tryParse(cart[idx]['qty'].toString()) ?? 0) : 0;
+
+                        if (itemQty > 0) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: TDGColors.cardLight,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: TDGColors.gold.withOpacity(0.6)),
                             ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              'ADD',
-                              style: TextStyle(color: TDGColors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
-                              ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: () => _removeItemFromCart(item),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(4)),
+                                    child: const Icon(Icons.remove, color: Colors.white, size: 14),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Text(
+                                    '$itemQty',
+                                    style: TextStyle(color: TDGColors.gold, fontSize: 13, fontWeight: FontWeight.w800),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () => _addItemToCart(item),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(color: Colors.white10, borderRadius: BorderRadius.circular(4)),
+                                    child: const Icon(Icons.add, color: Colors.white, size: 14),
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(width: 3),
-                            Icon(Icons.add, color: TDGColors.white, size: 14),
-                          ],
-                        ),
-                      ),
+                          );
+                        }
+
+                        return GestureDetector(
+                          onTap: () => _onAddItemPressed(item),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              gradient: TDGColors.embossedRedGradient,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  offset: const Offset(0, 2),
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'ADD',
+                                  style: TextStyle(color: TDGColors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                SizedBox(width: 3),
+                                Icon(Icons.add, color: TDGColors.white, size: 14),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
