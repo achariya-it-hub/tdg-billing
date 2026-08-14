@@ -2047,17 +2047,23 @@ export default function Reports() {
       }
       case 'bill': return {
         title: 'Bill Summary Report',
-        headers: ['Bill No', 'Related KOT No', 'Date', 'Time', 'Order Type', 'Original Subtotal (₹)', 'Offer / Discount Name', 'Discount Saved (₹)', 'Net Paid Amount (₹)', 'Payment Mode', 'Status'],
+        headers: ['Bill No', 'Related KOT No', 'Date', 'Time', 'Order Type', 'Gross Subtotal (₹)', 'Offer / Discount Name', 'Discount Saved (₹)', 'Net Subtotal (₹)', 'CGST 2.5% (₹)', 'SGST 2.5% (₹)', 'Total Collected (₹)', 'Payment Mode', 'Status'],
         rows: (ordersReport && ordersReport.length > 0 ? ordersReport : sampleBillData).map(b => {
+          const rawSub = Number(b.rawSubtotal) || (b.items || []).reduce((sum, i) => sum + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
           let discAmt = Number(b.discount || b.discountGiven || b.discountAmount || 0)
+          const dStr = b.date || (b.createdAt ? String(b.createdAt).slice(0, 10) : '')
           if (discAmt === 0) {
-            const rawSub = b.rawSubtotal || (b.items || []).reduce((sum, i) => sum + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
-            if (b.inaugurationOffer) discAmt = rawSub * 0.5
-            else if (b.specialOffer20) discAmt = rawSub * 0.2
+            if (b.inaugurationOffer || dStr === '2026-07-27' || dStr === '2026-07-28') discAmt = Math.round(rawSub * 0.5)
+            else if (b.specialOffer20 || (dStr >= '2026-07-29' && dStr <= '2026-08-02')) discAmt = Math.round(rawSub * 0.2)
+            else if (b.vip50) discAmt = Math.round(rawSub * 0.5)
+            else if (b.discountPct > 0) discAmt = Math.round(rawSub * (b.discountPct / 100))
           }
           const discName = b.discountName || (b.inaugurationOffer ? 'Inauguration 50%' : (b.specialOffer20 ? 'Special 20%' : (discAmt > 0 ? 'Discount' : '-')))
-          const netTotal = Number(b.total) || 0
-          const origAmt = Math.round(b.rawSubtotal || (netTotal + discAmt))
+          const netSub = Math.max(0, rawSub - discAmt)
+          const taxVal = b.tax !== undefined && b.tax !== null ? Number(b.tax) : Math.round(netSub * 0.05)
+          const cgst = Math.round(taxVal / 2)
+          const sgst = Math.round(taxVal / 2)
+          const totalCollected = b.total !== undefined && Number(b.total) > 0 ? Number(b.total) : Math.round(netSub + taxVal)
 
           const dateObj = b.createdAt ? new Date(b.createdAt) : new Date()
           const dateStr = dateObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -2081,10 +2087,13 @@ export default function Reports() {
             dateStr,
             timeStr,
             (b.type || 'DINE-IN').toUpperCase(),
-            `₹${origAmt}`,
+            `₹${Math.round(rawSub)}`,
             discName,
             `₹${Math.round(discAmt)}`,
-            `₹${Math.round(netTotal)}`,
+            `₹${Math.round(netSub)}`,
+            `₹${cgst}`,
+            `₹${sgst}`,
+            `₹${Math.round(totalCollected)}`,
             payLabel,
             b.status || 'completed'
           ]
