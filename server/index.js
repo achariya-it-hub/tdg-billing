@@ -8298,8 +8298,13 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ message: 'Email and password are required' })
     }
     const clean = email.trim().toLowerCase()
-    const user = mobileAppUsers.find(u => u.email.toLowerCase() === clean || u.phone.replace(/[^0-9]/g, '') === clean.replace(/[^0-9]/g, ''))
+    const user = findUserByPhoneOrEmail({ phone: clean, email: clean })
     if (!user) return res.status(400).json({ message: 'Invalid credentials' })
+
+    if (!user.password) {
+      return res.status(400).json({ message: 'Account exists but has no password set. Please tap "Forgot Password" to set a password.' })
+    }
+
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' })
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' })
