@@ -105,49 +105,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     setState(() => _isLoading = true);
     try {
-      await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: phone,
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          if (mounted) setState(() => _isLoading = false);
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          if (mounted) {
-            setState(() => _isLoading = false);
-            String message = e.message ?? 'Verification failed.';
-            if (e.code == 'invalid-phone-number' || message.contains('E.164')) {
-              message = 'Invalid phone number format. Please check the phone number and try again.';
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message), backgroundColor: Colors.redAccent),
-            );
-          }
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          if (mounted) {
-            setState(() {
-              _verificationId = verificationId;
-              _step = 2;
-              _isLoading = false;
-            });
-            _startResendTimer();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('OTP sent to $phone'), backgroundColor: Colors.green),
-            );
-          }
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          if (mounted) {
-            setState(() {
-              _verificationId = verificationId;
-            });
-          }
-        },
-      );
+      await ApiService().sendForgotPasswordOtp(phone);
+      _startResendTimer();
+      if (mounted) {
+        setState(() {
+          _step = 2;
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('OTP sent to $phone via MSG91'), backgroundColor: Colors.green),
+        );
+      }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: Colors.redAccent),
+          SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.redAccent),
         );
       }
     }
@@ -185,24 +158,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             phone = '+$digitsOnly';
           }
         }
-        if (_verificationId == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Verification ID is missing. Please request OTP again.'), backgroundColor: Colors.redAccent),
-          );
-          setState(() => _isLoading = false);
-          return;
-        }
-        // 1. Create a credential with the SMS code
-        PhoneAuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: _verificationId!,
-          smsCode: otp,
-        );
-
-        // 2. Sign in with credential to verify the OTP code
-        await FirebaseAuth.instance.signInWithCredential(credential);
-
-        // 3. Reset the password in the custom backend using 'firebase' as the bypass code
-        await ApiService().resetPassword(phone: phone, otp: 'firebase', newPassword: newPassword);
+        await ApiService().resetPassword(phone: phone, otp: otp, newPassword: newPassword);
       }
       
       if (mounted) {
