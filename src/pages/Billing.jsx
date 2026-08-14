@@ -223,11 +223,40 @@ export default function Billing() {
     }
   }, [])
 
-  const calculateTotal = (kot) => {
-    return kot.items.reduce((sum, item) => sum + (item.totalPrice || item.unitPrice * item.quantity), 0)
+  const calculateRawSubtotal = (kot) => {
+    if (!kot) return 0
+    if (kot.rawSubtotal !== undefined && kot.rawSubtotal !== null) return Number(kot.rawSubtotal)
+    return (kot.items || []).reduce((sum, item) => sum + (item.totalPrice !== undefined ? Number(item.totalPrice) : Number(item.unitPrice || item.price || 0) * Number(item.quantity || item.qty || 1)), 0)
   }
 
-  const calculateTax = (total) => total * 0.05
+  const getDiscountAmount = (kot) => {
+    if (!kot) return 0
+    const raw = calculateRawSubtotal(kot)
+    if (kot.discount !== undefined && kot.discount !== null && Number(kot.discount) > 0) return Number(kot.discount)
+    if (kot.discountGiven !== undefined && kot.discountGiven !== null && Number(kot.discountGiven) > 0) return Number(kot.discountGiven)
+    if (kot.inaugurationOffer) return Math.round(raw * 0.5)
+    if (kot.specialOffer20) return Math.round(raw * 0.2)
+    if (kot.vip50) return Math.round(raw * 0.5)
+    if (kot.discountPct > 0) return Math.round(raw * (kot.discountPct / 100))
+    return 0
+  }
+
+  const calculateNetSubtotal = (kot) => {
+    if (!kot) return 0
+    return Math.max(0, calculateRawSubtotal(kot) - getDiscountAmount(kot))
+  }
+
+  const calculateTax = (kot) => {
+    if (!kot) return 0
+    // Tax MUST ALWAYS be calculated on Net Subtotal AFTER discount
+    return Math.round(calculateNetSubtotal(kot) * 0.05)
+  }
+
+  const calculateTotal = (kot) => {
+    if (!kot) return 0
+    if (kot.total !== undefined && kot.total !== null && Number(kot.total) > 0) return Number(kot.total)
+    return Math.round(calculateNetSubtotal(kot) + calculateTax(kot))
+  }
 
   const acceptKOT = async (kot) => {
     try {
@@ -1151,25 +1180,25 @@ export default function Billing() {
               <div style={{ borderTop: '1px solid #e5e7eb', marginTop: '12px', paddingTop: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                   <span>Subtotal</span>
-                  <span>₹{(selectedKOT.rawSubtotal || calculateTotal(selectedKOT)).toFixed(0)}</span>
+                  <span>₹{calculateRawSubtotal(selectedKOT).toFixed(0)}</span>
                 </div>
-                {(selectedKOT.discount > 0 || selectedKOT.discountGiven > 0) && (
+                {getDiscountAmount(selectedKOT) > 0 && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', color: '#dc2626', fontWeight: 600 }}>
-                    <span>Discount ({selectedKOT.discountName || 'Saved'})</span>
-                    <span>-₹{(selectedKOT.discount || selectedKOT.discountGiven || 0).toFixed(0)}</span>
+                    <span>Discount ({selectedKOT.discountName || 'Promo'})</span>
+                    <span>-₹{getDiscountAmount(selectedKOT).toFixed(0)}</span>
                   </div>
                 )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                   <span>CGST (2.5%)</span>
-                  <span>₹{(calculateTax(selectedKOT.subtotal || calculateTotal(selectedKOT)) / 2).toFixed(0)}</span>
+                  <span>₹{(calculateTax(selectedKOT) / 2).toFixed(0)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span>SGST (2.5%)</span>
-                  <span>₹{(calculateTax(selectedKOT.subtotal || calculateTotal(selectedKOT)) / 2).toFixed(0)}</span>
+                  <span>₹{(calculateTax(selectedKOT) / 2).toFixed(0)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '20px', fontWeight: 700 }}>
                   <span>Total Collected</span>
-                  <span style={{ color: '#e63946' }}>₹{(selectedKOT.total || (calculateTotal(selectedKOT) + calculateTax(calculateTotal(selectedKOT)))).toFixed(0)}</span>
+                  <span style={{ color: '#e63946' }}>₹{calculateTotal(selectedKOT).toFixed(0)}</span>
                 </div>
               </div>
             </div>

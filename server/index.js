@@ -12104,9 +12104,9 @@ app.post('/api/pos/orders', (req, res) => {
     discountVal = Math.round(rawSub * 0.2)
   }
   discountVal = Math.max(0, Math.min(Math.round(discountVal), rawSub))
-  const netSub = subtotal || (rawSub - discountVal)
-  const taxVal = tax || Math.round(netSub * 0.05)
-  const totalVal = total || (netSub + taxVal)
+  const netSub = Math.max(0, rawSub - discountVal)
+  const taxVal = Math.round(netSub * 0.05)
+  const totalVal = Math.round(netSub + taxVal)
   
   const discountLabel = req.body.discountName || (
     isStaffBenefit ? (req.body.offerName || 'Achariya Family Week 2026') :

@@ -197,12 +197,14 @@ const PrintService = {
     const rawSub = bill.rawSubtotal || items.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
     let discountAmt = Number(bill.discount || bill.discountGiven || bill.discountAmount || 0)
     if (discountAmt === 0) {
-      if (bill.inaugurationOffer) discountAmt = rawSub * 0.5
-      else if (bill.specialOffer20) discountAmt = rawSub * 0.2
+      if (bill.inaugurationOffer) discountAmt = Math.round(rawSub * 0.5)
+      else if (bill.specialOffer20) discountAmt = Math.round(rawSub * 0.2)
+      else if (bill.vip50) discountAmt = Math.round(rawSub * 0.5)
+      else if (bill.discountPct > 0) discountAmt = Math.round(rawSub * (bill.discountPct / 100))
     }
-    const subtotal = bill.subtotal !== undefined ? bill.subtotal : Math.max(0, rawSub - discountAmt)
-    const tax = bill.tax !== undefined ? bill.tax : subtotal * 0.05
-    const total = bill.total !== undefined ? bill.total : Math.round(subtotal + tax)
+    const netSub = Math.max(0, rawSub - discountAmt)
+    const tax = Math.round(netSub * 0.05)
+    const total = bill.total !== undefined ? bill.total : Math.round(netSub + tax)
     const dateStr = bill.createdAt ? new Date(bill.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
     const timeStr = bill.createdAt ? new Date(bill.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
     const orderNum = bill.orderNumber || bill.id || '1001'
