@@ -86,7 +86,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             final String sessionId = cfResponse['paymentSessionId'] ?? '';
             if (sessionId.isNotEmpty) {
               final checkoutUrl = Uri.parse(
-                'https://checkout.cashfree.com/pg?payment_session_id=$sessionId&mode=PROD',
+                'https://payments.cashfree.com/order/#$sessionId',
               );
               if (await canLaunchUrl(checkoutUrl)) {
                 await launchUrl(checkoutUrl, mode: LaunchMode.externalApplication);
