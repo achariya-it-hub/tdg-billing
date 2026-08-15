@@ -622,7 +622,7 @@ function renderMobileScreen(screenId, setScreen, cartCount, setCartCount) {
               </div>
               <div>
                 <div style={{ fontSize: '10px', color: '#9ca3af' }}>Welcome to</div>
-                <div style={{ fontSize: '13px', fontWeight: 900, color: '#fff' }}>TEN DENS GYROS</div>
+                <div style={{ fontSize: '13px', fontWeight: 900, color: '#fff' }}>TENDENS GYROS</div>
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>

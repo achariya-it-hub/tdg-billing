@@ -14,7 +14,7 @@ const paymentMethods = [
 
 export default function Billing() {
   const { settings } = useSettings()
-  const company = settings?.company || { name: 'Ten Den Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '000000000' }
+  const company = settings?.company || { name: 'Tendens Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '000000000' }
   const [newKOTs, setNewKOTs] = useState([])
   const [pendingKOTs, setPendingKOTs] = useState([])
   const [paidBills, setPaidBills] = useState([])

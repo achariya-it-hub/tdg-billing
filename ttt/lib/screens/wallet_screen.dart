@@ -234,7 +234,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         children: [
                           Image.asset('assets/images/logo.png', height: 32, errorBuilder: (_, __, ___) => Icon(Icons.restaurant, color: TDGColors.gold, size: 28)),
                           SizedBox(width: 10),
-                          Text('TEN DEN GYROS', style: TextStyle(color: TDGColors.gold, fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
+                          Text('TENDENS GYROS', style: TextStyle(color: TDGColors.gold, fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
                         ],
                       ),
                       Container(
@@ -370,7 +370,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       'assets/images/logo_header.png',
                       height: 32,
                       errorBuilder: (_, __, ___) => Text(
-                        'TEN DEN GYROS',
+                        'TENDENS GYROS',
                         style: GoogleFonts.outfit(color: TDGColors.gold, fontWeight: FontWeight.w900, fontSize: 15),
                       ),
                     ),
@@ -399,8 +399,8 @@ class _WalletScreenState extends State<WalletScreen> {
                       onPressed: () {
                         final code = ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'TDG7890';
                         Share.share(
-                          'Join me at Ten Den Gyros! Use my referral code: $code to get 15% OFF on your 1st visit & 10% OFF on repeat visits! Download the app: https://tendengyros.com',
-                          subject: 'Ten Den Gyros Referral Invite',
+                          'Join me at Tendens Gyros! Use my referral code: $code to get 15% OFF on your 1st visit & 10% OFF on repeat visits! Download the app: https://tendengyros.com',
+                          subject: 'Tendens Gyros Referral Invite',
                         );
                       },
                       icon: const Icon(Icons.share_rounded, size: 14, color: Colors.black),

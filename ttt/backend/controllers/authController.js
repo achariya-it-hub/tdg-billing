@@ -296,7 +296,7 @@ exports.forgotPasswordEmail = async (req, res) => {
         });
 
         const mailOptions = {
-          from: `"Ten Dens Gyros" <${process.env.EMAIL_USER}>`,
+          from: `"Tendens Gyros" <${process.env.EMAIL_USER}>`,
           to: cleanEmail,
           subject: 'TDG Forgot Password OTP',
           text: `Your password reset OTP is ${otp}. It is valid for 5 minutes.`,

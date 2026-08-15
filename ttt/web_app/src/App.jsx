@@ -1087,7 +1087,7 @@ function App() {
               <>
                 <div className="portal-brand">
                   <div className="logo-icon" style={{ width: '28px', height: '28px', fontSize: '14px' }}>TDG</div>
-                  <h2>Ten Dens Gyros</h2>
+                  <h2>Tendens Gyros</h2>
                 </div>
 
                 <div style={{ backgroundColor: 'var(--card-dark)', padding: '10px', borderRadius: '10px', fontSize: '12px', textAlign: 'center', color: 'var(--gold)', border: '1px dashed var(--gold)', marginBottom: '16px' }}>

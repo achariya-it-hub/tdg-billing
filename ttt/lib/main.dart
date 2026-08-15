@@ -60,7 +60,7 @@ class TDGApp extends StatelessWidget {
         final api = ApiService();
 
         return MaterialApp(
-          title: 'Ten Dens Gyros',
+          title: 'Tendens Gyros',
           debugShowCheckedModeBanner: false,
           themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
           theme: ThemeData(

@@ -172,7 +172,7 @@ export default function DenWebApp() {
             <iframe
               key={key}
               src={`/app/index.html?t=${key}`}
-              title="Ten Den Gyros Mobile Web App"
+              title="Tendens Gyros Mobile Web App"
               style={{
                 width: '100%',
                 height: '100%',
@@ -186,7 +186,7 @@ export default function DenWebApp() {
           <iframe
             key={key}
             src={`/app/index.html?t=${key}`}
-            title="Ten Den Gyros Web App"
+            title="Tendens Gyros Web App"
             style={{
               width: '100%',
               height: '100%',

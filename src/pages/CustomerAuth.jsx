@@ -196,7 +196,7 @@ export default function CustomerAuth() {
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <img src="/tdg-logo.png" alt="TDG" style={{ height: '32px' }} onError={(e) => e.target.style.display = 'none'} />
-          <span style={{ fontSize: '16px', fontWeight: 900, letterSpacing: '1px' }}>TEN DEN GYROS</span>
+          <span style={{ fontSize: '16px', fontWeight: 900, letterSpacing: '1px' }}>TENDENS GYROS</span>
         </div>
       </div>
 

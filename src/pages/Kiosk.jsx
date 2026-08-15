@@ -425,7 +425,7 @@ export default function Kiosk() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <img
               src="/tdg-logo.png"
-              alt="Ten Dens Gyros TDG Logo"
+              alt="Tendens Gyros TDG Logo"
               style={{ height: '42px', width: 'auto', objectFit: 'contain', display: 'block' }}
             />
           </div>

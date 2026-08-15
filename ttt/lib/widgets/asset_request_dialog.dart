@@ -221,7 +221,7 @@ class _AssetRequestDialogState extends State<AssetRequestDialog>
                           border: Border.all(color: TDGColors.gold.withOpacity(0.2)),
                         ),
                         child: Text(
-                          'Accepting gives you exclusive discounts & access to rewards when dining with Ten Den Gyros!',
+                          'Accepting gives you exclusive discounts & access to rewards when dining with Tendens Gyros!',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.inter(
                             color: TDGColors.grey,

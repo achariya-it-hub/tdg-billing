@@ -103,7 +103,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               ShaderMask(
                 shaderCallback: (bounds) => TDGColors.goldGradient.createShader(bounds),
                 child: Text(
-                  'TEN DEN GYROS',
+                  'TENDENS GYROS',
                   style: GoogleFonts.outfit(
                     color: Colors.white,
                     fontSize: 24,

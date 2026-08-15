@@ -47,7 +47,7 @@ export default function PrivacyPolicy() {
           <div style={{ color: '#d1d5db', fontSize: '14px', lineHeight: '1.8', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <p><strong>Effective Date:</strong> July 24, 2026</p>
             
-            <p>Welcome to Ten Den Gyros (TDG). We are committed to protecting your personal information and your right to privacy. This Privacy Policy governs the privacy policies and practices of our website, mobile application, and POS billing services.</p>
+            <p>Welcome to Tendens Gyros (TDG). We are committed to protecting your personal information and your right to privacy. This Privacy Policy governs the privacy policies and practices of our website, mobile application, and POS billing services.</p>
             
             <h2 style={{ color: '#fff', fontWeight: 900, fontSize: '18px', marginTop: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '8px' }}>1. INFORMATION WE COLLECT</h2>
             <p>We collect information you provide directly to us when registering accounts, placing online orders, adding members to your referral Den, or redeeming points balances. This includes your name, mobile phone number, email address, physical delivery addresses, and payment transaction references.</p>

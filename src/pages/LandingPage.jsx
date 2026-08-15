@@ -1171,7 +1171,7 @@ export default function LandingPage() {
           gap: '16px', 
           fontSize: '12px' 
         }}>
-          <span>© {new Date().getFullYear()} Ten Den Gyros (TDG). All Rights Reserved.</span>
+          <span>© {new Date().getFullYear()} Tendens Gyros (TDG). All Rights Reserved.</span>
           <div style={{ display: 'flex', gap: '20px' }}>
             <Link to="/privacy-policy" style={{ color: '#ffd700', textDecoration: 'underline' }}>Privacy Policy</Link>
             <span style={{ cursor: 'pointer' }}>Terms & Conditions</span>
@@ -1236,7 +1236,7 @@ export default function LandingPage() {
             <div style={{ color: '#d1d5db', fontSize: '13px', lineHeight: '1.7', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <p><strong>Effective Date:</strong> July 24, 2026</p>
               
-              <p>Welcome to Ten Den Gyros (TDG). We are committed to protecting your personal information and your right to privacy. This Privacy Policy governs the privacy policies and practices of our website, mobile application, and POS billing services.</p>
+              <p>Welcome to Tendens Gyros (TDG). We are committed to protecting your personal information and your right to privacy. This Privacy Policy governs the privacy policies and practices of our website, mobile application, and POS billing services.</p>
               
               <h4 style={{ color: '#fff', fontWeight: 700, fontSize: '14px', marginTop: '10px' }}>1. INFORMATION WE COLLECT</h4>
               <p>We collect information you provide directly to us when registering accounts, placing online orders, adding members to your referral Den, or redeeming points balances. This includes your name, mobile phone number, email address, physical delivery addresses, and payment transaction references.</p>
@@ -1370,7 +1370,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#fff', letterSpacing: '1px', textTransform: 'uppercase', margin: 0 }}>
-                      TDG TEN DENS GYROS MENU
+                      TDG TENDENS GYROS MENU
                     </h3>
                     <p style={{ fontSize: '11px', color: '#9ca3af', margin: 0 }}>Official Restaurant Menu Card & Pricing</p>
                   </div>
@@ -1568,7 +1568,7 @@ export default function LandingPage() {
                   border: '1px solid rgba(255,255,255,0.08)'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ffd700', fontSize: '13px', fontWeight: 800 }}>
-                    <Flame size={16} /> FRESH & FLAME-GRILLED DAILY AT TEN DENS GYROS
+                    <Flame size={16} /> FRESH & FLAME-GRILLED DAILY AT TENDENS GYROS
                   </div>
 
                   <a

@@ -509,7 +509,7 @@ function syncSettingsVault(currentSettings) {
     const mergedCompany = {
       ...vaultCompany,
       ...currentCompany,
-      name: pickBest(currentCompany.name, vaultCompany.name) || 'Ten Den Gyros',
+      name: pickBest(currentCompany.name, vaultCompany.name) || 'Tendens Gyros',
       address: pickBest(currentCompany.address, vaultCompany.address) || 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram',
       phone: pickBest(currentCompany.phone, vaultCompany.phone),
       email: pickBest(currentCompany.email, vaultCompany.email),

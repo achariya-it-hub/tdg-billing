@@ -90,7 +90,7 @@ export default function TableQRGenerator() {
             {/* Header */}
             <div>
               <div style={{ fontSize: '32px', fontWeight: 900, fontFamily: 'Bebas Neue, sans-serif', letterSpacing: '2px', color: '#ffffff', marginBottom: '4px' }}>
-                TEN DEN GYROS 🌯
+                TENDENS GYROS 🌯
               </div>
               <div style={{
                 background: 'linear-gradient(135deg, #e63946, #c1121f)',
@@ -119,7 +119,7 @@ export default function TableQRGenerator() {
             }}>
               <img
                 src={qrImageUrl}
-                alt="Ten Den Gyros Self Order QR"
+                alt="Tendens Gyros Self Order QR"
                 style={{ width: '200px', height: '200px', display: 'block' }}
               />
             </div>

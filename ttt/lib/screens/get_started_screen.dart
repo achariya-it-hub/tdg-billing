@@ -18,7 +18,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
   final List<Map<String, String>> _onboardingData = [
     {
       'image': 'assets/images/hero_gyro.png',
-      'title': 'TEN DEN GYROS',
+      'title': 'TENDENS GYROS',
       'desc': 'Savor handcrafted wraps loaded with tender grilled fillings, fresh red onions, tomatoes, and house spreads.',
     },
     {

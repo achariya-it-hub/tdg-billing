@@ -152,7 +152,7 @@ const PrintService = {
         </head>
         <body>
           <div class="header">
-            <div class="brand-name">${company.name || 'Ten Dens Gyros'}</div>
+            <div class="brand-name">${company.name || 'Tendens Gyros'}</div>
             <div><span class="kot-title">Kitchen Order Ticket</span></div>
           </div>
 
@@ -350,7 +350,7 @@ const PrintService = {
         ` : ''}
 
         <div class="footer">
-          <div><strong>Thank You for Dining at Ten Dens Gyros!</strong></div>
+          <div><strong>Thank You for Dining at Tendens Gyros!</strong></div>
           <div>Visit Us Again • www.tendengyros.com</div>
         </div>
       </body>
@@ -402,7 +402,7 @@ const PrintService = {
         </head>
         <body>
           <div class="header">
-            <div class="brand-name">${company.name || 'Ten Dens Gyros'}</div>
+            <div class="brand-name">${company.name || 'Tendens Gyros'}</div>
             <div><span class="token-badge">GUEST ORDER TOKEN</span></div>
           </div>
 
@@ -523,7 +523,7 @@ const PrintService = {
       </head>
       <body>
         <div class="header">
-          <div class="brand-name">${company.name || 'Ten Dens Gyros'}</div>
+          <div class="brand-name">${company.name || 'Tendens Gyros'}</div>
           <div><span class="badge">SHIFT CLOSE & CASH HANDOVER</span></div>
         </div>
 

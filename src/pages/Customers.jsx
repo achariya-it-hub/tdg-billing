@@ -845,7 +845,7 @@ export default function Customers() {
                 <div style={{ marginTop: '14px', background: '#ffffff', padding: '12px', borderRadius: '10px', border: '1px solid #86efac' }}>
                   <div style={{ fontSize: '11px', fontWeight: 800, color: '#047857', marginBottom: '4px', letterSpacing: '0.5px' }}>💬 READY-TO-SEND WHATSAPP MESSAGE TEMPLATE:</div>
                   <div style={{ fontSize: '12px', color: '#1f2937', background: '#f8fafc', padding: '10px', borderRadius: '8px', fontFamily: 'monospace', whiteSpace: 'pre-wrap', border: '1px solid #cbd5e1' }}>
-{`🎉 Special Offer Alert from Ten Den Gyros! 🎉
+{`🎉 Special Offer Alert from Tendens Gyros! 🎉
 
 You have unlocked a Special ${bulkOfferPct}% OFF Offer on your next order! 🌯
 
@@ -857,7 +857,7 @@ Simply share your registered phone number at our Billing Counter, Self-Order Kio
                   <button
                     type="button"
                     onClick={() => {
-                      const msg = `🎉 Special Offer Alert from Ten Den Gyros! 🎉\n\nYou have unlocked a Special ${bulkOfferPct}% OFF Offer on your next order! 🌯\n\n📍 How to Redeem:\nSimply share your registered phone number at our Billing Counter, Self-Order Kiosk, or Online Website to claim your ${bulkOfferPct}% OFF instantly!\n\n🌐 Order Online: https://tendengyros.com`
+                      const msg = `🎉 Special Offer Alert from Tendens Gyros! 🎉\n\nYou have unlocked a Special ${bulkOfferPct}% OFF Offer on your next order! 🌯\n\n📍 How to Redeem:\nSimply share your registered phone number at our Billing Counter, Self-Order Kiosk, or Online Website to claim your ${bulkOfferPct}% OFF instantly!\n\n🌐 Order Online: https://tendengyros.com`
                       navigator.clipboard.writeText(msg)
                       alert('WhatsApp offer message copied to clipboard!')
                     }}

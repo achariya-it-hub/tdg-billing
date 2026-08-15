@@ -98160,7 +98160,7 @@ $.aD()
 A.Tq(new A.je(B.D,B.D,B.ax,r,B.D,B.aO,B.ax,r))
 $.br()
 s=A.tu(B.ax,new A.nN(B.ax,B.d,B.f,r,r,r,r,r,r,B.pN,B.m,r,r,r,r,r,r,r,r,r,r,r,r,r,r,B.IM,B.f,r,r,B.M,B.m,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,B.f,B.m),"Roboto",B.d,B.at,r)
-return new A.r9(B.ZP,"Ten Dens Gyros",s,A.tu(B.aO,new A.nN(B.aO,B.d,B.m,r,r,r,r,r,r,B.pN,B.m,r,r,r,r,r,r,r,r,r,r,r,r,r,r,B.JJ,B.m,r,r,B.M,B.f,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,B.I5,B.f),"Roboto",B.d,B.at,r),B.Eh,!1,r)},
+return new A.r9(B.ZP,"Tendens Gyros",s,A.tu(B.aO,new A.nN(B.aO,B.d,B.m,r,r,r,r,r,r,B.pN,B.m,r,r,r,r,r,r,r,r,r,r,r,r,r,r,B.JJ,B.m,r,r,B.M,B.f,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,B.I5,B.f),"Roboto",B.d,B.at,r),B.Eh,!1,r)},
 $S:604}
 A.pM.prototype={
 a8(){return new A.GH()}}
@@ -100206,7 +100206,7 @@ return s.w=!s.w},
 $S:0}
 A.qK.prototype={
 a8(){var s=t.N
-return new A.Xc(A.b([A.ac(["image","assets/images/hero_gyro.png","title","TEN DEN GYROS","desc","Savor handcrafted wraps loaded with tender grilled fillings, fresh red onions, tomatoes, and house spreads."],s,s),A.ac(["image","assets/images/refer_earn.png","title","BUILD YOUR DEN ASSETS","desc","Invite friends using your unique referral code. Earn diamond points every time they dine with us!"],s,s),A.ac(["image","assets/images/pride_lion.png","title","DISTRIBUTE & MULTIPLY","desc","Share points instantly among your active Den assets to claim collective discounts and BOGO treats."],s,s)],t.m0))}}
+return new A.Xc(A.b([A.ac(["image","assets/images/hero_gyro.png","title","TENDENS GYROS","desc","Savor handcrafted wraps loaded with tender grilled fillings, fresh red onions, tomatoes, and house spreads."],s,s),A.ac(["image","assets/images/refer_earn.png","title","BUILD YOUR DEN ASSETS","desc","Invite friends using your unique referral code. Earn diamond points every time they dine with us!"],s,s),A.ac(["image","assets/images/pride_lion.png","title","DISTRIBUTE & MULTIPLY","desc","Share points instantly among your active Den assets to claim collective discounts and BOGO treats."],s,s)],t.m0))}}
 A.Xc.prototype={
 J(a){var s,r,q,p,o=this,n=null,m=A.ww(0,A.W(n,n,B.i,n,n,B.FG,n,n,n,n,n,n,n)),l=A.T(22),k=A.aw(A.I(89,B.d.l()>>>16&255,B.d.l()>>>8&255,B.d.l()&255),2.5),j=A.b([new A.aW(0,B.E,A.I(20,B.d.l()>>>16&255,B.d.l()>>>8&255,B.d.l()&255),B.hC,15)],t.V)
 j=A.e2(n,A.bL(A.W(n,A.ee(A.T(19),A.e_("assets/images/logo.png",new A.avV(),B.cG,n,n,n),B.am),B.i,n,n,new A.V(n,n,k,l,j,n,B.o),n,125,n,n,n,n,125),n,n),n,n,0,0,50,n)
@@ -101744,7 +101744,7 @@ if(s!=null)s.ja(0)}},
 $S:0}
 A.aiD.prototype={
 $3(a,b,c){var s=null
-return A.k("TEN DEN GYROS",s,s,s,A.a1().$3$color$fontSize$fontWeight(B.d,18,B.K),s,s)},
+return A.k("TENDENS GYROS",s,s,s,A.a1().$3$color$fontSize$fontWeight(B.d,18,B.K),s,s)},
 $S:185}
 A.aiE.prototype={
 $0(){var s=null
@@ -101896,7 +101896,7 @@ o===$&&A.a()
 s=A.T(24)
 r=A.aw(A.I(B.e.a7(76.5),B.d.l()>>>16&255,B.d.l()>>>8&255,B.d.l()&255),3)
 q=A.b([new A.aW(2,B.E,A.I(31,B.d.l()>>>16&255,B.d.l()>>>8&255,B.d.l()&255),B.n,30)],t.V)
-return A.e5(p,B.dT,A.bL(A.fm(o,new A.aDQ(this),A.af(A.b([A.W(p,A.ee(A.T(22),A.e_("assets/images/logo.png",new A.aDR(),B.cG,p,p,p),B.am),B.i,p,p,new A.V(p,p,r,s,q,p,B.o),p,140,p,p,p,p,140),B.b9,A.tf(A.k("TEN DEN GYROS",p,p,p,A.a1().$4$color$fontSize$fontWeight$letterSpacing(B.f,24,B.K,3),p,p),new A.aDS()),B.cd,A.k("MEDITERRANEAN PRIDE",p,p,p,A.a1().$4$color$fontSize$fontWeight$letterSpacing(B.qk,10,B.u,1.5),p,p)],t.p),B.l,B.bD,B.j)),p,p),p)}}
+return A.e5(p,B.dT,A.bL(A.fm(o,new A.aDQ(this),A.af(A.b([A.W(p,A.ee(A.T(22),A.e_("assets/images/logo.png",new A.aDR(),B.cG,p,p,p),B.am),B.i,p,p,new A.V(p,p,r,s,q,p,B.o),p,140,p,p,p,p,140),B.b9,A.tf(A.k("TENDENS GYROS",p,p,p,A.a1().$4$color$fontSize$fontWeight$letterSpacing(B.f,24,B.K,3),p,p),new A.aDS()),B.cd,A.k("MEDITERRANEAN PRIDE",p,p,p,A.a1().$4$color$fontSize$fontWeight$letterSpacing(B.qk,10,B.u,1.5),p,p)],t.p),B.l,B.bD,B.j)),p,p),p)}}
 A.aDU.prototype={
 $0(){var s=this.a.c
 if(s!=null)A.agG(s,A.d6(new A.aDT(),null,t.z))},
@@ -102015,7 +102015,7 @@ r=new A.fe(A.wI(B.M,A.kZ(q,l,B.bl,l,l,!1),B.d,r),1000,l)}return A.e5(s,B.at,r,l)
 acH(){var s,r,q,p,o,n=this,m=null,l=4279898624,k=A.T(20),j=A.b([new A.aW(0,B.E,A.I(51,B.d.l()>>>16&255,B.d.l()>>>8&255,B.d.l()&255),new A.i(0,10),24)],t.V),i=A.T(20),h=t.O,g=A.W(m,m,B.i,m,m,new A.V(m,m,m,m,m,new A.d5(B.bh,B.c4,B.a9,A.b([A.bk(l),A.bk(4281081344),A.bk(l)],h),m,m),B.o),m,m,m,m,m,m,m),f=A.e2(m,A.W(m,m,B.i,m,m,new A.V(m,m,m,m,m,new A.hI(B.J,0.5,B.a9,m,0,A.b([A.I(31,B.d.l()>>>16&255,B.d.l()>>>8&255,B.d.l()&255),B.D],h),m,m),B.a1),m,160,m,m,m,m,160),m,m,m,-40,-40,m)
 h=A.e2(-30,A.W(m,m,B.i,m,m,new A.V(m,m,m,m,m,new A.hI(B.J,0.5,B.a9,m,0,A.b([A.I(20,B.d.l()>>>16&255,B.d.l()>>>8&255,B.d.l()&255),B.D],h),m,m),B.a1),m,120,m,m,m,m,120),m,m,-20,m,m,m)
 s=t.p
-r=A.ak(A.b([A.e_("assets/images/logo.png",new A.aFy(),m,32,m,m),A.b2(m,m,10),A.k("TEN DEN GYROS",m,m,m,A.S(m,m,B.d,m,m,m,m,m,m,m,m,13,m,m,B.G,m,m,!0,m,1.5,m,m,m,m,m,m),m,m)],s),B.l,B.k,B.j,0)
+r=A.ak(A.b([A.e_("assets/images/logo.png",new A.aFy(),m,32,m,m),A.b2(m,m,10),A.k("TENDENS GYROS",m,m,m,A.S(m,m,B.d,m,m,m,m,m,m,m,m,13,m,m,B.G,m,m,!0,m,1.5,m,m,m,m,m,m),m,m)],s),B.l,B.k,B.j,0)
 q=A.I(38,B.d.l()>>>16&255,B.d.l()>>>8&255,B.d.l()&255)
 p=A.T(8)
 o=A.aw(A.I(B.e.a7(76.5),B.d.l()>>>16&255,B.d.l()>>>8&255,B.d.l()&255),1)
@@ -102135,7 +102135,7 @@ $1(a){return B.kO},
 $S:64}
 A.aFw.prototype={
 $3(a,b,c){var s=null
-return A.k("TEN DEN GYROS",s,s,s,A.a1().$3$color$fontSize$fontWeight(B.d,15,B.K),s,s)},
+return A.k("TENDENS GYROS",s,s,s,A.a1().$3$color$fontSize$fontWeight(B.d,15,B.K),s,s)},
 $S:185}
 A.aFx.prototype={
 $0(){var s,r=$.br(),q=r.b
@@ -102144,7 +102144,7 @@ if(q==null){q=r.b
 q=q==null?null:q.h(0,"phone")}if(q==null){r=r.b
 r=r==null?null:r.h(0,"email")
 s=r}else s=q
-A.aJL("Join me at Ten Den Gyros! Use my referral code: "+A.j(s==null?"TDG7890":s)+" to get 15% OFF on your 1st visit & 10% OFF on repeat visits! Download the app: https://tendengyros.com","Ten Den Gyros Referral Invite")},
+A.aJL("Join me at Tendens Gyros! Use my referral code: "+A.j(s==null?"TDG7890":s)+" to get 15% OFF on your 1st visit & 10% OFF on repeat visits! Download the app: https://tendengyros.com","Tendens Gyros Referral Invite")},
 $S:0}
 A.a3X.prototype={
 Dk(){var s=0,r=A.D(t.H),q,p=this,o,n
@@ -103015,7 +103015,7 @@ h=A.I(20,B.d.l()>>>16&255,B.d.l()>>>8&255,B.d.l()&255)
 g=A.T(12)
 f=A.aw(A.I(51,B.d.l()>>>16&255,B.d.l()>>>8&255,B.d.l()&255),1)
 $.aD()
-k=A.b([k,B.bx,j,B.dC,i,B.ak,A.W(d,A.k("Accepting gives you exclusive discounts & access to rewards when dining with Ten Den Gyros!",d,d,d,A.iK().$3$color$fontSize$height(B.B,12,1.4),B.ao,d),B.i,d,d,new A.V(h,d,f,g,d,d,B.o),d,d,d,B.qX,d,d,d),B.o2],l)
+k=A.b([k,B.bx,j,B.dC,i,B.ak,A.W(d,A.k("Accepting gives you exclusive discounts & access to rewards when dining with Tendens Gyros!",d,d,d,A.iK().$3$color$fontSize$height(B.B,12,1.4),B.ao,d),B.i,d,d,new A.V(h,d,f,g,d,d,B.o),d,d,d,B.qX,d,d,d),B.o2],l)
 if(e.e)k.push(B.HR)
 else{j=A.aJt(d,d,d,d,d,d,d,d,d,d,d,d,B.lN,d,new A.bH(A.T(14),B.v),B.fM,d,d,d,d)
 j=A.bm(A.aJs(A.k("Reject",d,d,d,A.a1().$3$color$fontSize$fontWeight(B.aX,14,B.u),d,d),new A.aqd(e),j),1)

@@ -1,7 +1,7 @@
 {
   "name": "tdg-backend",
   "version": "1.0.0",
-  "description": "Backend API for Ten Dens Gyros (TDG) Mobile App",
+  "description": "Backend API for Tendens Gyros (TDG) Mobile App",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

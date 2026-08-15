@@ -88,7 +88,7 @@ class ReferralScreen extends StatelessWidget {
                           'assets/images/logo_header.png',
                           height: 38,
                           errorBuilder: (_, __, ___) => Text(
-                            'TEN DEN GYROS',
+                            'TENDENS GYROS',
                             style: GoogleFonts.outfit(color: TDGColors.gold, fontWeight: FontWeight.w900, fontSize: 18),
                           ),
                         ),
