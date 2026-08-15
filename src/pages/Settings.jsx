@@ -297,6 +297,37 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
 
+  const [testPhone, setTestPhone] = useState('')
+  const [testLoading, setTestLoading] = useState(false)
+  const [testResult, setTestResult] = useState(null)
+
+  const handleTestOtp = async () => {
+    if (!testPhone) {
+      alert('Please enter a phone number to test')
+      return
+    }
+    setTestLoading(true)
+    setTestResult(null)
+    try {
+      const res = await fetch(`${API_BASE}/api/msg91/test-send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: testPhone,
+          authKey: msg91Form.authKey,
+          templateId: msg91Form.templateId,
+          senderId: msg91Form.senderId,
+          widgetId: msg91Form.widgetId
+        })
+      })
+      const data = await res.json()
+      setTestResult(data)
+    } catch (e) {
+      setTestResult({ error: 'Network error: ' + e.message })
+    }
+    setTestLoading(false)
+  }
+
   const handleSave = async () => {
     setSaving(true); setMsg('')
     try {
@@ -433,6 +464,46 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
           <input type="checkbox" checked={msg91Form.isEnabled} onChange={e => setMsg91Form({ ...msg91Form, isEnabled: e.target.checked })} style={{ width: '18px', height: '18px', accentColor: '#10b981' }} />
           Enable MSG91 SMS OTP
         </label>
+
+        <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+          <h4 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '8px' }}>Test Live MSG91 OTP Delivery</h4>
+          <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '12px' }}>
+            Enter a 10-digit mobile number below to immediately test OTP SMS delivery via MSG91 API and see live response logs.
+          </p>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <input
+              style={{ ...inputStyle, width: '220px' }}
+              placeholder="e.g. 7904761795"
+              value={testPhone}
+              onChange={e => setTestPhone(e.target.value)}
+            />
+            <button
+              onClick={handleTestOtp}
+              disabled={testLoading}
+              style={{
+                padding: '10px 18px',
+                borderRadius: '8px',
+                background: testLoading ? '#9ca3af' : 'linear-gradient(135deg, #10b981, #059669)',
+                color: 'white',
+                fontWeight: 600,
+                border: 'none',
+                cursor: testLoading ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {testLoading ? 'Testing...' : 'Send Test OTP'}
+            </button>
+          </div>
+          {testResult && (
+            <div style={{ marginTop: '12px', padding: '12px', borderRadius: '8px', background: testResult.success ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', border: `1px solid ${testResult.success ? '#10b981' : '#ef4444'}` }}>
+              <div style={{ fontWeight: 700, fontSize: '13px', color: testResult.success ? '#047857' : '#b91c1c', marginBottom: '4px' }}>
+                {testResult.success ? '✅ MSG91 API Response: Success!' : '❌ MSG91 API Error'}
+              </div>
+              <pre style={{ fontSize: '11px', whiteSpace: 'pre-wrap', margin: 0, fontFamily: 'monospace' }}>
+                {JSON.stringify(testResult, null, 2)}
+              </pre>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* General */}
