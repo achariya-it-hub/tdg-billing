@@ -320,8 +320,17 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
           widgetId: msg91Form.widgetId
         })
       })
-      const data = await res.json()
-      setTestResult(data)
+
+      const contentType = res.headers.get('content-type') || ''
+      if (!contentType.includes('application/json')) {
+        const text = await res.text()
+        setTestResult({
+          error: `Server route /api/msg91/test-send returned HTML (HTTP ${res.status}). Please click "Restart Application" in Hostinger Node.js Selector to activate the new route. Preview: ${text.slice(0, 120)}...`
+        })
+      } else {
+        const data = await res.json()
+        setTestResult(data)
+      }
     } catch (e) {
       setTestResult({ error: 'Network error: ' + e.message })
     }
