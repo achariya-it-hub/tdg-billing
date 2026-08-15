@@ -22,28 +22,86 @@ class _MenuScreenState extends State<MenuScreen> {
 
   static const Map<String, List<Map<String, dynamic>>> _fallbackMenu = {
     'Gyros': [
-      {'name': 'Non-Veg - Spicy Chicken Gyro (Regular)', 'desc': 'Fresh pita wrap with spicy chicken, hummus & veggies', 'price': '₹99'},
-      {'name': 'Non-Veg - Spicy Chicken Gyro (Large)', 'desc': 'Double portion spicy chicken gyro with extra dips', 'price': '₹249'},
-      {'name': 'Non-Veg - Cream Chicken Gyro (Regular)', 'desc': 'Creamy garlic chicken in fluffy pita bread', 'price': '₹99'},
-      {'name': 'Veg - Spicy Paneer Gyro (Regular)', 'desc': 'Grilled paneer with spicy mayo & crisp iceberg', 'price': '₹99'},
+      {'name': 'Spicy Gyro', 'desc': 'Spicy gyro with fresh veggies & spread (Chicken or Paneer)', 'price': '₹199'},
+      {'name': 'Creamy Gyro', 'desc': 'Creamy tzatziki gyro wrap (Chicken or Paneer)', 'price': '₹199'},
+      {'name': 'BBQ Gyro', 'desc': 'Rich BBQ gyro wrap (Chicken or Paneer)', 'price': '₹199'},
+      {'name': 'Signature Gyro', 'desc': 'TDG signature gyro wrap with secret sauce (Chicken or Paneer)', 'price': '₹199'},
     ],
-    'TDG Crispy Chicken': [
-      {'name': 'Non-Veg - 3 Pc Crispy Wings (1 Dip)', 'desc': '3 pcs hot & spicy crispy fried chicken wings', 'price': '₹90'},
-      {'name': 'Non-Veg - 6 Pc Crispy Wings (2 Dip)', 'desc': '6 pcs crispy wings with choice of 2 dips', 'price': '₹180'},
-      {'name': 'Non-Veg - 3 Pc Crispy Strips (1 Dip)', 'desc': '3 pcs boneless crispy chicken tenders', 'price': '₹120'},
+    'Leg & Thigh': [
+      {'name': '1 Pc Leg & Thigh (1 Dip)', 'desc': '1 Pc Crispy Leg & Thigh + 1 Choice Dip', 'price': '₹70'},
+      {'name': '2 Pc Leg & Thigh (1 Dip)', 'desc': '2 Pc Crispy Leg & Thigh + 1 Choice Dip', 'price': '₹140'},
+      {'name': '4 Pc Leg & Thigh (2 Dips)', 'desc': '4 Pc Crispy Leg & Thigh + 2 Choice Dips', 'price': '₹280'},
+      {'name': '8 Pc Leg & Thigh (4 Dips)', 'desc': '8 Pc Crispy Leg & Thigh + 4 Choice Dips', 'price': '₹560'},
+      {'name': '12 Pc Leg & Thigh (6 Dips)', 'desc': '12 Pc Crispy Leg & Thigh + 6 Choice Dips', 'price': '₹840'},
     ],
-    'Sides': [
-      {'name': 'Veg - Fries (Salted, Peri Peri Or Cajun)', 'desc': 'Golden French fries tossed in your favorite seasoning', 'price': '₹99'},
-      {'name': 'Non-Veg - Loaded Chicken Fries', 'desc': 'Crispy fries topped with chicken bits & cheese sauce', 'price': '₹199'},
+    'Wings': [
+      {'name': '3 Pc Wings (1 Dip)', 'desc': '3 Pc Crispy Chicken Wings + 1 Choice Dip', 'price': '₹90'},
+      {'name': '6 Pc Wings (2 Dips)', 'desc': '6 Pc Crispy Chicken Wings + 2 Choice Dips', 'price': '₹180'},
+      {'name': '9 Pc Wings (3 Dips)', 'desc': '9 Pc Crispy Chicken Wings + 3 Choice Dips', 'price': '₹270'},
+      {'name': '20 Pc Wings (6 Dips)', 'desc': '20 Pc Crispy Chicken Wings + 6 Choice Dips', 'price': '₹600'},
     ],
-    'Thick Shakes': [
-      {'name': 'Veg - Vanilla Shake (Regular)', 'desc': 'Rich creamy vanilla thick shake', 'price': '₹99'},
-      {'name': 'Veg - Biscoff Shake (Regular)', 'desc': 'Lotus biscoff crunch thick shake', 'price': '₹99'},
-      {'name': 'Veg - Dark Chocolate Shake (Regular)', 'desc': 'Indulgent Belgian dark chocolate shake', 'price': '₹99'},
+    'Strips': [
+      {'name': '3 Pc Strips (1 Dip)', 'desc': '3 Pc Crispy Chicken Strips + 1 Choice Dip', 'price': '₹120'},
+      {'name': '6 Pc Strips (2 Dips)', 'desc': '6 Pc Crispy Chicken Strips + 2 Choice Dips', 'price': '₹240'},
+      {'name': '9 Pc Strips (3 Dips)', 'desc': '9 Pc Strips (3 Dips)', 'price': '₹360'},
+      {'name': '20 Pc Strips (6 Dips)', 'desc': '20 Pc Strips (6 Dips)', 'price': '₹800'},
+    ],
+    'Fries': [
+      {'name': 'Fries (Salted, Peri Peri or Cajun)', 'desc': 'Crispy Fries (Salted, Peri Peri, or Cajun)', 'price': '₹99'},
+      {'name': 'Loaded Fries', 'desc': 'Loaded Fries topped with melted cheese, sauces (Chicken or Paneer)', 'price': '₹199'},
+    ],
+    'Rice & Salads': [
+      {'name': 'Rice Bowl (Signature)', 'desc': 'Signature Lebanese Rice Bowl (Chicken or Paneer)', 'price': '₹199'},
+      {'name': 'Signature Salad', 'desc': 'Fresh Mediterranean Signature Salad (Chicken or Paneer)', 'price': '₹149'},
     ],
     'Beverages': [
-      {'name': 'Veg - Sprite / Coca-Cola (Regular)', 'desc': 'Chilled 330ml soda with ice & lemon', 'price': '₹59'},
-      {'name': 'Veg - Hot Chocolate', 'desc': 'Warm creamy hot chocolate drink', 'price': '₹149'},
+      {'name': 'Sprite (Regular)', 'desc': 'Sprite 330ml Regular', 'price': '₹59'},
+      {'name': 'Sprite (Large)', 'desc': 'Sprite 500ml Large', 'price': '₹99'},
+      {'name': 'Coca Cola (Regular)', 'desc': 'Coca Cola 330ml Regular', 'price': '₹59'},
+      {'name': 'Coca Cola (Large)', 'desc': 'Coca Cola 500ml Large', 'price': '₹99'},
+      {'name': 'Ice Tea (Regular)', 'desc': 'Ice Tea - Peach or Lime (Regular)', 'price': '₹59'},
+      {'name': 'Ice Tea (Large)', 'desc': 'Ice Tea - Peach or Lime (Large)', 'price': '₹99'},
+      {'name': 'Hot Chocolate', 'desc': 'Rich Warm Hot Chocolate', 'price': '₹99'},
+      {'name': 'Signature Tea', 'desc': 'Special TDG Signature Brewed Tea', 'price': '₹99'},
+    ],
+    'Meals & Combos': [
+      {'name': 'Express Meal', 'desc': 'Gyro & Regular Drink', 'price': '₹249'},
+      {'name': 'Signature Gyro Meal', 'desc': 'Gyro, Fries, Regular Drink', 'price': '₹279'},
+      {'name': 'Lebanese Rice Box', 'desc': 'Lebanese rice, Fries, Regular Drink', 'price': '₹299'},
+      {'name': 'Classic Gyro Meal', 'desc': 'Gyro, 2 Wings, Fries, Regular Drink, 1 Dip', 'price': '₹349'},
+      {'name': 'Duo Gyro Feast', 'desc': '2 Gyros, Fries, 2 Regular Drinks', 'price': '₹449'},
+      {'name': 'Double Crunch Box', 'desc': '2 Gyros, 6 Wings, Fries, 2 Regular Drinks', 'price': '₹699'},
+      {'name': 'Mega Feast Meal', 'desc': '2 Gyros, 2 Leg & Thighs, 2 Wings, 2 Strips, Fries, 2 Regular Drinks, 3 Dips', 'price': '₹799'},
+      {'name': 'Den\'s Party Meal', 'desc': '2 Gyros, 6 Wings, 4 Leg & Thighs, 2 Fries, 3 Regular Drinks', 'price': '₹1049'},
+      {'name': 'Super 5 Bucket', 'desc': '5 Leg & Thighs, 10 Wings, 10 Strips, 5 Regular Drinks', 'price': '₹1299'},
+    ],
+    'Protein Max': [
+      {'name': 'Protein Max Gyro', 'desc': 'High Protein Gyro (Chicken or Paneer)', 'price': '₹299'},
+      {'name': 'Protein Max Rice Bowl', 'desc': 'High Protein Rice Bowl (Chicken or Paneer)', 'price': '₹299'},
+      {'name': 'Protein Max Salad', 'desc': 'High Protein Mediterranean Salad (Chicken or Paneer)', 'price': '₹299'},
+    ],
+    'Shakes': [
+      {'name': 'Vanilla Shake (Regular)', 'desc': 'Ask for White Chocolate', 'price': '₹120'},
+      {'name': 'Vanilla Shake (Large)', 'desc': 'Ask for White Chocolate', 'price': '₹199'},
+      {'name': 'Strawberry Shake (Regular)', 'desc': 'Fresh Strawberry Shake Regular', 'price': '₹120'},
+      {'name': 'Strawberry Shake (Large)', 'desc': 'Fresh Strawberry Shake Large', 'price': '₹199'},
+      {'name': 'Biscoff Shake (Regular)', 'desc': 'Lotus Biscoff Shake Regular', 'price': '₹120'},
+      {'name': 'Biscoff Shake (Large)', 'desc': 'Lotus Biscoff Shake Large', 'price': '₹199'},
+      {'name': 'Chocolate Shake (Regular)', 'desc': 'Rich Chocolate Shake Regular', 'price': '₹120'},
+      {'name': 'Chocolate Shake (Large)', 'desc': 'Rich Chocolate Shake Large', 'price': '₹199'},
+      {'name': 'Kunafa Pistachio Shake (Regular)', 'desc': 'Signature Kunafa Pistachio Shake', 'price': '₹120'},
+      {'name': 'Kunafa Pistachio Shake (Large)', 'desc': 'Signature Kunafa Pistachio Shake', 'price': '₹199'},
+    ],
+    'Desserts': [
+      {'name': 'Chocolate Brownie', 'desc': 'Fudgy Chocolate Brownie', 'price': '₹99'},
+      {'name': 'Blondie Cake (Signature)', 'desc': 'Signature White Chocolate Blondie Cake', 'price': '₹99'},
+      {'name': 'Vanilla Softy', 'desc': 'Creamy Vanilla Soft Serve Cone', 'price': '₹39'},
+      {'name': 'Choice of Dip', 'desc': 'Choice of Dip', 'price': '₹15'},
+    ],
+    'Kombucha': [
+      {'name': 'Mint Kombucha', 'desc': 'Refreshing Brewed Mint Kombucha', 'price': '₹120'},
+      {'name': 'Hibiscus Kombucha', 'desc': 'Refreshing Brewed Hibiscus Kombucha', 'price': '₹120'},
+      {'name': 'Classic Kombucha', 'desc': 'Refreshing Brewed Classic Kombucha', 'price': '₹120'},
     ]
   };
 

@@ -25,7 +25,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String _selectedCategory = 'All';
-  List<String> _categories = ['All', 'Gyros', 'Sides', 'Shakes', 'Crispy Chicken'];
+  List<String> _categories = ['All', 'Gyros', 'Leg & Thigh', 'Wings', 'Strips', 'Fries', 'Beverages', 'Rice', 'Salads', 'Meals & Combos', 'Protein Max', 'Shakes', 'Desserts', 'Softy & Add-Ons', 'Kombucha'];
   List<Map<String, dynamic>> _allMenuItems = [];
   List<Map<String, dynamic>> _popularItems = [];
   bool _isLoading = false;
