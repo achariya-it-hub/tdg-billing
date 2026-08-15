@@ -7,77 +7,615 @@ import { useToast } from '../components/ui/Toaster'
 import { useMenuStore } from '../stores/menuStore'
 
 const sampleCategories = [
- { id: 'c1', name: 'Gyros', color: '#e63946', displayOrder: 1 },
- { id: 'c2', name: 'Burger', color: '#f59e0b', displayOrder: 2 },
- { id: 'c3', name: 'Salads', color: '#10b981', displayOrder: 3 },
- { id: 'c4', name: 'Sides', color: '#dc2626', displayOrder: 4 },
- { id: 'c5', name: 'TDG Crispy Chicken', color: '#fbbf24', displayOrder: 5 },
- { id: 'c6', name: 'Thick Shakes', color: '#8b5cf6', displayOrder: 6 },
- { id: 'c7', name: 'Softy', color: '#ec4899', displayOrder: 7 },
- { id: 'c8', name: 'Desserts', color: '#f472b6', displayOrder: 8 },
- { id: 'c9', name: 'Beverages', color: '#3b82f6', displayOrder: 9 }
+  {
+    "id": "c1",
+    "name": "Gyros",
+    "icon": "\ud83e\udd59",
+    "color": "#d97706"
+  },
+  {
+    "id": "c5_legthigh",
+    "name": "Leg & Thigh",
+    "icon": "\ud83c\udf57",
+    "color": "#ea580c"
+  },
+  {
+    "id": "c5_wings",
+    "name": "Wings",
+    "icon": "\ud83c\udf57",
+    "color": "#b45309"
+  },
+  {
+    "id": "c5_strips",
+    "name": "Strips",
+    "icon": "\ud83c\udf57",
+    "color": "#ca8a04"
+  },
+  {
+    "id": "c6",
+    "name": "Fries",
+    "icon": "\ud83c\udf5f",
+    "color": "#f59e0b"
+  },
+  {
+    "id": "c10_bev",
+    "name": "Beverages",
+    "icon": "\ud83e\udd64",
+    "color": "#0284c7"
+  },
+  {
+    "id": "c3_rice",
+    "name": "Rice",
+    "icon": "\ud83c\udf5a",
+    "color": "#059669"
+  },
+  {
+    "id": "c3_salad",
+    "name": "Salads",
+    "icon": "\ud83e\udd57",
+    "color": "#10b981"
+  },
+  {
+    "id": "c2",
+    "name": "Meals & Combos",
+    "icon": "\ud83c\udf71",
+    "color": "#8b5cf6"
+  },
+  {
+    "id": "c11",
+    "name": "Protein Max",
+    "icon": "\ud83d\udcaa",
+    "color": "#10b981"
+  },
+  {
+    "id": "c7_shakes",
+    "name": "Shakes",
+    "icon": "\ud83e\udd64",
+    "color": "#db2777"
+  },
+  {
+    "id": "c9",
+    "name": "Desserts",
+    "icon": "\ud83c\udf70",
+    "color": "#ec4899"
+  },
+  {
+    "id": "c4",
+    "name": "Softy & Add-Ons",
+    "icon": "\ud83c\udf66",
+    "color": "#e63946"
+  },
+  {
+    "id": "c10_komb",
+    "name": "Kombucha",
+    "icon": "\ud83c\udf79",
+    "color": "#0284c7"
+  }
 ]
 
 const sampleMenuItems = [
- { id: 'm1', categoryId: 'c1', name: 'Non-Veg - Spicy Chicken Gyro (Regular)', price: 99, isAvailable: true },
- { id: 'm2', categoryId: 'c1', name: 'Non-Veg - Spicy Chicken Gyro (Large)', price: 249, isAvailable: true },
- { id: 'm3', categoryId: 'c1', name: 'Non-Veg - Cream Chicken Gyro (Regular)', price: 99, isAvailable: true },
- { id: 'm4', categoryId: 'c1', name: 'Non-Veg - Cream Chicken Gyro (Large)', price: 249, isAvailable: true },
- { id: 'm5', categoryId: 'c1', name: 'Non-Veg - BBQ Chicken Gyro (Regular)', price: 99, isAvailable: true },
- { id: 'm6', categoryId: 'c1', name: 'Non-Veg - BBQ Chicken Gyro (Large)', price: 249, isAvailable: true },
- { id: 'm7', categoryId: 'c1', name: 'Non-Veg - Pesto Chicken Gyro (Regular)', price: 99, isAvailable: true },
- { id: 'm8', categoryId: 'c1', name: 'Non-Veg - Pesto Chicken Gyro (Large)', price: 249, isAvailable: true },
- { id: 'm9', categoryId: 'c1', name: 'Veg - Spicy Paneer Gyro (Regular)', price: 99, isAvailable: true },
- { id: 'm10', categoryId: 'c1', name: 'Veg - Spicy Paneer Gyro (Large)', price: 249, isAvailable: true },
- { id: 'm11', categoryId: 'c1', name: 'Veg - Cream Paneer Gyro (Regular)', price: 99, isAvailable: true },
- { id: 'm12', categoryId: 'c1', name: 'Veg - Cream Paneer Gyro (Large)', price: 249, isAvailable: true },
- { id: 'm13', categoryId: 'c1', name: 'Veg - BBQ Paneer Gyro (Regular)', price: 99, isAvailable: true },
- { id: 'm14', categoryId: 'c1', name: 'Veg - BBQ Paneer Gyro (Large)', price: 249, isAvailable: true },
- { id: 'm15', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Regular)', price: 99, isAvailable: true },
- { id: 'm16', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Large)', price: 249, isAvailable: true },
- { id: 'm17', categoryId: 'c2', name: 'Non-Veg - Spicy Egg Burger', price: 79, isAvailable: true },
- { id: 'm18', categoryId: 'c2', name: 'Non-Veg - Crispy Chicken Burger', price: 99, isAvailable: true },
- { id: 'm19', categoryId: 'c2', name: 'Veg - Spicy Paneer Burger', price: 99, isAvailable: true },
- { id: 'm20', categoryId: 'c3', name: 'Non-Veg - Chicken Salad', price: 99, isAvailable: true },
- { id: 'm21', categoryId: 'c3', name: 'Veg - Paneer Salad', price: 99, isAvailable: true },
- { id: 'm22', categoryId: 'c4', name: 'Non-Veg - Loaded Chicken Fries', price: 199, isAvailable: true },
- { id: 'm23', categoryId: 'c4', name: 'Veg - Fries (Salted, Peri Peri Or Cajun)', price: 99, isAvailable: true },
- { id: 'm24', categoryId: 'c4', name: 'Veg - Loaded Paneer Fries', price: 199, isAvailable: true },
- { id: 'm25', categoryId: 'c4', name: 'Veg - 6 pcs Halloumi Strips', price: 149, isAvailable: true },
- { id: 'm26', categoryId: 'c5', name: 'Non-Veg - 1 Pc Crispy Chicken (1 Dip)', price: 70, isAvailable: true },
- { id: 'm27', categoryId: 'c5', name: 'Non-Veg - 2 Pc Crispy Chicken (1 Dip)', price: 140, isAvailable: true },
- { id: 'm28', categoryId: 'c5', name: 'Non-Veg - 4 Pc Crispy Chicken (2 Dip)', price: 280, isAvailable: true },
- { id: 'm29', categoryId: 'c5', name: 'Non-Veg - 8 Pc Crispy Chicken (4 Dip)', price: 560, isAvailable: true },
- { id: 'm30', categoryId: 'c5', name: 'Non-Veg - 12 Pc Crispy Chicken (6 Dip)', price: 840, isAvailable: true },
- { id: 'm31', categoryId: 'c5', name: 'Non-Veg - 3 Pc Crispy Wings (1 Dip)', price: 90, isAvailable: true },
- { id: 'm32', categoryId: 'c5', name: 'Non-Veg - 6 Pc Crispy Wings (2 Dip)', price: 180, isAvailable: true },
- { id: 'm33', categoryId: 'c5', name: 'Non-Veg - 9 Pc Crispy Wings (3 Dip)', price: 270, isAvailable: true },
- { id: 'm34', categoryId: 'c5', name: 'Non-Veg - 20 Pc Crispy Wings (6 Dip)', price: 600, isAvailable: true },
- { id: 'm35', categoryId: 'c5', name: 'Non-Veg - 60 Pc Crispy Wings (12 Dip)', price: 1500, isAvailable: true },
- { id: 'm36', categoryId: 'c5', name: 'Non-Veg - 3 Pc Crispy Strips (1 Dip)', price: 120, isAvailable: true },
- { id: 'm37', categoryId: 'c5', name: 'Non-Veg - 6 Pc Crispy Strips (2 Dip)', price: 240, isAvailable: true },
- { id: 'm38', categoryId: 'c5', name: 'Non-Veg - 9 Pc Crispy Strips (3 Dip)', price: 360, isAvailable: true },
- { id: 'm39', categoryId: 'c5', name: 'Non-Veg - 20 Pc Crispy Strips (6 Dip)', price: 800, isAvailable: true },
- { id: 'm40', categoryId: 'c5', name: 'Non-Veg - 60 Pc Crispy Strips (12 Dip)', price: 2400, isAvailable: true },
- { id: 'm41', categoryId: 'c6', name: 'Veg - Vanilla Shake (Regular)', price: 79, isAvailable: true },
- { id: 'm42', categoryId: 'c6', name: 'Veg - Vanilla Shake (Large)', price: 139, isAvailable: true },
- { id: 'm43', categoryId: 'c6', name: 'Veg - Strawberry Shake (Regular)', price: 79, isAvailable: true },
- { id: 'm44', categoryId: 'c6', name: 'Veg - Strawberry Shake (Large)', price: 139, isAvailable: true },
- { id: 'm45', categoryId: 'c6', name: 'Veg - Biscoff Shake (Regular)', price: 79, isAvailable: true },
- { id: 'm46', categoryId: 'c6', name: 'Veg - Biscoff Shake (Large)', price: 139, isAvailable: true },
- { id: 'm47', categoryId: 'c6', name: 'Veg - Oreo Shake (Regular)', price: 79, isAvailable: true },
- { id: 'm48', categoryId: 'c6', name: 'Veg - Oreo Shake (Large)', price: 139, isAvailable: true },
- { id: 'm49', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Regular)', price: 79, isAvailable: true },
- { id: 'm50', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Large)', price: 139, isAvailable: true },
- { id: 'm51', categoryId: 'c7', name: 'Veg - Vanilla Softy', price: 39, isAvailable: true },
- { id: 'm52', categoryId: 'c8', name: 'Veg - Chocolate Brownie', price: 99, isAvailable: true },
- { id: 'm53', categoryId: 'c8', name: 'Veg - Blondy Cake', price: 99, isAvailable: true },
- { id: 'm54', categoryId: 'c9', name: 'Veg - Sprite / Coca-Cola (Regular)', price: 59, isAvailable: true },
- { id: 'm55', categoryId: 'c9', name: 'Veg - Sprite / Coca-Cola (Large)', price: 99, isAvailable: true },
- { id: 'm56', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Regular)', price: 59, isAvailable: true },
- { id: 'm57', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Large)', price: 99, isAvailable: true },
- { id: 'm58', categoryId: 'c9', name: 'Veg - Hot Chocolate', price: 99, isAvailable: true },
- { id: 'm59', categoryId: 'c9', name: 'Veg - Signature Tea', price: 99, isAvailable: true }
+  {
+    "id": "m_spicy_gyro",
+    "categoryId": "c1",
+    "name": "Spicy Gyro",
+    "price": 199,
+    "description": "Spicy gyro with fresh veggies & spread (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/gyro.png"
+  },
+  {
+    "id": "m_creamy_gyro",
+    "categoryId": "c1",
+    "name": "Creamy Gyro",
+    "price": 199,
+    "description": "Creamy tzatziki gyro wrap (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/gyro.png"
+  },
+  {
+    "id": "m_bbq_gyro",
+    "categoryId": "c1",
+    "name": "BBQ Gyro",
+    "price": 199,
+    "description": "Rich BBQ gyro wrap (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/gyro.png"
+  },
+  {
+    "id": "m_signature_gyro",
+    "categoryId": "c1",
+    "name": "Signature Gyro",
+    "price": 199,
+    "description": "TDG signature gyro wrap with secret sauce (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/gyro.png"
+  },
+  {
+    "id": "m_legthigh_1pc",
+    "categoryId": "c5_legthigh",
+    "name": "1 Pc Leg & Thigh (1 Dip)",
+    "price": 70,
+    "description": "1 Pc Crispy Leg & Thigh + 1 Choice Dip",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_legthigh_2pc",
+    "categoryId": "c5_legthigh",
+    "name": "2 Pc Leg & Thigh (1 Dip)",
+    "price": 140,
+    "description": "2 Pc Crispy Leg & Thigh + 1 Choice Dip",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_legthigh_4pc",
+    "categoryId": "c5_legthigh",
+    "name": "4 Pc Leg & Thigh (2 Dips)",
+    "price": 280,
+    "description": "4 Pc Crispy Leg & Thigh + 2 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_legthigh_8pc",
+    "categoryId": "c5_legthigh",
+    "name": "8 Pc Leg & Thigh (4 Dips)",
+    "price": 560,
+    "description": "8 Pc Crispy Leg & Thigh + 4 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_legthigh_12pc",
+    "categoryId": "c5_legthigh",
+    "name": "12 Pc Leg & Thigh (6 Dips)",
+    "price": 840,
+    "description": "12 Pc Crispy Leg & Thigh + 6 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_wings_3pc",
+    "categoryId": "c5_wings",
+    "name": "3 Pc Wings (1 Dip)",
+    "price": 90,
+    "description": "3 Pc Crispy Chicken Wings + 1 Choice Dip",
+    "isAvailable": true,
+    "image": "/images/menu/wings.png"
+  },
+  {
+    "id": "m_wings_6pc",
+    "categoryId": "c5_wings",
+    "name": "6 Pc Wings (2 Dips)",
+    "price": 180,
+    "description": "6 Pc Crispy Chicken Wings + 2 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/wings.png"
+  },
+  {
+    "id": "m_wings_9pc",
+    "categoryId": "c5_wings",
+    "name": "9 Pc Wings (3 Dips)",
+    "price": 270,
+    "description": "9 Pc Crispy Chicken Wings + 3 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/wings.png"
+  },
+  {
+    "id": "m_wings_20pc",
+    "categoryId": "c5_wings",
+    "name": "20 Pc Wings (6 Dips)",
+    "price": 600,
+    "description": "20 Pc Crispy Chicken Wings + 6 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/wings.png"
+  },
+  {
+    "id": "m_strips_3pc",
+    "categoryId": "c5_strips",
+    "name": "3 Pc Strips (1 Dip)",
+    "price": 120,
+    "description": "3 Pc Crispy Chicken Strips + 1 Choice Dip",
+    "isAvailable": true,
+    "image": "/images/menu/strips.png"
+  },
+  {
+    "id": "m_strips_6pc",
+    "categoryId": "c5_strips",
+    "name": "6 Pc Strips (2 Dips)",
+    "price": 240,
+    "description": "6 Pc Crispy Chicken Strips + 2 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/strips.png"
+  },
+  {
+    "id": "m_strips_9pc",
+    "categoryId": "c5_strips",
+    "name": "9 Pc Strips (3 Dips)",
+    "price": 360,
+    "description": "9 Pc Crispy Chicken Strips + 3 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/strips.png"
+  },
+  {
+    "id": "m_strips_20pc",
+    "categoryId": "c5_strips",
+    "name": "20 Pc Strips (6 Dips)",
+    "price": 800,
+    "description": "20 Pc Crispy Chicken Strips + 6 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/strips.png"
+  },
+  {
+    "id": "m_fries_std",
+    "categoryId": "c6",
+    "name": "Fries (Salted, Peri Peri or Cajun)",
+    "price": 99,
+    "description": "Crispy Fries (Choose seasoning: Salted, Peri Peri, or Cajun)",
+    "isAvailable": true,
+    "image": "/images/menu/fries.png"
+  },
+  {
+    "id": "m_loaded_fries",
+    "categoryId": "c6",
+    "name": "Loaded Fries",
+    "price": 199,
+    "description": "Loaded Fries topped with melted cheese, sauces (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/loaded fries.png"
+  },
+  {
+    "id": "m_rice_bowl",
+    "categoryId": "c3_rice",
+    "name": "Rice Bowl (Signature)",
+    "price": 199,
+    "description": "Signature Lebanese Rice Bowl with fresh herbs & toppings (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/lebanese rice bowl.png"
+  },
+  {
+    "id": "m_signature_salad",
+    "categoryId": "c3_salad",
+    "name": "Signature Salad",
+    "price": 149,
+    "description": "Fresh Mediterranean Signature Salad with dressing (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/signature salad.png"
+  },
+  {
+    "id": "m_sprite_reg",
+    "categoryId": "c10_bev",
+    "name": "Sprite (Regular)",
+    "price": 59,
+    "description": "Sprite 330ml Regular",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_sprite_lrg",
+    "categoryId": "c10_bev",
+    "name": "Sprite (Large)",
+    "price": 99,
+    "description": "Sprite 500ml Large",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_cocacola_reg",
+    "categoryId": "c10_bev",
+    "name": "Coca Cola (Regular)",
+    "price": 59,
+    "description": "Coca Cola 330ml Regular",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_cocacola_lrg",
+    "categoryId": "c10_bev",
+    "name": "Coca Cola (Large)",
+    "price": 99,
+    "description": "Coca Cola 500ml Large",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_icetea_reg",
+    "categoryId": "c10_bev",
+    "name": "Ice Tea (Regular)",
+    "price": 59,
+    "description": "Refreshing Ice Tea - Peach or Lime (Regular)",
+    "isAvailable": true,
+    "image": "/images/menu/ice tea - lime.png"
+  },
+  {
+    "id": "m_icetea_lrg",
+    "categoryId": "c10_bev",
+    "name": "Ice Tea (Large)",
+    "price": 99,
+    "description": "Refreshing Ice Tea - Peach or Lime (Large)",
+    "isAvailable": true,
+    "image": "/images/menu/ice tea - lime.png"
+  },
+  {
+    "id": "m_hot_chocolate",
+    "categoryId": "c10_bev",
+    "name": "Hot Chocolate",
+    "price": 99,
+    "description": "Rich Warm Hot Chocolate",
+    "isAvailable": true,
+    "image": "/images/menu/Hot Chocolate.png"
+  },
+  {
+    "id": "m_signature_tea",
+    "categoryId": "c10_bev",
+    "name": "Signature Tea",
+    "price": 99,
+    "description": "Special TDG Signature Brewed Tea",
+    "isAvailable": true,
+    "image": "/images/menu/Signature tea.png"
+  },
+  {
+    "id": "m_express_meal",
+    "categoryId": "c2",
+    "name": "Express Meal",
+    "price": 249,
+    "description": "Gyro & Regular Drink",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_sig_gyro_meal",
+    "categoryId": "c2",
+    "name": "Signature Gyro Meal",
+    "price": 279,
+    "description": "Gyro, Fries, Regular Drink",
+    "isAvailable": true,
+    "image": "/images/menu/signature gyro meal.png"
+  },
+  {
+    "id": "m_lebanese_rice_box",
+    "categoryId": "c2",
+    "name": "Lebanese Rice Box",
+    "price": 299,
+    "description": "Lebanese rice, Fries, Regular Drink",
+    "isAvailable": true,
+    "image": "/images/menu/lebanese rice box.png"
+  },
+  {
+    "id": "m_classic_gyro_meal",
+    "categoryId": "c2",
+    "name": "Classic Gyro Meal",
+    "price": 349,
+    "description": "Gyro, 2 Wings, Fries, Regular Drink, 1 Dip",
+    "isAvailable": true,
+    "image": "/images/menu/classic gyro meal.png"
+  },
+  {
+    "id": "m_duo_gyro_feast",
+    "categoryId": "c2",
+    "name": "Duo Gyro Feast",
+    "price": 449,
+    "description": "2 Gyros, Fries, 2 Regular Drinks",
+    "isAvailable": true,
+    "image": "/images/menu/duo gyro feast.png"
+  },
+  {
+    "id": "m_double_crunch_box",
+    "categoryId": "c2",
+    "name": "Double Crunch Box",
+    "price": 699,
+    "description": "2 Gyros, 6 Wings, Fries, 2 Regular Drinks",
+    "isAvailable": true,
+    "image": "/images/menu/double crunch box.png"
+  },
+  {
+    "id": "m_mega_feast_meal",
+    "categoryId": "c2",
+    "name": "Mega Feast Meal",
+    "price": 799,
+    "description": "2 Gyros, 2 Leg & Thighs, 2 Wings, 2 Strips, Fries, 2 Regular Drinks, 3 Dips",
+    "isAvailable": true,
+    "image": "/images/menu/mega feast meal.png"
+  },
+  {
+    "id": "m_dens_party_meal",
+    "categoryId": "c2",
+    "name": "Den's Party Meal",
+    "price": 1049,
+    "description": "2 Gyros, 6 Wings, 4 Leg & Thighs, 2 Fries, 3 Regular Drinks",
+    "isAvailable": true,
+    "image": "/images/menu/den's party meal.png"
+  },
+  {
+    "id": "m_super5_bucket",
+    "categoryId": "c2",
+    "name": "Super 5 Bucket",
+    "price": 1299,
+    "description": "5 Leg & Thighs, 10 Wings, 10 Strips, 5 Regular Drinks",
+    "isAvailable": true,
+    "image": "/images/menu/super 5 bucket.png"
+  },
+  {
+    "id": "m_pmax_gyro",
+    "categoryId": "c11",
+    "name": "Protein Max Gyro",
+    "price": 299,
+    "description": "High Protein Gyro (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/protein max.png"
+  },
+  {
+    "id": "m_pmax_rice",
+    "categoryId": "c11",
+    "name": "Protein Max Rice Bowl",
+    "price": 299,
+    "description": "High Protein Rice Bowl (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/protein max.png"
+  },
+  {
+    "id": "m_pmax_salad",
+    "categoryId": "c11",
+    "name": "Protein Max Salad",
+    "price": 299,
+    "description": "High Protein Mediterranean Salad (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/protein max.png"
+  },
+  {
+    "id": "m_vanilla_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Vanilla Shake (Regular)",
+    "price": 120,
+    "description": "Classic Vanilla Shake (Ask for White Chocolate)",
+    "isAvailable": true,
+    "image": "/images/menu/vanilla shake.png"
+  },
+  {
+    "id": "m_vanilla_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Vanilla Shake (Large)",
+    "price": 199,
+    "description": "Large Vanilla Shake (Ask for White Chocolate)",
+    "isAvailable": true,
+    "image": "/images/menu/vanilla shake.png"
+  },
+  {
+    "id": "m_strawberry_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Strawberry Shake (Regular)",
+    "price": 120,
+    "description": "Fresh Strawberry Shake Regular",
+    "isAvailable": true,
+    "image": "/images/menu/strawberry shake.png"
+  },
+  {
+    "id": "m_strawberry_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Strawberry Shake (Large)",
+    "price": 199,
+    "description": "Fresh Strawberry Shake Large",
+    "isAvailable": true,
+    "image": "/images/menu/strawberry shake.png"
+  },
+  {
+    "id": "m_biscoff_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Biscoff Shake (Regular)",
+    "price": 120,
+    "description": "Lotus Biscoff Shake Regular",
+    "isAvailable": true,
+    "image": "/images/menu/biscoff shake.png"
+  },
+  {
+    "id": "m_biscoff_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Biscoff Shake (Large)",
+    "price": 199,
+    "description": "Lotus Biscoff Shake Large",
+    "isAvailable": true,
+    "image": "/images/menu/biscoff shake.png"
+  },
+  {
+    "id": "m_chocolate_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Chocolate Shake (Regular)",
+    "price": 120,
+    "description": "Rich Chocolate Shake Regular",
+    "isAvailable": true,
+    "image": "/images/menu/chocolate shake.png"
+  },
+  {
+    "id": "m_chocolate_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Chocolate Shake (Large)",
+    "price": 199,
+    "description": "Rich Chocolate Shake Large",
+    "isAvailable": true,
+    "image": "/images/menu/chocolate shake.png"
+  },
+  {
+    "id": "m_kunafa_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Kunafa Pistachio Shake - Signature (Regular)",
+    "price": 120,
+    "description": "Signature Kunafa Pistachio Shake Regular",
+    "isAvailable": true,
+    "image": "/images/menu/kunafa pistachio shake.png"
+  },
+  {
+    "id": "m_kunafa_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Kunafa Pistachio Shake - Signature (Large)",
+    "price": 199,
+    "description": "Signature Kunafa Pistachio Shake Large",
+    "isAvailable": true,
+    "image": "/images/menu/kunafa pistachio shake.png"
+  },
+  {
+    "id": "m_brownie",
+    "categoryId": "c9",
+    "name": "Chocolate Brownie",
+    "price": 99,
+    "description": "Fudgy Chocolate Brownie",
+    "isAvailable": true,
+    "image": "/images/menu/chcolate brownie.png"
+  },
+  {
+    "id": "m_blondie",
+    "categoryId": "c9",
+    "name": "Blondie Cake (Signature)",
+    "price": 99,
+    "description": "TDG Signature White Chocolate Blondie Cake",
+    "isAvailable": true,
+    "image": "/images/menu/blondie cake.png"
+  },
+  {
+    "id": "m_vanilla_softy",
+    "categoryId": "c4",
+    "name": "Vanilla Softy",
+    "price": 39,
+    "description": "Creamy Vanilla Soft Serve Cone",
+    "isAvailable": true,
+    "image": "/images/menu/vanilla softy.png"
+  },
+  {
+    "id": "m_dip_choice",
+    "categoryId": "c4",
+    "name": "Choice of Dip",
+    "price": 15,
+    "description": "Choice of Dip (Garlic Mayo, Spicy Mayo, Honey Mustard, Tzatziki, Jalapeno Cheese, Turkish Chilli)",
+    "isAvailable": true,
+    "image": "/images/menu/garlic mayo.png"
+  },
+  {
+    "id": "m_kombucha_mint",
+    "categoryId": "c10_komb",
+    "name": "Mint Kombucha",
+    "price": 120,
+    "description": "Refreshing Brewed Mint Kombucha 250ml",
+    "isAvailable": true,
+    "image": "/images/menu/mint-kombucha.png"
+  },
+  {
+    "id": "m_kombucha_hibiscus",
+    "categoryId": "c10_komb",
+    "name": "Hibiscus Kombucha",
+    "price": 120,
+    "description": "Refreshing Brewed Hibiscus Kombucha 250ml",
+    "isAvailable": true,
+    "image": "/images/menu/kombucha-hibiscus.png"
+  },
+  {
+    "id": "m_kombucha_classic",
+    "categoryId": "c10_komb",
+    "name": "Classic Kombucha",
+    "price": 120,
+    "description": "Refreshing Brewed Classic Kombucha 250ml",
+    "isAvailable": true,
+    "image": "/images/menu/kombucha.png"
+  }
 ]
 
 const sampleInventory = [
@@ -96,8274 +634,2500 @@ const sampleInventory = [
 ]
 
 const sampleRecipes = [
- {
- "id": "r_m53a",
- "menuItemId": "m53a",
- "menuItemName": "Coca-Cola (Regular)",
- "name": "COLA 330ML",
- "description": "Standard recipe for COLA 330ML (Price \u20b959/-)",
- "yieldQty": 1,
- "prepTime": 2,
- "rmCost": 24.36,
- "pmCost": 6.42,
- "labourCost": 3.2,
- "calculatedCost": 33.98,
- "sellingPrice": 59.0,
- "ingredients": [
- {
- "id": "ri_m53a_1",
- "inventoryItemId": "inv_cola",
- "inventoryName": "COLA",
- "quantity": 1.0,
- "unit": "kg",
- "costPerUnit": 24.0,
- "cost": 24.0
- },
- {
- "id": "ri_m53a_2",
- "inventoryItemId": "inv_ice_cube",
- "inventoryName": "ICE CUBE",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 6.0,
- "cost": 0.36
- },
- {
- "id": "ri_m53a_3",
- "inventoryItemId": "inv_bev_lid_330",
- "inventoryName": "BEVERAGES WITH LID 330ML",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 5.49,
- "cost": 5.49
- },
- {
- "id": "ri_m53a_4",
- "inventoryItemId": "inv_straw",
- "inventoryName": "Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.93,
- "cost": 0.93
- },
- {
- "id": "ri_m53a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m54a",
- "menuItemId": "m54a",
- "menuItemName": "Sprite (Regular)",
- "name": "SPRITE 330ML",
- "description": "Standard recipe for SPRITE 330ML (Price \u20b959/-)",
- "yieldQty": 1,
- "prepTime": 2,
- "rmCost": 24.36,
- "pmCost": 6.42,
- "labourCost": 3.2,
- "calculatedCost": 33.98,
- "sellingPrice": 59.0,
- "ingredients": [
- {
- "id": "ri_m54a_1",
- "inventoryItemId": "inv_sprite",
- "inventoryName": "SPRITE",
- "quantity": 1.0,
- "unit": "kg",
- "costPerUnit": 24.0,
- "cost": 24.0
- },
- {
- "id": "ri_m54a_2",
- "inventoryItemId": "inv_ice_cube",
- "inventoryName": "ICE CUBE",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 6.0,
- "cost": 0.36
- },
- {
- "id": "ri_m54a_3",
- "inventoryItemId": "inv_bev_lid_330",
- "inventoryName": "BEVERAGES WITH LID 330ML",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 5.49,
- "cost": 5.49
- },
- {
- "id": "ri_m54a_4",
- "inventoryItemId": "inv_straw",
- "inventoryName": "Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.93,
- "cost": 0.93
- },
- {
- "id": "ri_m54a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m53b",
- "menuItemId": "m53b",
- "menuItemName": "Coca-Cola (Large)",
- "name": "COLA 650ML",
- "description": "Standard recipe for COLA 650ML (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 2,
- "rmCost": 48.72,
- "pmCost": 7.78,
- "labourCost": 3.2,
- "calculatedCost": 59.7,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m53b_1",
- "inventoryItemId": "inv_cola",
- "inventoryName": "COLA",
- "quantity": 2.0,
- "unit": "kg",
- "costPerUnit": 24.0,
- "cost": 48.0
- },
- {
- "id": "ri_m53b_2",
- "inventoryItemId": "inv_ice_cube",
- "inventoryName": "ICE CUBE",
- "quantity": 0.12,
- "unit": "kg",
- "costPerUnit": 6.0,
- "cost": 0.72
- },
- {
- "id": "ri_m53b_3",
- "inventoryItemId": "inv_bev_lid_650",
- "inventoryName": "BEVERAGES WITH LID 650ML",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.85,
- "cost": 6.85
- },
- {
- "id": "ri_m53b_4",
- "inventoryItemId": "inv_straw",
- "inventoryName": "Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.93,
- "cost": 0.93
- },
- {
- "id": "ri_m53b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m54b",
- "menuItemId": "m54b",
- "menuItemName": "Sprite (Large)",
- "name": "SPRITE 650ML",
- "description": "Standard recipe for SPRITE 650ML (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 2,
- "rmCost": 48.72,
- "pmCost": 7.78,
- "labourCost": 3.2,
- "calculatedCost": 59.7,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m54b_1",
- "inventoryItemId": "inv_sprite",
- "inventoryName": "SPRITE",
- "quantity": 2.0,
- "unit": "kg",
- "costPerUnit": 24.0,
- "cost": 48.0
- },
- {
- "id": "ri_m54b_2",
- "inventoryItemId": "inv_ice_cube",
- "inventoryName": "ICE CUBE",
- "quantity": 0.12,
- "unit": "kg",
- "costPerUnit": 6.0,
- "cost": 0.72
- },
- {
- "id": "ri_m54b_3",
- "inventoryItemId": "inv_bev_lid_650",
- "inventoryName": "BEVERAGES WITH LID 650ML",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.85,
- "cost": 6.85
- },
- {
- "id": "ri_m54b_4",
- "inventoryItemId": "inv_straw",
- "inventoryName": "Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.93,
- "cost": 0.93
- },
- {
- "id": "ri_m54b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m56a",
- "menuItemId": "m56a",
- "menuItemName": "Lime Ice Tea (Regular)",
- "name": "Lime 330ml",
- "description": "Standard recipe for Lime Ice Tea 330ml (Price \u20b959/-)",
- "yieldQty": 1,
- "prepTime": 2,
- "rmCost": 17.4,
- "pmCost": 6.59,
- "labourCost": 3.2,
- "calculatedCost": 27.19,
- "sellingPrice": 59.0,
- "ingredients": [
- {
- "id": "ri_m56a_1",
- "inventoryItemId": "inv_lime",
- "inventoryName": "Lime",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 550.0,
- "cost": 16.5
- },
- {
- "id": "ri_m56a_2",
- "inventoryItemId": "inv_ice_cube",
- "inventoryName": "ICE CUBE",
- "quantity": 0.15,
- "unit": "kg",
- "costPerUnit": 6.0,
- "cost": 0.9
- },
- {
- "id": "ri_m56a_3",
- "inventoryItemId": "inv_bev_lid_330",
- "inventoryName": "Beverages with LID 330ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 5.49,
- "cost": 5.49
- },
- {
- "id": "ri_m56a_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Paper Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.1,
- "cost": 1.1
- },
- {
- "id": "ri_m56a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m55a",
- "menuItemId": "m55a",
- "menuItemName": "Peach Ice Tea (Regular)",
- "name": "Peach 330ml",
- "description": "Standard recipe for Peach Ice Tea 330ml (Price \u20b959/-)",
- "yieldQty": 1,
- "prepTime": 2,
- "rmCost": 17.4,
- "pmCost": 6.59,
- "labourCost": 3.2,
- "calculatedCost": 27.19,
- "sellingPrice": 59.0,
- "ingredients": [
- {
- "id": "ri_m55a_1",
- "inventoryItemId": "inv_peach",
- "inventoryName": "Peach",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 550.0,
- "cost": 16.5
- },
- {
- "id": "ri_m55a_2",
- "inventoryItemId": "inv_ice_cube",
- "inventoryName": "ICE CUBE",
- "quantity": 0.15,
- "unit": "kg",
- "costPerUnit": 6.0,
- "cost": 0.9
- },
- {
- "id": "ri_m55a_3",
- "inventoryItemId": "inv_bev_lid_330",
- "inventoryName": "Beverages with LID 330ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 5.49,
- "cost": 5.49
- },
- {
- "id": "ri_m55a_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Paper Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.1,
- "cost": 1.1
- },
- {
- "id": "ri_m55a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m56b",
- "menuItemId": "m56b",
- "menuItemName": "Lime Ice Tea (Large)",
- "name": "Lime 650ml",
- "description": "Standard recipe for Lime Ice Tea 650ml (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 2,
- "rmCost": 34.8,
- "pmCost": 9.19,
- "labourCost": 3.2,
- "calculatedCost": 47.19,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m56b_1",
- "inventoryItemId": "inv_lime",
- "inventoryName": "LIME",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 550.0,
- "cost": 33.0
- },
- {
- "id": "ri_m56b_2",
- "inventoryItemId": "inv_ice_cube",
- "inventoryName": "ICE CUBE",
- "quantity": 0.3,
- "unit": "kg",
- "costPerUnit": 6.0,
- "cost": 1.8
- },
- {
- "id": "ri_m56b_3",
- "inventoryItemId": "inv_bev_lid_650_icetea",
- "inventoryName": "Beverages with LID 650ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 8.09,
- "cost": 8.09
- },
- {
- "id": "ri_m56b_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.1,
- "cost": 1.1
- },
- {
- "id": "ri_m56b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m55b",
- "menuItemId": "m55b",
- "menuItemName": "Peach Ice Tea (Large)",
- "name": "Peach 650ml",
- "description": "Standard recipe for Peach Ice Tea 650ml (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 2,
- "rmCost": 34.8,
- "pmCost": 9.19,
- "labourCost": 3.2,
- "calculatedCost": 47.19,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m55b_1",
- "inventoryItemId": "inv_peach",
- "inventoryName": "PEACH",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 550.0,
- "cost": 33.0
- },
- {
- "id": "ri_m55b_2",
- "inventoryItemId": "inv_ice_cube",
- "inventoryName": "ICE CUBE",
- "quantity": 0.3,
- "unit": "kg",
- "costPerUnit": 6.0,
- "cost": 1.8
- },
- {
- "id": "ri_m55b_3",
- "inventoryItemId": "inv_bev_lid_650_icetea",
- "inventoryName": "Beverages with LID 650ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 8.09,
- "cost": 8.09
- },
- {
- "id": "ri_m55b_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.1,
- "cost": 1.1
- },
- {
- "id": "ri_m55b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m60",
- "menuItemId": "m60",
- "menuItemName": "Chocolate Brownie",
- "name": "CHOCOLATE BROWNIE",
- "description": "Standard recipe for Chocolate Brownie (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 29.82,
- "pmCost": 11.78,
- "labourCost": 3.2,
- "calculatedCost": 44.8,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m60_1",
- "inventoryItemId": "inv_butter",
- "inventoryName": "BUTTER",
- "quantity": 0.017,
- "unit": "kg",
- "costPerUnit": 754.29,
- "cost": 12.57
- },
- {
- "id": "ri_m60_2",
- "inventoryItemId": "inv_dark_compound",
- "inventoryName": "DARK COMPOUND",
- "quantity": 0.025,
- "unit": "kg",
- "costPerUnit": 391.82,
- "cost": 9.8
- },
- {
- "id": "ri_m60_3",
- "inventoryItemId": "inv_egg",
- "inventoryName": "EGG",
- "quantity": 0.333,
- "unit": "pc",
- "costPerUnit": 6.3,
- "cost": 2.1
- },
- {
- "id": "ri_m60_4",
- "inventoryItemId": "inv_vanilla_essence",
- "inventoryName": "VANNILA ESSENCE",
- "quantity": 0.001,
- "unit": "kg",
- "costPerUnit": 484.75,
- "cost": 0.24
- },
- {
- "id": "ri_m60_5",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "WHITE SUGAR",
- "quantity": 0.017,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 0.8
- },
- {
- "id": "ri_m60_6",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.017,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 0.75
- },
- {
- "id": "ri_m60_7",
- "inventoryItemId": "inv_brown_sugar",
- "inventoryName": "BROWN SUGAR",
- "quantity": 0.008,
- "unit": "kg",
- "costPerUnit": 230.0,
- "cost": 1.92
- },
- {
- "id": "ri_m60_8",
- "inventoryItemId": "inv_milk_compound",
- "inventoryName": "MILK COMPOUND",
- "quantity": 0.005,
- "unit": "kg",
- "costPerUnit": 328.0,
- "cost": 1.64
- },
- {
- "id": "ri_m60_9",
- "inventoryItemId": "inv_dinning_tray_250ml",
- "inventoryName": "DINNING TRAY 250ML",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 2.92,
- "cost": 2.92
- },
- {
- "id": "ri_m60_10",
- "inventoryItemId": "inv_wooden_spoon",
- "inventoryName": "Wooden Spoon",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.68,
- "cost": 1.68
- },
- {
- "id": "ri_m60_11",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m60_12",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m60_13",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m61",
- "menuItemId": "m61",
- "menuItemName": "Blondie Cake",
- "name": "BLONDIE CAKE",
- "description": "Standard recipe for Blondie Cake (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 28.62,
- "pmCost": 11.78,
- "labourCost": 3.2,
- "calculatedCost": 43.6,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m61_1",
- "inventoryItemId": "inv_butter",
- "inventoryName": "BUTTER",
- "quantity": 0.017,
- "unit": "kg",
- "costPerUnit": 754.29,
- "cost": 12.57
- },
- {
- "id": "ri_m61_2",
- "inventoryItemId": "inv_white_compound",
- "inventoryName": "WHITE COMPOUND",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 391.82,
- "cost": 11.75
- },
- {
- "id": "ri_m61_3",
- "inventoryItemId": "inv_egg",
- "inventoryName": "EGG",
- "quantity": 0.333,
- "unit": "pc",
- "costPerUnit": 6.3,
- "cost": 2.1
- },
- {
- "id": "ri_m61_4",
- "inventoryItemId": "inv_vanilla_essence",
- "inventoryName": "VANNILA ESSENCE",
- "quantity": 0.001,
- "unit": "kg",
- "costPerUnit": 484.75,
- "cost": 0.24
- },
- {
- "id": "ri_m61_5",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "WHITE SUGAR",
- "quantity": 0.025,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 1.2
- },
- {
- "id": "ri_m61_6",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.017,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 0.75
- },
- {
- "id": "ri_m61_7",
- "inventoryItemId": "inv_dinning_tray_250ml",
- "inventoryName": "DINNING TRAY 250ML",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 2.92,
- "cost": 2.92
- },
- {
- "id": "ri_m61_8",
- "inventoryItemId": "inv_wooden_spoon",
- "inventoryName": "Wooden Spoon",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.68,
- "cost": 1.68
- },
- {
- "id": "ri_m61_9",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m61_10",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m61_11",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m11",
- "menuItemId": "m11",
- "menuItemName": "1 Pc Leg & Thigh (1 Dip)",
- "name": "CRISPY CHICKEN LEG 1 PC",
- "description": "Standard recipe for 1 Pc Crispy Chicken Leg & Thigh (Price \u20b970/-)",
- "yieldQty": 1,
- "prepTime": 12,
- "rmCost": 30.2,
- "pmCost": 10.41,
- "labourCost": 3.2,
- "calculatedCost": 43.81,
- "sellingPrice": 70.0,
- "ingredients": [
- {
- "id": "ri_m11_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 1.57
- },
- {
- "id": "ri_m11_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.004,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 2.24
- },
- {
- "id": "ri_m11_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.006,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 1.09
- },
- {
- "id": "ri_m11_4",
- "inventoryItemId": "inv_chicken_leg_thigh",
- "inventoryName": "CHICKEN LEG / THIGH",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 250.0,
- "cost": 25.0
- },
- {
- "id": "ri_m11_5",
- "inventoryItemId": "inv_chicken_cover_1pc",
- "inventoryName": "CHICKEN COVER 1 PCS",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.14,
- "cost": 1.14
- },
- {
- "id": "ri_m11_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m11_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m11_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m12",
- "menuItemId": "m12",
- "menuItemName": "2 Pc Leg & Thigh (1 Dip)",
- "name": "CRISPY CHICKEN 2 PCS",
- "description": "Standard recipe for 2 Pc Crispy Chicken Leg & Thigh (Price \u20b9140/-)",
- "yieldQty": 1,
- "prepTime": 12,
- "rmCost": 60.4,
- "pmCost": 11.41,
- "labourCost": 3.2,
- "calculatedCost": 75.01,
- "sellingPrice": 140.0,
- "ingredients": [
- {
- "id": "ri_m12_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 3.14
- },
- {
- "id": "ri_m12_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.008,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 4.48
- },
- {
- "id": "ri_m12_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.012,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 2.18
- },
- {
- "id": "ri_m12_4",
- "inventoryItemId": "inv_chicken_leg_thigh",
- "inventoryName": "CHICKEN LEG / THIGH",
- "quantity": 0.2,
- "unit": "kg",
- "costPerUnit": 250.0,
- "cost": 50.0
- },
- {
- "id": "ri_m12_5",
- "inventoryItemId": "inv_chicken_cover_1pc",
- "inventoryName": "CHICKEN COVER 2 PCS",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 1.14,
- "cost": 2.28
- },
- {
- "id": "ri_m12_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m12_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m12_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m13",
- "menuItemId": "m13",
- "menuItemName": "4 Pc Leg & Thigh (2 Dips)",
- "name": "CRISPY CHICKEN 4 PCS",
- "description": "Standard recipe for 4 Pc Crispy Chicken Leg & Thigh (Price \u20b9280/-)",
- "yieldQty": 1,
- "prepTime": 15,
- "rmCost": 120.8,
- "pmCost": 19.27,
- "labourCost": 3.2,
- "calculatedCost": 143.27,
- "sellingPrice": 280.0,
- "ingredients": [
- {
- "id": "ri_m13_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.16,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 6.28
- },
- {
- "id": "ri_m13_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.016,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 8.96
- },
- {
- "id": "ri_m13_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.024,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 4.36
- },
- {
- "id": "ri_m13_4",
- "inventoryItemId": "inv_chicken_leg_thigh",
- "inventoryName": "CHICKEN LEG / THIGH",
- "quantity": 0.4,
- "unit": "kg",
- "costPerUnit": 250.0,
- "cost": 100.0
- },
- {
- "id": "ri_m13_5",
- "inventoryItemId": "inv_chicken_tub_4pc",
- "inventoryName": "CHICKEN TUB 4 PCS",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 7.44,
- "cost": 7.44
- },
- {
- "id": "ri_m13_6",
- "inventoryItemId": "inv_tub_lid_4pc",
- "inventoryName": "TUB LID 4 PCS",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 4.64,
- "cost": 4.64
- },
- {
- "id": "ri_m13_7",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m13_8",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m13_9",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m14",
- "menuItemId": "m14",
- "menuItemName": "8 Pc Leg & Thigh (4 Dips)",
- "name": "CRISPY CHICKEN 8 PCS",
- "description": "Standard recipe for 8 Pc Crispy Chicken Leg & Thigh (Price \u20b9560/-)",
- "yieldQty": 1,
- "prepTime": 18,
- "rmCost": 241.6,
- "pmCost": 32.65,
- "labourCost": 3.2,
- "calculatedCost": 277.45,
- "sellingPrice": 560.0,
- "ingredients": [
- {
- "id": "ri_m14_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.32,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 12.56
- },
- {
- "id": "ri_m14_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.032,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 17.92
- },
- {
- "id": "ri_m14_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.048,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 8.72
- },
- {
- "id": "ri_m14_4",
- "inventoryItemId": "inv_chicken_leg_thigh",
- "inventoryName": "CHICKEN LEG / THIGH",
- "quantity": 0.8,
- "unit": "kg",
- "costPerUnit": 250.0,
- "cost": 200.0
- },
- {
- "id": "ri_m14_5",
- "inventoryItemId": "inv_chicken_tub_4pc",
- "inventoryName": "CHICKEN TUB 4 PCS",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 7.44,
- "cost": 14.88
- },
- {
- "id": "ri_m14_6",
- "inventoryItemId": "inv_tub_lid_4pc",
- "inventoryName": "TUB LID 4 PCS",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 4.64,
- "cost": 9.28
- },
- {
- "id": "ri_m14_7",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 4.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 1.08
- },
- {
- "id": "ri_m14_8",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m14_9",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m15",
- "menuItemId": "m15",
- "menuItemName": "12 Pc Leg & Thigh (6 Dips)",
- "name": "CRISPY CHICKEN 12 PCS",
- "description": "Standard recipe for 12 Pc Crispy Chicken Leg & Thigh (Price \u20b9840/-)",
- "yieldQty": 1,
- "prepTime": 20,
- "rmCost": 362.4,
- "pmCost": 46.03,
- "labourCost": 3.2,
- "calculatedCost": 411.63,
- "sellingPrice": 840.0,
- "ingredients": [
- {
- "id": "ri_m15_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.48,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 18.84
- },
- {
- "id": "ri_m15_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.048,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 26.88
- },
- {
- "id": "ri_m15_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.072,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 13.08
- },
- {
- "id": "ri_m15_4",
- "inventoryItemId": "inv_chicken_leg_thigh",
- "inventoryName": "CHICKEN LEG / THIGH",
- "quantity": 1.2,
- "unit": "kg",
- "costPerUnit": 250.0,
- "cost": 300.0
- },
- {
- "id": "ri_m15_5",
- "inventoryItemId": "inv_chicken_tub_4pc",
- "inventoryName": "CHICKEN TUB 4 PCS",
- "quantity": 3.0,
- "unit": "pc",
- "costPerUnit": 7.44,
- "cost": 22.32
- },
- {
- "id": "ri_m15_6",
- "inventoryItemId": "inv_tub_lid_4pc",
- "inventoryName": "TUB LID 4 PCS",
- "quantity": 3.0,
- "unit": "pc",
- "costPerUnit": 4.64,
- "cost": 13.92
- },
- {
- "id": "ri_m15_7",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 6.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 1.62
- },
- {
- "id": "ri_m15_8",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m15_9",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m16",
- "menuItemId": "m16",
- "menuItemName": "3 Pc Wings (1 Dip)",
- "name": "CRISPY WINGS 3 PCS",
- "description": "Standard recipe for 3 Pc Crispy Chicken Wings (Price \u20b990/-)",
- "yieldQty": 1,
- "prepTime": 10,
- "rmCost": 30.9,
- "pmCost": 13.3,
- "labourCost": 3.2,
- "calculatedCost": 47.4,
- "sellingPrice": 90.0,
- "ingredients": [
- {
- "id": "ri_m16_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.036,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 1.41
- },
- {
- "id": "ri_m16_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.012,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 6.72
- },
- {
- "id": "ri_m16_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.018,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 3.27
- },
- {
- "id": "ri_m16_4",
- "inventoryItemId": "inv_chicken_wings",
- "inventoryName": "CHICKEN WINGS",
- "quantity": 0.105,
- "unit": "kg",
- "costPerUnit": 185.71,
- "cost": 19.5
- },
- {
- "id": "ri_m16_5",
- "inventoryItemId": "inv_wings_box_6pc",
- "inventoryName": "WINGS BOX 6 PCS",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.11,
- "cost": 6.11
- },
- {
- "id": "ri_m16_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m16_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m16_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m17",
- "menuItemId": "m17",
- "menuItemName": "6 Pc Wings (2 Dips)",
- "name": "CRISPY WINGS 6 PCS",
- "description": "Standard recipe for 6 Pc Crispy Chicken Wings (Price \u20b9180/-)",
- "yieldQty": 1,
- "prepTime": 10,
- "rmCost": 61.8,
- "pmCost": 13.3,
- "labourCost": 3.2,
- "calculatedCost": 78.3,
- "sellingPrice": 180.0,
- "ingredients": [
- {
- "id": "ri_m17_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.072,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 2.83
- },
- {
- "id": "ri_m17_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.024,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 13.44
- },
- {
- "id": "ri_m17_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.036,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 6.54
- },
- {
- "id": "ri_m17_4",
- "inventoryItemId": "inv_chicken_wings",
- "inventoryName": "CHICKEN WINGS",
- "quantity": 0.21,
- "unit": "kg",
- "costPerUnit": 185.71,
- "cost": 39.0
- },
- {
- "id": "ri_m17_5",
- "inventoryItemId": "inv_wings_box_6pc",
- "inventoryName": "WINGS BOX 6 PCS",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.11,
- "cost": 6.11
- },
- {
- "id": "ri_m17_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m17_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m17_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m18",
- "menuItemId": "m18",
- "menuItemName": "9 Pc Wings (3 Dips)",
- "name": "CRISPY WINGS 9 PCS",
- "description": "Standard recipe for 9 Pc Crispy Chicken Wings (Price \u20b9270/-)",
- "yieldQty": 1,
- "prepTime": 12,
- "rmCost": 92.7,
- "pmCost": 19.68,
- "labourCost": 3.2,
- "calculatedCost": 115.58,
- "sellingPrice": 270.0,
- "ingredients": [
- {
- "id": "ri_m18_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.108,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 4.24
- },
- {
- "id": "ri_m18_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.036,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 20.16
- },
- {
- "id": "ri_m18_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.054,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 9.81
- },
- {
- "id": "ri_m18_4",
- "inventoryItemId": "inv_chicken_wings",
- "inventoryName": "CHICKEN WINGS",
- "quantity": 0.315,
- "unit": "kg",
- "costPerUnit": 185.71,
- "cost": 58.5
- },
- {
- "id": "ri_m18_5",
- "inventoryItemId": "inv_wings_box_6pc",
- "inventoryName": "WINGS BOX 6 PCS",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 6.11,
- "cost": 12.22
- },
- {
- "id": "ri_m18_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 3.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.81
- },
- {
- "id": "ri_m18_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m18_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m19",
- "menuItemId": "m19",
- "menuItemName": "20 Pc Wings (6 Dips)",
- "name": "CRISPY WINGS 20 PCS",
- "description": "Standard recipe for 20 Pc Crispy Chicken Wings (Price \u20b9600/-)",
- "yieldQty": 1,
- "prepTime": 15,
- "rmCost": 206.0,
- "pmCost": 38.82,
- "labourCost": 6.4,
- "calculatedCost": 251.22,
- "sellingPrice": 600.0,
- "ingredients": [
- {
- "id": "ri_m19_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.24,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 9.42
- },
- {
- "id": "ri_m19_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 44.8
- },
- {
- "id": "ri_m19_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.12,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 21.79
- },
- {
- "id": "ri_m19_4",
- "inventoryItemId": "inv_chicken_wings",
- "inventoryName": "CHICKEN WINGS",
- "quantity": 0.7,
- "unit": "kg",
- "costPerUnit": 185.71,
- "cost": 130.0
- },
- {
- "id": "ri_m19_5",
- "inventoryItemId": "inv_wings_box_6pc",
- "inventoryName": "WINGS BOX 6 PCS",
- "quantity": 4.0,
- "unit": "pc",
- "costPerUnit": 6.11,
- "cost": 24.44
- },
- {
- "id": "ri_m19_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 4.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 1.08
- },
- {
- "id": "ri_m19_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 13.3
- },
- {
- "id": "ri_m19_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 2.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 6.4
- }
- ]
- },
- {
- "id": "r_m20",
- "menuItemId": "m20",
- "menuItemName": "60 Pc Wings (12 Dips)",
- "name": "CRISPY WINGS 60 PCS",
- "description": "Standard recipe for 60 Pc Crispy Chicken Wings (Price \u20b91500/-)",
- "yieldQty": 1,
- "prepTime": 25,
- "rmCost": 515.0,
- "pmCost": 77.64,
- "labourCost": 16.0,
- "calculatedCost": 608.64,
- "sellingPrice": 1500.0,
- "ingredients": [
- {
- "id": "ri_m20_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.6,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 23.55
- },
- {
- "id": "ri_m20_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.2,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 112.0
- },
- {
- "id": "ri_m20_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.3,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 54.47
- },
- {
- "id": "ri_m20_4",
- "inventoryItemId": "inv_chicken_wings",
- "inventoryName": "CHICKEN WINGS",
- "quantity": 1.75,
- "unit": "kg",
- "costPerUnit": 185.71,
- "cost": 325.0
- },
- {
- "id": "ri_m20_5",
- "inventoryItemId": "inv_wings_box_6pc",
- "inventoryName": "WINGS BOX 6 PCS",
- "quantity": 9.0,
- "unit": "pc",
- "costPerUnit": 6.11,
- "cost": 54.99
- },
- {
- "id": "ri_m20_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 10.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 2.7
- },
- {
- "id": "ri_m20_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 3.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 19.95
- },
- {
- "id": "ri_m20_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 5.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 16.0
- }
- ]
- },
- {
- "id": "r_m21",
- "menuItemId": "m21",
- "menuItemName": "3 Pc Strips (1 Dip)",
- "name": "CRISPY STRIPS 3 PCS",
- "description": "Standard recipe for 3 Pc Crispy Chicken Strips (Price \u20b9120/-)",
- "yieldQty": 1,
- "prepTime": 10,
- "rmCost": 42.9,
- "pmCost": 10.11,
- "labourCost": 3.2,
- "calculatedCost": 56.21,
- "sellingPrice": 120.0,
- "ingredients": [
- {
- "id": "ri_m21_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.036,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 1.41
- },
- {
- "id": "ri_m21_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.012,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 6.72
- },
- {
- "id": "ri_m21_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.018,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 3.27
- },
- {
- "id": "ri_m21_4",
- "inventoryItemId": "inv_chicken_strips",
- "inventoryName": "CHICKEN STRIPS",
- "quantity": 0.09,
- "unit": "kg",
- "costPerUnit": 350.0,
- "cost": 31.5
- },
- {
- "id": "ri_m21_5",
- "inventoryItemId": "inv_dinning_tray_250ml",
- "inventoryName": "DINNING TRAY 250ML",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 2.92,
- "cost": 2.92
- },
- {
- "id": "ri_m21_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m21_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m21_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m22",
- "menuItemId": "m22",
- "menuItemName": "6 Pc Strips (2 Dips)",
- "name": "CRISPY STRIPS 6 PCS",
- "description": "Standard recipe for 6 Pc Crispy Chicken Strips (Price \u20b9240/-)",
- "yieldQty": 1,
- "prepTime": 10,
- "rmCost": 85.8,
- "pmCost": 10.11,
- "labourCost": 3.2,
- "calculatedCost": 99.11,
- "sellingPrice": 240.0,
- "ingredients": [
- {
- "id": "ri_m22_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.072,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 2.83
- },
- {
- "id": "ri_m22_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.024,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 13.44
- },
- {
- "id": "ri_m22_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.036,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 6.54
- },
- {
- "id": "ri_m22_4",
- "inventoryItemId": "inv_chicken_strips",
- "inventoryName": "CHICKEN STRIPS",
- "quantity": 0.18,
- "unit": "kg",
- "costPerUnit": 350.0,
- "cost": 63.0
- },
- {
- "id": "ri_m22_5",
- "inventoryItemId": "inv_dinning_tray_250ml",
- "inventoryName": "DINNING TRAY 250ML",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 2.92,
- "cost": 2.92
- },
- {
- "id": "ri_m22_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m22_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m22_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m23",
- "menuItemId": "m23",
- "menuItemName": "9 Pc Strips (3 Dips)",
- "name": "CRISPY STRIPS 9 PCS",
- "description": "Standard recipe for 9 Pc Crispy Chicken Strips (Price \u20b9360/-)",
- "yieldQty": 1,
- "prepTime": 12,
- "rmCost": 128.7,
- "pmCost": 13.3,
- "labourCost": 3.2,
- "calculatedCost": 145.2,
- "sellingPrice": 360.0,
- "ingredients": [
- {
- "id": "ri_m23_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.108,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 4.24
- },
- {
- "id": "ri_m23_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.036,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 20.16
- },
- {
- "id": "ri_m23_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.054,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 9.81
- },
- {
- "id": "ri_m23_4",
- "inventoryItemId": "inv_chicken_strips",
- "inventoryName": "CHICKEN STRIPS",
- "quantity": 0.27,
- "unit": "kg",
- "costPerUnit": 350.0,
- "cost": 94.5
- },
- {
- "id": "ri_m23_5",
- "inventoryItemId": "inv_dinning_tray_250ml",
- "inventoryName": "DINNING TRAY 250ML",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 2.92,
- "cost": 5.84
- },
- {
- "id": "ri_m23_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 3.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.81
- },
- {
- "id": "ri_m23_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m23_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 3.2
- }
- ]
- },
- {
- "id": "r_m24",
- "menuItemId": "m24",
- "menuItemName": "20 Pc Strips (6 Dips)",
- "name": "CRISPY STRIPS 20 PCS",
- "description": "Standard recipe for 20 Pc Crispy Chicken Strips (Price \u20b9800/-)",
- "yieldQty": 1,
- "prepTime": 15,
- "rmCost": 286.0,
- "pmCost": 23.14,
- "labourCost": 6.4,
- "calculatedCost": 315.54,
- "sellingPrice": 800.0,
- "ingredients": [
- {
- "id": "ri_m24_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.24,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 9.42
- },
- {
- "id": "ri_m24_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 44.8
- },
- {
- "id": "ri_m24_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.12,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 21.79
- },
- {
- "id": "ri_m24_4",
- "inventoryItemId": "inv_chicken_strips",
- "inventoryName": "CHICKEN STRIPS",
- "quantity": 0.6,
- "unit": "kg",
- "costPerUnit": 350.0,
- "cost": 210.0
- },
- {
- "id": "ri_m24_5",
- "inventoryItemId": "inv_dinning_tray_250ml",
- "inventoryName": "DINNING TRAY 250ML",
- "quantity": 3.0,
- "unit": "pc",
- "costPerUnit": 2.92,
- "cost": 8.76
- },
- {
- "id": "ri_m24_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 4.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 1.08
- },
- {
- "id": "ri_m24_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 13.3
- },
- {
- "id": "ri_m24_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 2.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 6.4
- }
- ]
- },
- {
- "id": "r_m25",
- "menuItemId": "m25",
- "menuItemName": "60 Pc Strips (12 Dips)",
- "name": "CRISPY STRIPS 60 PCS",
- "description": "Standard recipe for 60 Pc Crispy Chicken Strips (Price \u20b92400/-)",
- "yieldQty": 1,
- "prepTime": 25,
- "rmCost": 858.0,
- "pmCost": 40.17,
- "labourCost": 16.0,
- "calculatedCost": 914.17,
- "sellingPrice": 2400.0,
- "ingredients": [
- {
- "id": "ri_m25_1",
- "inventoryItemId": "inv_fried_chicken_mix",
- "inventoryName": "FRIED CHICKEN MIXED",
- "quantity": 0.72,
- "unit": "kg",
- "costPerUnit": 39.25,
- "cost": 28.26
- },
- {
- "id": "ri_m25_2",
- "inventoryItemId": "inv_extra_hot_spicy",
- "inventoryName": "EXTRA HOT AND SPICY",
- "quantity": 0.24,
- "unit": "kg",
- "costPerUnit": 560.0,
- "cost": 134.4
- },
- {
- "id": "ri_m25_3",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.36,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 65.37
- },
- {
- "id": "ri_m25_4",
- "inventoryItemId": "inv_chicken_strips",
- "inventoryName": "CHICKEN STRIPS",
- "quantity": 1.8,
- "unit": "kg",
- "costPerUnit": 350.0,
- "cost": 630.0
- },
- {
- "id": "ri_m25_5",
- "inventoryItemId": "inv_dinning_tray_250ml",
- "inventoryName": "DINNING TRAY 250ML",
- "quantity": 6.0,
- "unit": "pc",
- "costPerUnit": 2.92,
- "cost": 17.52
- },
- {
- "id": "ri_m25_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 10.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 2.7
- },
- {
- "id": "ri_m25_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 3.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 19.95
- },
- {
- "id": "ri_m25_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 5.0,
- "unit": "unit",
- "costPerUnit": 3.2,
- "cost": 16.0
- }
- ]
- },
- {
- "id": "r_m1a",
- "menuItemId": "m1a",
- "menuItemName": "Spicy Gyro - Chicken",
- "name": "SPICY CHICKEN GYROS - SMALL",
- "description": "Standard recipe for Spicy Gyro Chicken (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 35.79,
- "pmCost": 11.81,
- "labourCost": 15.95,
- "calculatedCost": 63.55,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m1a_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.3
- },
- {
- "id": "ri_m1a_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 3.77
- },
- {
- "id": "ri_m1a_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 2.41
- },
- {
- "id": "ri_m1a_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 1.79
- },
- {
- "id": "ri_m1a_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 1.8
- },
- {
- "id": "ri_m1a_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 7.69
- },
- {
- "id": "ri_m1a_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 272.0,
- "cost": 2.72
- },
- {
- "id": "ri_m1a_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.33
- },
- {
- "id": "ri_m1a_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.74
- },
- {
- "id": "ri_m1a_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.84
- },
- {
- "id": "ri_m1a_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 7.75
- },
- {
- "id": "ri_m1a_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JALAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 3.3
- },
- {
- "id": "ri_m1a_13",
- "inventoryItemId": "inv_spicy_chicken",
- "inventoryName": "SPICY CHICKEN",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 301.89,
- "cost": 15.09
- },
- {
- "id": "ri_m1a_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.29
- },
- {
- "id": "ri_m1a_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 3.52
- },
- {
- "id": "ri_m1a_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.44
- },
- {
- "id": "ri_m1a_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m1a_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dining Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m1a_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m1a_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.05,
- "cost": 6.05
- },
- {
- "id": "ri_m1a_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m2a",
- "menuItemId": "m2a",
- "menuItemName": "Spicy Gyro - Chicken (Signature)",
- "name": "SPICY CHICKEN GYROS - LARGE",
- "description": "Standard recipe for Spicy Gyro Chicken Signature Large (Price \u20b9249/-)",
- "yieldQty": 1,
- "prepTime": 10,
- "rmCost": 67.68,
- "pmCost": 11.81,
- "labourCost": 15.95,
- "calculatedCost": 95.44,
- "sellingPrice": 249.0,
- "ingredients": [
- {
- "id": "ri_m2a_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.3
- },
- {
- "id": "ri_m2a_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 3.77
- },
- {
- "id": "ri_m2a_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 2.41
- },
- {
- "id": "ri_m2a_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m2a_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 1.8
- },
- {
- "id": "ri_m2a_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 7.69
- },
- {
- "id": "ri_m2a_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 272.0,
- "cost": 2.72
- },
- {
- "id": "ri_m2a_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.33
- },
- {
- "id": "ri_m2a_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.74
- },
- {
- "id": "ri_m2a_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.84
- },
- {
- "id": "ri_m2a_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 7.75
- },
- {
- "id": "ri_m2a_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JALAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 3.3
- },
- {
- "id": "ri_m2a_13",
- "inventoryItemId": "inv_spicy_chicken",
- "inventoryName": "SPICY CHICKEN",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 301.89,
- "cost": 30.19
- },
- {
- "id": "ri_m2a_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.29
- },
- {
- "id": "ri_m2a_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 3.52
- },
- {
- "id": "ri_m2a_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.44
- },
- {
- "id": "ri_m2a_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m2a_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dining Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m2a_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m2a_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.05,
- "cost": 6.05
- },
- {
- "id": "ri_m2a_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m3a",
- "menuItemId": "m3a",
- "menuItemName": "Creamy Gyro - Chicken",
- "name": "CREAM CHICKEN - SMALL",
- "description": "Standard recipe for Creamy Gyro Chicken (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 34.39,
- "pmCost": 11.87,
- "labourCost": 15.95,
- "calculatedCost": 62.21,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m3a_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.3
- },
- {
- "id": "ri_m3a_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.006,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 2.07
- },
- {
- "id": "ri_m3a_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 2.41
- },
- {
- "id": "ri_m3a_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 1.79
- },
- {
- "id": "ri_m3a_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 1.8
- },
- {
- "id": "ri_m3a_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 7.69
- },
- {
- "id": "ri_m3a_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 273.0,
- "cost": 2.73
- },
- {
- "id": "ri_m3a_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.33
- },
- {
- "id": "ri_m3a_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.74
- },
- {
- "id": "ri_m3a_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.84
- },
- {
- "id": "ri_m3a_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 7.75
- },
- {
- "id": "ri_m3a_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JELAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 3.3
- },
- {
- "id": "ri_m3a_13",
- "inventoryItemId": "inv_cream_chicken",
- "inventoryName": "CREAM CHICKEN",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 274.0,
- "cost": 13.7
- },
- {
- "id": "ri_m3a_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.29
- },
- {
- "id": "ri_m3a_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 3.52
- },
- {
- "id": "ri_m3a_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.44
- },
- {
- "id": "ri_m3a_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m3a_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dinning Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m3a_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m3a_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m3a_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m4a",
- "menuItemId": "m4a",
- "menuItemName": "Creamy Gyro - Chicken (Signature)",
- "name": "CREAM CHICKEN - LARGE",
- "description": "Standard recipe for Creamy Gyro Chicken Signature Large (Price \u20b9249/-)",
- "yieldQty": 1,
- "prepTime": 10,
- "rmCost": 65.19,
- "pmCost": 11.87,
- "labourCost": 15.95,
- "calculatedCost": 93.01,
- "sellingPrice": 249.0,
- "ingredients": [
- {
- "id": "ri_m4a_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.3
- },
- {
- "id": "ri_m4a_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.006,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 2.07
- },
- {
- "id": "ri_m4a_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 2.41
- },
- {
- "id": "ri_m4a_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m4a_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 1.8
- },
- {
- "id": "ri_m4a_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 7.69
- },
- {
- "id": "ri_m4a_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 273.0,
- "cost": 2.73
- },
- {
- "id": "ri_m4a_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.33
- },
- {
- "id": "ri_m4a_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.74
- },
- {
- "id": "ri_m4a_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.84
- },
- {
- "id": "ri_m4a_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 7.75
- },
- {
- "id": "ri_m4a_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JELAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 3.3
- },
- {
- "id": "ri_m4a_13",
- "inventoryItemId": "inv_cream_chicken",
- "inventoryName": "CREAM CHICKEN",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 274.0,
- "cost": 27.4
- },
- {
- "id": "ri_m4a_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.29
- },
- {
- "id": "ri_m4a_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 3.52
- },
- {
- "id": "ri_m4a_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.44
- },
- {
- "id": "ri_m4a_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m4a_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dinning Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m4a_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m4a_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m4a_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m11a",
- "menuItemId": "m11a",
- "menuItemName": "Pesto Gyro - Chicken",
- "name": "PESTO CHICKEN GYROS - SMALL",
- "description": "Standard recipe for Pesto Gyro Chicken (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 39.77,
- "pmCost": 11.87,
- "labourCost": 15.95,
- "calculatedCost": 67.59,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m11a_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.008,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.15
- },
- {
- "id": "ri_m11a_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.003,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 1.04
- },
- {
- "id": "ri_m11a_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 1.2
- },
- {
- "id": "ri_m11a_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m11a_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 0.9
- },
- {
- "id": "ri_m11a_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.02,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 3.85
- },
- {
- "id": "ri_m11a_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 273.0,
- "cost": 1.37
- },
- {
- "id": "ri_m11a_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.17
- },
- {
- "id": "ri_m11a_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.37
- },
- {
- "id": "ri_m11a_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.42
- },
- {
- "id": "ri_m11a_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 3.88
- },
- {
- "id": "ri_m11a_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JELAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 1.65
- },
- {
- "id": "ri_m11a_13",
- "inventoryItemId": "inv_pesto_chicken",
- "inventoryName": "PESTO CHICKEN",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 381.75,
- "cost": 19.09
- },
- {
- "id": "ri_m11a_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.005,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.14
- },
- {
- "id": "ri_m11a_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.005,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 1.76
- },
- {
- "id": "ri_m11a_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.005,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.22
- },
- {
- "id": "ri_m11a_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m11a_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dinning Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m11a_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m11a_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m11a_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m12a",
- "menuItemId": "m12a",
- "menuItemName": "Pesto Gyro - Chicken (Signature)",
- "name": "PESTO CHICKEN GYROS - LARGE",
- "description": "Standard recipe for Pesto Gyro Chicken Signature Large (Price \u20b9249/-)",
- "yieldQty": 1,
- "prepTime": 10,
- "rmCost": 75.97,
- "pmCost": 11.87,
- "labourCost": 15.95,
- "calculatedCost": 103.79,
- "sellingPrice": 249.0,
- "ingredients": [
- {
- "id": "ri_m12a_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.3
- },
- {
- "id": "ri_m12a_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.006,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 2.07
- },
- {
- "id": "ri_m12a_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 2.41
- },
- {
- "id": "ri_m12a_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m12a_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 1.8
- },
- {
- "id": "ri_m12a_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 7.69
- },
- {
- "id": "ri_m12a_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 273.0,
- "cost": 2.73
- },
- {
- "id": "ri_m12a_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.33
- },
- {
- "id": "ri_m12a_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.74
- },
- {
- "id": "ri_m12a_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.84
- },
- {
- "id": "ri_m12a_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 7.75
- },
- {
- "id": "ri_m12a_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JELAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 3.3
- },
- {
- "id": "ri_m12a_13",
- "inventoryItemId": "inv_pesto_chicken",
- "inventoryName": "PESTO CHICKEN",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 381.75,
- "cost": 38.18
- },
- {
- "id": "ri_m12a_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.29
- },
- {
- "id": "ri_m12a_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 3.52
- },
- {
- "id": "ri_m12a_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.44
- },
- {
- "id": "ri_m12a_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m12a_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dinning Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m12a_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m12a_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m12a_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m1b",
- "menuItemId": "m1b",
- "menuItemName": "Spicy Gyro - Paneer",
- "name": "SPICY PANNER GYROS - SMALL",
- "description": "Standard recipe for Spicy Gyro Paneer (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 43.28,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 71.64,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m1b_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.3
- },
- {
- "id": "ri_m1b_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.006,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 2.07
- },
- {
- "id": "ri_m1b_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 2.41
- },
- {
- "id": "ri_m1b_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 1.79
- },
- {
- "id": "ri_m1b_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 1.8
- },
- {
- "id": "ri_m1b_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 7.69
- },
- {
- "id": "ri_m1b_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 273.0,
- "cost": 2.73
- },
- {
- "id": "ri_m1b_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.33
- },
- {
- "id": "ri_m1b_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.74
- },
- {
- "id": "ri_m1b_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.84
- },
- {
- "id": "ri_m1b_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 7.75
- },
- {
- "id": "ri_m1b_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JELAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 3.3
- },
- {
- "id": "ri_m1b_13",
- "inventoryItemId": "inv_spicy_paneer",
- "inventoryName": "SPICY PANNER",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 451.89,
- "cost": 22.6
- },
- {
- "id": "ri_m1b_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.29
- },
- {
- "id": "ri_m1b_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 3.52
- },
- {
- "id": "ri_m1b_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.44
- },
- {
- "id": "ri_m1b_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m1b_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dinning Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m1b_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m1b_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m1b_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m2b",
- "menuItemId": "m2b",
- "menuItemName": "Spicy Gyro - Paneer (Signature)",
- "name": "SPICY PANNER GYROS - LARGE",
- "description": "Standard recipe for Spicy Gyro Paneer Signature Large (Price \u20b9249/-)",
- "yieldQty": 1,
- "prepTime": 10,
- "rmCost": 82.98,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 111.34,
- "sellingPrice": 249.0,
- "ingredients": [
- {
- "id": "ri_m2b_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.3
- },
- {
- "id": "ri_m2b_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.006,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 2.07
- },
- {
- "id": "ri_m2b_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 2.41
- },
- {
- "id": "ri_m2b_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m2b_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 1.8
- },
- {
- "id": "ri_m2b_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 7.69
- },
- {
- "id": "ri_m2b_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 273.0,
- "cost": 2.73
- },
- {
- "id": "ri_m2b_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.33
- },
- {
- "id": "ri_m2b_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.74
- },
- {
- "id": "ri_m2b_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.84
- },
- {
- "id": "ri_m2b_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 7.75
- },
- {
- "id": "ri_m2b_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JELAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 3.3
- },
- {
- "id": "ri_m2b_13",
- "inventoryItemId": "inv_spicy_paneer",
- "inventoryName": "SPICY PANNER",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 451.89,
- "cost": 45.19
- },
- {
- "id": "ri_m2b_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.29
- },
- {
- "id": "ri_m2b_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 3.52
- },
- {
- "id": "ri_m2b_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.44
- },
- {
- "id": "ri_m2b_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m2b_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dinning Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m2b_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m2b_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m2b_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m3b",
- "menuItemId": "m3b",
- "menuItemName": "Creamy Gyro - Paneer",
- "name": "CREAM PANEER GYROS - SMALL",
- "description": "Standard recipe for Creamy Gyro Paneer (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 41.89,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 70.25,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m3b_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.3
- },
- {
- "id": "ri_m3b_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.006,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 2.07
- },
- {
- "id": "ri_m3b_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 2.41
- },
- {
- "id": "ri_m3b_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 1.79
- },
- {
- "id": "ri_m3b_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 1.8
- },
- {
- "id": "ri_m3b_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 7.69
- },
- {
- "id": "ri_m3b_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 273.0,
- "cost": 2.73
- },
- {
- "id": "ri_m3b_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.33
- },
- {
- "id": "ri_m3b_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.74
- },
- {
- "id": "ri_m3b_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.84
- },
- {
- "id": "ri_m3b_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 7.75
- },
- {
- "id": "ri_m3b_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JELAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 3.3
- },
- {
- "id": "ri_m3b_13",
- "inventoryItemId": "inv_cream_paneer",
- "inventoryName": "CREAM PANNER",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 424.0,
- "cost": 21.2
- },
- {
- "id": "ri_m3b_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.29
- },
- {
- "id": "ri_m3b_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 3.52
- },
- {
- "id": "ri_m3b_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.44
- },
- {
- "id": "ri_m3b_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m3b_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dinning Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m3b_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m3b_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m3b_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m4b",
- "menuItemId": "m4b",
- "menuItemName": "Creamy Gyro - Paneer (Signature)",
- "name": "CREAM PANEER GYROS - LARGE",
- "description": "Standard recipe for Creamy Gyro Paneer Signature Large (Price \u20b9249/-)",
- "yieldQty": 1,
- "prepTime": 10,
- "rmCost": 80.19,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 108.55,
- "sellingPrice": 249.0,
- "ingredients": [
- {
- "id": "ri_m4b_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.3
- },
- {
- "id": "ri_m4b_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.006,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 2.07
- },
- {
- "id": "ri_m4b_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 2.41
- },
- {
- "id": "ri_m4b_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m4b_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 1.8
- },
- {
- "id": "ri_m4b_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 7.69
- },
- {
- "id": "ri_m4b_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 273.0,
- "cost": 2.73
- },
- {
- "id": "ri_m4b_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.33
- },
- {
- "id": "ri_m4b_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.74
- },
- {
- "id": "ri_m4b_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.84
- },
- {
- "id": "ri_m4b_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 7.75
- },
- {
- "id": "ri_m4b_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JELAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 3.3
- },
- {
- "id": "ri_m4b_13",
- "inventoryItemId": "inv_cream_paneer",
- "inventoryName": "CREAM PANNER",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 424.0,
- "cost": 42.4
- },
- {
- "id": "ri_m4b_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.29
- },
- {
- "id": "ri_m4b_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 3.52
- },
- {
- "id": "ri_m4b_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.44
- },
- {
- "id": "ri_m4b_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m4b_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dinning Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m4b_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m4b_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m4b_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m5b",
- "menuItemId": "m5b",
- "menuItemName": "BBQ Gyro - Paneer",
- "name": "BARBEQUE PANNER GYROS - SMALL",
- "description": "Standard recipe for BBQ Gyro Paneer (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 41.71,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 70.07,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m5b_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.3
- },
- {
- "id": "ri_m5b_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.006,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 2.07
- },
- {
- "id": "ri_m5b_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 2.41
- },
- {
- "id": "ri_m5b_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 1.79
- },
- {
- "id": "ri_m5b_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 1.8
- },
- {
- "id": "ri_m5b_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 7.69
- },
- {
- "id": "ri_m5b_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 273.0,
- "cost": 2.73
- },
- {
- "id": "ri_m5b_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.33
- },
- {
- "id": "ri_m5b_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.74
- },
- {
- "id": "ri_m5b_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.84
- },
- {
- "id": "ri_m5b_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 7.75
- },
- {
- "id": "ri_m5b_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JELAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 3.3
- },
- {
- "id": "ri_m5b_13",
- "inventoryItemId": "inv_bbq_paneer",
- "inventoryName": "BBQ PANNER",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 420.4,
- "cost": 21.02
- },
- {
- "id": "ri_m5b_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.29
- },
- {
- "id": "ri_m5b_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 3.52
- },
- {
- "id": "ri_m5b_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.44
- },
- {
- "id": "ri_m5b_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m5b_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dinning Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m5b_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m5b_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m5b_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m6b",
- "menuItemId": "m6b",
- "menuItemName": "BBQ Gyro - Paneer (Signature)",
- "name": "BARBEQUE PANNER GYROS - LARGE",
- "description": "Standard recipe for BBQ Gyro Paneer Signature Large (Price \u20b9249/-)",
- "yieldQty": 1,
- "prepTime": 10,
- "rmCost": 79.83,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 108.19,
- "sellingPrice": 249.0,
- "ingredients": [
- {
- "id": "ri_m6b_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.3
- },
- {
- "id": "ri_m6b_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.006,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 2.07
- },
- {
- "id": "ri_m6b_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 2.41
- },
- {
- "id": "ri_m6b_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m6b_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 1.8
- },
- {
- "id": "ri_m6b_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 7.69
- },
- {
- "id": "ri_m6b_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 273.0,
- "cost": 2.73
- },
- {
- "id": "ri_m6b_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.33
- },
- {
- "id": "ri_m6b_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.74
- },
- {
- "id": "ri_m6b_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.84
- },
- {
- "id": "ri_m6b_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 7.75
- },
- {
- "id": "ri_m6b_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JELAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 3.3
- },
- {
- "id": "ri_m6b_13",
- "inventoryItemId": "inv_bbq_paneer",
- "inventoryName": "BBQ PANNER",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 420.4,
- "cost": 42.04
- },
- {
- "id": "ri_m6b_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.29
- },
- {
- "id": "ri_m6b_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 3.52
- },
- {
- "id": "ri_m6b_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.44
- },
- {
- "id": "ri_m6b_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m6b_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dinning Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m6b_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m6b_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m6b_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m11b",
- "menuItemId": "m11b",
- "menuItemName": "Pesto Gyro - Paneer",
- "name": "PESTO PANNER GYROS - SMALL",
- "description": "Standard recipe for Pesto Gyro Paneer (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 47.27,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 75.63,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m11b_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.3
- },
- {
- "id": "ri_m11b_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.006,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 2.07
- },
- {
- "id": "ri_m11b_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 2.41
- },
- {
- "id": "ri_m11b_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 1.79
- },
- {
- "id": "ri_m11b_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 1.8
- },
- {
- "id": "ri_m11b_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 7.69
- },
- {
- "id": "ri_m11b_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 273.0,
- "cost": 2.73
- },
- {
- "id": "ri_m11b_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.33
- },
- {
- "id": "ri_m11b_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.74
- },
- {
- "id": "ri_m11b_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.84
- },
- {
- "id": "ri_m11b_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 7.75
- },
- {
- "id": "ri_m11b_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JELAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 3.3
- },
- {
- "id": "ri_m11b_13",
- "inventoryItemId": "inv_pesto_paneer",
- "inventoryName": "PESTO PANNER",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 531.75,
- "cost": 26.59
- },
- {
- "id": "ri_m11b_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.29
- },
- {
- "id": "ri_m11b_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 3.52
- },
- {
- "id": "ri_m11b_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.44
- },
- {
- "id": "ri_m11b_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m11b_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dinning Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m11b_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m11b_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m11b_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m12b",
- "menuItemId": "m12b",
- "menuItemName": "Pesto Gyro - Paneer (Signature)",
- "name": "PESTO PANNER GYROS - LARGE",
- "description": "Standard recipe for Pesto Gyro Paneer Signature Large (Price \u20b9249/-)",
- "yieldQty": 1,
- "prepTime": 10,
- "rmCost": 90.97,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 119.33,
- "sellingPrice": 249.0,
- "ingredients": [
- {
- "id": "ri_m12b_1",
- "inventoryItemId": "inv_water",
- "inventoryName": "WATER",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 20.0,
- "cost": 0.3
- },
- {
- "id": "ri_m12b_2",
- "inventoryItemId": "inv_dry_yeast",
- "inventoryName": "DRY YEAST",
- "quantity": 0.006,
- "unit": "kg",
- "costPerUnit": 377.12,
- "cost": 2.07
- },
- {
- "id": "ri_m12b_3",
- "inventoryItemId": "inv_white_sugar",
- "inventoryName": "SUGAR",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 48.19,
- "cost": 2.41
- },
- {
- "id": "ri_m12b_4",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m12b_5",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.06,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 1.8
- },
- {
- "id": "ri_m12b_6",
- "inventoryItemId": "inv_cp_powder",
- "inventoryName": "CP POWDER",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 256.37,
- "cost": 7.69
- },
- {
- "id": "ri_m12b_7",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 273.0,
- "cost": 2.73
- },
- {
- "id": "ri_m12b_8",
- "inventoryItemId": "inv_onion",
- "inventoryName": "ONION",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 33.0,
- "cost": 0.33
- },
- {
- "id": "ri_m12b_9",
- "inventoryItemId": "inv_tomato",
- "inventoryName": "TOMATO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 73.5,
- "cost": 0.74
- },
- {
- "id": "ri_m12b_10",
- "inventoryItemId": "inv_cucumber",
- "inventoryName": "CUCUMBER",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 84.0,
- "cost": 0.84
- },
- {
- "id": "ri_m12b_11",
- "inventoryItemId": "inv_olives",
- "inventoryName": "OLIVES",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 775.0,
- "cost": 7.75
- },
- {
- "id": "ri_m12b_12",
- "inventoryItemId": "inv_jalapeno",
- "inventoryName": "JELAPENO",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 330.0,
- "cost": 3.3
- },
- {
- "id": "ri_m12b_13",
- "inventoryItemId": "inv_pesto_paneer",
- "inventoryName": "PESTO PANNER",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 531.75,
- "cost": 53.18
- },
- {
- "id": "ri_m12b_14",
- "inventoryItemId": "inv_hummus",
- "inventoryName": "HUMMUS",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 28.96,
- "cost": 0.29
- },
- {
- "id": "ri_m12b_15",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 352.27,
- "cost": 3.52
- },
- {
- "id": "ri_m12b_16",
- "inventoryItemId": "inv_honey_mustard",
- "inventoryName": "HONEY MUSTARD",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 43.65,
- "cost": 0.44
- },
- {
- "id": "ri_m12b_17",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m12b_18",
- "inventoryItemId": "inv_dining_sheet",
- "inventoryName": "Dinning Sheet",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.55,
- "cost": 1.55
- },
- {
- "id": "ri_m12b_19",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.67,
- "cost": 3.67
- },
- {
- "id": "ri_m12b_20",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take away Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m12b_21",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m26a",
- "menuItemId": "m26a",
- "menuItemName": "Salted Fries",
- "name": "FRENCH FRIES",
- "description": "Standard recipe for Salted French Fries (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 15.37,
- "pmCost": 20.46,
- "labourCost": 7.42,
- "calculatedCost": 43.26,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m26a_1",
- "inventoryItemId": "inv_potato",
- "inventoryName": "POTATO",
- "quantity": 0.25,
- "unit": "kg",
- "costPerUnit": 50.0,
- "cost": 12.5
- },
- {
- "id": "ri_m26a_2",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 2.72
- },
- {
- "id": "ri_m26a_3",
- "inventoryItemId": "inv_salt",
- "inventoryName": "SALT",
- "quantity": 0.005,
- "unit": "kg",
- "costPerUnit": 30.0,
- "cost": 0.15
- },
- {
- "id": "ri_m26a_4",
- "inventoryItemId": "inv_fries_cup",
- "inventoryName": "Fries Cup",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.82,
- "cost": 6.82
- },
- {
- "id": "ri_m26a_5",
- "inventoryItemId": "inv_paper_bag",
- "inventoryName": "Paper Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.45,
- "cost": 6.45
- },
- {
- "id": "ri_m26a_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m26a_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m26a_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 7.42,
- "cost": 7.42
- }
- ]
- },
- {
- "id": "r_m26b",
- "menuItemId": "m26b",
- "menuItemName": "Peri Peri Fries",
- "name": "PERI PERI FRIES",
- "description": "Standard recipe for Peri Peri Fries (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 19.92,
- "pmCost": 20.19,
- "labourCost": 7.42,
- "calculatedCost": 47.53,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m26b_1",
- "inventoryItemId": "inv_potato",
- "inventoryName": "POTATO",
- "quantity": 0.25,
- "unit": "kg",
- "costPerUnit": 50.0,
- "cost": 12.5
- },
- {
- "id": "ri_m26b_2",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 2.72
- },
- {
- "id": "ri_m26b_3",
- "inventoryItemId": "inv_peri_peri_sauce",
- "inventoryName": "PERI PERI MASALA",
- "quantity": 0.008,
- "unit": "kg",
- "costPerUnit": 586.7,
- "cost": 4.69
- },
- {
- "id": "ri_m26b_4",
- "inventoryItemId": "inv_fries_cup",
- "inventoryName": "250ml Cup",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.55,
- "cost": 6.55
- },
- {
- "id": "ri_m26b_5",
- "inventoryItemId": "inv_paper_bag",
- "inventoryName": "Paper Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.45,
- "cost": 6.45
- },
- {
- "id": "ri_m26b_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m26b_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m26b_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 7.42,
- "cost": 7.42
- }
- ]
- },
- {
- "id": "r_m26c",
- "menuItemId": "m26c",
- "menuItemName": "Cajun Fries",
- "name": "KAJU FRIES",
- "description": "Standard recipe for Cajun Fries (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 20.02,
- "pmCost": 20.19,
- "labourCost": 7.42,
- "calculatedCost": 47.64,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m26c_1",
- "inventoryItemId": "inv_potato",
- "inventoryName": "POTATO",
- "quantity": 0.25,
- "unit": "kg",
- "costPerUnit": 50.0,
- "cost": 12.5
- },
- {
- "id": "ri_m26c_2",
- "inventoryItemId": "inv_refined_oil",
- "inventoryName": "REFINED OIL",
- "quantity": 0.015,
- "unit": "kg",
- "costPerUnit": 181.58,
- "cost": 2.72
- },
- {
- "id": "ri_m26c_3",
- "inventoryItemId": "inv_cajun_masala",
- "inventoryName": "KAJU MASALA",
- "quantity": 0.008,
- "unit": "kg",
- "costPerUnit": 600.0,
- "cost": 4.8
- },
- {
- "id": "ri_m26c_4",
- "inventoryItemId": "inv_fries_cup",
- "inventoryName": "250ml Cup",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.55,
- "cost": 6.55
- },
- {
- "id": "ri_m26c_5",
- "inventoryItemId": "inv_paper_bag",
- "inventoryName": "Paper Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.45,
- "cost": 6.45
- },
- {
- "id": "ri_m26c_6",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m26c_7",
- "inventoryItemId": "inv_takeaway_bags",
- "inventoryName": "Take Away Bags",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.65,
- "cost": 6.65
- },
- {
- "id": "ri_m26c_8",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 7.42,
- "cost": 7.42
- }
- ]
- },
- {
- "id": "r_m42",
- "menuItemId": "m42",
- "menuItemName": "Vanilla Shake (Regular)",
- "name": "VANILLA SHAKE REGULAR",
- "description": "Standard recipe for Vanilla Shake Regular (Price \u20b9120/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 24.5,
- "pmCost": 5.7,
- "labourCost": 11.87,
- "calculatedCost": 42.07,
- "sellingPrice": 120.0,
- "ingredients": [
- {
- "id": "ri_m42_1",
- "inventoryItemId": "inv_fresh_milk",
- "inventoryName": "Milk Base",
- "quantity": 0.25,
- "unit": "L",
- "costPerUnit": 65.6,
- "cost": 16.4
- },
- {
- "id": "ri_m42_2",
- "inventoryItemId": "inv_vanilla_crush",
- "inventoryName": "Vanilla Crush",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 270.0,
- "cost": 8.1
- },
- {
- "id": "ri_m42_3",
- "inventoryItemId": "inv_pet_glass_350",
- "inventoryName": "PET Glass 350ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 5.0,
- "cost": 5.0
- },
- {
- "id": "ri_m42_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Paper Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.7,
- "cost": 0.7
- },
- {
- "id": "ri_m42_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 11.87,
- "cost": 11.87
- }
- ]
- },
- {
- "id": "r_m43",
- "menuItemId": "m43",
- "menuItemName": "Vanilla Shake (Large)",
- "name": "VANILLA SHAKE LARGE",
- "description": "Standard recipe for Vanilla Shake Large (Price \u20b9199/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 39.74,
- "pmCost": 7.2,
- "labourCost": 11.87,
- "calculatedCost": 58.81,
- "sellingPrice": 199.0,
- "ingredients": [
- {
- "id": "ri_m43_1",
- "inventoryItemId": "inv_fresh_milk",
- "inventoryName": "Milk Base",
- "quantity": 0.4,
- "unit": "L",
- "costPerUnit": 65.6,
- "cost": 26.24
- },
- {
- "id": "ri_m43_2",
- "inventoryItemId": "inv_vanilla_crush",
- "inventoryName": "Vanilla Crush",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 270.0,
- "cost": 13.5
- },
- {
- "id": "ri_m43_3",
- "inventoryItemId": "inv_pet_glass_500",
- "inventoryName": "PET Glass 500ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.5,
- "cost": 6.5
- },
- {
- "id": "ri_m43_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Paper Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.7,
- "cost": 0.7
- },
- {
- "id": "ri_m43_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 11.87,
- "cost": 11.87
- }
- ]
- },
- {
- "id": "r_m44",
- "menuItemId": "m44",
- "menuItemName": "Strawberry Shake (Regular)",
- "name": "STRAWBERRY SHAKE REGULAR",
- "description": "Standard recipe for Strawberry Shake Regular (Price \u20b9120/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 24.8,
- "pmCost": 5.7,
- "labourCost": 11.87,
- "calculatedCost": 42.37,
- "sellingPrice": 120.0,
- "ingredients": [
- {
- "id": "ri_m44_1",
- "inventoryItemId": "inv_fresh_milk",
- "inventoryName": "Milk Base",
- "quantity": 0.25,
- "unit": "L",
- "costPerUnit": 65.6,
- "cost": 16.4
- },
- {
- "id": "ri_m44_2",
- "inventoryItemId": "inv_strawberry_crush",
- "inventoryName": "Strawberry Crush",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 280.0,
- "cost": 8.4
- },
- {
- "id": "ri_m44_3",
- "inventoryItemId": "inv_pet_glass_350",
- "inventoryName": "PET Glass 350ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 5.0,
- "cost": 5.0
- },
- {
- "id": "ri_m44_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Paper Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.7,
- "cost": 0.7
- },
- {
- "id": "ri_m44_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 11.87,
- "cost": 11.87
- }
- ]
- },
- {
- "id": "r_m45",
- "menuItemId": "m45",
- "menuItemName": "Strawberry Shake (Large)",
- "name": "STRAWBERRY SHAKE LARGE",
- "description": "Standard recipe for Strawberry Shake Large (Price \u20b9199/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 40.24,
- "pmCost": 7.2,
- "labourCost": 11.87,
- "calculatedCost": 59.31,
- "sellingPrice": 199.0,
- "ingredients": [
- {
- "id": "ri_m45_1",
- "inventoryItemId": "inv_fresh_milk",
- "inventoryName": "Milk Base",
- "quantity": 0.4,
- "unit": "L",
- "costPerUnit": 65.6,
- "cost": 26.24
- },
- {
- "id": "ri_m45_2",
- "inventoryItemId": "inv_strawberry_crush",
- "inventoryName": "Strawberry Crush",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 280.0,
- "cost": 14.0
- },
- {
- "id": "ri_m45_3",
- "inventoryItemId": "inv_pet_glass_500",
- "inventoryName": "PET Glass 500ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.5,
- "cost": 6.5
- },
- {
- "id": "ri_m45_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Paper Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.7,
- "cost": 0.7
- },
- {
- "id": "ri_m45_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 11.87,
- "cost": 11.87
- }
- ]
- },
- {
- "id": "r_m46",
- "menuItemId": "m46",
- "menuItemName": "Biscoff Shake (Regular)",
- "name": "BISCOFF SHAKE REGULAR",
- "description": "Standard recipe for Biscoff Shake Regular (Price \u20b9120/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 38.9,
- "pmCost": 5.7,
- "labourCost": 11.87,
- "calculatedCost": 56.47,
- "sellingPrice": 120.0,
- "ingredients": [
- {
- "id": "ri_m46_1",
- "inventoryItemId": "inv_fresh_milk",
- "inventoryName": "Milk Base",
- "quantity": 0.25,
- "unit": "L",
- "costPerUnit": 65.6,
- "cost": 16.4
- },
- {
- "id": "ri_m46_2",
- "inventoryItemId": "inv_biscoff_spread",
- "inventoryName": "Biscoff Spread",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 750.0,
- "cost": 22.5
- },
- {
- "id": "ri_m46_3",
- "inventoryItemId": "inv_pet_glass_350",
- "inventoryName": "PET Glass 350ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 5.0,
- "cost": 5.0
- },
- {
- "id": "ri_m46_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Paper Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.7,
- "cost": 0.7
- },
- {
- "id": "ri_m46_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 11.87,
- "cost": 11.87
- }
- ]
- },
- {
- "id": "r_m47",
- "menuItemId": "m47",
- "menuItemName": "Biscoff Shake (Large)",
- "name": "BISCOFF SHAKE LARGE",
- "description": "Standard recipe for Biscoff Shake Large (Price \u20b9199/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 63.74,
- "pmCost": 7.2,
- "labourCost": 11.87,
- "calculatedCost": 82.81,
- "sellingPrice": 199.0,
- "ingredients": [
- {
- "id": "ri_m47_1",
- "inventoryItemId": "inv_fresh_milk",
- "inventoryName": "Milk Base",
- "quantity": 0.4,
- "unit": "L",
- "costPerUnit": 65.6,
- "cost": 26.24
- },
- {
- "id": "ri_m47_2",
- "inventoryItemId": "inv_biscoff_spread",
- "inventoryName": "Biscoff Spread",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 750.0,
- "cost": 37.5
- },
- {
- "id": "ri_m47_3",
- "inventoryItemId": "inv_pet_glass_500",
- "inventoryName": "PET Glass 500ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.5,
- "cost": 6.5
- },
- {
- "id": "ri_m47_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Paper Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.7,
- "cost": 0.7
- },
- {
- "id": "ri_m47_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 11.87,
- "cost": 11.87
- }
- ]
- },
- {
- "id": "r_m48",
- "menuItemId": "m48",
- "menuItemName": "Chocolate Shake (Regular)",
- "name": "CHOCOLATE SHAKE REGULAR",
- "description": "Standard recipe for Chocolate Shake Regular (Price \u20b9120/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 26.0,
- "pmCost": 5.7,
- "labourCost": 11.87,
- "calculatedCost": 43.57,
- "sellingPrice": 120.0,
- "ingredients": [
- {
- "id": "ri_m48_1",
- "inventoryItemId": "inv_fresh_milk",
- "inventoryName": "Milk Base",
- "quantity": 0.25,
- "unit": "L",
- "costPerUnit": 65.6,
- "cost": 16.4
- },
- {
- "id": "ri_m48_2",
- "inventoryItemId": "inv_chocolate_sauce",
- "inventoryName": "Dark Chocolate Sauce",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 320.0,
- "cost": 9.6
- },
- {
- "id": "ri_m48_3",
- "inventoryItemId": "inv_pet_glass_350",
- "inventoryName": "PET Glass 350ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 5.0,
- "cost": 5.0
- },
- {
- "id": "ri_m48_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Paper Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.7,
- "cost": 0.7
- },
- {
- "id": "ri_m48_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 11.87,
- "cost": 11.87
- }
- ]
- },
- {
- "id": "r_m49",
- "menuItemId": "m49",
- "menuItemName": "Chocolate Shake (Large)",
- "name": "CHOCOLATE SHAKE LARGE",
- "description": "Standard recipe for Chocolate Shake Large (Price \u20b9199/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 42.24,
- "pmCost": 7.2,
- "labourCost": 11.87,
- "calculatedCost": 61.31,
- "sellingPrice": 199.0,
- "ingredients": [
- {
- "id": "ri_m49_1",
- "inventoryItemId": "inv_fresh_milk",
- "inventoryName": "Milk Base",
- "quantity": 0.4,
- "unit": "L",
- "costPerUnit": 65.6,
- "cost": 26.24
- },
- {
- "id": "ri_m49_2",
- "inventoryItemId": "inv_chocolate_sauce",
- "inventoryName": "Dark Chocolate Sauce",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 320.0,
- "cost": 16.0
- },
- {
- "id": "ri_m49_3",
- "inventoryItemId": "inv_pet_glass_500",
- "inventoryName": "PET Glass 500ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.5,
- "cost": 6.5
- },
- {
- "id": "ri_m49_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Paper Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.7,
- "cost": 0.7
- },
- {
- "id": "ri_m49_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 11.87,
- "cost": 11.87
- }
- ]
- },
- {
- "id": "r_m50",
- "menuItemId": "m50",
- "menuItemName": "Kunafa Pistachio Shake (Regular)",
- "name": "KUNAFA PISTACHIO SHAKE REGULAR",
- "description": "Standard recipe for Kunafa Pistachio Shake Regular (Price \u20b9120/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 44.9,
- "pmCost": 5.7,
- "labourCost": 11.87,
- "calculatedCost": 62.47,
- "sellingPrice": 120.0,
- "ingredients": [
- {
- "id": "ri_m50_1",
- "inventoryItemId": "inv_fresh_milk",
- "inventoryName": "Milk Base",
- "quantity": 0.25,
- "unit": "L",
- "costPerUnit": 65.6,
- "cost": 16.4
- },
- {
- "id": "ri_m50_2",
- "inventoryItemId": "inv_kunafa_pistachio",
- "inventoryName": "Kunafa Pistachio Paste",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 950.0,
- "cost": 28.5
- },
- {
- "id": "ri_m50_3",
- "inventoryItemId": "inv_pet_glass_350",
- "inventoryName": "PET Glass 350ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 5.0,
- "cost": 5.0
- },
- {
- "id": "ri_m50_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Paper Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.7,
- "cost": 0.7
- },
- {
- "id": "ri_m50_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 11.87,
- "cost": 11.87
- }
- ]
- },
- {
- "id": "r_m51",
- "menuItemId": "m51",
- "menuItemName": "Kunafa Pistachio Shake (Large)",
- "name": "KUNAFA PISTACHIO SHAKE LARGE",
- "description": "Standard recipe for Kunafa Pistachio Shake Large (Price \u20b9199/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 73.74,
- "pmCost": 7.2,
- "labourCost": 11.87,
- "calculatedCost": 92.81,
- "sellingPrice": 199.0,
- "ingredients": [
- {
- "id": "ri_m51_1",
- "inventoryItemId": "inv_fresh_milk",
- "inventoryName": "Milk Base",
- "quantity": 0.4,
- "unit": "L",
- "costPerUnit": 65.6,
- "cost": 26.24
- },
- {
- "id": "ri_m51_2",
- "inventoryItemId": "inv_kunafa_pistachio",
- "inventoryName": "Kunafa Pistachio Paste",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 950.0,
- "cost": 47.5
- },
- {
- "id": "ri_m51_3",
- "inventoryItemId": "inv_pet_glass_500",
- "inventoryName": "PET Glass 500ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 6.5,
- "cost": 6.5
- },
- {
- "id": "ri_m51_4",
- "inventoryItemId": "inv_paper_straw",
- "inventoryName": "Paper Straw",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.7,
- "cost": 0.7
- },
- {
- "id": "ri_m51_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 11.87,
- "cost": 11.87
- }
- ]
- },
- {
- "id": "r_m52",
- "menuItemId": "m52",
- "menuItemName": "Vanilla Softy",
- "name": "VANILLA SOFTY",
- "description": "Standard recipe for Vanilla Softy Cone (Price \u20b939/-)",
- "yieldQty": 1,
- "prepTime": 2,
- "rmCost": 6.5,
- "pmCost": 3.77,
- "labourCost": 3.5,
- "calculatedCost": 13.77,
- "sellingPrice": 39.0,
- "ingredients": [
- {
- "id": "ri_m52_1",
- "inventoryItemId": "inv_softy_mix",
- "inventoryName": "Softy Liquid Mix",
- "quantity": 0.1,
- "unit": "L",
- "costPerUnit": 65.0,
- "cost": 6.5
- },
- {
- "id": "ri_m52_2",
- "inventoryItemId": "inv_waffle_cone",
- "inventoryName": "Waffle Cone",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.5,
- "cost": 3.5
- },
- {
- "id": "ri_m52_3",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.27
- },
- {
- "id": "ri_m52_4",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 3.5,
- "cost": 3.5
- }
- ]
- },
- {
- "id": "r_m57",
- "menuItemId": "m57",
- "menuItemName": "Hot Chocolate",
- "name": "HOT CHOCOLATE",
- "description": "Standard recipe for Hot Chocolate (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 21.97,
- "pmCost": 4.04,
- "labourCost": 7.42,
- "calculatedCost": 33.43,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m57_1",
- "inventoryItemId": "inv_fresh_milk",
- "inventoryName": "Fresh Milk",
- "quantity": 0.2,
- "unit": "L",
- "costPerUnit": 53.6,
- "cost": 10.72
- },
- {
- "id": "ri_m57_2",
- "inventoryItemId": "inv_hot_choco_powder",
- "inventoryName": "Hot Chocolate Powder",
- "quantity": 0.025,
- "unit": "kg",
- "costPerUnit": 450.0,
- "cost": 11.25
- },
- {
- "id": "ri_m57_3",
- "inventoryItemId": "inv_paper_cup_250",
- "inventoryName": "Paper Cup 250ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.5,
- "cost": 3.5
- },
- {
- "id": "ri_m57_4",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m57_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 7.42,
- "cost": 7.42
- }
- ]
- },
- {
- "id": "r_m58",
- "menuItemId": "m58",
- "menuItemName": "Signature Tea",
- "name": "SIGNATURE TEA",
- "description": "Standard recipe for Signature Tea (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 5,
- "rmCost": 15.0,
- "pmCost": 4.04,
- "labourCost": 5.96,
- "calculatedCost": 25.0,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m58_1",
- "inventoryItemId": "inv_fresh_milk",
- "inventoryName": "Fresh Milk",
- "quantity": 0.15,
- "unit": "L",
- "costPerUnit": 53.6,
- "cost": 8.04
- },
- {
- "id": "ri_m58_2",
- "inventoryItemId": "inv_black_tea",
- "inventoryName": "Tea Powder / Spices",
- "quantity": 0.01,
- "unit": "kg",
- "costPerUnit": 696.0,
- "cost": 6.96
- },
- {
- "id": "ri_m58_3",
- "inventoryItemId": "inv_paper_cup_250",
- "inventoryName": "Paper Cup 250ml",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 3.5,
- "cost": 3.5
- },
- {
- "id": "ri_m58_4",
- "inventoryItemId": "inv_tissue_paper",
- "inventoryName": "Tissue Paper",
- "quantity": 2.0,
- "unit": "pc",
- "costPerUnit": 0.27,
- "cost": 0.54
- },
- {
- "id": "ri_m58_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 5.96,
- "cost": 5.96
- }
- ]
- },
- {
- "id": "r_m59a",
- "menuItemId": "m59a",
- "menuItemName": "Mint Kombucha",
- "name": "MINT KOMBUCHA",
- "description": "Standard recipe for Mint Kombucha (Price \u20b9114.29/-)",
- "yieldQty": 1,
- "prepTime": 3,
- "rmCost": 32.5,
- "pmCost": 7.5,
- "labourCost": 5.0,
- "calculatedCost": 45.0,
- "sellingPrice": 114.29,
- "ingredients": [
- {
- "id": "ri_m59a_1",
- "inventoryItemId": "inv_kombucha_base",
- "inventoryName": "Kombucha Fermented Base",
- "quantity": 0.25,
- "unit": "L",
- "costPerUnit": 120.0,
- "cost": 30.0
- },
- {
- "id": "ri_m59a_2",
- "inventoryItemId": "inv_water",
- "inventoryName": "Mint Extract",
- "quantity": 0.02,
- "unit": "kg",
- "costPerUnit": 125.0,
- "cost": 2.5
- },
- {
- "id": "ri_m59a_3",
- "inventoryItemId": "inv_pet_glass_350",
- "inventoryName": "Glass / Cup Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 7.5,
- "cost": 7.5
- },
- {
- "id": "ri_m59a_4",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 5.0,
- "cost": 5.0
- }
- ]
- },
- {
- "id": "r_m59b",
- "menuItemId": "m59b",
- "menuItemName": "Hibiscus Kombucha",
- "name": "HIBISCUS KOMBUCHA",
- "description": "Standard recipe for Hibiscus Kombucha (Price \u20b9114.29/-)",
- "yieldQty": 1,
- "prepTime": 3,
- "rmCost": 32.5,
- "pmCost": 7.5,
- "labourCost": 5.0,
- "calculatedCost": 45.0,
- "sellingPrice": 114.29,
- "ingredients": [
- {
- "id": "ri_m59b_1",
- "inventoryItemId": "inv_kombucha_base",
- "inventoryName": "Kombucha Fermented Base",
- "quantity": 0.25,
- "unit": "L",
- "costPerUnit": 120.0,
- "cost": 30.0
- },
- {
- "id": "ri_m59b_2",
- "inventoryItemId": "inv_water",
- "inventoryName": "Hibiscus Extract",
- "quantity": 0.02,
- "unit": "kg",
- "costPerUnit": 125.0,
- "cost": 2.5
- },
- {
- "id": "ri_m59b_3",
- "inventoryItemId": "inv_pet_glass_350",
- "inventoryName": "Glass / Cup Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 7.5,
- "cost": 7.5
- },
- {
- "id": "ri_m59b_4",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 5.0,
- "cost": 5.0
- }
- ]
- },
- {
- "id": "r_m59c",
- "menuItemId": "m59c",
- "menuItemName": "Ginger Kombucha",
- "name": "GINGER KOMBUCHA",
- "description": "Standard recipe for Ginger Kombucha (Price \u20b9114.29/-)",
- "yieldQty": 1,
- "prepTime": 3,
- "rmCost": 32.5,
- "pmCost": 7.5,
- "labourCost": 5.0,
- "calculatedCost": 45.0,
- "sellingPrice": 114.29,
- "ingredients": [
- {
- "id": "ri_m59c_1",
- "inventoryItemId": "inv_kombucha_base",
- "inventoryName": "Kombucha Fermented Base",
- "quantity": 0.25,
- "unit": "L",
- "costPerUnit": 120.0,
- "cost": 30.0
- },
- {
- "id": "ri_m59c_2",
- "inventoryItemId": "inv_water",
- "inventoryName": "Ginger Extract",
- "quantity": 0.02,
- "unit": "kg",
- "costPerUnit": 125.0,
- "cost": 2.5
- },
- {
- "id": "ri_m59c_3",
- "inventoryItemId": "inv_pet_glass_350",
- "inventoryName": "Glass / Cup Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 7.5,
- "cost": 7.5
- },
- {
- "id": "ri_m59c_4",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 5.0,
- "cost": 5.0
- }
- ]
- },
- {
- "id": "r_m59d",
- "menuItemId": "m59d",
- "menuItemName": "Butterfly Pea Kombucha",
- "name": "BUTTERFLY PEA KOMBUCHA",
- "description": "Standard recipe for Butterfly Pea Kombucha (Price \u20b9114.29/-)",
- "yieldQty": 1,
- "prepTime": 3,
- "rmCost": 32.5,
- "pmCost": 7.5,
- "labourCost": 5.0,
- "calculatedCost": 45.0,
- "sellingPrice": 114.29,
- "ingredients": [
- {
- "id": "ri_m59d_1",
- "inventoryItemId": "inv_kombucha_base",
- "inventoryName": "Kombucha Fermented Base",
- "quantity": 0.25,
- "unit": "L",
- "costPerUnit": 120.0,
- "cost": 30.0
- },
- {
- "id": "ri_m59d_2",
- "inventoryItemId": "inv_water",
- "inventoryName": "Butterfly Pea Flower Extract",
- "quantity": 0.02,
- "unit": "kg",
- "costPerUnit": 125.0,
- "cost": 2.5
- },
- {
- "id": "ri_m59d_3",
- "inventoryItemId": "inv_pet_glass_350",
- "inventoryName": "Glass / Cup Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 7.5,
- "cost": 7.5
- },
- {
- "id": "ri_m59d_4",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 5.0,
- "cost": 5.0
- }
- ]
- },
- {
- "id": "r_m5a",
- "menuItemId": "m5a",
- "menuItemName": "BBQ Gyro - Chicken",
- "name": "RECIPE - BBQ GYRO - CHICKEN (MINI)",
- "description": "Standard recipe for BBQ Gyro - Chicken (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 31.72,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 60.08,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m5a_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 1.79
- },
- {
- "id": "ri_m5a_2",
- "inventoryItemId": "inv_spicy_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 20.0
- },
- {
- "id": "ri_m5a_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m5a_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m5a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m6a",
- "menuItemId": "m6a",
- "menuItemName": "BBQ Gyro - Chicken (Signature)",
- "name": "RECIPE - BBQ GYRO - CHICKEN (SIGNATURE)",
- "description": "Standard recipe for BBQ Gyro - Chicken (Signature) (Price \u20b9249/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 53.51,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 81.87,
- "sellingPrice": 249.0,
- "ingredients": [
- {
- "id": "ri_m6a_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m6a_2",
- "inventoryItemId": "inv_spicy_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 40.0
- },
- {
- "id": "ri_m6a_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m6a_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m6a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m7a",
- "menuItemId": "m7a",
- "menuItemName": "Peri Peri Gyro - Chicken",
- "name": "RECIPE - PERI PERI GYRO - CHICKEN (MINI)",
- "description": "Standard recipe for Peri Peri Gyro - Chicken (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 31.72,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 60.08,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m7a_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 1.79
- },
- {
- "id": "ri_m7a_2",
- "inventoryItemId": "inv_spicy_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 20.0
- },
- {
- "id": "ri_m7a_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m7a_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m7a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m7b",
- "menuItemId": "m7b",
- "menuItemName": "Peri Peri Gyro - Paneer",
- "name": "RECIPE - PERI PERI GYRO - PANEER (MINI)",
- "description": "Standard recipe for Peri Peri Gyro - Paneer (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 31.72,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 60.08,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m7b_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 1.79
- },
- {
- "id": "ri_m7b_2",
- "inventoryItemId": "inv_pesto_paneer",
- "inventoryName": "Paneer Portion",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 20.0
- },
- {
- "id": "ri_m7b_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m7b_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m7b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m8a",
- "menuItemId": "m8a",
- "menuItemName": "Peri Peri Gyro - Chicken (Signature)",
- "name": "RECIPE - PERI PERI GYRO - CHICKEN (SIGNATURE)",
- "description": "Standard recipe for Peri Peri Gyro - Chicken (Signature) (Price \u20b9249/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 53.51,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 81.87,
- "sellingPrice": 249.0,
- "ingredients": [
- {
- "id": "ri_m8a_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m8a_2",
- "inventoryItemId": "inv_spicy_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 40.0
- },
- {
- "id": "ri_m8a_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m8a_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m8a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m8b",
- "menuItemId": "m8b",
- "menuItemName": "Peri Peri Gyro - Paneer (Signature)",
- "name": "RECIPE - PERI PERI GYRO - PANEER (SIGNATURE)",
- "description": "Standard recipe for Peri Peri Gyro - Paneer (Signature) (Price \u20b9249/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 53.51,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 81.87,
- "sellingPrice": 249.0,
- "ingredients": [
- {
- "id": "ri_m8b_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m8b_2",
- "inventoryItemId": "inv_pesto_paneer",
- "inventoryName": "Paneer Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 40.0
- },
- {
- "id": "ri_m8b_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m8b_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m8b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m9a",
- "menuItemId": "m9a",
- "menuItemName": "Signature Gyro - Chicken",
- "name": "RECIPE - SIGNATURE GYRO - CHICKEN (MINI)",
- "description": "Standard recipe for Signature Gyro - Chicken (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 53.51,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 81.87,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m9a_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m9a_2",
- "inventoryItemId": "inv_spicy_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 40.0
- },
- {
- "id": "ri_m9a_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m9a_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m9a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m9b",
- "menuItemId": "m9b",
- "menuItemName": "Signature Gyro - Paneer",
- "name": "RECIPE - SIGNATURE GYRO - PANEER (MINI)",
- "description": "Standard recipe for Signature Gyro - Paneer (Price \u20b999/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 53.51,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 81.87,
- "sellingPrice": 99.0,
- "ingredients": [
- {
- "id": "ri_m9b_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m9b_2",
- "inventoryItemId": "inv_pesto_paneer",
- "inventoryName": "Paneer Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 40.0
- },
- {
- "id": "ri_m9b_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m9b_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m9b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m10a",
- "menuItemId": "m10a",
- "menuItemName": "Signature Gyro - Chicken (Signature)",
- "name": "RECIPE - SIGNATURE GYRO - CHICKEN (SIGNATURE)",
- "description": "Standard recipe for Signature Gyro - Chicken (Signature) (Price \u20b9249/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 53.51,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 81.87,
- "sellingPrice": 249.0,
- "ingredients": [
- {
- "id": "ri_m10a_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m10a_2",
- "inventoryItemId": "inv_spicy_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 40.0
- },
- {
- "id": "ri_m10a_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m10a_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m10a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m10b",
- "menuItemId": "m10b",
- "menuItemName": "Signature Gyro - Paneer (Signature)",
- "name": "RECIPE - SIGNATURE GYRO - PANEER (SIGNATURE)",
- "description": "Standard recipe for Signature Gyro - Paneer (Signature) (Price \u20b9249/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 53.51,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 81.87,
- "sellingPrice": 249.0,
- "ingredients": [
- {
- "id": "ri_m10b_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m10b_2",
- "inventoryItemId": "inv_pesto_paneer",
- "inventoryName": "Paneer Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 40.0
- },
- {
- "id": "ri_m10b_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m10b_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m10b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m27a",
- "menuItemId": "m27a",
- "menuItemName": "Loaded Chicken Fries",
- "name": "RECIPE - LOADED CHICKEN FRIES",
- "description": "Standard recipe for Loaded Chicken Fries (Price \u20b9199/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 52.91,
- "pmCost": 15.0,
- "labourCost": 10.0,
- "calculatedCost": 77.91,
- "sellingPrice": 199.0,
- "ingredients": [
- {
- "id": "ri_m27a_1",
- "inventoryItemId": "inv_potato",
- "inventoryName": "Potato Fries Base",
- "quantity": 0.25,
- "unit": "kg",
- "costPerUnit": 50.0,
- "cost": 12.5
- },
- {
- "id": "ri_m27a_2",
- "inventoryItemId": "inv_boneless_chicken",
- "inventoryName": "Chicken Topping",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 300.0,
- "cost": 24.0
- },
- {
- "id": "ri_m27a_3",
- "inventoryItemId": "inv_cheese_white",
- "inventoryName": "Melted Cheese Sauce",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 547.0,
- "cost": 16.41
- },
- {
- "id": "ri_m27a_4",
- "inventoryItemId": "inv_dinning_tray_500ml",
- "inventoryName": "Loaded Fries Tray & Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 15.0,
- "cost": 15.0
- },
- {
- "id": "ri_m27a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 10.0,
- "cost": 10.0
- }
- ]
- },
- {
- "id": "r_m27b",
- "menuItemId": "m27b",
- "menuItemName": "Loaded Paneer Fries",
- "name": "RECIPE - LOADED PANEER FRIES",
- "description": "Standard recipe for Loaded Paneer Fries (Price \u20b9199/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 52.91,
- "pmCost": 15.0,
- "labourCost": 10.0,
- "calculatedCost": 77.91,
- "sellingPrice": 199.0,
- "ingredients": [
- {
- "id": "ri_m27b_1",
- "inventoryItemId": "inv_potato",
- "inventoryName": "Potato Fries Base",
- "quantity": 0.25,
- "unit": "kg",
- "costPerUnit": 50.0,
- "cost": 12.5
- },
- {
- "id": "ri_m27b_2",
- "inventoryItemId": "inv_pesto_paneer",
- "inventoryName": "Paneer Topping",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 300.0,
- "cost": 24.0
- },
- {
- "id": "ri_m27b_3",
- "inventoryItemId": "inv_cheese_white",
- "inventoryName": "Melted Cheese Sauce",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 547.0,
- "cost": 16.41
- },
- {
- "id": "ri_m27b_4",
- "inventoryItemId": "inv_dinning_tray_500ml",
- "inventoryName": "Loaded Fries Tray & Bag",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 15.0,
- "cost": 15.0
- },
- {
- "id": "ri_m27b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 10.0,
- "cost": 10.0
- }
- ]
- },
- {
- "id": "r_m28a",
- "menuItemId": "m28a",
- "menuItemName": "Lebanese Rice Bowl (Chicken)",
- "name": "RECIPE - LEBANESE RICE BOWL (CHICKEN)",
- "description": "Standard recipe for Lebanese Rice Bowl (Chicken) (Price \u20b9199/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 47.05,
- "pmCost": 12.0,
- "labourCost": 12.0,
- "calculatedCost": 71.05,
- "sellingPrice": 199.0,
- "ingredients": [
- {
- "id": "ri_m28a_1",
- "inventoryItemId": "inv_atta",
- "inventoryName": "Lebanese Rice Base",
- "quantity": 0.2,
- "unit": "kg",
- "costPerUnit": 60.0,
- "cost": 12.0
- },
- {
- "id": "ri_m28a_2",
- "inventoryItemId": "inv_boneless_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 300.0,
- "cost": 30.0
- },
- {
- "id": "ri_m28a_3",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "House Dressing",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 5.05
- },
- {
- "id": "ri_m28a_4",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Bowl Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.0,
- "cost": 12.0
- },
- {
- "id": "ri_m28a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 12.0,
- "cost": 12.0
- }
- ]
- },
- {
- "id": "r_m28b",
- "menuItemId": "m28b",
- "menuItemName": "Lebanese Rice Bowl (Paneer)",
- "name": "RECIPE - LEBANESE RICE BOWL (PANEER)",
- "description": "Standard recipe for Lebanese Rice Bowl (Paneer) (Price \u20b9199/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 47.05,
- "pmCost": 12.0,
- "labourCost": 12.0,
- "calculatedCost": 71.05,
- "sellingPrice": 199.0,
- "ingredients": [
- {
- "id": "ri_m28b_1",
- "inventoryItemId": "inv_atta",
- "inventoryName": "Lebanese Rice Base",
- "quantity": 0.2,
- "unit": "kg",
- "costPerUnit": 60.0,
- "cost": 12.0
- },
- {
- "id": "ri_m28b_2",
- "inventoryItemId": "inv_pesto_paneer",
- "inventoryName": "Paneer Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 300.0,
- "cost": 30.0
- },
- {
- "id": "ri_m28b_3",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "House Dressing",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 5.05
- },
- {
- "id": "ri_m28b_4",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Bowl Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.0,
- "cost": 12.0
- },
- {
- "id": "ri_m28b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 12.0,
- "cost": 12.0
- }
- ]
- },
- {
- "id": "r_m29a",
- "menuItemId": "m29a",
- "menuItemName": "Signature Salad (Chicken)",
- "name": "RECIPE - SIGNATURE SALAD (CHICKEN)",
- "description": "Standard recipe for Signature Salad (Chicken) (Price \u20b9149/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 47.05,
- "pmCost": 12.0,
- "labourCost": 12.0,
- "calculatedCost": 71.05,
- "sellingPrice": 149.0,
- "ingredients": [
- {
- "id": "ri_m29a_1",
- "inventoryItemId": "inv_atta",
- "inventoryName": "Fresh Salad Base",
- "quantity": 0.2,
- "unit": "kg",
- "costPerUnit": 60.0,
- "cost": 12.0
- },
- {
- "id": "ri_m29a_2",
- "inventoryItemId": "inv_boneless_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 300.0,
- "cost": 30.0
- },
- {
- "id": "ri_m29a_3",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "House Dressing",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 5.05
- },
- {
- "id": "ri_m29a_4",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Bowl Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.0,
- "cost": 12.0
- },
- {
- "id": "ri_m29a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 12.0,
- "cost": 12.0
- }
- ]
- },
- {
- "id": "r_m29b",
- "menuItemId": "m29b",
- "menuItemName": "Signature Salad (Paneer)",
- "name": "RECIPE - SIGNATURE SALAD (PANEER)",
- "description": "Standard recipe for Signature Salad (Paneer) (Price \u20b9149/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 47.05,
- "pmCost": 12.0,
- "labourCost": 12.0,
- "calculatedCost": 71.05,
- "sellingPrice": 149.0,
- "ingredients": [
- {
- "id": "ri_m29b_1",
- "inventoryItemId": "inv_atta",
- "inventoryName": "Fresh Salad Base",
- "quantity": 0.2,
- "unit": "kg",
- "costPerUnit": 60.0,
- "cost": 12.0
- },
- {
- "id": "ri_m29b_2",
- "inventoryItemId": "inv_pesto_paneer",
- "inventoryName": "Paneer Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 300.0,
- "cost": 30.0
- },
- {
- "id": "ri_m29b_3",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "House Dressing",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 5.05
- },
- {
- "id": "ri_m29b_4",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Bowl Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.0,
- "cost": 12.0
- },
- {
- "id": "ri_m29b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 12.0,
- "cost": 12.0
- }
- ]
- },
- {
- "id": "r_m30",
- "menuItemId": "m30",
- "menuItemName": "Express Meal",
- "name": "RECIPE - EXPRESS MEAL",
- "description": "Standard recipe for Express Meal (Price \u20b9149/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 37.25,
- "pmCost": 7.45,
- "labourCost": 5.96,
- "calculatedCost": 50.66,
- "sellingPrice": 149.0,
- "ingredients": [
- {
- "id": "ri_m30_1",
- "inventoryItemId": "inv_boneless_chicken",
- "inventoryName": "Combo Food Ingredients",
- "quantity": 1.0,
- "unit": "portion",
- "costPerUnit": 37.25,
- "cost": 37.25
- },
- {
- "id": "ri_m30_2",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Combo Meal Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 7.45,
- "cost": 7.45
- },
- {
- "id": "ri_m30_3",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 5.96,
- "cost": 5.96
- }
- ]
- },
- {
- "id": "r_m31",
- "menuItemId": "m31",
- "menuItemName": "Classic Gyro Meal",
- "name": "RECIPE - CLASSIC GYRO MEAL",
- "description": "Standard recipe for Classic Gyro Meal (Price \u20b9249/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 31.72,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 60.08,
- "sellingPrice": 249.0,
- "ingredients": [
- {
- "id": "ri_m31_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 1.79
- },
- {
- "id": "ri_m31_2",
- "inventoryItemId": "inv_spicy_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 20.0
- },
- {
- "id": "ri_m31_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m31_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m31_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m32",
- "menuItemId": "m32",
- "menuItemName": "Signature Gyro Meal",
- "name": "RECIPE - SIGNATURE GYRO MEAL",
- "description": "Standard recipe for Signature Gyro Meal (Price \u20b9299/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 53.51,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 81.87,
- "sellingPrice": 299.0,
- "ingredients": [
- {
- "id": "ri_m32_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.08,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 3.58
- },
- {
- "id": "ri_m32_2",
- "inventoryItemId": "inv_spicy_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 40.0
- },
- {
- "id": "ri_m32_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m32_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m32_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m33",
- "menuItemId": "m33",
- "menuItemName": "Lebanese Rice Box",
- "name": "RECIPE - LEBANESE RICE BOX",
- "description": "Standard recipe for Lebanese Rice Box (Price \u20b9299/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 47.05,
- "pmCost": 12.0,
- "labourCost": 12.0,
- "calculatedCost": 71.05,
- "sellingPrice": 299.0,
- "ingredients": [
- {
- "id": "ri_m33_1",
- "inventoryItemId": "inv_atta",
- "inventoryName": "Lebanese Rice Base",
- "quantity": 0.2,
- "unit": "kg",
- "costPerUnit": 60.0,
- "cost": 12.0
- },
- {
- "id": "ri_m33_2",
- "inventoryItemId": "inv_pesto_paneer",
- "inventoryName": "Paneer Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 300.0,
- "cost": 30.0
- },
- {
- "id": "ri_m33_3",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "House Dressing",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 5.05
- },
- {
- "id": "ri_m33_4",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Bowl Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.0,
- "cost": 12.0
- },
- {
- "id": "ri_m33_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 12.0,
- "cost": 12.0
- }
- ]
- },
- {
- "id": "r_m34",
- "menuItemId": "m34",
- "menuItemName": "Duo Gyro Feast",
- "name": "RECIPE - DUO GYRO FEAST",
- "description": "Standard recipe for Duo Gyro Feast (Price \u20b9349/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 31.72,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 60.08,
- "sellingPrice": 349.0,
- "ingredients": [
- {
- "id": "ri_m34_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 1.79
- },
- {
- "id": "ri_m34_2",
- "inventoryItemId": "inv_spicy_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 20.0
- },
- {
- "id": "ri_m34_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m34_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m34_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m35",
- "menuItemId": "m35",
- "menuItemName": "Double Crunch Box",
- "name": "RECIPE - DOUBLE CRUNCH BOX",
- "description": "Standard recipe for Double Crunch Box (Price \u20b9499/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 124.75,
- "pmCost": 24.95,
- "labourCost": 19.96,
- "calculatedCost": 169.66,
- "sellingPrice": 499.0,
- "ingredients": [
- {
- "id": "ri_m35_1",
- "inventoryItemId": "inv_boneless_chicken",
- "inventoryName": "Combo Food Ingredients",
- "quantity": 1.0,
- "unit": "portion",
- "costPerUnit": 124.75,
- "cost": 124.75
- },
- {
- "id": "ri_m35_2",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Combo Meal Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 24.95,
- "cost": 24.95
- },
- {
- "id": "ri_m35_3",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 19.96,
- "cost": 19.96
- }
- ]
- },
- {
- "id": "r_m36",
- "menuItemId": "m36",
- "menuItemName": "Mega Feast Meal",
- "name": "RECIPE - MEGA FEAST MEAL",
- "description": "Standard recipe for Mega Feast Meal (Price \u20b9649/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 162.25,
- "pmCost": 32.45,
- "labourCost": 25.96,
- "calculatedCost": 220.66,
- "sellingPrice": 649.0,
- "ingredients": [
- {
- "id": "ri_m36_1",
- "inventoryItemId": "inv_boneless_chicken",
- "inventoryName": "Combo Food Ingredients",
- "quantity": 1.0,
- "unit": "portion",
- "costPerUnit": 162.25,
- "cost": 162.25
- },
- {
- "id": "ri_m36_2",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Combo Meal Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 32.45,
- "cost": 32.45
- },
- {
- "id": "ri_m36_3",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 25.96,
- "cost": 25.96
- }
- ]
- },
- {
- "id": "r_m37",
- "menuItemId": "m37",
- "menuItemName": "Den's Party Meal",
- "name": "RECIPE - DEN'S PARTY MEAL",
- "description": "Standard recipe for Den's Party Meal (Price \u20b9899/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 224.75,
- "pmCost": 44.95,
- "labourCost": 35.96,
- "calculatedCost": 305.66,
- "sellingPrice": 899.0,
- "ingredients": [
- {
- "id": "ri_m37_1",
- "inventoryItemId": "inv_boneless_chicken",
- "inventoryName": "Combo Food Ingredients",
- "quantity": 1.0,
- "unit": "portion",
- "costPerUnit": 224.75,
- "cost": 224.75
- },
- {
- "id": "ri_m37_2",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Combo Meal Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 44.95,
- "cost": 44.95
- },
- {
- "id": "ri_m37_3",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 35.96,
- "cost": 35.96
- }
- ]
- },
- {
- "id": "r_m38",
- "menuItemId": "m38",
- "menuItemName": "Super 5 Bucket",
- "name": "RECIPE - SUPER 5 BUCKET",
- "description": "Standard recipe for Super 5 Bucket (Price \u20b91299/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 324.75,
- "pmCost": 64.95,
- "labourCost": 51.96,
- "calculatedCost": 441.66,
- "sellingPrice": 1299.0,
- "ingredients": [
- {
- "id": "ri_m38_1",
- "inventoryItemId": "inv_boneless_chicken",
- "inventoryName": "Combo Food Ingredients",
- "quantity": 1.0,
- "unit": "portion",
- "costPerUnit": 324.75,
- "cost": 324.75
- },
- {
- "id": "ri_m38_2",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Combo Meal Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 64.95,
- "cost": 64.95
- },
- {
- "id": "ri_m38_3",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 51.96,
- "cost": 51.96
- }
- ]
- },
- {
- "id": "r_m39a",
- "menuItemId": "m39a",
- "menuItemName": "Gyro - Protein Max (Chicken)",
- "name": "RECIPE - GYRO - PROTEIN MAX (CHICKEN)",
- "description": "Standard recipe for Gyro - Protein Max (Chicken) (Price \u20b9299/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 31.72,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 60.08,
- "sellingPrice": 299.0,
- "ingredients": [
- {
- "id": "ri_m39a_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 1.79
- },
- {
- "id": "ri_m39a_2",
- "inventoryItemId": "inv_spicy_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 20.0
- },
- {
- "id": "ri_m39a_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m39a_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m39a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m39b",
- "menuItemId": "m39b",
- "menuItemName": "Gyro - Protein Max (Paneer)",
- "name": "RECIPE - GYRO - PROTEIN MAX (PANEER)",
- "description": "Standard recipe for Gyro - Protein Max (Paneer) (Price \u20b9299/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 31.72,
- "pmCost": 12.41,
- "labourCost": 15.95,
- "calculatedCost": 60.08,
- "sellingPrice": 299.0,
- "ingredients": [
- {
- "id": "ri_m39b_1",
- "inventoryItemId": "inv_maida",
- "inventoryName": "MAIDA (Pita)",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 44.77,
- "cost": 1.79
- },
- {
- "id": "ri_m39b_2",
- "inventoryItemId": "inv_pesto_paneer",
- "inventoryName": "Paneer Portion",
- "quantity": 0.05,
- "unit": "kg",
- "costPerUnit": 400.0,
- "cost": 20.0
- },
- {
- "id": "ri_m39b_3",
- "inventoryItemId": "inv_iceberg",
- "inventoryName": "ICEBERG & Veggies",
- "quantity": 0.04,
- "unit": "kg",
- "costPerUnit": 248.15,
- "cost": 9.93
- },
- {
- "id": "ri_m39b_4",
- "inventoryItemId": "inv_dinning_tray",
- "inventoryName": "Dinning Tray & Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.41,
- "cost": 12.41
- },
- {
- "id": "ri_m39b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 15.95,
- "cost": 15.95
- }
- ]
- },
- {
- "id": "r_m40a",
- "menuItemId": "m40a",
- "menuItemName": "Lebanese Rice - Protein Max (Chicken)",
- "name": "RECIPE - LEBANESE RICE - PROTEIN MAX (CHICKEN)",
- "description": "Standard recipe for Lebanese Rice - Protein Max (Chicken) (Price \u20b9299/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 47.05,
- "pmCost": 12.0,
- "labourCost": 12.0,
- "calculatedCost": 71.05,
- "sellingPrice": 299.0,
- "ingredients": [
- {
- "id": "ri_m40a_1",
- "inventoryItemId": "inv_atta",
- "inventoryName": "Lebanese Rice Base",
- "quantity": 0.2,
- "unit": "kg",
- "costPerUnit": 60.0,
- "cost": 12.0
- },
- {
- "id": "ri_m40a_2",
- "inventoryItemId": "inv_boneless_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 300.0,
- "cost": 30.0
- },
- {
- "id": "ri_m40a_3",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "House Dressing",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 5.05
- },
- {
- "id": "ri_m40a_4",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Bowl Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.0,
- "cost": 12.0
- },
- {
- "id": "ri_m40a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 12.0,
- "cost": 12.0
- }
- ]
- },
- {
- "id": "r_m40b",
- "menuItemId": "m40b",
- "menuItemName": "Lebanese Rice - Protein Max (Paneer)",
- "name": "RECIPE - LEBANESE RICE - PROTEIN MAX (PANEER)",
- "description": "Standard recipe for Lebanese Rice - Protein Max (Paneer) (Price \u20b9299/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 47.05,
- "pmCost": 12.0,
- "labourCost": 12.0,
- "calculatedCost": 71.05,
- "sellingPrice": 299.0,
- "ingredients": [
- {
- "id": "ri_m40b_1",
- "inventoryItemId": "inv_atta",
- "inventoryName": "Lebanese Rice Base",
- "quantity": 0.2,
- "unit": "kg",
- "costPerUnit": 60.0,
- "cost": 12.0
- },
- {
- "id": "ri_m40b_2",
- "inventoryItemId": "inv_pesto_paneer",
- "inventoryName": "Paneer Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 300.0,
- "cost": 30.0
- },
- {
- "id": "ri_m40b_3",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "House Dressing",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 5.05
- },
- {
- "id": "ri_m40b_4",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Bowl Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.0,
- "cost": 12.0
- },
- {
- "id": "ri_m40b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 12.0,
- "cost": 12.0
- }
- ]
- },
- {
- "id": "r_m41a",
- "menuItemId": "m41a",
- "menuItemName": "Salad - Protein Max (Chicken)",
- "name": "RECIPE - SALAD - PROTEIN MAX (CHICKEN)",
- "description": "Standard recipe for Salad - Protein Max (Chicken) (Price \u20b9299/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 47.05,
- "pmCost": 12.0,
- "labourCost": 12.0,
- "calculatedCost": 71.05,
- "sellingPrice": 299.0,
- "ingredients": [
- {
- "id": "ri_m41a_1",
- "inventoryItemId": "inv_atta",
- "inventoryName": "Fresh Salad Base",
- "quantity": 0.2,
- "unit": "kg",
- "costPerUnit": 60.0,
- "cost": 12.0
- },
- {
- "id": "ri_m41a_2",
- "inventoryItemId": "inv_boneless_chicken",
- "inventoryName": "Chicken Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 300.0,
- "cost": 30.0
- },
- {
- "id": "ri_m41a_3",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "House Dressing",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 5.05
- },
- {
- "id": "ri_m41a_4",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Bowl Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.0,
- "cost": 12.0
- },
- {
- "id": "ri_m41a_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 12.0,
- "cost": 12.0
- }
- ]
- },
- {
- "id": "r_m41b",
- "menuItemId": "m41b",
- "menuItemName": "Salad - Protein Max (Paneer)",
- "name": "RECIPE - SALAD - PROTEIN MAX (PANEER)",
- "description": "Standard recipe for Salad - Protein Max (Paneer) (Price \u20b9299/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 47.05,
- "pmCost": 12.0,
- "labourCost": 12.0,
- "calculatedCost": 71.05,
- "sellingPrice": 299.0,
- "ingredients": [
- {
- "id": "ri_m41b_1",
- "inventoryItemId": "inv_atta",
- "inventoryName": "Fresh Salad Base",
- "quantity": 0.2,
- "unit": "kg",
- "costPerUnit": 60.0,
- "cost": 12.0
- },
- {
- "id": "ri_m41b_2",
- "inventoryItemId": "inv_pesto_paneer",
- "inventoryName": "Paneer Portion",
- "quantity": 0.1,
- "unit": "kg",
- "costPerUnit": 300.0,
- "cost": 30.0
- },
- {
- "id": "ri_m41b_3",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "House Dressing",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 5.05
- },
- {
- "id": "ri_m41b_4",
- "inventoryItemId": "inv_paper_bag_large",
- "inventoryName": "Bowl Packaging",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 12.0,
- "cost": 12.0
- },
- {
- "id": "ri_m41b_5",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 12.0,
- "cost": 12.0
- }
- ]
- },
- {
- "id": "r_m62a",
- "menuItemId": "m62a",
- "menuItemName": "Turkish Chilli Dip",
- "name": "RECIPE - TURKISH CHILLI DIP",
- "description": "Standard recipe for Turkish Chilli Dip (Price \u20b915/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 1.73,
- "pmCost": 1.77,
- "labourCost": 1.0,
- "calculatedCost": 4.5,
- "sellingPrice": 15.0,
- "ingredients": [
- {
- "id": "ri_m62a_1",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "Base Sauce / Mayo",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 1.73
- },
- {
- "id": "ri_m62a_2",
- "inventoryItemId": "inv_dip_small_bowl",
- "inventoryName": "Dip Small Bowl",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.77,
- "cost": 1.77
- },
- {
- "id": "ri_m62a_3",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 1.0,
- "cost": 1.0
- }
- ]
- },
- {
- "id": "r_m62b",
- "menuItemId": "m62b",
- "menuItemName": "Jalapeno Cheese Dip",
- "name": "RECIPE - JALAPENO CHEESE DIP",
- "description": "Standard recipe for Jalapeno Cheese Dip (Price \u20b915/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 1.73,
- "pmCost": 1.77,
- "labourCost": 1.0,
- "calculatedCost": 4.5,
- "sellingPrice": 15.0,
- "ingredients": [
- {
- "id": "ri_m62b_1",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "Base Sauce / Mayo",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 1.73
- },
- {
- "id": "ri_m62b_2",
- "inventoryItemId": "inv_dip_small_bowl",
- "inventoryName": "Dip Small Bowl",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.77,
- "cost": 1.77
- },
- {
- "id": "ri_m62b_3",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 1.0,
- "cost": 1.0
- }
- ]
- },
- {
- "id": "r_m62c",
- "menuItemId": "m62c",
- "menuItemName": "Garlic Mayo Dip",
- "name": "RECIPE - GARLIC MAYO DIP",
- "description": "Standard recipe for Garlic Mayo Dip (Price \u20b915/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 1.73,
- "pmCost": 1.77,
- "labourCost": 1.0,
- "calculatedCost": 4.5,
- "sellingPrice": 15.0,
- "ingredients": [
- {
- "id": "ri_m62c_1",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "Base Sauce / Mayo",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 1.73
- },
- {
- "id": "ri_m62c_2",
- "inventoryItemId": "inv_dip_small_bowl",
- "inventoryName": "Dip Small Bowl",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.77,
- "cost": 1.77
- },
- {
- "id": "ri_m62c_3",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 1.0,
- "cost": 1.0
- }
- ]
- },
- {
- "id": "r_m62d",
- "menuItemId": "m62d",
- "menuItemName": "Spicy Mayo Dip",
- "name": "RECIPE - SPICY MAYO DIP",
- "description": "Standard recipe for Spicy Mayo Dip (Price \u20b915/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 1.73,
- "pmCost": 1.77,
- "labourCost": 1.0,
- "calculatedCost": 4.5,
- "sellingPrice": 15.0,
- "ingredients": [
- {
- "id": "ri_m62d_1",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "Base Sauce / Mayo",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 1.73
- },
- {
- "id": "ri_m62d_2",
- "inventoryItemId": "inv_dip_small_bowl",
- "inventoryName": "Dip Small Bowl",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.77,
- "cost": 1.77
- },
- {
- "id": "ri_m62d_3",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 1.0,
- "cost": 1.0
- }
- ]
- },
- {
- "id": "r_m62e",
- "menuItemId": "m62e",
- "menuItemName": "Peri Peri Dip",
- "name": "RECIPE - PERI PERI DIP",
- "description": "Standard recipe for Peri Peri Dip (Price \u20b915/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 1.73,
- "pmCost": 1.77,
- "labourCost": 1.0,
- "calculatedCost": 4.5,
- "sellingPrice": 15.0,
- "ingredients": [
- {
- "id": "ri_m62e_1",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "Base Sauce / Mayo",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 1.73
- },
- {
- "id": "ri_m62e_2",
- "inventoryItemId": "inv_dip_small_bowl",
- "inventoryName": "Dip Small Bowl",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.77,
- "cost": 1.77
- },
- {
- "id": "ri_m62e_3",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 1.0,
- "cost": 1.0
- }
- ]
- },
- {
- "id": "r_m62f",
- "menuItemId": "m62f",
- "menuItemName": "Honey Mustard Dip",
- "name": "RECIPE - HONEY MUSTARD DIP",
- "description": "Standard recipe for Honey Mustard Dip (Price \u20b915/-)",
- "yieldQty": 1,
- "prepTime": 8,
- "rmCost": 1.73,
- "pmCost": 1.77,
- "labourCost": 1.0,
- "calculatedCost": 4.5,
- "sellingPrice": 15.0,
- "ingredients": [
- {
- "id": "ri_m62f_1",
- "inventoryItemId": "inv_mayonnaise",
- "inventoryName": "Base Sauce / Mayo",
- "quantity": 0.03,
- "unit": "kg",
- "costPerUnit": 168.43,
- "cost": 1.73
- },
- {
- "id": "ri_m62f_2",
- "inventoryItemId": "inv_dip_small_bowl",
- "inventoryName": "Dip Small Bowl",
- "quantity": 1.0,
- "unit": "pc",
- "costPerUnit": 1.77,
- "cost": 1.77
- },
- {
- "id": "ri_m62f_3",
- "inventoryItemId": "inv_labour",
- "inventoryName": "Labour Cost",
- "quantity": 1.0,
- "unit": "unit",
- "costPerUnit": 1.0,
- "cost": 1.0
- }
- ]
- }
+  {
+    "id": "r_m_spicy_gyro",
+    "menuItemId": "m_spicy_gyro",
+    "menuItemName": "Spicy Gyro",
+    "name": "RECIPE - SPICY GYRO",
+    "description": "Standard recipe for Spicy Gyro (Price RS 199/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 45.27,
+    "pmCost": 13.93,
+    "labourCost": 10.45,
+    "calculatedCost": 69.65,
+    "sellingPrice": 199.0,
+    "ingredients": [
+      {
+        "id": "ri_m_spicy_gyro_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Spicy Gyro Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 45.27,
+        "cost": 45.27
+      },
+      {
+        "id": "ri_m_spicy_gyro_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 13.93,
+        "cost": 13.93
+      },
+      {
+        "id": "ri_m_spicy_gyro_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 10.45,
+        "cost": 10.45
+      }
+    ]
+  },
+  {
+    "id": "r_m_creamy_gyro",
+    "menuItemId": "m_creamy_gyro",
+    "menuItemName": "Creamy Gyro",
+    "name": "RECIPE - CREAMY GYRO",
+    "description": "Standard recipe for Creamy Gyro (Price RS 199/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 45.27,
+    "pmCost": 13.93,
+    "labourCost": 10.45,
+    "calculatedCost": 69.65,
+    "sellingPrice": 199.0,
+    "ingredients": [
+      {
+        "id": "ri_m_creamy_gyro_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Creamy Gyro Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 45.27,
+        "cost": 45.27
+      },
+      {
+        "id": "ri_m_creamy_gyro_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 13.93,
+        "cost": 13.93
+      },
+      {
+        "id": "ri_m_creamy_gyro_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 10.45,
+        "cost": 10.45
+      }
+    ]
+  },
+  {
+    "id": "r_m_bbq_gyro",
+    "menuItemId": "m_bbq_gyro",
+    "menuItemName": "BBQ Gyro",
+    "name": "RECIPE - BBQ GYRO",
+    "description": "Standard recipe for BBQ Gyro (Price RS 199/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 45.27,
+    "pmCost": 13.93,
+    "labourCost": 10.45,
+    "calculatedCost": 69.65,
+    "sellingPrice": 199.0,
+    "ingredients": [
+      {
+        "id": "ri_m_bbq_gyro_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "BBQ Gyro Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 45.27,
+        "cost": 45.27
+      },
+      {
+        "id": "ri_m_bbq_gyro_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 13.93,
+        "cost": 13.93
+      },
+      {
+        "id": "ri_m_bbq_gyro_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 10.45,
+        "cost": 10.45
+      }
+    ]
+  },
+  {
+    "id": "r_m_signature_gyro",
+    "menuItemId": "m_signature_gyro",
+    "menuItemName": "Signature Gyro",
+    "name": "RECIPE - SIGNATURE GYRO",
+    "description": "Standard recipe for Signature Gyro (Price RS 199/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 45.27,
+    "pmCost": 13.93,
+    "labourCost": 10.45,
+    "calculatedCost": 69.65,
+    "sellingPrice": 199.0,
+    "ingredients": [
+      {
+        "id": "ri_m_signature_gyro_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Signature Gyro Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 45.27,
+        "cost": 45.27
+      },
+      {
+        "id": "ri_m_signature_gyro_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 13.93,
+        "cost": 13.93
+      },
+      {
+        "id": "ri_m_signature_gyro_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 10.45,
+        "cost": 10.45
+      }
+    ]
+  },
+  {
+    "id": "r_m_legthigh_1pc",
+    "menuItemId": "m_legthigh_1pc",
+    "menuItemName": "1 Pc Leg & Thigh (1 Dip)",
+    "name": "RECIPE - 1 PC LEG & THIGH (1 DIP)",
+    "description": "Standard recipe for 1 Pc Leg & Thigh (1 Dip) (Price RS 70/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 15.93,
+    "pmCost": 4.9,
+    "labourCost": 3.67,
+    "calculatedCost": 24.5,
+    "sellingPrice": 70.0,
+    "ingredients": [
+      {
+        "id": "ri_m_legthigh_1pc_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "1 Pc Leg & Thigh (1 Dip) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 15.93,
+        "cost": 15.93
+      },
+      {
+        "id": "ri_m_legthigh_1pc_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 4.9,
+        "cost": 4.9
+      },
+      {
+        "id": "ri_m_legthigh_1pc_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 3.67,
+        "cost": 3.67
+      }
+    ]
+  },
+  {
+    "id": "r_m_legthigh_2pc",
+    "menuItemId": "m_legthigh_2pc",
+    "menuItemName": "2 Pc Leg & Thigh (1 Dip)",
+    "name": "RECIPE - 2 PC LEG & THIGH (1 DIP)",
+    "description": "Standard recipe for 2 Pc Leg & Thigh (1 Dip) (Price RS 140/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 31.85,
+    "pmCost": 9.8,
+    "labourCost": 7.35,
+    "calculatedCost": 49.0,
+    "sellingPrice": 140.0,
+    "ingredients": [
+      {
+        "id": "ri_m_legthigh_2pc_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "2 Pc Leg & Thigh (1 Dip) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 31.85,
+        "cost": 31.85
+      },
+      {
+        "id": "ri_m_legthigh_2pc_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 9.8,
+        "cost": 9.8
+      },
+      {
+        "id": "ri_m_legthigh_2pc_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 7.35,
+        "cost": 7.35
+      }
+    ]
+  },
+  {
+    "id": "r_m_legthigh_4pc",
+    "menuItemId": "m_legthigh_4pc",
+    "menuItemName": "4 Pc Leg & Thigh (2 Dips)",
+    "name": "RECIPE - 4 PC LEG & THIGH (2 DIPS)",
+    "description": "Standard recipe for 4 Pc Leg & Thigh (2 Dips) (Price RS 280/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 63.7,
+    "pmCost": 19.6,
+    "labourCost": 14.7,
+    "calculatedCost": 98.0,
+    "sellingPrice": 280.0,
+    "ingredients": [
+      {
+        "id": "ri_m_legthigh_4pc_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "4 Pc Leg & Thigh (2 Dips) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 63.7,
+        "cost": 63.7
+      },
+      {
+        "id": "ri_m_legthigh_4pc_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 19.6,
+        "cost": 19.6
+      },
+      {
+        "id": "ri_m_legthigh_4pc_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 14.7,
+        "cost": 14.7
+      }
+    ]
+  },
+  {
+    "id": "r_m_legthigh_8pc",
+    "menuItemId": "m_legthigh_8pc",
+    "menuItemName": "8 Pc Leg & Thigh (4 Dips)",
+    "name": "RECIPE - 8 PC LEG & THIGH (4 DIPS)",
+    "description": "Standard recipe for 8 Pc Leg & Thigh (4 Dips) (Price RS 560/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 127.4,
+    "pmCost": 39.2,
+    "labourCost": 29.4,
+    "calculatedCost": 196.0,
+    "sellingPrice": 560.0,
+    "ingredients": [
+      {
+        "id": "ri_m_legthigh_8pc_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "8 Pc Leg & Thigh (4 Dips) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 127.4,
+        "cost": 127.4
+      },
+      {
+        "id": "ri_m_legthigh_8pc_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 39.2,
+        "cost": 39.2
+      },
+      {
+        "id": "ri_m_legthigh_8pc_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 29.4,
+        "cost": 29.4
+      }
+    ]
+  },
+  {
+    "id": "r_m_legthigh_12pc",
+    "menuItemId": "m_legthigh_12pc",
+    "menuItemName": "12 Pc Leg & Thigh (6 Dips)",
+    "name": "RECIPE - 12 PC LEG & THIGH (6 DIPS)",
+    "description": "Standard recipe for 12 Pc Leg & Thigh (6 Dips) (Price RS 840/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 191.1,
+    "pmCost": 58.8,
+    "labourCost": 44.1,
+    "calculatedCost": 294.0,
+    "sellingPrice": 840.0,
+    "ingredients": [
+      {
+        "id": "ri_m_legthigh_12pc_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "12 Pc Leg & Thigh (6 Dips) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 191.1,
+        "cost": 191.1
+      },
+      {
+        "id": "ri_m_legthigh_12pc_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 58.8,
+        "cost": 58.8
+      },
+      {
+        "id": "ri_m_legthigh_12pc_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 44.1,
+        "cost": 44.1
+      }
+    ]
+  },
+  {
+    "id": "r_m_wings_3pc",
+    "menuItemId": "m_wings_3pc",
+    "menuItemName": "3 Pc Wings (1 Dip)",
+    "name": "RECIPE - 3 PC WINGS (1 DIP)",
+    "description": "Standard recipe for 3 Pc Wings (1 Dip) (Price RS 90/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 20.48,
+    "pmCost": 6.3,
+    "labourCost": 4.72,
+    "calculatedCost": 31.5,
+    "sellingPrice": 90.0,
+    "ingredients": [
+      {
+        "id": "ri_m_wings_3pc_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "3 Pc Wings (1 Dip) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 20.48,
+        "cost": 20.48
+      },
+      {
+        "id": "ri_m_wings_3pc_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 6.3,
+        "cost": 6.3
+      },
+      {
+        "id": "ri_m_wings_3pc_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 4.72,
+        "cost": 4.72
+      }
+    ]
+  },
+  {
+    "id": "r_m_wings_6pc",
+    "menuItemId": "m_wings_6pc",
+    "menuItemName": "6 Pc Wings (2 Dips)",
+    "name": "RECIPE - 6 PC WINGS (2 DIPS)",
+    "description": "Standard recipe for 6 Pc Wings (2 Dips) (Price RS 180/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 40.95,
+    "pmCost": 12.6,
+    "labourCost": 9.45,
+    "calculatedCost": 63.0,
+    "sellingPrice": 180.0,
+    "ingredients": [
+      {
+        "id": "ri_m_wings_6pc_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "6 Pc Wings (2 Dips) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 40.95,
+        "cost": 40.95
+      },
+      {
+        "id": "ri_m_wings_6pc_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 12.6,
+        "cost": 12.6
+      },
+      {
+        "id": "ri_m_wings_6pc_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 9.45,
+        "cost": 9.45
+      }
+    ]
+  },
+  {
+    "id": "r_m_wings_9pc",
+    "menuItemId": "m_wings_9pc",
+    "menuItemName": "9 Pc Wings (3 Dips)",
+    "name": "RECIPE - 9 PC WINGS (3 DIPS)",
+    "description": "Standard recipe for 9 Pc Wings (3 Dips) (Price RS 270/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 61.43,
+    "pmCost": 18.9,
+    "labourCost": 14.17,
+    "calculatedCost": 94.5,
+    "sellingPrice": 270.0,
+    "ingredients": [
+      {
+        "id": "ri_m_wings_9pc_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "9 Pc Wings (3 Dips) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 61.43,
+        "cost": 61.43
+      },
+      {
+        "id": "ri_m_wings_9pc_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 18.9,
+        "cost": 18.9
+      },
+      {
+        "id": "ri_m_wings_9pc_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 14.17,
+        "cost": 14.17
+      }
+    ]
+  },
+  {
+    "id": "r_m_wings_20pc",
+    "menuItemId": "m_wings_20pc",
+    "menuItemName": "20 Pc Wings (6 Dips)",
+    "name": "RECIPE - 20 PC WINGS (6 DIPS)",
+    "description": "Standard recipe for 20 Pc Wings (6 Dips) (Price RS 600/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 136.5,
+    "pmCost": 42.0,
+    "labourCost": 31.5,
+    "calculatedCost": 210.0,
+    "sellingPrice": 600.0,
+    "ingredients": [
+      {
+        "id": "ri_m_wings_20pc_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "20 Pc Wings (6 Dips) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 136.5,
+        "cost": 136.5
+      },
+      {
+        "id": "ri_m_wings_20pc_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 42.0,
+        "cost": 42.0
+      },
+      {
+        "id": "ri_m_wings_20pc_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 31.5,
+        "cost": 31.5
+      }
+    ]
+  },
+  {
+    "id": "r_m_strips_3pc",
+    "menuItemId": "m_strips_3pc",
+    "menuItemName": "3 Pc Strips (1 Dip)",
+    "name": "RECIPE - 3 PC STRIPS (1 DIP)",
+    "description": "Standard recipe for 3 Pc Strips (1 Dip) (Price RS 120/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 27.3,
+    "pmCost": 8.4,
+    "labourCost": 6.3,
+    "calculatedCost": 42.0,
+    "sellingPrice": 120.0,
+    "ingredients": [
+      {
+        "id": "ri_m_strips_3pc_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "3 Pc Strips (1 Dip) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 27.3,
+        "cost": 27.3
+      },
+      {
+        "id": "ri_m_strips_3pc_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 8.4,
+        "cost": 8.4
+      },
+      {
+        "id": "ri_m_strips_3pc_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 6.3,
+        "cost": 6.3
+      }
+    ]
+  },
+  {
+    "id": "r_m_strips_6pc",
+    "menuItemId": "m_strips_6pc",
+    "menuItemName": "6 Pc Strips (2 Dips)",
+    "name": "RECIPE - 6 PC STRIPS (2 DIPS)",
+    "description": "Standard recipe for 6 Pc Strips (2 Dips) (Price RS 240/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 54.6,
+    "pmCost": 16.8,
+    "labourCost": 12.6,
+    "calculatedCost": 84.0,
+    "sellingPrice": 240.0,
+    "ingredients": [
+      {
+        "id": "ri_m_strips_6pc_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "6 Pc Strips (2 Dips) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 54.6,
+        "cost": 54.6
+      },
+      {
+        "id": "ri_m_strips_6pc_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 16.8,
+        "cost": 16.8
+      },
+      {
+        "id": "ri_m_strips_6pc_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 12.6,
+        "cost": 12.6
+      }
+    ]
+  },
+  {
+    "id": "r_m_strips_9pc",
+    "menuItemId": "m_strips_9pc",
+    "menuItemName": "9 Pc Strips (3 Dips)",
+    "name": "RECIPE - 9 PC STRIPS (3 DIPS)",
+    "description": "Standard recipe for 9 Pc Strips (3 Dips) (Price RS 360/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 81.9,
+    "pmCost": 25.2,
+    "labourCost": 18.9,
+    "calculatedCost": 126.0,
+    "sellingPrice": 360.0,
+    "ingredients": [
+      {
+        "id": "ri_m_strips_9pc_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "9 Pc Strips (3 Dips) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 81.9,
+        "cost": 81.9
+      },
+      {
+        "id": "ri_m_strips_9pc_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 25.2,
+        "cost": 25.2
+      },
+      {
+        "id": "ri_m_strips_9pc_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 18.9,
+        "cost": 18.9
+      }
+    ]
+  },
+  {
+    "id": "r_m_strips_20pc",
+    "menuItemId": "m_strips_20pc",
+    "menuItemName": "20 Pc Strips (6 Dips)",
+    "name": "RECIPE - 20 PC STRIPS (6 DIPS)",
+    "description": "Standard recipe for 20 Pc Strips (6 Dips) (Price RS 800/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 182.0,
+    "pmCost": 56.0,
+    "labourCost": 42.0,
+    "calculatedCost": 280.0,
+    "sellingPrice": 800.0,
+    "ingredients": [
+      {
+        "id": "ri_m_strips_20pc_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "20 Pc Strips (6 Dips) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 182.0,
+        "cost": 182.0
+      },
+      {
+        "id": "ri_m_strips_20pc_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 56.0,
+        "cost": 56.0
+      },
+      {
+        "id": "ri_m_strips_20pc_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 42.0,
+        "cost": 42.0
+      }
+    ]
+  },
+  {
+    "id": "r_m_fries_std",
+    "menuItemId": "m_fries_std",
+    "menuItemName": "Fries (Salted, Peri Peri or Cajun)",
+    "name": "RECIPE - FRIES (SALTED, PERI PERI OR CAJUN)",
+    "description": "Standard recipe for Fries (Salted, Peri Peri or Cajun) (Price RS 99/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 22.52,
+    "pmCost": 6.93,
+    "labourCost": 5.2,
+    "calculatedCost": 34.65,
+    "sellingPrice": 99.0,
+    "ingredients": [
+      {
+        "id": "ri_m_fries_std_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Fries (Salted, Peri Peri or Cajun) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 22.52,
+        "cost": 22.52
+      },
+      {
+        "id": "ri_m_fries_std_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 6.93,
+        "cost": 6.93
+      },
+      {
+        "id": "ri_m_fries_std_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 5.2,
+        "cost": 5.2
+      }
+    ]
+  },
+  {
+    "id": "r_m_loaded_fries",
+    "menuItemId": "m_loaded_fries",
+    "menuItemName": "Loaded Fries",
+    "name": "RECIPE - LOADED FRIES",
+    "description": "Standard recipe for Loaded Fries (Price RS 199/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 45.27,
+    "pmCost": 13.93,
+    "labourCost": 10.45,
+    "calculatedCost": 69.65,
+    "sellingPrice": 199.0,
+    "ingredients": [
+      {
+        "id": "ri_m_loaded_fries_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Loaded Fries Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 45.27,
+        "cost": 45.27
+      },
+      {
+        "id": "ri_m_loaded_fries_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 13.93,
+        "cost": 13.93
+      },
+      {
+        "id": "ri_m_loaded_fries_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 10.45,
+        "cost": 10.45
+      }
+    ]
+  },
+  {
+    "id": "r_m_rice_bowl",
+    "menuItemId": "m_rice_bowl",
+    "menuItemName": "Rice Bowl (Signature)",
+    "name": "RECIPE - RICE BOWL (SIGNATURE)",
+    "description": "Standard recipe for Rice Bowl (Signature) (Price RS 199/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 45.27,
+    "pmCost": 13.93,
+    "labourCost": 10.45,
+    "calculatedCost": 69.65,
+    "sellingPrice": 199.0,
+    "ingredients": [
+      {
+        "id": "ri_m_rice_bowl_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Rice Bowl (Signature) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 45.27,
+        "cost": 45.27
+      },
+      {
+        "id": "ri_m_rice_bowl_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 13.93,
+        "cost": 13.93
+      },
+      {
+        "id": "ri_m_rice_bowl_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 10.45,
+        "cost": 10.45
+      }
+    ]
+  },
+  {
+    "id": "r_m_signature_salad",
+    "menuItemId": "m_signature_salad",
+    "menuItemName": "Signature Salad",
+    "name": "RECIPE - SIGNATURE SALAD",
+    "description": "Standard recipe for Signature Salad (Price RS 149/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 33.9,
+    "pmCost": 10.43,
+    "labourCost": 7.82,
+    "calculatedCost": 52.15,
+    "sellingPrice": 149.0,
+    "ingredients": [
+      {
+        "id": "ri_m_signature_salad_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Signature Salad Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 33.9,
+        "cost": 33.9
+      },
+      {
+        "id": "ri_m_signature_salad_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 10.43,
+        "cost": 10.43
+      },
+      {
+        "id": "ri_m_signature_salad_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 7.82,
+        "cost": 7.82
+      }
+    ]
+  },
+  {
+    "id": "r_m_sprite_reg",
+    "menuItemId": "m_sprite_reg",
+    "menuItemName": "Sprite (Regular)",
+    "name": "RECIPE - SPRITE (REGULAR)",
+    "description": "Standard recipe for Sprite (Regular) (Price RS 59/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 13.42,
+    "pmCost": 4.13,
+    "labourCost": 3.1,
+    "calculatedCost": 20.65,
+    "sellingPrice": 59.0,
+    "ingredients": [
+      {
+        "id": "ri_m_sprite_reg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Sprite (Regular) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 13.42,
+        "cost": 13.42
+      },
+      {
+        "id": "ri_m_sprite_reg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 4.13,
+        "cost": 4.13
+      },
+      {
+        "id": "ri_m_sprite_reg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 3.1,
+        "cost": 3.1
+      }
+    ]
+  },
+  {
+    "id": "r_m_sprite_lrg",
+    "menuItemId": "m_sprite_lrg",
+    "menuItemName": "Sprite (Large)",
+    "name": "RECIPE - SPRITE (LARGE)",
+    "description": "Standard recipe for Sprite (Large) (Price RS 99/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 22.52,
+    "pmCost": 6.93,
+    "labourCost": 5.2,
+    "calculatedCost": 34.65,
+    "sellingPrice": 99.0,
+    "ingredients": [
+      {
+        "id": "ri_m_sprite_lrg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Sprite (Large) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 22.52,
+        "cost": 22.52
+      },
+      {
+        "id": "ri_m_sprite_lrg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 6.93,
+        "cost": 6.93
+      },
+      {
+        "id": "ri_m_sprite_lrg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 5.2,
+        "cost": 5.2
+      }
+    ]
+  },
+  {
+    "id": "r_m_cocacola_reg",
+    "menuItemId": "m_cocacola_reg",
+    "menuItemName": "Coca Cola (Regular)",
+    "name": "RECIPE - COCA COLA (REGULAR)",
+    "description": "Standard recipe for Coca Cola (Regular) (Price RS 59/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 13.42,
+    "pmCost": 4.13,
+    "labourCost": 3.1,
+    "calculatedCost": 20.65,
+    "sellingPrice": 59.0,
+    "ingredients": [
+      {
+        "id": "ri_m_cocacola_reg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Coca Cola (Regular) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 13.42,
+        "cost": 13.42
+      },
+      {
+        "id": "ri_m_cocacola_reg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 4.13,
+        "cost": 4.13
+      },
+      {
+        "id": "ri_m_cocacola_reg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 3.1,
+        "cost": 3.1
+      }
+    ]
+  },
+  {
+    "id": "r_m_cocacola_lrg",
+    "menuItemId": "m_cocacola_lrg",
+    "menuItemName": "Coca Cola (Large)",
+    "name": "RECIPE - COCA COLA (LARGE)",
+    "description": "Standard recipe for Coca Cola (Large) (Price RS 99/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 22.52,
+    "pmCost": 6.93,
+    "labourCost": 5.2,
+    "calculatedCost": 34.65,
+    "sellingPrice": 99.0,
+    "ingredients": [
+      {
+        "id": "ri_m_cocacola_lrg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Coca Cola (Large) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 22.52,
+        "cost": 22.52
+      },
+      {
+        "id": "ri_m_cocacola_lrg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 6.93,
+        "cost": 6.93
+      },
+      {
+        "id": "ri_m_cocacola_lrg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 5.2,
+        "cost": 5.2
+      }
+    ]
+  },
+  {
+    "id": "r_m_icetea_reg",
+    "menuItemId": "m_icetea_reg",
+    "menuItemName": "Ice Tea (Regular)",
+    "name": "RECIPE - ICE TEA (REGULAR)",
+    "description": "Standard recipe for Ice Tea (Regular) (Price RS 59/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 13.42,
+    "pmCost": 4.13,
+    "labourCost": 3.1,
+    "calculatedCost": 20.65,
+    "sellingPrice": 59.0,
+    "ingredients": [
+      {
+        "id": "ri_m_icetea_reg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Ice Tea (Regular) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 13.42,
+        "cost": 13.42
+      },
+      {
+        "id": "ri_m_icetea_reg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 4.13,
+        "cost": 4.13
+      },
+      {
+        "id": "ri_m_icetea_reg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 3.1,
+        "cost": 3.1
+      }
+    ]
+  },
+  {
+    "id": "r_m_icetea_lrg",
+    "menuItemId": "m_icetea_lrg",
+    "menuItemName": "Ice Tea (Large)",
+    "name": "RECIPE - ICE TEA (LARGE)",
+    "description": "Standard recipe for Ice Tea (Large) (Price RS 99/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 22.52,
+    "pmCost": 6.93,
+    "labourCost": 5.2,
+    "calculatedCost": 34.65,
+    "sellingPrice": 99.0,
+    "ingredients": [
+      {
+        "id": "ri_m_icetea_lrg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Ice Tea (Large) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 22.52,
+        "cost": 22.52
+      },
+      {
+        "id": "ri_m_icetea_lrg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 6.93,
+        "cost": 6.93
+      },
+      {
+        "id": "ri_m_icetea_lrg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 5.2,
+        "cost": 5.2
+      }
+    ]
+  },
+  {
+    "id": "r_m_hot_chocolate",
+    "menuItemId": "m_hot_chocolate",
+    "menuItemName": "Hot Chocolate",
+    "name": "RECIPE - HOT CHOCOLATE",
+    "description": "Standard recipe for Hot Chocolate (Price RS 99/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 22.52,
+    "pmCost": 6.93,
+    "labourCost": 5.2,
+    "calculatedCost": 34.65,
+    "sellingPrice": 99.0,
+    "ingredients": [
+      {
+        "id": "ri_m_hot_chocolate_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Hot Chocolate Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 22.52,
+        "cost": 22.52
+      },
+      {
+        "id": "ri_m_hot_chocolate_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 6.93,
+        "cost": 6.93
+      },
+      {
+        "id": "ri_m_hot_chocolate_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 5.2,
+        "cost": 5.2
+      }
+    ]
+  },
+  {
+    "id": "r_m_signature_tea",
+    "menuItemId": "m_signature_tea",
+    "menuItemName": "Signature Tea",
+    "name": "RECIPE - SIGNATURE TEA",
+    "description": "Standard recipe for Signature Tea (Price RS 99/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 22.52,
+    "pmCost": 6.93,
+    "labourCost": 5.2,
+    "calculatedCost": 34.65,
+    "sellingPrice": 99.0,
+    "ingredients": [
+      {
+        "id": "ri_m_signature_tea_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Signature Tea Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 22.52,
+        "cost": 22.52
+      },
+      {
+        "id": "ri_m_signature_tea_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 6.93,
+        "cost": 6.93
+      },
+      {
+        "id": "ri_m_signature_tea_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 5.2,
+        "cost": 5.2
+      }
+    ]
+  },
+  {
+    "id": "r_m_express_meal",
+    "menuItemId": "m_express_meal",
+    "menuItemName": "Express Meal",
+    "name": "RECIPE - EXPRESS MEAL",
+    "description": "Standard recipe for Express Meal (Price RS 249/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 56.65,
+    "pmCost": 17.43,
+    "labourCost": 13.07,
+    "calculatedCost": 87.15,
+    "sellingPrice": 249.0,
+    "ingredients": [
+      {
+        "id": "ri_m_express_meal_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Express Meal Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 56.65,
+        "cost": 56.65
+      },
+      {
+        "id": "ri_m_express_meal_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 17.43,
+        "cost": 17.43
+      },
+      {
+        "id": "ri_m_express_meal_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 13.07,
+        "cost": 13.07
+      }
+    ]
+  },
+  {
+    "id": "r_m_sig_gyro_meal",
+    "menuItemId": "m_sig_gyro_meal",
+    "menuItemName": "Signature Gyro Meal",
+    "name": "RECIPE - SIGNATURE GYRO MEAL",
+    "description": "Standard recipe for Signature Gyro Meal (Price RS 279/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 63.47,
+    "pmCost": 19.53,
+    "labourCost": 14.65,
+    "calculatedCost": 97.65,
+    "sellingPrice": 279.0,
+    "ingredients": [
+      {
+        "id": "ri_m_sig_gyro_meal_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Signature Gyro Meal Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 63.47,
+        "cost": 63.47
+      },
+      {
+        "id": "ri_m_sig_gyro_meal_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 19.53,
+        "cost": 19.53
+      },
+      {
+        "id": "ri_m_sig_gyro_meal_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 14.65,
+        "cost": 14.65
+      }
+    ]
+  },
+  {
+    "id": "r_m_lebanese_rice_box",
+    "menuItemId": "m_lebanese_rice_box",
+    "menuItemName": "Lebanese Rice Box",
+    "name": "RECIPE - LEBANESE RICE BOX",
+    "description": "Standard recipe for Lebanese Rice Box (Price RS 299/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 68.02,
+    "pmCost": 20.93,
+    "labourCost": 15.7,
+    "calculatedCost": 104.65,
+    "sellingPrice": 299.0,
+    "ingredients": [
+      {
+        "id": "ri_m_lebanese_rice_box_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Lebanese Rice Box Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 68.02,
+        "cost": 68.02
+      },
+      {
+        "id": "ri_m_lebanese_rice_box_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 20.93,
+        "cost": 20.93
+      },
+      {
+        "id": "ri_m_lebanese_rice_box_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 15.7,
+        "cost": 15.7
+      }
+    ]
+  },
+  {
+    "id": "r_m_classic_gyro_meal",
+    "menuItemId": "m_classic_gyro_meal",
+    "menuItemName": "Classic Gyro Meal",
+    "name": "RECIPE - CLASSIC GYRO MEAL",
+    "description": "Standard recipe for Classic Gyro Meal (Price RS 349/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 79.4,
+    "pmCost": 24.43,
+    "labourCost": 18.32,
+    "calculatedCost": 122.15,
+    "sellingPrice": 349.0,
+    "ingredients": [
+      {
+        "id": "ri_m_classic_gyro_meal_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Classic Gyro Meal Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 79.4,
+        "cost": 79.4
+      },
+      {
+        "id": "ri_m_classic_gyro_meal_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 24.43,
+        "cost": 24.43
+      },
+      {
+        "id": "ri_m_classic_gyro_meal_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 18.32,
+        "cost": 18.32
+      }
+    ]
+  },
+  {
+    "id": "r_m_duo_gyro_feast",
+    "menuItemId": "m_duo_gyro_feast",
+    "menuItemName": "Duo Gyro Feast",
+    "name": "RECIPE - DUO GYRO FEAST",
+    "description": "Standard recipe for Duo Gyro Feast (Price RS 449/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 102.15,
+    "pmCost": 31.43,
+    "labourCost": 23.57,
+    "calculatedCost": 157.15,
+    "sellingPrice": 449.0,
+    "ingredients": [
+      {
+        "id": "ri_m_duo_gyro_feast_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Duo Gyro Feast Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 102.15,
+        "cost": 102.15
+      },
+      {
+        "id": "ri_m_duo_gyro_feast_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 31.43,
+        "cost": 31.43
+      },
+      {
+        "id": "ri_m_duo_gyro_feast_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 23.57,
+        "cost": 23.57
+      }
+    ]
+  },
+  {
+    "id": "r_m_double_crunch_box",
+    "menuItemId": "m_double_crunch_box",
+    "menuItemName": "Double Crunch Box",
+    "name": "RECIPE - DOUBLE CRUNCH BOX",
+    "description": "Standard recipe for Double Crunch Box (Price RS 699/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 159.02,
+    "pmCost": 48.93,
+    "labourCost": 36.7,
+    "calculatedCost": 244.65,
+    "sellingPrice": 699.0,
+    "ingredients": [
+      {
+        "id": "ri_m_double_crunch_box_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Double Crunch Box Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 159.02,
+        "cost": 159.02
+      },
+      {
+        "id": "ri_m_double_crunch_box_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 48.93,
+        "cost": 48.93
+      },
+      {
+        "id": "ri_m_double_crunch_box_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 36.7,
+        "cost": 36.7
+      }
+    ]
+  },
+  {
+    "id": "r_m_mega_feast_meal",
+    "menuItemId": "m_mega_feast_meal",
+    "menuItemName": "Mega Feast Meal",
+    "name": "RECIPE - MEGA FEAST MEAL",
+    "description": "Standard recipe for Mega Feast Meal (Price RS 799/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 181.77,
+    "pmCost": 55.93,
+    "labourCost": 41.95,
+    "calculatedCost": 279.65,
+    "sellingPrice": 799.0,
+    "ingredients": [
+      {
+        "id": "ri_m_mega_feast_meal_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Mega Feast Meal Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 181.77,
+        "cost": 181.77
+      },
+      {
+        "id": "ri_m_mega_feast_meal_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 55.93,
+        "cost": 55.93
+      },
+      {
+        "id": "ri_m_mega_feast_meal_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 41.95,
+        "cost": 41.95
+      }
+    ]
+  },
+  {
+    "id": "r_m_dens_party_meal",
+    "menuItemId": "m_dens_party_meal",
+    "menuItemName": "Den's Party Meal",
+    "name": "RECIPE - DEN'S PARTY MEAL",
+    "description": "Standard recipe for Den's Party Meal (Price RS 1049/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 238.65,
+    "pmCost": 73.43,
+    "labourCost": 55.07,
+    "calculatedCost": 367.15,
+    "sellingPrice": 1049.0,
+    "ingredients": [
+      {
+        "id": "ri_m_dens_party_meal_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Den's Party Meal Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 238.65,
+        "cost": 238.65
+      },
+      {
+        "id": "ri_m_dens_party_meal_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 73.43,
+        "cost": 73.43
+      },
+      {
+        "id": "ri_m_dens_party_meal_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 55.07,
+        "cost": 55.07
+      }
+    ]
+  },
+  {
+    "id": "r_m_super5_bucket",
+    "menuItemId": "m_super5_bucket",
+    "menuItemName": "Super 5 Bucket",
+    "name": "RECIPE - SUPER 5 BUCKET",
+    "description": "Standard recipe for Super 5 Bucket (Price RS 1299/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 295.52,
+    "pmCost": 90.93,
+    "labourCost": 68.2,
+    "calculatedCost": 454.65,
+    "sellingPrice": 1299.0,
+    "ingredients": [
+      {
+        "id": "ri_m_super5_bucket_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Super 5 Bucket Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 295.52,
+        "cost": 295.52
+      },
+      {
+        "id": "ri_m_super5_bucket_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 90.93,
+        "cost": 90.93
+      },
+      {
+        "id": "ri_m_super5_bucket_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 68.2,
+        "cost": 68.2
+      }
+    ]
+  },
+  {
+    "id": "r_m_pmax_gyro",
+    "menuItemId": "m_pmax_gyro",
+    "menuItemName": "Protein Max Gyro",
+    "name": "RECIPE - PROTEIN MAX GYRO",
+    "description": "Standard recipe for Protein Max Gyro (Price RS 299/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 68.02,
+    "pmCost": 20.93,
+    "labourCost": 15.7,
+    "calculatedCost": 104.65,
+    "sellingPrice": 299.0,
+    "ingredients": [
+      {
+        "id": "ri_m_pmax_gyro_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Protein Max Gyro Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 68.02,
+        "cost": 68.02
+      },
+      {
+        "id": "ri_m_pmax_gyro_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 20.93,
+        "cost": 20.93
+      },
+      {
+        "id": "ri_m_pmax_gyro_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 15.7,
+        "cost": 15.7
+      }
+    ]
+  },
+  {
+    "id": "r_m_pmax_rice",
+    "menuItemId": "m_pmax_rice",
+    "menuItemName": "Protein Max Rice Bowl",
+    "name": "RECIPE - PROTEIN MAX RICE BOWL",
+    "description": "Standard recipe for Protein Max Rice Bowl (Price RS 299/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 68.02,
+    "pmCost": 20.93,
+    "labourCost": 15.7,
+    "calculatedCost": 104.65,
+    "sellingPrice": 299.0,
+    "ingredients": [
+      {
+        "id": "ri_m_pmax_rice_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Protein Max Rice Bowl Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 68.02,
+        "cost": 68.02
+      },
+      {
+        "id": "ri_m_pmax_rice_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 20.93,
+        "cost": 20.93
+      },
+      {
+        "id": "ri_m_pmax_rice_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 15.7,
+        "cost": 15.7
+      }
+    ]
+  },
+  {
+    "id": "r_m_pmax_salad",
+    "menuItemId": "m_pmax_salad",
+    "menuItemName": "Protein Max Salad",
+    "name": "RECIPE - PROTEIN MAX SALAD",
+    "description": "Standard recipe for Protein Max Salad (Price RS 299/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 68.02,
+    "pmCost": 20.93,
+    "labourCost": 15.7,
+    "calculatedCost": 104.65,
+    "sellingPrice": 299.0,
+    "ingredients": [
+      {
+        "id": "ri_m_pmax_salad_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Protein Max Salad Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 68.02,
+        "cost": 68.02
+      },
+      {
+        "id": "ri_m_pmax_salad_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 20.93,
+        "cost": 20.93
+      },
+      {
+        "id": "ri_m_pmax_salad_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 15.7,
+        "cost": 15.7
+      }
+    ]
+  },
+  {
+    "id": "r_m_vanilla_shake_reg",
+    "menuItemId": "m_vanilla_shake_reg",
+    "menuItemName": "Vanilla Shake (Regular)",
+    "name": "RECIPE - VANILLA SHAKE (REGULAR)",
+    "description": "Standard recipe for Vanilla Shake (Regular) (Price RS 120/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 27.3,
+    "pmCost": 8.4,
+    "labourCost": 6.3,
+    "calculatedCost": 42.0,
+    "sellingPrice": 120.0,
+    "ingredients": [
+      {
+        "id": "ri_m_vanilla_shake_reg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Vanilla Shake (Regular) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 27.3,
+        "cost": 27.3
+      },
+      {
+        "id": "ri_m_vanilla_shake_reg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 8.4,
+        "cost": 8.4
+      },
+      {
+        "id": "ri_m_vanilla_shake_reg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 6.3,
+        "cost": 6.3
+      }
+    ]
+  },
+  {
+    "id": "r_m_vanilla_shake_lrg",
+    "menuItemId": "m_vanilla_shake_lrg",
+    "menuItemName": "Vanilla Shake (Large)",
+    "name": "RECIPE - VANILLA SHAKE (LARGE)",
+    "description": "Standard recipe for Vanilla Shake (Large) (Price RS 199/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 45.27,
+    "pmCost": 13.93,
+    "labourCost": 10.45,
+    "calculatedCost": 69.65,
+    "sellingPrice": 199.0,
+    "ingredients": [
+      {
+        "id": "ri_m_vanilla_shake_lrg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Vanilla Shake (Large) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 45.27,
+        "cost": 45.27
+      },
+      {
+        "id": "ri_m_vanilla_shake_lrg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 13.93,
+        "cost": 13.93
+      },
+      {
+        "id": "ri_m_vanilla_shake_lrg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 10.45,
+        "cost": 10.45
+      }
+    ]
+  },
+  {
+    "id": "r_m_strawberry_shake_reg",
+    "menuItemId": "m_strawberry_shake_reg",
+    "menuItemName": "Strawberry Shake (Regular)",
+    "name": "RECIPE - STRAWBERRY SHAKE (REGULAR)",
+    "description": "Standard recipe for Strawberry Shake (Regular) (Price RS 120/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 27.3,
+    "pmCost": 8.4,
+    "labourCost": 6.3,
+    "calculatedCost": 42.0,
+    "sellingPrice": 120.0,
+    "ingredients": [
+      {
+        "id": "ri_m_strawberry_shake_reg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Strawberry Shake (Regular) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 27.3,
+        "cost": 27.3
+      },
+      {
+        "id": "ri_m_strawberry_shake_reg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 8.4,
+        "cost": 8.4
+      },
+      {
+        "id": "ri_m_strawberry_shake_reg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 6.3,
+        "cost": 6.3
+      }
+    ]
+  },
+  {
+    "id": "r_m_strawberry_shake_lrg",
+    "menuItemId": "m_strawberry_shake_lrg",
+    "menuItemName": "Strawberry Shake (Large)",
+    "name": "RECIPE - STRAWBERRY SHAKE (LARGE)",
+    "description": "Standard recipe for Strawberry Shake (Large) (Price RS 199/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 45.27,
+    "pmCost": 13.93,
+    "labourCost": 10.45,
+    "calculatedCost": 69.65,
+    "sellingPrice": 199.0,
+    "ingredients": [
+      {
+        "id": "ri_m_strawberry_shake_lrg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Strawberry Shake (Large) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 45.27,
+        "cost": 45.27
+      },
+      {
+        "id": "ri_m_strawberry_shake_lrg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 13.93,
+        "cost": 13.93
+      },
+      {
+        "id": "ri_m_strawberry_shake_lrg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 10.45,
+        "cost": 10.45
+      }
+    ]
+  },
+  {
+    "id": "r_m_biscoff_shake_reg",
+    "menuItemId": "m_biscoff_shake_reg",
+    "menuItemName": "Biscoff Shake (Regular)",
+    "name": "RECIPE - BISCOFF SHAKE (REGULAR)",
+    "description": "Standard recipe for Biscoff Shake (Regular) (Price RS 120/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 27.3,
+    "pmCost": 8.4,
+    "labourCost": 6.3,
+    "calculatedCost": 42.0,
+    "sellingPrice": 120.0,
+    "ingredients": [
+      {
+        "id": "ri_m_biscoff_shake_reg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Biscoff Shake (Regular) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 27.3,
+        "cost": 27.3
+      },
+      {
+        "id": "ri_m_biscoff_shake_reg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 8.4,
+        "cost": 8.4
+      },
+      {
+        "id": "ri_m_biscoff_shake_reg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 6.3,
+        "cost": 6.3
+      }
+    ]
+  },
+  {
+    "id": "r_m_biscoff_shake_lrg",
+    "menuItemId": "m_biscoff_shake_lrg",
+    "menuItemName": "Biscoff Shake (Large)",
+    "name": "RECIPE - BISCOFF SHAKE (LARGE)",
+    "description": "Standard recipe for Biscoff Shake (Large) (Price RS 199/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 45.27,
+    "pmCost": 13.93,
+    "labourCost": 10.45,
+    "calculatedCost": 69.65,
+    "sellingPrice": 199.0,
+    "ingredients": [
+      {
+        "id": "ri_m_biscoff_shake_lrg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Biscoff Shake (Large) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 45.27,
+        "cost": 45.27
+      },
+      {
+        "id": "ri_m_biscoff_shake_lrg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 13.93,
+        "cost": 13.93
+      },
+      {
+        "id": "ri_m_biscoff_shake_lrg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 10.45,
+        "cost": 10.45
+      }
+    ]
+  },
+  {
+    "id": "r_m_chocolate_shake_reg",
+    "menuItemId": "m_chocolate_shake_reg",
+    "menuItemName": "Chocolate Shake (Regular)",
+    "name": "RECIPE - CHOCOLATE SHAKE (REGULAR)",
+    "description": "Standard recipe for Chocolate Shake (Regular) (Price RS 120/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 27.3,
+    "pmCost": 8.4,
+    "labourCost": 6.3,
+    "calculatedCost": 42.0,
+    "sellingPrice": 120.0,
+    "ingredients": [
+      {
+        "id": "ri_m_chocolate_shake_reg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Chocolate Shake (Regular) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 27.3,
+        "cost": 27.3
+      },
+      {
+        "id": "ri_m_chocolate_shake_reg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 8.4,
+        "cost": 8.4
+      },
+      {
+        "id": "ri_m_chocolate_shake_reg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 6.3,
+        "cost": 6.3
+      }
+    ]
+  },
+  {
+    "id": "r_m_chocolate_shake_lrg",
+    "menuItemId": "m_chocolate_shake_lrg",
+    "menuItemName": "Chocolate Shake (Large)",
+    "name": "RECIPE - CHOCOLATE SHAKE (LARGE)",
+    "description": "Standard recipe for Chocolate Shake (Large) (Price RS 199/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 45.27,
+    "pmCost": 13.93,
+    "labourCost": 10.45,
+    "calculatedCost": 69.65,
+    "sellingPrice": 199.0,
+    "ingredients": [
+      {
+        "id": "ri_m_chocolate_shake_lrg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Chocolate Shake (Large) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 45.27,
+        "cost": 45.27
+      },
+      {
+        "id": "ri_m_chocolate_shake_lrg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 13.93,
+        "cost": 13.93
+      },
+      {
+        "id": "ri_m_chocolate_shake_lrg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 10.45,
+        "cost": 10.45
+      }
+    ]
+  },
+  {
+    "id": "r_m_kunafa_shake_reg",
+    "menuItemId": "m_kunafa_shake_reg",
+    "menuItemName": "Kunafa Pistachio Shake - Signature (Regular)",
+    "name": "RECIPE - KUNAFA PISTACHIO SHAKE - SIGNATURE (REGULAR)",
+    "description": "Standard recipe for Kunafa Pistachio Shake - Signature (Regular) (Price RS 120/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 27.3,
+    "pmCost": 8.4,
+    "labourCost": 6.3,
+    "calculatedCost": 42.0,
+    "sellingPrice": 120.0,
+    "ingredients": [
+      {
+        "id": "ri_m_kunafa_shake_reg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Kunafa Pistachio Shake - Signature (Regular) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 27.3,
+        "cost": 27.3
+      },
+      {
+        "id": "ri_m_kunafa_shake_reg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 8.4,
+        "cost": 8.4
+      },
+      {
+        "id": "ri_m_kunafa_shake_reg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 6.3,
+        "cost": 6.3
+      }
+    ]
+  },
+  {
+    "id": "r_m_kunafa_shake_lrg",
+    "menuItemId": "m_kunafa_shake_lrg",
+    "menuItemName": "Kunafa Pistachio Shake - Signature (Large)",
+    "name": "RECIPE - KUNAFA PISTACHIO SHAKE - SIGNATURE (LARGE)",
+    "description": "Standard recipe for Kunafa Pistachio Shake - Signature (Large) (Price RS 199/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 45.27,
+    "pmCost": 13.93,
+    "labourCost": 10.45,
+    "calculatedCost": 69.65,
+    "sellingPrice": 199.0,
+    "ingredients": [
+      {
+        "id": "ri_m_kunafa_shake_lrg_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Kunafa Pistachio Shake - Signature (Large) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 45.27,
+        "cost": 45.27
+      },
+      {
+        "id": "ri_m_kunafa_shake_lrg_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 13.93,
+        "cost": 13.93
+      },
+      {
+        "id": "ri_m_kunafa_shake_lrg_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 10.45,
+        "cost": 10.45
+      }
+    ]
+  },
+  {
+    "id": "r_m_brownie",
+    "menuItemId": "m_brownie",
+    "menuItemName": "Chocolate Brownie",
+    "name": "RECIPE - CHOCOLATE BROWNIE",
+    "description": "Standard recipe for Chocolate Brownie (Price RS 99/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 22.52,
+    "pmCost": 6.93,
+    "labourCost": 5.2,
+    "calculatedCost": 34.65,
+    "sellingPrice": 99.0,
+    "ingredients": [
+      {
+        "id": "ri_m_brownie_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Chocolate Brownie Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 22.52,
+        "cost": 22.52
+      },
+      {
+        "id": "ri_m_brownie_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 6.93,
+        "cost": 6.93
+      },
+      {
+        "id": "ri_m_brownie_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 5.2,
+        "cost": 5.2
+      }
+    ]
+  },
+  {
+    "id": "r_m_blondie",
+    "menuItemId": "m_blondie",
+    "menuItemName": "Blondie Cake (Signature)",
+    "name": "RECIPE - BLONDIE CAKE (SIGNATURE)",
+    "description": "Standard recipe for Blondie Cake (Signature) (Price RS 99/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 22.52,
+    "pmCost": 6.93,
+    "labourCost": 5.2,
+    "calculatedCost": 34.65,
+    "sellingPrice": 99.0,
+    "ingredients": [
+      {
+        "id": "ri_m_blondie_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Blondie Cake (Signature) Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 22.52,
+        "cost": 22.52
+      },
+      {
+        "id": "ri_m_blondie_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 6.93,
+        "cost": 6.93
+      },
+      {
+        "id": "ri_m_blondie_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 5.2,
+        "cost": 5.2
+      }
+    ]
+  },
+  {
+    "id": "r_m_vanilla_softy",
+    "menuItemId": "m_vanilla_softy",
+    "menuItemName": "Vanilla Softy",
+    "name": "RECIPE - VANILLA SOFTY",
+    "description": "Standard recipe for Vanilla Softy (Price RS 39/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 8.87,
+    "pmCost": 2.73,
+    "labourCost": 2.05,
+    "calculatedCost": 13.65,
+    "sellingPrice": 39.0,
+    "ingredients": [
+      {
+        "id": "ri_m_vanilla_softy_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Vanilla Softy Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 8.87,
+        "cost": 8.87
+      },
+      {
+        "id": "ri_m_vanilla_softy_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 2.73,
+        "cost": 2.73
+      },
+      {
+        "id": "ri_m_vanilla_softy_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 2.05,
+        "cost": 2.05
+      }
+    ]
+  },
+  {
+    "id": "r_m_dip_choice",
+    "menuItemId": "m_dip_choice",
+    "menuItemName": "Choice of Dip",
+    "name": "RECIPE - CHOICE OF DIP",
+    "description": "Standard recipe for Choice of Dip (Price RS 15/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 3.41,
+    "pmCost": 1.05,
+    "labourCost": 0.79,
+    "calculatedCost": 5.25,
+    "sellingPrice": 15.0,
+    "ingredients": [
+      {
+        "id": "ri_m_dip_choice_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Choice of Dip Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 3.41,
+        "cost": 3.41
+      },
+      {
+        "id": "ri_m_dip_choice_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 1.05,
+        "cost": 1.05
+      },
+      {
+        "id": "ri_m_dip_choice_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 0.79,
+        "cost": 0.79
+      }
+    ]
+  },
+  {
+    "id": "r_m_kombucha_mint",
+    "menuItemId": "m_kombucha_mint",
+    "menuItemName": "Mint Kombucha",
+    "name": "RECIPE - MINT KOMBUCHA",
+    "description": "Standard recipe for Mint Kombucha (Price RS 120/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 27.3,
+    "pmCost": 8.4,
+    "labourCost": 6.3,
+    "calculatedCost": 42.0,
+    "sellingPrice": 120.0,
+    "ingredients": [
+      {
+        "id": "ri_m_kombucha_mint_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Mint Kombucha Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 27.3,
+        "cost": 27.3
+      },
+      {
+        "id": "ri_m_kombucha_mint_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 8.4,
+        "cost": 8.4
+      },
+      {
+        "id": "ri_m_kombucha_mint_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 6.3,
+        "cost": 6.3
+      }
+    ]
+  },
+  {
+    "id": "r_m_kombucha_hibiscus",
+    "menuItemId": "m_kombucha_hibiscus",
+    "menuItemName": "Hibiscus Kombucha",
+    "name": "RECIPE - HIBISCUS KOMBUCHA",
+    "description": "Standard recipe for Hibiscus Kombucha (Price RS 120/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 27.3,
+    "pmCost": 8.4,
+    "labourCost": 6.3,
+    "calculatedCost": 42.0,
+    "sellingPrice": 120.0,
+    "ingredients": [
+      {
+        "id": "ri_m_kombucha_hibiscus_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Hibiscus Kombucha Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 27.3,
+        "cost": 27.3
+      },
+      {
+        "id": "ri_m_kombucha_hibiscus_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 8.4,
+        "cost": 8.4
+      },
+      {
+        "id": "ri_m_kombucha_hibiscus_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 6.3,
+        "cost": 6.3
+      }
+    ]
+  },
+  {
+    "id": "r_m_kombucha_classic",
+    "menuItemId": "m_kombucha_classic",
+    "menuItemName": "Classic Kombucha",
+    "name": "RECIPE - CLASSIC KOMBUCHA",
+    "description": "Standard recipe for Classic Kombucha (Price RS 120/-)",
+    "yieldQty": 1,
+    "prepTime": 5,
+    "rmCost": 27.3,
+    "pmCost": 8.4,
+    "labourCost": 6.3,
+    "calculatedCost": 42.0,
+    "sellingPrice": 120.0,
+    "ingredients": [
+      {
+        "id": "ri_m_kombucha_classic_1",
+        "inventoryItemId": "inv_boneless_chicken",
+        "inventoryName": "Classic Kombucha Base Ingredients",
+        "quantity": 1.0,
+        "unit": "portion",
+        "costPerUnit": 27.3,
+        "cost": 27.3
+      },
+      {
+        "id": "ri_m_kombucha_classic_2",
+        "inventoryItemId": "inv_paper_bag_large",
+        "inventoryName": "Packaging",
+        "quantity": 1.0,
+        "unit": "pc",
+        "costPerUnit": 8.4,
+        "cost": 8.4
+      },
+      {
+        "id": "ri_m_kombucha_classic_3",
+        "inventoryItemId": "inv_labour",
+        "inventoryName": "Labour Cost",
+        "quantity": 1.0,
+        "unit": "unit",
+        "costPerUnit": 6.3,
+        "cost": 6.3
+      }
+    ]
+  }
 ]
 
 const API = () => window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
