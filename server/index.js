@@ -10282,6 +10282,51 @@ app.get('/api/backup/local', (req, res) => {
  }
  })
 
+  // Endpoint to force-reset and purge legacy menu in memory & disk
+  app.post('/api/admin/force-reset-menu', (req, res) => {
+    try {
+      const { categories: newCats, menuItems: newItems, recipes: newRecs } = req.body
+      if (Array.isArray(newCats) && newCats.length > 0) {
+        categories.length = 0
+        categories.push(...newCats)
+      }
+      if (Array.isArray(newItems) && newItems.length > 0) {
+        menuItems.length = 0
+        menuItems.push(...newItems)
+      }
+      if (Array.isArray(newRecs) && newRecs.length > 0) {
+        recipes.length = 0
+        recipes.push(...newRecs)
+      }
+
+      const payload = {
+        categories,
+        menuItems,
+        recipes,
+        updatedAt: new Date().toISOString()
+      }
+
+      writeFileSync(MENU_VAULT_PATH, JSON.stringify(payload, null, 2))
+      writeFileSync(FROZEN_MENU_PATH, JSON.stringify(payload, null, 2))
+      
+      const db = readDb() || {}
+      db.categories = categories
+      db.menuItems = menuItems
+      db.recipes = recipes
+      writeDb(db)
+
+      if (io) {
+        io.emit('menu:updated')
+      }
+
+      console.log(`[FORCE RESET MENU] Replaced menu with ${menuItems.length} items & ${categories.length} categories.`)
+      res.json({ success: true, count: menuItems.length, categoriesCount: categories.length })
+    } catch (e) {
+      console.error('[FORCE RESET MENU ERROR]', e)
+      res.status(500).json({ error: e.message })
+    }
+  })
+
  // Check menu freeze status
  app.get('/api/admin/menu-freeze-status', (req, res) => {
  try {
