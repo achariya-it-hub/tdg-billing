@@ -11332,6 +11332,7 @@ app.delete('/api/admin/menu/items/:id', (req, res) => {
  }
  menuItems.splice(idx, 1)
  saveState()
+ if (io) io.emit('menu:updated')
  res.json({ success: true })
 })
 
