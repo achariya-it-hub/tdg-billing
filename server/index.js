@@ -484,51 +484,61 @@ function syncInventoryVault(curInventory) {
 }
 
 function syncSettingsVault(currentSettings) {
- try {
- let vaultCompany = {}
- if (existsSync(SETTINGS_VAULT_PATH)) {
- const content = readFileSync(SETTINGS_VAULT_PATH, 'utf-8').trim()
- if (content) {
- const parsed = JSON.parse(content)
- vaultCompany = parsed.company || (parsed.settings ? parsed.settings.company : {})
- }
- }
+  try {
+    let vaultCompany = {}
+    let vaultSettings = {}
+    if (existsSync(SETTINGS_VAULT_PATH)) {
+      const content = readFileSync(SETTINGS_VAULT_PATH, 'utf-8').trim()
+      if (content) {
+        try {
+          vaultSettings = JSON.parse(content)
+          vaultCompany = vaultSettings.company || (vaultSettings.settings ? vaultSettings.settings.company : {})
+        } catch (e) {}
+      }
+    }
 
- const currentCompany = currentSettings?.company || {}
- const pickBest = (currVal, vaultVal) => {
- const c = (currVal || '').toString().trim()
- const v = (vaultVal || '').toString().trim()
- if (c && c !== '000000000') return c
- if (v && v !== '000000000') return v
- return c || v || ''
- }
+    const currentCompany = currentSettings?.company || {}
+    const pickBest = (currVal, vaultVal) => {
+      const c = (currVal || '').toString().trim()
+      const v = (vaultVal || '').toString().trim()
+      if (c && c !== '000000000') return c
+      if (v && v !== '000000000') return v
+      return c || v || ''
+    }
 
- const mergedCompany = {
- ...vaultCompany,
- ...currentCompany,
- name: pickBest(currentCompany.name, vaultCompany.name) || 'Ten Den Gyros',
- address: pickBest(currentCompany.address, vaultCompany.address) || 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram',
- phone: pickBest(currentCompany.phone, vaultCompany.phone),
- email: pickBest(currentCompany.email, vaultCompany.email),
- gst: pickBest(currentCompany.gst || currentCompany.gstNo || currentCompany.gstin, vaultCompany.gst || vaultCompany.gstNo || vaultCompany.gstin),
- gstNo: pickBest(currentCompany.gstNo || currentCompany.gst || currentCompany.gstin, vaultCompany.gstNo || vaultCompany.gst || vaultCompany.gstin),
- gstin: pickBest(currentCompany.gstin || currentCompany.gst || currentCompany.gstNo, vaultCompany.gstin || vaultCompany.gst || vaultCompany.gstNo),
- upiId: pickBest(currentCompany.upiId, vaultCompany.upiId),
- logo: currentCompany.logo !== undefined ? currentCompany.logo : vaultCompany.logo,
- deliveryEnabled: currentCompany.deliveryEnabled !== undefined ? currentCompany.deliveryEnabled : (vaultCompany.deliveryEnabled !== false)
- }
+    const mergedCompany = {
+      ...vaultCompany,
+      ...currentCompany,
+      name: pickBest(currentCompany.name, vaultCompany.name) || 'Ten Den Gyros',
+      address: pickBest(currentCompany.address, vaultCompany.address) || 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram',
+      phone: pickBest(currentCompany.phone, vaultCompany.phone),
+      email: pickBest(currentCompany.email, vaultCompany.email),
+      gst: pickBest(currentCompany.gst || currentCompany.gstNo || currentCompany.gstin, vaultCompany.gst || vaultCompany.gstNo || vaultCompany.gstin),
+      gstNo: pickBest(currentCompany.gstNo || currentCompany.gst || currentCompany.gstin, vaultCompany.gstNo || vaultCompany.gst || vaultCompany.gstin),
+      gstin: pickBest(currentCompany.gstin || currentCompany.gst || currentCompany.gstNo, vaultCompany.gstin || vaultCompany.gst || vaultCompany.gstNo),
+      upiId: pickBest(currentCompany.upiId, vaultCompany.upiId),
+      logo: currentCompany.logo !== undefined ? currentCompany.logo : vaultCompany.logo,
+      deliveryEnabled: currentCompany.deliveryEnabled !== undefined ? currentCompany.deliveryEnabled : (vaultCompany.deliveryEnabled !== false)
+    }
 
- const finalSettings = {
- ...(currentSettings || {}),
- company: mergedCompany
- }
+    const mergedMsg91 = {
+      ...(vaultSettings.msg91 || {}),
+      ...(currentSettings?.msg91 || {})
+    }
 
- writeFileSync(SETTINGS_VAULT_PATH, JSON.stringify(finalSettings, null, 2))
- return finalSettings
- } catch (e) {
- console.error('[SETTINGS VAULT] Error:', e.message)
- return currentSettings
- }
+    const finalSettings = {
+      ...vaultSettings,
+      ...(currentSettings || {}),
+      company: mergedCompany,
+      msg91: mergedMsg91
+    }
+
+    writeFileSync(SETTINGS_VAULT_PATH, JSON.stringify(finalSettings, null, 2))
+    return finalSettings
+  } catch (e) {
+    console.error('[SETTINGS VAULT] Error:', e.message)
+    return currentSettings
+  }
 }
 
 function saveState() {
