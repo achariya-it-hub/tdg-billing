@@ -152,13 +152,26 @@ export default function POS() {
   }
 
   const filteredMenuItems = menuItems.filter(item => {
-    if (!itemSearchTerm || !itemSearchTerm.trim()) return true
-    const term = itemSearchTerm.toLowerCase().trim()
-    const name = (item.name || '').toLowerCase()
-    const price = String(item.price || '')
-    const cat = categories.find(c => c.id === item.categoryId)
-    const catName = (cat?.name || '').toLowerCase()
-    return name.includes(term) || catName.includes(term) || price.includes(term)
+    if (!item) return false
+
+    // Filter by selected category
+    if (selectedCategory && selectedCategory !== 'all') {
+      if (String(item.categoryId) !== String(selectedCategory)) {
+        return false
+      }
+    }
+
+    // Filter by search term
+    if (itemSearchTerm && itemSearchTerm.trim()) {
+      const term = itemSearchTerm.toLowerCase().trim()
+      const name = (item.name || '').toLowerCase()
+      const price = String(item.price || '')
+      const cat = categories.find(c => c.id === item.categoryId)
+      const catName = (cat?.name || '').toLowerCase()
+      return name.includes(term) || catName.includes(term) || price.includes(term)
+    }
+
+    return true
   })
 
   // Gyro & Combo Customizer State

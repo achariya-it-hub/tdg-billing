@@ -11458,7 +11458,12 @@ app.delete('/api/admin/menu/categories/:id', (req, res) => {
 
 // Menu Items Admin list (full data)
 app.get('/api/admin/menu/items', (req, res) => {
- res.json(menuItems)
+  const { categoryId } = req.query
+  if (categoryId && categoryId !== 'all') {
+    const filtered = menuItems.filter(i => i && String(i.categoryId) === String(categoryId))
+    return res.json(filtered)
+  }
+  res.json(menuItems)
 })
 
 app.get('/api/admin/menu/categories', (req, res) => {
