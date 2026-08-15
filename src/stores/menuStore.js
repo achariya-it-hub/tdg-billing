@@ -1,100 +1,615 @@
 import { create } from 'zustand'
 
 const sampleCategories = [
-  { id: 'c10', name: 'Beverages & Kombucha', color: '#0284c7' },
-  { id: 'c9', name: 'Desserts', color: '#ec4899' },
-  { id: 'c4', name: 'Dips & Add-Ons', color: '#e63946' },
-  { id: 'c6', name: 'Fries', color: '#f59e0b' },
-  { id: 'c1', name: 'Gyros', color: '#d97706' },
-  { id: 'c2', name: 'Meals & Combos', color: '#8b5cf6' },
-  { id: 'c11', name: 'Protein Max', color: '#10b981' },
-  { id: 'c3', name: 'Rice & Salads', color: '#059669' },
-  { id: 'c7', name: 'Shakes & Softy', color: '#db2777' },
-  { id: 'c5_strips', name: 'Strips', color: '#ca8a04' },
-  { id: 'c5_wings', name: 'Wings', color: '#b45309' }
+  {
+    "id": "c1",
+    "name": "Gyros",
+    "icon": "\ud83e\udd59",
+    "color": "#d97706"
+  },
+  {
+    "id": "c5_legthigh",
+    "name": "Leg & Thigh",
+    "icon": "\ud83c\udf57",
+    "color": "#ea580c"
+  },
+  {
+    "id": "c5_wings",
+    "name": "Wings",
+    "icon": "\ud83c\udf57",
+    "color": "#b45309"
+  },
+  {
+    "id": "c5_strips",
+    "name": "Strips",
+    "icon": "\ud83c\udf57",
+    "color": "#ca8a04"
+  },
+  {
+    "id": "c6",
+    "name": "Fries",
+    "icon": "\ud83c\udf5f",
+    "color": "#f59e0b"
+  },
+  {
+    "id": "c10_bev",
+    "name": "Beverages",
+    "icon": "\ud83e\udd64",
+    "color": "#0284c7"
+  },
+  {
+    "id": "c3_rice",
+    "name": "Rice",
+    "icon": "\ud83c\udf5a",
+    "color": "#059669"
+  },
+  {
+    "id": "c3_salad",
+    "name": "Salads",
+    "icon": "\ud83e\udd57",
+    "color": "#10b981"
+  },
+  {
+    "id": "c2",
+    "name": "Meals & Combos",
+    "icon": "\ud83c\udf71",
+    "color": "#8b5cf6"
+  },
+  {
+    "id": "c11",
+    "name": "Protein Max",
+    "icon": "\ud83d\udcaa",
+    "color": "#10b981"
+  },
+  {
+    "id": "c7_shakes",
+    "name": "Shakes",
+    "icon": "\ud83e\udd64",
+    "color": "#db2777"
+  },
+  {
+    "id": "c9",
+    "name": "Desserts",
+    "icon": "\ud83c\udf70",
+    "color": "#ec4899"
+  },
+  {
+    "id": "c4",
+    "name": "Softy & Add-Ons",
+    "icon": "\ud83c\udf66",
+    "color": "#e63946"
+  },
+  {
+    "id": "c10_komb",
+    "name": "Kombucha",
+    "icon": "\ud83c\udf79",
+    "color": "#0284c7"
+  }
 ]
 
 const sampleMenuItems = [
-  // Gyros (c1)
-  { id: 'm1', categoryId: 'c1', name: 'Non-Veg - Spicy Chicken Gyro (Regular)', price: 99, isAvailable: 1 },
-  { id: 'm2', categoryId: 'c1', name: 'Non-Veg - Spicy Chicken Gyro (Large)', price: 249, isAvailable: 1 },
-  { id: 'm3', categoryId: 'c1', name: 'Non-Veg - Cream Chicken Gyro (Regular)', price: 99, isAvailable: 1 },
-  { id: 'm4', categoryId: 'c1', name: 'Non-Veg - Cream Chicken Gyro (Large)', price: 249, isAvailable: 1 },
-  { id: 'm5', categoryId: 'c1', name: 'Non-Veg - BBQ Chicken Gyro (Regular)', price: 99, isAvailable: 1 },
-  { id: 'm6', categoryId: 'c1', name: 'Non-Veg - BBQ Chicken Gyro (Large)', price: 249, isAvailable: 1 },
-  { id: 'm7', categoryId: 'c1', name: 'Non-Veg - Pesto Chicken Gyro (Regular)', price: 99, isAvailable: 1 },
-  { id: 'm8', categoryId: 'c1', name: 'Non-Veg - Pesto Chicken Gyro (Large)', price: 249, isAvailable: 1 },
-  { id: 'm9', categoryId: 'c1', name: 'Veg - Spicy Paneer Gyro (Regular)', price: 99, isAvailable: 1 },
-  { id: 'm10', categoryId: 'c1', name: 'Veg - Spicy Paneer Gyro (Large)', price: 249, isAvailable: 1 },
-  { id: 'm11', categoryId: 'c1', name: 'Veg - Cream Paneer Gyro (Regular)', price: 99, isAvailable: 1 },
-  { id: 'm12', categoryId: 'c1', name: 'Veg - Cream Paneer Gyro (Large)', price: 249, isAvailable: 1 },
-  { id: 'm13', categoryId: 'c1', name: 'Veg - BBQ Paneer Gyro (Regular)', price: 99, isAvailable: 1 },
-  { id: 'm14', categoryId: 'c1', name: 'Veg - BBQ Paneer Gyro (Large)', price: 249, isAvailable: 1 },
-  { id: 'm15', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Regular)', price: 99, isAvailable: 1 },
-  { id: 'm16', categoryId: 'c1', name: 'Veg - Pesto Paneer Gyro (Large)', price: 249, isAvailable: 1 },
-
-  // Salads (c3)
-  { id: 'm20', categoryId: 'c3', name: 'Non-Veg - Chicken Salad', price: 99, isAvailable: 1 },
-  { id: 'm21', categoryId: 'c3', name: 'Veg - Paneer Salad', price: 99, isAvailable: 1 },
-
-  // Sides (c4)
-  { id: 'm22', categoryId: 'c4', name: 'Non-Veg - Loaded Chicken Fries', price: 199, isAvailable: 1 },
-  { id: 'm23', categoryId: 'c4', name: 'Veg - Fries (Salted, Peri Peri Or Cajun)', price: 99, isAvailable: 1 },
-  { id: 'm24', categoryId: 'c4', name: 'Veg - Loaded Paneer Fries', price: 199, isAvailable: 1 },
-  { id: 'm25', categoryId: 'c4', name: 'Veg - 6 pcs Halloumi Strips', price: 149, isAvailable: 1 },
-
-  // TDG Crispy Chicken (c5)
-  // Leg & Thigh
-  { id: 'm26', categoryId: 'c5', name: 'Non-Veg - 1 Pc Crispy Chicken (1 Dip)', price: 70, isAvailable: 1 },
-  { id: 'm27', categoryId: 'c5', name: 'Non-Veg - 2 Pc Crispy Chicken (1 Dip)', price: 140, isAvailable: 1 },
-  { id: 'm28', categoryId: 'c5', name: 'Non-Veg - 4 Pc Crispy Chicken (2 Dip)', price: 280, isAvailable: 1 },
-  { id: 'm29', categoryId: 'c5', name: 'Non-Veg - 8 Pc Crispy Chicken (4 Dip)', price: 560, isAvailable: 1 },
-  { id: 'm30', categoryId: 'c5', name: 'Non-Veg - 12 Pc Crispy Chicken (6 Dip)', price: 840, isAvailable: 1 },
-  // Wings
-  { id: 'm31', categoryId: 'c5', name: 'Non-Veg - 3 Pc Crispy Wings (1 Dip)', price: 90, isAvailable: 1 },
-  { id: 'm32', categoryId: 'c5', name: 'Non-Veg - 6 Pc Crispy Wings (2 Dip)', price: 180, isAvailable: 1 },
-  { id: 'm33', categoryId: 'c5', name: 'Non-Veg - 9 Pc Crispy Wings (3 Dip)', price: 270, isAvailable: 1 },
-  { id: 'm34', categoryId: 'c5', name: 'Non-Veg - 20 Pc Crispy Wings (6 Dip)', price: 600, isAvailable: 1 },
-  { id: 'm35', categoryId: 'c5', name: 'Non-Veg - 60 Pc Crispy Wings (12 Dip)', price: 1500, isAvailable: 1 },
-  // Strips
-  { id: 'm36', categoryId: 'c5', name: 'Non-Veg - 3 Pc Crispy Strips (1 Dip)', price: 120, isAvailable: 1 },
-  { id: 'm37', categoryId: 'c5', name: 'Non-Veg - 6 Pc Crispy Strips (2 Dip)', price: 240, isAvailable: 1 },
-  { id: 'm38', categoryId: 'c5', name: 'Non-Veg - 9 Pc Crispy Strips (3 Dip)', price: 360, isAvailable: 1 },
-  { id: 'm39', categoryId: 'c5', name: 'Non-Veg - 20 Pc Crispy Strips (6 Dip)', price: 800, isAvailable: 1 },
-  { id: 'm40', categoryId: 'c5', name: 'Non-Veg - 60 Pc Crispy Strips (12 Dip)', price: 2400, isAvailable: 1 },
-
-  // Thick Shakes (c6)
-  { id: 'm41', categoryId: 'c6', name: 'Veg - Vanilla Shake (Regular)', price: 79, isAvailable: 1 },
-  { id: 'm42', categoryId: 'c6', name: 'Veg - Vanilla Shake (Large)', price: 139, isAvailable: 1 },
-  { id: 'm43', categoryId: 'c6', name: 'Veg - Strawberry Shake (Regular)', price: 79, isAvailable: 1 },
-  { id: 'm44', categoryId: 'c6', name: 'Veg - Strawberry Shake (Large)', price: 139, isAvailable: 1 },
-  { id: 'm45', categoryId: 'c6', name: 'Veg - Biscoff Shake (Regular)', price: 79, isAvailable: 1 },
-  { id: 'm46', categoryId: 'c6', name: 'Veg - Biscoff Shake (Large)', price: 139, isAvailable: 1 },
-  { id: 'm47', categoryId: 'c6', name: 'Veg - Oreo Shake (Regular)', price: 79, isAvailable: 1 },
-  { id: 'm48', categoryId: 'c6', name: 'Veg - Oreo Shake (Large)', price: 139, isAvailable: 1 },
-  { id: 'm49', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Regular)', price: 79, isAvailable: 1 },
-  { id: 'm50', categoryId: 'c6', name: 'Veg - Kunafa Pistachio Shake (Large)', price: 139, isAvailable: 1 },
-
-  // Softy (c7)
-  { id: 'm51', categoryId: 'c7', name: 'Veg - Vanilla Softy', price: 39, isAvailable: 1 },
-
-  // Desserts (c8)
-  { id: 'm52', categoryId: 'c8', name: 'Veg - Chocolate Brownie', price: 99, isAvailable: 1 },
-  { id: 'm53', categoryId: 'c8', name: 'Veg - Blondy Cake', price: 99, isAvailable: 1 },
-
-  // Beverages (c9)
-  { id: 'm54', categoryId: 'c9', name: 'Veg - Sprite / Coca-Cola (Regular)', price: 59, isAvailable: 1 },
-  { id: 'm55', categoryId: 'c9', name: 'Veg - Sprite / Coca-Cola (Large)', price: 99, isAvailable: 1 },
-  { id: 'm56', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Regular)', price: 59, isAvailable: 1 },
-  { id: 'm57', categoryId: 'c9', name: 'Veg - Ice Tea (Peach / Lime) (Large)', price: 99, isAvailable: 1 },
-  { id: 'm58', categoryId: 'c9', name: 'Veg - Hot Chocolate', price: 99, isAvailable: 1 },
-  { id: 'm59', categoryId: 'c9', name: 'Veg - Signature Tea', price: 99, isAvailable: 1 },
-
-  // Kombucha (c10)
-  { id: 'm59a', categoryId: 'c10', name: 'Mint Kombucha', price: 114.29, taxInclusive: true, isAvailable: 1 },
-  { id: 'm59b', categoryId: 'c10', name: 'Hibiscus Kombucha', price: 114.29, taxInclusive: true, isAvailable: 1 },
-  { id: 'm59c', categoryId: 'c10', name: 'Ginger Kombucha', price: 114.29, taxInclusive: true, isAvailable: 1 },
-  { id: 'm59d', categoryId: 'c10', name: 'Butterfly Pea Kombucha', price: 114.29, taxInclusive: true, isAvailable: 1 }
+  {
+    "id": "m_spicy_gyro",
+    "categoryId": "c1",
+    "name": "Spicy Gyro",
+    "price": 199,
+    "description": "Spicy gyro with fresh veggies & spread (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/gyro.png"
+  },
+  {
+    "id": "m_creamy_gyro",
+    "categoryId": "c1",
+    "name": "Creamy Gyro",
+    "price": 199,
+    "description": "Creamy tzatziki gyro wrap (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/gyro.png"
+  },
+  {
+    "id": "m_bbq_gyro",
+    "categoryId": "c1",
+    "name": "BBQ Gyro",
+    "price": 199,
+    "description": "Rich BBQ gyro wrap (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/gyro.png"
+  },
+  {
+    "id": "m_signature_gyro",
+    "categoryId": "c1",
+    "name": "Signature Gyro",
+    "price": 199,
+    "description": "TDG signature gyro wrap with secret sauce (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/gyro.png"
+  },
+  {
+    "id": "m_legthigh_1pc",
+    "categoryId": "c5_legthigh",
+    "name": "1 Pc Leg & Thigh (1 Dip)",
+    "price": 70,
+    "description": "1 Pc Crispy Leg & Thigh + 1 Choice Dip",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_legthigh_2pc",
+    "categoryId": "c5_legthigh",
+    "name": "2 Pc Leg & Thigh (1 Dip)",
+    "price": 140,
+    "description": "2 Pc Crispy Leg & Thigh + 1 Choice Dip",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_legthigh_4pc",
+    "categoryId": "c5_legthigh",
+    "name": "4 Pc Leg & Thigh (2 Dips)",
+    "price": 280,
+    "description": "4 Pc Crispy Leg & Thigh + 2 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_legthigh_8pc",
+    "categoryId": "c5_legthigh",
+    "name": "8 Pc Leg & Thigh (4 Dips)",
+    "price": 560,
+    "description": "8 Pc Crispy Leg & Thigh + 4 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_legthigh_12pc",
+    "categoryId": "c5_legthigh",
+    "name": "12 Pc Leg & Thigh (6 Dips)",
+    "price": 840,
+    "description": "12 Pc Crispy Leg & Thigh + 6 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_wings_3pc",
+    "categoryId": "c5_wings",
+    "name": "3 Pc Wings (1 Dip)",
+    "price": 90,
+    "description": "3 Pc Crispy Chicken Wings + 1 Choice Dip",
+    "isAvailable": true,
+    "image": "/images/menu/wings.png"
+  },
+  {
+    "id": "m_wings_6pc",
+    "categoryId": "c5_wings",
+    "name": "6 Pc Wings (2 Dips)",
+    "price": 180,
+    "description": "6 Pc Crispy Chicken Wings + 2 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/wings.png"
+  },
+  {
+    "id": "m_wings_9pc",
+    "categoryId": "c5_wings",
+    "name": "9 Pc Wings (3 Dips)",
+    "price": 270,
+    "description": "9 Pc Crispy Chicken Wings + 3 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/wings.png"
+  },
+  {
+    "id": "m_wings_20pc",
+    "categoryId": "c5_wings",
+    "name": "20 Pc Wings (6 Dips)",
+    "price": 600,
+    "description": "20 Pc Crispy Chicken Wings + 6 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/wings.png"
+  },
+  {
+    "id": "m_strips_3pc",
+    "categoryId": "c5_strips",
+    "name": "3 Pc Strips (1 Dip)",
+    "price": 120,
+    "description": "3 Pc Crispy Chicken Strips + 1 Choice Dip",
+    "isAvailable": true,
+    "image": "/images/menu/strips.png"
+  },
+  {
+    "id": "m_strips_6pc",
+    "categoryId": "c5_strips",
+    "name": "6 Pc Strips (2 Dips)",
+    "price": 240,
+    "description": "6 Pc Crispy Chicken Strips + 2 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/strips.png"
+  },
+  {
+    "id": "m_strips_9pc",
+    "categoryId": "c5_strips",
+    "name": "9 Pc Strips (3 Dips)",
+    "price": 360,
+    "description": "9 Pc Crispy Chicken Strips + 3 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/strips.png"
+  },
+  {
+    "id": "m_strips_20pc",
+    "categoryId": "c5_strips",
+    "name": "20 Pc Strips (6 Dips)",
+    "price": 800,
+    "description": "20 Pc Crispy Chicken Strips + 6 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/strips.png"
+  },
+  {
+    "id": "m_fries_std",
+    "categoryId": "c6",
+    "name": "Fries (Salted, Peri Peri or Cajun)",
+    "price": 99,
+    "description": "Crispy Fries (Choose seasoning: Salted, Peri Peri, or Cajun)",
+    "isAvailable": true,
+    "image": "/images/menu/fries.png"
+  },
+  {
+    "id": "m_loaded_fries",
+    "categoryId": "c6",
+    "name": "Loaded Fries",
+    "price": 199,
+    "description": "Loaded Fries topped with melted cheese, sauces (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/loaded fries.png"
+  },
+  {
+    "id": "m_rice_bowl",
+    "categoryId": "c3_rice",
+    "name": "Rice Bowl (Signature)",
+    "price": 199,
+    "description": "Signature Lebanese Rice Bowl with fresh herbs & toppings (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/lebanese rice bowl.png"
+  },
+  {
+    "id": "m_signature_salad",
+    "categoryId": "c3_salad",
+    "name": "Signature Salad",
+    "price": 149,
+    "description": "Fresh Mediterranean Signature Salad with dressing (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/signature salad.png"
+  },
+  {
+    "id": "m_sprite_reg",
+    "categoryId": "c10_bev",
+    "name": "Sprite (Regular)",
+    "price": 59,
+    "description": "Sprite 330ml Regular",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_sprite_lrg",
+    "categoryId": "c10_bev",
+    "name": "Sprite (Large)",
+    "price": 99,
+    "description": "Sprite 500ml Large",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_cocacola_reg",
+    "categoryId": "c10_bev",
+    "name": "Coca Cola (Regular)",
+    "price": 59,
+    "description": "Coca Cola 330ml Regular",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_cocacola_lrg",
+    "categoryId": "c10_bev",
+    "name": "Coca Cola (Large)",
+    "price": 99,
+    "description": "Coca Cola 500ml Large",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_icetea_reg",
+    "categoryId": "c10_bev",
+    "name": "Ice Tea (Regular)",
+    "price": 59,
+    "description": "Refreshing Ice Tea - Peach or Lime (Regular)",
+    "isAvailable": true,
+    "image": "/images/menu/ice tea - lime.png"
+  },
+  {
+    "id": "m_icetea_lrg",
+    "categoryId": "c10_bev",
+    "name": "Ice Tea (Large)",
+    "price": 99,
+    "description": "Refreshing Ice Tea - Peach or Lime (Large)",
+    "isAvailable": true,
+    "image": "/images/menu/ice tea - lime.png"
+  },
+  {
+    "id": "m_hot_chocolate",
+    "categoryId": "c10_bev",
+    "name": "Hot Chocolate",
+    "price": 99,
+    "description": "Rich Warm Hot Chocolate",
+    "isAvailable": true,
+    "image": "/images/menu/Hot Chocolate.png"
+  },
+  {
+    "id": "m_signature_tea",
+    "categoryId": "c10_bev",
+    "name": "Signature Tea",
+    "price": 99,
+    "description": "Special TDG Signature Brewed Tea",
+    "isAvailable": true,
+    "image": "/images/menu/Signature tea.png"
+  },
+  {
+    "id": "m_express_meal",
+    "categoryId": "c2",
+    "name": "Express Meal",
+    "price": 249,
+    "description": "Gyro & Regular Drink",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_sig_gyro_meal",
+    "categoryId": "c2",
+    "name": "Signature Gyro Meal",
+    "price": 279,
+    "description": "Gyro, Fries, Regular Drink",
+    "isAvailable": true,
+    "image": "/images/menu/signature gyro meal.png"
+  },
+  {
+    "id": "m_lebanese_rice_box",
+    "categoryId": "c2",
+    "name": "Lebanese Rice Box",
+    "price": 299,
+    "description": "Lebanese rice, Fries, Regular Drink",
+    "isAvailable": true,
+    "image": "/images/menu/lebanese rice box.png"
+  },
+  {
+    "id": "m_classic_gyro_meal",
+    "categoryId": "c2",
+    "name": "Classic Gyro Meal",
+    "price": 349,
+    "description": "Gyro, 2 Wings, Fries, Regular Drink, 1 Dip",
+    "isAvailable": true,
+    "image": "/images/menu/classic gyro meal.png"
+  },
+  {
+    "id": "m_duo_gyro_feast",
+    "categoryId": "c2",
+    "name": "Duo Gyro Feast",
+    "price": 449,
+    "description": "2 Gyros, Fries, 2 Regular Drinks",
+    "isAvailable": true,
+    "image": "/images/menu/duo gyro feast.png"
+  },
+  {
+    "id": "m_double_crunch_box",
+    "categoryId": "c2",
+    "name": "Double Crunch Box",
+    "price": 699,
+    "description": "2 Gyros, 6 Wings, Fries, 2 Regular Drinks",
+    "isAvailable": true,
+    "image": "/images/menu/double crunch box.png"
+  },
+  {
+    "id": "m_mega_feast_meal",
+    "categoryId": "c2",
+    "name": "Mega Feast Meal",
+    "price": 799,
+    "description": "2 Gyros, 2 Leg & Thighs, 2 Wings, 2 Strips, Fries, 2 Regular Drinks, 3 Dips",
+    "isAvailable": true,
+    "image": "/images/menu/mega feast meal.png"
+  },
+  {
+    "id": "m_dens_party_meal",
+    "categoryId": "c2",
+    "name": "Den's Party Meal",
+    "price": 1049,
+    "description": "2 Gyros, 6 Wings, 4 Leg & Thighs, 2 Fries, 3 Regular Drinks",
+    "isAvailable": true,
+    "image": "/images/menu/den's party meal.png"
+  },
+  {
+    "id": "m_super5_bucket",
+    "categoryId": "c2",
+    "name": "Super 5 Bucket",
+    "price": 1299,
+    "description": "5 Leg & Thighs, 10 Wings, 10 Strips, 5 Regular Drinks",
+    "isAvailable": true,
+    "image": "/images/menu/super 5 bucket.png"
+  },
+  {
+    "id": "m_pmax_gyro",
+    "categoryId": "c11",
+    "name": "Protein Max Gyro",
+    "price": 299,
+    "description": "High Protein Gyro (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/protein max.png"
+  },
+  {
+    "id": "m_pmax_rice",
+    "categoryId": "c11",
+    "name": "Protein Max Rice Bowl",
+    "price": 299,
+    "description": "High Protein Rice Bowl (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/protein max.png"
+  },
+  {
+    "id": "m_pmax_salad",
+    "categoryId": "c11",
+    "name": "Protein Max Salad",
+    "price": 299,
+    "description": "High Protein Mediterranean Salad (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/protein max.png"
+  },
+  {
+    "id": "m_vanilla_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Vanilla Shake (Regular)",
+    "price": 120,
+    "description": "Classic Vanilla Shake (Ask for White Chocolate)",
+    "isAvailable": true,
+    "image": "/images/menu/vanilla shake.png"
+  },
+  {
+    "id": "m_vanilla_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Vanilla Shake (Large)",
+    "price": 199,
+    "description": "Large Vanilla Shake (Ask for White Chocolate)",
+    "isAvailable": true,
+    "image": "/images/menu/vanilla shake.png"
+  },
+  {
+    "id": "m_strawberry_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Strawberry Shake (Regular)",
+    "price": 120,
+    "description": "Fresh Strawberry Shake Regular",
+    "isAvailable": true,
+    "image": "/images/menu/strawberry shake.png"
+  },
+  {
+    "id": "m_strawberry_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Strawberry Shake (Large)",
+    "price": 199,
+    "description": "Fresh Strawberry Shake Large",
+    "isAvailable": true,
+    "image": "/images/menu/strawberry shake.png"
+  },
+  {
+    "id": "m_biscoff_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Biscoff Shake (Regular)",
+    "price": 120,
+    "description": "Lotus Biscoff Shake Regular",
+    "isAvailable": true,
+    "image": "/images/menu/biscoff shake.png"
+  },
+  {
+    "id": "m_biscoff_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Biscoff Shake (Large)",
+    "price": 199,
+    "description": "Lotus Biscoff Shake Large",
+    "isAvailable": true,
+    "image": "/images/menu/biscoff shake.png"
+  },
+  {
+    "id": "m_chocolate_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Chocolate Shake (Regular)",
+    "price": 120,
+    "description": "Rich Chocolate Shake Regular",
+    "isAvailable": true,
+    "image": "/images/menu/chocolate shake.png"
+  },
+  {
+    "id": "m_chocolate_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Chocolate Shake (Large)",
+    "price": 199,
+    "description": "Rich Chocolate Shake Large",
+    "isAvailable": true,
+    "image": "/images/menu/chocolate shake.png"
+  },
+  {
+    "id": "m_kunafa_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Kunafa Pistachio Shake - Signature (Regular)",
+    "price": 120,
+    "description": "Signature Kunafa Pistachio Shake Regular",
+    "isAvailable": true,
+    "image": "/images/menu/kunafa pistachio shake.png"
+  },
+  {
+    "id": "m_kunafa_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Kunafa Pistachio Shake - Signature (Large)",
+    "price": 199,
+    "description": "Signature Kunafa Pistachio Shake Large",
+    "isAvailable": true,
+    "image": "/images/menu/kunafa pistachio shake.png"
+  },
+  {
+    "id": "m_brownie",
+    "categoryId": "c9",
+    "name": "Chocolate Brownie",
+    "price": 99,
+    "description": "Fudgy Chocolate Brownie",
+    "isAvailable": true,
+    "image": "/images/menu/chcolate brownie.png"
+  },
+  {
+    "id": "m_blondie",
+    "categoryId": "c9",
+    "name": "Blondie Cake (Signature)",
+    "price": 99,
+    "description": "TDG Signature White Chocolate Blondie Cake",
+    "isAvailable": true,
+    "image": "/images/menu/blondie cake.png"
+  },
+  {
+    "id": "m_vanilla_softy",
+    "categoryId": "c4",
+    "name": "Vanilla Softy",
+    "price": 39,
+    "description": "Creamy Vanilla Soft Serve Cone",
+    "isAvailable": true,
+    "image": "/images/menu/vanilla softy.png"
+  },
+  {
+    "id": "m_dip_choice",
+    "categoryId": "c4",
+    "name": "Choice of Dip",
+    "price": 15,
+    "description": "Choice of Dip (Garlic Mayo, Spicy Mayo, Honey Mustard, Tzatziki, Jalapeno Cheese, Turkish Chilli)",
+    "isAvailable": true,
+    "image": "/images/menu/garlic mayo.png"
+  },
+  {
+    "id": "m_kombucha_mint",
+    "categoryId": "c10_komb",
+    "name": "Mint Kombucha",
+    "price": 120,
+    "description": "Refreshing Brewed Mint Kombucha 250ml",
+    "isAvailable": true,
+    "image": "/images/menu/mint-kombucha.png"
+  },
+  {
+    "id": "m_kombucha_hibiscus",
+    "categoryId": "c10_komb",
+    "name": "Hibiscus Kombucha",
+    "price": 120,
+    "description": "Refreshing Brewed Hibiscus Kombucha 250ml",
+    "isAvailable": true,
+    "image": "/images/menu/kombucha-hibiscus.png"
+  },
+  {
+    "id": "m_kombucha_classic",
+    "categoryId": "c10_komb",
+    "name": "Classic Kombucha",
+    "price": 120,
+    "description": "Refreshing Brewed Classic Kombucha 250ml",
+    "isAvailable": true,
+    "image": "/images/menu/kombucha.png"
+  }
 ]
 
 export const useMenuStore = create((set, get) => ({
@@ -108,14 +623,16 @@ export const useMenuStore = create((set, get) => ({
         ? 'http://localhost:3001' 
         : window.location.origin
       
-      const res = await fetch(`${apiUrl}/api/menu/categories`)
-      const data = await res.json()
-      if (Array.isArray(data) && data.length > 0) {
-        set({ categories: data })
-        return
+      const res = await fetch(`${apiUrl}/api/admin/menu/categories`)
+      if (res.ok) {
+        const data = await res.json()
+        if (Array.isArray(data) && data.length > 0) {
+          set({ categories: data })
+          return
+        }
       }
     } catch (e) {
-      console.log('Using local categories')
+      console.log('Using local categories fallback')
     }
     set({ categories: sampleCategories })
   },
@@ -127,15 +644,18 @@ export const useMenuStore = create((set, get) => ({
         ? 'http://localhost:3001' 
         : window.location.origin
       
-      const url = categoryId ? `${apiUrl}/api/menu/items?categoryId=${categoryId}` : `${apiUrl}/api/menu/items`
+      const url = categoryId ? `${apiUrl}/api/admin/menu/items?categoryId=${categoryId}` : `${apiUrl}/api/admin/menu/items`
       const res = await fetch(url)
-      const data = await res.json()
-      if (Array.isArray(data) && data.length > 0) {
-        set({ menuItems: data, loading: false })
-        return
+      if (res.ok) {
+        const rawData = await res.json()
+        const data = Array.isArray(rawData) ? rawData : (rawData.items || rawData.menuItems || [])
+        if (Array.isArray(data) && data.length > 0) {
+          set({ menuItems: data, loading: false })
+          return
+        }
       }
     } catch (e) {
-      console.log('Using local menu items')
+      console.log('Using local menu items fallback')
     }
     if (categoryId) {
       set({ menuItems: sampleMenuItems.filter(i => i.categoryId === categoryId), loading: false })
