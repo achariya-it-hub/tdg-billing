@@ -14876,6 +14876,27 @@ function resolveItemCategory(item) {
  return 'General'
 }
 
+// Helper to extract detailed name including customizer variations
+function getCustomizedItemName(item) {
+  let baseName = item.menuItemName || item.name || 'Unspecified Item'
+  if (!item.customization) return baseName
+
+  const c = item.customization
+  const parts = []
+  if (c.gyro1) parts.push(c.gyro1)
+  if (c.gyro2) parts.push(`G2: ${c.gyro2}`)
+  if (c.drink) parts.push(c.drink)
+  if (c.bread) parts.push(c.bread)
+  if (c.spread) parts.push(c.spread)
+  // Optionally include sauces and veggies if needed, but gyro1/bread are usually enough for high level sales
+  // if (c.sauces && c.sauces.length) parts.push(c.sauces.join(','))
+  
+  if (parts.length > 0) {
+    return `${baseName} [${parts.join(' | ')}]`
+  }
+  return baseName
+}
+
 // ============ ITEMWISE SALES REPORT ============
 app.get('/api/reports/itemwise-sales', (req, res) => {
  const periodOrders = getCompletedSales(req.query)
@@ -14887,7 +14908,7 @@ app.get('/api/reports/itemwise-sales', (req, res) => {
  periodOrders.forEach(o => {
  const items = o.items || []
  items.forEach(i => {
- const name = i.menuItemName || i.name || 'Unspecified Item'
+ const name = getCustomizedItemName(i)
  const category = resolveItemCategory(i)
  const qty = Number(i.quantity || i.qty || 1)
  const unitPrice = Number(i.unitPrice || i.price || 0)
@@ -14942,6 +14963,7 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
  const items = o.items || []
  items.forEach(i => {
  const category = resolveItemCategory(i)
+ const itemName = getCustomizedItemName(i)
  const qty = Number(i.quantity || i.qty || 1)
  const unitPrice = Number(i.unitPrice || i.price || 0)
  const totalPrice = Number(i.totalPrice || unitPrice * qty)
@@ -14958,7 +14980,7 @@ app.get('/api/reports/categorywise-sales', (req, res) => {
  orderCount: 0
  }
  }
- catMap[category].itemsSet.add(i.name || i.menuItemName || 'Item')
+ catMap[category].itemsSet.add(itemName)
  catMap[category].totalQty += qty
  catMap[category].totalRevenue += totalPrice
  catMap[category].orderCount += 1
