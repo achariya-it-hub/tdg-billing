@@ -14885,11 +14885,11 @@ function getCustomizedItemName(item) {
   const parts = []
   if (c.gyro1) parts.push(c.gyro1)
   if (c.gyro2) parts.push(`G2: ${c.gyro2}`)
+  if (c.protein) parts.push(c.protein)
   if (c.drink) parts.push(c.drink)
+  if (c.dips) parts.push(`Dips: ${c.dips}`)
   if (c.bread) parts.push(c.bread)
   if (c.spread) parts.push(c.spread)
-  // Optionally include sauces and veggies if needed, but gyro1/bread are usually enough for high level sales
-  // if (c.sauces && c.sauces.length) parts.push(c.sauces.join(','))
   
   if (parts.length > 0) {
     return `${baseName} [${parts.join(' | ')}]`
