@@ -2980,7 +2980,7 @@
       "items": [
         {
           "id": "m11",
-          "name": "Pesto Gyro (Mini)",
+          "name": "Pesto Gyro",
           "price": 99,
           "unitPrice": 99,
           "quantity": 1,
@@ -4413,7 +4413,7 @@
       "items": [
         {
           "id": "m11",
-          "name": "Pesto Gyro (Mini)",
+          "name": "Pesto Gyro",
           "price": 384,
           "unitPrice": 384,
           "quantity": 1,
@@ -5271,7 +5271,7 @@
       "items": [
         {
           "id": "m11",
-          "name": "Pesto Gyro (Mini)",
+          "name": "Pesto Gyro",
           "price": 396,
           "unitPrice": 396,
           "quantity": 1,
@@ -12432,7 +12432,7 @@
       "items": [
         {
           "id": "m3a",
-          "name": "Creamy Gyro - Chicken (Mini)",
+          "name": "Creamy Gyro - Chicken",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -12614,7 +12614,7 @@
       "items": [
         {
           "id": "m7a",
-          "name": "Peri Peri Gyro - Chicken (Mini)",
+          "name": "Peri Peri Gyro - Chicken",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -12848,7 +12848,7 @@
       "items": [
         {
           "id": "m9b",
-          "name": "Signature Gyro - Paneer (Mini)",
+          "name": "Signature Gyro - Paneer",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -13186,7 +13186,7 @@
       "items": [
         {
           "id": "m3b",
-          "name": "Creamy Gyro - Paneer (Mini)",
+          "name": "Creamy Gyro - Paneer",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -13264,7 +13264,7 @@
       "items": [
         {
           "id": "m9a",
-          "name": "Signature Gyro - Chicken (Mini)",
+          "name": "Signature Gyro - Chicken",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -13290,7 +13290,7 @@
       "items": [
         {
           "id": "m7b",
-          "name": "Peri Peri Gyro - Paneer (Mini)",
+          "name": "Peri Peri Gyro - Paneer",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -13394,7 +13394,7 @@
       "items": [
         {
           "id": "m9a",
-          "name": "Signature Gyro - Chicken (Mini)",
+          "name": "Signature Gyro - Chicken",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -13472,7 +13472,7 @@
       "items": [
         {
           "id": "m1b",
-          "name": "Spicy Gyro - Paneer (Mini)",
+          "name": "Spicy Gyro - Paneer",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -13550,7 +13550,7 @@
       "items": [
         {
           "id": "m9b",
-          "name": "Signature Gyro - Paneer (Mini)",
+          "name": "Signature Gyro - Paneer",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -13784,7 +13784,7 @@
       "items": [
         {
           "id": "m3a",
-          "name": "Creamy Gyro - Chicken (Mini)",
+          "name": "Creamy Gyro - Chicken",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -13836,7 +13836,7 @@
       "items": [
         {
           "id": "m7a",
-          "name": "Peri Peri Gyro - Chicken (Mini)",
+          "name": "Peri Peri Gyro - Chicken",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -14420,7 +14420,7 @@
       "items": [
         {
           "id": "m7b",
-          "name": "Peri Peri Gyro - Paneer (Mini)",
+          "name": "Peri Peri Gyro - Paneer",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -14807,7 +14807,7 @@
       "items": [
         {
           "id": "m5b",
-          "name": "BBQ Gyro - Paneer (Mini)",
+          "name": "BBQ Gyro - Paneer",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -14960,7 +14960,7 @@
       "items": [
         {
           "id": "m1a",
-          "name": "Spicy Gyro - Chicken (Mini)",
+          "name": "Spicy Gyro - Chicken",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -15828,7 +15828,7 @@
       "items": [
         {
           "id": "m3a",
-          "name": "Creamy Gyro - Chicken (Mini)",
+          "name": "Creamy Gyro - Chicken",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -16529,7 +16529,7 @@
       "items": [
         {
           "id": "m1b",
-          "name": "Spicy Gyro - Paneer (Mini)",
+          "name": "Spicy Gyro - Paneer",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -16717,7 +16717,7 @@
       "items": [
         {
           "id": "m3a",
-          "name": "Creamy Gyro - Chicken (Mini)",
+          "name": "Creamy Gyro - Chicken",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -16847,7 +16847,7 @@
       "items": [
         {
           "id": "m3b",
-          "name": "Creamy Gyro - Paneer (Mini)",
+          "name": "Creamy Gyro - Paneer",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -17393,7 +17393,7 @@
       "items": [
         {
           "id": "m9a",
-          "name": "Signature Gyro - Chicken (Mini)",
+          "name": "Signature Gyro - Chicken",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -17523,7 +17523,7 @@
       "items": [
         {
           "id": "m3a",
-          "name": "Creamy Gyro - Chicken (Mini)",
+          "name": "Creamy Gyro - Chicken",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -17835,7 +17835,7 @@
       "items": [
         {
           "id": "m3a",
-          "name": "Creamy Gyro - Chicken (Mini)",
+          "name": "Creamy Gyro - Chicken",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -18236,7 +18236,7 @@
       "items": [
         {
           "id": "m9a",
-          "name": "Signature Gyro - Chicken (Mini)",
+          "name": "Signature Gyro - Chicken",
           "category": "Gyros",
           "unitPrice": 99,
           "quantity": 1,
@@ -22077,7 +22077,7 @@
       "items": [
         {
           "id": "m11",
-          "name": "Pesto Gyro (Mini)",
+          "name": "Pesto Gyro",
           "price": 279,
           "unitPrice": 279,
           "quantity": 1,
@@ -26270,7 +26270,7 @@
       "items": [
         {
           "id": "m5",
-          "name": "BBQ Gyro (Mini)",
+          "name": "BBQ Gyro",
           "price": 447,
           "unitPrice": 447,
           "quantity": 1,
@@ -26322,7 +26322,7 @@
       "items": [
         {
           "id": "m9",
-          "name": "Signature Gyro (Mini)",
+          "name": "Signature Gyro",
           "price": 426,
           "unitPrice": 426,
           "quantity": 1,
@@ -26530,7 +26530,7 @@
       "items": [
         {
           "id": "m3",
-          "name": "Creamy Gyro (Mini)",
+          "name": "Creamy Gyro",
           "price": 413,
           "unitPrice": 413,
           "quantity": 1,
@@ -26660,7 +26660,7 @@
       "items": [
         {
           "id": "m7",
-          "name": "Peri Peri Gyro (Mini)",
+          "name": "Peri Peri Gyro",
           "price": 438,
           "unitPrice": 438,
           "quantity": 1,
@@ -27076,7 +27076,7 @@
       "items": [
         {
           "id": "m1",
-          "name": "Spicy Gyro (Mini)",
+          "name": "Spicy Gyro",
           "price": 392,
           "unitPrice": 392,
           "quantity": 1,
@@ -27778,7 +27778,7 @@
       "items": [
         {
           "id": "m11",
-          "name": "Pesto Gyro (Mini)",
+          "name": "Pesto Gyro",
           "price": 285,
           "unitPrice": 285,
           "quantity": 1,
@@ -28064,7 +28064,7 @@
       "items": [
         {
           "id": "m3",
-          "name": "Creamy Gyro (Mini)",
+          "name": "Creamy Gyro",
           "price": 436,
           "unitPrice": 436,
           "quantity": 1,
@@ -28350,7 +28350,7 @@
       "items": [
         {
           "id": "m7",
-          "name": "Peri Peri Gyro (Mini)",
+          "name": "Peri Peri Gyro",
           "price": 435,
           "unitPrice": 435,
           "quantity": 1,
@@ -28376,7 +28376,7 @@
       "items": [
         {
           "id": "m1",
-          "name": "Spicy Gyro (Mini)",
+          "name": "Spicy Gyro",
           "price": 408,
           "unitPrice": 408,
           "quantity": 1,
@@ -28428,7 +28428,7 @@
       "items": [
         {
           "id": "m5",
-          "name": "BBQ Gyro (Mini)",
+          "name": "BBQ Gyro",
           "price": 437,
           "unitPrice": 437,
           "quantity": 1,
@@ -28558,7 +28558,7 @@
       "items": [
         {
           "id": "m9",
-          "name": "Signature Gyro (Mini)",
+          "name": "Signature Gyro",
           "price": 432,
           "unitPrice": 432,
           "quantity": 1,
@@ -31444,7 +31444,7 @@
       "items": [
         {
           "id": "m11",
-          "name": "Pesto Gyro (Mini)",
+          "name": "Pesto Gyro",
           "price": 450,
           "unitPrice": 450,
           "quantity": 1,
@@ -31730,7 +31730,7 @@
       "items": [
         {
           "id": "m11",
-          "name": "Pesto Gyro (Mini)",
+          "name": "Pesto Gyro",
           "price": 382,
           "unitPrice": 382,
           "quantity": 1,

@@ -546,6 +546,10 @@ export default function Kiosk() {
                       style={{
                         width: '100%', height: '100%', objectFit: 'contain', padding: '4px', boxSizing: 'border-box'
                       }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80';
+                      }}
                     />
                     
                     {/* Dark subtle gradient overlay */}

@@ -1076,7 +1076,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (rawImg.startsWith('http://') || rawImg.startsWith('https://')) {
         fullNetUrl = rawImg;
       } else {
-        final base = ApiService().baseUrl;
+        final base = ApiService().baseUrl.replaceAll(RegExp(r'/api/?$'), '');
         fullNetUrl = rawImg.startsWith('/') ? '$base$rawImg' : '$base/$rawImg';
       }
     } else if (rawImg.startsWith('assets/')) {
@@ -1106,11 +1106,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? Image.network(
                       fullNetUrl,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Image.asset(fallbackAsset, fit: BoxFit.cover),
+                      errorBuilder: (_, __, ___) => Image.asset(
+                        fallbackAsset,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Icon(Icons.fastfood, color: TDGColors.gold, size: 36),
+                      ),
                     )
                   : Image.asset(
                       fallbackAsset,
                       fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Icon(Icons.fastfood, color: TDGColors.gold, size: 36),
                     ),
             ),
           ),

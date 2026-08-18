@@ -593,11 +593,24 @@ function App() {
               <div key={item.id} className="item-card" onClick={() => handleAddToCart(item)}>
                 {item.tag && <span className="item-tag">{item.tag}</span>}
                 <div className="item-img">
-                  {/* Icon representations instead of missing local image assets */}
-                  {item.category === 'Gyros' && <Utensils size={32} color="#888" />}
-                  {item.category === 'Fries' && <TrendingUp size={32} color="#888" />}
-                  {item.category === 'Combos' && <ShoppingCart size={32} color="#888" />}
-                  {item.category === 'Drinks' && <Tv size={32} color="#888" />}
+                  {item.image ? (
+                    <img 
+                      src={item.image} 
+                      alt={item.name} 
+                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.style.display = 'none';
+                      }} 
+                    />
+                  ) : (
+                    <>
+                      {item.category === 'Gyros' && <Utensils size={32} color="#888" />}
+                      {item.category === 'Fries' && <TrendingUp size={32} color="#888" />}
+                      {item.category === 'Combos' && <ShoppingCart size={32} color="#888" />}
+                      {item.category === 'Drinks' && <Tv size={32} color="#888" />}
+                    </>
+                  )}
                 </div>
                 <div className="item-info">
                   <div className="item-name">{item.name}</div>

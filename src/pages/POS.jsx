@@ -850,7 +850,15 @@ export default function POS() {
           {!item.isAvailable && <span style={{ background: '#e63946', color: 'white', fontSize: '9px', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>UNAVAILABLE</span>}
           {item.isAvailable && (
             item.image ? (
-              <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              <img 
+                src={item.image} 
+                alt={item.name} 
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/images/menu/gyro.png';
+                }}
+              />
             ) : (
               (categoryIcons[cat?.name] || '🍽️')
             )

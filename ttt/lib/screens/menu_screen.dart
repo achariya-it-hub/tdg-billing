@@ -415,7 +415,7 @@ class _MenuScreenState extends State<MenuScreen> {
       if (rawImage.startsWith('http://') || rawImage.startsWith('https://')) {
         fullImageUrl = rawImage;
       } else {
-        final base = ApiService().baseUrl;
+        final base = ApiService().baseUrl.replaceAll(RegExp(r'/api/?$'), '');
         fullImageUrl = rawImage.startsWith('/') ? '$base$rawImage' : '$base/$rawImage';
       }
     }
@@ -445,11 +445,16 @@ class _MenuScreenState extends State<MenuScreen> {
                   ? Image.network(
                       fullImageUrl,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Image.asset(fallbackAsset, fit: BoxFit.cover),
+                      errorBuilder: (_, __, ___) => Image.asset(
+                        fallbackAsset,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Icon(Icons.fastfood, color: TDGColors.gold, size: 36),
+                      ),
                     )
                   : Image.asset(
                       fallbackAsset,
                       fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Icon(Icons.fastfood, color: TDGColors.gold, size: 36),
                     ),
             ),
           ),
