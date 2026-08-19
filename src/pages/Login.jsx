@@ -64,6 +64,9 @@ export default function Login() {
       const data = await res.json()
       if (res.ok && data.user) {
         localStorage.setItem('user', JSON.stringify(data.user))
+        if (data.token) {
+          localStorage.setItem('token', data.token)
+        }
         navigate('/pos')
       } else {
         setError(data.error || 'Invalid PIN'); setPin('')

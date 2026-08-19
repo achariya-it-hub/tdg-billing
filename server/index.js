@@ -8058,19 +8058,55 @@ function generateReferralCode() {
  }
 }
 
-// Auth middleware
+// Auth middleware for customer/mobile app
 function auth(req, res, next) {
- const header = req.headers.authorization
- if (!header || !header.startsWith('Bearer ')) {
- return res.status(401).json({ message: 'No token provided' })
- }
- try {
- const decoded = jwt.verify(header.split(' ')[1], JWT_SECRET)
- req.userId = decoded.userId
- next()
- } catch (e) {
- return res.status(401).json({ message: 'Invalid token' })
- }
+  const header = req.headers.authorization
+  if (!header || !header.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'No token provided' })
+  }
+  try {
+    const decoded = jwt.verify(header.split(' ')[1], JWT_SECRET)
+    req.userId = decoded.userId
+    next()
+  } catch (e) {
+    return res.status(401).json({ message: 'Invalid token' })
+  }
+}
+
+// Auth middleware for POS staff
+function posAuth(req, res, next) {
+  const header = req.headers.authorization
+  if (!header || !header.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'No authentication token provided. Please log in.' })
+  }
+  try {
+    const decoded = jwt.verify(header.split(' ')[1], JWT_SECRET)
+    if (!decoded.staffId) {
+      return res.status(403).json({ error: 'Not a valid staff token. Access denied.' })
+    }
+    req.staffId = decoded.staffId
+    req.staffRole = decoded.role
+    next()
+  } catch (e) {
+    return res.status(401).json({ error: 'Session expired or invalid token' })
+  }
+}
+
+// Optional Auth middleware (allows Kiosk/Captain but identifies Staff if present)
+function optionalPosAuth(req, res, next) {
+  const header = req.headers.authorization
+  if (!header || !header.startsWith('Bearer ')) {
+    req.staffId = null
+    return next()
+  }
+  try {
+    const decoded = jwt.verify(header.split(' ')[1], JWT_SECRET)
+    req.staffId = decoded.staffId
+    req.staffRole = decoded.role
+  } catch (e) {
+    req.staffId = null
+  }
+  next()
 }
 
 // ============ MOBILE APP API ROUTES ============
@@ -8967,7 +9003,8 @@ app.post('/api/billing/login', async (req, res) => {
  }
  const { pin: _, ...userWithoutPin } = user
  const safeUser = { ...userWithoutPin, permissions: user.permissions || getDefaultPermissions(user.role) }
- res.json({ user: safeUser })
+ const token = jwt.sign({ staffId: user.id, role: user.role }, JWT_SECRET, { expiresIn: '14d' })
+ res.json({ user: safeUser, token })
  } catch (error) {
  console.error('Billing login error:', error)
  res.status(500).json({ error: 'Server error during login' })
@@ -12133,8 +12170,8 @@ app.get('/api/staff/audit-logs', (req, res) => {
  res.json(staffAuditLogs)
 })
 
-// POS Orders (no auth)
-app.get('/api/pos/orders', (req, res) => {
+// POS Orders (Hybrid: Kiosk/Captain unauthenticated, POS authenticated)
+app.get('/api/pos/orders', optionalPosAuth, (req, res) => {
  try {
  const { status, source } = req.query
  const includeCancelled = req.query.includeCancelled === 'true' || req.query.report === 'kot-cancelled'
@@ -12284,9 +12321,23 @@ function resolveCampaignOffer(orderDateStr, customerPhone, flags) {
  }
 }
 
-app.post('/api/pos/orders', (req, res) => {
- const { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod, complimentary, complimentaryType, specialRemarks } = req.body
- 
+app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
+  let { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod, complimentary, complimentaryType, specialRemarks, status, paymentStatus, paidAt, settleDirectly } = req.body
+
+  // Security: Prevent unauthenticated users from tampering with order status/payments
+  if (!req.staffId) {
+    if (source !== 'qr_self_order' && source !== 'captain' && source !== 'online') {
+      return res.status(403).json({ error: 'Unauthorized order source' })
+    }
+    // Force pending status and block direct settlement
+    status = 'pending'
+    paymentStatus = 'pending'
+    paidAt = null
+    settleDirectly = false
+    complimentary = false
+    complimentaryType = ''
+  }
+
   const id = uuid()
   const orderNum = ++orderNumber
   const kotNum = getNextKotNumber()
@@ -12582,7 +12633,7 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
  res.status(404).json({ error: 'Order not found' })
 })
 
-app.post('/api/pos/orders/:id/cancel', (req, res) => {
+app.post('/api/pos/orders/:id/cancel', posAuth, (req, res) => {
  const { id } = req.params
  const { reason, cancelledBy } = req.body || {}
  const targetOrder = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
