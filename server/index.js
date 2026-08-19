@@ -12287,12 +12287,12 @@ function resolveCampaignOffer(orderDateStr, customerPhone, flags) {
 app.post('/api/pos/orders', (req, res) => {
  const { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod, complimentary, complimentaryType, specialRemarks } = req.body
  
- const id = uuid()
- const orderNum = ++orderNumber
- const kotNum = getNextKotNumber()
- const now = new Date().toISOString()
- 
- const itemList = Array.isArray(items) ? items : []
+  const id = uuid()
+  const orderNum = ++orderNumber
+  const kotNum = getNextKotNumber()
+  const now = req.body.backdateOverride || new Date().toISOString()
+  
+  const itemList = Array.isArray(items) ? items : []
  const rawSub = req.body.rawSubtotal || Math.round(itemList.reduce((sum, item) => sum + (Number(item.totalPrice) || (Number(item.unitPrice || item.price || 0) * Number(item.quantity || item.qty || 1))), 0)) || subtotal || 0
  const isStaffBenefit = Boolean(req.body.staffBenefitOffer || req.body.employeeId || req.body.offerType === 'staff_family')
  const clientDiscount = Number(req.body.discount || req.body.discountAmount || 0)
