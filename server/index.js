@@ -14338,6 +14338,24 @@ setInterval(() => {
 }, 10000)
 
 // Diagnostic endpoint — check live database state (admin only)
+
+// Admin route: Raw orders list by date for audit and diagnosis
+app.get('/api/admin/raw-orders', (req, res) => {
+  try {
+    const targetDate = req.query.date || '2026-08-19'
+    const db = readDb()
+    const allOrders = db.orders || orders || []
+    const filtered = allOrders.filter(o => o && String(o.createdAt || o.date || '').startsWith(targetDate))
+    res.json({
+      date: targetDate,
+      count: filtered.length,
+      orders: filtered
+    })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
 app.get('/api/admin/db-diagnostics', (req, res) => {
  try {
  const db = readDb()
