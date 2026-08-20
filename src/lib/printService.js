@@ -1,3 +1,67 @@
+
+const getPrintItemDetailsList = (item) => {
+  if (!item) return []
+  const details = []
+  const c = (typeof item.customization === 'object' && item.customization !== null) ? item.customization : {}
+
+  const protein = item.protein || item.proteinType || item.variant || item.variantName || item.selectedVariant || c.protein || c.proteinType || c.variant
+  if (protein) details.push(`Protein: ${protein}`)
+
+  const bread = item.bread || item.breadType || c.bread || c.breadType
+  if (bread) details.push(`Bread: ${bread}`)
+
+  const flavor = item.flavor || c.flavor
+  if (flavor) details.push(`Flavor: ${flavor}`)
+
+  const spread = item.spread || item.spreadType || c.spread
+  if (spread) details.push(`Spread: ${spread}`)
+
+  const gyro1 = item.gyro1 || c.gyro1
+  if (gyro1) details.push(`Gyro 1: ${gyro1}`)
+  const gyro2 = item.gyro2 || c.gyro2
+  if (gyro2) details.push(`Gyro 2: ${gyro2}`)
+
+  const drink = item.drink || c.drink
+  if (drink) details.push(`Drink: ${drink}`)
+
+  const dips = item.dips || c.dips
+  if (dips) details.push(`Dips: ${dips}`)
+
+  const sauces = item.sauces || c.sauces
+  if (Array.isArray(sauces) && sauces.length > 0) {
+    details.push(`Sauces: ${sauces.join(', ')}`)
+  } else if (typeof sauces === 'string' && sauces.trim()) {
+    details.push(`Sauces: ${sauces.trim()}`)
+  }
+
+  const veggies = item.veggies || c.veggies
+  if (Array.isArray(veggies) && veggies.length > 0) {
+    details.push(`Veggies: ${veggies.join(', ')}`)
+  } else if (typeof veggies === 'string' && veggies.trim()) {
+    details.push(`Veggies: ${veggies.trim()}`)
+  }
+
+  const addons = item.addons || item.addOns || c.addons
+  if (Array.isArray(addons) && addons.length > 0) {
+    const addStr = addons.map(a => typeof a === 'object' ? (a.name || a.title) : a).filter(Boolean).join(', ')
+    if (addStr) details.push(`Add-ons: ${addStr}`)
+  } else if (typeof addons === 'string' && addons.trim()) {
+    details.push(`Add-ons: ${addons.trim()}`)
+  }
+
+  if (typeof item.customization === 'string' && item.customization.trim()) {
+    details.push(`Details: ${item.customization.trim()}`)
+  }
+  if (typeof item.details === 'string' && item.details.trim()) {
+    details.push(`Details: ${item.details.trim()}`)
+  }
+
+  const notes = item.notes || item.instruction || c.notes
+  if (notes) details.push(`Note: ${notes}`)
+
+  return [...new Set(details)]
+}
+
 import { getCompanyInfoSync } from './getCompanyInfo'
 
 // Global Print Deduplication Lock Guard (15s TTL)
@@ -77,22 +141,9 @@ const PrintService = {
       const note = item.notes || ''
 
       let customDetails = ''
-      if (item.customization) {
-        const c = item.customization
-        const parts = []
-        if (c.gyro1) parts.push(c.gyro1)
-        if (c.gyro2) parts.push(c.gyro2)
-        if (c.drink) parts.push(`Drink: ${c.drink}`)
-        if (!c.gyro1) {
-          if (c.protein) parts.push(`Protein: ${c.protein}`)
-          if (c.bread) parts.push(`Bread: ${c.bread}`)
-          if (c.spread) parts.push(`Spread: ${c.spread}`)
-          if (c.sauces && c.sauces.length > 0) parts.push(`Sauces: ${c.sauces.join(', ')}`)
-          if (c.veggies && c.veggies.length > 0) parts.push(`Veggies: ${c.veggies.join(', ')}`)
-        }
-        if (parts.length > 0) {
-          customDetails = `<div class="item-custom">• ${parts.join('<br/>• ')}</div>`
-        }
+      const detailsList = getPrintItemDetailsList(item)
+      if (detailsList.length > 0) {
+        customDetails = `<div class="item-custom">• ${detailsList.join('<br/>• ')}</div>`
       }
 
       return `
@@ -296,22 +347,9 @@ const PrintService = {
           const amt = item.totalPrice || unitPrice * qty
 
           let custDetails = ''
-          if (item.customization) {
-            const c = item.customization
-            const parts = []
-            if (c.gyro1) parts.push(c.gyro1)
-            if (c.gyro2) parts.push(c.gyro2)
-            if (c.drink) parts.push(`Drink: ${c.drink}`)
-            if (!c.gyro1) {
-              if (c.bread) parts.push(`Bread: ${c.bread}`)
-              if (c.protein) parts.push(`Protein: ${c.protein}`)
-              if (c.sauces && c.sauces.length) parts.push(`Sauces: ${c.sauces.join(', ')}`)
-              if (c.veggies && c.veggies.length) parts.push(`Veggies: ${c.veggies.join(', ')}`)
-            }
-            if (c.notes) parts.push(`Note: ${c.notes}`)
-            if (parts.length > 0) {
-              custDetails = `<div style="font-size:10px; font-weight:700; color:#333; margin:2px 0 4px 10px; line-height:1.2;">• ${parts.join('<br/>• ')}</div>`
-            }
+          const bDetailsList = getPrintItemDetailsList(item)
+          if (bDetailsList.length > 0) {
+            custDetails = `<div style="font-size:10px; font-weight:700; color:#333; margin:2px 0 4px 10px; line-height:1.2;">• ${bDetailsList.join('<br/>• ')}</div>`
           }
 
           return `

@@ -3,6 +3,70 @@ import { Check, AlertTriangle, Wifi, WifiOff, RefreshCw, ChevronLeft, ChevronRig
 import { getSocket, connectToKitchen } from '../lib/socket'
 import PrintService from '../lib/printService'
 
+
+const getItemDetailsList = (item) => {
+  if (!item) return []
+  const details = []
+  const c = (typeof item.customization === 'object' && item.customization !== null) ? item.customization : {}
+
+  const protein = item.protein || item.proteinType || item.variant || item.variantName || item.selectedVariant || c.protein || c.proteinType || c.variant
+  if (protein) details.push(`🍗 Protein: ${protein}`)
+
+  const bread = item.bread || item.breadType || c.bread || c.breadType
+  if (bread) details.push(`🥖 Bread: ${bread}`)
+
+  const flavor = item.flavor || c.flavor
+  if (flavor) details.push(`🌶️ Flavor: ${flavor}`)
+
+  const spread = item.spread || item.spreadType || c.spread
+  if (spread) details.push(`🥣 Spread: ${spread}`)
+
+  const gyro1 = item.gyro1 || c.gyro1
+  if (gyro1) details.push(`🥙 Gyro 1: ${gyro1}`)
+  const gyro2 = item.gyro2 || c.gyro2
+  if (gyro2) details.push(`🥙 Gyro 2: ${gyro2}`)
+
+  const drink = item.drink || c.drink
+  if (drink) details.push(`🥤 Drink: ${drink}`)
+
+  const dips = item.dips || c.dips
+  if (dips) details.push(`🧄 Dips: ${dips}`)
+
+  const sauces = item.sauces || c.sauces
+  if (Array.isArray(sauces) && sauces.length > 0) {
+    details.push(`🔥 Sauces: ${sauces.join(', ')}`)
+  } else if (typeof sauces === 'string' && sauces.trim()) {
+    details.push(`🔥 Sauces: ${sauces.trim()}`)
+  }
+
+  const veggies = item.veggies || c.veggies
+  if (Array.isArray(veggies) && veggies.length > 0) {
+    details.push(`🥗 Veggies: ${veggies.join(', ')}`)
+  } else if (typeof veggies === 'string' && veggies.trim()) {
+    details.push(`🥗 Veggies: ${veggies.trim()}`)
+  }
+
+  const addons = item.addons || item.addOns || c.addons
+  if (Array.isArray(addons) && addons.length > 0) {
+    const addStr = addons.map(a => typeof a === 'object' ? (a.name || a.title) : a).filter(Boolean).join(', ')
+    if (addStr) details.push(`➕ Add-ons: ${addStr}`)
+  } else if (typeof addons === 'string' && addons.trim()) {
+    details.push(`➕ Add-ons: ${addons.trim()}`)
+  }
+
+  if (typeof item.customization === 'string' && item.customization.trim()) {
+    details.push(`📝 Customization: ${item.customization.trim()}`)
+  }
+  if (typeof item.details === 'string' && item.details.trim()) {
+    details.push(`📌 Details: ${item.details.trim()}`)
+  }
+
+  const notes = item.notes || item.instruction || c.notes
+  if (notes) details.push(`⚠️ Note: ${notes}`)
+
+  return [...new Set(details)]
+}
+
 export default function KOT() {
   const [orders, setOrders] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -286,29 +350,40 @@ export default function KOT() {
                     <span
                       style={{
                         fontSize: '20px',
-                        fontWeight: 600,
+                        fontWeight: 700,
                         color: item.isCompleted ? 'white' : '#1a1a2e',
                         textDecoration: item.isCompleted ? 'line-through' : 'none',
                         opacity: item.isCompleted ? 0.7 : 1
                       }}
                     >
-                      {item.menuItemName}
+                      {item.menuItemName || item.name}
                     </span>
-                    {item.customization && (
-                      <span
-                        style={{
-                          fontSize: '13px',
-                          fontWeight: 500,
-                          color: item.isCompleted ? 'rgba(255,255,255,0.7)' : '#e63946',
-                          marginTop: '4px',
-                          lineHeight: 1.3
-                        }}
-                      >
-                        {item.customization.protein} • {item.customization.bread} bread • {item.customization.spread} spread
-                        {item.customization.sauces?.length > 0 && ` • Sauces: ${item.customization.sauces.join(', ')}`}
-                        {item.customization.veggies?.length > 0 && ` • Veggies: ${item.customization.veggies.join(', ')}`}
-                      </span>
-                    )}
+                    {(() => {
+                      const details = getItemDetailsList(item)
+                      if (details.length === 0) return null
+                      return (
+                        <div style={{ marginTop: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          {details.map((d, i) => (
+                            <span
+                              key={i}
+                              style={{
+                                fontSize: '13.5px',
+                                fontWeight: 700,
+                                color: item.isCompleted ? 'rgba(255,255,255,0.95)' : '#c1121f',
+                                background: item.isCompleted ? 'rgba(255,255,255,0.15)' : '#fff0f3',
+                                padding: '3px 10px',
+                                borderRadius: '8px',
+                                width: 'fit-content',
+                                border: item.isCompleted ? '1px solid rgba(255,255,255,0.3)' : '1px solid #ffccd5',
+                                lineHeight: 1.3
+                              }}
+                            >
+                              {d}
+                            </span>
+                          ))}
+                        </div>
+                      )
+                    })()}
                   </div>
                 </button>
               ))}
