@@ -8393,8 +8393,23 @@ app.post('/api/auth/login', async (req, res) => {
 })
 
 // ============ MSG91 OTP SERVICE ============
-async function sendMSG91OTP(phone, otp) {
+let recentOtpLogs = []
+
+async function sendMSG91OTP(phone, otp, type = 'auth') {
  const cfg = settings.msg91 || {}
+ const cleanPhone = (phone || '').replace(/[^0-9]/g, '')
+ const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
+
+ const logEntry = {
+   timestamp: new Date().toISOString(),
+   phone: phone,
+   formattedPhone: formattedPhone,
+   otp: otp,
+   type: type,
+   status: (!cfg.isEnabled || !cfg.authKey) ? 'CONSOLE_FALLBACK' : 'SENT_MSG91'
+ }
+ recentOtpLogs.unshift(logEntry)
+ if (recentOtpLogs.length > 50) recentOtpLogs.pop()
  const widgetId = cfg.widgetId || '36686e624b35303331383732'
  
  if (!cfg.isEnabled || !cfg.authKey) {
@@ -8454,6 +8469,15 @@ function generateOTP() {
 }
 
 // MSG91 config endpoint
+
+// GET recent OTP logs
+app.get('/api/msg91/logs', (req, res) => {
+  res.json({
+    count: recentOtpLogs.length,
+    logs: recentOtpLogs
+  })
+})
+
 app.get('/api/msg91/config', (req, res) => {
  const cfg = settings.msg91 || {}
  res.json({
