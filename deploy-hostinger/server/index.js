@@ -8363,7 +8363,8 @@ async function sendMSG91OTP(phone, otp, type = 'auth') {
   const cfg = settings.msg91 || {}
   const cleanPhone = (phone || '').replace(/[^0-9]/g, '')
   const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
-  const widgetId = cfg.widgetId || '36686e624b35303331383732'
+  const widgetId = cfg.widgetId || 'SecureOTPWidgetRKEV'
+  const authKey = cfg.authKey || process.env.MSG91_AUTH_KEY || '507494Aat701nlyG786a7f01caP1'
 
   const logEntry = {
     timestamp: new Date().toISOString(),
@@ -8371,12 +8372,12 @@ async function sendMSG91OTP(phone, otp, type = 'auth') {
     formattedPhone: formattedPhone,
     otp: otp,
     type: type,
-    status: (!cfg.isEnabled || !cfg.authKey) ? 'CONSOLE_FALLBACK' : 'SENT_MSG91'
+    status: (cfg.isEnabled === false || !authKey) ? 'CONSOLE_FALLBACK' : 'SENT_MSG91'
   }
   recentOtpLogs.unshift(logEntry)
   if (recentOtpLogs.length > 50) recentOtpLogs.pop()
 
-  if (!cfg.isEnabled || !cfg.authKey) {
+  if (cfg.isEnabled === false || !authKey) {
     console.log(`[MSG91] OTP for ${phone}: ${otp} (MSG91 disabled or Auth Key missing, logged to console)`)
     return { success: true, method: 'console', otp }
   }
@@ -8384,15 +8385,20 @@ async function sendMSG91OTP(phone, otp, type = 'auth') {
   try {
     const headers = {
       'Content-Type': 'application/json',
-      'authkey': cfg.authKey
+      'authkey': authKey
     }
 
     // 1. Primary: MSG91 Widget API (https://api.msg91.com/api/v5/widget/sendOtp)
-    const widgetUrl = 'https://api.msg91.com/api/v5/widget/sendOtp'
+    const widgetUrl = `https://api.msg91.com/api/v5/widget/sendOtp?authkey=${encodeURIComponent(authKey)}`
     const widgetPayload = {
       widgetId: widgetId,
-      identifier: formattedPhone
+      widget_id: widgetId,
+      mobile: formattedPhone,
+      identifier: formattedPhone,
+      otp: otp
     }
+    if (cfg.senderId) widgetPayload.sender = cfg.senderId
+    if (cfg.templateId) widgetPayload.template_id = cfg.templateId
 
     const resp = await fetch(widgetUrl, {
       method: 'POST',
@@ -8402,17 +8408,17 @@ async function sendMSG91OTP(phone, otp, type = 'auth') {
     const data = await resp.json()
     console.log(`[MSG91 Widget] OTP API response for ${formattedPhone}: ${resp.status}`, JSON.stringify(data))
 
-    const isSuccess = resp.ok || data.type === 'success' || data.responseType === 'success'
+    const isSuccess = resp.ok || data.type === 'success' || data.responseType === 'success' || (data.message && String(data.message).toLowerCase().includes('success'))
     if (isSuccess) {
       return { success: true, data, reqId: data.reqId || data.message, method: 'msg91' }
     }
 
-    // 2. Fallback: Standard Control OTP API
-    console.warn(`[MSG91 Widget Fallback] Widget API returned error, trying standard OTP endpoint...`)
+    // 2. Fallback: Standard Control OTP API (https://control.msg91.com/api/v5/otp)
+    console.warn(`[MSG91 Widget Fallback] Widget API response: ${JSON.stringify(data)}, trying standard OTP endpoint...`)
     const templateId = cfg.templateId || ''
     const senderId = cfg.senderId || 'TDGBIL'
 
-    let fallbackUrl = `https://control.msg91.com/api/v5/otp?mobile=${formattedPhone}&authkey=${encodeURIComponent(cfg.authKey)}`
+    let fallbackUrl = `https://control.msg91.com/api/v5/otp?mobile=${formattedPhone}&authkey=${encodeURIComponent(authKey)}`
     if (templateId) fallbackUrl += `&template_id=${encodeURIComponent(templateId)}`
     if (senderId) fallbackUrl += `&sender=${encodeURIComponent(senderId)}`
     if (otp) fallbackUrl += `&otp=${encodeURIComponent(otp)}`
@@ -8434,7 +8440,7 @@ async function sendMSG91OTP(phone, otp, type = 'auth') {
     const fallbackData = await fallbackResp.json()
     console.log(`[MSG91 Fallback] OTP API response for ${formattedPhone}: ${fallbackResp.status}`, JSON.stringify(fallbackData))
 
-    const fallbackSuccess = fallbackResp.ok || fallbackData.type === 'success' || fallbackData.responseType === 'success'
+    const fallbackSuccess = fallbackResp.ok || fallbackData.type === 'success' || fallbackData.responseType === 'success' || (fallbackData.message && String(fallbackData.message).toLowerCase().includes('success'))
     return { success: fallbackSuccess, data: fallbackData, method: 'msg91', otp: fallbackSuccess ? undefined : otp }
   } catch (err) {
     console.error(`[MSG91] Failed to send OTP to ${formattedPhone}:`, err.message)
