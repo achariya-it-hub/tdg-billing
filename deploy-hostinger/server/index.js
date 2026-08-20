@@ -358,7 +358,7 @@ let settings = {
  },
  msg91: {
  widgetId: process.env.MSG91_WIDGET_ID || '36686e624b35303331383732',
- authKey: process.env.MSG91_AUTH_KEY || '',
+ authKey: process.env.MSG91_AUTH_KEY || '507494Aat701nlyG786a7f01caP1',
  senderId: process.env.MSG91_SENDER_ID || 'TDGBIL',
  templateId: process.env.MSG91_TEMPLATE_ID || '',
  otpExpiry: 300,
@@ -8360,71 +8360,87 @@ app.post('/api/auth/login', async (req, res) => {
 let recentOtpLogs = []
 
 async function sendMSG91OTP(phone, otp, type = 'auth') {
- const cfg = settings.msg91 || {}
- const cleanPhone = (phone || '').replace(/[^0-9]/g, '')
- const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
+  const cfg = settings.msg91 || {}
+  const cleanPhone = (phone || '').replace(/[^0-9]/g, '')
+  const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
+  const widgetId = cfg.widgetId || '36686e624b35303331383732'
 
- const logEntry = {
-   timestamp: new Date().toISOString(),
-   phone: phone,
-   formattedPhone: formattedPhone,
-   otp: otp,
-   type: type,
-   status: (!cfg.isEnabled || !cfg.authKey) ? 'CONSOLE_FALLBACK' : 'SENT_MSG91'
- }
- recentOtpLogs.unshift(logEntry)
- if (recentOtpLogs.length > 50) recentOtpLogs.pop()
- const widgetId = cfg.widgetId || '36686e624b35303331383732'
- 
- if (!cfg.isEnabled || !cfg.authKey) {
- console.log(`[MSG91] OTP for ${phone}: ${otp} (MSG91 disabled or Auth Key missing, logged to console)`)
- return { success: true, method: 'console', otp }
- }
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    phone: phone,
+    formattedPhone: formattedPhone,
+    otp: otp,
+    type: type,
+    status: (!cfg.isEnabled || !cfg.authKey) ? 'CONSOLE_FALLBACK' : 'SENT_MSG91'
+  }
+  recentOtpLogs.unshift(logEntry)
+  if (recentOtpLogs.length > 50) recentOtpLogs.pop()
 
- const cleanPhone = phone.replace(/[^0-9]/g, '')
- const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
+  if (!cfg.isEnabled || !cfg.authKey) {
+    console.log(`[MSG91] OTP for ${phone}: ${otp} (MSG91 disabled or Auth Key missing, logged to console)`)
+    return { success: true, method: 'console', otp }
+  }
 
- try {
- const templateId = cfg.templateId || ''
- const senderId = cfg.senderId || 'TDGBIL'
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      'authkey': cfg.authKey
+    }
 
- let url = `https://control.msg91.com/api/v5/otp?mobile=${formattedPhone}&authkey=${encodeURIComponent(cfg.authKey)}`
- if (templateId) url += `&template_id=${encodeURIComponent(templateId)}`
- if (senderId) url += `&sender=${encodeURIComponent(senderId)}`
- if (otp) url += `&otp=${encodeURIComponent(otp)}`
+    // 1. Primary: MSG91 Widget API (https://api.msg91.com/api/v5/widget/sendOtp)
+    const widgetUrl = 'https://api.msg91.com/api/v5/widget/sendOtp'
+    const widgetPayload = {
+      widgetId: widgetId,
+      identifier: formattedPhone
+    }
 
- const payload = {
- mobile: formattedPhone,
- otp: otp,
- sender: senderId,
- otp_expiry: cfg.otpExpiry || 300
- }
- if (widgetId) payload.widget_id = widgetId
- if (templateId) payload.template_id = templateId
+    const resp = await fetch(widgetUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(widgetPayload)
+    })
+    const data = await resp.json()
+    console.log(`[MSG91 Widget] OTP API response for ${formattedPhone}: ${resp.status}`, JSON.stringify(data))
 
- const headers = {
- 'Content-Type': 'application/json',
- 'authkey': cfg.authKey
- }
+    const isSuccess = resp.ok || data.type === 'success' || data.responseType === 'success'
+    if (isSuccess) {
+      return { success: true, data, reqId: data.reqId || data.message, method: 'msg91' }
+    }
 
- const resp = await fetch(url, {
- method: 'POST',
- headers,
- body: JSON.stringify(payload)
- })
- const data = await resp.json()
- console.log(`[MSG91] OTP API response for ${formattedPhone}: ${resp.status}`, JSON.stringify(data))
+    // 2. Fallback: Standard Control OTP API
+    console.warn(`[MSG91 Widget Fallback] Widget API returned error, trying standard OTP endpoint...`)
+    const templateId = cfg.templateId || ''
+    const senderId = cfg.senderId || 'TDGBIL'
 
- const isSuccess = resp.ok || data.type === 'success' || data.responseType === 'success'
- if (!isSuccess) {
- console.warn(`[MSG91 FALLBACK] Provider error: ${JSON.stringify(data)}. Logged OTP to console for ${phone}: ${otp}`)
- }
- return { success: isSuccess, data, method: 'msg91', otp: isSuccess ? undefined : otp }
- } catch (err) {
- console.error(`[MSG91] Failed to send OTP to ${formattedPhone}:`, err.message)
- console.log(`[MSG91 FALLBACK] Logging OTP to console for ${phone}: ${otp}`)
- return { success: false, error: err.message, method: 'console', otp }
- }
+    let fallbackUrl = `https://control.msg91.com/api/v5/otp?mobile=${formattedPhone}&authkey=${encodeURIComponent(cfg.authKey)}`
+    if (templateId) fallbackUrl += `&template_id=${encodeURIComponent(templateId)}`
+    if (senderId) fallbackUrl += `&sender=${encodeURIComponent(senderId)}`
+    if (otp) fallbackUrl += `&otp=${encodeURIComponent(otp)}`
+
+    const fallbackPayload = {
+      mobile: formattedPhone,
+      otp: otp,
+      sender: senderId,
+      otp_expiry: cfg.otpExpiry || 300
+    }
+    if (widgetId) fallbackPayload.widget_id = widgetId
+    if (templateId) fallbackPayload.template_id = templateId
+
+    const fallbackResp = await fetch(fallbackUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(fallbackPayload)
+    })
+    const fallbackData = await fallbackResp.json()
+    console.log(`[MSG91 Fallback] OTP API response for ${formattedPhone}: ${fallbackResp.status}`, JSON.stringify(fallbackData))
+
+    const fallbackSuccess = fallbackResp.ok || fallbackData.type === 'success' || fallbackData.responseType === 'success'
+    return { success: fallbackSuccess, data: fallbackData, method: 'msg91', otp: fallbackSuccess ? undefined : otp }
+  } catch (err) {
+    console.error(`[MSG91] Failed to send OTP to ${formattedPhone}:`, err.message)
+    console.log(`[MSG91 FALLBACK] Logging OTP to console for ${phone}: ${otp}`)
+    return { success: false, error: err.message, method: 'console', otp }
+  }
 }
 
 
@@ -9506,29 +9522,59 @@ app.post('/api/mobile/redeem-points', (req, res) => {
 
 const otpStore = new Map()
 
-async function verifyMSG91OTP(phone, otp) {
- try {
- const cleanPhone = String(phone).replace(/\D/g, '')
+async function verifyMSG91OTP(phone, otp, reqId = null) {
+  try {
+    const cleanPhone = String(phone).replace(/\D/g, '')
+    const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
 
- const msg91Config = settings?.msg91 || {}
- const authKey = msg91Config.authKey || process.env.MSG91_AUTH_KEY || ''
+    const msg91Config = settings?.msg91 || {}
+    const authKey = msg91Config.authKey || process.env.MSG91_AUTH_KEY || ''
+    const widgetId = msg91Config.widgetId || '36686e624b35303331383732'
 
- if (authKey && msg91Config.isEnabled !== false) {
- const url = `https://control.msg91.com/api/v5/otp/verify?mobile=${formattedPhone}&otp=${otp}`
- const response = await fetch(url, {
- method: 'GET',
- headers: { 'authkey': authKey }
- })
- const data = await response.json()
- console.log(`[MSG91 OTP VERIFY] Mobile: ${formattedPhone}, Response:`, data)
- return data.type === 'success'
- } else {
- return String(otp) === '1234' || String(otp).length === 4
- }
- } catch (e) {
- console.error('[MSG91 VERIFY ERROR]', e.message)
- return false
- }
+    if (authKey && msg91Config.isEnabled !== false) {
+      // 1. Try Widget verification API (https://api.msg91.com/api/v5/widget/verifyOtp)
+      try {
+        const widgetVerifyUrl = 'https://api.msg91.com/api/v5/widget/verifyOtp'
+        const payload = {
+          widgetId: widgetId,
+          otp: String(otp)
+        }
+        if (reqId) payload.reqId = reqId
+        else payload.identifier = formattedPhone
+
+        const widgetResp = await fetch(widgetVerifyUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'authkey': authKey
+          },
+          body: JSON.stringify(payload)
+        })
+        const widgetData = await widgetResp.json()
+        console.log(`[MSG91 WIDGET VERIFY] Mobile: ${formattedPhone}, Response:`, widgetData)
+        if (widgetResp.ok || widgetData.type === 'success' || widgetData.responseType === 'success') {
+          return true
+        }
+      } catch (widgetErr) {
+        console.warn('[MSG91 WIDGET VERIFY WARNING]', widgetErr.message)
+      }
+
+      // 2. Fallback to standard control verify API (https://control.msg91.com/api/v5/otp/verify)
+      const url = `https://control.msg91.com/api/v5/otp/verify?mobile=${formattedPhone}&otp=${encodeURIComponent(otp)}`
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'authkey': authKey }
+      })
+      const data = await response.json()
+      console.log(`[MSG91 OTP VERIFY] Mobile: ${formattedPhone}, Response:`, data)
+      return response.ok || data.type === 'success' || data.responseType === 'success'
+    } else {
+      return String(otp) === '1234' || String(otp).length === 4
+    }
+  } catch (e) {
+    console.error('[MSG91 VERIFY ERROR]', e.message)
+    return false
+  }
 }
 
 // 1. Send MSG91 OTP for Forgot Password or Asset Verification
