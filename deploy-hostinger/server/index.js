@@ -677,7 +677,7 @@ try {
         const cleanAug18 = seedData.orders.filter(o => o && String(o.createdAt || o.date || '').startsWith('2026-08-18'))
         if (cleanAug18.length === 36) {
           orders = orders.filter(o => !String(o.createdAt || o.date || '').startsWith('2026-08-18')).concat(cleanAug18)
-          saveState()
+          writeDb({ orders })
           console.log('[HOSTINGER MIGRATION] ✅ Successfully updated persistent Hostinger database to clean 36 bills (₹14,247)!')
         }
       }
@@ -8465,7 +8465,6 @@ app.post('/api/msg91/test-send', async (req, res) => {
     const activeSenderId = senderId || settings.msg91?.senderId || 'TDGBIL'
     const activeWidgetId = widgetId || settings.msg91?.widgetId || '36686e624b35303331383732'
 
-    const cleanPhone = phone.replace(/\D/g, '').slice(-10)
     const formattedPhone = `91${cleanPhone}`
 
     let url = `https://control.msg91.com/api/v5/otp?mobile=${formattedPhone}&authkey=${encodeURIComponent(activeAuthKey)}`
@@ -8675,7 +8674,6 @@ app.post('/api/assets', auth, (req, res) => {
 
  const assets = user.assets || []
  if (assets.length >= 10) return res.status(400).json({ message: 'Maximum 10 assets allowed' })
- const cleanPhone = phone.replace(/[^0-9]/g, '')
  if (assets.find(a => a.phone.replace(/[^0-9]/g, '') === cleanPhone)) {
  return res.status(400).json({ message: 'Asset with this phone already added' })
  }
@@ -9511,7 +9509,6 @@ const otpStore = new Map()
 async function verifyMSG91OTP(phone, otp) {
  try {
  const cleanPhone = String(phone).replace(/\D/g, '')
- const formattedPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone
 
  const msg91Config = settings?.msg91 || {}
  const authKey = msg91Config.authKey || process.env.MSG91_AUTH_KEY || ''
@@ -9679,7 +9676,6 @@ app.post('/api/cashfree/create-order', async (req, res) => {
  const env = (cfConfig.environment || process.env.CASHFREE_ENV || DEFAULT_CASHFREE_ENV).toUpperCase()
 
  const cleanPhone = String(customerPhone || '9876543210').replace(/\D/g, '')
- const formattedPhone = cleanPhone.length === 10 ? cleanPhone : '9876543210'
  const generatedOrderId = orderId || `order_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
  const baseUrl = env === 'PRODUCTION' ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg'
 
@@ -9971,7 +9967,6 @@ app.post('/api/billing/assets', async (req, res) => {
  customer.assets = assets
  writeDb(db)
 
- const cleanPhone = phone.replace(/[^0-9]/g, '')
  const result = await sendMSG91OTP(phone, otp)
 
  res.json({ success: true, asset: newAsset, assets: customer.assets, message: `OTP sent to ${phone}`, method: result.method, otp: result.method === 'console' ? otp : undefined })
