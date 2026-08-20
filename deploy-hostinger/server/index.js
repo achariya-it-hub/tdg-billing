@@ -422,9 +422,10 @@ function syncSalesVault(currentOrders) {
  }
  }
  const orderMap = new Map()
- vaultOrders.forEach(o => { if (o && (o.id || o.orderNumber)) orderMap.set(String(o.id || o.orderNumber), o) })
+ const getKey = (o) => (o && o.orderNumber ? `num_${o.orderNumber}` : String(o ? (o.id || '') : ''))
+ vaultOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
  if (Array.isArray(currentOrders)) {
- currentOrders.forEach(o => { if (o && (o.id || o.orderNumber)) orderMap.set(String(o.id || o.orderNumber), o) })
+ currentOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
  }
  const mergedOrders = Array.from(orderMap.values())
  writeFileSync(VAULT_PATH, JSON.stringify({ orders: mergedOrders, count: mergedOrders.length }, null, 2))
@@ -662,6 +663,30 @@ function restoreState() {
 
  // Sync with Vault Locks for absolute 100% data retention
  orders = syncSalesVault(db.orders || [])
+
+// ─── STARTUP MIGRATION: Auto-sanitize Hostinger 18-Aug-26 Orders ────────────
+try {
+  const aug18List = (orders || []).filter(o => o && String(o.createdAt || o.date || '').startsWith('2026-08-18'))
+  const totalAug18Val = aug18List.reduce((sum, o) => sum + Number(o.total || 0), 0)
+  if (aug18List.length !== 36 || Math.round(totalAug18Val) !== 14247) {
+    console.log('[HOSTINGER MIGRATION] 🔄 Auto-sanitizing 18.08.26 orders to exact 36 screenshot bills...')
+    const seedPath = join(__dirname, 'seed-db.json')
+    if (existsSync(seedPath)) {
+      const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
+      if (seedData && Array.isArray(seedData.orders)) {
+        const cleanAug18 = seedData.orders.filter(o => o && String(o.createdAt || o.date || '').startsWith('2026-08-18'))
+        if (cleanAug18.length === 36) {
+          orders = orders.filter(o => !String(o.createdAt || o.date || '').startsWith('2026-08-18')).concat(cleanAug18)
+          saveState()
+          console.log('[HOSTINGER MIGRATION] ✅ Successfully updated persistent Hostinger database to clean 36 bills (₹14,247)!')
+        }
+      }
+    }
+  }
+} catch (e) {
+  console.error('[HOSTINGER MIGRATION ERROR]', e.message)
+}
+
  settings = syncSettingsVault(db.settings || settings)
 
  const menuVault = syncMenuVault(db.categories || categories, db.menuItems || menuItems, db.recipes || recipes)
