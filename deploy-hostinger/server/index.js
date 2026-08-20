@@ -8472,45 +8472,27 @@ app.get('/api/msg91/config', (req, res) => {
 // MSG91 test send endpoint
 app.post('/api/msg91/test-send', async (req, res) => {
   try {
-    const { phone, authKey, templateId, senderId, widgetId } = req.body
+    const { phone } = req.body
     if (!phone) return res.status(400).json({ error: 'Mobile phone number required' })
 
+    const cleanPhone = String(phone).replace(/\D/g, '')
+    const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
+
     const testOtp = generateOTP()
-    const activeAuthKey = authKey || settings.msg91?.authKey || process.env.MSG91_AUTH_KEY || ''
-    const activeTemplateId = templateId || settings.msg91?.templateId || ''
-    const activeSenderId = senderId || settings.msg91?.senderId || 'TDGBIL'
-    const activeWidgetId = widgetId || settings.msg91?.widgetId || '36686e624b35303331383732'
+    const result = await sendMSG91OTP(cleanPhone, testOtp, 'test')
 
-    const formattedPhone = `91${cleanPhone}`
-
-    let url = `https://control.msg91.com/api/v5/otp?mobile=${formattedPhone}&authkey=${encodeURIComponent(activeAuthKey)}`
-    if (activeTemplateId) url += `&template_id=${encodeURIComponent(activeTemplateId)}`
-    if (activeSenderId) url += `&sender=${encodeURIComponent(activeSenderId)}`
-    url += `&otp=${encodeURIComponent(testOtp)}`
-
-    const payload = {
-      mobile: formattedPhone,
-      otp: testOtp,
-      sender: activeSenderId,
-      otp_expiry: 300
-    }
-    if (activeWidgetId) payload.widget_id = activeWidgetId
-    if (activeTemplateId) payload.template_id = activeTemplateId
-
-    const resp = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'authkey': activeAuthKey
-      },
-      body: JSON.stringify(payload)
-    })
-    const data = await resp.json()
-
-    if (resp.ok || data.type === 'success' || data.responseType === 'success') {
-      return res.json({ success: true, message: `Test OTP sent successfully to +91 ${cleanPhone}!`, data })
+    if (result.success) {
+      return res.json({
+        success: true,
+        message: `Test OTP sent successfully to +${formattedPhone}!`,
+        data: result.data,
+        method: result.method,
+        otp: result.otp
+      })
     } else {
-      return res.status(400).json({ error: data.message || data.error || JSON.stringify(data) })
+      return res.status(400).json({
+        error: result.error || (result.data ? JSON.stringify(result.data) : 'Failed to send test OTP')
+      })
     }
   } catch (err) {
     return res.status(500).json({ error: err.message })
