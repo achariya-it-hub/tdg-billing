@@ -183,6 +183,14 @@ exports.forgotPassword = async (req, res) => {
 
     console.log(`\n[OTP DEBUG] Forgot Password OTP for ${phone} (${cleanPhone}) is: ${otp}\n`);
 
+    try {
+      const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+      const msg = encodeURIComponent(`Your TDG Billing Forgot Password verification OTP code is ${otp}. Valid for 5 minutes.`);
+      await fetch(`http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/${formattedPhone}/${msg}`);
+    } catch (e) {
+      console.error("[WhatsApp OTP Error]", e.message);
+    }
+
     return res.status(200).json({ message: 'OTP sent successfully' });
   } catch (error) {
     console.error("Forgot password error:", error);

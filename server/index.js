@@ -8409,14 +8409,22 @@ let recentOtpLogs = []
 
 async function sendWhatsAppOTP(phone, otp, type = 'auth', customMessage = null) {
   const whatsappCfg = settings.whatsapp || {}
+  
+  let defaultMsg = `Your TDG Billing OTP verification code is ${otp}. Valid for 5 minutes.`
+  if (type === 'forgot-password' || type === 'reset-password') {
+    defaultMsg = `Your TDG Billing Forgot Password verification OTP code is ${otp}. Valid for 5 minutes. Do not share with anyone.`
+  } else if (type === 'asset' || type === 'asset-verification') {
+    defaultMsg = `Your TDG Billing Asset Referral verification OTP code is ${otp}. Valid for 5 minutes.`
+  }
+
+  const messageText = customMessage || defaultMsg
+  const encodedMsg = encodeURIComponent(messageText)
   const cleanPhone = (phone || '').replace(/[^0-9]/g, '')
   if (!cleanPhone) {
     return { success: false, error: 'Invalid phone number' }
   }
 
   const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
-  const messageText = customMessage || `Your TDG Billing OTP verification code is ${otp}. Valid for 5 minutes.`
-  const encodedMsg = encodeURIComponent(messageText)
 
   const defaultUrl = 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>'
   const serviceUrlTemplate = whatsappCfg.serviceUrl || defaultUrl
