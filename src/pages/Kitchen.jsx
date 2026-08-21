@@ -190,9 +190,12 @@ export default function Kitchen() {
                       )}
                     </div>
                     <div style={{ textAlign: 'right', color: 'white' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontFamily: 'JetBrains Mono' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontFamily: 'JetBrains Mono', justifyContent: 'flex-end' }}>
                         <Clock size={14} />
                         {mins}m
+                      </div>
+                      <div style={{ fontSize: '11px', opacity: 0.9, marginTop: '2px', fontWeight: 600 }}>
+                        {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) + ' • ' + new Date(order.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) : ''}
                       </div>
                       {order.type && (
                         <div style={{ fontSize: '11px', textTransform: 'uppercase' }}>{order.type}</div>
@@ -355,9 +358,12 @@ export default function Kitchen() {
                     )}
                   </div>
                   <div style={{ textAlign: 'right', color: 'white' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'flex-end' }}>
                       <Clock size={14} />
                       <span style={{ fontFamily: 'JetBrains Mono', fontSize: '14px' }}>{mins}m</span>
+                    </div>
+                    <div style={{ fontSize: '11px', opacity: 0.9, marginTop: '2px', fontWeight: 600 }}>
+                      {order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) + ' • ' + new Date(order.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) : ''}
                     </div>
                     {order.type === 'delivery' && <span style={{ fontSize: '10px', textTransform: 'uppercase' }}>Delivery</span>}
                   </div>

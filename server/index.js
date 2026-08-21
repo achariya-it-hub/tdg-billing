@@ -364,6 +364,10 @@ let settings = {
  otpExpiry: 300,
  isEnabled: true
  },
+ whatsapp: {
+ isEnabled: true,
+ serviceUrl: 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>'
+ },
  offers: [
  { id: '1', title: 'Golden Gyro Feast (50% OFF)', desc: '1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink', tag: '50% OFF', price: '₹199', origPrice: '₹398', image: '/uploads/menu/m1.jpg' },
  { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2x Dip + Sauce', tag: 'Save ₹151', price: '₹299', origPrice: '₹450', image: '/uploads/menu/m2.jpg' },
@@ -527,11 +531,19 @@ function syncSettingsVault(currentSettings) {
       ...(currentSettings?.msg91 || {})
     }
 
+    const mergedWhatsApp = {
+      serviceUrl: 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>',
+      isEnabled: true,
+      ...(vaultSettings.whatsapp || {}),
+      ...(currentSettings?.whatsapp || {})
+    }
+
     const finalSettings = {
       ...vaultSettings,
       ...(currentSettings || {}),
       company: mergedCompany,
-      msg91: mergedMsg91
+      msg91: mergedMsg91,
+      whatsapp: mergedWhatsApp
     }
 
     writeFileSync(SETTINGS_VAULT_PATH, JSON.stringify(finalSettings, null, 2))
@@ -8392,10 +8404,86 @@ app.post('/api/auth/login', async (req, res) => {
  }
 })
 
-// ============ MSG91 OTP SERVICE ============
+// ============ WHATSAPP & SMS OTP SERVICE ============
 let recentOtpLogs = []
 
+async function sendWhatsAppOTP(phone, otp, type = 'auth', customMessage = null) {
+  const whatsappCfg = settings.whatsapp || {}
+  const cleanPhone = (phone || '').replace(/[^0-9]/g, '')
+  if (!cleanPhone) {
+    return { success: false, error: 'Invalid phone number' }
+  }
+
+  const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
+  const messageText = customMessage || `Your TDG Billing OTP verification code is ${otp}. Valid for 5 minutes.`
+  const encodedMsg = encodeURIComponent(messageText)
+
+  const defaultUrl = 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>'
+  const serviceUrlTemplate = whatsappCfg.serviceUrl || defaultUrl
+
+  let targetUrl = serviceUrlTemplate
+    .replace('<contact_number>', formattedPhone)
+    .replace('<message>', encodedMsg)
+
+  if (targetUrl === serviceUrlTemplate) {
+    targetUrl = `http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/${formattedPhone}/${encodedMsg}`
+  }
+
+  console.log(`[WhatsApp OTP] Sending OTP ${otp} to ${formattedPhone} via service: ${targetUrl}`)
+
+  try {
+    const resp = await fetch(targetUrl, { method: 'GET' })
+    const responseText = await resp.text()
+    let responseData = null
+    try { responseData = JSON.parse(responseText) } catch (e) { responseData = { raw: responseText } }
+
+    console.log(`[WhatsApp OTP Response] ${resp.status}:`, responseData)
+
+    const isSuccess = resp.ok || (responseData && (responseData.status === 'success' || responseData.type === 'success' || (responseData.message && responseData.message.toLowerCase().includes('success'))))
+
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      phone: phone,
+      formattedPhone: formattedPhone,
+      otp: otp,
+      type: type,
+      provider: 'WhatsApp',
+      status: isSuccess ? 'SENT_WHATSAPP' : 'WHATSAPP_FAILED',
+      response: responseData
+    }
+    recentOtpLogs.unshift(logEntry)
+    if (recentOtpLogs.length > 50) recentOtpLogs.pop()
+
+    if (isSuccess) {
+      return { success: true, provider: 'whatsapp', data: responseData, otp }
+    }
+    return { success: false, provider: 'whatsapp', data: responseData, otp }
+  } catch (err) {
+    console.error(`[WhatsApp OTP Exception] Failed to send to ${formattedPhone}:`, err.message)
+    recentOtpLogs.unshift({
+      timestamp: new Date().toISOString(),
+      phone: phone,
+      formattedPhone: formattedPhone,
+      otp: otp,
+      type: type,
+      provider: 'WhatsApp',
+      status: 'ERROR',
+      error: err.message
+    })
+    if (recentOtpLogs.length > 50) recentOtpLogs.pop()
+    return { success: false, provider: 'whatsapp', error: err.message, otp }
+  }
+}
+
 async function sendMSG91OTP(phone, otp, type = 'auth') {
+  // Primary: Custom WhatsApp OTP Service
+  const waResult = await sendWhatsAppOTP(phone, otp, type)
+  if (waResult.success) {
+    return { success: true, method: 'whatsapp', data: waResult.data, otp }
+  }
+
+  console.warn(`[OTP Fallback] WhatsApp OTP failed, attempting MSG91 SMS...`)
+
   const cfg = settings.msg91 || {}
   const cleanPhone = (phone || '').replace(/[^0-9]/g, '')
   const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
@@ -8408,6 +8496,7 @@ async function sendMSG91OTP(phone, otp, type = 'auth') {
     formattedPhone: formattedPhone,
     otp: otp,
     type: type,
+    provider: 'MSG91',
     status: (cfg.isEnabled === false || !authKey) ? 'CONSOLE_FALLBACK' : 'SENT_MSG91'
   }
   recentOtpLogs.unshift(logEntry)
@@ -8424,7 +8513,6 @@ async function sendMSG91OTP(phone, otp, type = 'auth') {
       'authkey': authKey
     }
 
-    // 1. Primary: MSG91 Widget API (https://api.msg91.com/api/v5/widget/sendOtp)
     const widgetUrl = `https://api.msg91.com/api/v5/widget/sendOtp?authkey=${encodeURIComponent(authKey)}`
     const widgetPayload = {
       widgetId: widgetId,
@@ -8449,7 +8537,6 @@ async function sendMSG91OTP(phone, otp, type = 'auth') {
       return { success: true, data, reqId: data.reqId || data.message, method: 'msg91' }
     }
 
-    // 2. Fallback: Standard Control OTP API (https://control.msg91.com/api/v5/otp)
     console.warn(`[MSG91 Widget Fallback] Widget API response: ${JSON.stringify(data)}, trying standard OTP endpoint...`)
     const templateId = cfg.templateId || ''
     const senderId = cfg.senderId || 'TDGBIL'
@@ -8485,18 +8572,23 @@ async function sendMSG91OTP(phone, otp, type = 'auth') {
   }
 }
 
-
 function generateOTP() {
  return String(Math.floor(1000 + Math.random() * 9000))
 }
-
-// MSG91 config endpoint
 
 // GET recent OTP logs
 app.get('/api/msg91/logs', (req, res) => {
   res.json({
     count: recentOtpLogs.length,
     logs: recentOtpLogs
+  })
+})
+
+app.get('/api/whatsapp/config', (req, res) => {
+  const wa = settings.whatsapp || {}
+  res.json({
+    enabled: wa.isEnabled !== false,
+    serviceUrl: wa.serviceUrl || 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>'
   })
 })
 
@@ -8509,6 +8601,34 @@ app.get('/api/msg91/config', (req, res) => {
  senderId: cfg.senderId || 'TDGBIL',
  templateId: cfg.templateId || ''
  })
+})
+
+// WhatsApp test send endpoint
+app.post('/api/whatsapp/test-send', async (req, res) => {
+  try {
+    const { phone } = req.body
+    if (!phone) return res.status(400).json({ error: 'Mobile phone number required' })
+
+    const cleanPhone = String(phone).replace(/\D/g, '')
+    const testOtp = generateOTP()
+    const result = await sendWhatsAppOTP(cleanPhone, testOtp, 'test')
+
+    if (result.success) {
+      return res.json({
+        success: true,
+        message: `WhatsApp OTP sent successfully to ${cleanPhone}!`,
+        data: result.data,
+        method: 'whatsapp',
+        otp: result.otp
+      })
+    } else {
+      return res.status(400).json({
+        error: result.error || (result.data ? JSON.stringify(result.data) : 'Failed to send WhatsApp OTP')
+      })
+    }
+  } catch (err) {
+    return res.status(500).json({ error: err.message })
+  }
 })
 
 // MSG91 test send endpoint
@@ -8526,7 +8646,7 @@ app.post('/api/msg91/test-send', async (req, res) => {
     if (result.success) {
       return res.json({
         success: true,
-        message: `Test OTP sent successfully to +${formattedPhone}!`,
+        message: `Test OTP sent successfully via ${result.method.toUpperCase()} to +${formattedPhone}!`,
         data: result.data,
         method: result.method,
         otp: result.otp
@@ -14328,34 +14448,155 @@ function runMidnightDayClosingCheck() {
 
 // ============ BILL RESETTLEMENT ENDPOINT ============
 app.put('/api/pos/orders/:id/resettle', (req, res) => {
- try {
- const { id } = req.params
- const { paymentMethod, paymentStatus, status, notes } = req.body
+  try {
+    const { id } = req.params
+    const { paymentMethod, paymentStatus, status, notes } = req.body
 
- const targetOrder = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
- if (!targetOrder) {
- return res.status(404).json({ error: 'Order / Bill not found' })
- }
+    const targetOrder = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
+    if (!targetOrder) {
+      return res.status(404).json({ error: 'Order / Bill not found' })
+    }
 
- if (paymentMethod) targetOrder.paymentMethod = paymentMethod.toLowerCase()
- if (req.body.splitPayments) targetOrder.splitPayments = req.body.splitPayments
- else if (paymentMethod !== 'split') targetOrder.splitPayments = undefined
- if (paymentStatus) targetOrder.paymentStatus = paymentStatus
- if (status) targetOrder.status = status
- const nowStamp = new Date().toISOString()
- if ((paymentStatus === 'paid' || status === 'completed') && !targetOrder.paidAt) targetOrder.paidAt = nowStamp
- if ((paymentStatus === 'paid' || status === 'completed') && !targetOrder.completedAt) targetOrder.completedAt = nowStamp
- targetOrder.resettledAt = nowStamp
- targetOrder.resettledBy = req.body.resettledBy || 'Admin'
- if (notes) targetOrder.resettleNotes = notes
+    if (paymentMethod) targetOrder.paymentMethod = paymentMethod.toLowerCase()
+    if (req.body.splitPayments) targetOrder.splitPayments = req.body.splitPayments
+    else if (paymentMethod && paymentMethod !== 'split') targetOrder.splitPayments = undefined
+    if (paymentStatus) targetOrder.paymentStatus = paymentStatus
+    if (status) targetOrder.status = status
+    const nowStamp = new Date().toISOString()
+    if ((paymentStatus === 'paid' || status === 'completed') && !targetOrder.paidAt) targetOrder.paidAt = nowStamp
+    if ((paymentStatus === 'paid' || status === 'completed') && !targetOrder.completedAt) targetOrder.completedAt = nowStamp
+    targetOrder.resettledAt = nowStamp
+    targetOrder.resettledBy = req.body.resettledBy || 'Admin'
+    if (notes) targetOrder.resettleNotes = notes
 
- saveState()
- console.log(`[BILL RESETTLEMENT] Order #${targetOrder.orderNumber || targetOrder.id} resettled to ${(targetOrder.paymentMethod || 'cash').toUpperCase()}`)
- res.json({ success: true, message: 'Bill resettled successfully', order: targetOrder })
- } catch (e) {
- console.error('[BILL RESETTLEMENT ERROR]', e.message)
- res.status(500).json({ error: 'Failed to resettle bill: ' + e.message })
- }
+    saveState()
+    console.log(`[BILL RESETTLEMENT] Order #${targetOrder.orderNumber || targetOrder.id} resettled to ${(targetOrder.paymentMethod || 'cash').toUpperCase()}`)
+    res.json({ success: true, message: 'Bill resettled successfully', order: targetOrder })
+  } catch (e) {
+    console.error('[BILL RESETTLEMENT ERROR]', e.message)
+    res.status(500).json({ error: 'Failed to resettle bill: ' + e.message })
+  }
+})
+
+// ============ BILL MODIFICATION ENDPOINT (Requires Admin/Manager Approval) ============
+app.put('/api/pos/orders/:id/modify', (req, res) => {
+  try {
+    const { id } = req.params
+    const {
+      adminPin,
+      pin,
+      items,
+      discount,
+      discountName,
+      paymentMethod,
+      splitPayments,
+      tableNumber,
+      type,
+      customerName,
+      customerPhone,
+      modificationReason,
+      notes
+    } = req.body
+
+    const inputPin = adminPin || pin
+    if (!inputPin || String(inputPin).length < 4) {
+      return res.status(400).json({ error: '4-digit Admin / Manager PIN required' })
+    }
+
+    // Verify Admin/Manager PIN
+    const authorizer = billingUsers.find(u => bcrypt.compareSync(String(inputPin), u.pin))
+    if (!authorizer) {
+      return res.status(401).json({ error: 'Invalid PIN. Access denied.' })
+    }
+
+    const role = (authorizer.role || '').toLowerCase()
+    if (role !== 'admin' && role !== 'manager' && role !== 'super-admin') {
+      return res.status(403).json({ error: 'Unauthorized: Only Admin or Manager PIN can modify bills' })
+    }
+
+    const targetOrder = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
+    if (!targetOrder) {
+      return res.status(404).json({ error: 'Order / Bill not found' })
+    }
+
+    const previousTotal = targetOrder.total || 0
+    const nowStamp = new Date().toISOString()
+
+    // 1. If items are being updated, restore previous inventory & deduct new inventory
+    if (Array.isArray(items) && items.length > 0) {
+      if (targetOrder.status !== 'cancelled') {
+        restoreInventoryForOrder(targetOrder)
+      }
+      targetOrder.items = items.map(item => ({
+        menuItemId: item.menuItemId || item.id || '',
+        name: item.menuItemName || item.name || 'Item',
+        menuItemName: item.menuItemName || item.name || 'Item',
+        quantity: Number(item.quantity || item.qty || 1),
+        qty: Number(item.quantity || item.qty || 1),
+        unitPrice: Number(item.unitPrice || item.price || 0),
+        price: Number(item.unitPrice || item.price || 0),
+        totalPrice: Number(item.totalPrice !== undefined ? item.totalPrice : (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)),
+        customization: item.customization || null,
+        notes: item.notes || ''
+      }))
+      if (targetOrder.status !== 'cancelled') {
+        deductInventoryForOrder(targetOrder)
+      }
+    }
+
+    // 2. Recalculate bill financial values
+    const rawSubtotal = targetOrder.items.reduce((sum, item) => sum + (Number(item.totalPrice) || (Number(item.unitPrice || 0) * Number(item.quantity || 1))), 0)
+    const discountAmt = discount !== undefined ? Math.max(0, Number(discount)) : (targetOrder.discount || 0)
+    const netSubtotal = Math.max(0, rawSubtotal - discountAmt)
+    const tax = Math.round(netSubtotal * 0.05)
+    const newTotal = Math.round(netSubtotal + tax)
+
+    targetOrder.rawSubtotal = rawSubtotal
+    targetOrder.discount = discountAmt
+    targetOrder.discountGiven = discountAmt
+    if (discountName !== undefined) targetOrder.discountName = discountName
+    targetOrder.subtotal = netSubtotal
+    targetOrder.tax = tax
+    targetOrder.total = newTotal
+
+    // 3. Update metadata if provided
+    if (paymentMethod) targetOrder.paymentMethod = paymentMethod.toLowerCase()
+    if (splitPayments) targetOrder.splitPayments = splitPayments
+    else if (paymentMethod && paymentMethod !== 'split') targetOrder.splitPayments = undefined
+
+    if (tableNumber !== undefined) targetOrder.tableNumber = tableNumber
+    if (type) targetOrder.type = type
+    if (customerName !== undefined) targetOrder.customerName = customerName
+    if (customerPhone !== undefined) targetOrder.customerPhone = customerPhone
+    if (notes !== undefined) targetOrder.notes = notes
+
+    targetOrder.updatedAt = nowStamp
+    targetOrder.modifiedAt = nowStamp
+    targetOrder.modifiedBy = authorizer.name || authorizer.role || 'Admin'
+
+    // 4. Audit Log
+    if (!targetOrder.modificationHistory) targetOrder.modificationHistory = []
+    targetOrder.modificationHistory.push({
+      modifiedAt: nowStamp,
+      modifiedBy: authorizer.name || authorizer.role || 'Admin',
+      reason: modificationReason || notes || 'Bill modified by admin',
+      previousTotal: previousTotal,
+      newTotal: newTotal
+    })
+
+    saveState()
+    io.emit('order:updated', targetOrder)
+    console.log(`[BILL MODIFICATION] Order #${targetOrder.orderNumber || targetOrder.id} modified by ${targetOrder.modifiedBy}. Total: ₹${previousTotal} → ₹${newTotal}`)
+
+    res.json({
+      success: true,
+      message: `Bill #${targetOrder.orderNumber || targetOrder.id} modified successfully`,
+      order: targetOrder
+    })
+  } catch (e) {
+    console.error('[BILL MODIFICATION ERROR]', e.message)
+    res.status(500).json({ error: 'Failed to modify bill: ' + e.message })
+  }
 })
 
 // Check every 60 seconds for 12:00 AM IST rollover
@@ -15023,13 +15264,48 @@ function resolveItemCategory(item) {
  return 'General'
 }
 
-// Helper to extract detailed name including customizer variations
+// Helper to extract detailed name including customizer variations (Paneer, Chicken, Gyros, etc.)
 function getCustomizedItemName(item) {
+  if (!item) return 'Unspecified Item'
   let baseName = item.menuItemName || item.name || 'Unspecified Item'
-  if (!item.customization) return baseName
+  const c = (typeof item.customization === 'object' && item.customization !== null) ? item.customization : {}
+  const lowerBase = baseName.toLowerCase()
 
-  const c = item.customization
+  // Extract protein / variant (especially Paneer vs Chicken for salads & rice bowls)
+  let protein = item.protein || item.proteinType || item.variant || item.variantName || item.selectedVariant || c.protein || c.proteinType || c.variant || c.flavor
+
+  if (!protein) {
+    const custStr = typeof item.customization === 'string' ? item.customization : JSON.stringify(c)
+    const notesStr = item.notes || item.instruction || c.notes || ''
+    const combinedStr = `${custStr} ${notesStr}`
+
+    if (/paneer/i.test(combinedStr)) {
+      protein = 'Paneer'
+    } else if (/chicken/i.test(combinedStr)) {
+      protein = 'Chicken'
+    } else if (/egg/i.test(combinedStr)) {
+      protein = 'Egg'
+    } else if (/mushroom/i.test(combinedStr)) {
+      protein = 'Mushroom'
+    } else if (/falafel/i.test(combinedStr)) {
+      protein = 'Falafel'
+    }
+  }
+
   const parts = []
+  if (protein) {
+    const proteinStr = String(protein).trim()
+    if (!lowerBase.includes(proteinStr.toLowerCase())) {
+      parts.push(`Protein: ${proteinStr}`)
+    }
+  } else if (lowerBase.includes('salad') || lowerBase.includes('bowl') || lowerBase.includes('rice')) {
+    if (item.isVeg === true || item.type === 'veg' || lowerBase.includes('veg')) {
+      parts.push('Paneer / Veg')
+    } else if (item.isVeg === false || item.type === 'non-veg' || lowerBase.includes('non-veg')) {
+      parts.push('Chicken')
+    }
+  }
+
   if (c.gyro1) parts.push(c.gyro1)
   if (c.gyro2) parts.push(`G2: ${c.gyro2}`)
   if (c.protein) parts.push(c.protein)

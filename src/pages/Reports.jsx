@@ -139,6 +139,48 @@ export default function Reports() {
     return `${year}-${month}-${day}`
   }
 
+  const getItemDisplayName = (item) => {
+    if (!item) return ''
+    let baseName = item.menuItemName || item.name || 'Item'
+    const c = (typeof item.customization === 'object' && item.customization !== null) ? item.customization : {}
+    const lowerBase = baseName.toLowerCase()
+
+    let protein = item.protein || item.proteinType || item.variant || item.variantName || item.selectedVariant || c.protein || c.proteinType || c.variant || c.flavor
+
+    if (!protein) {
+      const custStr = typeof item.customization === 'string' ? item.customization : JSON.stringify(c)
+      const notesStr = item.notes || item.instruction || c.notes || ''
+      const combinedStr = `${custStr} ${notesStr}`
+      if (/paneer/i.test(combinedStr)) protein = 'Paneer'
+      else if (/chicken/i.test(combinedStr)) protein = 'Chicken'
+      else if (/egg/i.test(combinedStr)) protein = 'Egg'
+      else if (/mushroom/i.test(combinedStr)) protein = 'Mushroom'
+      else if (/falafel/i.test(combinedStr)) protein = 'Falafel'
+    }
+
+    const details = []
+    if (protein) {
+      const pStr = String(protein).trim()
+      if (!lowerBase.includes(pStr.toLowerCase())) {
+        details.push(`Protein: ${pStr}`)
+      }
+    } else if (lowerBase.includes('salad') || lowerBase.includes('bowl') || lowerBase.includes('rice')) {
+      if (item.isVeg === true || item.type === 'veg' || lowerBase.includes('veg')) {
+        details.push('Paneer / Veg')
+      } else if (item.isVeg === false || item.type === 'non-veg' || lowerBase.includes('non-veg')) {
+        details.push('Chicken')
+      }
+    }
+
+    if (c.gyro1) details.push(c.gyro1)
+    if (c.gyro2) details.push(`G2: ${c.gyro2}`)
+
+    if (details.length > 0) {
+      return `${baseName} [${details.join(' | ')}]`
+    }
+    return baseName
+  }
+
   const getApiUrl = () => window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
 
   const getQueryParams = () => {
@@ -1963,6 +2005,7 @@ export default function Reports() {
       default:
         return null
     }
+
   }
 
   const getReportData = () => {
@@ -2039,7 +2082,7 @@ export default function Reports() {
         rows: (ordersReport || []).map(k => [
           `#K${k.orderNumber || k.id}`,
           k.tableNumber ? `Table ${k.tableNumber}` : k.type || 'POS',
-          (k.items || []).map(i => `${i.menuItemName || i.name} x${i.quantity || 1}`).join(', '),
+          (k.items || []).map(i => `${getItemDisplayName(i)} x${i.quantity || 1}`).join(', '),
           k.createdAt ? new Date(k.createdAt).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : '-',
           `₹${(Number(k.total) || 0).toLocaleString('en-IN')}`,
           k.status || 'completed'

@@ -286,8 +286,11 @@ export default function KOT() {
               <div style={{ fontFamily: 'Bebas Neue', fontSize: '72px', lineHeight: 1, color: 'white' }}>
                 {currentOrder.orderNumber}
               </div>
-              <div style={{ color: 'white', opacity: 0.8, marginTop: '8px' }}>
+              <div style={{ color: 'white', opacity: 0.9, marginTop: '8px', fontSize: '16px', fontWeight: 600 }}>
                 {currentOrder.type === 'dine-in' ? `Table ${currentOrder.tableNumber}` : currentOrder.type}
+              </div>
+              <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: '13px', marginTop: '6px', fontWeight: 700 }}>
+                📅 {new Date(currentOrder.createdAt || Date.now()).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })} • ⏰ {new Date(currentOrder.createdAt || Date.now()).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}
               </div>
             </div>
 

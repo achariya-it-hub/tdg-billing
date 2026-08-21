@@ -160,7 +160,8 @@ const PrintService = {
     const orderNum = kot.orderNumber || kot.id || '1001'
     const orderType = (kot.type || 'dine-in').toUpperCase()
     const tableNum = kot.tableNumber || kot.table || ''
-    const createdAt = kot.createdAt ? new Date(kot.createdAt).toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
+    const createdDate = kot.createdAt ? new Date(kot.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+    const createdTime = kot.createdAt ? new Date(kot.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
 
     return `
       <!DOCTYPE html>
@@ -209,7 +210,8 @@ const PrintService = {
 
           <div class="order-badge-container">
             <div class="order-number">ORDER #${orderNum}</div>
-            <div class="order-meta">${orderType} ${tableNum ? `• TABLE ${tableNum}` : ''} • ${createdAt}</div>
+            <div class="order-meta">${orderType} ${tableNum ? `• TABLE ${tableNum}` : ''}</div>
+            <div class="order-meta" style="font-size: 10.5px; margin-top: 3px; font-weight: 800;">DATE: ${createdDate} • TIME: ${createdTime}</div>
           </div>
 
           <div class="col-header">

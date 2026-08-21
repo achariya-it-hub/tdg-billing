@@ -52,6 +52,28 @@ export default function Billing() {
   const [cancelError, setCancelError] = useState('')
   const [cancelProcessing, setCancelProcessing] = useState(false)
 
+  // Bill Modification State
+  const [modifyBillOrder, setModifyBillOrder] = useState(null)
+  const [modifyItems, setModifyItems] = useState([])
+  const [modifyDiscount, setModifyDiscount] = useState('')
+  const [modifyDiscountName, setModifyDiscountName] = useState('')
+  const [modifyPaymentMethod, setModifyPaymentMethod] = useState('cash')
+  const [modifySplitCash, setModifySplitCash] = useState('')
+  const [modifySplitUpi, setModifySplitUpi] = useState('')
+  const [modifySplitCard, setModifySplitCard] = useState('')
+  const [modifyTableNumber, setModifyTableNumber] = useState('')
+  const [modifyType, setModifyType] = useState('dine-in')
+  const [modifyCustomerName, setModifyCustomerName] = useState('')
+  const [modifyCustomerPhone, setModifyCustomerPhone] = useState('')
+  const [modifyReasonPreset, setModifyReasonPreset] = useState('Item quantity / items changed')
+  const [modifyReasonCustom, setModifyReasonCustom] = useState('')
+  const [modifyPin, setModifyPin] = useState('')
+  const [modifyError, setModifyError] = useState('')
+  const [modifyProcessing, setModifyProcessing] = useState(false)
+  const [availableMenuItems, setAvailableMenuItems] = useState([])
+  const [showAddItemDropdown, setShowAddItemDropdown] = useState(false)
+  const [itemSearchQuery, setItemSearchQuery] = useState('')
+
   const getLocalDateString = (val) => {
     if (!val) return ''
     try {
@@ -824,6 +846,25 @@ export default function Billing() {
                     Cancel
                   </button>
                   <button
+                    onClick={() => handleOpenModify(kot)}
+                    style={{
+                      padding: '8px 12px',
+                      background: '#eff6ff',
+                      border: '1px solid #bfdbfe',
+                      borderRadius: '10px',
+                      color: '#2563eb',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                    title="Modify KOT Items"
+                  >
+                    ✏️ Edit
+                  </button>
+                  <button
                     onClick={() => acceptKOT(kot)}
                     style={{
                       padding: '10px 18px',
@@ -975,6 +1016,25 @@ export default function Billing() {
                       Cancel KOT
                     </button>
                     <button
+                      onClick={() => handleOpenModify(kot)}
+                      style={{
+                        padding: '8px 12px',
+                        background: '#eff6ff',
+                        border: '1px solid #bfdbfe',
+                        borderRadius: '10px',
+                        color: '#2563eb',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                      title="Modify KOT / Order Items"
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button
                       onClick={() => handleGenerateBill(kot)}
                       style={{
                         padding: '10px 18px',
@@ -1032,6 +1092,25 @@ export default function Billing() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button
+                      onClick={() => handleOpenModify(bill)}
+                      style={{
+                        background: '#eff6ff',
+                        border: '1px solid #bfdbfe',
+                        borderRadius: '8px',
+                        padding: '6px 10px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        color: '#2563eb'
+                      }}
+                      title="Modify Bill with Admin Approval"
+                    >
+                      ✏️ Edit Bill
+                    </button>
                     <button 
                       onClick={() => handleOpenResettle(bill)}
                       style={{
@@ -1581,6 +1660,378 @@ export default function Billing() {
                 }}
               >
                 {resettling ? 'Resettling...' : 'Confirm Resettlement'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bill Modification Modal (Requires Admin PIN Approval) */}
+      {modifyBillOrder && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+          backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1100
+        }}>
+          <div style={{
+            background: 'white', borderRadius: '24px', padding: '24px',
+            width: '95%', maxWidth: '640px', maxHeight: '90vh', overflowY: 'auto',
+            border: '1px solid rgba(0,0,0,0.1)',
+            boxShadow: '0 24px 60px rgba(0,0,0,0.2)'
+          }}>
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '2px solid #f1f5f9', paddingBottom: '12px' }}>
+              <div>
+                <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#1e293b', margin: 0 }}>
+                  ✏️ Modify Bill #{modifyBillOrder.orderNumber || modifyBillOrder.id}
+                </h3>
+                <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
+                  Original Total: <strong>₹{Math.round(modifyBillOrder.total || calculateTotal(modifyBillOrder))}</strong> • Admin PIN Authorization Required
+                </div>
+              </div>
+              <button onClick={() => setModifyBillOrder(null)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                <X size={24} color="#9ca3af" />
+              </button>
+            </div>
+
+            {/* Section 1: Order Metadata (Type, Table, Customer) */}
+            <div style={{ background: '#f8fafc', padding: '12px 16px', borderRadius: '12px', marginBottom: '16px', border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: '12px', fontWeight: 800, color: '#334155', textTransform: 'uppercase', marginBottom: '8px' }}>
+                1. Order & Customer Details
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#64748b' }}>Order Type</label>
+                  <select
+                    value={modifyType}
+                    onChange={e => setModifyType(e.target.value)}
+                    style={{ width: '100%', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', fontWeight: 700 }}
+                  >
+                    <option value="dine-in">Dine-In</option>
+                    <option value="takeaway">Takeaway</option>
+                    <option value="delivery">Delivery</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#64748b' }}>Table No.</label>
+                  <input
+                    type="text"
+                    value={modifyTableNumber}
+                    onChange={e => setModifyTableNumber(e.target.value)}
+                    placeholder="e.g. 5"
+                    style={{ width: '100%', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', fontWeight: 700 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#64748b' }}>Cust. Name</label>
+                  <input
+                    type="text"
+                    value={modifyCustomerName}
+                    onChange={e => setModifyCustomerName(e.target.value)}
+                    placeholder="Name"
+                    style={{ width: '100%', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', fontWeight: 700 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#64748b' }}>Cust. Phone</label>
+                  <input
+                    type="text"
+                    value={modifyCustomerPhone}
+                    onChange={e => setModifyCustomerPhone(e.target.value)}
+                    placeholder="Mobile"
+                    style={{ width: '100%', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', fontWeight: 700 }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Items & Quantities */}
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 800, color: '#1e293b' }}>
+                  2. Modify Items & Quantities ({modifyItems.length} items)
+                </div>
+                <div style={{ position: 'relative' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddItemDropdown(!showAddItemDropdown)}
+                    style={{
+                      padding: '6px 12px', background: '#e0f2fe', color: '#0369a1',
+                      border: '1px solid #bae6fd', borderRadius: '8px',
+                      fontSize: '12px', fontWeight: 700, cursor: 'pointer'
+                    }}
+                  >
+                    ➕ Add Item to Bill
+                  </button>
+
+                  {showAddItemDropdown && (
+                    <div style={{
+                      position: 'absolute', right: 0, top: '110%', width: '280px', maxHeight: '220px',
+                      background: 'white', border: '1px solid #cbd5e1', borderRadius: '12px',
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.15)', zIndex: 1200, padding: '8px', overflowY: 'auto'
+                    }}>
+                      <input
+                        type="text"
+                        placeholder="Search menu items..."
+                        value={itemSearchQuery}
+                        onChange={e => setItemSearchQuery(e.target.value)}
+                        style={{ width: '100%', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px', marginBottom: '6px', boxSizing: 'border-box' }}
+                        autoFocus
+                      />
+                      {availableMenuItems
+                        .filter(m => m.name && m.name.toLowerCase().includes(itemSearchQuery.toLowerCase()))
+                        .slice(0, 15)
+                        .map(m => (
+                          <div
+                            key={m.id}
+                            onClick={() => handleAddItemToModify(m)}
+                            style={{
+                              padding: '8px', cursor: 'pointer', borderRadius: '6px', fontSize: '12px',
+                              display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9'
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
+                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                          >
+                            <span style={{ fontWeight: 700 }}>{m.name}</span>
+                            <span style={{ color: '#10b981', fontWeight: 800 }}>₹{m.price || m.halfPrice || 0}</span>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div style={{ border: '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 100px 100px 90px 40px', background: '#f1f5f9', padding: '8px 12px', fontSize: '11px', fontWeight: 800, color: '#475569', textTransform: 'uppercase' }}>
+                  <span>Item Name</span>
+                  <span style={{ textAlign: 'center' }}>Quantity</span>
+                  <span style={{ textAlign: 'right' }}>Rate (₹)</span>
+                  <span style={{ textAlign: 'right' }}>Amt (₹)</span>
+                  <span></span>
+                </div>
+
+                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                  {modifyItems.map((item, idx) => (
+                    <div key={idx} style={{ display: 'grid', gridTemplateColumns: '2fr 100px 100px 90px 40px', alignItems: 'center', padding: '8px 12px', borderBottom: '1px solid #f1f5f9', fontSize: '12px' }}>
+                      <div>
+                        <div style={{ fontWeight: 700, color: '#1e293b' }}>{item.name}</div>
+                        {item.customization && (
+                          <div style={{ fontSize: '10.5px', color: '#e63946' }}>
+                            {typeof item.customization === 'object' ? Object.values(item.customization).filter(v => typeof v === 'string').join(' • ') : item.customization}
+                          </div>
+                        )}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                        <button
+                          type="button"
+                          onClick={() => handleModifyQuantity(idx, -1)}
+                          style={{ width: '24px', height: '24px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#f8fafc', fontWeight: 800, cursor: 'pointer' }}
+                        >
+                          -
+                        </button>
+                        <span style={{ fontWeight: 800, width: '20px', textAlign: 'center' }}>{item.quantity}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleModifyQuantity(idx, 1)}
+                          style={{ width: '24px', height: '24px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#f8fafc', fontWeight: 800, cursor: 'pointer' }}
+                        >
+                          +
+                        </button>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <input
+                          type="number"
+                          value={item.unitPrice}
+                          onChange={e => handleModifyUnitPrice(idx, e.target.value)}
+                          style={{ width: '70px', padding: '4px', textAlign: 'right', borderRadius: '6px', border: '1px solid #cbd5e1', fontWeight: 700, fontSize: '12px' }}
+                        />
+                      </div>
+                      <div style={{ textAlign: 'right', fontWeight: 800, color: '#0f172a' }}>
+                        ₹{item.totalPrice}
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveItemFromModify(idx)}
+                          style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#dc2626' }}
+                          title="Remove Item"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {modifyItems.length === 0 && (
+                    <div style={{ padding: '16px', textAlign: 'center', color: '#94a3b8', fontSize: '12px' }}>
+                      No items in bill. Click "Add Item to Bill" above.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Section 3: Financial Calculations & Discount */}
+            <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '12px', marginBottom: '16px', border: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '10px' }}>
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569' }}>Discount Amount (₹)</label>
+                  <input
+                    type="number"
+                    value={modifyDiscount}
+                    onChange={e => setModifyDiscount(e.target.value)}
+                    placeholder="0"
+                    style={{ width: '100%', padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 700 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569' }}>Discount Reason / Promo Name</label>
+                  <input
+                    type="text"
+                    value={modifyDiscountName}
+                    onChange={e => setModifyDiscountName(e.target.value)}
+                    placeholder="e.g. Special Discount"
+                    style={{ width: '100%', padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 700 }}
+                  />
+                </div>
+              </div>
+
+              {/* Live Totals Summary */}
+              {(() => {
+                const raw = calculateModifyRawSubtotal()
+                const disc = Number(modifyDiscount) || 0
+                const net = Math.max(0, raw - disc)
+                const tax = Math.round(net * 0.05)
+                const grand = Math.round(net + tax)
+                return (
+                  <div style={{ background: 'white', padding: '10px 14px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
+                      <span>Raw Items Subtotal:</span><span>₹{raw}</span>
+                    </div>
+                    {disc > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', color: '#dc2626', fontWeight: 700, marginBottom: '3px' }}>
+                        <span>Discount ({modifyDiscountName || 'Discount'}):</span><span>-₹{disc}</span>
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
+                      <span>GST Tax (5%):</span><span>₹{tax}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px', fontWeight: 900, color: '#2563eb', borderTop: '1px dashed #cbd5e1', paddingTop: '6px', marginTop: '3px' }}>
+                      <span>NEW TOTAL COLLECTED:</span><span>₹{grand}</span>
+                    </div>
+                  </div>
+                )
+              })()}
+            </div>
+
+            {/* Section 4: Payment Method */}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 800, color: '#334155', display: 'block', marginBottom: '6px' }}>
+                4. Select Payment Method:
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px', marginBottom: '8px' }}>
+                {['cash', 'card', 'upi', 'split', 'wallet'].map(m => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => setModifyPaymentMethod(m)}
+                    style={{
+                      padding: '8px', borderRadius: '8px',
+                      border: modifyPaymentMethod === m ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                      background: modifyPaymentMethod === m ? '#eff6ff' : '#ffffff',
+                      color: modifyPaymentMethod === m ? '#2563eb' : '#475569',
+                      fontWeight: 800, fontSize: '11.5px', textTransform: 'uppercase', cursor: 'pointer'
+                    }}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Section 5: Authorize Admin PIN */}
+            <div style={{ marginBottom: '20px', background: '#fff1f2', padding: '14px', borderRadius: '12px', border: '1.5px solid #fecdd3' }}>
+              <label style={{ fontSize: '13px', fontWeight: 800, color: '#9f1239', display: 'block', marginBottom: '6px' }}>
+                🔑 Authorize Modification (Manager / Admin 4-Digit PIN) *
+              </label>
+
+              <div style={{ marginBottom: '10px' }}>
+                <label style={{ fontSize: '11px', fontWeight: 700, color: '#881337', display: 'block', marginBottom: '4px' }}>
+                  Modification Reason:
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px', marginBottom: '6px' }}>
+                  {[
+                    'Item quantity / items changed',
+                    'Discount corrected',
+                    'Wrong table or order type',
+                    'Price rate updated',
+                    'Other admin reason'
+                  ].map(r => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setModifyReasonPreset(r)}
+                      style={{
+                        padding: '6px 8px', borderRadius: '6px',
+                        border: modifyReasonPreset === r ? '2px solid #e63946' : '1px solid #fda4af',
+                        background: modifyReasonPreset === r ? '#fff' : '#fff1f2',
+                        color: modifyReasonPreset === r ? '#e63946' : '#9f1239',
+                        fontWeight: 700, fontSize: '11px', cursor: 'pointer'
+                      }}
+                    >
+                      {modifyReasonPreset === r ? '✓ ' : ''}{r}
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="text"
+                  placeholder="Additional notes (Optional)"
+                  value={modifyReasonCustom}
+                  onChange={e => setModifyReasonCustom(e.target.value)}
+                  style={{ width: '100%', padding: '8px', borderRadius: '8px', border: '1px solid #fca5a5', fontSize: '12px', boxSizing: 'border-box' }}
+                />
+              </div>
+
+              <input
+                type="password"
+                maxLength={4}
+                placeholder="Enter 4-digit Manager PIN"
+                value={modifyPin}
+                onChange={e => setModifyPin(e.target.value)}
+                style={{
+                  width: '100%', padding: '10px', borderRadius: '10px',
+                  border: '2px solid #e63946', fontSize: '20px', textAlign: 'center',
+                  letterSpacing: '6px', boxSizing: 'border-box', outline: 'none', fontWeight: 800, background: 'white'
+                }}
+              />
+
+              {modifyError && (
+                <div style={{ color: '#dc2626', fontSize: '12px', marginTop: '6px', fontWeight: 800, textAlign: 'center' }}>
+                  ⚠️ {modifyError}
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                type="button"
+                onClick={() => setModifyBillOrder(null)}
+                style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', background: '#f1f5f9', fontWeight: 700, cursor: 'pointer', color: '#475569' }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmModifyBill}
+                disabled={modifyProcessing}
+                style={{
+                  flex: 2, padding: '12px', borderRadius: '10px', border: 'none',
+                  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', color: 'white',
+                  fontWeight: 800, cursor: modifyProcessing ? 'not-allowed' : 'pointer', fontSize: '14px',
+                  boxShadow: '0 4px 14px rgba(37,99,235,0.3)'
+                }}
+              >
+                {modifyProcessing ? 'Saving & Verifying...' : 'Authorize & Save Modifications'}
               </button>
             </div>
           </div>

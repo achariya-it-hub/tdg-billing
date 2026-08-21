@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import { Building2, Database, Printer, Palette, CreditCard, Save, Upload, Download, RotateCcw, X, Plus, Trash2, Key, ShieldCheck, Tag, Image as ImageIcon, Truck } from 'lucide-react'
+import { Building2, Database, Printer, Palette, CreditCard, Save, Upload, Download, RotateCcw, X, Plus, Trash2, Key, ShieldCheck, Tag, Image as ImageIcon, Truck, Smartphone, MessageSquare } from 'lucide-react'
 import API_BASE from '../lib/apiConfig'
 import { useSettings } from '../lib/settingsContext'
 import { clearSettingsCache } from '../lib/getCompanyInfo'
 
 const TABS = [
   { id: 'company', label: 'Company Info', icon: Building2 },
+  { id: 'whatsapp-otp', label: '💬 WhatsApp OTP Service', icon: Smartphone },
   { id: 'payment', label: 'Payment Gateways', icon: CreditCard },
   { id: 'offers', label: 'App Offers Manager', icon: Tag },
   { id: 'achariya-staff-promo', label: '🎓 Achariya Staff Promotion', icon: ShieldCheck },
@@ -87,7 +88,7 @@ export default function Settings() {
       </div>
 
       {activeTab === 'company' && <CompanyTab pin={pin} settings={settings} onSaved={reloadSettings} />}
-      {activeTab === 'payment' && <PaymentGatewaysTab pin={pin} settings={settings} onSaved={reloadSettings} />}
+      {(activeTab === 'payment' || activeTab === 'whatsapp-otp') && <PaymentGatewaysTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'offers' && <OffersTab pin={pin} settings={settings} onSaved={reloadSettings} />}
       {activeTab === 'achariya-staff-promo' && <AchariyaStaffPromoTab />}
       {activeTab === 'images' && <ImagesTab pin={pin} settings={settings} onSaved={reloadSettings} />}
@@ -337,13 +338,43 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
     setTestLoading(false)
   }
 
+  const whatsappConfig = settings?.whatsapp || {}
+  const [whatsappForm, setWhatsappForm] = useState({
+    serviceUrl: whatsappConfig.serviceUrl || 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>',
+    isEnabled: whatsappConfig.isEnabled !== false
+  })
+  const [waTestPhone, setWaTestPhone] = useState('')
+  const [waTestLoading, setWaTestLoading] = useState(false)
+  const [waTestResult, setWaTestResult] = useState(null)
+
+  const handleTestWhatsAppOtp = async () => {
+    if (!waTestPhone) {
+      alert('Please enter a phone number to test WhatsApp OTP')
+      return
+    }
+    setWaTestLoading(true)
+    setWaTestResult(null)
+    try {
+      const res = await fetch(`${API_BASE}/api/whatsapp/test-send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: waTestPhone })
+      })
+      const data = await res.json()
+      setWaTestResult(data)
+    } catch (e) {
+      setWaTestResult({ error: 'Network error: ' + e.message })
+    }
+    setWaTestLoading(false)
+  }
+
   const handleSave = async () => {
     setSaving(true); setMsg('')
     try {
       const res = await fetch(`${API_BASE}/api/settings/payment-gateways`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin, ccavenue: ccForm, cashfree: cfForm, msg91: msg91Form, enableAssetOtp })
+        body: JSON.stringify({ pin, ccavenue: ccForm, cashfree: cfForm, msg91: msg91Form, whatsapp: whatsappForm, enableAssetOtp })
       })
       const data = await res.json()
       if (data.success) {
@@ -434,6 +465,80 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
             <input type="checkbox" checked={cfForm.isProduction} onChange={e => setCfForm({ ...cfForm, isProduction: e.target.checked })} style={{ width: '18px', height: '18px', accentColor: '#0066ff' }} />
             Production Mode
           </label>
+        </div>
+      </div>
+
+      {/* Custom WhatsApp OTP Gateway */}
+      <div style={{ ...glassCard, border: '1.5px solid rgba(34, 197, 94, 0.3)', background: 'linear-gradient(135deg, rgba(240, 253, 244, 0.6), rgba(255, 255, 255, 0.9))' }}>
+        <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '10px', color: '#15803d' }}>
+          💬 Custom WhatsApp OTP Service
+        </h3>
+        <p style={{ fontSize: '13px', color: '#4b5563', marginBottom: '20px' }}>
+          Integrated custom WhatsApp messaging API endpoint for sending live OTP codes for customer verification, referral signups, and password reset.
+        </p>
+
+        <div style={{ marginBottom: '16px' }}>
+          <label style={labelStyle}>WhatsApp API Service Endpoint URL Template</label>
+          <input
+            style={{ ...inputStyle, fontFamily: 'monospace', fontSize: '13px' }}
+            placeholder="http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>"
+            value={whatsappForm.serviceUrl}
+            onChange={e => setWhatsappForm({ ...whatsappForm, serviceUrl: e.target.value })}
+          />
+          <span style={{ fontSize: '11.5px', color: '#6b7280', marginTop: '4px', display: 'block' }}>
+            Supports placeholders: <code>&lt;contact_number&gt;</code> and <code>&lt;message&gt;</code>
+          </span>
+        </div>
+
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '14px', marginBottom: '16px', color: '#166534' }}>
+          <input
+            type="checkbox"
+            checked={whatsappForm.isEnabled}
+            onChange={e => setWhatsappForm({ ...whatsappForm, isEnabled: e.target.checked })}
+            style={{ width: '18px', height: '18px', accentColor: '#22c55e' }}
+          />
+          Enable Custom WhatsApp OTP Delivery (Primary)
+        </label>
+
+        <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+          <h4 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '8px', color: '#166534' }}>Test Live WhatsApp OTP Delivery</h4>
+          <p style={{ fontSize: '12px', color: '#4b5563', marginBottom: '12px' }}>
+            Enter a mobile phone number below to send a live test OTP message via your WhatsApp service.
+          </p>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <input
+              style={{ ...inputStyle, width: '220px' }}
+              placeholder="e.g. 9876543210"
+              value={waTestPhone}
+              onChange={e => setWaTestPhone(e.target.value)}
+            />
+            <button
+              onClick={handleTestWhatsAppOtp}
+              disabled={waTestLoading}
+              style={{
+                padding: '10px 18px',
+                borderRadius: '8px',
+                background: waTestLoading ? '#9ca3af' : 'linear-gradient(135deg, #22c55e, #15803d)',
+                color: 'white',
+                fontWeight: 700,
+                border: 'none',
+                cursor: waTestLoading ? 'not-allowed' : 'pointer',
+                boxShadow: '0 4px 12px rgba(34,197,94,0.3)'
+              }}
+            >
+              {waTestLoading ? 'Sending...' : '📲 Send Test WhatsApp OTP'}
+            </button>
+          </div>
+          {waTestResult && (
+            <div style={{ marginTop: '12px', padding: '12px', borderRadius: '8px', background: waTestResult.success ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: `1px solid ${waTestResult.success ? '#22c55e' : '#ef4444'}` }}>
+              <div style={{ fontWeight: 700, fontSize: '13px', color: waTestResult.success ? '#15803d' : '#b91c1c', marginBottom: '4px' }}>
+                {waTestResult.success ? '✅ WhatsApp API Success!' : '❌ WhatsApp API Error'}
+              </div>
+              <pre style={{ fontSize: '11px', whiteSpace: 'pre-wrap', margin: 0, fontFamily: 'monospace' }}>
+                {JSON.stringify(waTestResult, null, 2)}
+              </pre>
+            </div>
+          )}
         </div>
       </div>
 
