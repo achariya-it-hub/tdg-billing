@@ -1,5 +1,5 @@
 {
-  "exportedAt": "2026-08-22T11:49:15.259Z",
+  "exportedAt": "2026-08-22T11:55:03.727Z",
   "totalItems": 58,
   "totalCategories": 13,
   "categories": [
@@ -858,13 +858,13 @@
       "name": "Mint Kombucha",
       "category": "Kombucha",
       "categoryId": "c10_komb",
-      "price": 120,
+      "price": 114.29,
       "estimatedCost": 0,
-      "estimatedProfit": 120,
+      "estimatedProfit": 114.29,
       "marginPercentage": "100%",
       "isAvailable": true,
       "image": "/images/menu/mint-kombucha.png",
-      "description": "Refreshing Brewed Mint Kombucha 250ml",
+      "description": "Mint Kombucha 250ml (₹120 Inclusive of Tax)",
       "recipe": null
     },
     {
@@ -872,13 +872,13 @@
       "name": "Hibiscus Kombucha",
       "category": "Kombucha",
       "categoryId": "c10_komb",
-      "price": 120,
+      "price": 114.29,
       "estimatedCost": 0,
-      "estimatedProfit": 120,
+      "estimatedProfit": 114.29,
       "marginPercentage": "100%",
       "isAvailable": true,
       "image": "/images/menu/kombucha-hibiscus.png",
-      "description": "Refreshing Brewed Hibiscus Kombucha 250ml",
+      "description": "Hibiscus Kombucha 250ml (₹120 Inclusive of Tax)",
       "recipe": null
     },
     {
@@ -886,13 +886,13 @@
       "name": "Classic Kombucha",
       "category": "Kombucha",
       "categoryId": "c10_komb",
-      "price": 120,
+      "price": 114.29,
       "estimatedCost": 0,
-      "estimatedProfit": 120,
+      "estimatedProfit": 114.29,
       "marginPercentage": "100%",
       "isAvailable": true,
       "image": "/images/menu/kombucha.png",
-      "description": "Refreshing Brewed Classic Kombucha 250ml",
+      "description": "Classic Kombucha 250ml (₹120 Inclusive of Tax)",
       "recipe": null
     }
   ]

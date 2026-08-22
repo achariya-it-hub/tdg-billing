@@ -583,28 +583,31 @@
       "id": "m_kombucha_mint",
       "categoryId": "c10_komb",
       "name": "Mint Kombucha",
-      "price": 120,
-      "description": "Refreshing Brewed Mint Kombucha 250ml",
+      "price": 114.29,
+      "description": "Mint Kombucha 250ml (₹120 Inclusive of Tax)",
       "isAvailable": true,
-      "image": "/images/menu/mint-kombucha.png"
+      "image": "/images/menu/mint-kombucha.png",
+      "taxInclusive": true
     },
     {
       "id": "m_kombucha_hibiscus",
       "categoryId": "c10_komb",
       "name": "Hibiscus Kombucha",
-      "price": 120,
-      "description": "Refreshing Brewed Hibiscus Kombucha 250ml",
+      "price": 114.29,
+      "description": "Hibiscus Kombucha 250ml (₹120 Inclusive of Tax)",
       "isAvailable": true,
-      "image": "/images/menu/kombucha-hibiscus.png"
+      "image": "/images/menu/kombucha-hibiscus.png",
+      "taxInclusive": true
     },
     {
       "id": "m_kombucha_classic",
       "categoryId": "c10_komb",
       "name": "Classic Kombucha",
-      "price": 120,
-      "description": "Refreshing Brewed Classic Kombucha 250ml",
+      "price": 114.29,
+      "description": "Classic Kombucha 250ml (₹120 Inclusive of Tax)",
       "isAvailable": true,
-      "image": "/images/menu/kombucha.png"
+      "image": "/images/menu/kombucha.png",
+      "taxInclusive": true
     }
   ],
   "recipes": [
