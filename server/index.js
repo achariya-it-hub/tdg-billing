@@ -699,19 +699,20 @@ try {
   console.error('[HOSTINGER MIGRATION ERROR]', e.message)
 }
 
-// Only use seed-db.json fallback if db.menuItems is completely missing/empty
-if ((!db.menuItems || !db.menuItems.length) && (!menuItems || !menuItems.length)) {
+// Ensure exact 58 official menu items on server startup
+if (!menuItems || menuItems.length !== 58) {
   try {
     const seedPath = join(__dirname, 'seed-db.json')
     if (existsSync(seedPath)) {
       const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
-      if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length > 0) {
+      if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length === 58) {
         menuItems = seedData.menuItems
         categories = seedData.categories || categories
+        console.log('[MENU RESTORE] ✅ Restored exact 58 official menu items!')
       }
     }
   } catch (e) {
-    console.error('[HOSTINGER MENU SEED ERROR]', e.message)
+    console.error('[MENU RESTORE ERROR]', e.message)
   }
 }
 
