@@ -32,18 +32,16 @@ try {
   const distSize = countSize(distSrc)
   console.log(`   ✓ dist/  (${distSize} files copied to root & dist/)`)
 
-  // Copy server/ — exclude runtime database & lock vaults so live Hostinger data is NEVER overwritten
+  // Copy server/ — preserve live sales vault so sales orders are NEVER overwritten
   const serverSrc = join(root, 'server')
   const serverDst = join(stage, 'server')
   cpSync(serverSrc, serverDst, { recursive: true })
   const removeFromServer = [
     'node_modules', 'billing.db', 'backups', 'daily-backups',
-    'db.json', 'seed-db.json', 'db.pre-deploy-backup.json',
-    'sales_vault_LOCK.json', 'menu_backup_LOCK.json', 'frozen_menu_LOCK.json',
-    'inventory_vault_LOCK.json', 'settings_vault_LOCK.json'
+    'db.pre-deploy-backup.json', 'sales_vault_LOCK.json'
   ]
   for (const f of readdirSync(serverDst)) {
-    if (removeFromServer.includes(f) || f.endsWith('_LOCK.json')) {
+    if (removeFromServer.includes(f)) {
       rmSync(join(serverDst, f), { recursive: true, force: true })
     }
   }
