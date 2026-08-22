@@ -1,0 +1,59 @@
+S.No,Menu Item Name,Category,Selling Price (INR),Ingredient Name,Quantity,Unit,Unit Cost (INR),Ingredient Total Cost (INR)
+1,"Spicy Gyro","Gyros",199,"No Recipe Mapped",0,"-",0,0
+2,"Creamy Gyro","Gyros",199,"No Recipe Mapped",0,"-",0,0
+3,"BBQ Gyro","Gyros",199,"No Recipe Mapped",0,"-",0,0
+4,"Signature Gyro","Gyros",199,"No Recipe Mapped",0,"-",0,0
+5,"1 Pc Leg & Thigh (1 Dip)","Leg & Thigh",70,"No Recipe Mapped",0,"-",0,0
+6,"2 Pc Leg & Thigh (1 Dip)","Leg & Thigh",140,"No Recipe Mapped",0,"-",0,0
+7,"4 Pc Leg & Thigh (2 Dips)","Leg & Thigh",280,"No Recipe Mapped",0,"-",0,0
+8,"8 Pc Leg & Thigh (4 Dips)","Leg & Thigh",560,"No Recipe Mapped",0,"-",0,0
+9,"12 Pc Leg & Thigh (6 Dips)","Leg & Thigh",840,"No Recipe Mapped",0,"-",0,0
+10,"3 Pc Wings (1 Dip)","Wings",90,"No Recipe Mapped",0,"-",0,0
+11,"6 Pc Wings (2 Dips)","Wings",180,"No Recipe Mapped",0,"-",0,0
+12,"9 Pc Wings (3 Dips)","Wings",270,"No Recipe Mapped",0,"-",0,0
+13,"20 Pc Wings (6 Dips)","Wings",600,"No Recipe Mapped",0,"-",0,0
+14,"3 Pc Strips (1 Dip)","Strips",120,"No Recipe Mapped",0,"-",0,0
+15,"6 Pc Strips (2 Dips)","Strips",240,"No Recipe Mapped",0,"-",0,0
+16,"9 Pc Strips (3 Dips)","Strips",360,"No Recipe Mapped",0,"-",0,0
+17,"20 Pc Strips (6 Dips)","Strips",800,"No Recipe Mapped",0,"-",0,0
+18,"Fries","Fries",99,"No Recipe Mapped",0,"-",0,0
+19,"Loaded Fries","Fries",199,"No Recipe Mapped",0,"-",0,0
+20,"Sprite (Regular)","Beverages",59,"No Recipe Mapped",0,"-",0,0
+21,"Sprite (Large)","Beverages",99,"No Recipe Mapped",0,"-",0,0
+22,"Coca Cola (Regular)","Beverages",59,"No Recipe Mapped",0,"-",0,0
+23,"Coca Cola (Large)","Beverages",99,"No Recipe Mapped",0,"-",0,0
+24,"Ice Tea (Regular)","Beverages",59,"No Recipe Mapped",0,"-",0,0
+25,"Ice Tea (Large)","Beverages",99,"No Recipe Mapped",0,"-",0,0
+26,"Hot Chocolate","Beverages",99,"No Recipe Mapped",0,"-",0,0
+27,"Signature Tea","Beverages",99,"No Recipe Mapped",0,"-",0,0
+28,"Rice Bowl (Signature)","Rice & Salads",199,"No Recipe Mapped",0,"-",0,0
+29,"Signature Salad","Rice & Salads",149,"No Recipe Mapped",0,"-",0,0
+30,"Express Meal","Meals & Combos",249,"No Recipe Mapped",0,"-",0,0
+31,"Signature Gyro Meal","Meals & Combos",279,"No Recipe Mapped",0,"-",0,0
+32,"Lebanese Rice Box","Meals & Combos",299,"No Recipe Mapped",0,"-",0,0
+33,"Classic Gyro Meal","Meals & Combos",349,"No Recipe Mapped",0,"-",0,0
+34,"Duo Gyro Feast","Meals & Combos",449,"No Recipe Mapped",0,"-",0,0
+35,"Double Crunch Box","Meals & Combos",699,"No Recipe Mapped",0,"-",0,0
+36,"Mega Feast Meal","Meals & Combos",799,"No Recipe Mapped",0,"-",0,0
+37,"Den's Party Meal","Meals & Combos",1049,"No Recipe Mapped",0,"-",0,0
+38,"Super 5 Bucket","Meals & Combos",1299,"No Recipe Mapped",0,"-",0,0
+39,"Protein Max Gyro","Protein Max",299,"No Recipe Mapped",0,"-",0,0
+40,"Protein Max Rice Bowl","Protein Max",299,"No Recipe Mapped",0,"-",0,0
+41,"Protein Max Salad","Protein Max",299,"No Recipe Mapped",0,"-",0,0
+42,"Vanilla Shake (Regular)","Shakes",120,"No Recipe Mapped",0,"-",0,0
+43,"Vanilla Shake (Large)","Shakes",199,"No Recipe Mapped",0,"-",0,0
+44,"Strawberry Shake (Regular)","Shakes",120,"No Recipe Mapped",0,"-",0,0
+45,"Strawberry Shake (Large)","Shakes",199,"No Recipe Mapped",0,"-",0,0
+46,"Biscoff Shake (Regular)","Shakes",120,"No Recipe Mapped",0,"-",0,0
+47,"Biscoff Shake (Large)","Shakes",199,"No Recipe Mapped",0,"-",0,0
+48,"Chocolate Shake (Regular)","Shakes",120,"No Recipe Mapped",0,"-",0,0
+49,"Chocolate Shake (Large)","Shakes",199,"No Recipe Mapped",0,"-",0,0
+50,"Kunafa Pistachio Shake - Signature (Regular)","Shakes",120,"No Recipe Mapped",0,"-",0,0
+51,"Kunafa Pistachio Shake - Signature (Large)","Shakes",199,"No Recipe Mapped",0,"-",0,0
+52,"Chocolate Brownie","Desserts",99,"No Recipe Mapped",0,"-",0,0
+53,"Blondie Cake (Signature)","Desserts",99,"No Recipe Mapped",0,"-",0,0
+54,"Vanilla Softy","Softy & Add-Ons",39,"No Recipe Mapped",0,"-",0,0
+55,"Choice of Dip","Softy & Add-Ons",15,"No Recipe Mapped",0,"-",0,0
+56,"Mint Kombucha","Kombucha",120,"No Recipe Mapped",0,"-",0,0
+57,"Hibiscus Kombucha","Kombucha",120,"No Recipe Mapped",0,"-",0,0
+58,"Classic Kombucha","Kombucha",120,"No Recipe Mapped",0,"-",0,0

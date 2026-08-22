@@ -38,16 +38,10 @@ const sampleCategories = [
     "color": "#0284c7"
   },
   {
-    "id": "c3_rice",
-    "name": "Rice",
-    "icon": "🍚",
+    "id": "c3_rice_salad",
+    "name": "Rice & Salads",
+    "icon": "🍚🥗",
     "color": "#059669"
-  },
-  {
-    "id": "c3_salad",
-    "name": "Salads",
-    "icon": "🥗",
-    "color": "#10b981"
   },
   {
     "id": "c2",
@@ -333,7 +327,7 @@ const sampleMenuItems = [
   },
   {
     "id": "m_rice_bowl",
-    "categoryId": "c3_rice",
+    "categoryId": "c3_rice_salad",
     "name": "Rice Bowl (Signature)",
     "price": 199,
     "description": "Signature Lebanese Rice Bowl with fresh herbs & toppings (Choose: Chicken or Paneer)",
@@ -342,7 +336,7 @@ const sampleMenuItems = [
   },
   {
     "id": "m_signature_salad",
-    "categoryId": "c3_salad",
+    "categoryId": "c3_rice_salad",
     "name": "Signature Salad",
     "price": 149,
     "description": "Fresh Mediterranean Signature Salad with dressing (Choose: Chicken or Paneer)",
