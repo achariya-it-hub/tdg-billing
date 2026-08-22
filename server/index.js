@@ -11756,6 +11756,9 @@ app.delete('/api/admin/menu/categories/:id', (req, res) => {
 
 // Menu Items Admin list (full data)
 app.get('/api/admin/menu/items', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+  res.setHeader('Pragma', 'no-cache')
+  res.setHeader('Expires', '0')
   const { categoryId } = req.query
   if (categoryId && categoryId !== 'all') {
     const filtered = menuItems.filter(i => i && String(i.categoryId) === String(categoryId))
@@ -11765,7 +11768,10 @@ app.get('/api/admin/menu/items', (req, res) => {
 })
 
 app.get('/api/admin/menu/categories', (req, res) => {
- res.json(categories.sort((a, b) => a.displayOrder - b.displayOrder))
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+  res.setHeader('Pragma', 'no-cache')
+  res.setHeader('Expires', '0')
+  res.json(categories.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)))
 })
 
 // Export Menu to Excel
