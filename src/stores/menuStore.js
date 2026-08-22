@@ -4,85 +4,85 @@ const sampleCategories = [
   {
     "id": "c1",
     "name": "Gyros",
-    "icon": "\ud83e\udd59",
+    "icon": "🥙",
     "color": "#d97706"
   },
   {
     "id": "c5_legthigh",
     "name": "Leg & Thigh",
-    "icon": "\ud83c\udf57",
+    "icon": "🍗",
     "color": "#ea580c"
   },
   {
     "id": "c5_wings",
     "name": "Wings",
-    "icon": "\ud83c\udf57",
+    "icon": "🍗",
     "color": "#b45309"
   },
   {
     "id": "c5_strips",
     "name": "Strips",
-    "icon": "\ud83c\udf57",
+    "icon": "🍗",
     "color": "#ca8a04"
   },
   {
     "id": "c6",
     "name": "Fries",
-    "icon": "\ud83c\udf5f",
+    "icon": "🍟",
     "color": "#f59e0b"
   },
   {
     "id": "c10_bev",
     "name": "Beverages",
-    "icon": "\ud83e\udd64",
+    "icon": "🥤",
     "color": "#0284c7"
   },
   {
     "id": "c3_rice",
     "name": "Rice",
-    "icon": "\ud83c\udf5a",
+    "icon": "🍚",
     "color": "#059669"
   },
   {
     "id": "c3_salad",
     "name": "Salads",
-    "icon": "\ud83e\udd57",
+    "icon": "🥗",
     "color": "#10b981"
   },
   {
     "id": "c2",
     "name": "Meals & Combos",
-    "icon": "\ud83c\udf71",
+    "icon": "🍱",
     "color": "#8b5cf6"
   },
   {
     "id": "c11",
     "name": "Protein Max",
-    "icon": "\ud83d\udcaa",
+    "icon": "💪",
     "color": "#10b981"
   },
   {
     "id": "c7_shakes",
     "name": "Shakes",
-    "icon": "\ud83e\udd64",
+    "icon": "🥤",
     "color": "#db2777"
   },
   {
     "id": "c9",
     "name": "Desserts",
-    "icon": "\ud83c\udf70",
+    "icon": "🍰",
     "color": "#ec4899"
   },
   {
     "id": "c4",
     "name": "Softy & Add-Ons",
-    "icon": "\ud83c\udf66",
+    "icon": "🍦",
     "color": "#e63946"
   },
   {
     "id": "c10_komb",
     "name": "Kombucha",
-    "icon": "\ud83c\udf79",
+    "icon": "🍹",
     "color": "#0284c7"
   }
 ]
@@ -93,7 +93,7 @@ const sampleMenuItems = [
     "categoryId": "c1",
     "name": "Spicy Gyro",
     "price": 199,
-    "description": "Spicy gyro with fresh veggies & spread (Choose: Chicken or Paneer)",
+    "description": "Spicy gyro wrap (Choose: Chicken or Paneer)",
     "isAvailable": true,
     "image": "/images/menu/gyro.png"
   },
@@ -260,24 +260,6 @@ const sampleMenuItems = [
     "image": "/images/menu/loaded fries.png"
   },
   {
-    "id": "m_rice_bowl",
-    "categoryId": "c3_rice",
-    "name": "Rice Bowl (Signature)",
-    "price": 199,
-    "description": "Signature Lebanese Rice Bowl with fresh herbs & toppings (Choose: Chicken or Paneer)",
-    "isAvailable": true,
-    "image": "/images/menu/lebanese rice bowl.png"
-  },
-  {
-    "id": "m_signature_salad",
-    "categoryId": "c3_salad",
-    "name": "Signature Salad",
-    "price": 149,
-    "description": "Fresh Mediterranean Signature Salad with dressing (Choose: Chicken or Paneer)",
-    "isAvailable": true,
-    "image": "/images/menu/signature salad.png"
-  },
-  {
     "id": "m_sprite_reg",
     "categoryId": "c10_bev",
     "name": "Sprite (Regular)",
@@ -350,10 +332,28 @@ const sampleMenuItems = [
     "image": "/images/menu/Signature tea.png"
   },
   {
+    "id": "m_rice_bowl",
+    "categoryId": "c3_rice",
+    "name": "Rice Bowl (Signature)",
+    "price": 199,
+    "description": "Signature Lebanese Rice Bowl with fresh herbs & toppings (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/lebanese rice bowl.png"
+  },
+  {
+    "id": "m_signature_salad",
+    "categoryId": "c3_salad",
+    "name": "Signature Salad",
+    "price": 149,
+    "description": "Fresh Mediterranean Signature Salad with dressing (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/signature salad.png"
+  },
+  {
     "id": "m_express_meal",
     "categoryId": "c2",
     "name": "Express Meal",
-    "price": 149,
+    "price": 249,
     "description": "Gyro & Regular Drink",
     "isAvailable": true,
     "image": "/images/menu/express meal.png"
@@ -362,7 +362,7 @@ const sampleMenuItems = [
     "id": "m_sig_gyro_meal",
     "categoryId": "c2",
     "name": "Signature Gyro Meal",
-    "price": 299,
+    "price": 279,
     "description": "Gyro, Fries, Regular Drink",
     "isAvailable": true,
     "image": "/images/menu/signature gyro meal.png"
@@ -380,7 +380,7 @@ const sampleMenuItems = [
     "id": "m_classic_gyro_meal",
     "categoryId": "c2",
     "name": "Classic Gyro Meal",
-    "price": 249,
+    "price": 349,
     "description": "Gyro, 2 Wings, Fries, Regular Drink, 1 Dip",
     "isAvailable": true,
     "image": "/images/menu/classic gyro meal.png"
@@ -389,7 +389,7 @@ const sampleMenuItems = [
     "id": "m_duo_gyro_feast",
     "categoryId": "c2",
     "name": "Duo Gyro Feast",
-    "price": 349,
+    "price": 449,
     "description": "2 Gyros, Fries, 2 Regular Drinks",
     "isAvailable": true,
     "image": "/images/menu/duo gyro feast.png"
@@ -398,7 +398,7 @@ const sampleMenuItems = [
     "id": "m_double_crunch_box",
     "categoryId": "c2",
     "name": "Double Crunch Box",
-    "price": 499,
+    "price": 699,
     "description": "2 Gyros, 6 Wings, Fries, 2 Regular Drinks",
     "isAvailable": true,
     "image": "/images/menu/double crunch box.png"
@@ -407,7 +407,7 @@ const sampleMenuItems = [
     "id": "m_mega_feast_meal",
     "categoryId": "c2",
     "name": "Mega Feast Meal",
-    "price": 649,
+    "price": 799,
     "description": "2 Gyros, 2 Leg & Thighs, 2 Wings, 2 Strips, Fries, 2 Regular Drinks, 3 Dips",
     "isAvailable": true,
     "image": "/images/menu/mega feast meal.png"
@@ -416,7 +416,7 @@ const sampleMenuItems = [
     "id": "m_dens_party_meal",
     "categoryId": "c2",
     "name": "Den's Party Meal",
-    "price": 899,
+    "price": 1049,
     "description": "2 Gyros, 6 Wings, 4 Leg & Thighs, 2 Fries, 3 Regular Drinks",
     "isAvailable": true,
     "image": "/images/menu/den's party meal.png"
