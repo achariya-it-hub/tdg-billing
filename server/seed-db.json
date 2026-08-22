@@ -31632,7 +31632,7 @@
       "id": "m30",
       "categoryId": "c2",
       "name": "Express Meal",
-      "price": 149,
+      "price": 249,
       "description": "Gyro & Regular Drink",
       "isAvailable": true,
       "image": "/images/menu/express meal.png"
@@ -31641,7 +31641,7 @@
       "id": "m31",
       "categoryId": "c2",
       "name": "Classic Gyro Meal",
-      "price": 249,
+      "price": 349,
       "description": "Gyro, 2 Wings, Fries, Regular Drink, 1 Dip",
       "isAvailable": true,
       "image": "/images/menu/classic gyro meal.png"
@@ -31650,7 +31650,7 @@
       "id": "m32",
       "categoryId": "c2",
       "name": "Signature Gyro Meal",
-      "price": 299,
+      "price": 279,
       "description": "Signature Gyro, Fries, Regular Drink",
       "isAvailable": true,
       "image": "/images/menu/signature gyro meal.png"
@@ -31668,7 +31668,7 @@
       "id": "m34",
       "categoryId": "c2",
       "name": "Duo Gyro Feast",
-      "price": 349,
+      "price": 449,
       "description": "2 Gyros, Fries, 2 Regular Drinks",
       "isAvailable": true,
       "image": "/images/menu/duo gyro feast.png"
@@ -31677,7 +31677,7 @@
       "id": "m35",
       "categoryId": "c2",
       "name": "Double Crunch Box",
-      "price": 499,
+      "price": 699,
       "description": "2 Gyros, 6 Wings, Fries, 2 Regular Drinks",
       "isAvailable": true,
       "image": "/images/menu/double crunch box.png"
@@ -31686,7 +31686,7 @@
       "id": "m36",
       "categoryId": "c2",
       "name": "Mega Feast Meal",
-      "price": 649,
+      "price": 799,
       "description": "2 Gyros, 2 Leg & Thighs, 2 Wings, 2 Strips, Fries, 2 Regular Drinks, 3 Dips",
       "isAvailable": true,
       "image": "/images/menu/mega feast meal.png"
@@ -31695,7 +31695,7 @@
       "id": "m37",
       "categoryId": "c2",
       "name": "Den's Party Meal",
-      "price": 899,
+      "price": 1049,
       "description": "2 Signature Gyros, 6 Wings, 4 Leg & Thighs, 2 Fries, 3 Regular Drinks",
       "isAvailable": true,
       "image": "/images/menu/den's party meal.png"
