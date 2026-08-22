@@ -1064,23 +1064,37 @@ export default function Reports() {
       }
 
       case 'kot': {
+        const totalKotsCount = ordersReport.length
+        const completedKotsCount = ordersReport.filter(o => {
+          const st = (o.status || '').toLowerCase()
+          return st === 'completed' || st === 'served' || st === 'delivered' || !st
+        }).length
+        const preparingKotsCount = ordersReport.filter(o => {
+          const st = (o.status || '').toLowerCase()
+          return st === 'preparing' || st === 'pending' || st === 'cooking' || st === 'kitchen'
+        }).length
+        const cancelledKotsCount = ordersReport.filter(o => {
+          const st = (o.status || '').toLowerCase()
+          return st === 'cancelled' || st === 'void' || st === 'rejected'
+        }).length
+
         return (
           <div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
               <div style={{ background: '#f0fdf4', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
-                <div style={{ fontSize: '32px', fontWeight: 700, color: '#10b981' }}>24</div>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#10b981' }}>{totalKotsCount}</div>
                 <div style={{ fontSize: '13px', color: '#166534' }}>Total KOTs</div>
               </div>
               <div style={{ background: '#f0fdf4', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
-                <div style={{ fontSize: '32px', fontWeight: 700, color: '#10b981' }}>20</div>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#10b981' }}>{completedKotsCount}</div>
                 <div style={{ fontSize: '13px', color: '#166534' }}>Completed</div>
               </div>
               <div style={{ background: '#fef3c7', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
-                <div style={{ fontSize: '32px', fontWeight: 700, color: '#f59e0b' }}>{preparingKots.length}</div>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#f59e0b' }}>{preparingKotsCount}</div>
                 <div style={{ fontSize: '13px', color: '#92400e' }}>Preparing / Active</div>
               </div>
               <div style={{ background: '#fef2f2', padding: '20px', borderRadius: '12px', textAlign: 'center' }}>
-                <div style={{ fontSize: '32px', fontWeight: 700, color: '#dc2626' }}>{cancelledKots.length}</div>
+                <div style={{ fontSize: '32px', fontWeight: 700, color: '#dc2626' }}>{cancelledKotsCount}</div>
                 <div style={{ fontSize: '13px', color: '#991b1b' }}>Cancelled</div>
               </div>
             </div>
