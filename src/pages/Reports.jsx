@@ -681,12 +681,18 @@ export default function Reports() {
                     <h4 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', marginBottom: '14px' }}>Sales & Cost Breakdown</h4>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13px' }}>
                       <span style={{ color: '#6b7280' }}>Menu Bill Total</span>
-                      <span style={{ fontWeight: 600, color: '#4b5563' }}>₹{((displayClosing.totalSales || 0) + (displayClosing.totalDiscountGiven || 0)).toLocaleString()}</span>
+                      <span style={{ fontWeight: 600, color: '#4b5563' }}>₹{((displayClosing.totalSales || 0) + (displayClosing.totalDiscountGiven || 0) + (displayClosing.complimentaryTotal || 0)).toLocaleString()}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13px' }}>
                       <span style={{ color: '#dc2626', fontWeight: 600 }}>Discount Savings</span>
                       <span style={{ fontWeight: 700, color: '#dc2626' }}>- ₹{(displayClosing.totalDiscountGiven || 0).toLocaleString()}</span>
                     </div>
+                    {(displayClosing.complimentaryCount > 0 || displayClosing.complimentaryTotal > 0) && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13px' }}>
+                        <span style={{ color: '#8b5cf6', fontWeight: 600 }}>Complimentary Bills ({displayClosing.complimentaryCount || 0})</span>
+                        <span style={{ fontWeight: 700, color: '#8b5cf6' }}>- ₹{(displayClosing.complimentaryTotal || 0).toLocaleString()}</span>
+                      </div>
+                    )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', borderTop: '1px dashed #e5e7eb', paddingTop: '8px', fontSize: '13px' }}>
                       <span style={{ color: '#059669', fontWeight: 700 }}>Net Paid Collected (Settled)</span>
                       <span style={{ fontWeight: 800, color: '#10b981' }}>₹{((displayClosing.settledSales || 0)).toLocaleString()}</span>

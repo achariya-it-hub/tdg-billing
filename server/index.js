@@ -14176,37 +14176,6 @@ const getOrderAmount = (o) => {
 
 function isDemoOrderBeforeOpening(o) {
  if (!o) return false
- const dStr = getOrderDate(o)
- if (dStr === '2026-07-27') {
- if (o.orderNumber && Number(o.orderNumber) < 1036) {
- return true
- }
- const ts = o.createdAt || o.paidAt || o.completedAt || ''
- if (ts) {
- try {
- const dateObj = new Date(ts)
- if (dateObj.getTime() < new Date('2026-07-27T11:05:00.000Z').getTime()) {
- return true
- }
- } catch (e) {}
- }
- }
- return false
-}
-
-const isCompletedSale = (o) => {
- if (!o) return false
- const s = (o.status || '').toLowerCase()
- const p = (o.paymentStatus || '').toLowerCase()
- const m = (o.paymentMethod || '').toLowerCase()
-
- // Requirement 3: Exclude Cancelled, Void, Complimentary, Draft, Deleted, Duplicate
- if (s === 'cancelled' || s === 'canceled' || s === 'void' || s === 'draft' || s === 'deleted' || o.isCancelled || o.isVoid || o.isDraft || o.isDeleted || o.isDuplicate) {
- return false
- }
- if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') {
- return false
- }
  if (isDemoOrderBeforeOpening(o)) {
  return false
  }
@@ -14233,83 +14202,97 @@ function getCompletedSales(reqQuery, options = {}) {
 }
 
 function calculateSalesMetrics(salesOrders = []) {
- let totalInvoices = salesOrders.length
- let netSalesCollected = 0
- let grossMenuSubtotal = 0
- let totalDiscountGiven = 0
- let totalTaxGST = 0
+  let totalInvoices = salesOrders.length
+  let netSalesCollected = 0
+  let grossMenuSubtotal = 0
+  let totalDiscountGiven = 0
+  let totalTaxGST = 0
+  let complimentaryCount = 0
+  let complimentaryTotal = 0
 
- const byPaymentMethod = { cash: 0, upi: 0, card: 0, wallet: 0 }
- const paymentCounts = { cash: 0, upi: 0, card: 0, wallet: 0 }
- const byDiscountType = {}
- const bySource = {}
+  const byPaymentMethod = { cash: 0, upi: 0, card: 0, wallet: 0 }
+  const paymentCounts = { cash: 0, upi: 0, card: 0, wallet: 0 }
+  const byDiscountType = {}
+  const bySource = {}
 
- salesOrders.forEach(o => {
- const amt = getOrderAmount(o)
- netSalesCollected += amt
+  salesOrders.forEach(o => {
+    const amt = getOrderAmount(o)
+    netSalesCollected += amt
 
- const { discount: disc, name: dName } = getOrderDiscountInfo(o)
- const itemSub = (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
- const rawSub = Number(o.rawSubtotal) || (disc > 0 ? (Number(o.subtotal) + disc) : (itemSub || Number(o.subtotal) || 0))
- const netSub = Number(o.subtotal) || Math.max(0, rawSub - disc)
+    const m = (o.paymentMethod || '').toLowerCase()
+    const isComp = o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary'
 
- grossMenuSubtotal += rawSub
+    const { discount: disc, name: dName } = getOrderDiscountInfo(o)
+    const itemSub = (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
+    const rawSub = Number(o.rawSubtotal) || (disc > 0 ? (Number(o.subtotal) + disc) : (itemSub || Number(o.subtotal) || 0))
+    const netSub = Number(o.subtotal) || Math.max(0, rawSub - disc)
 
- // GST Tax (5%) is calculated strictly on Net Subtotal (discounted offer price)
- const tax = o.tax !== undefined && o.tax !== null ? Number(o.tax) : Math.round(netSub * 0.05)
- totalTaxGST += tax
+    grossMenuSubtotal += rawSub
 
- if (disc > 0) {
- totalDiscountGiven += disc
- if (!byDiscountType[dName]) {
- byDiscountType[dName] = { count: 0, totalDiscount: 0 }
- }
- byDiscountType[dName].count += 1
- byDiscountType[dName].totalDiscount += disc
- }
+    if (isComp) {
+      complimentaryCount += 1
+      const compVal = rawSub || Number(o.total) || netSub || 0
+      complimentaryTotal += compVal
+      byPaymentMethod['complimentary'] = (byPaymentMethod['complimentary'] || 0) + 0
+      paymentCounts['complimentary'] = (paymentCounts['complimentary'] || 0) + 1
+    }
 
- if (o.splitPayments && typeof o.splitPayments === 'object' && Object.keys(o.splitPayments).length > 0) {
- Object.entries(o.splitPayments).forEach(([mKey, mVal]) => {
- const val = Number(mVal) || 0
- if (val > 0) {
- let key = mKey.toLowerCase()
- if (key.includes('card') || key.includes('credit') || key.includes('debit')) key = 'card'
- else if (key.includes('upi') || key.includes('gpay') || key.includes('phonepe') || key.includes('paytm') || key.includes('online')) key = 'upi'
- else if (key.includes('wallet')) key = 'wallet'
- else key = 'cash'
- byPaymentMethod[key] = (byPaymentMethod[key] || 0) + val
- paymentCounts[key] = (paymentCounts[key] || 0) + 1
- }
- })
- } else {
- let method = (o.paymentMethod || 'cash').toLowerCase()
- if (method.includes('card') || method.includes('credit') || method.includes('debit')) method = 'card'
- else if (method.includes('upi') || method.includes('gpay') || method.includes('phonepe') || method.includes('paytm') || method.includes('online')) method = 'upi'
- else if (method.includes('wallet')) method = 'wallet'
- else method = 'cash'
+    const tax = o.tax !== undefined && o.tax !== null ? Number(o.tax) : Math.round(netSub * 0.05)
+    totalTaxGST += tax
 
- byPaymentMethod[method] = (byPaymentMethod[method] || 0) + amt
- paymentCounts[method] = (paymentCounts[method] || 0) + 1
- }
+    if (disc > 0) {
+      totalDiscountGiven += disc
+      if (!byDiscountType[dName]) {
+        byDiscountType[dName] = { count: 0, totalDiscount: 0 }
+      }
+      byDiscountType[dName].count += 1
+      byDiscountType[dName].totalDiscount += disc
+    }
 
- let src = (o.source || o.type || 'dine-in').toUpperCase()
- bySource[src] = (bySource[src] || 0) + 1
- })
+    if (o.splitPayments && typeof o.splitPayments === 'object' && Object.keys(o.splitPayments).length > 0) {
+      Object.entries(o.splitPayments).forEach(([mKey, mVal]) => {
+        const val = Number(mVal) || 0
+        if (val > 0) {
+          let key = mKey.toLowerCase()
+          if (key.includes('card') || key.includes('credit') || key.includes('debit')) key = 'card'
+          else if (key.includes('upi') || key.includes('gpay') || key.includes('phonepe') || key.includes('paytm') || key.includes('online')) key = 'upi'
+          else if (key.includes('wallet')) key = 'wallet'
+          else key = 'cash'
+          byPaymentMethod[key] = (byPaymentMethod[key] || 0) + val
+          paymentCounts[key] = (paymentCounts[key] || 0) + 1
+        }
+      })
+    } else if (!isComp) {
+      let method = (o.paymentMethod || 'cash').toLowerCase()
+      if (method.includes('card') || method.includes('credit') || method.includes('debit')) method = 'card'
+      else if (method.includes('upi') || method.includes('gpay') || method.includes('phonepe') || method.includes('paytm') || method.includes('online')) method = 'upi'
+      else if (method.includes('wallet')) method = 'wallet'
+      else method = 'cash'
 
- const avgBasketValue = totalInvoices > 0 ? Math.round(netSalesCollected / totalInvoices) : 0
+      byPaymentMethod[method] = (byPaymentMethod[method] || 0) + amt
+      paymentCounts[method] = (paymentCounts[method] || 0) + 1
+    }
 
- return {
- totalInvoices,
- netSalesCollected: Math.round(netSalesCollected),
- grossMenuSubtotal: Math.round(grossMenuSubtotal),
- totalDiscountGiven: Math.round(totalDiscountGiven),
- totalTaxGST: Math.round(totalTaxGST),
- avgBasketValue,
- byPaymentMethod,
- paymentCounts,
- byDiscountType,
- bySource
- }
+    let src = (o.source || o.type || 'dine-in').toUpperCase()
+    bySource[src] = (bySource[src] || 0) + 1
+  })
+
+  const avgBasketValue = totalInvoices > 0 ? Math.round(netSalesCollected / totalInvoices) : 0
+
+  return {
+    totalInvoices,
+    netSalesCollected: Math.round(netSalesCollected),
+    grossMenuSubtotal: Math.round(grossMenuSubtotal),
+    totalDiscountGiven: Math.round(totalDiscountGiven),
+    complimentaryCount,
+    complimentaryTotal: Math.round(complimentaryTotal),
+    totalTaxGST: Math.round(totalTaxGST),
+    avgBasketValue,
+    byPaymentMethod,
+    paymentCounts,
+    byDiscountType,
+    bySource
+  }
 }
 
 const getOrderDiscountInfo = (o) => {
