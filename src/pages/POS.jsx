@@ -178,6 +178,7 @@ export default function POS() {
   const [customizingItem, setCustomizingItem] = useState(null)
   const [selectedBread, setSelectedBread] = useState('Baked')
   const [selectedProtein, setSelectedProtein] = useState('Chicken')
+  const [selectedSeasoning, setSelectedSeasoning] = useState('Salted')
   const [selectedDrink, setSelectedDrink] = useState('Coca-Cola')
   const [selectedSpread, setSelectedSpread] = useState('Tzatziki')
   const [selectedSauces, setSelectedSauces] = useState(['Garlic Mayo'])
@@ -447,7 +448,8 @@ export default function POS() {
       catName.includes('meal') || catName.includes('combo') ||
       itemName.includes('meal') || itemName.includes('box') ||
       itemName.includes('feast') || itemName.includes('bucket') ||
-      itemName.includes('rice') || itemName.includes('salad')
+      itemName.includes('rice') || itemName.includes('salad') ||
+      catName.includes('fries') || itemName.includes('fries')
     )
   }
 
@@ -483,6 +485,7 @@ export default function POS() {
       setCustomizingItem(item)
       setSelectedBread('Baked')
       setSelectedProtein('Chicken')
+      setSelectedSeasoning('Salted')
       setSelectedDrink('Coca-Cola')
       setSelectedDrink1('Coca-Cola')
       setSelectedDrink2('Sprite')
@@ -530,7 +533,16 @@ export default function POS() {
     const isDualCombo = isDualGyroCombo(customizingItem)
     const isRiceItem = itemName.includes('rice')
     const isSuper5 = itemName.includes('super 5')
-    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSuper5
+    const isPlainFries = itemName.includes('fries') && !itemName.includes('loaded')
+    const isLoadedFries = itemName.includes('loaded')
+    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSuper5 && !isPlainFries && !isLoadedFries
+
+    let formattedName = customizingItem.name
+    if (isPlainFries) {
+      formattedName = `Fries (${selectedSeasoning})`
+    } else if (isLoadedFries) {
+      formattedName = `Loaded Fries (${selectedProtein})`
+    }
 
     const drinkCount = getMealDrinkCount(customizingItem.name)
     const dipCount = getMealDipCount(customizingItem.name)
@@ -555,8 +567,9 @@ export default function POS() {
       }
     } else {
       customization = {
+        ...(isPlainFries ? { seasoning: selectedSeasoning } : {}),
+        ...((hasGyro || isRiceItem || isLoadedFries) ? { protein: selectedProtein } : {}),
         ...(hasGyro ? { bread: selectedBread, spread: selectedSpread, sauces: selectedSauces, veggies: selectedVeggies } : {}),
-        ...((hasGyro || isRiceItem) ? { protein: selectedProtein } : {}),
         ...(drinkSummary ? { drink: drinkSummary } : {}),
         ...(dipSummary ? { dips: dipSummary } : {}),
         notes: gyroNotes
@@ -565,13 +578,13 @@ export default function POS() {
 
     addItem({
       menuItemId: customizingItem.id,
-      menuItemName: customizingItem.name,
+      menuItemName: formattedName,
       unitPrice: customizingItem.price,
       totalPrice: customizingItem.price,
       customization
     })
     setCustomizingItem(null)
-    toast.success(`Added ${customizingItem.name} to order`)
+    toast.success(`Added ${formattedName} to order`)
   }
 
   const handleAddStandardGyro = () => {
@@ -1886,7 +1899,7 @@ export default function POS() {
               {(() => {
                 const cItemName = (customizingItem?.name || '').toLowerCase()
                 const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
-                const hasProteinChoice = cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein')
+                const hasProteinChoice = cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cItemName.includes('loaded') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein')
                 if (!hasProteinChoice) return null
                 return (
                   <div>
@@ -1903,6 +1916,33 @@ export default function POS() {
                           fontWeight: 700, fontSize: '14px', cursor: 'pointer', transition: 'all 0.15s'
                         }}>
                           {p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })()}
+
+              {/* Seasoning Choice Section (for Plain Fries) */}
+              {(() => {
+                const cItemName = (customizingItem?.name || '').toLowerCase()
+                const isPlainFries = cItemName.includes('fries') && !cItemName.includes('loaded')
+                if (!isPlainFries) return null
+                return (
+                  <div>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      🍟 Choose Fries Seasoning
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      {['Salted', 'Peri Peri', 'Cajun'].map(s => (
+                        <button key={s} type="button" onClick={() => setSelectedSeasoning(s)} style={{
+                          flex: 1, padding: '12px 14px', borderRadius: '10px',
+                          border: selectedSeasoning === s ? '2px solid #f59e0b' : '1px solid #e5e7eb',
+                          background: selectedSeasoning === s ? '#fffbeb' : '#f9fafb',
+                          color: selectedSeasoning === s ? '#b45309' : '#374151',
+                          fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.15s'
+                        }}>
+                          {selectedSeasoning === s ? '✓ ' : ''}{s}
                         </button>
                       ))}
                     </div>

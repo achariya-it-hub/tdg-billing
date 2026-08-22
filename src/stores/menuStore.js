@@ -244,9 +244,9 @@ const sampleMenuItems = [
   {
     "id": "m_fries_std",
     "categoryId": "c6",
-    "name": "Fries (Salted, Peri Peri or Cajun)",
+    "name": "Fries",
     "price": 99,
-    "description": "Crispy Fries (Choose seasoning: Salted, Peri Peri, or Cajun)",
+    "description": "Crispy golden French fries (Choose seasoning: Salted, Peri Peri, or Cajun)",
     "isAvailable": true,
     "image": "/images/menu/fries.png"
   },
@@ -255,7 +255,7 @@ const sampleMenuItems = [
     "categoryId": "c6",
     "name": "Loaded Fries",
     "price": 199,
-    "description": "Loaded Fries topped with melted cheese, sauces (Choose: Chicken or Paneer)",
+    "description": "Loaded Fries topped with melted cheese & sauces (Choose protein: Chicken or Paneer)",
     "isAvailable": true,
     "image": "/images/menu/loaded fries.png"
   },
