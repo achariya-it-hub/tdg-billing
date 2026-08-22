@@ -699,18 +699,20 @@ try {
   console.error('[HOSTINGER MIGRATION ERROR]', e.message)
 }
 
-// Auto-synchronize menu on startup from official locked seed
-try {
-  const seedPath = join(__dirname, 'seed-db.json')
-  if (existsSync(seedPath)) {
-    const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
-    if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length > 0) {
-      menuItems = seedData.menuItems
-      categories = seedData.categories || categories
+// Only use seed-db.json fallback if db.menuItems is completely missing/empty
+if ((!db.menuItems || !db.menuItems.length) && (!menuItems || !menuItems.length)) {
+  try {
+    const seedPath = join(__dirname, 'seed-db.json')
+    if (existsSync(seedPath)) {
+      const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
+      if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length > 0) {
+        menuItems = seedData.menuItems
+        categories = seedData.categories || categories
+      }
     }
+  } catch (e) {
+    console.error('[HOSTINGER MENU SEED ERROR]', e.message)
   }
-} catch (e) {
-  console.error('[HOSTINGER MENU SYNC ERROR]', e.message)
 }
 
   settings = syncSettingsVault(db.settings || settings)
