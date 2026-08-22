@@ -14175,13 +14175,42 @@ const getOrderAmount = (o) => {
 }
 
 function isDemoOrderBeforeOpening(o) {
- if (!o) return false
- if (isDemoOrderBeforeOpening(o)) {
- return false
- }
+  if (!o) return false
+  const dStr = getOrderDate(o)
+  if (dStr === '2026-07-27') {
+    if (o.orderNumber && Number(o.orderNumber) < 1036) {
+      return true
+    }
+    const ts = o.createdAt || o.paidAt || o.completedAt || ''
+    if (ts) {
+      try {
+        const dateObj = new Date(ts)
+        if (dateObj.getTime() < new Date('2026-07-27T11:05:00.000Z').getTime()) {
+          return true
+        }
+      } catch (e) {}
+    }
+  }
+  return false
+}
 
- // Requirement 4: Include only Completed or Paid Bills
- return s === 'completed' || p === 'paid' || Boolean(o.settleDirectly)
+const isCompletedSale = (o) => {
+  if (!o) return false
+  const s = (o.status || '').toLowerCase()
+  const p = (o.paymentStatus || '').toLowerCase()
+  const m = (o.paymentMethod || '').toLowerCase()
+
+  // Requirement 3: Exclude Cancelled, Void, Draft, Deleted, Duplicate
+  if (s === 'cancelled' || s === 'canceled' || s === 'void' || s === 'draft' || s === 'deleted' || o.isCancelled || o.isVoid || o.isDraft || o.isDeleted || o.isDuplicate) {
+    return false
+  }
+  if (isDemoOrderBeforeOpening(o)) {
+    return false
+  }
+
+  // Requirement 4: Include Completed, Paid, or Complimentary Bills
+  const isComp = o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary'
+  return s === 'completed' || p === 'paid' || Boolean(o.settleDirectly) || isComp
 }
 
 const isValidSalesOrder = isCompletedSale

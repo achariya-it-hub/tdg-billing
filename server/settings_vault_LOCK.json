@@ -32,6 +32,12 @@
       "accessCode": "",
       "isProduction": false,
       "isEnabled": true
+    },
+    "cashfree": {
+      "appId": "",
+      "secretKey": "",
+      "isProduction": false,
+      "isEnabled": true
     }
   },
   "offers": [
@@ -47,12 +53,52 @@
     {
       "id": "2",
       "title": "Crispy Chicken & Dip Combo",
-      "desc": "4 Pcs Crispy Chicken + 2 Garlic Dips + Fries",
-      "tag": "SAVE ₹151",
+      "desc": "4 Pcs Crispy Chicken + 2x Dip + Sauce",
+      "tag": "Save ₹151",
       "price": "₹299",
       "origPrice": "₹450",
+      "image": "/uploads/menu/m2.jpg"
+    },
+    {
+      "id": "3",
+      "title": "BOGO Thick Shake Delight",
+      "desc": "Buy 1 Shake & get Vanilla Shake Free",
+      "tag": "BUY 1 GET 1",
+      "price": "₹149",
+      "origPrice": "₹298",
       "image": "/uploads/menu/m3.jpg"
     }
   ],
-  "msg91": {}
+  "msg91": {
+    "widgetId": "36686e624b35303331383732",
+    "authKey": "507494Aat701nlyG786a7f01caP1",
+    "senderId": "TDGBIL",
+    "templateId": "",
+    "otpExpiry": 300,
+    "isEnabled": true
+  },
+  "whatsapp": {
+    "serviceUrl": "http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>",
+    "isEnabled": true
+  },
+  "campaigns": {
+    "inauguration": {
+      "active": true,
+      "date": "2026-07-27",
+      "pct": 50,
+      "label": "Inauguration Offer 50%"
+    },
+    "special20": {
+      "active": true,
+      "from": "2026-07-29",
+      "to": "2026-08-02",
+      "pct": 20,
+      "label": "Special Offer 20%"
+    },
+    "vip50": {
+      "active": true,
+      "pct": 50,
+      "label": "VIP 50% OFF"
+    }
+  }
 }

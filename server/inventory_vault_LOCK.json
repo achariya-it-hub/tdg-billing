@@ -4,28 +4,19 @@
       "id": "1",
       "name": "Chicken Breast",
       "currentStock": 50,
-      "minimumStock": 20,
-      "costPerUnit": 180,
-      "unit": "kg",
-      "category": "Raw Material"
+      "minimumStock": 20
     },
     {
       "id": "2",
       "name": "Burger Buns",
       "currentStock": 200,
-      "minimumStock": 50,
-      "costPerUnit": 8,
-      "unit": "kg",
-      "category": "Raw Material"
+      "minimumStock": 50
     },
     {
       "id": "3",
       "name": "Fries",
       "currentStock": 30,
-      "minimumStock": 10,
-      "costPerUnit": 45,
-      "unit": "kg",
-      "category": "Raw Material"
+      "minimumStock": 10
     },
     {
       "id": "inv_cola",
