@@ -126,9 +126,7 @@ export default function Kiosk() {
       name.includes('duo') ||
       name.includes('double crunch') ||
       name.includes('party meal') ||
-      name.includes('mega feast') ||
-      name.includes('super 5') ||
-      name.includes('bucket')
+      name.includes('mega feast')
     )
   }
 
@@ -193,8 +191,9 @@ export default function Kiosk() {
     const itemName = (customizingItem?.name || '').toLowerCase()
 
     const isDualCombo = isDualGyroCombo(customizingItem)
-    const hasGyro = catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('box') || itemName.includes('meal')
-    const hasRice = itemName.includes('rice')
+    const isRiceItem = itemName.includes('rice')
+    const isSuper5 = itemName.includes('super 5')
+    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSuper5
 
     const drinkCount = getMealDrinkCount(customizingItem.name)
     const dipCount = getMealDipCount(customizingItem.name)
@@ -227,7 +226,7 @@ export default function Kiosk() {
           sauces: selectedSauces.join(', ') || 'None',
           veggies: selectedVeggies.join(', ') || 'None'
         } : {}),
-        ...(!hasGyro && hasRice ? { protein: selectedProtein } : {}),
+        ...((hasGyro || isRiceItem) ? { protein: selectedProtein } : {}),
         ...(drinkSummary ? { drink: drinkSummary } : {}),
         ...(dipSummary ? { dips: dipSummary } : {}),
         notes: gyroNotes
@@ -1050,58 +1049,96 @@ export default function Kiosk() {
                 })()}
               </div>
             ) : (
-              /* POS MATCHING GYRO CUSTOMIZER STEPS (1. Protein, 2. Flavor, 3. Bread, 4. Sauces, 5. Veggies) */
+              /* POS MATCHING CUSTOMIZER STEPS (Protein, Drink, Gyro Steps) */
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                {/* 1. Choose Protein */}
-                <div>
-                  <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
-                    1. Choose Protein *
-                  </label>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    {['Chicken', 'Paneer'].map(p => (
-                      <button key={p} onClick={() => setSelectedProtein(p)} style={{
-                        flex: 1, padding: '10px', borderRadius: '10px',
-                        border: selectedProtein === p ? '2px solid #e63946' : '1px solid #cbd5e1',
-                        background: selectedProtein === p ? '#fff5f5' : '#ffffff',
-                        color: selectedProtein === p ? '#e63946' : '#334155', fontWeight: 800, fontSize: '13px', cursor: 'pointer'
-                      }}>{p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}</button>
-                    ))}
-                  </div>
-                </div>
+                {(() => {
+                  const cItemName = (customizingItem?.name || '').toLowerCase()
+                  const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
+                  const isRiceItem = cItemName.includes('rice')
+                  const isSuper5 = cItemName.includes('super 5')
+                  const hasProteinChoice = cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein')
+                  const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cCatName.includes('gyro')) && !isRiceItem && !isSuper5
+                  const dCount = getMealDrinkCount(customizingItem?.name)
 
-                {/* 2. Flavor / Style */}
-                <div>
-                  <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
-                    2. Flavor / Style *
-                  </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
-                    {['Spicy', 'Creamy', 'BBQ', 'Signature'].map(f => (
-                      <button key={f} onClick={() => setSelectedGyroFlavor(f)} style={{
-                        padding: '8px 4px', borderRadius: '8px',
-                        border: selectedGyroFlavor === f ? '2px solid #e63946' : '1px solid #cbd5e1',
-                        background: selectedGyroFlavor === f ? '#e63946' : '#ffffff',
-                        color: selectedGyroFlavor === f ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11.5px', cursor: 'pointer', textAlign: 'center'
-                      }}>{selectedGyroFlavor === f ? '✓ ' : ''}{f}</button>
-                    ))}
-                  </div>
-                </div>
+                  return (
+                    <>
+                      {/* 1. Choose Protein */}
+                      {hasProteinChoice && (
+                        <div>
+                          <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
+                            1. Choose Protein *
+                          </label>
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            {['Chicken', 'Paneer'].map(p => (
+                              <button key={p} onClick={() => setSelectedProtein(p)} style={{
+                                flex: 1, padding: '10px', borderRadius: '10px',
+                                border: selectedProtein === p ? '2px solid #e63946' : '1px solid #cbd5e1',
+                                background: selectedProtein === p ? '#fff5f5' : '#ffffff',
+                                color: selectedProtein === p ? '#e63946' : '#334155', fontWeight: 800, fontSize: '13px', cursor: 'pointer'
+                              }}>{p === 'Chicken' ? '🔴 Non-Veg Chicken' : '🟢 Veg Paneer'}</button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
-                {/* 3. Choose Pita Bread */}
-                <div>
-                  <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
-                    3. Choose Pita Bread *
-                  </label>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    {['Baked', 'Fried'].map(b => (
-                      <button key={b} onClick={() => setSelectedBread(b)} style={{
-                        flex: 1, padding: '10px', borderRadius: '10px',
-                        border: selectedBread === b ? '2px solid #2563eb' : '1px solid #cbd5e1',
-                        background: selectedBread === b ? '#eff6ff' : '#ffffff',
-                        color: selectedBread === b ? '#1e40af' : '#334155', fontWeight: 800, fontSize: '12.5px', cursor: 'pointer'
-                      }}>{b === 'Baked' ? 'Baked Pita' : 'Fried Pita'}</button>
-                    ))}
-                  </div>
-                </div>
+                      {/* Drink Choice Section */}
+                      {dCount > 0 && (
+                        <div>
+                          <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
+                            🥤 Choose Drink / Beverage ({dCount} Included) *
+                          </label>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                            {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
+                              <button key={d} onClick={() => setSelectedDrink1(d)} style={{
+                                padding: '8px 4px', borderRadius: '8px',
+                                border: selectedDrink1 === d ? '2px solid #06b6d4' : '1px solid #cbd5e1',
+                                background: selectedDrink1 === d ? '#ecfeff' : '#ffffff',
+                                color: selectedDrink1 === d ? '#0891b2' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center'
+                              }}>{selectedDrink1 === d ? '✓ ' : ''}{d}</button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Gyro Flavor & Bread */}
+                      {hasGyroChoice && (
+                        <>
+                          <div>
+                            <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
+                              Flavor / Style *
+                            </label>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                              {['Spicy', 'Creamy', 'BBQ', 'Signature'].map(f => (
+                                <button key={f} onClick={() => setSelectedGyroFlavor(f)} style={{
+                                  padding: '8px 4px', borderRadius: '8px',
+                                  border: selectedGyroFlavor === f ? '2px solid #e63946' : '1px solid #cbd5e1',
+                                  background: selectedGyroFlavor === f ? '#e63946' : '#ffffff',
+                                  color: selectedGyroFlavor === f ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11.5px', cursor: 'pointer', textAlign: 'center'
+                                }}>{selectedGyroFlavor === f ? '✓ ' : ''}{f}</button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
+                              Choose Pita Bread *
+                            </label>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              {['Baked', 'Fried'].map(b => (
+                                <button key={b} onClick={() => setSelectedBread(b)} style={{
+                                  flex: 1, padding: '10px', borderRadius: '10px',
+                                  border: selectedBread === b ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                                  background: selectedBread === b ? '#eff6ff' : '#ffffff',
+                                  color: selectedBread === b ? '#1e40af' : '#334155', fontWeight: 800, fontSize: '12.5px', cursor: 'pointer'
+                                }}>{b === 'Baked' ? 'Baked Pita' : 'Fried Pita'}</button>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )
+                })()}
 
                 {/* 4. Sauces (Select Multiple) */}
                 <div>

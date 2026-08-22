@@ -473,9 +473,7 @@ export default function POS() {
       name.includes('duo') ||
       name.includes('double crunch') ||
       name.includes('party meal') ||
-      name.includes('mega feast') ||
-      name.includes('super 5') ||
-      name.includes('bucket')
+      name.includes('mega feast')
     )
   }
 
@@ -530,8 +528,9 @@ export default function POS() {
     const itemName = (customizingItem?.name || '').toLowerCase()
 
     const isDualCombo = isDualGyroCombo(customizingItem)
-    const hasGyro = catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('box') || itemName.includes('meal')
-    const hasRice = itemName.includes('rice')
+    const isRiceItem = itemName.includes('rice')
+    const isSuper5 = itemName.includes('super 5')
+    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSuper5
 
     const drinkCount = getMealDrinkCount(customizingItem.name)
     const dipCount = getMealDipCount(customizingItem.name)
@@ -557,7 +556,7 @@ export default function POS() {
     } else {
       customization = {
         ...(hasGyro ? { bread: selectedBread, spread: selectedSpread, sauces: selectedSauces, veggies: selectedVeggies } : {}),
-        ...((hasGyro || hasRice) ? { protein: selectedProtein } : {}),
+        ...((hasGyro || isRiceItem) ? { protein: selectedProtein } : {}),
         ...(drinkSummary ? { drink: drinkSummary } : {}),
         ...(dipSummary ? { dips: dipSummary } : {}),
         notes: gyroNotes
@@ -1938,9 +1937,9 @@ export default function POS() {
               })()}
               {/* Gyro Pita Bread Section */}
               {(() => {
-                const cItemName = (customizingItem?.name || '').toLowerCase()
-                const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
-                const hasGyroChoice = cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cCatName.includes('gyro')
+                const isRiceItem = cItemName.includes('rice')
+                const isSuper5 = cItemName.includes('super 5')
+                const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cCatName.includes('gyro')) && !isRiceItem && !isSuper5
                 if (!hasGyroChoice) return null
                 return (
                   <>
