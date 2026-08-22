@@ -1937,6 +1937,8 @@ export default function POS() {
               })()}
               {/* Gyro Pita Bread Section */}
               {(() => {
+                const cItemName = (customizingItem?.name || '').toLowerCase()
+                const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
                 const isRiceItem = cItemName.includes('rice')
                 const isSuper5 = cItemName.includes('super 5')
                 const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cCatName.includes('gyro')) && !isRiceItem && !isSuper5
