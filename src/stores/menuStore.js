@@ -353,7 +353,7 @@ const sampleMenuItems = [
     "id": "m_express_meal",
     "categoryId": "c2",
     "name": "Express Meal",
-    "price": 249,
+    "price": 149,
     "description": "Gyro & Regular Drink",
     "isAvailable": true,
     "image": "/images/menu/express meal.png"
@@ -362,7 +362,7 @@ const sampleMenuItems = [
     "id": "m_sig_gyro_meal",
     "categoryId": "c2",
     "name": "Signature Gyro Meal",
-    "price": 279,
+    "price": 299,
     "description": "Gyro, Fries, Regular Drink",
     "isAvailable": true,
     "image": "/images/menu/signature gyro meal.png"
@@ -380,7 +380,7 @@ const sampleMenuItems = [
     "id": "m_classic_gyro_meal",
     "categoryId": "c2",
     "name": "Classic Gyro Meal",
-    "price": 349,
+    "price": 249,
     "description": "Gyro, 2 Wings, Fries, Regular Drink, 1 Dip",
     "isAvailable": true,
     "image": "/images/menu/classic gyro meal.png"
@@ -389,7 +389,7 @@ const sampleMenuItems = [
     "id": "m_duo_gyro_feast",
     "categoryId": "c2",
     "name": "Duo Gyro Feast",
-    "price": 449,
+    "price": 349,
     "description": "2 Gyros, Fries, 2 Regular Drinks",
     "isAvailable": true,
     "image": "/images/menu/duo gyro feast.png"
@@ -398,7 +398,7 @@ const sampleMenuItems = [
     "id": "m_double_crunch_box",
     "categoryId": "c2",
     "name": "Double Crunch Box",
-    "price": 699,
+    "price": 499,
     "description": "2 Gyros, 6 Wings, Fries, 2 Regular Drinks",
     "isAvailable": true,
     "image": "/images/menu/double crunch box.png"
@@ -407,7 +407,7 @@ const sampleMenuItems = [
     "id": "m_mega_feast_meal",
     "categoryId": "c2",
     "name": "Mega Feast Meal",
-    "price": 799,
+    "price": 649,
     "description": "2 Gyros, 2 Leg & Thighs, 2 Wings, 2 Strips, Fries, 2 Regular Drinks, 3 Dips",
     "isAvailable": true,
     "image": "/images/menu/mega feast meal.png"
@@ -416,7 +416,7 @@ const sampleMenuItems = [
     "id": "m_dens_party_meal",
     "categoryId": "c2",
     "name": "Den's Party Meal",
-    "price": 1049,
+    "price": 899,
     "description": "2 Gyros, 6 Wings, 4 Leg & Thighs, 2 Fries, 3 Regular Drinks",
     "isAvailable": true,
     "image": "/images/menu/den's party meal.png"
