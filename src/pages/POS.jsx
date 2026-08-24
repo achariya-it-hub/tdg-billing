@@ -1084,13 +1084,28 @@ export default function POS() {
           </div>
           {searchingCustomer && <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '8px' }}>Searching customers...</div>}
           {(currentOrder.customerName || currentOrder.customerPhone) && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12px', fontWeight: 700, color: '#1e293b', background: '#f8fafc', padding: '8px 10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
-              <span>
-                👤 {currentOrder.customerName || 'Customer'}
-                {currentOrder.customerPhone && <span style={{ color: '#2563eb', fontWeight: 700 }}> • 📱 {currentOrder.customerPhone}</span>}
-                {currentOrder.customerDiscountPct > 0 && <span style={{ color: currentOrder.customerDiscountPct >= 50 ? '#7c3aed' : '#dc2626' }}> — {currentOrder.customerDiscountPct}% OFF</span>}
-              </span>
-              <button onClick={clearCustomer} style={{ fontSize: '12px', fontWeight: 700, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '8px', background: '#f8fafc', padding: '8px 10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: '#1e293b' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: 1 }}>
+                  <span>👤</span>
+                  <input
+                    type="text"
+                    placeholder="Enter Customer Name"
+                    value={currentOrder.customerName || ''}
+                    onChange={e => setCustomerName(e.target.value)}
+                    style={{ border: 'none', background: 'transparent', fontWeight: 700, fontSize: '12px', color: '#0f172a', width: '100%', outline: 'none' }}
+                  />
+                </div>
+                <button onClick={clearCustomer} title="Remove Customer" style={{ fontSize: '12px', fontWeight: 700, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600 }}>
+                {currentOrder.customerPhone && <span style={{ color: '#2563eb' }}>📱 {currentOrder.customerPhone}</span>}
+                {currentOrder.customerDiscountPct > 0 ? (
+                  <span style={{ color: currentOrder.customerDiscountPct >= 50 ? '#7c3aed' : '#dc2626', fontWeight: 800 }}>👑 {currentOrder.customerDiscountPct}% OFF</span>
+                ) : (
+                  <span style={{ color: '#64748b' }}>Standard Price</span>
+                )}
+              </div>
             </div>
           )}
           <div style={{ maxHeight: '300px', overflow: 'auto', marginBottom: '16px' }}>

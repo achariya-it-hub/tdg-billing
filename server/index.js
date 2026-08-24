@@ -9406,14 +9406,28 @@ app.get('/api/customers/check-discount', (req, res) => {
     return cleanLast10.length >= 8 && uClean.endsWith(cleanLast10)
   })
 
+  const resolveName = (u, p) => {
+    let n = u ? (u.name || u.customerName || u.fullName || '') : ''
+    if (!n || n === 'Customer' || n === 'VIP Customer' || n === 'Mobile App User' || n === 'Den Member') {
+      const pClean = (p || '').replace(/\D/g, '')
+      const pLast = pClean.length >= 10 ? pClean.slice(-10) : pClean
+      if (pLast && pLast.length >= 8) {
+        const past = [...(db.orders || orders || [])].reverse().find(o => o && o.customerName && o.customerName !== 'Customer' && o.customerName !== 'VIP Customer' && String(o.customerPhone || '').replace(/\D/g, '').endsWith(pLast))
+        if (past && past.customerName) n = past.customerName
+      }
+    }
+    return n || (u && (u.name || u.customerName)) || 'Customer'
+  }
+
   if (user) {
+    const custName = resolveName(user, phone)
     if (user.offerRedeemed) {
       return res.json({
         found: true,
         hasDiscount: false,
         discountPct: 0,
         offerRedeemed: true,
-        customerName: user.name || user.customerName || 'Customer',
+        customerName: custName,
         phone: user.phone || phone,
         tier: user.tier || 'Offer Redeemed',
         discountReason: '⚠️ Offer Already Redeemed for this phone number'
@@ -9451,7 +9465,7 @@ app.get('/api/customers/check-discount', (req, res) => {
       hasDiscount: discountPct > 0,
       discountPct,
       discountReason,
-      customerName: user.name || user.customerName || 'VIP Customer',
+      customerName: custName,
       phone: user.phone || phone,
       tier: user.tier || 'VIP',
       visitCount,
@@ -9463,7 +9477,9 @@ app.get('/api/customers/check-discount', (req, res) => {
     })
   }
 
-  return res.json({ found: false, hasDiscount: false, discountPct: 0, customerName: 'Customer', phone })
+  // Fallback if not in users array, check past orders for name
+  const fallbackName = resolveName(null, phone)
+  return res.json({ found: false, hasDiscount: false, discountPct: 0, customerName: fallbackName, phone })
 })
 
 // Search customers by phone or name (for POS customer lookup & auto-completion)
@@ -9474,6 +9490,19 @@ app.get('/api/customers/search', (req, res) => {
   const cleanQPhone = q.replace(/\D/g, '')
   const db = readDb()
   const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
+
+  const resolveName = (u, p) => {
+    let n = u ? (u.name || u.customerName || u.fullName || '') : ''
+    if (!n || n === 'Customer' || n === 'VIP Customer' || n === 'Mobile App User' || n === 'Den Member') {
+      const pClean = (p || '').replace(/\D/g, '')
+      const pLast = pClean.length >= 10 ? pClean.slice(-10) : pClean
+      if (pLast && pLast.length >= 8) {
+        const past = [...(db.orders || orders || [])].reverse().find(o => o && o.customerName && o.customerName !== 'Customer' && o.customerName !== 'VIP Customer' && String(o.customerPhone || '').replace(/\D/g, '').endsWith(pLast))
+        if (past && past.customerName) n = past.customerName
+      }
+    }
+    return n || (u && (u.name || u.customerName)) || 'Customer'
+  }
 
   const seen = new Set()
   const results = []
@@ -9493,7 +9522,7 @@ app.get('/api/customers/search', (req, res) => {
         const disc = Number(u.discountPct) || (u.tier && String(u.tier).includes('50%') ? 50 : 0)
         results.push({
           id: u.id,
-          customerName: u.name || u.customerName || 'Customer',
+          customerName: resolveName(u, uPhone),
           phone: u.phone || uPhone,
           discountPct: disc,
           offerRedeemed: Boolean(u.offerRedeemed),

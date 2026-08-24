@@ -144,14 +144,20 @@ export const useOrderStore = create(
   },
 
   setCustomer: (customer) => {
-    set(state => ({
-      currentOrder: {
-        ...state.currentOrder,
-        customerName: (customer && customer.customerName) || (customer && customer.name) || state.currentOrder.customerName,
-        customerPhone: (customer && customer.phone) || state.currentOrder.customerPhone,
-        customerDiscountPct: customer ? Math.min(90, Math.round(Number(customer.discountPct) || 0)) : 0
+    set(state => {
+      const fetchedName = customer ? (customer.customerName || customer.name || customer.fullName || '') : ''
+      const isValidFetchedName = fetchedName && fetchedName !== 'Customer' && fetchedName !== 'VIP Customer' && fetchedName !== 'Mobile App User' && fetchedName !== 'Den Member'
+      const finalName = isValidFetchedName ? fetchedName : (state.currentOrder.customerName || fetchedName || 'Customer')
+
+      return {
+        currentOrder: {
+          ...state.currentOrder,
+          customerName: finalName,
+          customerPhone: (customer && customer.phone) || state.currentOrder.customerPhone,
+          customerDiscountPct: customer ? Math.min(90, Math.round(Number(customer.discountPct) || 0)) : 0
+        }
       }
-    }))
+    })
   },
 
   setCustomerPhone: async (customerPhone) => {
