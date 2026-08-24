@@ -1053,22 +1053,44 @@ export default function POS() {
           </div>
           <div style={{ position: 'relative', marginBottom: '12px' }}>
             <input type="text" placeholder="🔍 Search Customer by Phone or Name (auto discount)" value={customerSearch} onChange={e => setCustomerSearch(e.target.value)} style={inputStyle} />
-            {showCustomerDropdown && customerResults.length > 0 && (
-              <div style={{ position: 'absolute', zIndex: 60, top: '100%', left: 0, right: 0, maxHeight: '170px', overflow: 'auto', borderRadius: '10px', background: 'white', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.12)' }}>
+            {showCustomerDropdown && (customerResults.length > 0 || customerSearch.replace(/\D/g, '').length >= 8) && (
+              <div style={{ position: 'absolute', zIndex: 60, top: '100%', left: 0, right: 0, maxHeight: '220px', overflow: 'auto', borderRadius: '10px', background: 'white', border: '1px solid #cbd5e1', boxShadow: '0 4px 14px rgba(0,0,0,0.12)' }}>
                 {customerResults.map((c, idx) => (
                   <button key={idx} onClick={() => selectCustomer(c)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '10px', border: 'none', borderBottom: '1px solid #f1f5f9', background: 'white', cursor: 'pointer', textAlign: 'left' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#1e293b' }}>{c.customerName}</span>
-                    <span style={{ fontSize: '11px', fontWeight: 800, color: c.discountPct >= 50 ? '#7c3aed' : '#dc2626', background: c.discountPct >= 50 ? '#f5f3ff' : '#fef2f2', padding: '2px 8px', borderRadius: '12px' }}>{c.discountPct}% OFF</span>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#1e293b' }}>👤 {c.customerName}</span>
+                      {c.phone && <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>📱 {c.phone}</span>}
+                    </div>
+                    <span style={{ fontSize: '11px', fontWeight: 800, color: c.discountPct >= 50 ? '#7c3aed' : (c.discountPct > 0 ? '#dc2626' : '#059669'), background: c.discountPct >= 50 ? '#f5f3ff' : (c.discountPct > 0 ? '#fef2f2' : '#f0fdf4'), padding: '2px 8px', borderRadius: '12px' }}>
+                      {c.discountPct > 0 ? `${c.discountPct}% OFF` : 'Standard'}
+                    </span>
                   </button>
                 ))}
+                {customerSearch.replace(/\D/g, '').length >= 8 && (
+                  <button
+                    onClick={() => {
+                      const cleanP = customerSearch.replace(/\D/g, '')
+                      setCustomerPhone(cleanP)
+                      setCustomerSearch('')
+                      setShowCustomerDropdown(false)
+                    }}
+                    style={{ width: '100%', padding: '10px', border: 'none', background: '#f8fafc', borderTop: '1px solid #e2e8f0', color: '#2563eb', fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'left' }}
+                  >
+                    📱 Use Phone Number: {customerSearch.replace(/\D/g, '')}
+                  </button>
+                )}
               </div>
             )}
           </div>
           {searchingCustomer && <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '8px' }}>Searching customers...</div>}
-          {currentOrder.customerName && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12px', fontWeight: 700, color: '#1e293b', background: '#f8fafc', padding: '8px 10px', borderRadius: '8px' }}>
-              <span>👤 {currentOrder.customerName}{currentOrder.customerDiscountPct > 0 && <span style={{ color: currentOrder.customerDiscountPct >= 50 ? '#7c3aed' : '#dc2626' }}> — {currentOrder.customerDiscountPct}% OFF</span>}</span>
-              <button onClick={clearCustomer} style={{ fontSize: '10px', fontWeight: 700, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
+          {(currentOrder.customerName || currentOrder.customerPhone) && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', fontSize: '12px', fontWeight: 700, color: '#1e293b', background: '#f8fafc', padding: '8px 10px', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+              <span>
+                👤 {currentOrder.customerName || 'Customer'}
+                {currentOrder.customerPhone && <span style={{ color: '#2563eb', fontWeight: 700 }}> • 📱 {currentOrder.customerPhone}</span>}
+                {currentOrder.customerDiscountPct > 0 && <span style={{ color: currentOrder.customerDiscountPct >= 50 ? '#7c3aed' : '#dc2626' }}> — {currentOrder.customerDiscountPct}% OFF</span>}
+              </span>
+              <button onClick={clearCustomer} style={{ fontSize: '12px', fontWeight: 700, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}>✕</button>
             </div>
           )}
           <div style={{ maxHeight: '300px', overflow: 'auto', marginBottom: '16px' }}>
@@ -1322,8 +1344,8 @@ export default function POS() {
         {(currentOrder.type === 'dine-in' || currentOrder.type === 'takeaway' || currentOrder.type === 'delivery') && (
           <div style={{ padding: '8px 12px', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
             <input type="text" placeholder="🔍 Search Customer by Phone or Name (auto discount)" value={customerSearch} onChange={e => setCustomerSearch(e.target.value)} style={{ ...inputStyle, padding: '6px 10px', fontSize: '12px' }} />
-            {showCustomerDropdown && customerResults.length > 0 && (
-              <div style={{ marginTop: '4px', maxHeight: '180px', overflow: 'auto', borderRadius: '10px', background: 'white', border: '1px solid #cbd5e1', boxShadow: '0 4px 14px rgba(0,0,0,0.12)', zIndex: 50, position: 'relative' }}>
+            {showCustomerDropdown && (customerResults.length > 0 || customerSearch.replace(/\D/g, '').length >= 8) && (
+              <div style={{ marginTop: '4px', maxHeight: '200px', overflow: 'auto', borderRadius: '10px', background: 'white', border: '1px solid #cbd5e1', boxShadow: '0 4px 14px rgba(0,0,0,0.12)', zIndex: 50, position: 'relative' }}>
                 {customerResults.map((c, idx) => (
                   <button key={idx} onClick={() => selectCustomer(c)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '9px 10px', border: 'none', borderBottom: '1px solid #f1f5f9', background: 'white', cursor: 'pointer', textAlign: 'left' }}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1335,6 +1357,19 @@ export default function POS() {
                     </span>
                   </button>
                 ))}
+                {customerSearch.replace(/\D/g, '').length >= 8 && (
+                  <button
+                    onClick={() => {
+                      const cleanP = customerSearch.replace(/\D/g, '')
+                      setCustomerPhone(cleanP)
+                      setCustomerSearch('')
+                      setShowCustomerDropdown(false)
+                    }}
+                    style={{ width: '100%', padding: '10px', border: 'none', background: '#f8fafc', borderTop: '1px solid #e2e8f0', color: '#2563eb', fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'left' }}
+                  >
+                    📱 Use Phone Number: {customerSearch.replace(/\D/g, '')}
+                  </button>
+                )}
               </div>
             )}
             {searchingCustomer && <div style={{ fontSize: '10px', color: '#64748b', marginTop: '4px' }}>Searching customers...</div>}
