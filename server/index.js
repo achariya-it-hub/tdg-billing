@@ -9392,114 +9392,118 @@ app.get('/api/customers/all-dens', (req, res) => {
 
 // Check customer discount by phone number (for POS auto-discount & Kiosk validation)
 app.get('/api/customers/check-discount', (req, res) => {
- const phone = String(req.query.phone || '').replace(/\D/g, '')
- if (!phone || phone.length < 8) return res.json({ found: false, hasDiscount: false, discountPct: 0 })
+  const phone = String(req.query.phone || '').replace(/\D/g, '')
+  if (!phone || phone.length < 8) return res.json({ found: false, hasDiscount: false, discountPct: 0, customerName: 'Customer', phone })
 
- const db = readDb()
- const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
- const user = allUsers.find(u => u && (String(u.phone || '').replace(/\D/g, '') === phone || String(u.phone || '').replace(/\D/g, '').endsWith(phone)))
+  const db = readDb()
+  const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
+  const cleanLast10 = phone.length >= 10 ? phone.slice(-10) : phone
+  const user = allUsers.find(u => {
+    if (!u || !u.phone) return false
+    const uClean = String(u.phone).replace(/\D/g, '')
+    if (!uClean) return false
+    if (uClean === phone || uClean.endsWith(phone) || phone.endsWith(uClean)) return true
+    return cleanLast10.length >= 8 && uClean.endsWith(cleanLast10)
+  })
 
- if (user) {
- // Past completed sales for visit & spend tracking
- const userOrders = (orders || []).filter(o => o && isValidSalesOrder(o) && (String(o.customerPhone || '').replace(/\D/g, '') === phone))
- const visitCount = user.visitCount !== undefined ? Number(user.visitCount) : userOrders.length
- const totalSpend = userOrders.reduce((sum, o) => sum + Number(o.total || 0), 0)
+  if (user) {
+    if (user.offerRedeemed) {
+      return res.json({
+        found: true,
+        hasDiscount: false,
+        discountPct: 0,
+        offerRedeemed: true,
+        customerName: user.name || user.customerName || 'Customer',
+        phone: user.phone || phone,
+        tier: user.tier || 'Offer Redeemed',
+        discountReason: '⚠️ Offer Already Redeemed for this phone number'
+      })
+    }
 
- // Gamification Partner Level Upgrade: Cumulative spend >= ₹5,000 upgrades to Partner
- if (totalSpend >= 5000 && user.tier !== 'Partner') {
- user.tier = 'Partner'
- saveState()
- }
+    const userOrders = (orders || []).filter(o => o && isValidSalesOrder(o) && (String(o.customerPhone || '').replace(/\D/g, '').endsWith(cleanLast10)))
+    const visitCount = user.visitCount !== undefined ? Number(user.visitCount) : userOrders.length
+    const totalSpend = userOrders.reduce((sum, o) => sum + Number(o.total || 0), 0)
 
- let discountPct = Number(user.discountPct) || 0
- let discountReason = 'Customer Discount'
+    if (totalSpend >= 5000 && user.tier !== 'Partner') {
+      user.tier = 'Partner'
+      saveState()
+    }
 
- // Rule 1: Staff 50% Discount (Achariya Direct Reimbursement Log)
- if (user.isStaff || (user.tier && user.tier.toLowerCase().includes('staff'))) {
- discountPct = 50
- discountReason = 'Achariya Staff 50% OFF'
- }
- // Rule 2: Primary User (30% Initial Discount)
- else if (user.isPrimaryUser || user.type === 'primary' || (user.tier && user.tier.includes('30%'))) {
- discountPct = 30
- discountReason = 'Primary User 30% OFF'
- }
- // Rule 3: Tiered Discount Structure for Referred Guests
- else if (user.isReferred || user.referredBy || user.referralCodeUsed || (user.tier && user.tier.toLowerCase().includes('referred'))) {
- if (visitCount === 0) {
- discountPct = 15 // 1st Visit: 15% OFF
- discountReason = 'Referred Guest 1st Visit 15% OFF'
- } else {
- discountPct = 10 // Repeat Visits: 10% OFF on every subsequent visit
- discountReason = 'Referred Guest Repeat Visit 10% OFF'
- }
- }
- // Rule 4: Fallback explicit VIP 50% OFF
- else if (!discountPct && user.tier && user.tier.includes('50%')) {
- discountPct = 50
- discountReason = 'VIP 50% OFF'
- }
+    let discountPct = Number(user.discountPct) || (user.isVip50 || (user.tier && String(user.tier).includes('50%')) ? 50 : 0)
+    let discountReason = user.tier || 'VIP 50% OFF'
 
- const referredCount = user.referredFriendsCount || (Array.isArray(user.referredFriends) ? user.referredFriends.length : 0)
- const isQualifiedAsset = referredCount >= 10 // Network threshold: 10 friends required
+    if (user.isStaff || (user.tier && String(user.tier).toLowerCase().includes('staff'))) {
+      discountPct = 50
+      discountReason = 'Achariya Staff 50% OFF'
+    } else if (user.isPrimaryUser || user.type === 'primary' || (user.tier && String(user.tier).includes('30%'))) {
+      discountPct = 30
+      discountReason = 'Primary User 30% OFF'
+    } else if (user.isReferred || user.referredBy || (user.tier && String(user.tier).toLowerCase().includes('referred'))) {
+      discountPct = visitCount === 0 ? 15 : 10
+      discountReason = visitCount === 0 ? 'Referred Guest 1st Visit 15% OFF' : 'Referred Guest Repeat Visit 10% OFF'
+    }
 
- return res.json({
- found: true,
- hasDiscount: discountPct > 0,
- discountPct,
- discountReason,
- customerName: user.name || user.customerName || 'Customer',
- phone: user.phone || phone,
- tier: user.tier || 'Asset',
- visitCount,
- totalSpend,
- walletBalance: Number(user.walletBalance || user.rubyPoints || 0),
- referredFriendsCount: referredCount,
- isQualifiedAsset,
- offerRedeemed: false
- })
- }
+    const referredCount = user.referredFriendsCount || (Array.isArray(user.referredFriends) ? user.referredFriends.length : 0)
+    const isQualifiedAsset = referredCount >= 10
 
- return res.json({ found: false, hasDiscount: false, discountPct: 0 })
+    return res.json({
+      found: true,
+      hasDiscount: discountPct > 0,
+      discountPct,
+      discountReason,
+      customerName: user.name || user.customerName || 'VIP Customer',
+      phone: user.phone || phone,
+      tier: user.tier || 'VIP',
+      visitCount,
+      totalSpend,
+      walletBalance: Number(user.walletBalance || user.rubyPoints || 0),
+      referredFriendsCount: referredCount,
+      isQualifiedAsset,
+      offerRedeemed: false
+    })
+  }
+
+  return res.json({ found: false, hasDiscount: false, discountPct: 0, customerName: 'Customer', phone })
 })
 
 // Search customers by phone or name (for POS customer lookup & auto-completion)
 app.get('/api/customers/search', (req, res) => {
- const q = String(req.query.q || '').trim().toLowerCase()
- if (!q) return res.json({ customers: [] })
+  const q = String(req.query.q || '').trim().toLowerCase()
+  if (!q) return res.json({ customers: [] })
 
- const cleanQPhone = q.replace(/\D/g, '')
- const db = readDb()
- const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
+  const cleanQPhone = q.replace(/\D/g, '')
+  const db = readDb()
+  const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
 
- const seen = new Set()
- const results = []
+  const seen = new Set()
+  const results = []
 
- for (const u of allUsers) {
- if (!u) continue
- const uPhone = String(u.phone || '').replace(/\D/g, '')
- const uName = String(u.name || u.customerName || '').toLowerCase()
+  for (const u of allUsers) {
+    if (!u) continue
+    const uPhone = String(u.phone || '').replace(/\D/g, '')
+    const uName = String(u.name || u.customerName || '').toLowerCase()
 
- const matchesPhone = cleanQPhone.length >= 2 && uPhone.includes(cleanQPhone)
- const matchesName = q.length >= 2 && uName.includes(q)
+    const matchesPhone = cleanQPhone.length >= 2 && (uPhone.includes(cleanQPhone) || (cleanQPhone.length >= 8 && uPhone.endsWith(cleanQPhone.slice(-8))))
+    const matchesName = q.length >= 2 && uName.includes(q)
 
- if (matchesPhone || matchesName) {
- const key = uPhone || u.id
- if (!seen.has(key)) {
- seen.add(key)
- results.push({
- id: u.id,
- customerName: u.name || u.customerName || 'Customer',
- phone: u.phone || '',
- discountPct: Number(u.discountPct) || (u.tier && u.tier.includes('50%') ? 50 : 0),
- offerRedeemed: Boolean(u.offerRedeemed),
- tier: u.tier || 'Standard'
- })
- }
- }
- }
+    if (matchesPhone || matchesName) {
+      const key = uPhone || u.id
+      if (!seen.has(key)) {
+        seen.add(key)
+        const disc = Number(u.discountPct) || (u.tier && String(u.tier).includes('50%') ? 50 : 0)
+        results.push({
+          id: u.id,
+          customerName: u.name || u.customerName || 'Customer',
+          phone: u.phone || uPhone,
+          discountPct: disc,
+          offerRedeemed: Boolean(u.offerRedeemed),
+          tier: u.tier || (disc >= 50 ? 'VIP 50% OFF' : 'Standard')
+        })
+      }
+    }
+  }
 
- res.json({ customers: results.slice(0, 25) })
+  res.json({ customers: results.slice(0, 25) })
 })
 
 // Delete single customer by ID or phone

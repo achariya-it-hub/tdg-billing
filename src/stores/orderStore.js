@@ -155,34 +155,32 @@ export const useOrderStore = create(
   },
 
   setCustomerPhone: async (customerPhone) => {
-    set(state => ({ currentOrder: { ...state.currentOrder, customerPhone } }))
     const clean = String(customerPhone || '').replace(/\D/g, '')
+    set(state => ({
+      currentOrder: {
+        ...state.currentOrder,
+        customerPhone: clean || customerPhone,
+        customerName: state.currentOrder.customerName || 'Customer'
+      }
+    }))
     if (clean.length >= 8) {
       try {
         const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
         const res = await fetch(`${apiUrl}/api/customers/check-discount?phone=${clean}`)
         if (res.ok) {
           const data = await res.json()
-          if (data.found || (data.customerName && data.customerName !== 'Customer')) {
-            get().setCustomer({
-              customerName: data.customerName,
-              phone: data.phone || clean,
-              discountPct: data.discountPct || 0,
-              tier: data.tier,
-              discountReason: data.discountReason,
-              discountName: data.discountReason
-            })
-          } else {
-            get().setCustomerDiscountPct(0)
-          }
-        } else {
-          get().setCustomerDiscountPct(0)
+          get().setCustomer({
+            customerName: data.customerName || 'Customer',
+            phone: data.phone || clean,
+            discountPct: data.offerRedeemed ? 0 : (data.discountPct || 0),
+            tier: data.tier,
+            discountReason: data.discountReason,
+            discountName: data.discountReason
+          })
         }
       } catch (e) {
         console.warn('Customer discount check failed', e)
       }
-    } else {
-      get().setCustomerDiscountPct(0)
     }
   },
 
