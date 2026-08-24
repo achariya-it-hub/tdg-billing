@@ -9295,63 +9295,56 @@ app.delete('/api/billing/users/:id', (req, res) => {
 
 // Get all mobile app customers + loyalty/den users
 app.get('/api/customers', (req, res) => {
- const db = readDb()
- const ordersList = db.orders || orders || []
+  const db = readDb()
+  const ordersList = db.orders || orders || []
 
- const mobileList = (db.users || mobileAppUsers || []).map(u => {
- const userOrders = ordersList.filter(o => o.userId === u.id || (u.phone && o.customerPhone === u.phone))
- const totalSpent = userOrders.reduce((s, o) => s + (o.total || 0), 0)
- return {
- id: u.id,
- name: u.name || 'Mobile App User',
- phone: u.phone || '',
- email: u.email || '',
- points: u.rubyBalance || u.points || 0,
- rubyBalance: u.rubyBalance || 0,
- denLevel: u.denLevel || 'Bronze',
- totalOrders: Math.max(userOrders.length, (u.orderHistory || []).length),
- totalSpent: Math.max(totalSpent, (u.orderHistory || []).reduce((s, o) => s + (o.total || 0), 0)),
- createdAt: u.createdAt || u.signupAt || '',
- lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
- type: u.type || 'customer',
- source: 'Mobile App',
- partnerCode: u.partnerCode || u.referralCode || '',
- discountPct: u.discountPct || 0,
- referralCode: u.referralCode || ''
- }
- })
+  // Combine memory & disk sources for complete customer list
+  const allRawUsers = [
+    ...(loyaltyUsers || []),
+    ...(mobileAppUsers || []),
+    ...(db.loyaltyUsers || []),
+    ...(db.users || [])
+  ]
 
- const loyaltyList = (db.loyaltyUsers || loyaltyUsers || []).map(u => {
- const userOrders = ordersList.filter(o => u.phone && o.customerPhone === u.phone)
- const totalSpent = userOrders.reduce((s, o) => s + (o.total || 0), 0)
- return {
- id: u.id,
- name: u.name || 'Den Member',
- phone: u.phone || '',
- email: u.email || '',
- points: u.points || 0,
- rubyBalance: u.points || 0,
- denLevel: u.tier || 'Silver',
- totalOrders: Math.max(userOrders.length, (u.orderHistory || []).length),
- totalSpent: Math.max(totalSpent, (u.orderHistory || []).reduce((s, o) => s + (o.total || 0), 0)),
- createdAt: u.createdAt || u.signupAt || '',
- lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
- type: u.type || 'customer',
- source: 'Den Member',
- partnerCode: u.partnerCode || '',
- discountPct: u.discountPct || 0
- }
- })
+  const seen = new Set()
+  const all = []
 
- const seen = new Set()
- const all = []
- for (const c of [...mobileList, ...loyaltyList]) {
- const key = c.phone || c.id
- if (seen.has(key)) continue
- seen.add(key)
- all.push(c)
- }
- res.json(all)
+  for (const u of allRawUsers) {
+    if (!u) continue
+    const rawPhone = String(u.phone || '').replace(/\D/g, '')
+    const key = rawPhone || String(u.id || '')
+    if (!key || seen.has(key)) continue
+    seen.add(key)
+
+    const userOrders = ordersList.filter(o => o && ((u.id && o.userId === u.id) || (rawPhone && String(o.customerPhone || '').replace(/\D/g, '') === rawPhone)))
+    const totalSpent = userOrders.reduce((s, o) => s + (Number(o.total) || 0), 0)
+
+    const discountPct = Number(u.discountPct) || (u.tier && String(u.tier).includes('50%') ? 50 : 0)
+    const isVip50 = discountPct >= 50 || Boolean(u.isVip50) || (u.tier && String(u.tier).includes('50%'))
+
+    all.push({
+      id: u.id || `u_${key}`,
+      name: u.name || u.customerName || (isVip50 ? 'VIP 50% Customer' : 'Customer'),
+      phone: u.phone || '',
+      email: u.email || '',
+      points: Number(u.rubyBalance || u.points || 0),
+      rubyBalance: Number(u.rubyBalance || u.points || 0),
+      denLevel: u.denLevel || u.tier || (isVip50 ? 'VIP 50% OFF' : 'Bronze'),
+      tier: u.tier || (isVip50 ? 'VIP 50% OFF' : 'Bronze'),
+      totalOrders: Math.max(userOrders.length, (u.orderHistory || []).length),
+      totalSpent: Math.max(totalSpent, (u.orderHistory || []).reduce((s, o) => s + (Number(o.total) || 0), 0)),
+      createdAt: u.createdAt || u.signupAt || '',
+      lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
+      type: u.type || (isVip50 ? 'staff' : 'customer'),
+      source: u.source || (u.referralCode ? 'Mobile App' : 'Den Member'),
+      partnerCode: u.partnerCode || u.referralCode || '',
+      discountPct: discountPct,
+      isVip50: isVip50,
+      referralCode: u.referralCode || ''
+    })
+  }
+
+  res.json(all)
 })
 
 // Dedicated endpoint to fetch detailed summary of all Dens & Mobile App users list

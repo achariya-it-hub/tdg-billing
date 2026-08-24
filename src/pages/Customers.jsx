@@ -135,20 +135,21 @@ export default function Customers() {
 
   const mobileAppCount = customers.filter(c => c.source === 'Mobile App' || (c.id && String(c.id).startsWith('u_'))).length
   const denMembersCount = customers.filter(c => c.source === 'Den Member' || (c.id && String(c.id).startsWith('den_'))).length
-  const staffCount = customers.filter(c => c.type === 'staff' || c.partnerCode).length
+  const staffCount = customers.filter(c => c.type === 'staff' || c.partnerCode || c.discountPct >= 50 || c.isVip50 || (c.denLevel && String(c.denLevel).includes('50%')) || (c.tier && String(c.tier).includes('50%'))).length
 
   const filteredCustomers = customers.filter(c => {
     const matchesSearch =
       (c.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (c.phone || '').includes(searchTerm) ||
       (c.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (c.partnerCode || '').toLowerCase().includes(searchTerm.toLowerCase())
+      (c.partnerCode || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (c.denLevel || '').toLowerCase().includes(searchTerm.toLowerCase())
 
     if (!matchesSearch) return false
 
     if (filterSource === 'mobile') return c.source === 'Mobile App' || (c.id && String(c.id).startsWith('u_'))
     if (filterSource === 'den') return c.source === 'Den Member' || (c.id && String(c.id).startsWith('den_'))
-    if (filterSource === 'staff') return c.type === 'staff' || c.partnerCode
+    if (filterSource === 'staff') return c.type === 'staff' || c.partnerCode || c.discountPct >= 50 || c.isVip50 || (c.denLevel && String(c.denLevel).includes('50%')) || (c.tier && String(c.tier).includes('50%'))
 
     return true
   })
@@ -490,6 +491,11 @@ export default function Customers() {
                           {customer.type === 'staff' && (
                             <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700, background: '#dbeafe', color: '#1d4ed8' }}>
                               STAFF
+                            </span>
+                          )}
+                          {(customer.discountPct >= 50 || customer.isVip50 || (customer.denLevel && String(customer.denLevel).includes('50%'))) && (
+                            <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 800, background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a' }}>
+                              🌟 50% OFF VIP
                             </span>
                           )}
                         </div>
