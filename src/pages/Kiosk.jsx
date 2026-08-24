@@ -117,7 +117,8 @@ export default function Kiosk() {
       catName.includes('meal') || catName.includes('combo') ||
       itemName.includes('meal') || itemName.includes('box') ||
       itemName.includes('feast') || itemName.includes('bucket') ||
-      itemName.includes('rice') || itemName.includes('salad')
+      itemName.includes('rice') || itemName.includes('salad') ||
+      catName.includes('fries') || itemName.includes('fries') || itemName.includes('loaded')
     )
   }
 
@@ -169,7 +170,7 @@ export default function Kiosk() {
     }
   }
 
-  const addToCartDirect = (item, customDetails = null) => {
+  const addToCartDirect = (item, customDetails = null, overrideName = null) => {
     const cartItemId = customDetails ? `${item.id}_${Date.now()}` : item.id
     const existing = cart.find(c => c.cartItemId === cartItemId || (!customDetails && c.menuItemId === item.id))
 
@@ -179,7 +180,7 @@ export default function Kiosk() {
       setCart([...cart, {
         cartItemId: cartItemId,
         menuItemId: item.id,
-        menuItemName: item.name,
+        menuItemName: overrideName || item.name,
         unitPrice: item.price,
         quantity: 1,
         image: getItemImage(item),
@@ -197,7 +198,13 @@ export default function Kiosk() {
     const isDualCombo = isDualGyroCombo(customizingItem)
     const isRiceItem = itemName.includes('rice')
     const isSuper5 = itemName.includes('super 5')
-    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSuper5
+    const isLoadedFries = itemName.includes('loaded')
+    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSuper5 && !isLoadedFries
+
+    let formattedName = customizingItem.name
+    if (isLoadedFries) {
+      formattedName = `Loaded Fries (${selectedProtein})`
+    }
 
     const drinkCount = getMealDrinkCount(customizingItem.name)
     const dipCount = getMealDipCount(customizingItem.name)
@@ -230,14 +237,14 @@ export default function Kiosk() {
           sauces: selectedSauces.join(', ') || 'None',
           veggies: selectedVeggies.join(', ') || 'None'
         } : {}),
-        ...((hasGyro || isRiceItem) ? { protein: selectedProtein } : {}),
+        ...((hasGyro || isRiceItem || isLoadedFries) ? { protein: selectedProtein } : {}),
         ...(drinkSummary ? { drink: drinkSummary } : {}),
         ...(dipSummary ? { dips: dipSummary } : {}),
         notes: gyroNotes
       }
     }
 
-    addToCartDirect(customizingItem, customization)
+    addToCartDirect(customizingItem, customization, formattedName)
     setCustomizingItem(null)
   }
 
@@ -1088,7 +1095,7 @@ export default function Kiosk() {
                   const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
                   const isRiceItem = cItemName.includes('rice')
                   const isSuper5 = cItemName.includes('super 5')
-                  const hasProteinChoice = cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein')
+                  const hasProteinChoice = cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cItemName.includes('loaded') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein')
                   const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cCatName.includes('gyro')) && !isRiceItem && !isSuper5
                   const dCount = getMealDrinkCount(customizingItem?.name)
 

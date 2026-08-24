@@ -5,6 +5,83 @@ import Button from '../components/ui/Button'
 import { getSocket, connectToKitchen } from '../lib/socket'
 import { playOrderAlertSound } from '../utils/audioAlert'
 
+const getComboItemsBreakdown = (item) => {
+  if (!item) return []
+  const name = (item.menuItemName || item.name || '').toLowerCase()
+  const c = (typeof item.customization === 'object' && item.customization !== null) ? item.customization : {}
+
+  const protein = item.protein || item.proteinType || c.protein || ''
+  const drink = item.drink || c.drink || ''
+  const dips = item.dips || c.dips || ''
+  const gyro1 = item.gyro1 || c.gyro1 || ''
+  const gyro2 = item.gyro2 || c.gyro2 || ''
+  const bread = item.bread || c.bread || ''
+  const spread = item.spread || c.spread || ''
+  const flavor = item.flavor || c.flavor || ''
+
+  const itemsList = []
+
+  if (name.includes('express meal')) {
+    const gyroDesc = protein ? `${protein} Gyro` : 'Gyro Wrap'
+    const gyroOpts = [flavor, spread ? `${spread} Spread` : '', bread ? `${bread} Pita` : ''].filter(Boolean).join(', ')
+    itemsList.push(`1x ${gyroDesc}${gyroOpts ? ` (${gyroOpts})` : ''}`)
+    itemsList.push(`1x Regular Drink${drink ? ` (${drink})` : ''}`)
+  } else if (name.includes('signature gyro meal') || name.includes('sig gyro meal')) {
+    const gyroDesc = protein ? `${protein} Gyro` : 'Gyro Wrap'
+    const gyroOpts = [flavor, spread ? `${spread} Spread` : '', bread ? `${bread} Pita` : ''].filter(Boolean).join(', ')
+    itemsList.push(`1x ${gyroDesc}${gyroOpts ? ` (${gyroOpts})` : ''}`)
+    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`1x Regular Drink${drink ? ` (${drink})` : ''}`)
+  } else if (name.includes('lebanese rice box') || name.includes('rice box')) {
+    const riceDesc = protein ? `Lebanese Rice Bowl (${protein})` : 'Lebanese Rice Bowl'
+    itemsList.push(`1x ${riceDesc}`)
+    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`1x Regular Drink${drink ? ` (${drink})` : ''}`)
+  } else if (name.includes('classic gyro meal')) {
+    const gyroDesc = protein ? `${protein} Gyro` : 'Gyro Wrap'
+    const gyroOpts = [flavor, spread ? `${spread} Spread` : '', bread ? `${bread} Pita` : ''].filter(Boolean).join(', ')
+    itemsList.push(`1x ${gyroDesc}${gyroOpts ? ` (${gyroOpts})` : ''}`)
+    itemsList.push(`2x Crispy Chicken Wings`)
+    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`1x Regular Drink${drink ? ` (${drink})` : ''}`)
+    itemsList.push(`1x Choice Dip${dips ? ` (${dips})` : ''}`)
+  } else if (name.includes('duo gyro feast')) {
+    itemsList.push(`1x ${gyro1 || 'Gyro 1 (Chicken/Paneer)'}`)
+    itemsList.push(`1x ${gyro2 || 'Gyro 2 (Chicken/Paneer)'}`)
+    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`2x Regular Drinks${drink ? ` (${drink})` : ''}`)
+  } else if (name.includes('double crunch box')) {
+    itemsList.push(`1x ${gyro1 || 'Gyro 1'}`)
+    itemsList.push(`1x ${gyro2 || 'Gyro 2'}`)
+    itemsList.push(`6x Crispy Chicken Wings`)
+    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`2x Regular Drinks${drink ? ` (${drink})` : ''}`)
+  } else if (name.includes('mega feast meal')) {
+    itemsList.push(`1x ${gyro1 || 'Gyro 1'}`)
+    itemsList.push(`1x ${gyro2 || 'Gyro 2'}`)
+    itemsList.push(`2x Crispy Leg & Thighs`)
+    itemsList.push(`2x Crispy Chicken Wings`)
+    itemsList.push(`2x Crispy Chicken Strips`)
+    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`2x Regular Drinks${drink ? ` (${drink})` : ''}`)
+    itemsList.push(`3x Choice Dips${dips ? ` (${dips})` : ''}`)
+  } else if (name.includes('den\'s party meal') || name.includes('party meal')) {
+    itemsList.push(`1x ${gyro1 || 'Gyro 1'}`)
+    itemsList.push(`1x ${gyro2 || 'Gyro 2'}`)
+    itemsList.push(`6x Crispy Chicken Wings`)
+    itemsList.push(`4x Crispy Leg & Thighs`)
+    itemsList.push(`2x French Fries (Salted)`)
+    itemsList.push(`3x Regular Drinks${drink ? ` (${drink})` : ''}`)
+  } else if (name.includes('super 5 bucket') || name.includes('super 5')) {
+    itemsList.push(`5x Crispy Leg & Thighs`)
+    itemsList.push(`10x Crispy Chicken Wings`)
+    itemsList.push(`10x Crispy Chicken Strips`)
+    itemsList.push(`5x Regular Drinks${drink ? ` (${drink})` : ''}`)
+  }
+
+  return itemsList
+}
+
 export default function Kitchen() {
   const [orders, setOrders] = useState([])
   const [filter, setFilter] = useState('all')
@@ -234,13 +311,32 @@ export default function Kitchen() {
                         </div>
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                           <span style={{ fontWeight: 600, fontSize: '16px' }}>{item.menuItemName}</span>
-                          {item.customization && (
-                            <span style={{ fontSize: '12px', color: '#e63946', marginTop: '2px', fontWeight: 500 }}>
-                              {item.customization.protein} • {item.customization.bread} bread • {item.customization.spread} spread
-                              {item.customization.sauces?.length > 0 && ` • Sauces: ${item.customization.sauces.join(', ')}`}
-                              {item.customization.veggies?.length > 0 && ` • Veggies: ${item.customization.veggies.join(', ')}`}
-                            </span>
-                          )}
+                          {(() => {
+                            const c = (typeof item.customization === 'object' && item.customization !== null) ? item.customization : {}
+                            const cbList = getComboItemsBreakdown(item)
+                            return (
+                              <div style={{ fontSize: '12px', color: '#e63946', marginTop: '2px', fontWeight: 600, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                {cbList.length > 0 && (
+                                  <div style={{ background: '#fff1f2', padding: '4px 8px', borderRadius: '6px', border: '1px solid #fecdd3', color: '#be123c' }}>
+                                    <div style={{ fontWeight: 800 }}>🍱 Included Combo Items:</div>
+                                    {cbList.map((cb, idx) => (
+                                      <div key={idx}>• {cb}</div>
+                                    ))}
+                                  </div>
+                                )}
+                                {cbList.length === 0 && (c.protein || item.protein) && <div>• Protein: {c.protein || item.protein}</div>}
+                                {cbList.length === 0 && c.gyro1 && <div>• {c.gyro1}</div>}
+                                {cbList.length === 0 && c.gyro2 && <div>• {c.gyro2}</div>}
+                                {cbList.length === 0 && c.bread && <div>• Bread: {c.bread}</div>}
+                                {cbList.length === 0 && c.spread && <div>• Spread: {c.spread}</div>}
+                                {cbList.length === 0 && c.drink && <div>• Drink: {c.drink}</div>}
+                                {cbList.length === 0 && c.dips && <div>• Dips: {c.dips}</div>}
+                                {c.sauces?.length > 0 && <div>• Sauces: {Array.isArray(c.sauces) ? c.sauces.join(', ') : c.sauces}</div>}
+                                {c.veggies?.length > 0 && <div>• Veggies: {Array.isArray(c.veggies) ? c.veggies.join(', ') : c.veggies}</div>}
+                                {c.notes && <div>• Note: {c.notes}</div>}
+                              </div>
+                            )
+                          })()}
                         </div>
                       </div>
                     ))}
@@ -383,13 +479,32 @@ export default function Kitchen() {
                       </span>
                       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                         <span style={{ fontWeight: 600, fontSize: '14px' }}>{item.menuItemName}</span>
-                        {item.customization && (
-                          <span style={{ fontSize: '12px', color: '#e63946', marginTop: '2px', fontWeight: 500 }}>
-                            {item.customization.protein} • {item.customization.bread} bread • {item.customization.spread} spread
-                            {item.customization.sauces?.length > 0 && ` • Sauces: ${item.customization.sauces.join(', ')}`}
-                            {item.customization.veggies?.length > 0 && ` • Veggies: ${item.customization.veggies.join(', ')}`}
-                          </span>
-                        )}
+                          {(() => {
+                            const c = (typeof item.customization === 'object' && item.customization !== null) ? item.customization : {}
+                            const cbList = getComboItemsBreakdown(item)
+                            return (
+                              <div style={{ fontSize: '12px', color: '#e63946', marginTop: '2px', fontWeight: 600, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                {cbList.length > 0 && (
+                                  <div style={{ background: '#fff1f2', padding: '4px 8px', borderRadius: '6px', border: '1px solid #fecdd3', color: '#be123c' }}>
+                                    <div style={{ fontWeight: 800 }}>🍱 Included Combo Items:</div>
+                                    {cbList.map((cb, idx) => (
+                                      <div key={idx}>• {cb}</div>
+                                    ))}
+                                  </div>
+                                )}
+                                {cbList.length === 0 && (c.protein || item.protein) && <div>• Protein: {c.protein || item.protein}</div>}
+                                {cbList.length === 0 && c.gyro1 && <div>• {c.gyro1}</div>}
+                                {cbList.length === 0 && c.gyro2 && <div>• {c.gyro2}</div>}
+                                {cbList.length === 0 && c.bread && <div>• Bread: {c.bread}</div>}
+                                {cbList.length === 0 && c.spread && <div>• Spread: {c.spread}</div>}
+                                {cbList.length === 0 && c.drink && <div>• Drink: {c.drink}</div>}
+                                {cbList.length === 0 && c.dips && <div>• Dips: {c.dips}</div>}
+                                {c.sauces?.length > 0 && <div>• Sauces: {Array.isArray(c.sauces) ? c.sauces.join(', ') : c.sauces}</div>}
+                                {c.veggies?.length > 0 && <div>• Veggies: {Array.isArray(c.veggies) ? c.veggies.join(', ') : c.veggies}</div>}
+                                {c.notes && <div>• Note: {c.notes}</div>}
+                              </div>
+                            )
+                          })()}
                       </div>
                     </div>
                   ))}

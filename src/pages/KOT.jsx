@@ -4,33 +4,116 @@ import { getSocket, connectToKitchen } from '../lib/socket'
 import PrintService from '../lib/printService'
 
 
+const getComboItemsBreakdown = (item) => {
+  if (!item) return []
+  const name = (item.menuItemName || item.name || '').toLowerCase()
+  const c = (typeof item.customization === 'object' && item.customization !== null) ? item.customization : {}
+
+  const protein = item.protein || item.proteinType || c.protein || ''
+  const drink = item.drink || c.drink || ''
+  const dips = item.dips || c.dips || ''
+  const gyro1 = item.gyro1 || c.gyro1 || ''
+  const gyro2 = item.gyro2 || c.gyro2 || ''
+  const bread = item.bread || c.bread || ''
+  const spread = item.spread || c.spread || ''
+  const flavor = item.flavor || c.flavor || ''
+
+  const itemsList = []
+
+  if (name.includes('express meal')) {
+    const gyroDesc = protein ? `${protein} Gyro` : 'Gyro Wrap'
+    const gyroOpts = [flavor, spread ? `${spread} Spread` : '', bread ? `${bread} Pita` : ''].filter(Boolean).join(', ')
+    itemsList.push(`1x ${gyroDesc}${gyroOpts ? ` (${gyroOpts})` : ''}`)
+    itemsList.push(`1x Regular Drink${drink ? ` (${drink})` : ''}`)
+  } else if (name.includes('signature gyro meal') || name.includes('sig gyro meal')) {
+    const gyroDesc = protein ? `${protein} Gyro` : 'Gyro Wrap'
+    const gyroOpts = [flavor, spread ? `${spread} Spread` : '', bread ? `${bread} Pita` : ''].filter(Boolean).join(', ')
+    itemsList.push(`1x ${gyroDesc}${gyroOpts ? ` (${gyroOpts})` : ''}`)
+    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`1x Regular Drink${drink ? ` (${drink})` : ''}`)
+  } else if (name.includes('lebanese rice box') || name.includes('rice box')) {
+    const riceDesc = protein ? `Lebanese Rice Bowl (${protein})` : 'Lebanese Rice Bowl'
+    itemsList.push(`1x ${riceDesc}`)
+    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`1x Regular Drink${drink ? ` (${drink})` : ''}`)
+  } else if (name.includes('classic gyro meal')) {
+    const gyroDesc = protein ? `${protein} Gyro` : 'Gyro Wrap'
+    const gyroOpts = [flavor, spread ? `${spread} Spread` : '', bread ? `${bread} Pita` : ''].filter(Boolean).join(', ')
+    itemsList.push(`1x ${gyroDesc}${gyroOpts ? ` (${gyroOpts})` : ''}`)
+    itemsList.push(`2x Crispy Chicken Wings`)
+    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`1x Regular Drink${drink ? ` (${drink})` : ''}`)
+    itemsList.push(`1x Choice Dip${dips ? ` (${dips})` : ''}`)
+  } else if (name.includes('duo gyro feast')) {
+    itemsList.push(`1x ${gyro1 || 'Gyro 1 (Chicken/Paneer)'}`)
+    itemsList.push(`1x ${gyro2 || 'Gyro 2 (Chicken/Paneer)'}`)
+    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`2x Regular Drinks${drink ? ` (${drink})` : ''}`)
+  } else if (name.includes('double crunch box')) {
+    itemsList.push(`1x ${gyro1 || 'Gyro 1'}`)
+    itemsList.push(`1x ${gyro2 || 'Gyro 2'}`)
+    itemsList.push(`6x Crispy Chicken Wings`)
+    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`2x Regular Drinks${drink ? ` (${drink})` : ''}`)
+  } else if (name.includes('mega feast meal')) {
+    itemsList.push(`1x ${gyro1 || 'Gyro 1'}`)
+    itemsList.push(`1x ${gyro2 || 'Gyro 2'}`)
+    itemsList.push(`2x Crispy Leg & Thighs`)
+    itemsList.push(`2x Crispy Chicken Wings`)
+    itemsList.push(`2x Crispy Chicken Strips`)
+    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`2x Regular Drinks${drink ? ` (${drink})` : ''}`)
+    itemsList.push(`3x Choice Dips${dips ? ` (${dips})` : ''}`)
+  } else if (name.includes('den\'s party meal') || name.includes('party meal')) {
+    itemsList.push(`1x ${gyro1 || 'Gyro 1'}`)
+    itemsList.push(`1x ${gyro2 || 'Gyro 2'}`)
+    itemsList.push(`6x Crispy Chicken Wings`)
+    itemsList.push(`4x Crispy Leg & Thighs`)
+    itemsList.push(`2x French Fries (Salted)`)
+    itemsList.push(`3x Regular Drinks${drink ? ` (${drink})` : ''}`)
+  } else if (name.includes('super 5 bucket') || name.includes('super 5')) {
+    itemsList.push(`5x Crispy Leg & Thighs`)
+    itemsList.push(`10x Crispy Chicken Wings`)
+    itemsList.push(`10x Crispy Chicken Strips`)
+    itemsList.push(`5x Regular Drinks${drink ? ` (${drink})` : ''}`)
+  }
+
+  return itemsList
+}
+
 const getItemDetailsList = (item) => {
   if (!item) return []
   const details = []
   const c = (typeof item.customization === 'object' && item.customization !== null) ? item.customization : {}
 
+  const comboBreakdown = getComboItemsBreakdown(item)
+  if (comboBreakdown.length > 0) {
+    details.push(`🍱 INCLUDED COMBO ITEMS:`)
+    comboBreakdown.forEach(cb => details.push(`  • ${cb}`))
+  }
+
   const protein = item.protein || item.proteinType || item.variant || item.variantName || item.selectedVariant || c.protein || c.proteinType || c.variant
-  if (protein) details.push(`🍗 Protein: ${protein}`)
+  if (protein && comboBreakdown.length === 0) details.push(`🍗 Protein: ${protein}`)
 
   const bread = item.bread || item.breadType || c.bread || c.breadType
-  if (bread) details.push(`🥖 Bread: ${bread}`)
+  if (bread && comboBreakdown.length === 0) details.push(`🥖 Bread: ${bread}`)
 
   const flavor = item.flavor || c.flavor
-  if (flavor) details.push(`🌶️ Flavor: ${flavor}`)
+  if (flavor && comboBreakdown.length === 0) details.push(`🌶️ Flavor: ${flavor}`)
 
   const spread = item.spread || item.spreadType || c.spread
-  if (spread) details.push(`🥣 Spread: ${spread}`)
+  if (spread && comboBreakdown.length === 0) details.push(`🥣 Spread: ${spread}`)
 
   const gyro1 = item.gyro1 || c.gyro1
-  if (gyro1) details.push(`🥙 Gyro 1: ${gyro1}`)
+  if (gyro1 && comboBreakdown.length === 0) details.push(`🥙 Gyro 1: ${gyro1}`)
   const gyro2 = item.gyro2 || c.gyro2
-  if (gyro2) details.push(`🥙 Gyro 2: ${gyro2}`)
+  if (gyro2 && comboBreakdown.length === 0) details.push(`🥙 Gyro 2: ${gyro2}`)
 
   const drink = item.drink || c.drink
-  if (drink) details.push(`🥤 Drink: ${drink}`)
+  if (drink && comboBreakdown.length === 0) details.push(`🥤 Drink: ${drink}`)
 
   const dips = item.dips || c.dips
-  if (dips) details.push(`🧄 Dips: ${dips}`)
+  if (dips && comboBreakdown.length === 0) details.push(`🧄 Dips: ${dips}`)
 
   const sauces = item.sauces || c.sauces
   if (Array.isArray(sauces) && sauces.length > 0) {
