@@ -8457,14 +8457,18 @@ async function sendWhatsAppOTP(phone, otp, type = 'auth', customMessage = null) 
   console.log(`[WhatsApp OTP] Sending OTP ${otp} to ${formattedPhone} via service: ${targetUrl}`)
 
   try {
-    const resp = await fetch(targetUrl, { method: 'GET' })
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000)
+
+    const resp = await fetch(targetUrl, { method: 'GET', signal: controller.signal })
+    clearTimeout(timeoutId)
     const responseText = await resp.text()
     let responseData = null
-    try { responseData = JSON.parse(responseText) } catch (e) { responseData = { raw: responseText } }
+    try { responseData = JSON.parse(responseText) } catch (e) { responseData = { raw: responseText.slice(0, 200) } }
 
     console.log(`[WhatsApp OTP Response] ${resp.status}:`, responseData)
 
-    const isSuccess = resp.ok || (responseData && (responseData.status === 'success' || responseData.type === 'success' || (responseData.message && responseData.message.toLowerCase().includes('success'))))
+    const isSuccess = resp.ok && responseData && (responseData.status === 'success' || responseData.type === 'success' || (responseData.message && String(responseData.message).toLowerCase().includes('success')))
 
     const logEntry = {
       timestamp: new Date().toISOString(),
@@ -8857,6 +8861,7 @@ app.post('/api/assets', auth, (req, res) => {
  const user = getMobileUser(req.userId)
  if (!user) return res.status(404).json({ message: 'User not found' })
 
+ const cleanPhone = String(phone).replace(/\D/g, '')
  const assets = user.assets || []
  if (assets.length >= 10) return res.status(400).json({ message: 'Maximum 10 assets allowed' })
  if (assets.find(a => a.phone.replace(/[^0-9]/g, '') === cleanPhone)) {
@@ -9747,14 +9752,14 @@ async function verifyMSG91OTP(phone, otp, reqId = null) {
   }
 }
 
-// 1. Send MSG91 OTP for Forgot Password or Asset Verification
+// 1. Send WhatsApp / MSG91 OTP for Forgot Password or Asset Verification
 app.post(['/api/auth/send-otp', '/api/auth/forgot-password', '/api/assets/send-otp'], async (req, res) => {
  try {
- const { phone, purpose = 'verification' } = req.body
+ const { phone, purpose = 'asset-verification' } = req.body
  const cleanPhone = String(phone || '').replace(/\D/g, '')
 
  if (!cleanPhone || cleanPhone.length < 8) {
- return res.status(400).json({ error: 'Valid phone number required for MSG91 OTP' })
+ return res.status(400).json({ error: 'Valid phone number required for WhatsApp OTP' })
  }
 
  const otp = String(Math.floor(1000 + Math.random() * 9000))
@@ -9762,13 +9767,13 @@ app.post(['/api/auth/send-otp', '/api/auth/forgot-password', '/api/assets/send-o
 
  otpStore.set(cleanPhone, { otp, expiresAt, purpose })
 
- const msg91Res = await sendMSG91OTP(cleanPhone, otp)
+ const msg91Res = await sendMSG91OTP(cleanPhone, otp, purpose)
 
  res.json({
  success: true,
- message: `OTP sent successfully to ${cleanPhone} via MSG91`,
+ message: `WhatsApp OTP sent successfully to ${cleanPhone}`,
  phone: cleanPhone,
- method: msg91Res.method,
+ method: msg91Res.method || 'whatsapp',
  otp: msg91Res.method === 'console' ? otp : undefined
  })
  } catch (err) {
@@ -9777,7 +9782,7 @@ app.post(['/api/auth/send-otp', '/api/auth/forgot-password', '/api/assets/send-o
  }
 })
 
-// 2. Verify MSG91 OTP for Forgot Password or Asset Addition
+// 2. Verify WhatsApp / MSG91 OTP for Forgot Password or Asset Addition
 app.post(['/api/auth/verify-otp', '/api/assets/verify-otp', '/api/auth/reset-password'], async (req, res) => {
  try {
  const { phone, otp, newPassword, assetName, masterPhone } = req.body
@@ -9847,8 +9852,28 @@ app.post(['/api/auth/verify-otp', '/api/assets/verify-otp', '/api/auth/reset-pas
  masterUser.referredFriends.push(cleanPhone)
  masterUser.referredFriendsCount = masterUser.referredFriends.length
  }
+
+ if (!masterUser.assets) masterUser.assets = []
+ const existingAsset = masterUser.assets.find(a => String(a.phone || '').replace(/\D/g, '') === cleanPhone)
+ if (!existingAsset) {
+ masterUser.assets.push({
+ id: 'a_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+ name: assetName,
+ phone: cleanPhone,
+ status: 'active',
+ activatedAt: new Date().toISOString(),
+ hasDined: false,
+ pointsDistributed: 0,
+ addedById: masterUser.id,
+ addedByName: masterUser.name
+ })
+ } else {
+ existingAsset.status = 'active'
+ existingAsset.activatedAt = new Date().toISOString()
+ }
+
  saveState()
- return res.json({ success: true, message: 'Asset friend verified via MSG91 OTP and added successfully!', asset: assetUser })
+ return res.json({ success: true, message: `${assetName} verified via WhatsApp OTP and added successfully!`, asset: assetUser })
  }
  }
 
@@ -9886,12 +9911,13 @@ app.post('/api/cashfree/create-order', async (req, res) => {
  const { amount, orderId, customerName, customerPhone, customerEmail } = req.body
  if (!amount || amount <= 0) return res.status(400).json({ error: 'Valid payment amount is required' })
 
- const cfConfig = settings?.cashfree || {}
+ const cfConfig = settings?.paymentGateways?.cashfree || settings?.cashfree || {}
  const appId = cfConfig.appId || process.env.CASHFREE_APP_ID || DEFAULT_CASHFREE_APP_ID
  const secretKey = cfConfig.secretKey || process.env.CASHFREE_SECRET_KEY || DEFAULT_CASHFREE_SECRET_KEY
  const env = (cfConfig.environment || process.env.CASHFREE_ENV || DEFAULT_CASHFREE_ENV).toUpperCase()
 
  const cleanPhone = String(customerPhone || '9876543210').replace(/\D/g, '')
+ const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
  const generatedOrderId = orderId || `order_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
  const baseUrl = env === 'PRODUCTION' ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg'
 
@@ -11021,12 +11047,15 @@ app.post('/api/ccavenue/initiate', (req, res) => {
  ? 'https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction'
  : 'https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction'
 
+ const paymentUrl = `${host}/api/ccavenue/pay?encRequest=${encodeURIComponent(encRequest)}&accessCode=${encodeURIComponent(accessCode)}&isProduction=${isProduction}`
+
  res.json({
  success: true,
  orderId: txnOrderId,
  encRequest,
  accessCode,
  ccavenueUrl,
+ paymentUrl,
  formFields: {
  encRequest,
  access_code: accessCode
@@ -11036,6 +11065,42 @@ app.post('/api/ccavenue/initiate', (req, res) => {
  console.error('CCAvenue Initiate Error:', e)
  res.status(500).json({ error: 'Failed to initiate CCAvenue payment: ' + e.message })
  }
+})
+
+// Auto-submitting HTML form wrapper for CCAvenue POST payment launch
+app.get('/api/ccavenue/pay', (req, res) => {
+ const { encRequest, accessCode, isProduction } = req.query
+ if (!encRequest || !accessCode) {
+ return res.status(400).send('Invalid CCAvenue payment parameters.')
+ }
+ const actionUrl = isProduction === 'true'
+ ? 'https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction'
+ : 'https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction'
+
+ const html = `
+<!DOCTYPE html>
+<html>
+<head>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Redirecting to CCAvenue Payment Gateway...</title>
+ <style>
+ body { font-family: system-ui, -apple-system, sans-serif; background: #0f0f12; color: #fff; text-align: center; padding-top: 80px; }
+ .spinner { border: 4px solid rgba(255,255,255,0.1); width: 44px; height: 44px; border-radius: 50%; border-left-color: #f59e0b; animation: spin 1s linear infinite; margin: 20px auto; }
+ @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+ </style>
+</head>
+<body onload="document.forms['ccavenueForm'].submit()">
+ <div class="spinner"></div>
+ <h2>Redirecting to CCAvenue Secure Payment Gateway...</h2>
+ <p style="color: #9ca3af;">Please do not refresh or close this window.</p>
+ <form name="ccavenueForm" method="POST" action="${actionUrl}">
+ <input type="hidden" name="encRequest" value="${encRequest}" />
+ <input type="hidden" name="access_code" value="${accessCode}" />
+ </form>
+</body>
+</html>
+ `
+ res.send(html)
 })
 
 // Handle CCAvenue Response Callback

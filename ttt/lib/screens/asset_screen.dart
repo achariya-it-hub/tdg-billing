@@ -125,7 +125,7 @@ class _AssetScreenState extends State<AssetScreen> {
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: TDGColors.gold),
         ),
-        title: Text('ADD ASSET (OTP VERIFICATION)', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+        title: Text('ADD ASSET (WHATSAPP OTP VERIFICATION)', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 14)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -155,7 +155,7 @@ class _AssetScreenState extends State<AssetScreen> {
             ),
             SizedBox(height: 8),
             Text(
-              'A 4-digit MSG91 OTP will be sent to verify this phone number.',
+              'A 4-digit WhatsApp OTP verification code will be sent to this phone number.',
               style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
             ),
           ],
@@ -173,7 +173,7 @@ class _AssetScreenState extends State<AssetScreen> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(result['message'] ?? 'MSG91 OTP sent to $phone'),
+                      content: Text(result['message'] ?? 'WhatsApp OTP sent to $phone'),
                       backgroundColor: Colors.blue.shade700,
                     ),
                   );
@@ -187,7 +187,7 @@ class _AssetScreenState extends State<AssetScreen> {
                 }
               }
             },
-            child: Text('Send OTP', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold)),
+            child: Text('Send WhatsApp OTP', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -204,11 +204,11 @@ class _AssetScreenState extends State<AssetScreen> {
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: TDGColors.gold),
         ),
-        title: Text('ENTER MSG91 OTP', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+        title: Text('ENTER WHATSAPP OTP', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 14)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Enter the 4-digit OTP sent to $phone to verify and add $name.', style: TextStyle(color: Colors.white70, fontSize: 12)),
+            Text('Enter the 4-digit WhatsApp OTP sent to $phone to verify and add $name.', style: TextStyle(color: Colors.white70, fontSize: 12)),
             SizedBox(height: 14),
             TextField(
               controller: otpCtrl,
@@ -443,7 +443,7 @@ class _AssetScreenState extends State<AssetScreen> {
               child: RefreshIndicator(
                 onRefresh: _fetchAssets,
                 child: ListView(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 40),
                 children: [
                   // Points Card
                   Container(
@@ -548,7 +548,7 @@ class _AssetScreenState extends State<AssetScreen> {
                   ),
                   SizedBox(height: 20),
 
-                  // Network Threshold & Level Unlock Progress Bar
+                  // Catchy Den Squad Goal & Level Unlock Progress Bar
                   Container(
                     padding: EdgeInsets.all(18),
                     decoration: BoxDecoration(
@@ -562,8 +562,18 @@ class _AssetScreenState extends State<AssetScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Network Threshold (Referrer Asset)', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w700, fontSize: 15)),
-                            Text('${_assets.length}/10 Friends', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w800, fontSize: 15)),
+                            Expanded(
+                              child: Text(
+                                '🔥 DEN SQUAD GOAL',
+                                style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w800, fontSize: 15, letterSpacing: 0.5),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${_assets.length}/10 Friends',
+                              style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w800, fontSize: 15),
+                            ),
                           ],
                         ),
                         SizedBox(height: 10),
@@ -796,9 +806,13 @@ class _AssetScreenState extends State<AssetScreen> {
               ),
             ],
             onSelected: (value) {
-              if (value == 'distribute') _showDistributeDialog(asset['id'], asset['name']);
-              else if (value == 'replace') _showReplaceDialog(asset['id'], asset['name']);
-              else if (value == 'remove') _removeAsset(asset['id'], asset['name']);
+              if (value == 'distribute') {
+                _showDistributeDialog(asset['id'], asset['name']);
+              } else if (value == 'replace') {
+                _showReplaceDialog(asset['id'], asset['name']);
+              } else if (value == 'remove') {
+                _removeAsset(asset['id'], asset['name']);
+              }
             },
           ),
         ],

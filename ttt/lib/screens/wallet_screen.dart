@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
+import '../widgets/tdg_logo.dart';
 import 'asset_screen.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -66,36 +67,6 @@ class _WalletScreenState extends State<WalletScreen> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
-  }
-
-  void _handleRedeem() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: TDGColors.cardMid,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: TDGColors.gold),
-        ),
-        title: Row(
-          children: [
-            Icon(Icons.redeem_rounded, color: TDGColors.gold),
-            const SizedBox(width: 10),
-            Text('REDEEM POINTS', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-          ],
-        ),
-        content: Text(
-          'You can redeem your points as a direct discount during checkout when placing upcoming orders!\n\n1 Point = ₹1 Discount',
-          style: TextStyle(color: Colors.white.withOpacity(0.7), height: 1.5, fontSize: 13),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('OK', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -232,7 +203,7 @@ class _WalletScreenState extends State<WalletScreen> {
                     children: [
                       Row(
                         children: [
-                          Image.asset('assets/images/logo.png', height: 32, errorBuilder: (_, __, ___) => Icon(Icons.restaurant, color: TDGColors.gold, size: 28)),
+                          const TDGLogo(width: 32),
                           SizedBox(width: 10),
                           Text('TENDENS GYROS', style: TextStyle(color: TDGColors.gold, fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
                         ],

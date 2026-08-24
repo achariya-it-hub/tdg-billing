@@ -198,12 +198,14 @@ export default function POS() {
   const [selectedGyro1Protein, setSelectedGyro1Protein] = useState('Chicken')
   const [selectedGyro1Bread, setSelectedGyro1Bread] = useState('Baked')
   const [selectedGyro1Flavor, setSelectedGyro1Flavor] = useState('Spicy')
+  const [selectedGyro1Spread, setSelectedGyro1Spread] = useState('Tzatziki')
   const [selectedGyro1Sauces, setSelectedGyro1Sauces] = useState(['Garlic Mayo'])
   const [selectedGyro1Veggies, setSelectedGyro1Veggies] = useState(['Lettuce', 'Onion'])
 
   const [selectedGyro2Protein, setSelectedGyro2Protein] = useState('Paneer')
   const [selectedGyro2Bread, setSelectedGyro2Bread] = useState('Baked')
   const [selectedGyro2Flavor, setSelectedGyro2Flavor] = useState('Spicy')
+  const [selectedGyro2Spread, setSelectedGyro2Spread] = useState('Tzatziki')
   const [selectedGyro2Sauces, setSelectedGyro2Sauces] = useState(['Spicy Mayo'])
   const [selectedGyro2Veggies, setSelectedGyro2Veggies] = useState(['Lettuce', 'Onion'])
 
@@ -504,12 +506,14 @@ export default function POS() {
       setSelectedGyro1Protein('Chicken')
       setSelectedGyro1Bread('Baked')
       setSelectedGyro1Flavor('Spicy')
+      setSelectedGyro1Spread('Tzatziki')
       setSelectedGyro1Sauces(['Garlic Mayo'])
       setSelectedGyro1Veggies(['Lettuce', 'Onion'])
 
       setSelectedGyro2Protein('Paneer')
       setSelectedGyro2Bread('Baked')
       setSelectedGyro2Flavor('Spicy')
+      setSelectedGyro2Spread('Tzatziki')
       setSelectedGyro2Sauces(['Spicy Mayo'])
       setSelectedGyro2Veggies(['Lettuce', 'Onion'])
 
@@ -559,8 +563,8 @@ export default function POS() {
     let customization
     if (isDualCombo) {
       customization = {
-        gyro1: `Gyro 1: ${selectedGyro1Protein} Gyro (${selectedGyro1Flavor}, ${selectedGyro1Bread} Pita, Sauces: ${selectedGyro1Sauces.join(', ') || 'None'})`,
-        gyro2: `Gyro 2: ${selectedGyro2Protein} Gyro (${selectedGyro2Flavor}, ${selectedGyro2Bread} Pita, Sauces: ${selectedGyro2Sauces.join(', ') || 'None'})`,
+        gyro1: `Gyro 1: ${selectedGyro1Protein} Gyro (${selectedGyro1Flavor}, ${selectedGyro1Spread} Spread, ${selectedGyro1Bread} Pita, Sauces: ${selectedGyro1Sauces.join(', ') || 'None'})`,
+        gyro2: `Gyro 2: ${selectedGyro2Protein} Gyro (${selectedGyro2Flavor}, ${selectedGyro2Spread} Spread, ${selectedGyro2Bread} Pita, Sauces: ${selectedGyro2Sauces.join(', ') || 'None'})`,
         ...(drinkSummary ? { drink: drinkSummary } : {}),
         ...(dipSummary ? { dips: dipSummary } : {}),
         notes: gyroNotes
@@ -1639,9 +1643,25 @@ export default function POS() {
                   </div>
                 </div>
 
+                {/* Gyro 1 Base Spread */}
+                <div style={{ marginBottom: '10px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>3. Base Spread</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                    {['Tzatziki', 'Hummus', 'Cheese', 'Ricotta'].map(s => (
+                      <button key={s} type="button" onClick={() => setSelectedGyro1Spread(s)} style={{
+                        padding: '8px', borderRadius: '8px',
+                        border: selectedGyro1Spread === s ? '2px solid #e63946' : '1px solid #cbd5e1',
+                        background: selectedGyro1Spread === s ? '#e63946' : '#ffffff',
+                        color: selectedGyro1Spread === s ? '#ffffff' : '#334155',
+                        fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'center'
+                      }}>{s}</button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Gyro 1 Bread */}
                 <div style={{ marginBottom: '10px' }}>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>3. Pita Bread</div>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>4. Pita Bread</div>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     {['Baked', 'Fried'].map(b => (
                       <button key={b} type="button" onClick={() => setSelectedGyro1Bread(b)} style={{
@@ -1658,7 +1678,7 @@ export default function POS() {
                 {/* Gyro 1 Sauces (Multiple Choices) */}
                 <div style={{ marginBottom: '10px' }}>
                   <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>4. Sauces (Select Multiple)</span>
+                    <span>5. Sauces (Select Multiple)</span>
                     <span style={{ fontSize: '10px', background: '#ffe4e6', color: '#be123c', padding: '1px 6px', borderRadius: '4px', fontWeight: 700 }}>MULTI</span>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
@@ -1683,7 +1703,7 @@ export default function POS() {
                 {/* Gyro 1 Veggies (Multiple Choices) */}
                 <div>
                   <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>5. Fresh Veggies & Toppings (Select Multiple)</span>
+                    <span>6. Fresh Veggies & Toppings (Select Multiple)</span>
                     <span style={{ fontSize: '10px', background: '#ecfdf5', color: '#047857', padding: '1px 6px', borderRadius: '4px', fontWeight: 700 }}>MULTI</span>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
@@ -1747,9 +1767,25 @@ export default function POS() {
                   </div>
                 </div>
 
+                {/* Gyro 2 Base Spread */}
+                <div style={{ marginBottom: '10px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>3. Base Spread</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                    {['Tzatziki', 'Hummus', 'Cheese', 'Ricotta'].map(s => (
+                      <button key={s} type="button" onClick={() => setSelectedGyro2Spread(s)} style={{
+                        padding: '8px', borderRadius: '8px',
+                        border: selectedGyro2Spread === s ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                        background: selectedGyro2Spread === s ? '#2563eb' : '#ffffff',
+                        color: selectedGyro2Spread === s ? '#ffffff' : '#334155',
+                        fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'center'
+                      }}>{s}</button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Gyro 2 Bread */}
                 <div style={{ marginBottom: '10px' }}>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>3. Pita Bread</div>
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px' }}>4. Pita Bread</div>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     {['Baked', 'Fried'].map(b => (
                       <button key={b} type="button" onClick={() => setSelectedGyro2Bread(b)} style={{
@@ -1766,7 +1802,7 @@ export default function POS() {
                 {/* Gyro 2 Sauces (Multiple Choices) */}
                 <div style={{ marginBottom: '10px' }}>
                   <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>4. Sauces (Select Multiple)</span>
+                    <span>5. Sauces (Select Multiple)</span>
                     <span style={{ fontSize: '10px', background: '#dbeafe', color: '#1e40af', padding: '1px 6px', borderRadius: '4px', fontWeight: 700 }}>MULTI</span>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
@@ -1791,7 +1827,7 @@ export default function POS() {
                 {/* Gyro 2 Veggies (Multiple Choices) */}
                 <div>
                   <div style={{ fontSize: '12px', fontWeight: 700, color: '#475569', marginBottom: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>5. Fresh Veggies & Toppings (Select Multiple)</span>
+                    <span>6. Fresh Veggies & Toppings (Select Multiple)</span>
                     <span style={{ fontSize: '10px', background: '#ecfdf5', color: '#047857', padding: '1px 6px', borderRadius: '4px', fontWeight: 700 }}>MULTI</span>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>

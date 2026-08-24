@@ -70,10 +70,12 @@ export default function Kiosk() {
   const [selectedGyro1Protein, setSelectedGyro1Protein] = useState('Chicken')
   const [selectedGyro1Bread, setSelectedGyro1Bread] = useState('Baked')
   const [selectedGyro1Flavor, setSelectedGyro1Flavor] = useState('Spicy')
+  const [selectedGyro1Spread, setSelectedGyro1Spread] = useState('Tzatziki')
 
   const [selectedGyro2Protein, setSelectedGyro2Protein] = useState('Paneer')
   const [selectedGyro2Bread, setSelectedGyro2Bread] = useState('Baked')
   const [selectedGyro2Flavor, setSelectedGyro2Flavor] = useState('Spicy')
+  const [selectedGyro2Spread, setSelectedGyro2Spread] = useState('Tzatziki')
 
   const [selectedDrink1, setSelectedDrink1] = useState('Coca-Cola')
   const [selectedDrink2, setSelectedDrink2] = useState('Sprite')
@@ -154,10 +156,12 @@ export default function Kiosk() {
       setSelectedGyro1Protein('Chicken')
       setSelectedGyro1Bread('Baked')
       setSelectedGyro1Flavor('Spicy')
+      setSelectedGyro1Spread('Tzatziki')
 
       setSelectedGyro2Protein('Paneer')
       setSelectedGyro2Bread('Baked')
       setSelectedGyro2Flavor('Spicy')
+      setSelectedGyro2Spread('Tzatziki')
 
       setGyroNotes('')
     } else {
@@ -210,8 +214,8 @@ export default function Kiosk() {
     let customization
     if (isDualCombo) {
       customization = {
-        gyro1: `Gyro 1: ${selectedGyro1Protein} (${selectedGyro1Flavor}, ${selectedGyro1Bread} Pita)`,
-        gyro2: `Gyro 2: ${selectedGyro2Protein} (${selectedGyro2Flavor}, ${selectedGyro2Bread} Pita)`,
+        gyro1: `Gyro 1: ${selectedGyro1Protein} (${selectedGyro1Flavor}, ${selectedGyro1Spread} Spread, ${selectedGyro1Bread} Pita)`,
+        gyro2: `Gyro 2: ${selectedGyro2Protein} (${selectedGyro2Flavor}, ${selectedGyro2Spread} Spread, ${selectedGyro2Bread} Pita)`,
         ...(drinkSummary ? { drink: drinkSummary } : {}),
         ...(dipSummary ? { dips: dipSummary } : {}),
         notes: gyroNotes
@@ -931,7 +935,7 @@ export default function Kiosk() {
                     </div>
                   </div>
 
-                  <div>
+                  <div style={{ marginBottom: '8px' }}>
                     <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Flavor / Style</label>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
                       {['Spicy', 'Creamy', 'BBQ', 'Signature'].map(f => (
@@ -941,6 +945,20 @@ export default function Kiosk() {
                           background: selectedGyro1Flavor === f ? '#e63946' : '#ffffff',
                           color: selectedGyro1Flavor === f ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
                         }}>{f}</button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ marginBottom: '8px' }}>
+                    <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Base Spread</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                      {['Tzatziki', 'Hummus', 'Cheese', 'Ricotta'].map(s => (
+                        <button key={s} onClick={() => setSelectedGyro1Spread(s)} style={{
+                          padding: '6px', borderRadius: '8px',
+                          border: selectedGyro1Spread === s ? '2px solid #e63946' : '1px solid #cbd5e1',
+                          background: selectedGyro1Spread === s ? '#e63946' : '#ffffff',
+                          color: selectedGyro1Spread === s ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
+                        }}>{s}</button>
                       ))}
                     </div>
                   </div>
@@ -963,7 +981,7 @@ export default function Kiosk() {
                     </div>
                   </div>
 
-                  <div>
+                  <div style={{ marginBottom: '8px' }}>
                     <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Flavor / Style</label>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
                       {['Spicy', 'Creamy', 'BBQ', 'Signature'].map(f => (
@@ -973,6 +991,20 @@ export default function Kiosk() {
                           background: selectedGyro2Flavor === f ? '#2563eb' : '#ffffff',
                           color: selectedGyro2Flavor === f ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
                         }}>{f}</button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Base Spread</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                      {['Tzatziki', 'Hummus', 'Cheese', 'Ricotta'].map(s => (
+                        <button key={s} onClick={() => setSelectedGyro2Spread(s)} style={{
+                          padding: '6px', borderRadius: '8px',
+                          border: selectedGyro2Spread === s ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                          background: selectedGyro2Spread === s ? '#2563eb' : '#ffffff',
+                          color: selectedGyro2Spread === s ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
+                        }}>{s}</button>
                       ))}
                     </div>
                   </div>

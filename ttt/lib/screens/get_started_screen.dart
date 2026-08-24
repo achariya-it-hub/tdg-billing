@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
+import '../widgets/tdg_logo.dart';
 import 'main_nav_screen.dart';
 import 'login_screen.dart';
 
@@ -52,39 +53,24 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
             ),
           ),
 
-          // Rounded Rectangle Top Brand Logo
+          // Top Brand Logo (Fixed 1:1 Aspect Ratio)
           Positioned(
             top: 50,
             left: 0,
             right: 0,
             child: Center(
               child: Container(
-                width: 125,
-                height: 125,
                 decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.circular(22),
-                  border: Border.all(color: TDGColors.gold.withOpacity(0.35), width: 2.5),
                   boxShadow: [
                     BoxShadow(
-                      color: TDGColors.gold.withOpacity(0.08),
-                      blurRadius: 15,
+                      color: TDGColors.gold.withOpacity(0.15),
+                      blurRadius: 20,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(19),
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) => Icon(
-                      Icons.restaurant_menu_rounded,
-                      size: 50,
-                      color: TDGColors.gold,
-                    ),
-                  ),
-                ),
+                child: const TDGLogo(width: 110),
               ),
             ),
           ),
@@ -99,7 +85,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
             itemBuilder: (context, index) {
               final slide = _onboardingData[index];
               return Padding(
-                padding: const EdgeInsets.fromLTRB(24, 180, 24, 60),
+                padding: EdgeInsets.fromLTRB(24, 160, 24, MediaQuery.of(context).padding.bottom + 120),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -157,9 +143,9 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
             },
           ),
 
-          // Bottom Action Panel
+          // Bottom Action Panel with safe area bottom padding
           Positioned(
-            bottom: 40,
+            bottom: MediaQuery.of(context).padding.bottom + 20,
             left: 24,
             right: 24,
             child: Column(
@@ -179,16 +165,20 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                     );
                   }),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     final api = ApiService();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => api.isAuthenticated ? MainNavScreen(key: MainNavScreen.navKey) : const LoginScreen(),
-                      ),
-                    );
+                    if (_currentIndex < _onboardingData.length - 1) {
+                      setState(() => _currentIndex++);
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => api.isAuthenticated ? MainNavScreen(key: MainNavScreen.navKey) : const LoginScreen(),
+                        ),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: TDGColors.gold,

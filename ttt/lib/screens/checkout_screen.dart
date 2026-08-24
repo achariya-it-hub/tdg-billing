@@ -84,17 +84,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
           if (cfResponse['success'] == true) {
             final String sessionId = cfResponse['paymentSessionId'] ?? '';
+            final String env = (cfResponse['environment'] ?? 'PRODUCTION').toString().toUpperCase();
             if (sessionId.isNotEmpty) {
-              final checkoutUrl = Uri.parse(
-                'https://payments.cashfree.com/order/#$sessionId',
-              );
-              if (await canLaunchUrl(checkoutUrl)) {
-                await launchUrl(checkoutUrl, mode: LaunchMode.externalApplication);
-                gatewayLaunched = true;
-              }
+              final String cashfreeBaseUrl = env == 'PRODUCTION'
+                  ? 'https://payments.cashfree.com/order/#'
+                  : 'https://sandbox.cashfree.com/pg/orders/';
+              final checkoutUrl = Uri.parse('$cashfreeBaseUrl$sessionId');
+              await launchUrl(checkoutUrl, mode: LaunchMode.externalApplication);
+              gatewayLaunched = true;
             }
           } else {
-            throw Exception(cfResponse['message'] ?? 'Failed to initiate Cashfree payment gateway');
+            throw Exception(cfResponse['message'] ?? cfResponse['error'] ?? 'Failed to initiate Cashfree payment gateway');
           }
         } else if (_selectedPayment == 'ccavenue') {
           final ccResponse = await ApiService().initiateCCavenuePayment(
@@ -105,29 +105,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           );
 
           if (ccResponse['success'] == true) {
+            final String payUrl = ccResponse['paymentUrl'] ?? '';
             final String ccUrl = ccResponse['ccavenueUrl'] ?? '';
             final String encRequest = ccResponse['encRequest'] ?? '';
             final String accessCode = ccResponse['accessCode'] ?? '';
 
-            if (ccUrl.isNotEmpty) {
-              final baseUri = Uri.parse(ccUrl);
-              final fullUri = Uri(
-                scheme: baseUri.scheme,
-                host: baseUri.host,
-                path: baseUri.path,
-                queryParameters: {
-                  'command': 'initiateTransaction',
-                  'encRequest': encRequest,
-                  'access_code': accessCode,
-                },
-              );
-              if (await canLaunchUrl(fullUri)) {
-                await launchUrl(fullUri, mode: LaunchMode.externalApplication);
-                gatewayLaunched = true;
-              }
+            Uri targetUri;
+            if (payUrl.isNotEmpty) {
+              targetUri = Uri.parse(payUrl);
+            } else if (ccUrl.isNotEmpty) {
+              targetUri = Uri.parse('$ccUrl&encRequest=${Uri.encodeComponent(encRequest)}&access_code=${Uri.encodeComponent(accessCode)}');
+            } else {
+              throw Exception('Invalid CCAvenue response');
             }
+
+            await launchUrl(targetUri, mode: LaunchMode.externalApplication);
+            gatewayLaunched = true;
           } else {
-            throw Exception(ccResponse['message'] ?? 'Failed to initiate CCAvenue payment gateway');
+            throw Exception(ccResponse['message'] ?? ccResponse['error'] ?? 'Failed to initiate CCAvenue payment gateway');
           }
         }
 

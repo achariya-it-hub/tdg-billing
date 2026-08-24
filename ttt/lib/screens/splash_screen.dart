@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/colors.dart';
 import 'get_started_screen.dart';
+import '../widgets/tdg_logo.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -72,32 +73,17 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             children: [
               // Logo image container with gold glow border decoration
               Container(
-                width: 140,
-                height: 140,
                 decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: TDGColors.gold.withOpacity(0.3), width: 3),
                   boxShadow: [
                     BoxShadow(
-                      color: TDGColors.gold.withOpacity(0.12),
+                      color: TDGColors.gold.withOpacity(0.18),
                       blurRadius: 30,
                       spreadRadius: 2,
                     ),
                   ],
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(22),
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) => Icon(
-                      Icons.restaurant_menu_rounded,
-                      size: 60,
-                      color: TDGColors.gold,
-                    ),
-                  ),
-                ),
+                child: const TDGLogo(width: 130),
               ),
               const SizedBox(height: 24),
               ShaderMask(

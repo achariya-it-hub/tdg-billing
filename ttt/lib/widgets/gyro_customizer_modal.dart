@@ -62,10 +62,12 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
   String _gyro1Protein = 'Non-Veg Chicken';
   String _gyro1Flavor = 'Spicy';
   String _gyro1Bread = 'Baked Pita';
+  String _gyro1Spread = 'Tzatziki';
 
   String _gyro2Protein = 'Veg Paneer';
   String _gyro2Flavor = 'Spicy';
   String _gyro2Bread = 'Baked Pita';
+  String _gyro2Spread = 'Tzatziki';
 
   // Drink Selections
   final List<String> _selectedDrinks = [
@@ -88,6 +90,7 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
   final List<String> _proteins = ['Non-Veg Chicken', 'Veg Paneer'];
   final List<String> _flavors = ['Spicy', 'Creamy', 'BBQ', 'Signature'];
   final List<String> _breads = ['Baked Pita', 'Fried Pita'];
+  final List<String> _spreads = ['Tzatziki', 'Hummus', 'Cheese', 'Ricotta'];
   final List<String> _availableDrinks = [
     'Coca-Cola',
     'Sprite',
@@ -221,8 +224,8 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
     final Map<String, dynamic> customDetails = {};
 
     if (_isDualCombo) {
-      customDetails['gyro1'] = 'Gyro 1: $_gyro1Protein ($_gyro1Flavor, $_gyro1Bread)';
-      customDetails['gyro2'] = 'Gyro 2: $_gyro2Protein ($_gyro2Flavor, $_gyro2Bread)';
+      customDetails['gyro1'] = 'Gyro 1: $_gyro1Protein ($_gyro1Flavor, $_gyro1Spread Spread, $_gyro1Bread)';
+      customDetails['gyro2'] = 'Gyro 2: $_gyro2Protein ($_gyro2Flavor, $_gyro2Spread Spread, $_gyro2Bread)';
     } else if (!_isRiceSalad) {
       customDetails['protein'] = _selectedProtein;
       customDetails['flavor'] = _selectedFlavor;
@@ -359,6 +362,31 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
                   );
                 }).toList(),
               ),
+              const SizedBox(height: 8),
+              Text('Base Spread:', style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w700, color: const Color(0xFF475569))),
+              const SizedBox(height: 4),
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 4,
+                crossAxisSpacing: 4,
+                childAspectRatio: 2.2,
+                children: _spreads.map((s) {
+                  final isSel = _gyro1Spread == s;
+                  return GestureDetector(
+                    onTap: () => setState(() => _gyro1Spread = s),
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: isSel ? const Color(0xFFEF4444) : Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: isSel ? const Color(0xFFEF4444) : const Color(0xFFCBD5E1)),
+                      ),
+                      child: Text(s, style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w800, color: isSel ? Colors.white : const Color(0xFF334155))),
+                    ),
+                  );
+                }).toList(),
+              ),
             ],
           ),
         ),
@@ -421,6 +449,31 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
                         border: Border.all(color: isSel ? const Color(0xFF2563EB) : const Color(0xFFCBD5E1)),
                       ),
                       child: Text(f, style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w800, color: isSel ? Colors.white : const Color(0xFF334155))),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 8),
+              Text('Base Spread:', style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w700, color: const Color(0xFF475569))),
+              const SizedBox(height: 4),
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 4,
+                crossAxisSpacing: 4,
+                childAspectRatio: 2.2,
+                children: _spreads.map((s) {
+                  final isSel = _gyro2Spread == s;
+                  return GestureDetector(
+                    onTap: () => setState(() => _gyro2Spread = s),
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: isSel ? const Color(0xFF2563EB) : Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: isSel ? const Color(0xFF2563EB) : const Color(0xFFCBD5E1)),
+                      ),
+                      child: Text(s, style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w800, color: isSel ? Colors.white : const Color(0xFF334155))),
                     ),
                   );
                 }).toList(),

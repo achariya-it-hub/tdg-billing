@@ -460,6 +460,181 @@ export default function Billing() {
     setResettleBill(null)
   }
 
+  const fetchAvailableMenuItems = async () => {
+    try {
+      const res = await fetch(`${getApiUrl()}/api/menu/items`)
+      if (res.ok) {
+        const data = await res.json()
+        setAvailableMenuItems(Array.isArray(data) ? data : [])
+      }
+    } catch (e) {
+      console.error('Failed to fetch menu items:', e)
+    }
+  }
+
+  const handleOpenModify = (bill) => {
+    if (!availableMenuItems || availableMenuItems.length === 0) {
+      fetchAvailableMenuItems()
+    }
+    setModifyBillOrder(bill)
+    const initialItems = (bill.items || []).map(item => ({
+      menuItemId: item.menuItemId || item.id || '',
+      name: item.menuItemName || item.name || 'Item',
+      quantity: Number(item.quantity || item.qty || 1),
+      unitPrice: Number(item.unitPrice || item.price || 0),
+      totalPrice: Number(item.totalPrice !== undefined ? item.totalPrice : (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)),
+      customization: item.customization || null,
+      notes: item.notes || ''
+    }))
+    setModifyItems(initialItems)
+    setModifyDiscount(bill.discount !== undefined ? String(bill.discount) : (bill.discountGiven !== undefined ? String(bill.discountGiven) : '0'))
+    setModifyDiscountName(bill.discountName || '')
+    setModifyPaymentMethod((bill.paymentMethod || 'cash').toLowerCase())
+    if (bill.splitPayments) {
+      setModifySplitCash(bill.splitPayments.cash || '')
+      setModifySplitUpi(bill.splitPayments.upi || '')
+      setModifySplitCard(bill.splitPayments.card || '')
+    } else {
+      setModifySplitCash('')
+      setModifySplitUpi('')
+      setModifySplitCard('')
+    }
+    setModifyTableNumber(bill.tableNumber || '')
+    setModifyType(bill.type || 'dine-in')
+    setModifyCustomerName(bill.customerName || '')
+    setModifyCustomerPhone(bill.customerPhone || '')
+    setModifyReasonPreset('Item quantity / items changed')
+    setModifyReasonCustom('')
+    setModifyPin('')
+    setModifyError('')
+  }
+
+  const handleAddItemToModify = (menuItem) => {
+    if (!menuItem) return
+    const price = Number(menuItem.price || menuItem.halfPrice || 0)
+    setModifyItems(prev => {
+      const idx = prev.findIndex(i => String(i.menuItemId || i.name).toLowerCase() === String(menuItem.id || menuItem.name).toLowerCase())
+      if (idx >= 0) {
+        const updated = [...prev]
+        const newQty = updated[idx].quantity + 1
+        updated[idx] = {
+          ...updated[idx],
+          quantity: newQty,
+          totalPrice: newQty * updated[idx].unitPrice
+        }
+        return updated
+      } else {
+        return [
+          ...prev,
+          {
+            menuItemId: menuItem.id,
+            name: menuItem.name,
+            quantity: 1,
+            unitPrice: price,
+            totalPrice: price,
+            customization: null,
+            notes: ''
+          }
+        ]
+      }
+    })
+    setShowAddItemDropdown(false)
+    setItemSearchQuery('')
+  }
+
+  const handleModifyQuantity = (index, delta) => {
+    setModifyItems(prev => {
+      if (index < 0 || index >= prev.length) return prev
+      const updated = [...prev]
+      const newQty = updated[index].quantity + delta
+      if (newQty <= 0) {
+        return updated.filter((_, i) => i !== index)
+      }
+      updated[index] = {
+        ...updated[index],
+        quantity: newQty,
+        totalPrice: newQty * updated[index].unitPrice
+      }
+      return updated
+    })
+  }
+
+  const handleModifyUnitPrice = (index, val) => {
+    const unitPrice = Math.max(0, Number(val) || 0)
+    setModifyItems(prev => {
+      if (index < 0 || index >= prev.length) return prev
+      const updated = [...prev]
+      updated[index] = {
+        ...updated[index],
+        unitPrice,
+        totalPrice: updated[index].quantity * unitPrice
+      }
+      return updated
+    })
+  }
+
+  const handleRemoveItemFromModify = (index) => {
+    setModifyItems(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const calculateModifyRawSubtotal = () => {
+    return modifyItems.reduce((sum, item) => sum + (Number(item.totalPrice) || (Number(item.unitPrice || 0) * Number(item.quantity || 1))), 0)
+  }
+
+  const handleConfirmModifyBill = async () => {
+    if (!modifyBillOrder) return
+    if (!modifyPin || modifyPin.length < 4) {
+      setModifyError('Please enter a 4-digit Manager / Admin PIN')
+      return
+    }
+    setModifyProcessing(true)
+    setModifyError('')
+
+    let splitData = undefined
+    if (modifyPaymentMethod === 'split') {
+      const c = Number(modifySplitCash) || 0
+      const u = Number(modifySplitUpi) || 0
+      const cd = Number(modifySplitCard) || 0
+      splitData = { cash: c, upi: u, card: cd }
+    }
+
+    const finalReason = (modifyReasonPreset + (modifyReasonCustom ? ` - ${modifyReasonCustom}` : '')).trim()
+    const billId = modifyBillOrder.id || modifyBillOrder.orderNumber
+
+    try {
+      const res = await fetch(`${getApiUrl()}/api/pos/orders/${billId}/modify`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          adminPin: modifyPin,
+          items: modifyItems,
+          discount: Number(modifyDiscount) || 0,
+          discountName: modifyDiscountName,
+          paymentMethod: modifyPaymentMethod,
+          splitPayments: splitData,
+          tableNumber: modifyTableNumber,
+          type: modifyType,
+          customerName: modifyCustomerName,
+          customerPhone: modifyCustomerPhone,
+          modificationReason: finalReason
+        })
+      })
+
+      const data = await res.json()
+      if (res.ok && data.success) {
+        alert(`Bill #${modifyBillOrder.orderNumber || modifyBillOrder.id} modified successfully!`)
+        setModifyBillOrder(null)
+        fetchOrders()
+      } else {
+        setModifyError(data.error || 'Failed to modify bill')
+      }
+    } catch (err) {
+      console.error('Modify bill error:', err)
+      setModifyError('Network error while modifying bill: ' + err.message)
+    }
+    setModifyProcessing(false)
+  }
+
   const exportBillsSummary = async () => {
     if (!visiblePaidBills || visiblePaidBills.length === 0) {
       alert('No bill records found for the selected filter.')
