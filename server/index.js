@@ -9490,19 +9490,6 @@ app.get('/api/customers/check-discount', (req, res) => {
 
   if (user) {
     const custName = resolveName(user, phone)
-    if (user.offerRedeemed) {
-      return res.json({
-        found: true,
-        hasDiscount: false,
-        discountPct: 0,
-        offerRedeemed: true,
-        customerName: custName,
-        phone: user.phone || user.customerPhone || user.mobile || phone,
-        tier: user.tier || 'Offer Redeemed',
-        discountReason: '⚠️ Offer Already Redeemed for this phone number'
-      })
-    }
-
     const userOrders = (orders || []).filter(o => o && isValidSalesOrder(o) && (String(o.customerPhone || '').replace(/\D/g, '').endsWith(cleanLast10)))
     const visitCount = user.visitCount !== undefined ? Number(user.visitCount) : userOrders.length
     const totalSpend = userOrders.reduce((sum, o) => sum + Number(o.total || 0), 0)
@@ -9512,8 +9499,20 @@ app.get('/api/customers/check-discount', (req, res) => {
       saveState()
     }
 
-    let discountPct = Number(user.discountPct) || (user.isVip50 || (user.tier && String(user.tier).includes('50%')) ? 50 : 0)
-    let discountReason = user.tier || 'VIP 50% OFF'
+    let discountPct = Number(user.discountPct) || 0
+    if (!discountPct) {
+      if (user.isVip50 || (user.tier && String(user.tier).includes('50%'))) {
+        discountPct = 50
+      } else if (user.tier) {
+        const match = String(user.tier).match(/(\d+)%/)
+        if (match && match[1]) discountPct = Number(match[1])
+      }
+    }
+    if (!discountPct && (user.offerName || user.offerType || user.isVip)) {
+      discountPct = 50
+    }
+
+    let discountReason = user.discountReason || user.tier || user.offerName || (discountPct > 0 ? `${discountPct}% OFF Special Offer` : 'Standard Price')
 
     if (user.isStaff || (user.tier && String(user.tier).toLowerCase().includes('staff'))) {
       discountPct = 50
@@ -9536,13 +9535,13 @@ app.get('/api/customers/check-discount', (req, res) => {
       discountReason,
       customerName: custName,
       phone: user.phone || user.customerPhone || user.mobile || phone,
-      tier: user.tier || 'VIP',
+      tier: user.tier || (discountPct > 0 ? `${discountPct}% OFF` : 'VIP'),
       visitCount,
       totalSpend,
       walletBalance: Number(user.walletBalance || user.rubyPoints || 0),
       referredFriendsCount: referredCount,
       isQualifiedAsset,
-      offerRedeemed: false
+      offerRedeemed: Boolean(user.offerRedeemed)
     })
   }
 

@@ -1423,7 +1423,9 @@ export default function POS() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600 }}>
                   {currentOrder.customerPhone && <span style={{ color: '#2563eb' }}>📱 {currentOrder.customerPhone}</span>}
                   {currentOrder.customerDiscountPct > 0 ? (
-                    <span style={{ color: currentOrder.customerDiscountPct >= 50 ? '#7c3aed' : '#dc2626', fontWeight: 800 }}>👑 {currentOrder.customerDiscountPct}% OFF</span>
+                    <span style={{ color: currentOrder.customerDiscountPct >= 50 ? '#7c3aed' : '#dc2626', fontWeight: 800 }}>
+                      👑 {currentOrder.customerDiscountPct}% OFF {currentOrder.customerDiscountReason ? `(${currentOrder.customerDiscountReason})` : ''}
+                    </span>
                   ) : (
                     <span style={{ color: '#64748b' }}>Standard Price</span>
                   )}

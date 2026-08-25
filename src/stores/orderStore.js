@@ -154,13 +154,15 @@ export const useOrderStore = create(
 
       const existingName = state.currentOrder.customerName
       const finalName = !isGeneric(fetchedName) ? fetchedName : (!isGeneric(existingName) ? existingName : 'Customer')
+      const disc = customer ? Math.min(90, Math.round(Number(customer.discountPct) || 0)) : 0
 
       return {
         currentOrder: {
           ...state.currentOrder,
           customerName: finalName,
           customerPhone: (customer && customer.phone) || state.currentOrder.customerPhone,
-          customerDiscountPct: customer ? Math.min(90, Math.round(Number(customer.discountPct) || 0)) : 0
+          customerDiscountPct: disc,
+          customerDiscountReason: customer ? (customer.discountReason || customer.tier || '') : ''
         }
       }
     })
@@ -191,7 +193,7 @@ export const useOrderStore = create(
           get().setCustomer({
             customerName: data.customerName || '',
             phone: data.phone || clean,
-            discountPct: data.offerRedeemed ? 0 : (data.discountPct || 0),
+            discountPct: Number(data.discountPct) || 0,
             tier: data.tier,
             discountReason: data.discountReason,
             discountName: data.discountReason
