@@ -179,6 +179,7 @@ export default function POS() {
   const [selectedBread, setSelectedBread] = useState('Baked')
   const [selectedProtein, setSelectedProtein] = useState('Chicken')
   const [selectedSeasoning, setSelectedSeasoning] = useState('Salted')
+  const [selectedIceTeaFlavor, setSelectedIceTeaFlavor] = useState('Peach')
   const [selectedDrink, setSelectedDrink] = useState('Coca-Cola')
   const [selectedSpread, setSelectedSpread] = useState('Tzatziki')
   const [selectedSauces, setSelectedSauces] = useState(['Garlic Mayo'])
@@ -451,7 +452,8 @@ export default function POS() {
       itemName.includes('meal') || itemName.includes('box') ||
       itemName.includes('feast') || itemName.includes('bucket') ||
       itemName.includes('rice') || itemName.includes('salad') ||
-      catName.includes('fries') || itemName.includes('fries')
+      catName.includes('fries') || itemName.includes('fries') ||
+      itemName.includes('ice tea') || itemName.includes('iced tea')
     )
   }
 
@@ -488,6 +490,12 @@ export default function POS() {
       setSelectedBread('Baked')
       setSelectedProtein('Chicken')
       setSelectedSeasoning('Salted')
+      const itemNameLower = (item.name || '').toLowerCase()
+      if (itemNameLower.includes('lime')) {
+        setSelectedIceTeaFlavor('Lime')
+      } else {
+        setSelectedIceTeaFlavor('Peach')
+      }
       setSelectedDrink('Coca-Cola')
       setSelectedDrink1('Coca-Cola')
       setSelectedDrink2('Sprite')
@@ -539,13 +547,17 @@ export default function POS() {
     const isSuper5 = itemName.includes('super 5')
     const isPlainFries = itemName.includes('fries') && !itemName.includes('loaded')
     const isLoadedFries = itemName.includes('loaded')
-    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSuper5 && !isPlainFries && !isLoadedFries
+    const isIceTea = itemName.includes('ice tea') || itemName.includes('iced tea')
+    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSuper5 && !isPlainFries && !isLoadedFries && !isIceTea
 
     let formattedName = customizingItem.name
     if (isPlainFries) {
       formattedName = `Fries (${selectedSeasoning})`
     } else if (isLoadedFries) {
       formattedName = `Loaded Fries (${selectedProtein})`
+    } else if (isIceTea) {
+      const size = itemName.includes('large') ? 'Large' : 'Regular'
+      formattedName = `${selectedIceTeaFlavor} Ice Tea (${size})`
     }
 
     const drinkCount = getMealDrinkCount(customizingItem.name)
@@ -567,6 +579,11 @@ export default function POS() {
         gyro2: `Gyro 2: ${selectedGyro2Protein} Gyro (${selectedGyro2Flavor}, ${selectedGyro2Spread} Spread, ${selectedGyro2Bread} Pita, Sauces: ${selectedGyro2Sauces.join(', ') || 'None'})`,
         ...(drinkSummary ? { drink: drinkSummary } : {}),
         ...(dipSummary ? { dips: dipSummary } : {}),
+        notes: gyroNotes
+      }
+    } else if (isIceTea) {
+      customization = {
+        flavor: selectedIceTeaFlavor,
         notes: gyroNotes
       }
     } else {
@@ -2029,6 +2046,33 @@ export default function POS() {
                           fontWeight: 700, fontSize: '13px', cursor: 'pointer', transition: 'all 0.15s'
                         }}>
                           {selectedSeasoning === s ? '✓ ' : ''}{s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })()}
+
+              {/* Ice Tea Flavor Choice Section */}
+              {(() => {
+                const cItemName = (customizingItem?.name || '').toLowerCase()
+                const isIceTea = cItemName.includes('ice tea') || cItemName.includes('iced tea')
+                if (!isIceTea) return null
+                return (
+                  <div>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      🍹 Choose Ice Tea Flavor
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      {['Peach', 'Lime'].map(f => (
+                        <button key={f} type="button" onClick={() => setSelectedIceTeaFlavor(f)} style={{
+                          flex: 1, padding: '12px 14px', borderRadius: '10px',
+                          border: selectedIceTeaFlavor === f ? '2px solid #e63946' : '1px solid #e5e7eb',
+                          background: selectedIceTeaFlavor === f ? '#fff5f5' : '#f9fafb',
+                          color: selectedIceTeaFlavor === f ? '#e63946' : '#374151',
+                          fontWeight: 700, fontSize: '14px', cursor: 'pointer', transition: 'all 0.15s'
+                        }}>
+                          {f === 'Peach' ? '🍑 Peach Ice Tea' : '🍋 Lime Ice Tea'}
                         </button>
                       ))}
                     </div>

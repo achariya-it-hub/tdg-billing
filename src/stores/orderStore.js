@@ -145,9 +145,15 @@ export const useOrderStore = create(
 
   setCustomer: (customer) => {
     set(state => {
-      const fetchedName = customer ? (customer.customerName || customer.name || customer.fullName || '') : ''
-      const isValidFetchedName = fetchedName && fetchedName !== 'Customer' && fetchedName !== 'VIP Customer' && fetchedName !== 'Mobile App User' && fetchedName !== 'Den Member'
-      const finalName = isValidFetchedName ? fetchedName : (state.currentOrder.customerName || fetchedName || 'Customer')
+      const fetchedName = customer ? (customer.customerName || customer.name || customer.fullName || customer.userName || customer.guestName || customer.contactName || '') : ''
+      const isGeneric = (str) => {
+        if (!str) return true
+        const s = String(str).trim().toLowerCase()
+        return !s || ['customer', 'vip customer', 'vip 50% customer', 'mobile app user', 'den member', 'new customer', 'guest', 'user'].includes(s)
+      }
+
+      const existingName = state.currentOrder.customerName
+      const finalName = !isGeneric(fetchedName) ? fetchedName : (!isGeneric(existingName) ? existingName : 'Customer')
 
       return {
         currentOrder: {
@@ -162,13 +168,20 @@ export const useOrderStore = create(
 
   setCustomerPhone: async (customerPhone) => {
     const clean = String(customerPhone || '').replace(/\D/g, '')
-    set(state => ({
-      currentOrder: {
-        ...state.currentOrder,
-        customerPhone: clean || customerPhone,
-        customerName: state.currentOrder.customerName || 'Customer'
+    set(state => {
+      const isGeneric = (str) => {
+        if (!str) return true
+        const s = String(str).trim().toLowerCase()
+        return !s || ['customer', 'vip customer', 'vip 50% customer', 'mobile app user', 'den member', 'new customer', 'guest', 'user'].includes(s)
       }
-    }))
+      return {
+        currentOrder: {
+          ...state.currentOrder,
+          customerPhone: clean || customerPhone,
+          customerName: !isGeneric(state.currentOrder.customerName) ? state.currentOrder.customerName : 'Customer'
+        }
+      }
+    })
     if (clean.length >= 8) {
       try {
         const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
@@ -176,7 +189,7 @@ export const useOrderStore = create(
         if (res.ok) {
           const data = await res.json()
           get().setCustomer({
-            customerName: data.customerName || 'Customer',
+            customerName: data.customerName || '',
             phone: data.phone || clean,
             discountPct: data.offerRedeemed ? 0 : (data.discountPct || 0),
             tier: data.tier,

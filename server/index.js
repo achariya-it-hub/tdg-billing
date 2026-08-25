@@ -9396,27 +9396,63 @@ app.get('/api/customers/check-discount', (req, res) => {
   if (!phone || phone.length < 8) return res.json({ found: false, hasDiscount: false, discountPct: 0, customerName: 'Customer', phone })
 
   const db = readDb()
-  const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
+  const allUsers = [
+    ...(loyaltyUsers || []),
+    ...(mobileAppUsers || []),
+    ...(db.loyaltyUsers || []),
+    ...(db.users || []),
+    ...(db.customers || []),
+    ...(db.offerRegistrations || []),
+    ...(db.offers || []),
+    ...(db.vips || []),
+    ...(db.employees || []),
+    ...(db.familyMembers || [])
+  ]
   const cleanLast10 = phone.length >= 10 ? phone.slice(-10) : phone
   const user = allUsers.find(u => {
-    if (!u || !u.phone) return false
-    const uClean = String(u.phone).replace(/\D/g, '')
+    if (!u) return false
+    const uClean = String(u.phone || u.customerPhone || u.mobile || '').replace(/\D/g, '')
     if (!uClean) return false
     if (uClean === phone || uClean.endsWith(phone) || phone.endsWith(uClean)) return true
     return cleanLast10.length >= 8 && uClean.endsWith(cleanLast10)
   })
 
+  const isGeneric = (str) => {
+    if (!str) return true
+    const s = String(str).trim().toLowerCase()
+    return !s || ['customer', 'vip customer', 'vip 50% customer', 'mobile app user', 'den member', 'new customer', 'guest', 'user'].includes(s)
+  }
+
   const resolveName = (u, p) => {
-    let n = u ? (u.name || u.customerName || u.fullName || '') : ''
-    if (!n || n === 'Customer' || n === 'VIP Customer' || n === 'Mobile App User' || n === 'Den Member') {
-      const pClean = (p || '').replace(/\D/g, '')
-      const pLast = pClean.length >= 10 ? pClean.slice(-10) : pClean
-      if (pLast && pLast.length >= 8) {
-        const past = [...(db.orders || orders || [])].reverse().find(o => o && o.customerName && o.customerName !== 'Customer' && o.customerName !== 'VIP Customer' && String(o.customerPhone || '').replace(/\D/g, '').endsWith(pLast))
-        if (past && past.customerName) n = past.customerName
+    let n = u ? (u.name || u.customerName || u.fullName || u.userName || u.guestName || u.contactName || u.employeeName || u.familyMemberName || u.memberName || u.clientName || '') : ''
+    const pClean = (p || (u && u.phone) || '').replace(/\D/g, '')
+    const pLast = pClean.length >= 10 ? pClean.slice(-10) : pClean
+
+    if (isGeneric(n) && pLast && pLast.length >= 8) {
+      // 1. Search all user collections for a non-generic name matching phone
+      const matchInUsers = allUsers.find(other => {
+        if (!other) return false
+        const oName = (other.name || other.customerName || other.fullName || other.userName || other.guestName || other.contactName || other.employeeName || '')
+        if (isGeneric(oName)) return false
+        const oPhone = String(other.phone || other.customerPhone || other.mobile || '').replace(/\D/g, '')
+        return oPhone.endsWith(pLast)
+      })
+      if (matchInUsers) {
+        n = matchInUsers.name || matchInUsers.customerName || matchInUsers.fullName || matchInUsers.userName || matchInUsers.guestName || matchInUsers.contactName || matchInUsers.employeeName
       }
     }
-    return n || (u && (u.name || u.customerName)) || 'Customer'
+
+    if (isGeneric(n) && pLast && pLast.length >= 8) {
+      // 2. Search past sales orders for a real customer name matching phone
+      const past = [...(db.orders || orders || [])].reverse().find(o => {
+        if (!o || isGeneric(o.customerName)) return false
+        const oPhone = String(o.customerPhone || '').replace(/\D/g, '')
+        return oPhone.endsWith(pLast)
+      })
+      if (past && past.customerName) n = past.customerName
+    }
+
+    return isGeneric(n) ? 'Customer' : n
   }
 
   if (user) {
@@ -9477,7 +9513,7 @@ app.get('/api/customers/check-discount', (req, res) => {
     })
   }
 
-  // Fallback if not in users array, check past orders for name
+  // Fallback if not in users array, check all user collections & past orders for name
   const fallbackName = resolveName(null, phone)
   return res.json({ found: false, hasDiscount: false, discountPct: 0, customerName: fallbackName, phone })
 })
@@ -9489,19 +9525,53 @@ app.get('/api/customers/search', (req, res) => {
 
   const cleanQPhone = q.replace(/\D/g, '')
   const db = readDb()
-  const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
+  const allUsers = [
+    ...(loyaltyUsers || []),
+    ...(mobileAppUsers || []),
+    ...(db.loyaltyUsers || []),
+    ...(db.users || []),
+    ...(db.customers || []),
+    ...(db.offerRegistrations || []),
+    ...(db.offers || []),
+    ...(db.vips || []),
+    ...(db.employees || []),
+    ...(db.familyMembers || [])
+  ]
+
+  const isGeneric = (str) => {
+    if (!str) return true
+    const s = String(str).trim().toLowerCase()
+    return !s || ['customer', 'vip customer', 'vip 50% customer', 'mobile app user', 'den member', 'new customer', 'guest', 'user'].includes(s)
+  }
 
   const resolveName = (u, p) => {
-    let n = u ? (u.name || u.customerName || u.fullName || '') : ''
-    if (!n || n === 'Customer' || n === 'VIP Customer' || n === 'Mobile App User' || n === 'Den Member') {
-      const pClean = (p || '').replace(/\D/g, '')
-      const pLast = pClean.length >= 10 ? pClean.slice(-10) : pClean
-      if (pLast && pLast.length >= 8) {
-        const past = [...(db.orders || orders || [])].reverse().find(o => o && o.customerName && o.customerName !== 'Customer' && o.customerName !== 'VIP Customer' && String(o.customerPhone || '').replace(/\D/g, '').endsWith(pLast))
-        if (past && past.customerName) n = past.customerName
+    let n = u ? (u.name || u.customerName || u.fullName || u.userName || u.guestName || u.contactName || u.employeeName || u.familyMemberName || u.memberName || u.clientName || '') : ''
+    const pClean = (p || (u && u.phone) || '').replace(/\D/g, '')
+    const pLast = pClean.length >= 10 ? pClean.slice(-10) : pClean
+
+    if (isGeneric(n) && pLast && pLast.length >= 8) {
+      const matchInUsers = allUsers.find(other => {
+        if (!other) return false
+        const oName = (other.name || other.customerName || other.fullName || other.userName || other.guestName || other.contactName || other.employeeName || '')
+        if (isGeneric(oName)) return false
+        const oPhone = String(other.phone || other.customerPhone || other.mobile || '').replace(/\D/g, '')
+        return oPhone.endsWith(pLast)
+      })
+      if (matchInUsers) {
+        n = matchInUsers.name || matchInUsers.customerName || matchInUsers.fullName || matchInUsers.userName || matchInUsers.guestName || matchInUsers.contactName || matchInUsers.employeeName
       }
     }
-    return n || (u && (u.name || u.customerName)) || 'Customer'
+
+    if (isGeneric(n) && pLast && pLast.length >= 8) {
+      const past = [...(db.orders || orders || [])].reverse().find(o => {
+        if (!o || isGeneric(o.customerName)) return false
+        const oPhone = String(o.customerPhone || '').replace(/\D/g, '')
+        return oPhone.endsWith(pLast)
+      })
+      if (past && past.customerName) n = past.customerName
+    }
+
+    return isGeneric(n) ? 'Customer' : n
   }
 
   const seen = new Set()
@@ -9509,8 +9579,8 @@ app.get('/api/customers/search', (req, res) => {
 
   for (const u of allUsers) {
     if (!u) continue
-    const uPhone = String(u.phone || '').replace(/\D/g, '')
-    const uName = String(u.name || u.customerName || '').toLowerCase()
+    const uPhone = String(u.phone || u.customerPhone || u.mobile || '').replace(/\D/g, '')
+    const uName = String(u.name || u.customerName || u.fullName || u.userName || '').toLowerCase()
 
     const matchesPhone = cleanQPhone.length >= 2 && (uPhone.includes(cleanQPhone) || (cleanQPhone.length >= 8 && uPhone.endsWith(cleanQPhone.slice(-8))))
     const matchesName = q.length >= 2 && uName.includes(q)

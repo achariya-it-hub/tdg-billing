@@ -17,6 +17,7 @@ const getComboItemsBreakdown = (item) => {
   const bread = item.bread || c.bread || ''
   const spread = item.spread || c.spread || ''
   const flavor = item.flavor || c.flavor || ''
+  const seasoning = item.seasoning || c.seasoning || 'Salted'
 
   const itemsList = []
 
@@ -26,34 +27,34 @@ const getComboItemsBreakdown = (item) => {
     itemsList.push(`1x ${gyroDesc}${gyroOpts ? ` (${gyroOpts})` : ''}`)
     itemsList.push(`1x Regular Drink${drink ? ` (${drink})` : ''}`)
   } else if (name.includes('signature gyro meal') || name.includes('sig gyro meal')) {
-    const gyroDesc = protein ? `${protein} Gyro` : 'Gyro Wrap'
+    const gyroDesc = protein ? `${protein} Gyro` : 'Signature Gyro Wrap'
     const gyroOpts = [flavor, spread ? `${spread} Spread` : '', bread ? `${bread} Pita` : ''].filter(Boolean).join(', ')
     itemsList.push(`1x ${gyroDesc}${gyroOpts ? ` (${gyroOpts})` : ''}`)
-    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`1x French Fries (${seasoning})`)
     itemsList.push(`1x Regular Drink${drink ? ` (${drink})` : ''}`)
   } else if (name.includes('lebanese rice box') || name.includes('rice box')) {
     const riceDesc = protein ? `Lebanese Rice Bowl (${protein})` : 'Lebanese Rice Bowl'
     itemsList.push(`1x ${riceDesc}`)
-    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`1x French Fries (${seasoning})`)
     itemsList.push(`1x Regular Drink${drink ? ` (${drink})` : ''}`)
   } else if (name.includes('classic gyro meal')) {
     const gyroDesc = protein ? `${protein} Gyro` : 'Gyro Wrap'
     const gyroOpts = [flavor, spread ? `${spread} Spread` : '', bread ? `${bread} Pita` : ''].filter(Boolean).join(', ')
     itemsList.push(`1x ${gyroDesc}${gyroOpts ? ` (${gyroOpts})` : ''}`)
     itemsList.push(`2x Crispy Chicken Wings`)
-    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`1x French Fries (${seasoning})`)
     itemsList.push(`1x Regular Drink${drink ? ` (${drink})` : ''}`)
     itemsList.push(`1x Choice Dip${dips ? ` (${dips})` : ''}`)
   } else if (name.includes('duo gyro feast')) {
     itemsList.push(`1x ${gyro1 || 'Gyro 1 (Chicken/Paneer)'}`)
     itemsList.push(`1x ${gyro2 || 'Gyro 2 (Chicken/Paneer)'}`)
-    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`1x French Fries (${seasoning})`)
     itemsList.push(`2x Regular Drinks${drink ? ` (${drink})` : ''}`)
   } else if (name.includes('double crunch box')) {
     itemsList.push(`1x ${gyro1 || 'Gyro 1'}`)
     itemsList.push(`1x ${gyro2 || 'Gyro 2'}`)
     itemsList.push(`6x Crispy Chicken Wings`)
-    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`1x French Fries (${seasoning})`)
     itemsList.push(`2x Regular Drinks${drink ? ` (${drink})` : ''}`)
   } else if (name.includes('mega feast meal')) {
     itemsList.push(`1x ${gyro1 || 'Gyro 1'}`)
@@ -61,7 +62,7 @@ const getComboItemsBreakdown = (item) => {
     itemsList.push(`2x Crispy Leg & Thighs`)
     itemsList.push(`2x Crispy Chicken Wings`)
     itemsList.push(`2x Crispy Chicken Strips`)
-    itemsList.push(`1x French Fries (Salted)`)
+    itemsList.push(`1x French Fries (${seasoning})`)
     itemsList.push(`2x Regular Drinks${drink ? ` (${drink})` : ''}`)
     itemsList.push(`3x Choice Dips${dips ? ` (${dips})` : ''}`)
   } else if (name.includes('den\'s party meal') || name.includes('party meal')) {
@@ -69,13 +70,20 @@ const getComboItemsBreakdown = (item) => {
     itemsList.push(`1x ${gyro2 || 'Gyro 2'}`)
     itemsList.push(`6x Crispy Chicken Wings`)
     itemsList.push(`4x Crispy Leg & Thighs`)
-    itemsList.push(`2x French Fries (Salted)`)
+    itemsList.push(`2x French Fries (${seasoning})`)
     itemsList.push(`3x Regular Drinks${drink ? ` (${drink})` : ''}`)
   } else if (name.includes('super 5 bucket') || name.includes('super 5')) {
     itemsList.push(`5x Crispy Leg & Thighs`)
     itemsList.push(`10x Crispy Chicken Wings`)
     itemsList.push(`10x Crispy Chicken Strips`)
     itemsList.push(`5x Regular Drinks${drink ? ` (${drink})` : ''}`)
+  } else if (gyro1 || gyro2 || (drink && (name.includes('meal') || name.includes('combo') || name.includes('box') || name.includes('feast') || name.includes('bucket')))) {
+    if (gyro1) itemsList.push(`1x ${gyro1}`)
+    if (gyro2) itemsList.push(`1x ${gyro2}`)
+    if (protein && !gyro1) itemsList.push(`1x ${protein} Wrap/Bowl`)
+    itemsList.push(`1x French Fries (${seasoning})`)
+    if (drink) itemsList.push(`1x Regular Drink (${drink})`)
+    if (dips) itemsList.push(`1x Choice Dip (${dips})`)
   }
 
   return itemsList
@@ -99,7 +107,14 @@ const getItemDetailsList = (item) => {
   if (bread && comboBreakdown.length === 0) details.push(`🥖 Bread: ${bread}`)
 
   const flavor = item.flavor || c.flavor
-  if (flavor && comboBreakdown.length === 0) details.push(`🌶️ Flavor: ${flavor}`)
+  if (flavor && comboBreakdown.length === 0) {
+    const itemNameLower = (item.menuItemName || item.name || '').toLowerCase()
+    const flavorLower = String(flavor).toLowerCase()
+    let flavorEmoji = '🌶️'
+    if (flavorLower.includes('peach') || itemNameLower.includes('peach')) flavorEmoji = '🍑'
+    else if (flavorLower.includes('lime') || itemNameLower.includes('lime')) flavorEmoji = '🍋'
+    details.push(`${flavorEmoji} Flavor: ${flavor}`)
+  }
 
   const spread = item.spread || item.spreadType || c.spread
   if (spread && comboBreakdown.length === 0) details.push(`🥣 Spread: ${spread}`)

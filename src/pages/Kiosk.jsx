@@ -62,6 +62,7 @@ export default function Kiosk() {
   const [selectedProtein, setSelectedProtein] = useState('Chicken')
   const [selectedGyroFlavor, setSelectedGyroFlavor] = useState('Spicy')
   const [selectedBread, setSelectedBread] = useState('Baked')
+  const [selectedIceTeaFlavor, setSelectedIceTeaFlavor] = useState('Peach')
   const [selectedSpread, setSelectedSpread] = useState('Tzatziki')
   const [selectedSauces, setSelectedSauces] = useState(['Garlic Mayo'])
   const [selectedVeggies, setSelectedVeggies] = useState(['Lettuce', 'Onion'])
@@ -118,7 +119,8 @@ export default function Kiosk() {
       itemName.includes('meal') || itemName.includes('box') ||
       itemName.includes('feast') || itemName.includes('bucket') ||
       itemName.includes('rice') || itemName.includes('salad') ||
-      catName.includes('fries') || itemName.includes('fries') || itemName.includes('loaded')
+      catName.includes('fries') || itemName.includes('fries') || itemName.includes('loaded') ||
+      itemName.includes('ice tea') || itemName.includes('iced tea')
     )
   }
 
@@ -140,6 +142,12 @@ export default function Kiosk() {
       setSelectedProtein('Chicken')
       setSelectedGyroFlavor('Spicy')
       setSelectedBread('Baked')
+      const itemNameLower = (item.name || '').toLowerCase()
+      if (itemNameLower.includes('lime')) {
+        setSelectedIceTeaFlavor('Lime')
+      } else {
+        setSelectedIceTeaFlavor('Peach')
+      }
       setSelectedSpread('Tzatziki')
       setSelectedSauces(['Garlic Mayo'])
       setSelectedVeggies(['Lettuce', 'Onion'])
@@ -199,11 +207,15 @@ export default function Kiosk() {
     const isRiceItem = itemName.includes('rice')
     const isSuper5 = itemName.includes('super 5')
     const isLoadedFries = itemName.includes('loaded')
-    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSuper5 && !isLoadedFries
+    const isIceTea = itemName.includes('ice tea') || itemName.includes('iced tea')
+    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSuper5 && !isLoadedFries && !isIceTea
 
     let formattedName = customizingItem.name
     if (isLoadedFries) {
       formattedName = `Loaded Fries (${selectedProtein})`
+    } else if (isIceTea) {
+      const size = itemName.includes('large') ? 'Large' : 'Regular'
+      formattedName = `${selectedIceTeaFlavor} Ice Tea (${size})`
     }
 
     const drinkCount = getMealDrinkCount(customizingItem.name)
@@ -225,6 +237,11 @@ export default function Kiosk() {
         gyro2: `Gyro 2: ${selectedGyro2Protein} (${selectedGyro2Flavor}, ${selectedGyro2Spread} Spread, ${selectedGyro2Bread} Pita)`,
         ...(drinkSummary ? { drink: drinkSummary } : {}),
         ...(dipSummary ? { dips: dipSummary } : {}),
+        notes: gyroNotes
+      }
+    } else if (isIceTea) {
+      customization = {
+        flavor: selectedIceTeaFlavor,
         notes: gyroNotes
       }
     } else {
@@ -811,7 +828,9 @@ export default function Kiosk() {
                           } else if (data.hasDiscount && data.discountPct > 0) {
                             setCustomerDiscountPct(data.discountPct)
                             setDiscountStatusMsg(`👑 ${data.discountReason || `VIP ${data.discountPct}% OFF Discount Auto-Applied!`}`)
-                            if (data.customerName && data.customerName !== 'Customer') setCustomerName(data.customerName)
+                            if (data.customerName && !['customer', 'vip customer', 'vip 50% customer', 'mobile app user', 'den member', 'new customer', 'guest', 'user'].includes(String(data.customerName).trim().toLowerCase())) {
+                              setCustomerName(data.customerName)
+                            }
                           } else {
                             setCustomerDiscountPct(0); setDiscountStatusMsg('')
                           }
@@ -1095,12 +1114,32 @@ export default function Kiosk() {
                   const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
                   const isRiceItem = cItemName.includes('rice')
                   const isSuper5 = cItemName.includes('super 5')
-                  const hasProteinChoice = cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cItemName.includes('loaded') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein')
-                  const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cCatName.includes('gyro')) && !isRiceItem && !isSuper5
+                  const isIceTea = cItemName.includes('ice tea') || cItemName.includes('iced tea')
+                  const hasProteinChoice = (cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cItemName.includes('loaded') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein')) && !isIceTea
+                  const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cCatName.includes('gyro')) && !isRiceItem && !isSuper5 && !isIceTea
                   const dCount = getMealDrinkCount(customizingItem?.name)
 
                   return (
                     <>
+                      {/* Ice Tea Flavor Selection */}
+                      {isIceTea && (
+                        <div>
+                          <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
+                            🍹 Choose Ice Tea Flavor *
+                          </label>
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            {['Peach', 'Lime'].map(f => (
+                              <button key={f} onClick={() => setSelectedIceTeaFlavor(f)} style={{
+                                flex: 1, padding: '12px', borderRadius: '10px',
+                                border: selectedIceTeaFlavor === f ? '2px solid #e63946' : '1px solid #cbd5e1',
+                                background: selectedIceTeaFlavor === f ? '#fff5f5' : '#ffffff',
+                                color: selectedIceTeaFlavor === f ? '#e63946' : '#334155', fontWeight: 800, fontSize: '13px', cursor: 'pointer'
+                              }}>{f === 'Peach' ? '🍑 Peach Ice Tea' : '🍋 Lime Ice Tea'}</button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       {/* 1. Choose Protein */}
                       {hasProteinChoice && (
                         <div>
