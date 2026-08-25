@@ -9396,49 +9396,82 @@ app.get('/api/customers/check-discount', (req, res) => {
   if (!phone || phone.length < 8) return res.json({ found: false, hasDiscount: false, discountPct: 0, customerName: 'Customer', phone })
 
   const db = readDb()
-  const allUsers = [
-    ...(loyaltyUsers || []),
-    ...(mobileAppUsers || []),
-    ...(db.loyaltyUsers || []),
-    ...(db.users || []),
-    ...(db.customers || []),
-    ...(db.offerRegistrations || []),
-    ...(db.offers || []),
-    ...(db.vips || []),
-    ...(db.employees || []),
-    ...(db.familyMembers || [])
+  const userSources = [
+    loyaltyUsers, mobileAppUsers, employees,
+    db.loyaltyUsers, db.users, db.customers, db.offerRegistrations,
+    db.offers, db.vips, db.employees, db.familyMembers, db.contacts,
+    db.contacts121, db.vipUsers, db.customerList, db.allCustomers,
+    db.registeredUsers, db.offerUsers, db.members, db.registrations, db.leads
   ]
+  
+  const allUsers = []
+  for (const src of userSources) {
+    if (Array.isArray(src)) allUsers.push(...src)
+  }
+  if (db && typeof db === 'object') {
+    for (const key of Object.keys(db)) {
+      if (Array.isArray(db[key])) {
+        for (const item of db[key]) {
+          if (item && typeof item === 'object' && (item.phone || item.customerPhone || item.mobile || item.contactNumber || item.phoneNumber)) {
+            allUsers.push(item)
+          }
+        }
+      }
+    }
+  }
+
   const cleanLast10 = phone.length >= 10 ? phone.slice(-10) : phone
   const user = allUsers.find(u => {
     if (!u) return false
-    const uClean = String(u.phone || u.customerPhone || u.mobile || '').replace(/\D/g, '')
+    const uClean = String(u.phone || u.customerPhone || u.mobile || u.contactNumber || u.phoneNumber || '').replace(/\D/g, '')
     if (!uClean) return false
     if (uClean === phone || uClean.endsWith(phone) || phone.endsWith(uClean)) return true
     return cleanLast10.length >= 8 && uClean.endsWith(cleanLast10)
   })
 
+  const extractRawName = (u) => {
+    if (!u) return ''
+    if (typeof u.name === 'string' && u.name.trim()) return u.name.trim()
+    if (typeof u.customerName === 'string' && u.customerName.trim()) return u.customerName.trim()
+    if (typeof u.fullName === 'string' && u.fullName.trim()) return u.fullName.trim()
+    if (typeof u.userName === 'string' && u.userName.trim()) return u.userName.trim()
+    if (typeof u.guestName === 'string' && u.guestName.trim()) return u.guestName.trim()
+    if (typeof u.contactName === 'string' && u.contactName.trim()) return u.contactName.trim()
+    if (typeof u.employeeName === 'string' && u.employeeName.trim()) return u.employeeName.trim()
+    if (typeof u.familyMemberName === 'string' && u.familyMemberName.trim()) return u.familyMemberName.trim()
+    if (typeof u.memberName === 'string' && u.memberName.trim()) return u.memberName.trim()
+    if (typeof u.clientName === 'string' && u.clientName.trim()) return u.clientName.trim()
+    if (typeof u.displayName === 'string' && u.displayName.trim()) return u.displayName.trim()
+    if (u.firstName || u.first_name) {
+      const f = u.firstName || u.first_name || ''
+      const l = u.lastName || u.last_name || ''
+      return `${f} ${l}`.trim()
+    }
+    return ''
+  }
+
   const isGeneric = (str) => {
     if (!str) return true
     const s = String(str).trim().toLowerCase()
-    return !s || ['customer', 'vip customer', 'vip 50% customer', 'mobile app user', 'den member', 'new customer', 'guest', 'user'].includes(s)
+    return !s || ['customer', 'vip customer', 'vip 50% customer', 'mobile app user', 'den member', 'new customer', 'guest', 'user', 'walk-in customer'].includes(s)
   }
 
   const resolveName = (u, p) => {
-    let n = u ? (u.name || u.customerName || u.fullName || u.userName || u.guestName || u.contactName || u.employeeName || u.familyMemberName || u.memberName || u.clientName || '') : ''
-    const pClean = (p || (u && u.phone) || '').replace(/\D/g, '')
+    let n = extractRawName(u)
+    const pClean = (p || (u && (u.phone || u.customerPhone || u.mobile)) || '').replace(/\D/g, '')
     const pLast = pClean.length >= 10 ? pClean.slice(-10) : pClean
 
     if (isGeneric(n) && pLast && pLast.length >= 8) {
       // 1. Search all user collections for a non-generic name matching phone
       const matchInUsers = allUsers.find(other => {
         if (!other) return false
-        const oName = (other.name || other.customerName || other.fullName || other.userName || other.guestName || other.contactName || other.employeeName || '')
+        const oName = extractRawName(other)
         if (isGeneric(oName)) return false
-        const oPhone = String(other.phone || other.customerPhone || other.mobile || '').replace(/\D/g, '')
+        const oPhone = String(other.phone || other.customerPhone || other.mobile || other.contactNumber || other.phoneNumber || '').replace(/\D/g, '')
         return oPhone.endsWith(pLast)
       })
       if (matchInUsers) {
-        n = matchInUsers.name || matchInUsers.customerName || matchInUsers.fullName || matchInUsers.userName || matchInUsers.guestName || matchInUsers.contactName || matchInUsers.employeeName
+        n = extractRawName(matchInUsers)
       }
     }
 
@@ -9464,7 +9497,7 @@ app.get('/api/customers/check-discount', (req, res) => {
         discountPct: 0,
         offerRedeemed: true,
         customerName: custName,
-        phone: user.phone || phone,
+        phone: user.phone || user.customerPhone || user.mobile || phone,
         tier: user.tier || 'Offer Redeemed',
         discountReason: '⚠️ Offer Already Redeemed for this phone number'
       })
@@ -9502,7 +9535,7 @@ app.get('/api/customers/check-discount', (req, res) => {
       discountPct,
       discountReason,
       customerName: custName,
-      phone: user.phone || phone,
+      phone: user.phone || user.customerPhone || user.mobile || phone,
       tier: user.tier || 'VIP',
       visitCount,
       totalSpend,
@@ -9525,40 +9558,72 @@ app.get('/api/customers/search', (req, res) => {
 
   const cleanQPhone = q.replace(/\D/g, '')
   const db = readDb()
-  const allUsers = [
-    ...(loyaltyUsers || []),
-    ...(mobileAppUsers || []),
-    ...(db.loyaltyUsers || []),
-    ...(db.users || []),
-    ...(db.customers || []),
-    ...(db.offerRegistrations || []),
-    ...(db.offers || []),
-    ...(db.vips || []),
-    ...(db.employees || []),
-    ...(db.familyMembers || [])
+  const userSources = [
+    loyaltyUsers, mobileAppUsers, employees,
+    db.loyaltyUsers, db.users, db.customers, db.offerRegistrations,
+    db.offers, db.vips, db.employees, db.familyMembers, db.contacts,
+    db.contacts121, db.vipUsers, db.customerList, db.allCustomers,
+    db.registeredUsers, db.offerUsers, db.members, db.registrations, db.leads
   ]
+  
+  const allUsers = []
+  for (const src of userSources) {
+    if (Array.isArray(src)) allUsers.push(...src)
+  }
+  if (db && typeof db === 'object') {
+    for (const key of Object.keys(db)) {
+      if (Array.isArray(db[key])) {
+        for (const item of db[key]) {
+          if (item && typeof item === 'object' && (item.phone || item.customerPhone || item.mobile || item.contactNumber || item.phoneNumber)) {
+            allUsers.push(item)
+          }
+        }
+      }
+    }
+  }
+
+  const extractRawName = (u) => {
+    if (!u) return ''
+    if (typeof u.name === 'string' && u.name.trim()) return u.name.trim()
+    if (typeof u.customerName === 'string' && u.customerName.trim()) return u.customerName.trim()
+    if (typeof u.fullName === 'string' && u.fullName.trim()) return u.fullName.trim()
+    if (typeof u.userName === 'string' && u.userName.trim()) return u.userName.trim()
+    if (typeof u.guestName === 'string' && u.guestName.trim()) return u.guestName.trim()
+    if (typeof u.contactName === 'string' && u.contactName.trim()) return u.contactName.trim()
+    if (typeof u.employeeName === 'string' && u.employeeName.trim()) return u.employeeName.trim()
+    if (typeof u.familyMemberName === 'string' && u.familyMemberName.trim()) return u.familyMemberName.trim()
+    if (typeof u.memberName === 'string' && u.memberName.trim()) return u.memberName.trim()
+    if (typeof u.clientName === 'string' && u.clientName.trim()) return u.clientName.trim()
+    if (typeof u.displayName === 'string' && u.displayName.trim()) return u.displayName.trim()
+    if (u.firstName || u.first_name) {
+      const f = u.firstName || u.first_name || ''
+      const l = u.lastName || u.last_name || ''
+      return `${f} ${l}`.trim()
+    }
+    return ''
+  }
 
   const isGeneric = (str) => {
     if (!str) return true
     const s = String(str).trim().toLowerCase()
-    return !s || ['customer', 'vip customer', 'vip 50% customer', 'mobile app user', 'den member', 'new customer', 'guest', 'user'].includes(s)
+    return !s || ['customer', 'vip customer', 'vip 50% customer', 'mobile app user', 'den member', 'new customer', 'guest', 'user', 'walk-in customer'].includes(s)
   }
 
   const resolveName = (u, p) => {
-    let n = u ? (u.name || u.customerName || u.fullName || u.userName || u.guestName || u.contactName || u.employeeName || u.familyMemberName || u.memberName || u.clientName || '') : ''
-    const pClean = (p || (u && u.phone) || '').replace(/\D/g, '')
+    let n = extractRawName(u)
+    const pClean = (p || (u && (u.phone || u.customerPhone || u.mobile)) || '').replace(/\D/g, '')
     const pLast = pClean.length >= 10 ? pClean.slice(-10) : pClean
 
     if (isGeneric(n) && pLast && pLast.length >= 8) {
       const matchInUsers = allUsers.find(other => {
         if (!other) return false
-        const oName = (other.name || other.customerName || other.fullName || other.userName || other.guestName || other.contactName || other.employeeName || '')
+        const oName = extractRawName(other)
         if (isGeneric(oName)) return false
-        const oPhone = String(other.phone || other.customerPhone || other.mobile || '').replace(/\D/g, '')
+        const oPhone = String(other.phone || other.customerPhone || other.mobile || other.contactNumber || other.phoneNumber || '').replace(/\D/g, '')
         return oPhone.endsWith(pLast)
       })
       if (matchInUsers) {
-        n = matchInUsers.name || matchInUsers.customerName || matchInUsers.fullName || matchInUsers.userName || matchInUsers.guestName || matchInUsers.contactName || matchInUsers.employeeName
+        n = extractRawName(matchInUsers)
       }
     }
 
@@ -9579,8 +9644,8 @@ app.get('/api/customers/search', (req, res) => {
 
   for (const u of allUsers) {
     if (!u) continue
-    const uPhone = String(u.phone || u.customerPhone || u.mobile || '').replace(/\D/g, '')
-    const uName = String(u.name || u.customerName || u.fullName || u.userName || '').toLowerCase()
+    const uPhone = String(u.phone || u.customerPhone || u.mobile || u.contactNumber || u.phoneNumber || '').replace(/\D/g, '')
+    const uName = String(extractRawName(u) || '').toLowerCase()
 
     const matchesPhone = cleanQPhone.length >= 2 && (uPhone.includes(cleanQPhone) || (cleanQPhone.length >= 8 && uPhone.endsWith(cleanQPhone.slice(-8))))
     const matchesName = q.length >= 2 && uName.includes(q)
@@ -9593,7 +9658,7 @@ app.get('/api/customers/search', (req, res) => {
         results.push({
           id: u.id,
           customerName: resolveName(u, uPhone),
-          phone: u.phone || uPhone,
+          phone: u.phone || u.customerPhone || u.mobile || uPhone,
           discountPct: disc,
           offerRedeemed: Boolean(u.offerRedeemed),
           tier: u.tier || (disc >= 50 ? 'VIP 50% OFF' : 'Standard')
