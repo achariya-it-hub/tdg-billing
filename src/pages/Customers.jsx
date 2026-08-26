@@ -127,6 +127,52 @@ export default function Customers() {
   }
 
   const [filterSource, setFilterSource] = useState('all')
+  const [batchRedeemText, setBatchRedeemText] = useState('')
+  const [batchRedeemLoading, setBatchRedeemLoading] = useState(false)
+  const [batchRedeemResult, setBatchRedeemResult] = useState(null)
+
+  const handleBatchMarkRedeemed = async (status = true) => {
+    if (!batchRedeemText.trim()) { alert('Please paste at least one phone number / contact'); return }
+    setBatchRedeemLoading(true)
+    setBatchRedeemResult(null)
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/customers/bulk-mark-redeemed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contactsText: batchRedeemText, offerRedeemed: status })
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setBatchRedeemResult({ ...data, status })
+        setBatchRedeemText('')
+        fetchCustomers()
+      } else {
+        alert(data.error || 'Failed to update redemption status')
+      }
+    } catch {
+      alert('Connection error')
+    }
+    setBatchRedeemLoading(false)
+  }
+
+  const handlePurgeRedeemed = async () => {
+    if (!window.confirm('Are you sure you want to permanently remove all redeemed customers from the active VIP list?')) return
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/customers/purge-redeemed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        alert(`Successfully removed ${data.purgedCount} redeemed customers! ${data.remainingLoyaltyCount} eligible members remain in VIP list.`)
+        fetchCustomers()
+      } else {
+        alert(data.error || 'Failed to purge redeemed customers')
+      }
+    } catch {
+      alert('Connection error')
+    }
+  }
 
   const totalMembers = customers.length
   const totalPointsIssued = customers.reduce((s, c) => s + (c.points || 0), 0)
@@ -136,6 +182,10 @@ export default function Customers() {
   const mobileAppCount = customers.filter(c => c.source === 'Mobile App' || (c.id && String(c.id).startsWith('u_'))).length
   const denMembersCount = customers.filter(c => c.source === 'Den Member' || (c.id && String(c.id).startsWith('den_'))).length
   const staffCount = customers.filter(c => c.type === 'staff' || c.partnerCode || c.discountPct >= 50 || c.isVip50 || (c.denLevel && String(c.denLevel).includes('50%')) || (c.tier && String(c.tier).includes('50%'))).length
+
+  const isVipCustomer = (c) => Boolean(c.discountPct >= 50 || c.isVip50 || (c.denLevel && String(c.denLevel).includes('50%')) || (c.tier && String(c.tier).includes('50%')))
+  const unredeemedCount = customers.filter(c => isVipCustomer(c) && !c.offerRedeemed).length
+  const redeemedCount = customers.filter(c => isVipCustomer(c) && Boolean(c.offerRedeemed)).length
 
   const filteredCustomers = customers.filter(c => {
     const matchesSearch =
@@ -147,12 +197,32 @@ export default function Customers() {
 
     if (!matchesSearch) return false
 
+    if (filterSource === 'unredeemed') return isVipCustomer(c) && !c.offerRedeemed
+    if (filterSource === 'redeemed') return isVipCustomer(c) && Boolean(c.offerRedeemed)
     if (filterSource === 'mobile') return c.source === 'Mobile App' || (c.id && String(c.id).startsWith('u_'))
     if (filterSource === 'den') return c.source === 'Den Member' || (c.id && String(c.id).startsWith('den_'))
-    if (filterSource === 'staff') return c.type === 'staff' || c.partnerCode || c.discountPct >= 50 || c.isVip50 || (c.denLevel && String(c.denLevel).includes('50%')) || (c.tier && String(c.tier).includes('50%'))
+    if (filterSource === 'staff') return isVipCustomer(c) || c.type === 'staff' || c.partnerCode
 
     return true
   })
+
+  const handleToggleRedemption = async (customer, newStatus) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/customers/toggle-redemption`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId: customer.id, phone: customer.phone, offerRedeemed: newStatus })
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        fetchCustomers()
+      } else {
+        alert(data.error || 'Failed to update redemption status')
+      }
+    } catch {
+      alert('Connection error')
+    }
+  }
 
   const handleExportCSV = () => {
     if (!filteredCustomers.length) {
@@ -440,6 +510,8 @@ export default function Customers() {
           <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', overflowX: 'auto', paddingBottom: '4px' }}>
             {[
               { id: 'all', label: `🔥 All Users (${customers.length})` },
+              { id: 'unredeemed', label: `🎁 50% VIP Available (${unredeemedCount})` },
+              { id: 'redeemed', label: `✅ 50% VIP Redeemed (${redeemedCount})` },
               { id: 'mobile', label: `📱 Mobile App Users (${mobileAppCount})` },
               { id: 'den', label: `🏰 Den Members (${denMembersCount})` },
               { id: 'staff', label: `⭐ Staff & VIP (${staffCount})` },
@@ -449,7 +521,7 @@ export default function Customers() {
                 onClick={() => setFilterSource(f.id)}
                 style={{
                   padding: '8px 16px', borderRadius: '20px', border: 'none',
-                  background: filterSource === f.id ? '#1a1a2e' : '#e5e7eb',
+                  background: filterSource === f.id ? (f.id === 'unredeemed' ? '#10b981' : f.id === 'redeemed' ? '#f59e0b' : '#1a1a2e') : '#e5e7eb',
                   color: filterSource === f.id ? 'white' : '#374151',
                   fontSize: '13px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s'
                 }}
@@ -466,6 +538,8 @@ export default function Customers() {
               const tier = tierConfig[tierKey]
               const TierIcon = tier.icon
               const initials = (customer.name || '?').split(' ').map(n => n[0]).join('').toUpperCase()
+              const isVip = Boolean(customer.discountPct >= 50 || customer.isVip50 || (customer.denLevel && String(customer.denLevel).includes('50%')) || (customer.tier && String(customer.tier).includes('50%')))
+
               return (
                 <Card key={customer.id} hover>
                   <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
@@ -493,20 +567,40 @@ export default function Customers() {
                               STAFF
                             </span>
                           )}
-                          {(customer.discountPct >= 50 || customer.isVip50 || (customer.denLevel && String(customer.denLevel).includes('50%'))) && (
+                          {isVip && !customer.offerRedeemed && (
+                            <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 800, background: '#dcfce7', color: '#15803d', border: '1px solid #86efac' }}>
+                              🎁 50% OFFER AVAILABLE
+                            </span>
+                          )}
+                          {isVip && customer.offerRedeemed && (
                             <span style={{ padding: '3px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 800, background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a' }}>
-                              🌟 50% OFF VIP
+                              ✅ OFFER REDEEMED
                             </span>
                           )}
                         </div>
                         <div style={{ display: 'flex' }}>
+                          {isVip && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleToggleRedemption(customer, !customer.offerRedeemed); }}
+                              title={customer.offerRedeemed ? "Reset Offer (Mark Available)" : "Mark Offer as Redeemed"}
+                              style={{
+                                border: 'none',
+                                background: customer.offerRedeemed ? '#fef3c7' : '#dcfce7',
+                                color: customer.offerRedeemed ? '#b45309' : '#15803d',
+                                padding: '6px 10px', borderRadius: '8px', cursor: 'pointer',
+                                fontSize: '11px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px'
+                              }}
+                            >
+                              {customer.offerRedeemed ? "🔄 Reset" : "✅ Mark Redeemed"}
+                            </button>
+                          )}
                           <button
                             onClick={(e) => { e.stopPropagation(); handleDeleteCustomer(customer.id, customer.name); }}
                             title="Delete Customer"
                             style={{
                               border: 'none', background: 'rgba(239, 68, 68, 0.08)', color: '#dc2626',
                               padding: '8px', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.2s',
-                              display: 'flex', alignItems: 'center', justifyContent: 'center'
+                              display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: '6px'
                             }}
                           >
                             <Trash2 size={16} />
@@ -937,6 +1031,77 @@ Simply share your registered phone number at our Billing Counter, Self-Order Kio
             <Button onClick={handleBulkImport} loading={bulkLoading} fullWidth style={{ padding: '14px', fontSize: '15px', fontWeight: 800 }}>
               <Gift size={20} /> Validate & Save All Contacts to POS
             </Button>
+          </div>
+
+          {/* Batch Redemption Segregation Card */}
+          <div style={{ background: 'white', borderRadius: '16px', padding: '28px', border: '1px solid #e5e7eb', marginTop: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fef3c7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Check size={22} color="#b45309" />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#1a1a2e', margin: 0 }}>Batch Redemption Segregation Manager</h3>
+                <p style={{ color: '#6b7280', fontSize: '13px', margin: '2px 0 0 0' }}>
+                  Paste phone numbers below to mark them as <strong>Already Redeemed</strong> or <strong>Reset Available</strong> in bulk.
+                </p>
+              </div>
+            </div>
+
+            {batchRedeemResult && (
+              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '12px 16px', marginBottom: '16px', marginTop: '12px', fontSize: '13px', color: '#166534', fontWeight: 700 }}>
+                ✅ Successfully updated {batchRedeemResult.updatedCount} customer profiles to status: {batchRedeemResult.status ? '✅ REDEEMED' : '🎁 AVAILABLE'}!
+              </div>
+            )}
+
+            <div style={{ marginTop: '16px', marginBottom: '16px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 700, color: '#374151', display: 'block', marginBottom: '4px' }}>PASTE REDEEMED CUSTOMER PHONE NUMBERS</label>
+              <textarea
+                rows={5}
+                value={batchRedeemText}
+                onChange={(e) => setBatchRedeemText(e.target.value)}
+                placeholder={`Paste phone numbers of customers who already redeemed, e.g.:\n\n6385585796\n9600903367\n6382302944`}
+                style={{ ...inputStyle, fontFamily: 'monospace', fontSize: '12.5px', lineHeight: 1.4, resize: 'vertical' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                type="button"
+                onClick={() => handleBatchMarkRedeemed(true)}
+                disabled={batchRedeemLoading}
+                style={{
+                  flex: 1, padding: '12px', borderRadius: '10px', border: 'none',
+                  background: '#f59e0b', color: 'white', fontWeight: 800, fontSize: '13px', cursor: 'pointer'
+                }}
+              >
+                ✅ Mark Batch as REDEEMED
+              </button>
+              <button
+                type="button"
+                onClick={() => handleBatchMarkRedeemed(false)}
+                disabled={batchRedeemLoading}
+                style={{
+                  flex: 1, padding: '12px', borderRadius: '10px', border: 'none',
+                  background: '#10b981', color: 'white', fontWeight: 800, fontSize: '13px', cursor: 'pointer'
+                }}
+              >
+                🔄 Reset Batch to AVAILABLE
+              </button>
+            </div>
+
+            <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px dashed #e2e8f0', textAlign: 'right' }}>
+              <button
+                type="button"
+                onClick={handlePurgeRedeemed}
+                style={{
+                  padding: '10px 18px', borderRadius: '10px', border: '1px solid #fecaca',
+                  background: '#fef2f2', color: '#dc2626', fontWeight: 800, fontSize: '12.5px', cursor: 'pointer',
+                  display: 'inline-flex', alignItems: 'center', gap: '6px'
+                }}
+              >
+                <Trash2 size={16} /> Permanently Remove All Redeemed Customers from Active VIP List ({redeemedCount})
+              </button>
+            </div>
           </div>
         </div>
       )}

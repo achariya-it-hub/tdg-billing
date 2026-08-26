@@ -393,6 +393,8 @@ const MENU_VAULT_PATH = join(DATA_DIR, 'menu_backup_LOCK.json')
 const FROZEN_MENU_PATH = join(DATA_DIR, 'frozen_menu_LOCK.json')
 const INVENTORY_VAULT_PATH = join(DATA_DIR, 'inventory_vault_LOCK.json')
 const SETTINGS_VAULT_PATH = join(DATA_DIR, 'settings_vault_LOCK.json')
+const CUSTOMER_VAULT_PATH = join(DATA_DIR, 'customer_vault_LOCK.json')
+const MASTER_DOUBLE_BACKUP_PATH = join(DATA_DIR, 'master_double_backup_LOCK.json')
 
 // One-time migration: copy vault files from old server/ location to new DATA_DIR
 const OLD_VAULT_FILES = [
@@ -400,7 +402,8 @@ const OLD_VAULT_FILES = [
  { old: join(__dirname, 'menu_backup_LOCK.json'), new: MENU_VAULT_PATH },
  { old: join(__dirname, 'frozen_menu_LOCK.json'), new: FROZEN_MENU_PATH },
  { old: join(__dirname, 'inventory_vault_LOCK.json'), new: INVENTORY_VAULT_PATH },
- { old: join(__dirname, 'settings_vault_LOCK.json'), new: SETTINGS_VAULT_PATH }
+ { old: join(__dirname, 'settings_vault_LOCK.json'), new: SETTINGS_VAULT_PATH },
+ { old: join(__dirname, 'customer_vault_LOCK.json'), new: CUSTOMER_VAULT_PATH }
 ]
 for (const vf of OLD_VAULT_FILES) {
  if (!existsSync(vf.new) && existsSync(vf.old)) {
@@ -554,16 +557,175 @@ function syncSettingsVault(currentSettings) {
   }
 }
 
-function saveState() {
- orders = syncSalesVault(orders)
- settings = syncSettingsVault(settings)
- 
- const menuVault = syncMenuVault(categories, menuItems, recipes)
- categories = menuVault.categories
- menuItems = menuVault.menuItems
- recipes = menuVault.recipes
+function syncCustomerVault(curLoyaltyUsers, curMobileUsers, curEmployees) {
+  try {
+    let vaultLoyalty = []
+    let vaultMobile = []
+    let vaultEmp = []
 
- inventory = syncInventoryVault(inventory)
+    if (existsSync(CUSTOMER_VAULT_PATH)) {
+      const content = readFileSync(CUSTOMER_VAULT_PATH, 'utf-8').trim()
+      if (content) {
+        try {
+          const parsed = JSON.parse(content)
+          vaultLoyalty = parsed.loyaltyUsers || []
+          vaultMobile = parsed.users || parsed.mobileUsers || []
+          vaultEmp = parsed.employees || []
+        } catch (err) {}
+      }
+    }
+
+    // Merge Loyalty Users (50% VIP offer members)
+    const loyaltyMap = new Map()
+    vaultLoyalty.forEach(u => {
+      if (u) {
+        const key = String(u.phone || u.id || u.customerPhone || '').replace(/\D/g, '') || u.id
+        if (key) loyaltyMap.set(key, u)
+      }
+    })
+    ;(curLoyaltyUsers || []).forEach(u => {
+      if (u) {
+        const key = String(u.phone || u.id || u.customerPhone || '').replace(/\D/g, '') || u.id
+        if (key) {
+          const existing = loyaltyMap.get(key)
+          loyaltyMap.set(key, existing ? { ...existing, ...u } : u)
+        }
+      }
+    })
+
+    // Merge Mobile App Users
+    const mobileMap = new Map()
+    vaultMobile.forEach(u => {
+      if (u) {
+        const key = String(u.phone || u.id || u.customerPhone || '').replace(/\D/g, '') || u.id
+        if (key) mobileMap.set(key, u)
+      }
+    })
+    ;(curMobileUsers || []).forEach(u => {
+      if (u) {
+        const key = String(u.phone || u.id || u.customerPhone || '').replace(/\D/g, '') || u.id
+        if (key) {
+          const existing = mobileMap.get(key)
+          mobileMap.set(key, existing ? { ...existing, ...u } : u)
+        }
+      }
+    })
+
+    // Merge Employees (Staff Master)
+    const empMap = new Map()
+    vaultEmp.forEach(e => {
+      if (e) {
+        const key = String(e.id || e.mobile || e.partnerCode || e.name || '').trim().toUpperCase()
+        if (key) empMap.set(key, e)
+      }
+    })
+    ;(curEmployees || []).forEach(e => {
+      if (e) {
+        const key = String(e.id || e.mobile || e.partnerCode || e.name || '').trim().toUpperCase()
+        if (key) {
+          const existing = empMap.get(key)
+          empMap.set(key, existing ? { ...existing, ...e } : e)
+        }
+      }
+    })
+
+    const finalLoyalty = Array.from(loyaltyMap.values())
+    const finalMobile = Array.from(mobileMap.values())
+    const finalEmp = Array.from(empMap.values())
+
+    const finalVault = {
+      loyaltyUsers: finalLoyalty,
+      users: finalMobile,
+      employees: finalEmp,
+      updatedAt: new Date().toISOString(),
+      counts: {
+        loyaltyUsers: finalLoyalty.length,
+        users: finalMobile.length,
+        employees: finalEmp.length
+      }
+    }
+
+    writeFileSync(CUSTOMER_VAULT_PATH, JSON.stringify(finalVault, null, 2))
+    return {
+      loyaltyUsers: finalLoyalty,
+      users: finalMobile,
+      employees: finalEmp
+    }
+  } catch (e) {
+    console.error('[CUSTOMER VAULT] Error:', e.message)
+    return {
+      loyaltyUsers: curLoyaltyUsers || [],
+      users: curMobileUsers || [],
+      employees: curEmployees || []
+    }
+  }
+}
+
+function syncDoubleBackupVaults() {
+  try {
+    orders = syncSalesVault(orders)
+    settings = syncSettingsVault(settings)
+    
+    const menuVault = syncMenuVault(categories, menuItems, recipes)
+    categories = menuVault.categories
+    menuItems = menuVault.menuItems
+    recipes = menuVault.recipes
+
+    inventory = syncInventoryVault(inventory)
+
+    const custVault = syncCustomerVault(loyaltyUsers, mobileAppUsers, employees)
+    loyaltyUsers = custVault.loyaltyUsers
+    mobileAppUsers = custVault.users
+    employees = custVault.employees
+
+    const masterBackup = {
+      orders,
+      settings,
+      categories,
+      menuItems,
+      recipes,
+      inventory,
+      billingUsers,
+      users: mobileAppUsers,
+      loyaltyUsers,
+      employees,
+      expenses,
+      cashCounterSessions,
+      purchases,
+      suppliers,
+      purchaseOrders,
+      poItems,
+      grns,
+      vendorPayments,
+      _meta: {
+        doubleBackupVersion: '2.0.0',
+        savedAt: new Date().toISOString(),
+        savedAtIST: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+        counts: {
+          orders: (orders || []).length,
+          menuItems: (menuItems || []).length,
+          categories: (categories || []).length,
+          recipes: (recipes || []).length,
+          loyaltyUsers: (loyaltyUsers || []).length,
+          users: (mobileAppUsers || []).length,
+          employees: (employees || []).length
+        }
+      }
+    }
+
+    if (!existsSync(BACKUP_DIR)) mkdirSync(BACKUP_DIR, { recursive: true })
+    writeFileSync(MASTER_DOUBLE_BACKUP_PATH, JSON.stringify(masterBackup, null, 2))
+    writeFileSync(join(BACKUP_DIR, 'master-double-backup-latest.json'), JSON.stringify(masterBackup, null, 2))
+
+    return masterBackup
+  } catch (e) {
+    console.error('[MASTER DOUBLE BACKUP ERROR]', e.message)
+    return null
+  }
+}
+
+function saveState() {
+ syncDoubleBackupVaults()
 
  writeDb({
  orders,
@@ -745,6 +907,15 @@ if (!menuItems || menuItems.length !== 58) {
  else employees = defaultEmployees
  if (db.staffAuditLogs && Array.isArray(db.staffAuditLogs)) staffAuditLogs = db.staffAuditLogs
  if (db.staffPromotionSettings) staffPromotionSettings = { ...staffPromotionSettings, ...db.staffPromotionSettings }
+
+ // Double-Backup Customer & Staff Vault Recovery
+ const custVault = syncCustomerVault(loyaltyUsers, mobileAppUsers, employees)
+ loyaltyUsers = custVault.loyaltyUsers
+ mobileAppUsers = custVault.users
+ employees = custVault.employees
+
+ // Execute Master Double-Backup Vault Sync on startup
+ syncDoubleBackupVaults()
 
  if (db.billingUsers && Array.isArray(db.billingUsers) && db.billingUsers.length) {
  billingUsers = db.billingUsers
@@ -9499,6 +9670,19 @@ app.get('/api/customers/check-discount', (req, res) => {
       saveState()
     }
 
+    if (user.offerRedeemed) {
+      return res.json({
+        found: true,
+        hasDiscount: false,
+        discountPct: 0,
+        offerRedeemed: true,
+        customerName: custName,
+        phone: user.phone || user.customerPhone || user.mobile || phone,
+        tier: 'Offer Redeemed',
+        discountReason: '⚠️ 1-Time VIP Offer Already Redeemed for this phone number'
+      })
+    }
+
     let discountPct = Number(user.discountPct) || 0
     if (!discountPct) {
       if (user.isVip50 || (user.tier && String(user.tier).includes('50%'))) {
@@ -10581,6 +10765,137 @@ app.post('/api/settings/upload-customers', (req, res) => {
  res.status(500).json({ error: 'CSV parse failed: ' + e.message })
  }
  })
+
+// Toggle individual customer offer redemption status
+app.post('/api/admin/customers/toggle-redemption', (req, res) => {
+  const { customerId, phone, offerRedeemed } = req.body || {}
+  const targetPhone = String(phone || '').replace(/\D/g, '')
+  
+  let found = false
+  const userCollections = [loyaltyUsers, mobileAppUsers]
+  
+  for (const list of userCollections) {
+    if (!Array.isArray(list)) continue
+    for (const u of list) {
+      if (!u) continue
+      const uPhone = String(u.phone || u.customerPhone || '').replace(/\D/g, '')
+      if ((customerId && u.id === customerId) || (targetPhone && uPhone && (uPhone === targetPhone || uPhone.endsWith(targetPhone) || targetPhone.endsWith(uPhone)))) {
+        u.offerRedeemed = offerRedeemed !== undefined ? Boolean(offerRedeemed) : !Boolean(u.offerRedeemed)
+        if (u.offerRedeemed) {
+          u.offerRedeemedAt = new Date().toISOString()
+        } else {
+          delete u.offerRedeemedAt
+        }
+        found = true
+      }
+    }
+  }
+
+  saveState()
+  return res.json({ success: true, found, offerRedeemed: Boolean(offerRedeemed) })
+})
+
+// Bulk mark list of phone numbers / contacts as redeemed
+app.post('/api/admin/customers/bulk-mark-redeemed', (req, res) => {
+  const { contactsText, offerRedeemed = true } = req.body || {}
+  if (!contactsText) return res.status(400).json({ error: 'contactsText is required' })
+
+  const rawLines = String(contactsText).split(/[\n\r;,]+/)
+  let updatedCount = 0
+
+  for (let line of rawLines) {
+    const phone = line.replace(/\D/g, '')
+    if (phone.length < 8) continue
+
+    const pLast = phone.length >= 10 ? phone.slice(-10) : phone
+    for (const list of [loyaltyUsers, mobileAppUsers]) {
+      if (!Array.isArray(list)) continue
+      for (const u of list) {
+        if (!u) continue
+        const uPhone = String(u.phone || u.customerPhone || '').replace(/\D/g, '')
+        if (uPhone && (uPhone.endsWith(pLast) || pLast.endsWith(uPhone))) {
+          u.offerRedeemed = Boolean(offerRedeemed)
+          if (u.offerRedeemed) u.offerRedeemedAt = new Date().toISOString()
+          else delete u.offerRedeemedAt
+          updatedCount++
+        }
+      }
+    }
+  }
+
+  saveState()
+  return res.json({ success: true, updatedCount })
+})
+
+// Permanently remove all redeemed offer customers from the active VIP list
+app.post('/api/admin/customers/purge-redeemed', (req, res) => {
+  try {
+    const initialLoyaltyCount = loyaltyUsers.length
+    loyaltyUsers = loyaltyUsers.filter(u => !u || !u.offerRedeemed)
+    const purgedCount = initialLoyaltyCount - loyaltyUsers.length
+
+    saveState()
+    return res.json({ success: true, purgedCount, remainingLoyaltyCount: loyaltyUsers.length })
+  } catch (e) {
+    return res.status(500).json({ error: 'Purge failed: ' + e.message })
+  }
+})
+
+// Double Backup API Endpoints
+app.post('/api/admin/double-backup/create', (req, res) => {
+  try {
+    const backupResult = syncDoubleBackupVaults()
+    saveState()
+    res.json({
+      success: true,
+      message: '✅ Synchronous Master Double-Backup Completed across all vaults!',
+      backupMeta: backupResult ? backupResult._meta : null
+    })
+  } catch (e) {
+    res.status(500).json({ error: 'Double backup failed: ' + e.message })
+  }
+})
+
+app.get('/api/admin/double-backup/status', (req, res) => {
+  try {
+    const db = readDb() || {}
+    const getVaultStats = (filePath) => {
+      if (!existsSync(filePath)) return { exists: false, count: 0, sizeBytes: 0, modifiedAt: null }
+      try {
+        const stats = statSync(filePath)
+        const content = readFileSync(filePath, 'utf-8').trim()
+        let count = 0
+        if (content) {
+          const parsed = JSON.parse(content)
+          count = Array.isArray(parsed) ? parsed.length : (parsed.count || (parsed.orders ? parsed.orders.length : (parsed.menuItems ? parsed.menuItems.length : (parsed.loyaltyUsers ? parsed.loyaltyUsers.length : 0))))
+        }
+        return { exists: true, count, sizeBytes: stats.size, modifiedAt: stats.mtime }
+      } catch (e) {
+        return { exists: true, count: 0, sizeBytes: 0, error: e.message }
+      }
+    }
+
+    res.json({
+      success: true,
+      primaryDb: {
+        ordersCount: (db.orders || []).length,
+        menuItemsCount: (db.menuItems || []).length,
+        loyaltyUsersCount: (db.loyaltyUsers || []).length,
+        employeesCount: (db.employees || []).length,
+        usersCount: (db.users || []).length
+      },
+      secondaryVaults: {
+        salesVault: getVaultStats(VAULT_PATH),
+        menuVault: getVaultStats(MENU_VAULT_PATH),
+        customerVault: getVaultStats(CUSTOMER_VAULT_PATH),
+        inventoryVault: getVaultStats(INVENTORY_VAULT_PATH),
+        masterDoubleBackup: getVaultStats(MASTER_DOUBLE_BACKUP_PATH)
+      },
+      timestamp: new Date().toISOString()
+    })
+  } catch (e) {
+    res.status(500).json({ error: 'Status check failed: ' + e.message })
+  }
 })
 
 // Search customers by phone number or name (name is case-insensitive, phone is digit-normalized).

@@ -364,6 +364,10 @@ let settings = {
  otpExpiry: 300,
  isEnabled: true
  },
+ whatsapp: {
+ isEnabled: true,
+ serviceUrl: 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>'
+ },
  offers: [
  { id: '1', title: 'Golden Gyro Feast (50% OFF)', desc: '1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink', tag: '50% OFF', price: '₹199', origPrice: '₹398', image: '/uploads/menu/m1.jpg' },
  { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2x Dip + Sauce', tag: 'Save ₹151', price: '₹299', origPrice: '₹450', image: '/uploads/menu/m2.jpg' },
@@ -389,6 +393,8 @@ const MENU_VAULT_PATH = join(DATA_DIR, 'menu_backup_LOCK.json')
 const FROZEN_MENU_PATH = join(DATA_DIR, 'frozen_menu_LOCK.json')
 const INVENTORY_VAULT_PATH = join(DATA_DIR, 'inventory_vault_LOCK.json')
 const SETTINGS_VAULT_PATH = join(DATA_DIR, 'settings_vault_LOCK.json')
+const CUSTOMER_VAULT_PATH = join(DATA_DIR, 'customer_vault_LOCK.json')
+const MASTER_DOUBLE_BACKUP_PATH = join(DATA_DIR, 'master_double_backup_LOCK.json')
 
 // One-time migration: copy vault files from old server/ location to new DATA_DIR
 const OLD_VAULT_FILES = [
@@ -396,7 +402,8 @@ const OLD_VAULT_FILES = [
  { old: join(__dirname, 'menu_backup_LOCK.json'), new: MENU_VAULT_PATH },
  { old: join(__dirname, 'frozen_menu_LOCK.json'), new: FROZEN_MENU_PATH },
  { old: join(__dirname, 'inventory_vault_LOCK.json'), new: INVENTORY_VAULT_PATH },
- { old: join(__dirname, 'settings_vault_LOCK.json'), new: SETTINGS_VAULT_PATH }
+ { old: join(__dirname, 'settings_vault_LOCK.json'), new: SETTINGS_VAULT_PATH },
+ { old: join(__dirname, 'customer_vault_LOCK.json'), new: CUSTOMER_VAULT_PATH }
 ]
 for (const vf of OLD_VAULT_FILES) {
  if (!existsSync(vf.new) && existsSync(vf.old)) {
@@ -527,11 +534,19 @@ function syncSettingsVault(currentSettings) {
       ...(currentSettings?.msg91 || {})
     }
 
+    const mergedWhatsApp = {
+      serviceUrl: 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>',
+      isEnabled: true,
+      ...(vaultSettings.whatsapp || {}),
+      ...(currentSettings?.whatsapp || {})
+    }
+
     const finalSettings = {
       ...vaultSettings,
       ...(currentSettings || {}),
       company: mergedCompany,
-      msg91: mergedMsg91
+      msg91: mergedMsg91,
+      whatsapp: mergedWhatsApp
     }
 
     writeFileSync(SETTINGS_VAULT_PATH, JSON.stringify(finalSettings, null, 2))
@@ -542,16 +557,175 @@ function syncSettingsVault(currentSettings) {
   }
 }
 
-function saveState() {
- orders = syncSalesVault(orders)
- settings = syncSettingsVault(settings)
- 
- const menuVault = syncMenuVault(categories, menuItems, recipes)
- categories = menuVault.categories
- menuItems = menuVault.menuItems
- recipes = menuVault.recipes
+function syncCustomerVault(curLoyaltyUsers, curMobileUsers, curEmployees) {
+  try {
+    let vaultLoyalty = []
+    let vaultMobile = []
+    let vaultEmp = []
 
- inventory = syncInventoryVault(inventory)
+    if (existsSync(CUSTOMER_VAULT_PATH)) {
+      const content = readFileSync(CUSTOMER_VAULT_PATH, 'utf-8').trim()
+      if (content) {
+        try {
+          const parsed = JSON.parse(content)
+          vaultLoyalty = parsed.loyaltyUsers || []
+          vaultMobile = parsed.users || parsed.mobileUsers || []
+          vaultEmp = parsed.employees || []
+        } catch (err) {}
+      }
+    }
+
+    // Merge Loyalty Users (50% VIP offer members)
+    const loyaltyMap = new Map()
+    vaultLoyalty.forEach(u => {
+      if (u) {
+        const key = String(u.phone || u.id || u.customerPhone || '').replace(/\D/g, '') || u.id
+        if (key) loyaltyMap.set(key, u)
+      }
+    })
+    ;(curLoyaltyUsers || []).forEach(u => {
+      if (u) {
+        const key = String(u.phone || u.id || u.customerPhone || '').replace(/\D/g, '') || u.id
+        if (key) {
+          const existing = loyaltyMap.get(key)
+          loyaltyMap.set(key, existing ? { ...existing, ...u } : u)
+        }
+      }
+    })
+
+    // Merge Mobile App Users
+    const mobileMap = new Map()
+    vaultMobile.forEach(u => {
+      if (u) {
+        const key = String(u.phone || u.id || u.customerPhone || '').replace(/\D/g, '') || u.id
+        if (key) mobileMap.set(key, u)
+      }
+    })
+    ;(curMobileUsers || []).forEach(u => {
+      if (u) {
+        const key = String(u.phone || u.id || u.customerPhone || '').replace(/\D/g, '') || u.id
+        if (key) {
+          const existing = mobileMap.get(key)
+          mobileMap.set(key, existing ? { ...existing, ...u } : u)
+        }
+      }
+    })
+
+    // Merge Employees (Staff Master)
+    const empMap = new Map()
+    vaultEmp.forEach(e => {
+      if (e) {
+        const key = String(e.id || e.mobile || e.partnerCode || e.name || '').trim().toUpperCase()
+        if (key) empMap.set(key, e)
+      }
+    })
+    ;(curEmployees || []).forEach(e => {
+      if (e) {
+        const key = String(e.id || e.mobile || e.partnerCode || e.name || '').trim().toUpperCase()
+        if (key) {
+          const existing = empMap.get(key)
+          empMap.set(key, existing ? { ...existing, ...e } : e)
+        }
+      }
+    })
+
+    const finalLoyalty = Array.from(loyaltyMap.values())
+    const finalMobile = Array.from(mobileMap.values())
+    const finalEmp = Array.from(empMap.values())
+
+    const finalVault = {
+      loyaltyUsers: finalLoyalty,
+      users: finalMobile,
+      employees: finalEmp,
+      updatedAt: new Date().toISOString(),
+      counts: {
+        loyaltyUsers: finalLoyalty.length,
+        users: finalMobile.length,
+        employees: finalEmp.length
+      }
+    }
+
+    writeFileSync(CUSTOMER_VAULT_PATH, JSON.stringify(finalVault, null, 2))
+    return {
+      loyaltyUsers: finalLoyalty,
+      users: finalMobile,
+      employees: finalEmp
+    }
+  } catch (e) {
+    console.error('[CUSTOMER VAULT] Error:', e.message)
+    return {
+      loyaltyUsers: curLoyaltyUsers || [],
+      users: curMobileUsers || [],
+      employees: curEmployees || []
+    }
+  }
+}
+
+function syncDoubleBackupVaults() {
+  try {
+    orders = syncSalesVault(orders)
+    settings = syncSettingsVault(settings)
+    
+    const menuVault = syncMenuVault(categories, menuItems, recipes)
+    categories = menuVault.categories
+    menuItems = menuVault.menuItems
+    recipes = menuVault.recipes
+
+    inventory = syncInventoryVault(inventory)
+
+    const custVault = syncCustomerVault(loyaltyUsers, mobileAppUsers, employees)
+    loyaltyUsers = custVault.loyaltyUsers
+    mobileAppUsers = custVault.users
+    employees = custVault.employees
+
+    const masterBackup = {
+      orders,
+      settings,
+      categories,
+      menuItems,
+      recipes,
+      inventory,
+      billingUsers,
+      users: mobileAppUsers,
+      loyaltyUsers,
+      employees,
+      expenses,
+      cashCounterSessions,
+      purchases,
+      suppliers,
+      purchaseOrders,
+      poItems,
+      grns,
+      vendorPayments,
+      _meta: {
+        doubleBackupVersion: '2.0.0',
+        savedAt: new Date().toISOString(),
+        savedAtIST: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+        counts: {
+          orders: (orders || []).length,
+          menuItems: (menuItems || []).length,
+          categories: (categories || []).length,
+          recipes: (recipes || []).length,
+          loyaltyUsers: (loyaltyUsers || []).length,
+          users: (mobileAppUsers || []).length,
+          employees: (employees || []).length
+        }
+      }
+    }
+
+    if (!existsSync(BACKUP_DIR)) mkdirSync(BACKUP_DIR, { recursive: true })
+    writeFileSync(MASTER_DOUBLE_BACKUP_PATH, JSON.stringify(masterBackup, null, 2))
+    writeFileSync(join(BACKUP_DIR, 'master-double-backup-latest.json'), JSON.stringify(masterBackup, null, 2))
+
+    return masterBackup
+  } catch (e) {
+    console.error('[MASTER DOUBLE BACKUP ERROR]', e.message)
+    return null
+  }
+}
+
+function saveState() {
+ syncDoubleBackupVaults()
 
  writeDb({
  orders,
@@ -687,12 +861,29 @@ try {
   console.error('[HOSTINGER MIGRATION ERROR]', e.message)
 }
 
- settings = syncSettingsVault(db.settings || settings)
+// Ensure exact 58 official menu items on server startup
+if (!menuItems || menuItems.length !== 58) {
+  try {
+    const seedPath = join(__dirname, 'seed-db.json')
+    if (existsSync(seedPath)) {
+      const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
+      if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length === 58) {
+        menuItems = seedData.menuItems
+        categories = seedData.categories || categories
+        console.log('[MENU RESTORE] ✅ Restored exact 58 official menu items!')
+      }
+    }
+  } catch (e) {
+    console.error('[MENU RESTORE ERROR]', e.message)
+  }
+}
 
- const menuVault = syncMenuVault(db.categories || categories, db.menuItems || menuItems, db.recipes || recipes)
- categories = menuVault.categories
- menuItems = menuVault.menuItems
- recipes = menuVault.recipes
+  settings = syncSettingsVault(db.settings || settings)
+
+  const menuVault = syncMenuVault(categories, menuItems, recipes)
+  categories = menuVault.categories
+  menuItems = menuVault.menuItems
+  recipes = menuVault.recipes
 
  inventory = syncInventoryVault(db.inventory || inventory)
 
@@ -716,6 +907,15 @@ try {
  else employees = defaultEmployees
  if (db.staffAuditLogs && Array.isArray(db.staffAuditLogs)) staffAuditLogs = db.staffAuditLogs
  if (db.staffPromotionSettings) staffPromotionSettings = { ...staffPromotionSettings, ...db.staffPromotionSettings }
+
+ // Double-Backup Customer & Staff Vault Recovery
+ const custVault = syncCustomerVault(loyaltyUsers, mobileAppUsers, employees)
+ loyaltyUsers = custVault.loyaltyUsers
+ mobileAppUsers = custVault.users
+ employees = custVault.employees
+
+ // Execute Master Double-Backup Vault Sync on startup
+ syncDoubleBackupVaults()
 
  if (db.billingUsers && Array.isArray(db.billingUsers) && db.billingUsers.length) {
  billingUsers = db.billingUsers
@@ -8083,19 +8283,55 @@ function generateReferralCode() {
  }
 }
 
-// Auth middleware
+// Auth middleware for customer/mobile app
 function auth(req, res, next) {
- const header = req.headers.authorization
- if (!header || !header.startsWith('Bearer ')) {
- return res.status(401).json({ message: 'No token provided' })
- }
- try {
- const decoded = jwt.verify(header.split(' ')[1], JWT_SECRET)
- req.userId = decoded.userId
- next()
- } catch (e) {
- return res.status(401).json({ message: 'Invalid token' })
- }
+  const header = req.headers.authorization
+  if (!header || !header.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'No token provided' })
+  }
+  try {
+    const decoded = jwt.verify(header.split(' ')[1], JWT_SECRET)
+    req.userId = decoded.userId
+    next()
+  } catch (e) {
+    return res.status(401).json({ message: 'Invalid token' })
+  }
+}
+
+// Auth middleware for POS staff
+function posAuth(req, res, next) {
+  const header = req.headers.authorization
+  if (!header || !header.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'No authentication token provided. Please log in.' })
+  }
+  try {
+    const decoded = jwt.verify(header.split(' ')[1], JWT_SECRET)
+    if (!decoded.staffId) {
+      return res.status(403).json({ error: 'Not a valid staff token. Access denied.' })
+    }
+    req.staffId = decoded.staffId
+    req.staffRole = decoded.role
+    next()
+  } catch (e) {
+    return res.status(401).json({ error: 'Session expired or invalid token' })
+  }
+}
+
+// Optional Auth middleware (allows Kiosk/Captain but identifies Staff if present)
+function optionalPosAuth(req, res, next) {
+  const header = req.headers.authorization
+  if (!header || !header.startsWith('Bearer ')) {
+    req.staffId = null
+    return next()
+  }
+  try {
+    const decoded = jwt.verify(header.split(' ')[1], JWT_SECRET)
+    req.staffId = decoded.staffId
+    req.staffRole = decoded.role
+  } catch (e) {
+    req.staffId = null
+  }
+  next()
 }
 
 // ============ MOBILE APP API ROUTES ============
@@ -8356,10 +8592,98 @@ app.post('/api/auth/login', async (req, res) => {
  }
 })
 
-// ============ MSG91 OTP SERVICE ============
+// ============ WHATSAPP & SMS OTP SERVICE ============
 let recentOtpLogs = []
 
+async function sendWhatsAppOTP(phone, otp, type = 'auth', customMessage = null) {
+  const whatsappCfg = settings.whatsapp || {}
+  
+  let defaultMsg = `Your TDG Billing OTP verification code is ${otp}. Valid for 5 minutes.`
+  if (type === 'forgot-password' || type === 'reset-password') {
+    defaultMsg = `Your TDG Billing Forgot Password verification OTP code is ${otp}. Valid for 5 minutes. Do not share with anyone.`
+  } else if (type === 'asset' || type === 'asset-verification') {
+    defaultMsg = `Your TDG Billing Asset Referral verification OTP code is ${otp}. Valid for 5 minutes.`
+  }
+
+  const messageText = customMessage || defaultMsg
+  const encodedMsg = encodeURIComponent(messageText)
+  const cleanPhone = (phone || '').replace(/[^0-9]/g, '')
+  if (!cleanPhone) {
+    return { success: false, error: 'Invalid phone number' }
+  }
+
+  const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
+
+  const defaultUrl = 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>'
+  const serviceUrlTemplate = whatsappCfg.serviceUrl || defaultUrl
+
+  let targetUrl = serviceUrlTemplate
+    .replace('<contact_number>', formattedPhone)
+    .replace('<message>', encodedMsg)
+
+  if (targetUrl === serviceUrlTemplate) {
+    targetUrl = `http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/${formattedPhone}/${encodedMsg}`
+  }
+
+  console.log(`[WhatsApp OTP] Sending OTP ${otp} to ${formattedPhone} via service: ${targetUrl}`)
+
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 5000)
+
+    const resp = await fetch(targetUrl, { method: 'GET', signal: controller.signal })
+    clearTimeout(timeoutId)
+    const responseText = await resp.text()
+    let responseData = null
+    try { responseData = JSON.parse(responseText) } catch (e) { responseData = { raw: responseText.slice(0, 200) } }
+
+    console.log(`[WhatsApp OTP Response] ${resp.status}:`, responseData)
+
+    const isSuccess = resp.ok && responseData && (responseData.status === 'success' || responseData.type === 'success' || (responseData.message && String(responseData.message).toLowerCase().includes('success')))
+
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      phone: phone,
+      formattedPhone: formattedPhone,
+      otp: otp,
+      type: type,
+      provider: 'WhatsApp',
+      status: isSuccess ? 'SENT_WHATSAPP' : 'WHATSAPP_FAILED',
+      response: responseData
+    }
+    recentOtpLogs.unshift(logEntry)
+    if (recentOtpLogs.length > 50) recentOtpLogs.pop()
+
+    if (isSuccess) {
+      return { success: true, provider: 'whatsapp', data: responseData, otp }
+    }
+    return { success: false, provider: 'whatsapp', data: responseData, otp }
+  } catch (err) {
+    console.error(`[WhatsApp OTP Exception] Failed to send to ${formattedPhone}:`, err.message)
+    recentOtpLogs.unshift({
+      timestamp: new Date().toISOString(),
+      phone: phone,
+      formattedPhone: formattedPhone,
+      otp: otp,
+      type: type,
+      provider: 'WhatsApp',
+      status: 'ERROR',
+      error: err.message
+    })
+    if (recentOtpLogs.length > 50) recentOtpLogs.pop()
+    return { success: false, provider: 'whatsapp', error: err.message, otp }
+  }
+}
+
 async function sendMSG91OTP(phone, otp, type = 'auth') {
+  // Primary: Custom WhatsApp OTP Service
+  const waResult = await sendWhatsAppOTP(phone, otp, type)
+  if (waResult.success) {
+    return { success: true, method: 'whatsapp', data: waResult.data, otp }
+  }
+
+  console.warn(`[OTP Fallback] WhatsApp OTP failed, attempting MSG91 SMS...`)
+
   const cfg = settings.msg91 || {}
   const cleanPhone = (phone || '').replace(/[^0-9]/g, '')
   const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
@@ -8372,6 +8696,7 @@ async function sendMSG91OTP(phone, otp, type = 'auth') {
     formattedPhone: formattedPhone,
     otp: otp,
     type: type,
+    provider: 'MSG91',
     status: (cfg.isEnabled === false || !authKey) ? 'CONSOLE_FALLBACK' : 'SENT_MSG91'
   }
   recentOtpLogs.unshift(logEntry)
@@ -8388,7 +8713,6 @@ async function sendMSG91OTP(phone, otp, type = 'auth') {
       'authkey': authKey
     }
 
-    // 1. Primary: MSG91 Widget API (https://api.msg91.com/api/v5/widget/sendOtp)
     const widgetUrl = `https://api.msg91.com/api/v5/widget/sendOtp?authkey=${encodeURIComponent(authKey)}`
     const widgetPayload = {
       widgetId: widgetId,
@@ -8413,7 +8737,6 @@ async function sendMSG91OTP(phone, otp, type = 'auth') {
       return { success: true, data, reqId: data.reqId || data.message, method: 'msg91' }
     }
 
-    // 2. Fallback: Standard Control OTP API (https://control.msg91.com/api/v5/otp)
     console.warn(`[MSG91 Widget Fallback] Widget API response: ${JSON.stringify(data)}, trying standard OTP endpoint...`)
     const templateId = cfg.templateId || ''
     const senderId = cfg.senderId || 'TDGBIL'
@@ -8449,18 +8772,23 @@ async function sendMSG91OTP(phone, otp, type = 'auth') {
   }
 }
 
-
 function generateOTP() {
  return String(Math.floor(1000 + Math.random() * 9000))
 }
-
-// MSG91 config endpoint
 
 // GET recent OTP logs
 app.get('/api/msg91/logs', (req, res) => {
   res.json({
     count: recentOtpLogs.length,
     logs: recentOtpLogs
+  })
+})
+
+app.get('/api/whatsapp/config', (req, res) => {
+  const wa = settings.whatsapp || {}
+  res.json({
+    enabled: wa.isEnabled !== false,
+    serviceUrl: wa.serviceUrl || 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>'
   })
 })
 
@@ -8473,6 +8801,34 @@ app.get('/api/msg91/config', (req, res) => {
  senderId: cfg.senderId || 'TDGBIL',
  templateId: cfg.templateId || ''
  })
+})
+
+// WhatsApp test send endpoint
+app.post('/api/whatsapp/test-send', async (req, res) => {
+  try {
+    const { phone } = req.body
+    if (!phone) return res.status(400).json({ error: 'Mobile phone number required' })
+
+    const cleanPhone = String(phone).replace(/\D/g, '')
+    const testOtp = generateOTP()
+    const result = await sendWhatsAppOTP(cleanPhone, testOtp, 'test')
+
+    if (result.success) {
+      return res.json({
+        success: true,
+        message: `WhatsApp OTP sent successfully to ${cleanPhone}!`,
+        data: result.data,
+        method: 'whatsapp',
+        otp: result.otp
+      })
+    } else {
+      return res.status(400).json({
+        error: result.error || (result.data ? JSON.stringify(result.data) : 'Failed to send WhatsApp OTP')
+      })
+    }
+  } catch (err) {
+    return res.status(500).json({ error: err.message })
+  }
 })
 
 // MSG91 test send endpoint
@@ -8490,7 +8846,7 @@ app.post('/api/msg91/test-send', async (req, res) => {
     if (result.success) {
       return res.json({
         success: true,
-        message: `Test OTP sent successfully to +${formattedPhone}!`,
+        message: `Test OTP sent successfully via ${result.method.toUpperCase()} to +${formattedPhone}!`,
         data: result.data,
         method: result.method,
         otp: result.otp
@@ -8676,6 +9032,7 @@ app.post('/api/assets', auth, (req, res) => {
  const user = getMobileUser(req.userId)
  if (!user) return res.status(404).json({ message: 'User not found' })
 
+ const cleanPhone = String(phone).replace(/\D/g, '')
  const assets = user.assets || []
  if (assets.length >= 10) return res.status(400).json({ message: 'Maximum 10 assets allowed' })
  if (assets.find(a => a.phone.replace(/[^0-9]/g, '') === cleanPhone)) {
@@ -9018,7 +9375,8 @@ app.post('/api/billing/login', async (req, res) => {
  }
  const { pin: _, ...userWithoutPin } = user
  const safeUser = { ...userWithoutPin, permissions: user.permissions || getDefaultPermissions(user.role) }
- res.json({ user: safeUser })
+ const token = jwt.sign({ staffId: user.id, role: user.role }, JWT_SECRET, { expiresIn: '14d' })
+ res.json({ user: safeUser, token })
  } catch (error) {
  console.error('Billing login error:', error)
  res.status(500).json({ error: 'Server error during login' })
@@ -9108,63 +9466,56 @@ app.delete('/api/billing/users/:id', (req, res) => {
 
 // Get all mobile app customers + loyalty/den users
 app.get('/api/customers', (req, res) => {
- const db = readDb()
- const ordersList = db.orders || orders || []
+  const db = readDb()
+  const ordersList = db.orders || orders || []
 
- const mobileList = (db.users || mobileAppUsers || []).map(u => {
- const userOrders = ordersList.filter(o => o.userId === u.id || (u.phone && o.customerPhone === u.phone))
- const totalSpent = userOrders.reduce((s, o) => s + (o.total || 0), 0)
- return {
- id: u.id,
- name: u.name || 'Mobile App User',
- phone: u.phone || '',
- email: u.email || '',
- points: u.rubyBalance || u.points || 0,
- rubyBalance: u.rubyBalance || 0,
- denLevel: u.denLevel || 'Bronze',
- totalOrders: Math.max(userOrders.length, (u.orderHistory || []).length),
- totalSpent: Math.max(totalSpent, (u.orderHistory || []).reduce((s, o) => s + (o.total || 0), 0)),
- createdAt: u.createdAt || u.signupAt || '',
- lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
- type: u.type || 'customer',
- source: 'Mobile App',
- partnerCode: u.partnerCode || u.referralCode || '',
- discountPct: u.discountPct || 0,
- referralCode: u.referralCode || ''
- }
- })
+  // Combine memory & disk sources for complete customer list
+  const allRawUsers = [
+    ...(loyaltyUsers || []),
+    ...(mobileAppUsers || []),
+    ...(db.loyaltyUsers || []),
+    ...(db.users || [])
+  ]
 
- const loyaltyList = (db.loyaltyUsers || loyaltyUsers || []).map(u => {
- const userOrders = ordersList.filter(o => u.phone && o.customerPhone === u.phone)
- const totalSpent = userOrders.reduce((s, o) => s + (o.total || 0), 0)
- return {
- id: u.id,
- name: u.name || 'Den Member',
- phone: u.phone || '',
- email: u.email || '',
- points: u.points || 0,
- rubyBalance: u.points || 0,
- denLevel: u.tier || 'Silver',
- totalOrders: Math.max(userOrders.length, (u.orderHistory || []).length),
- totalSpent: Math.max(totalSpent, (u.orderHistory || []).reduce((s, o) => s + (o.total || 0), 0)),
- createdAt: u.createdAt || u.signupAt || '',
- lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
- type: u.type || 'customer',
- source: 'Den Member',
- partnerCode: u.partnerCode || '',
- discountPct: u.discountPct || 0
- }
- })
+  const seen = new Set()
+  const all = []
 
- const seen = new Set()
- const all = []
- for (const c of [...mobileList, ...loyaltyList]) {
- const key = c.phone || c.id
- if (seen.has(key)) continue
- seen.add(key)
- all.push(c)
- }
- res.json(all)
+  for (const u of allRawUsers) {
+    if (!u) continue
+    const rawPhone = String(u.phone || '').replace(/\D/g, '')
+    const key = rawPhone || String(u.id || '')
+    if (!key || seen.has(key)) continue
+    seen.add(key)
+
+    const userOrders = ordersList.filter(o => o && ((u.id && o.userId === u.id) || (rawPhone && String(o.customerPhone || '').replace(/\D/g, '') === rawPhone)))
+    const totalSpent = userOrders.reduce((s, o) => s + (Number(o.total) || 0), 0)
+
+    const discountPct = Number(u.discountPct) || (u.tier && String(u.tier).includes('50%') ? 50 : 0)
+    const isVip50 = discountPct >= 50 || Boolean(u.isVip50) || (u.tier && String(u.tier).includes('50%'))
+
+    all.push({
+      id: u.id || `u_${key}`,
+      name: u.name || u.customerName || (isVip50 ? 'VIP 50% Customer' : 'Customer'),
+      phone: u.phone || '',
+      email: u.email || '',
+      points: Number(u.rubyBalance || u.points || 0),
+      rubyBalance: Number(u.rubyBalance || u.points || 0),
+      denLevel: u.denLevel || u.tier || (isVip50 ? 'VIP 50% OFF' : 'Bronze'),
+      tier: u.tier || (isVip50 ? 'VIP 50% OFF' : 'Bronze'),
+      totalOrders: Math.max(userOrders.length, (u.orderHistory || []).length),
+      totalSpent: Math.max(totalSpent, (u.orderHistory || []).reduce((s, o) => s + (Number(o.total) || 0), 0)),
+      createdAt: u.createdAt || u.signupAt || '',
+      lastVisit: u.lastVisit || u.updatedAt || u.createdAt || '',
+      type: u.type || (isVip50 ? 'staff' : 'customer'),
+      source: u.source || (u.referralCode ? 'Mobile App' : 'Den Member'),
+      partnerCode: u.partnerCode || u.referralCode || '',
+      discountPct: discountPct,
+      isVip50: isVip50,
+      referralCode: u.referralCode || ''
+    })
+  }
+
+  res.json(all)
 })
 
 // Dedicated endpoint to fetch detailed summary of all Dens & Mobile App users list
@@ -9212,114 +9563,294 @@ app.get('/api/customers/all-dens', (req, res) => {
 
 // Check customer discount by phone number (for POS auto-discount & Kiosk validation)
 app.get('/api/customers/check-discount', (req, res) => {
- const phone = String(req.query.phone || '').replace(/\D/g, '')
- if (!phone || phone.length < 8) return res.json({ found: false, hasDiscount: false, discountPct: 0 })
+  const phone = String(req.query.phone || '').replace(/\D/g, '')
+  if (!phone || phone.length < 8) return res.json({ found: false, hasDiscount: false, discountPct: 0, customerName: 'Customer', phone })
 
- const db = readDb()
- const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
- const user = allUsers.find(u => u && (String(u.phone || '').replace(/\D/g, '') === phone || String(u.phone || '').replace(/\D/g, '').endsWith(phone)))
+  const db = readDb()
+  const userSources = [
+    loyaltyUsers, mobileAppUsers, employees,
+    db.loyaltyUsers, db.users, db.customers, db.offerRegistrations,
+    db.offers, db.vips, db.employees, db.familyMembers, db.contacts,
+    db.contacts121, db.vipUsers, db.customerList, db.allCustomers,
+    db.registeredUsers, db.offerUsers, db.members, db.registrations, db.leads
+  ]
+  
+  const allUsers = []
+  for (const src of userSources) {
+    if (Array.isArray(src)) allUsers.push(...src)
+  }
+  if (db && typeof db === 'object') {
+    for (const key of Object.keys(db)) {
+      if (Array.isArray(db[key])) {
+        for (const item of db[key]) {
+          if (item && typeof item === 'object' && (item.phone || item.customerPhone || item.mobile || item.contactNumber || item.phoneNumber)) {
+            allUsers.push(item)
+          }
+        }
+      }
+    }
+  }
 
- if (user) {
- // Past completed sales for visit & spend tracking
- const userOrders = (orders || []).filter(o => o && isValidSalesOrder(o) && (String(o.customerPhone || '').replace(/\D/g, '') === phone))
- const visitCount = user.visitCount !== undefined ? Number(user.visitCount) : userOrders.length
- const totalSpend = userOrders.reduce((sum, o) => sum + Number(o.total || 0), 0)
+  const cleanLast10 = phone.length >= 10 ? phone.slice(-10) : phone
+  const user = allUsers.find(u => {
+    if (!u) return false
+    const uClean = String(u.phone || u.customerPhone || u.mobile || u.contactNumber || u.phoneNumber || '').replace(/\D/g, '')
+    if (!uClean) return false
+    if (uClean === phone || uClean.endsWith(phone) || phone.endsWith(uClean)) return true
+    return cleanLast10.length >= 8 && uClean.endsWith(cleanLast10)
+  })
 
- // Gamification Partner Level Upgrade: Cumulative spend >= ₹5,000 upgrades to Partner
- if (totalSpend >= 5000 && user.tier !== 'Partner') {
- user.tier = 'Partner'
- saveState()
- }
+  const extractRawName = (u) => {
+    if (!u) return ''
+    if (typeof u.name === 'string' && u.name.trim()) return u.name.trim()
+    if (typeof u.customerName === 'string' && u.customerName.trim()) return u.customerName.trim()
+    if (typeof u.fullName === 'string' && u.fullName.trim()) return u.fullName.trim()
+    if (typeof u.userName === 'string' && u.userName.trim()) return u.userName.trim()
+    if (typeof u.guestName === 'string' && u.guestName.trim()) return u.guestName.trim()
+    if (typeof u.contactName === 'string' && u.contactName.trim()) return u.contactName.trim()
+    if (typeof u.employeeName === 'string' && u.employeeName.trim()) return u.employeeName.trim()
+    if (typeof u.familyMemberName === 'string' && u.familyMemberName.trim()) return u.familyMemberName.trim()
+    if (typeof u.memberName === 'string' && u.memberName.trim()) return u.memberName.trim()
+    if (typeof u.clientName === 'string' && u.clientName.trim()) return u.clientName.trim()
+    if (typeof u.displayName === 'string' && u.displayName.trim()) return u.displayName.trim()
+    if (u.firstName || u.first_name) {
+      const f = u.firstName || u.first_name || ''
+      const l = u.lastName || u.last_name || ''
+      return `${f} ${l}`.trim()
+    }
+    return ''
+  }
 
- let discountPct = Number(user.discountPct) || 0
- let discountReason = 'Customer Discount'
+  const isGeneric = (str) => {
+    if (!str) return true
+    const s = String(str).trim().toLowerCase()
+    return !s || ['customer', 'vip customer', 'vip 50% customer', 'mobile app user', 'den member', 'new customer', 'guest', 'user', 'walk-in customer'].includes(s)
+  }
 
- // Rule 1: Staff 50% Discount (Achariya Direct Reimbursement Log)
- if (user.isStaff || (user.tier && user.tier.toLowerCase().includes('staff'))) {
- discountPct = 50
- discountReason = 'Achariya Staff 50% OFF'
- }
- // Rule 2: Primary User (30% Initial Discount)
- else if (user.isPrimaryUser || user.type === 'primary' || (user.tier && user.tier.includes('30%'))) {
- discountPct = 30
- discountReason = 'Primary User 30% OFF'
- }
- // Rule 3: Tiered Discount Structure for Referred Guests
- else if (user.isReferred || user.referredBy || user.referralCodeUsed || (user.tier && user.tier.toLowerCase().includes('referred'))) {
- if (visitCount === 0) {
- discountPct = 15 // 1st Visit: 15% OFF
- discountReason = 'Referred Guest 1st Visit 15% OFF'
- } else {
- discountPct = 10 // Repeat Visits: 10% OFF on every subsequent visit
- discountReason = 'Referred Guest Repeat Visit 10% OFF'
- }
- }
- // Rule 4: Fallback explicit VIP 50% OFF
- else if (!discountPct && user.tier && user.tier.includes('50%')) {
- discountPct = 50
- discountReason = 'VIP 50% OFF'
- }
+  const resolveName = (u, p) => {
+    let n = extractRawName(u)
+    const pClean = (p || (u && (u.phone || u.customerPhone || u.mobile)) || '').replace(/\D/g, '')
+    const pLast = pClean.length >= 10 ? pClean.slice(-10) : pClean
 
- const referredCount = user.referredFriendsCount || (Array.isArray(user.referredFriends) ? user.referredFriends.length : 0)
- const isQualifiedAsset = referredCount >= 10 // Network threshold: 10 friends required
+    if (isGeneric(n) && pLast && pLast.length >= 8) {
+      // 1. Search all user collections for a non-generic name matching phone
+      const matchInUsers = allUsers.find(other => {
+        if (!other) return false
+        const oName = extractRawName(other)
+        if (isGeneric(oName)) return false
+        const oPhone = String(other.phone || other.customerPhone || other.mobile || other.contactNumber || other.phoneNumber || '').replace(/\D/g, '')
+        return oPhone.endsWith(pLast)
+      })
+      if (matchInUsers) {
+        n = extractRawName(matchInUsers)
+      }
+    }
 
- return res.json({
- found: true,
- hasDiscount: discountPct > 0,
- discountPct,
- discountReason,
- customerName: user.name || user.customerName || 'Customer',
- phone: user.phone || phone,
- tier: user.tier || 'Asset',
- visitCount,
- totalSpend,
- walletBalance: Number(user.walletBalance || user.rubyPoints || 0),
- referredFriendsCount: referredCount,
- isQualifiedAsset,
- offerRedeemed: false
- })
- }
+    if (isGeneric(n) && pLast && pLast.length >= 8) {
+      // 2. Search past sales orders for a real customer name matching phone
+      const past = [...(db.orders || orders || [])].reverse().find(o => {
+        if (!o || isGeneric(o.customerName)) return false
+        const oPhone = String(o.customerPhone || '').replace(/\D/g, '')
+        return oPhone.endsWith(pLast)
+      })
+      if (past && past.customerName) n = past.customerName
+    }
 
- return res.json({ found: false, hasDiscount: false, discountPct: 0 })
+    return isGeneric(n) ? 'Customer' : n
+  }
+
+  if (user) {
+    const custName = resolveName(user, phone)
+    const userOrders = (orders || []).filter(o => o && isValidSalesOrder(o) && (String(o.customerPhone || '').replace(/\D/g, '').endsWith(cleanLast10)))
+    const visitCount = user.visitCount !== undefined ? Number(user.visitCount) : userOrders.length
+    const totalSpend = userOrders.reduce((sum, o) => sum + Number(o.total || 0), 0)
+
+    if (totalSpend >= 5000 && user.tier !== 'Partner') {
+      user.tier = 'Partner'
+      saveState()
+    }
+
+    if (user.offerRedeemed) {
+      return res.json({
+        found: true,
+        hasDiscount: false,
+        discountPct: 0,
+        offerRedeemed: true,
+        customerName: custName,
+        phone: user.phone || user.customerPhone || user.mobile || phone,
+        tier: 'Offer Redeemed',
+        discountReason: '⚠️ 1-Time VIP Offer Already Redeemed for this phone number'
+      })
+    }
+
+    let discountPct = Number(user.discountPct) || 0
+    if (!discountPct) {
+      if (user.isVip50 || (user.tier && String(user.tier).includes('50%'))) {
+        discountPct = 50
+      } else if (user.tier) {
+        const match = String(user.tier).match(/(\d+)%/)
+        if (match && match[1]) discountPct = Number(match[1])
+      }
+    }
+    if (!discountPct && (user.offerName || user.offerType || user.isVip)) {
+      discountPct = 50
+    }
+
+    let discountReason = user.discountReason || user.tier || user.offerName || (discountPct > 0 ? `${discountPct}% OFF Special Offer` : 'Standard Price')
+
+    if (user.isStaff || (user.tier && String(user.tier).toLowerCase().includes('staff'))) {
+      discountPct = 50
+      discountReason = 'Achariya Staff 50% OFF'
+    } else if (user.isPrimaryUser || user.type === 'primary' || (user.tier && String(user.tier).includes('30%'))) {
+      discountPct = 30
+      discountReason = 'Primary User 30% OFF'
+    } else if (user.isReferred || user.referredBy || (user.tier && String(user.tier).toLowerCase().includes('referred'))) {
+      discountPct = visitCount === 0 ? 15 : 10
+      discountReason = visitCount === 0 ? 'Referred Guest 1st Visit 15% OFF' : 'Referred Guest Repeat Visit 10% OFF'
+    }
+
+    const referredCount = user.referredFriendsCount || (Array.isArray(user.referredFriends) ? user.referredFriends.length : 0)
+    const isQualifiedAsset = referredCount >= 10
+
+    return res.json({
+      found: true,
+      hasDiscount: discountPct > 0,
+      discountPct,
+      discountReason,
+      customerName: custName,
+      phone: user.phone || user.customerPhone || user.mobile || phone,
+      tier: user.tier || (discountPct > 0 ? `${discountPct}% OFF` : 'VIP'),
+      visitCount,
+      totalSpend,
+      walletBalance: Number(user.walletBalance || user.rubyPoints || 0),
+      referredFriendsCount: referredCount,
+      isQualifiedAsset,
+      offerRedeemed: Boolean(user.offerRedeemed)
+    })
+  }
+
+  // Fallback if not in users array, check all user collections & past orders for name
+  const fallbackName = resolveName(null, phone)
+  return res.json({ found: false, hasDiscount: false, discountPct: 0, customerName: fallbackName, phone })
 })
 
 // Search customers by phone or name (for POS customer lookup & auto-completion)
 app.get('/api/customers/search', (req, res) => {
- const q = String(req.query.q || '').trim().toLowerCase()
- if (!q) return res.json({ customers: [] })
+  const q = String(req.query.q || '').trim().toLowerCase()
+  if (!q) return res.json({ customers: [] })
 
- const cleanQPhone = q.replace(/\D/g, '')
- const db = readDb()
- const allUsers = [...(loyaltyUsers || []), ...(mobileAppUsers || []), ...(db.loyaltyUsers || []), ...(db.users || [])]
+  const cleanQPhone = q.replace(/\D/g, '')
+  const db = readDb()
+  const userSources = [
+    loyaltyUsers, mobileAppUsers, employees,
+    db.loyaltyUsers, db.users, db.customers, db.offerRegistrations,
+    db.offers, db.vips, db.employees, db.familyMembers, db.contacts,
+    db.contacts121, db.vipUsers, db.customerList, db.allCustomers,
+    db.registeredUsers, db.offerUsers, db.members, db.registrations, db.leads
+  ]
+  
+  const allUsers = []
+  for (const src of userSources) {
+    if (Array.isArray(src)) allUsers.push(...src)
+  }
+  if (db && typeof db === 'object') {
+    for (const key of Object.keys(db)) {
+      if (Array.isArray(db[key])) {
+        for (const item of db[key]) {
+          if (item && typeof item === 'object' && (item.phone || item.customerPhone || item.mobile || item.contactNumber || item.phoneNumber)) {
+            allUsers.push(item)
+          }
+        }
+      }
+    }
+  }
 
- const seen = new Set()
- const results = []
+  const extractRawName = (u) => {
+    if (!u) return ''
+    if (typeof u.name === 'string' && u.name.trim()) return u.name.trim()
+    if (typeof u.customerName === 'string' && u.customerName.trim()) return u.customerName.trim()
+    if (typeof u.fullName === 'string' && u.fullName.trim()) return u.fullName.trim()
+    if (typeof u.userName === 'string' && u.userName.trim()) return u.userName.trim()
+    if (typeof u.guestName === 'string' && u.guestName.trim()) return u.guestName.trim()
+    if (typeof u.contactName === 'string' && u.contactName.trim()) return u.contactName.trim()
+    if (typeof u.employeeName === 'string' && u.employeeName.trim()) return u.employeeName.trim()
+    if (typeof u.familyMemberName === 'string' && u.familyMemberName.trim()) return u.familyMemberName.trim()
+    if (typeof u.memberName === 'string' && u.memberName.trim()) return u.memberName.trim()
+    if (typeof u.clientName === 'string' && u.clientName.trim()) return u.clientName.trim()
+    if (typeof u.displayName === 'string' && u.displayName.trim()) return u.displayName.trim()
+    if (u.firstName || u.first_name) {
+      const f = u.firstName || u.first_name || ''
+      const l = u.lastName || u.last_name || ''
+      return `${f} ${l}`.trim()
+    }
+    return ''
+  }
 
- for (const u of allUsers) {
- if (!u) continue
- const uPhone = String(u.phone || '').replace(/\D/g, '')
- const uName = String(u.name || u.customerName || '').toLowerCase()
+  const isGeneric = (str) => {
+    if (!str) return true
+    const s = String(str).trim().toLowerCase()
+    return !s || ['customer', 'vip customer', 'vip 50% customer', 'mobile app user', 'den member', 'new customer', 'guest', 'user', 'walk-in customer'].includes(s)
+  }
 
- const matchesPhone = cleanQPhone.length >= 2 && uPhone.includes(cleanQPhone)
- const matchesName = q.length >= 2 && uName.includes(q)
+  const resolveName = (u, p) => {
+    let n = extractRawName(u)
+    const pClean = (p || (u && (u.phone || u.customerPhone || u.mobile)) || '').replace(/\D/g, '')
+    const pLast = pClean.length >= 10 ? pClean.slice(-10) : pClean
 
- if (matchesPhone || matchesName) {
- const key = uPhone || u.id
- if (!seen.has(key)) {
- seen.add(key)
- results.push({
- id: u.id,
- customerName: u.name || u.customerName || 'Customer',
- phone: u.phone || '',
- discountPct: Number(u.discountPct) || (u.tier && u.tier.includes('50%') ? 50 : 0),
- offerRedeemed: Boolean(u.offerRedeemed),
- tier: u.tier || 'Standard'
- })
- }
- }
- }
+    if (isGeneric(n) && pLast && pLast.length >= 8) {
+      const matchInUsers = allUsers.find(other => {
+        if (!other) return false
+        const oName = extractRawName(other)
+        if (isGeneric(oName)) return false
+        const oPhone = String(other.phone || other.customerPhone || other.mobile || other.contactNumber || other.phoneNumber || '').replace(/\D/g, '')
+        return oPhone.endsWith(pLast)
+      })
+      if (matchInUsers) {
+        n = extractRawName(matchInUsers)
+      }
+    }
 
- res.json({ customers: results.slice(0, 25) })
+    if (isGeneric(n) && pLast && pLast.length >= 8) {
+      const past = [...(db.orders || orders || [])].reverse().find(o => {
+        if (!o || isGeneric(o.customerName)) return false
+        const oPhone = String(o.customerPhone || '').replace(/\D/g, '')
+        return oPhone.endsWith(pLast)
+      })
+      if (past && past.customerName) n = past.customerName
+    }
+
+    return isGeneric(n) ? 'Customer' : n
+  }
+
+  const seen = new Set()
+  const results = []
+
+  for (const u of allUsers) {
+    if (!u) continue
+    const uPhone = String(u.phone || u.customerPhone || u.mobile || u.contactNumber || u.phoneNumber || '').replace(/\D/g, '')
+    const uName = String(extractRawName(u) || '').toLowerCase()
+
+    const matchesPhone = cleanQPhone.length >= 2 && (uPhone.includes(cleanQPhone) || (cleanQPhone.length >= 8 && uPhone.endsWith(cleanQPhone.slice(-8))))
+    const matchesName = q.length >= 2 && uName.includes(q)
+
+    if (matchesPhone || matchesName) {
+      const key = uPhone || u.id
+      if (!seen.has(key)) {
+        seen.add(key)
+        const disc = Number(u.discountPct) || (u.tier && String(u.tier).includes('50%') ? 50 : 0)
+        results.push({
+          id: u.id,
+          customerName: resolveName(u, uPhone),
+          phone: u.phone || u.customerPhone || u.mobile || uPhone,
+          discountPct: disc,
+          offerRedeemed: Boolean(u.offerRedeemed),
+          tier: u.tier || (disc >= 50 ? 'VIP 50% OFF' : 'Standard')
+        })
+      }
+    }
+  }
+
+  res.json({ customers: results.slice(0, 25) })
 })
 
 // Delete single customer by ID or phone
@@ -9565,14 +10096,14 @@ async function verifyMSG91OTP(phone, otp, reqId = null) {
   }
 }
 
-// 1. Send MSG91 OTP for Forgot Password or Asset Verification
+// 1. Send WhatsApp / MSG91 OTP for Forgot Password or Asset Verification
 app.post(['/api/auth/send-otp', '/api/auth/forgot-password', '/api/assets/send-otp'], async (req, res) => {
  try {
- const { phone, purpose = 'verification' } = req.body
+ const { phone, purpose = 'asset-verification' } = req.body
  const cleanPhone = String(phone || '').replace(/\D/g, '')
 
  if (!cleanPhone || cleanPhone.length < 8) {
- return res.status(400).json({ error: 'Valid phone number required for MSG91 OTP' })
+ return res.status(400).json({ error: 'Valid phone number required for WhatsApp OTP' })
  }
 
  const otp = String(Math.floor(1000 + Math.random() * 9000))
@@ -9580,13 +10111,13 @@ app.post(['/api/auth/send-otp', '/api/auth/forgot-password', '/api/assets/send-o
 
  otpStore.set(cleanPhone, { otp, expiresAt, purpose })
 
- const msg91Res = await sendMSG91OTP(cleanPhone, otp)
+ const msg91Res = await sendMSG91OTP(cleanPhone, otp, purpose)
 
  res.json({
  success: true,
- message: `OTP sent successfully to ${cleanPhone} via MSG91`,
+ message: `WhatsApp OTP sent successfully to ${cleanPhone}`,
  phone: cleanPhone,
- method: msg91Res.method,
+ method: msg91Res.method || 'whatsapp',
  otp: msg91Res.method === 'console' ? otp : undefined
  })
  } catch (err) {
@@ -9595,7 +10126,7 @@ app.post(['/api/auth/send-otp', '/api/auth/forgot-password', '/api/assets/send-o
  }
 })
 
-// 2. Verify MSG91 OTP for Forgot Password or Asset Addition
+// 2. Verify WhatsApp / MSG91 OTP for Forgot Password or Asset Addition
 app.post(['/api/auth/verify-otp', '/api/assets/verify-otp', '/api/auth/reset-password'], async (req, res) => {
  try {
  const { phone, otp, newPassword, assetName, masterPhone } = req.body
@@ -9665,8 +10196,28 @@ app.post(['/api/auth/verify-otp', '/api/assets/verify-otp', '/api/auth/reset-pas
  masterUser.referredFriends.push(cleanPhone)
  masterUser.referredFriendsCount = masterUser.referredFriends.length
  }
+
+ if (!masterUser.assets) masterUser.assets = []
+ const existingAsset = masterUser.assets.find(a => String(a.phone || '').replace(/\D/g, '') === cleanPhone)
+ if (!existingAsset) {
+ masterUser.assets.push({
+ id: 'a_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+ name: assetName,
+ phone: cleanPhone,
+ status: 'active',
+ activatedAt: new Date().toISOString(),
+ hasDined: false,
+ pointsDistributed: 0,
+ addedById: masterUser.id,
+ addedByName: masterUser.name
+ })
+ } else {
+ existingAsset.status = 'active'
+ existingAsset.activatedAt = new Date().toISOString()
+ }
+
  saveState()
- return res.json({ success: true, message: 'Asset friend verified via MSG91 OTP and added successfully!', asset: assetUser })
+ return res.json({ success: true, message: `${assetName} verified via WhatsApp OTP and added successfully!`, asset: assetUser })
  }
  }
 
@@ -9704,12 +10255,13 @@ app.post('/api/cashfree/create-order', async (req, res) => {
  const { amount, orderId, customerName, customerPhone, customerEmail } = req.body
  if (!amount || amount <= 0) return res.status(400).json({ error: 'Valid payment amount is required' })
 
- const cfConfig = settings?.cashfree || {}
+ const cfConfig = settings?.paymentGateways?.cashfree || settings?.cashfree || {}
  const appId = cfConfig.appId || process.env.CASHFREE_APP_ID || DEFAULT_CASHFREE_APP_ID
  const secretKey = cfConfig.secretKey || process.env.CASHFREE_SECRET_KEY || DEFAULT_CASHFREE_SECRET_KEY
  const env = (cfConfig.environment || process.env.CASHFREE_ENV || DEFAULT_CASHFREE_ENV).toUpperCase()
 
  const cleanPhone = String(customerPhone || '9876543210').replace(/\D/g, '')
+ const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
  const generatedOrderId = orderId || `order_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
  const baseUrl = env === 'PRODUCTION' ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg'
 
@@ -10213,6 +10765,137 @@ app.post('/api/settings/upload-customers', (req, res) => {
  res.status(500).json({ error: 'CSV parse failed: ' + e.message })
  }
  })
+
+// Toggle individual customer offer redemption status
+app.post('/api/admin/customers/toggle-redemption', (req, res) => {
+  const { customerId, phone, offerRedeemed } = req.body || {}
+  const targetPhone = String(phone || '').replace(/\D/g, '')
+  
+  let found = false
+  const userCollections = [loyaltyUsers, mobileAppUsers]
+  
+  for (const list of userCollections) {
+    if (!Array.isArray(list)) continue
+    for (const u of list) {
+      if (!u) continue
+      const uPhone = String(u.phone || u.customerPhone || '').replace(/\D/g, '')
+      if ((customerId && u.id === customerId) || (targetPhone && uPhone && (uPhone === targetPhone || uPhone.endsWith(targetPhone) || targetPhone.endsWith(uPhone)))) {
+        u.offerRedeemed = offerRedeemed !== undefined ? Boolean(offerRedeemed) : !Boolean(u.offerRedeemed)
+        if (u.offerRedeemed) {
+          u.offerRedeemedAt = new Date().toISOString()
+        } else {
+          delete u.offerRedeemedAt
+        }
+        found = true
+      }
+    }
+  }
+
+  saveState()
+  return res.json({ success: true, found, offerRedeemed: Boolean(offerRedeemed) })
+})
+
+// Bulk mark list of phone numbers / contacts as redeemed
+app.post('/api/admin/customers/bulk-mark-redeemed', (req, res) => {
+  const { contactsText, offerRedeemed = true } = req.body || {}
+  if (!contactsText) return res.status(400).json({ error: 'contactsText is required' })
+
+  const rawLines = String(contactsText).split(/[\n\r;,]+/)
+  let updatedCount = 0
+
+  for (let line of rawLines) {
+    const phone = line.replace(/\D/g, '')
+    if (phone.length < 8) continue
+
+    const pLast = phone.length >= 10 ? phone.slice(-10) : phone
+    for (const list of [loyaltyUsers, mobileAppUsers]) {
+      if (!Array.isArray(list)) continue
+      for (const u of list) {
+        if (!u) continue
+        const uPhone = String(u.phone || u.customerPhone || '').replace(/\D/g, '')
+        if (uPhone && (uPhone.endsWith(pLast) || pLast.endsWith(uPhone))) {
+          u.offerRedeemed = Boolean(offerRedeemed)
+          if (u.offerRedeemed) u.offerRedeemedAt = new Date().toISOString()
+          else delete u.offerRedeemedAt
+          updatedCount++
+        }
+      }
+    }
+  }
+
+  saveState()
+  return res.json({ success: true, updatedCount })
+})
+
+// Permanently remove all redeemed offer customers from the active VIP list
+app.post('/api/admin/customers/purge-redeemed', (req, res) => {
+  try {
+    const initialLoyaltyCount = loyaltyUsers.length
+    loyaltyUsers = loyaltyUsers.filter(u => !u || !u.offerRedeemed)
+    const purgedCount = initialLoyaltyCount - loyaltyUsers.length
+
+    saveState()
+    return res.json({ success: true, purgedCount, remainingLoyaltyCount: loyaltyUsers.length })
+  } catch (e) {
+    return res.status(500).json({ error: 'Purge failed: ' + e.message })
+  }
+})
+
+// Double Backup API Endpoints
+app.post('/api/admin/double-backup/create', (req, res) => {
+  try {
+    const backupResult = syncDoubleBackupVaults()
+    saveState()
+    res.json({
+      success: true,
+      message: '✅ Synchronous Master Double-Backup Completed across all vaults!',
+      backupMeta: backupResult ? backupResult._meta : null
+    })
+  } catch (e) {
+    res.status(500).json({ error: 'Double backup failed: ' + e.message })
+  }
+})
+
+app.get('/api/admin/double-backup/status', (req, res) => {
+  try {
+    const db = readDb() || {}
+    const getVaultStats = (filePath) => {
+      if (!existsSync(filePath)) return { exists: false, count: 0, sizeBytes: 0, modifiedAt: null }
+      try {
+        const stats = statSync(filePath)
+        const content = readFileSync(filePath, 'utf-8').trim()
+        let count = 0
+        if (content) {
+          const parsed = JSON.parse(content)
+          count = Array.isArray(parsed) ? parsed.length : (parsed.count || (parsed.orders ? parsed.orders.length : (parsed.menuItems ? parsed.menuItems.length : (parsed.loyaltyUsers ? parsed.loyaltyUsers.length : 0))))
+        }
+        return { exists: true, count, sizeBytes: stats.size, modifiedAt: stats.mtime }
+      } catch (e) {
+        return { exists: true, count: 0, sizeBytes: 0, error: e.message }
+      }
+    }
+
+    res.json({
+      success: true,
+      primaryDb: {
+        ordersCount: (db.orders || []).length,
+        menuItemsCount: (db.menuItems || []).length,
+        loyaltyUsersCount: (db.loyaltyUsers || []).length,
+        employeesCount: (db.employees || []).length,
+        usersCount: (db.users || []).length
+      },
+      secondaryVaults: {
+        salesVault: getVaultStats(VAULT_PATH),
+        menuVault: getVaultStats(MENU_VAULT_PATH),
+        customerVault: getVaultStats(CUSTOMER_VAULT_PATH),
+        inventoryVault: getVaultStats(INVENTORY_VAULT_PATH),
+        masterDoubleBackup: getVaultStats(MASTER_DOUBLE_BACKUP_PATH)
+      },
+      timestamp: new Date().toISOString()
+    })
+  } catch (e) {
+    res.status(500).json({ error: 'Status check failed: ' + e.message })
+  }
 })
 
 // Search customers by phone number or name (name is case-insensitive, phone is digit-normalized).
@@ -10839,12 +11522,15 @@ app.post('/api/ccavenue/initiate', (req, res) => {
  ? 'https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction'
  : 'https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction'
 
+ const paymentUrl = `${host}/api/ccavenue/pay?encRequest=${encodeURIComponent(encRequest)}&accessCode=${encodeURIComponent(accessCode)}&isProduction=${isProduction}`
+
  res.json({
  success: true,
  orderId: txnOrderId,
  encRequest,
  accessCode,
  ccavenueUrl,
+ paymentUrl,
  formFields: {
  encRequest,
  access_code: accessCode
@@ -10854,6 +11540,42 @@ app.post('/api/ccavenue/initiate', (req, res) => {
  console.error('CCAvenue Initiate Error:', e)
  res.status(500).json({ error: 'Failed to initiate CCAvenue payment: ' + e.message })
  }
+})
+
+// Auto-submitting HTML form wrapper for CCAvenue POST payment launch
+app.get('/api/ccavenue/pay', (req, res) => {
+ const { encRequest, accessCode, isProduction } = req.query
+ if (!encRequest || !accessCode) {
+ return res.status(400).send('Invalid CCAvenue payment parameters.')
+ }
+ const actionUrl = isProduction === 'true'
+ ? 'https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction'
+ : 'https://test.ccavenue.com/transaction/transaction.do?command=initiateTransaction'
+
+ const html = `
+<!DOCTYPE html>
+<html>
+<head>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Redirecting to CCAvenue Payment Gateway...</title>
+ <style>
+ body { font-family: system-ui, -apple-system, sans-serif; background: #0f0f12; color: #fff; text-align: center; padding-top: 80px; }
+ .spinner { border: 4px solid rgba(255,255,255,0.1); width: 44px; height: 44px; border-radius: 50%; border-left-color: #f59e0b; animation: spin 1s linear infinite; margin: 20px auto; }
+ @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+ </style>
+</head>
+<body onload="document.forms['ccavenueForm'].submit()">
+ <div class="spinner"></div>
+ <h2>Redirecting to CCAvenue Secure Payment Gateway...</h2>
+ <p style="color: #9ca3af;">Please do not refresh or close this window.</p>
+ <form name="ccavenueForm" method="POST" action="${actionUrl}">
+ <input type="hidden" name="encRequest" value="${encRequest}" />
+ <input type="hidden" name="access_code" value="${accessCode}" />
+ </form>
+</body>
+</html>
+ `
+ res.send(html)
 })
 
 // Handle CCAvenue Response Callback
@@ -11591,6 +12313,9 @@ app.delete('/api/admin/menu/categories/:id', (req, res) => {
 
 // Menu Items Admin list (full data)
 app.get('/api/admin/menu/items', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+  res.setHeader('Pragma', 'no-cache')
+  res.setHeader('Expires', '0')
   const { categoryId } = req.query
   if (categoryId && categoryId !== 'all') {
     const filtered = menuItems.filter(i => i && String(i.categoryId) === String(categoryId))
@@ -11600,7 +12325,10 @@ app.get('/api/admin/menu/items', (req, res) => {
 })
 
 app.get('/api/admin/menu/categories', (req, res) => {
- res.json(categories.sort((a, b) => a.displayOrder - b.displayOrder))
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+  res.setHeader('Pragma', 'no-cache')
+  res.setHeader('Expires', '0')
+  res.json(categories.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)))
 })
 
 // Export Menu to Excel
@@ -12211,8 +12939,8 @@ app.get('/api/staff/audit-logs', (req, res) => {
  res.json(staffAuditLogs)
 })
 
-// POS Orders (no auth)
-app.get('/api/pos/orders', (req, res) => {
+// POS Orders (Hybrid: Kiosk/Captain unauthenticated, POS authenticated)
+app.get('/api/pos/orders', optionalPosAuth, (req, res) => {
  try {
  const { status, source } = req.query
  const includeCancelled = req.query.includeCancelled === 'true' || req.query.report === 'kot-cancelled'
@@ -12362,9 +13090,23 @@ function resolveCampaignOffer(orderDateStr, customerPhone, flags) {
  }
 }
 
-app.post('/api/pos/orders', (req, res) => {
- const { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod, complimentary, complimentaryType, specialRemarks } = req.body
- 
+app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
+  let { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod, complimentary, complimentaryType, specialRemarks, status, paymentStatus, paidAt, settleDirectly } = req.body
+
+  // Security: Prevent unauthenticated users from tampering with order status/payments
+  if (!req.staffId) {
+    if (source !== 'qr_self_order' && source !== 'captain' && source !== 'online') {
+      return res.status(403).json({ error: 'Unauthorized order source' })
+    }
+    // Force pending status and block direct settlement
+    status = 'pending'
+    paymentStatus = 'pending'
+    paidAt = null
+    settleDirectly = false
+    complimentary = false
+    complimentaryType = ''
+  }
+
   const id = uuid()
   const orderNum = ++orderNumber
   const kotNum = getNextKotNumber()
@@ -12660,7 +13402,7 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
  res.status(404).json({ error: 'Order not found' })
 })
 
-app.post('/api/pos/orders/:id/cancel', (req, res) => {
+app.post('/api/pos/orders/:id/cancel', posAuth, (req, res) => {
  const { id } = req.params
  const { reason, cancelledBy } = req.body || {}
  const targetOrder = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
@@ -13996,44 +14738,42 @@ const getOrderAmount = (o) => {
 }
 
 function isDemoOrderBeforeOpening(o) {
- if (!o) return false
- const dStr = getOrderDate(o)
- if (dStr === '2026-07-27') {
- if (o.orderNumber && Number(o.orderNumber) < 1036) {
- return true
- }
- const ts = o.createdAt || o.paidAt || o.completedAt || ''
- if (ts) {
- try {
- const dateObj = new Date(ts)
- if (dateObj.getTime() < new Date('2026-07-27T11:05:00.000Z').getTime()) {
- return true
- }
- } catch (e) {}
- }
- }
- return false
+  if (!o) return false
+  const dStr = getOrderDate(o)
+  if (dStr === '2026-07-27') {
+    if (o.orderNumber && Number(o.orderNumber) < 1036) {
+      return true
+    }
+    const ts = o.createdAt || o.paidAt || o.completedAt || ''
+    if (ts) {
+      try {
+        const dateObj = new Date(ts)
+        if (dateObj.getTime() < new Date('2026-07-27T11:05:00.000Z').getTime()) {
+          return true
+        }
+      } catch (e) {}
+    }
+  }
+  return false
 }
 
 const isCompletedSale = (o) => {
- if (!o) return false
- const s = (o.status || '').toLowerCase()
- const p = (o.paymentStatus || '').toLowerCase()
- const m = (o.paymentMethod || '').toLowerCase()
+  if (!o) return false
+  const s = (o.status || '').toLowerCase()
+  const p = (o.paymentStatus || '').toLowerCase()
+  const m = (o.paymentMethod || '').toLowerCase()
 
- // Requirement 3: Exclude Cancelled, Void, Complimentary, Draft, Deleted, Duplicate
- if (s === 'cancelled' || s === 'canceled' || s === 'void' || s === 'draft' || s === 'deleted' || o.isCancelled || o.isVoid || o.isDraft || o.isDeleted || o.isDuplicate) {
- return false
- }
- if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') {
- return false
- }
- if (isDemoOrderBeforeOpening(o)) {
- return false
- }
+  // Requirement 3: Exclude Cancelled, Void, Draft, Deleted, Duplicate
+  if (s === 'cancelled' || s === 'canceled' || s === 'void' || s === 'draft' || s === 'deleted' || o.isCancelled || o.isVoid || o.isDraft || o.isDeleted || o.isDuplicate) {
+    return false
+  }
+  if (isDemoOrderBeforeOpening(o)) {
+    return false
+  }
 
- // Requirement 4: Include only Completed or Paid Bills
- return s === 'completed' || p === 'paid' || Boolean(o.settleDirectly)
+  // Requirement 4: Include Completed, Paid, or Complimentary Bills
+  const isComp = o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary'
+  return s === 'completed' || p === 'paid' || Boolean(o.settleDirectly) || isComp
 }
 
 const isValidSalesOrder = isCompletedSale
@@ -14054,83 +14794,97 @@ function getCompletedSales(reqQuery, options = {}) {
 }
 
 function calculateSalesMetrics(salesOrders = []) {
- let totalInvoices = salesOrders.length
- let netSalesCollected = 0
- let grossMenuSubtotal = 0
- let totalDiscountGiven = 0
- let totalTaxGST = 0
+  let totalInvoices = salesOrders.length
+  let netSalesCollected = 0
+  let grossMenuSubtotal = 0
+  let totalDiscountGiven = 0
+  let totalTaxGST = 0
+  let complimentaryCount = 0
+  let complimentaryTotal = 0
 
- const byPaymentMethod = { cash: 0, upi: 0, card: 0, wallet: 0 }
- const paymentCounts = { cash: 0, upi: 0, card: 0, wallet: 0 }
- const byDiscountType = {}
- const bySource = {}
+  const byPaymentMethod = { cash: 0, upi: 0, card: 0, wallet: 0 }
+  const paymentCounts = { cash: 0, upi: 0, card: 0, wallet: 0 }
+  const byDiscountType = {}
+  const bySource = {}
 
- salesOrders.forEach(o => {
- const amt = getOrderAmount(o)
- netSalesCollected += amt
+  salesOrders.forEach(o => {
+    const amt = getOrderAmount(o)
+    netSalesCollected += amt
 
- const { discount: disc, name: dName } = getOrderDiscountInfo(o)
- const itemSub = (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
- const rawSub = Number(o.rawSubtotal) || (disc > 0 ? (Number(o.subtotal) + disc) : (itemSub || Number(o.subtotal) || 0))
- const netSub = Number(o.subtotal) || Math.max(0, rawSub - disc)
+    const m = (o.paymentMethod || '').toLowerCase()
+    const isComp = o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary'
 
- grossMenuSubtotal += rawSub
+    const { discount: disc, name: dName } = getOrderDiscountInfo(o)
+    const itemSub = (o.items || []).reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
+    const rawSub = Number(o.rawSubtotal) || (disc > 0 ? (Number(o.subtotal) + disc) : (itemSub || Number(o.subtotal) || 0))
+    const netSub = Number(o.subtotal) || Math.max(0, rawSub - disc)
 
- // GST Tax (5%) is calculated strictly on Net Subtotal (discounted offer price)
- const tax = o.tax !== undefined && o.tax !== null ? Number(o.tax) : Math.round(netSub * 0.05)
- totalTaxGST += tax
+    grossMenuSubtotal += rawSub
 
- if (disc > 0) {
- totalDiscountGiven += disc
- if (!byDiscountType[dName]) {
- byDiscountType[dName] = { count: 0, totalDiscount: 0 }
- }
- byDiscountType[dName].count += 1
- byDiscountType[dName].totalDiscount += disc
- }
+    if (isComp) {
+      complimentaryCount += 1
+      const compVal = rawSub || Number(o.total) || netSub || 0
+      complimentaryTotal += compVal
+      byPaymentMethod['complimentary'] = (byPaymentMethod['complimentary'] || 0) + 0
+      paymentCounts['complimentary'] = (paymentCounts['complimentary'] || 0) + 1
+    }
 
- if (o.splitPayments && typeof o.splitPayments === 'object' && Object.keys(o.splitPayments).length > 0) {
- Object.entries(o.splitPayments).forEach(([mKey, mVal]) => {
- const val = Number(mVal) || 0
- if (val > 0) {
- let key = mKey.toLowerCase()
- if (key.includes('card') || key.includes('credit') || key.includes('debit')) key = 'card'
- else if (key.includes('upi') || key.includes('gpay') || key.includes('phonepe') || key.includes('paytm') || key.includes('online')) key = 'upi'
- else if (key.includes('wallet')) key = 'wallet'
- else key = 'cash'
- byPaymentMethod[key] = (byPaymentMethod[key] || 0) + val
- paymentCounts[key] = (paymentCounts[key] || 0) + 1
- }
- })
- } else {
- let method = (o.paymentMethod || 'cash').toLowerCase()
- if (method.includes('card') || method.includes('credit') || method.includes('debit')) method = 'card'
- else if (method.includes('upi') || method.includes('gpay') || method.includes('phonepe') || method.includes('paytm') || method.includes('online')) method = 'upi'
- else if (method.includes('wallet')) method = 'wallet'
- else method = 'cash'
+    const tax = o.tax !== undefined && o.tax !== null ? Number(o.tax) : Math.round(netSub * 0.05)
+    totalTaxGST += tax
 
- byPaymentMethod[method] = (byPaymentMethod[method] || 0) + amt
- paymentCounts[method] = (paymentCounts[method] || 0) + 1
- }
+    if (disc > 0) {
+      totalDiscountGiven += disc
+      if (!byDiscountType[dName]) {
+        byDiscountType[dName] = { count: 0, totalDiscount: 0 }
+      }
+      byDiscountType[dName].count += 1
+      byDiscountType[dName].totalDiscount += disc
+    }
 
- let src = (o.source || o.type || 'dine-in').toUpperCase()
- bySource[src] = (bySource[src] || 0) + 1
- })
+    if (o.splitPayments && typeof o.splitPayments === 'object' && Object.keys(o.splitPayments).length > 0) {
+      Object.entries(o.splitPayments).forEach(([mKey, mVal]) => {
+        const val = Number(mVal) || 0
+        if (val > 0) {
+          let key = mKey.toLowerCase()
+          if (key.includes('card') || key.includes('credit') || key.includes('debit')) key = 'card'
+          else if (key.includes('upi') || key.includes('gpay') || key.includes('phonepe') || key.includes('paytm') || key.includes('online')) key = 'upi'
+          else if (key.includes('wallet')) key = 'wallet'
+          else key = 'cash'
+          byPaymentMethod[key] = (byPaymentMethod[key] || 0) + val
+          paymentCounts[key] = (paymentCounts[key] || 0) + 1
+        }
+      })
+    } else if (!isComp) {
+      let method = (o.paymentMethod || 'cash').toLowerCase()
+      if (method.includes('card') || method.includes('credit') || method.includes('debit')) method = 'card'
+      else if (method.includes('upi') || method.includes('gpay') || method.includes('phonepe') || method.includes('paytm') || method.includes('online')) method = 'upi'
+      else if (method.includes('wallet')) method = 'wallet'
+      else method = 'cash'
 
- const avgBasketValue = totalInvoices > 0 ? Math.round(netSalesCollected / totalInvoices) : 0
+      byPaymentMethod[method] = (byPaymentMethod[method] || 0) + amt
+      paymentCounts[method] = (paymentCounts[method] || 0) + 1
+    }
 
- return {
- totalInvoices,
- netSalesCollected: Math.round(netSalesCollected),
- grossMenuSubtotal: Math.round(grossMenuSubtotal),
- totalDiscountGiven: Math.round(totalDiscountGiven),
- totalTaxGST: Math.round(totalTaxGST),
- avgBasketValue,
- byPaymentMethod,
- paymentCounts,
- byDiscountType,
- bySource
- }
+    let src = (o.source || o.type || 'dine-in').toUpperCase()
+    bySource[src] = (bySource[src] || 0) + 1
+  })
+
+  const avgBasketValue = totalInvoices > 0 ? Math.round(netSalesCollected / totalInvoices) : 0
+
+  return {
+    totalInvoices,
+    netSalesCollected: Math.round(netSalesCollected),
+    grossMenuSubtotal: Math.round(grossMenuSubtotal),
+    totalDiscountGiven: Math.round(totalDiscountGiven),
+    complimentaryCount,
+    complimentaryTotal: Math.round(complimentaryTotal),
+    totalTaxGST: Math.round(totalTaxGST),
+    avgBasketValue,
+    byPaymentMethod,
+    paymentCounts,
+    byDiscountType,
+    bySource
+  }
 }
 
 const getOrderDiscountInfo = (o) => {
@@ -14277,34 +15031,155 @@ function runMidnightDayClosingCheck() {
 
 // ============ BILL RESETTLEMENT ENDPOINT ============
 app.put('/api/pos/orders/:id/resettle', (req, res) => {
- try {
- const { id } = req.params
- const { paymentMethod, paymentStatus, status, notes } = req.body
+  try {
+    const { id } = req.params
+    const { paymentMethod, paymentStatus, status, notes } = req.body
 
- const targetOrder = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
- if (!targetOrder) {
- return res.status(404).json({ error: 'Order / Bill not found' })
- }
+    const targetOrder = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
+    if (!targetOrder) {
+      return res.status(404).json({ error: 'Order / Bill not found' })
+    }
 
- if (paymentMethod) targetOrder.paymentMethod = paymentMethod.toLowerCase()
- if (req.body.splitPayments) targetOrder.splitPayments = req.body.splitPayments
- else if (paymentMethod !== 'split') targetOrder.splitPayments = undefined
- if (paymentStatus) targetOrder.paymentStatus = paymentStatus
- if (status) targetOrder.status = status
- const nowStamp = new Date().toISOString()
- if ((paymentStatus === 'paid' || status === 'completed') && !targetOrder.paidAt) targetOrder.paidAt = nowStamp
- if ((paymentStatus === 'paid' || status === 'completed') && !targetOrder.completedAt) targetOrder.completedAt = nowStamp
- targetOrder.resettledAt = nowStamp
- targetOrder.resettledBy = req.body.resettledBy || 'Admin'
- if (notes) targetOrder.resettleNotes = notes
+    if (paymentMethod) targetOrder.paymentMethod = paymentMethod.toLowerCase()
+    if (req.body.splitPayments) targetOrder.splitPayments = req.body.splitPayments
+    else if (paymentMethod && paymentMethod !== 'split') targetOrder.splitPayments = undefined
+    if (paymentStatus) targetOrder.paymentStatus = paymentStatus
+    if (status) targetOrder.status = status
+    const nowStamp = new Date().toISOString()
+    if ((paymentStatus === 'paid' || status === 'completed') && !targetOrder.paidAt) targetOrder.paidAt = nowStamp
+    if ((paymentStatus === 'paid' || status === 'completed') && !targetOrder.completedAt) targetOrder.completedAt = nowStamp
+    targetOrder.resettledAt = nowStamp
+    targetOrder.resettledBy = req.body.resettledBy || 'Admin'
+    if (notes) targetOrder.resettleNotes = notes
 
- saveState()
- console.log(`[BILL RESETTLEMENT] Order #${targetOrder.orderNumber || targetOrder.id} resettled to ${(targetOrder.paymentMethod || 'cash').toUpperCase()}`)
- res.json({ success: true, message: 'Bill resettled successfully', order: targetOrder })
- } catch (e) {
- console.error('[BILL RESETTLEMENT ERROR]', e.message)
- res.status(500).json({ error: 'Failed to resettle bill: ' + e.message })
- }
+    saveState()
+    console.log(`[BILL RESETTLEMENT] Order #${targetOrder.orderNumber || targetOrder.id} resettled to ${(targetOrder.paymentMethod || 'cash').toUpperCase()}`)
+    res.json({ success: true, message: 'Bill resettled successfully', order: targetOrder })
+  } catch (e) {
+    console.error('[BILL RESETTLEMENT ERROR]', e.message)
+    res.status(500).json({ error: 'Failed to resettle bill: ' + e.message })
+  }
+})
+
+// ============ BILL MODIFICATION ENDPOINT (Requires Admin/Manager Approval) ============
+app.put('/api/pos/orders/:id/modify', (req, res) => {
+  try {
+    const { id } = req.params
+    const {
+      adminPin,
+      pin,
+      items,
+      discount,
+      discountName,
+      paymentMethod,
+      splitPayments,
+      tableNumber,
+      type,
+      customerName,
+      customerPhone,
+      modificationReason,
+      notes
+    } = req.body
+
+    const inputPin = adminPin || pin
+    if (!inputPin || String(inputPin).length < 4) {
+      return res.status(400).json({ error: '4-digit Admin / Manager PIN required' })
+    }
+
+    // Verify Admin/Manager PIN
+    const authorizer = billingUsers.find(u => bcrypt.compareSync(String(inputPin), u.pin))
+    if (!authorizer) {
+      return res.status(401).json({ error: 'Invalid PIN. Access denied.' })
+    }
+
+    const role = (authorizer.role || '').toLowerCase()
+    if (role !== 'admin' && role !== 'manager' && role !== 'super-admin') {
+      return res.status(403).json({ error: 'Unauthorized: Only Admin or Manager PIN can modify bills' })
+    }
+
+    const targetOrder = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
+    if (!targetOrder) {
+      return res.status(404).json({ error: 'Order / Bill not found' })
+    }
+
+    const previousTotal = targetOrder.total || 0
+    const nowStamp = new Date().toISOString()
+
+    // 1. If items are being updated, restore previous inventory & deduct new inventory
+    if (Array.isArray(items) && items.length > 0) {
+      if (targetOrder.status !== 'cancelled') {
+        restoreInventoryForOrder(targetOrder)
+      }
+      targetOrder.items = items.map(item => ({
+        menuItemId: item.menuItemId || item.id || '',
+        name: item.menuItemName || item.name || 'Item',
+        menuItemName: item.menuItemName || item.name || 'Item',
+        quantity: Number(item.quantity || item.qty || 1),
+        qty: Number(item.quantity || item.qty || 1),
+        unitPrice: Number(item.unitPrice || item.price || 0),
+        price: Number(item.unitPrice || item.price || 0),
+        totalPrice: Number(item.totalPrice !== undefined ? item.totalPrice : (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)),
+        customization: item.customization || null,
+        notes: item.notes || ''
+      }))
+      if (targetOrder.status !== 'cancelled') {
+        deductInventoryForOrder(targetOrder)
+      }
+    }
+
+    // 2. Recalculate bill financial values
+    const rawSubtotal = targetOrder.items.reduce((sum, item) => sum + (Number(item.totalPrice) || (Number(item.unitPrice || 0) * Number(item.quantity || 1))), 0)
+    const discountAmt = discount !== undefined ? Math.max(0, Number(discount)) : (targetOrder.discount || 0)
+    const netSubtotal = Math.max(0, rawSubtotal - discountAmt)
+    const tax = Math.round(netSubtotal * 0.05)
+    const newTotal = Math.round(netSubtotal + tax)
+
+    targetOrder.rawSubtotal = rawSubtotal
+    targetOrder.discount = discountAmt
+    targetOrder.discountGiven = discountAmt
+    if (discountName !== undefined) targetOrder.discountName = discountName
+    targetOrder.subtotal = netSubtotal
+    targetOrder.tax = tax
+    targetOrder.total = newTotal
+
+    // 3. Update metadata if provided
+    if (paymentMethod) targetOrder.paymentMethod = paymentMethod.toLowerCase()
+    if (splitPayments) targetOrder.splitPayments = splitPayments
+    else if (paymentMethod && paymentMethod !== 'split') targetOrder.splitPayments = undefined
+
+    if (tableNumber !== undefined) targetOrder.tableNumber = tableNumber
+    if (type) targetOrder.type = type
+    if (customerName !== undefined) targetOrder.customerName = customerName
+    if (customerPhone !== undefined) targetOrder.customerPhone = customerPhone
+    if (notes !== undefined) targetOrder.notes = notes
+
+    targetOrder.updatedAt = nowStamp
+    targetOrder.modifiedAt = nowStamp
+    targetOrder.modifiedBy = authorizer.name || authorizer.role || 'Admin'
+
+    // 4. Audit Log
+    if (!targetOrder.modificationHistory) targetOrder.modificationHistory = []
+    targetOrder.modificationHistory.push({
+      modifiedAt: nowStamp,
+      modifiedBy: authorizer.name || authorizer.role || 'Admin',
+      reason: modificationReason || notes || 'Bill modified by admin',
+      previousTotal: previousTotal,
+      newTotal: newTotal
+    })
+
+    saveState()
+    io.emit('order:updated', targetOrder)
+    console.log(`[BILL MODIFICATION] Order #${targetOrder.orderNumber || targetOrder.id} modified by ${targetOrder.modifiedBy}. Total: ₹${previousTotal} → ₹${newTotal}`)
+
+    res.json({
+      success: true,
+      message: `Bill #${targetOrder.orderNumber || targetOrder.id} modified successfully`,
+      order: targetOrder
+    })
+  } catch (e) {
+    console.error('[BILL MODIFICATION ERROR]', e.message)
+    res.status(500).json({ error: 'Failed to modify bill: ' + e.message })
+  }
 })
 
 // Check every 60 seconds for 12:00 AM IST rollover
@@ -14972,13 +15847,48 @@ function resolveItemCategory(item) {
  return 'General'
 }
 
-// Helper to extract detailed name including customizer variations
+// Helper to extract detailed name including customizer variations (Paneer, Chicken, Gyros, etc.)
 function getCustomizedItemName(item) {
+  if (!item) return 'Unspecified Item'
   let baseName = item.menuItemName || item.name || 'Unspecified Item'
-  if (!item.customization) return baseName
+  const c = (typeof item.customization === 'object' && item.customization !== null) ? item.customization : {}
+  const lowerBase = baseName.toLowerCase()
 
-  const c = item.customization
+  // Extract protein / variant (especially Paneer vs Chicken for salads & rice bowls)
+  let protein = item.protein || item.proteinType || item.variant || item.variantName || item.selectedVariant || c.protein || c.proteinType || c.variant || c.flavor
+
+  if (!protein) {
+    const custStr = typeof item.customization === 'string' ? item.customization : JSON.stringify(c)
+    const notesStr = item.notes || item.instruction || c.notes || ''
+    const combinedStr = `${custStr} ${notesStr}`
+
+    if (/paneer/i.test(combinedStr)) {
+      protein = 'Paneer'
+    } else if (/chicken/i.test(combinedStr)) {
+      protein = 'Chicken'
+    } else if (/egg/i.test(combinedStr)) {
+      protein = 'Egg'
+    } else if (/mushroom/i.test(combinedStr)) {
+      protein = 'Mushroom'
+    } else if (/falafel/i.test(combinedStr)) {
+      protein = 'Falafel'
+    }
+  }
+
   const parts = []
+  if (protein) {
+    const proteinStr = String(protein).trim()
+    if (!lowerBase.includes(proteinStr.toLowerCase())) {
+      parts.push(`Protein: ${proteinStr}`)
+    }
+  } else if (lowerBase.includes('salad') || lowerBase.includes('bowl') || lowerBase.includes('rice')) {
+    if (item.isVeg === true || item.type === 'veg' || lowerBase.includes('veg')) {
+      parts.push('Paneer / Veg')
+    } else if (item.isVeg === false || item.type === 'non-veg' || lowerBase.includes('non-veg')) {
+      parts.push('Chicken')
+    }
+  }
+
   if (c.gyro1) parts.push(c.gyro1)
   if (c.gyro2) parts.push(`G2: ${c.gyro2}`)
   if (c.protein) parts.push(c.protein)
