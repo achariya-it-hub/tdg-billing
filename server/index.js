@@ -10765,6 +10765,7 @@ app.post('/api/settings/upload-customers', (req, res) => {
  res.status(500).json({ error: 'CSV parse failed: ' + e.message })
  }
  })
+})
 
 // Toggle individual customer offer redemption status
 app.post('/api/admin/customers/toggle-redemption', (req, res) => {
