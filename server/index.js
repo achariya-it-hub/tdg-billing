@@ -108,32 +108,6 @@ function readDb() {
       if (content && content !== '{}') {
         let parsed = JSON.parse(content)
         
-        // ─── EMERGENCY AUTO-RESTORE ──────────────────────────────────────
-        try {
-          const restorePath = join(__dirname, 'db.json')
-          if (existsSync(restorePath)) {
-            const restoreData = JSON.parse(readFileSync(restorePath, 'utf-8'))
-            const restoreAug28 = (restoreData.orders || []).filter(o => String(o.createdAt).startsWith('2026-08-28')).length
-            const liveAug28 = (parsed.orders || []).filter(o => String(o.createdAt).startsWith('2026-08-28')).length
-            
-            if (restoreAug28 > liveAug28) {
-              console.log(`[EMERGENCY RESTORE] Bundled DB has ${restoreAug28} Aug 28 bills. Live DB has ${liveAug28}. OVERWRITING...`)
-              parsed = restoreData
-              writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2))
-              
-              // Force vault rebuild
-              const vaultPath = join(DATA_DIR, 'sales_vault_LOCK.json')
-              if (existsSync(vaultPath)) {
-                console.log('[EMERGENCY RESTORE] Deleting old sales_vault_LOCK.json to force rebuild')
-                rmSync(vaultPath)
-              }
-            }
-          }
-        } catch (re) {
-          console.error('[EMERGENCY RESTORE ERROR]', re.message)
-        }
-        // ─────────────────────────────────────────────────────────────────
-
         if (parsed && typeof parsed === 'object') return parsed
       }
     }
