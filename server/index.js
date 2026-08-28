@@ -14638,38 +14638,37 @@ app.post('/api/purchases', (req, res) => {
 // Helper for IST timezone & business shift safe local date string (YYYY-MM-DD)
 // Applies 5:00 AM IST shift cutoff so late-night bills (12:00 AM - 04:59 AM IST) belong to yesterday's shift.
 const getLocalDateStr = (val) => {
- if (!val) return ''
- const str = String(val).trim()
- if (!str) return ''
+  if (!val) return ''
+  const str = String(val).trim()
+  if (!str) return ''
 
- // 1. If already plain YYYY-MM-DD date string without time
- if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str
 
- // 2. Parse Date objects or ISO strings (e.g. 2026-08-05T18:35:00.000Z)
- try {
- const d = typeof val === 'number' ? new Date(val) : new Date(str)
- if (!isNaN(d.getTime())) {
- // 5:00 AM IST shift cutoff: 12:00 AM to 04:59 AM IST is part of previous day's shift
- const istHours = Number(d.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour12: false }).split(':')[0])
- if (istHours < 5) {
- const shifted = new Date(d.getTime() - 5 * 3600 * 1000)
- return shifted.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
- }
- return d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
- }
- } catch (e) {}
+  try {
+    const d = typeof val === 'number' ? new Date(val) : new Date(str)
+    if (!isNaN(d.getTime())) {
+      const istMs = d.getTime() + (5.5 * 60 * 60 * 1000)
+      const istDate = new Date(istMs)
+      const istHours = istDate.getUTCHours()
 
- // 3. Match DD.MM.YYYY, DD.MM.YY, DD/MM/YYYY, DD/MM/YY, DD-MM-YYYY, DD-MM-YY
- const dmyMatch = str.match(/^(\d{1,2})[\.\/\-](\d{1,2})[\.\/\-](\d{2,4})/)
- if (dmyMatch) {
- let day = dmyMatch[1].padStart(2, '0')
- let month = dmyMatch[2].padStart(2, '0')
- let year = dmyMatch[3]
- if (year.length === 2) year = '20' + year
- return `${year}-${month}-${day}`
- }
+      if (istHours < 5) {
+        const shifted = new Date(istMs - (24 * 60 * 60 * 1000))
+        return shifted.toISOString().split('T')[0]
+      }
+      return istDate.toISOString().split('T')[0]
+    }
+  } catch (e) {}
 
- return str.slice(0, 10)
+  const dmyMatch = str.match(/^(\d{1,2})[\.\/\-](\d{1,2})[\.\/\-](\d{2,4})/)
+  if (dmyMatch) {
+    let day = dmyMatch[1].padStart(2, '0')
+    let month = dmyMatch[2].padStart(2, '0')
+    let year = dmyMatch[3]
+    if (year.length === 2) year = '20' + year
+    return `${year}-${month}-${day}`
+  }
+
+  return str.slice(0, 10)
 }
 
 // Helper to safely extract date field from an order (checks date first, then createdAt, paidAt, completedAt, timestamp)
