@@ -14608,6 +14608,45 @@ app.post('/api/sync/push', (req, res) => {
  }
 })
 
+app.post('/api/admin/force-restore', (req, res) => {
+  try {
+    const { newOrders } = req.body;
+    if (!Array.isArray(newOrders) || newOrders.length === 0) {
+      return res.status(400).json({ error: 'No orders provided' });
+    }
+    
+    let added = 0;
+    const orderMap = new Map();
+    orders.forEach(o => orderMap.set(String(o.orderNumber || o.id), o));
+    
+    newOrders.forEach(o => {
+      const key = String(o.orderNumber || o.id);
+      if (!orderMap.has(key)) {
+        orderMap.set(key, o);
+        orders.push(o);
+        added++;
+      } else {
+        const existing = orderMap.get(key);
+        if (existing.total === 0 && o.total > 0) {
+          Object.assign(existing, o);
+          added++;
+        }
+      }
+    });
+    
+    saveState();
+    
+    try {
+      const vaultPath = join(DATA_DIR, 'sales_vault_LOCK.json');
+      if (existsSync(vaultPath)) rmSync(vaultPath);
+    } catch(e) {}
+    
+    res.json({ success: true, added, totalOrders: orders.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+})
+
 app.get('/api/sync/pull', (req, res) => {
  res.json(db)
 })
