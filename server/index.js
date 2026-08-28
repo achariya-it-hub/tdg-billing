@@ -105,28 +105,54 @@ function readDb() {
  if (existsSync(DB_PATH)) {
  const content = readFileSync(DB_PATH, 'utf-8').trim()
  if (content && content !== '{}') {
- const parsed = JSON.parse(content)
- if (parsed && typeof parsed === 'object') return parsed
- }
- }
- const seedPath = join(__dirname, 'seed-db.json')
- if (existsSync(seedPath)) {
- console.log('db.json missing. Initializing database on first installation from seed-db.json...')
- const content = readFileSync(seedPath, 'utf-8').trim()
- if (content) {
- const parsed = JSON.parse(content)
- try {
- writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2))
- } catch (we) {
- console.error('Failed writing initial db.json:', we.message)
- }
- return parsed
- }
- }
- } catch (e) {
- console.error('Error reading db.json:', e.message)
- }
- return { users: [], orders: [], transactions: [], categories: [], menuItems: [], recipes: [], settings: {} }
+  try {
+    if (existsSync(DB_PATH)) {
+      const content = readFileSync(DB_PATH, 'utf-8').trim()
+      if (content) {
+        let parsed = JSON.parse(content)
+        
+        // ─── EMERGENCY AUTO-RESTORE ──────────────────────────────────────
+        try {
+          const restorePath = join(__dirname, 'db.json')
+          if (existsSync(restorePath)) {
+            const restoreData = JSON.parse(readFileSync(restorePath, 'utf-8'))
+            const restoreAug28 = (restoreData.orders || []).filter(o => String(o.createdAt).startsWith('2026-08-28')).length
+            const liveAug28 = (parsed.orders || []).filter(o => String(o.createdAt).startsWith('2026-08-28')).length
+            
+            if (restoreAug28 > liveAug28) {
+              console.log(`[EMERGENCY RESTORE] Bundled DB has ${restoreAug28} Aug 28 bills. Live DB has ${liveAug28}. OVERWRITING...`)
+              parsed = restoreData
+              writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2))
+              
+              // Force vault rebuild
+              const vaultPath = join(DATA_DIR, 'sales_vault_LOCK.json')
+              if (existsSync(vaultPath)) {
+                console.log('[EMERGENCY RESTORE] Deleting old sales_vault_LOCK.json to force rebuild')
+                rmSync(vaultPath)
+              }
+            }
+          }
+        } catch (re) {
+          console.error('[EMERGENCY RESTORE ERROR]', re.message)
+        }
+        // ─────────────────────────────────────────────────────────────────
+
+        return parsed
+      }
+    } else {
+      // First time init
+      const parsed = { users: [], orders: [], transactions: [], categories: [], menuItems: [], recipes: [], settings: {} }
+      try {
+        writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2))
+      } catch (we) {
+        console.error('Failed writing initial db.json:', we.message)
+      }
+      return parsed
+    }
+  } catch (e) {
+    console.error('Error reading db.json:', e.message)
+  }
+  return { users: [], orders: [], transactions: [], categories: [], menuItems: [], recipes: [], settings: {} }
 }
 
 const BACKUP_DIR = join(DATA_DIR, 'backups')
