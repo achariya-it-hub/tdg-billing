@@ -108,7 +108,21 @@ function readDb() {
       if (content && content !== '{}') {
         let parsed = JSON.parse(content)
         
-        if (parsed && typeof parsed === 'object') return parsed
+        if (parsed && typeof parsed === 'object') {
+          if (Array.isArray(parsed.orders)) {
+            let changed = false
+            parsed.orders.forEach(o => {
+              if (!o.id) {
+                o.id = 'res_' + Math.random().toString(36).slice(2, 9)
+                changed = true
+              }
+            })
+            if (changed) {
+              try { writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2)) } catch(e) {}
+            }
+          }
+          return parsed
+        }
       }
     }
 
@@ -14622,7 +14636,7 @@ app.post('/api/admin/force-restore', (req, res) => {
 })
 
 app.get('/api/sync/pull', (req, res) => {
- res.json(db)
+ res.json(readDb())
 })
 
 app.post('/api/sync/pull-merge', (req, res) => {
