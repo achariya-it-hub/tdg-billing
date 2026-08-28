@@ -85,30 +85,27 @@ process.on('beforeExit', (code) => {
 })
 
 function readDb() {
- try {
- // Recover orphaned temp file (from interrupted writeDb)
- const tmpPath = `${DB_PATH}.tmp`
- if (existsSync(tmpPath)) {
- try {
- const tmpContent = readFileSync(tmpPath, 'utf-8').trim()
- if (tmpContent) {
- const tmpParsed = JSON.parse(tmpContent)
- if (tmpParsed && typeof tmpParsed === 'object' && (tmpParsed.orders?.length || tmpParsed.menuItems?.length)) {
- console.log('[DATA RECOVERY] Found orphaned tmp file, recovering...')
- renameSync(tmpPath, DB_PATH)
- }
- }
- } catch (re) {
- console.error('[DATA RECOVERY] Failed to recover tmp file:', re.message)
- }
- }
- if (existsSync(DB_PATH)) {
- const content = readFileSync(DB_PATH, 'utf-8').trim()
- if (content && content !== '{}') {
   try {
+    // Recover orphaned temp file (from interrupted writeDb)
+    const tmpPath = `${DB_PATH}.tmp`
+    if (existsSync(tmpPath)) {
+      try {
+        const tmpContent = readFileSync(tmpPath, 'utf-8').trim()
+        if (tmpContent) {
+          const tmpParsed = JSON.parse(tmpContent)
+          if (tmpParsed && typeof tmpParsed === 'object' && (tmpParsed.orders?.length || tmpParsed.menuItems?.length)) {
+            console.log('[DATA RECOVERY] Found orphaned tmp file, recovering...')
+            renameSync(tmpPath, DB_PATH)
+          }
+        }
+      } catch (re) {
+        console.error('[DATA RECOVERY] Failed to recover tmp file:', re.message)
+      }
+    }
+
     if (existsSync(DB_PATH)) {
       const content = readFileSync(DB_PATH, 'utf-8').trim()
-      if (content) {
+      if (content && content !== '{}') {
         let parsed = JSON.parse(content)
         
         // ─── EMERGENCY AUTO-RESTORE ──────────────────────────────────────
@@ -137,17 +134,23 @@ function readDb() {
         }
         // ─────────────────────────────────────────────────────────────────
 
+        if (parsed && typeof parsed === 'object') return parsed
+      }
+    }
+
+    const seedPath = join(__dirname, 'seed-db.json')
+    if (existsSync(seedPath)) {
+      console.log('db.json missing. Initializing database on first installation from seed-db.json...')
+      const content = readFileSync(seedPath, 'utf-8').trim()
+      if (content) {
+        const parsed = JSON.parse(content)
+        try {
+          writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2))
+        } catch (we) {
+          console.error('Failed writing initial db.json:', we.message)
+        }
         return parsed
       }
-    } else {
-      // First time init
-      const parsed = { users: [], orders: [], transactions: [], categories: [], menuItems: [], recipes: [], settings: {} }
-      try {
-        writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2))
-      } catch (we) {
-        console.error('Failed writing initial db.json:', we.message)
-      }
-      return parsed
     }
   } catch (e) {
     console.error('Error reading db.json:', e.message)
