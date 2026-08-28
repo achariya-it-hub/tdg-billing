@@ -544,11 +544,12 @@ export default function POS() {
 
     const isDualCombo = isDualGyroCombo(customizingItem)
     const isRiceItem = itemName.includes('rice')
+    const isSaladItem = itemName.includes('salad')
     const isSuper5 = itemName.includes('super 5')
     const isPlainFries = itemName.includes('fries') && !itemName.includes('loaded')
     const isLoadedFries = itemName.includes('loaded')
     const isIceTea = itemName.includes('ice tea') || itemName.includes('iced tea')
-    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSuper5 && !isPlainFries && !isLoadedFries && !isIceTea
+    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSaladItem && !isSuper5 && !isPlainFries && !isLoadedFries && !isIceTea
 
     let formattedName = customizingItem.name
     if (isPlainFries) {
@@ -558,6 +559,10 @@ export default function POS() {
     } else if (isIceTea) {
       const size = itemName.includes('large') ? 'Large' : 'Regular'
       formattedName = `${selectedIceTeaFlavor} Ice Tea (${size})`
+    } else if (isSaladItem && !itemName.includes('chicken') && !itemName.includes('paneer')) {
+      formattedName = `${customizingItem.name} (${selectedProtein})`
+    } else if (isRiceItem && !itemName.includes('chicken') && !itemName.includes('paneer')) {
+      formattedName = `${customizingItem.name} (${selectedProtein})`
     }
 
     const drinkCount = getMealDrinkCount(customizingItem.name)
@@ -589,8 +594,9 @@ export default function POS() {
     } else {
       customization = {
         ...(isPlainFries ? { seasoning: selectedSeasoning } : {}),
-        ...((hasGyro || isRiceItem || isLoadedFries) ? { protein: selectedProtein } : {}),
+        ...((hasGyro || isRiceItem || isSaladItem || isLoadedFries) ? { protein: selectedProtein } : {}),
         ...(hasGyro ? { bread: selectedBread, spread: selectedSpread, sauces: selectedSauces, veggies: selectedVeggies } : {}),
+        ...((isSaladItem || isRiceItem) ? { sauces: selectedSauces, veggies: selectedVeggies } : {}),
         ...(drinkSummary ? { drink: drinkSummary } : {}),
         ...(dipSummary ? { dips: dipSummary } : {}),
         notes: gyroNotes
@@ -610,11 +616,24 @@ export default function POS() {
 
   const handleAddStandardGyro = () => {
     if (!customizingItem) return
+    const itemName = (customizingItem?.name || '').toLowerCase()
+    const isSaladItem = itemName.includes('salad')
+    const isRiceItem = itemName.includes('rice')
+    
+    let defaultProtein = 'Chicken'
+    if (itemName.includes('paneer') || itemName.includes('veg')) defaultProtein = 'Paneer'
+
+    let formattedName = customizingItem.name
+    if ((isSaladItem || isRiceItem) && !itemName.includes('chicken') && !itemName.includes('paneer')) {
+      formattedName = `${customizingItem.name} (${defaultProtein})`
+    }
+
     addItem({
       menuItemId: customizingItem.id,
-      menuItemName: customizingItem.name,
+      menuItemName: formattedName,
       unitPrice: customizingItem.price,
-      totalPrice: customizingItem.price
+      totalPrice: customizingItem.price,
+      customization: (isSaladItem || isRiceItem) ? { protein: defaultProtein } : undefined
     })
     setCustomizingItem(null)
   }
@@ -2014,7 +2033,7 @@ export default function POS() {
               {(() => {
                 const cItemName = (customizingItem?.name || '').toLowerCase()
                 const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
-                const hasProteinChoice = cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cItemName.includes('loaded') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein')
+                const hasProteinChoice = cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cItemName.includes('loaded') || cItemName.includes('salad') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein') || cCatName.includes('salad')
                 if (!hasProteinChoice) return null
                 return (
                   <div>
@@ -2096,24 +2115,37 @@ export default function POS() {
               {(() => {
                 const dCount = getMealDrinkCount(customizingItem?.name)
                 if (dCount <= 0) return null
+                const drinksArr = [
+                  { label: '1st Drink', val: selectedDrink1, set: setSelectedDrink1 },
+                  { label: '2nd Drink', val: selectedDrink2, set: setSelectedDrink2 },
+                  { label: '3rd Drink', val: selectedDrink3, set: setSelectedDrink3 },
+                  { label: '4th Drink', val: selectedDrink4, set: setSelectedDrink4 },
+                  { label: '5th Drink', val: selectedDrink5, set: setSelectedDrink5 }
+                ].slice(0, dCount)
+
                 return (
-                  <div style={{ marginTop: '12px' }}>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      🥤 Choose Drink / Beverage
+                  <div style={{ background: '#f0fdf4', padding: '14px', borderRadius: '14px', border: '1.5px solid #bbf7d0', marginTop: '12px' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 800, color: '#15803d', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>🥤 CHOOSE YOUR {dCount} DRINK{dCount > 1 ? 'S' : ''} / BEVERAGE</span>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                      {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
-                        <button key={d} type="button" onClick={() => setSelectedDrink1(d)} style={{
-                          padding: '10px', borderRadius: '10px',
-                          border: selectedDrink1 === d ? '2px solid #06b6d4' : '1px solid #e5e7eb',
-                          background: selectedDrink1 === d ? '#ecfeff' : '#f9fafb',
-                          color: selectedDrink1 === d ? '#0891b2' : '#374151',
-                          fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'center', transition: 'all 0.15s'
-                        }}>
-                          {selectedDrink1 === d ? '✓ ' : ''}{d}
-                        </button>
-                      ))}
-                    </div>
+                    {drinksArr.map((dItem, idx) => (
+                      <div key={idx} style={{ marginBottom: idx === drinksArr.length - 1 ? 0 : '10px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: 700, color: '#166534', marginBottom: '4px' }}>{idx + 1}. {dItem.label}</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                          {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
+                            <button key={d} type="button" onClick={() => dItem.set(d)} style={{
+                              padding: '8px', borderRadius: '8px',
+                              border: dItem.val === d ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                              background: dItem.val === d ? '#16a34a' : '#ffffff',
+                              color: dItem.val === d ? '#ffffff' : '#334155',
+                              fontWeight: 700, fontSize: '11.5px', cursor: 'pointer', textAlign: 'center', transition: 'all 0.15s'
+                            }}>
+                              {dItem.val === d ? '✓ ' : ''}{d}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )
               })()}

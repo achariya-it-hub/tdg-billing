@@ -1159,24 +1159,7 @@ export default function Kiosk() {
                         </div>
                       )}
 
-                      {/* Drink Choice Section */}
-                      {dCount > 0 && (
-                        <div>
-                          <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>
-                            🥤 Choose Drink / Beverage ({dCount} Included) *
-                          </label>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-                            {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
-                              <button key={d} onClick={() => setSelectedDrink1(d)} style={{
-                                padding: '8px 4px', borderRadius: '8px',
-                                border: selectedDrink1 === d ? '2px solid #06b6d4' : '1px solid #cbd5e1',
-                                background: selectedDrink1 === d ? '#ecfeff' : '#ffffff',
-                                color: selectedDrink1 === d ? '#0891b2' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center'
-                              }}>{selectedDrink1 === d ? '✓ ' : ''}{d}</button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+
 
                       {/* Gyro Flavor & Bread */}
                       {hasGyroChoice && (
@@ -1270,19 +1253,34 @@ export default function Kiosk() {
                 {(() => {
                   const dCount = getMealDrinkCount(customizingItem?.name)
                   if (dCount <= 0) return null
+                  const drinksArr = [
+                    { label: '1st Drink', val: selectedDrink1, set: setSelectedDrink1 },
+                    { label: '2nd Drink', val: selectedDrink2, set: setSelectedDrink2 },
+                    { label: '3rd Drink', val: selectedDrink3, set: setSelectedDrink3 },
+                    { label: '4th Drink', val: selectedDrink4, set: setSelectedDrink4 },
+                    { label: '5th Drink', val: selectedDrink5, set: setSelectedDrink5 }
+                  ].slice(0, dCount)
+
                   return (
-                    <div>
-                      <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f172a', display: 'block', marginBottom: '6px' }}>🥤 Choose Drink / Beverage</label>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-                        {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
-                          <button key={d} onClick={() => setSelectedDrink1(d)} style={{
-                            padding: '8px', borderRadius: '8px',
-                            border: selectedDrink1 === d ? '2px solid #06b6d4' : '1px solid #cbd5e1',
-                            background: selectedDrink1 === d ? '#ecfeff' : '#ffffff',
-                            color: selectedDrink1 === d ? '#0891b2' : '#334155', fontWeight: 800, fontSize: '11px', cursor: 'pointer'
-                          }}>{selectedDrink1 === d ? '✓ ' : ''}{d}</button>
-                        ))}
+                    <div style={{ background: '#f0fdf4', padding: '12px', borderRadius: '12px', border: '1.5px solid #bbf7d0' }}>
+                      <div style={{ fontSize: '12.5px', fontWeight: 900, color: '#15803d', marginBottom: '8px' }}>
+                        🥤 CHOOSE YOUR {dCount} REGULAR DRINK{dCount > 1 ? 'S' : ''}
                       </div>
+                      {drinksArr.map((dItem, idx) => (
+                        <div key={idx} style={{ marginBottom: idx === drinksArr.length - 1 ? 0 : '8px' }}>
+                          <div style={{ fontSize: '11px', fontWeight: 700, color: '#166534', marginBottom: '4px' }}>{idx + 1}. {dItem.label}</div>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                            {['Coca-Cola', 'Sprite', 'Fanta', 'Peach Ice Tea', 'Lime Ice Tea', 'Water Bottle'].map(d => (
+                              <button key={d} onClick={() => dItem.set(d)} style={{
+                                padding: '6px', borderRadius: '6px',
+                                border: dItem.val === d ? '2px solid #16a34a' : '1px solid #cbd5e1',
+                                background: dItem.val === d ? '#16a34a' : '#ffffff',
+                                color: dItem.val === d ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '10.5px', cursor: 'pointer', textAlign: 'center'
+                              }}>{dItem.val === d ? '✓ ' : ''}{d}</button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )
                 })()}

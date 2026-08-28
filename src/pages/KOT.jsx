@@ -100,7 +100,15 @@ const getItemDetailsList = (item) => {
     comboBreakdown.forEach(cb => details.push(`  • ${cb}`))
   }
 
-  const protein = item.protein || item.proteinType || item.variant || item.variantName || item.selectedVariant || c.protein || c.proteinType || c.variant
+  let protein = item.protein || item.proteinType || item.variant || item.variantName || item.selectedVariant || c.protein || c.proteinType || c.variant
+  if (!protein) {
+    const itemNameLower = (item.menuItemName || item.name || '').toLowerCase()
+    const custStr = typeof item.customization === 'string' ? item.customization : JSON.stringify(c)
+    const notesStr = item.notes || item.instruction || c.notes || ''
+    const combinedStr = `${itemNameLower} ${custStr} ${notesStr}`
+    if (/paneer/i.test(combinedStr)) protein = 'Paneer'
+    else if (/chicken/i.test(combinedStr)) protein = 'Chicken'
+  }
   if (protein && comboBreakdown.length === 0) details.push(`🍗 Protein: ${protein}`)
 
   const bread = item.bread || item.breadType || c.bread || c.breadType

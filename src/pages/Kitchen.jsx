@@ -332,7 +332,7 @@ export default function Kitchen() {
                                     ))}
                                   </div>
                                 )}
-                                {cbList.length === 0 && (c.protein || item.protein) && <div>• Protein: {c.protein || item.protein}</div>}
+                                {cbList.length === 0 && (c.protein || item.protein || item.proteinType || item.variant || item.variantName || item.selectedVariant || (/paneer/i.test(`${item.menuItemName || item.name || ''} ${typeof item.customization === 'string' ? item.customization : JSON.stringify(c)}`) ? 'Paneer' : (/chicken/i.test(`${item.menuItemName || item.name || ''} ${typeof item.customization === 'string' ? item.customization : JSON.stringify(c)}`) ? 'Chicken' : ''))) && <div>• Protein: {c.protein || item.protein || item.proteinType || item.variant || item.variantName || item.selectedVariant || (/paneer/i.test(`${item.menuItemName || item.name || ''} ${typeof item.customization === 'string' ? item.customization : JSON.stringify(c)}`) ? 'Paneer' : 'Chicken')}</div>}
                                 {cbList.length === 0 && (c.flavor || item.flavor) && <div>• Flavor: {c.flavor || item.flavor}</div>}
                                 {cbList.length === 0 && c.gyro1 && <div>• {c.gyro1}</div>}
                                 {cbList.length === 0 && c.gyro2 && <div>• {c.gyro2}</div>}
@@ -501,7 +501,7 @@ export default function Kitchen() {
                                     ))}
                                   </div>
                                 )}
-                                {cbList.length === 0 && (c.protein || item.protein) && <div>• Protein: {c.protein || item.protein}</div>}
+                                {cbList.length === 0 && (c.protein || item.protein || item.proteinType || item.variant || item.variantName || item.selectedVariant || (/paneer/i.test(`${item.menuItemName || item.name || ''} ${typeof item.customization === 'string' ? item.customization : JSON.stringify(c)}`) ? 'Paneer' : (/chicken/i.test(`${item.menuItemName || item.name || ''} ${typeof item.customization === 'string' ? item.customization : JSON.stringify(c)}`) ? 'Chicken' : ''))) && <div>• Protein: {c.protein || item.protein || item.proteinType || item.variant || item.variantName || item.selectedVariant || (/paneer/i.test(`${item.menuItemName || item.name || ''} ${typeof item.customization === 'string' ? item.customization : JSON.stringify(c)}`) ? 'Paneer' : 'Chicken')}</div>}
                                 {cbList.length === 0 && (c.flavor || item.flavor) && <div>• Flavor: {c.flavor || item.flavor}</div>}
                                 {cbList.length === 0 && c.gyro1 && <div>• {c.gyro1}</div>}
                                 {cbList.length === 0 && c.gyro2 && <div>• {c.gyro2}</div>}
