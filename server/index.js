@@ -418,24 +418,12 @@ for (const vf of OLD_VAULT_FILES) {
 
 function syncSalesVault(currentOrders) {
   try {
-    let vaultOrders = []
-    if (existsSync(VAULT_PATH)) {
-      const content = readFileSync(VAULT_PATH, 'utf-8').trim()
-      if (content) {
-        try {
-          const parsed = JSON.parse(content)
-          vaultOrders = Array.isArray(parsed) ? parsed : (parsed.orders || [])
-        } catch (err) {}
-      }
-    }
+    // Priority order (lowest to highest): backups → vault → currentOrders
+    // currentOrders MUST be processed last so live/restored data always wins
     const orderMap = new Map()
     const getKey = (o) => (o && o.orderNumber ? `num_${o.orderNumber}` : String(o ? (o.id || '') : ''))
-    vaultOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
-    if (Array.isArray(currentOrders)) {
-      currentOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
-    }
 
-    // Auto-scan BACKUP_DIR for any order snapshots in timestamped backups
+    // 1. Scan BACKUP_DIR first (lowest priority — oldest snapshots)
     try {
       if (typeof BACKUP_DIR !== 'undefined' && existsSync(BACKUP_DIR)) {
         const backupFiles = readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json'))
@@ -451,6 +439,24 @@ function syncSalesVault(currentOrders) {
         }
       }
     } catch (e) {}
+
+    // 2. Vault orders override backups
+    let vaultOrders = []
+    if (existsSync(VAULT_PATH)) {
+      const content = readFileSync(VAULT_PATH, 'utf-8').trim()
+      if (content) {
+        try {
+          const parsed = JSON.parse(content)
+          vaultOrders = Array.isArray(parsed) ? parsed : (parsed.orders || [])
+        } catch (err) {}
+      }
+    }
+    vaultOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
+
+    // 3. currentOrders override everything (highest priority — live/restored data)
+    if (Array.isArray(currentOrders)) {
+      currentOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
+    }
 
     const mergedOrders = Array.from(orderMap.values())
     writeFileSync(VAULT_PATH, JSON.stringify({ orders: mergedOrders, count: mergedOrders.length }, null, 2))
