@@ -417,30 +417,48 @@ for (const vf of OLD_VAULT_FILES) {
 }
 
 function syncSalesVault(currentOrders) {
- try {
- let vaultOrders = []
- if (existsSync(VAULT_PATH)) {
- const content = readFileSync(VAULT_PATH, 'utf-8').trim()
- if (content) {
- try {
- const parsed = JSON.parse(content)
- vaultOrders = Array.isArray(parsed) ? parsed : (parsed.orders || [])
- } catch (err) {}
- }
- }
- const orderMap = new Map()
- const getKey = (o) => (o && o.orderNumber ? `num_${o.orderNumber}` : String(o ? (o.id || '') : ''))
- vaultOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
- if (Array.isArray(currentOrders)) {
- currentOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
- }
- const mergedOrders = Array.from(orderMap.values())
- writeFileSync(VAULT_PATH, JSON.stringify({ orders: mergedOrders, count: mergedOrders.length }, null, 2))
- return mergedOrders
- } catch (e) {
- console.error('[SALES VAULT] Error:', e.message)
- return Array.isArray(currentOrders) && currentOrders.length ? currentOrders : []
- }
+  try {
+    let vaultOrders = []
+    if (existsSync(VAULT_PATH)) {
+      const content = readFileSync(VAULT_PATH, 'utf-8').trim()
+      if (content) {
+        try {
+          const parsed = JSON.parse(content)
+          vaultOrders = Array.isArray(parsed) ? parsed : (parsed.orders || [])
+        } catch (err) {}
+      }
+    }
+    const orderMap = new Map()
+    const getKey = (o) => (o && o.orderNumber ? `num_${o.orderNumber}` : String(o ? (o.id || '') : ''))
+    vaultOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
+    if (Array.isArray(currentOrders)) {
+      currentOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
+    }
+
+    // Auto-scan BACKUP_DIR for any order snapshots in timestamped backups
+    try {
+      if (typeof BACKUP_DIR !== 'undefined' && existsSync(BACKUP_DIR)) {
+        const backupFiles = readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json'))
+        for (const bf of backupFiles) {
+          try {
+            const bContent = readFileSync(join(BACKUP_DIR, bf), 'utf-8').trim()
+            if (bContent) {
+              const bParsed = JSON.parse(bContent)
+              const bOrders = Array.isArray(bParsed) ? bParsed : (bParsed.orders || [])
+              bOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
+            }
+          } catch (e) {}
+        }
+      }
+    } catch (e) {}
+
+    const mergedOrders = Array.from(orderMap.values())
+    writeFileSync(VAULT_PATH, JSON.stringify({ orders: mergedOrders, count: mergedOrders.length }, null, 2))
+    return mergedOrders
+  } catch (e) {
+    console.error('[SALES VAULT] Error:', e.message)
+    return Array.isArray(currentOrders) && currentOrders.length ? currentOrders : []
+  }
 }
 
 function syncMenuVault(curCategories, curMenuItems, curRecipes) {
