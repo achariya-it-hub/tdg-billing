@@ -13347,7 +13347,7 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  io.emit('order:created', order)
  io.to('kitchen').emit('kot:created', { id, orderNumber: `K${kotNum}`, kotNumber: kotNum, billNumber: orderNum, items: order.items, tableNumber: order.tableNumber, type: order.type, createdAt: now })
  
- res.status(201).json(order)
+  res.status(201).json({ ...order, _debug: { memoryCount: orders.length, diskCount }})
 })
 
 app.patch('/api/pos/orders/:id/status', (req, res) => {
