@@ -14999,7 +14999,15 @@ const getOrderDiscountInfo = (o) => {
 
 function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
  const { date, from, to } = reqQuery || {}
- const targetOrders = includeAll ? orders : orders.filter(isValidSalesOrder)
+ // CRITICAL FIX: Always read fresh from disk to support PM2 cluster/multi-process deployments.
+ // In cluster mode, each worker has its own in-memory `orders`. A POST on Worker A
+ // would not be visible to Worker B's GET. Reading from disk ensures all workers see all orders.
+ let diskOrders = orders
+ try {
+   const freshDb = readDb()
+   if (freshDb && Array.isArray(freshDb.orders)) diskOrders = freshDb.orders
+ } catch(e) { diskOrders = orders }
+ const targetOrders = includeAll ? diskOrders : diskOrders.filter(isValidSalesOrder)
  const today = new Date()
  const todayStr = getLocalDateStr(today)
 
