@@ -8367,8 +8367,8 @@ function optionalPosAuth(req, res, next) {
   }
   try {
     const decoded = jwt.verify(header.split(' ')[1], JWT_SECRET)
-    req.staffId = decoded.staffId
-    req.staffRole = decoded.role
+    req.staffId = decoded.staffId || decoded.userId || decoded.id
+    req.staffRole = decoded.role || 'staff'
   } catch (e) {
     req.staffId = null
   }
