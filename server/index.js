@@ -439,7 +439,7 @@ function syncSalesVault(currentOrders) {
     // Priority order (lowest to highest): backups → vault → currentOrders
     // currentOrders MUST be processed last so live/restored data always wins
     const orderMap = new Map()
-    const getKey = (o) => (o && o.orderNumber ? `num_${o.orderNumber}` : String(o ? (o.id || '') : ''))
+    const getKey = (o) => String(o ? (o.id || '') : '')
 
     // 1. Scan BACKUP_DIR first (lowest priority — oldest snapshots)
     try {
@@ -932,7 +932,11 @@ if (!menuItems || menuItems.length !== 58) {
  if (db.loyaltyUsers && Array.isArray(db.loyaltyUsers)) loyaltyUsers = db.loyaltyUsers
  if (db.dens && Array.isArray(db.dens) && db.dens.length) dens = db.dens
  if (db.pointTransactions && Array.isArray(db.pointTransactions) && db.pointTransactions.length) pointTransactions = db.pointTransactions
- if (db.orderNumber) orderNumber = Math.max(orderNumber || 0, db.orderNumber || 0)
+  if (db.orderNumber) orderNumber = Math.max(orderNumber || 0, db.orderNumber || 0)
+  if (db.orders && Array.isArray(db.orders)) {
+    const maxFromOrders = Math.max(0, ...db.orders.map(o => Number(o.orderNumber) || 0))
+    orderNumber = Math.max(orderNumber, maxFromOrders)
+  }
  if (db.usedReferralCodes && Array.isArray(db.usedReferralCodes)) usedReferralCodes = new Set(db.usedReferralCodes)
  if (db.expenses && Array.isArray(db.expenses) && db.expenses.length) expenses = db.expenses
  if (db.cashCounterSessions && Array.isArray(db.cashCounterSessions)) cashCounterSessions = db.cashCounterSessions
@@ -13148,6 +13152,19 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
   }
 
   const id = uuid()
+  
+  // CRITICAL FIX: In PM2 cluster mode, read fresh max orderNumber from disk to prevent duplicate bill numbers
+  try {
+    const freshDb = readDb()
+    if (freshDb && typeof freshDb.orderNumber === 'number') {
+      orderNumber = Math.max(orderNumber || 0, freshDb.orderNumber)
+    }
+    if (freshDb && Array.isArray(freshDb.orders)) {
+      const maxFromOrders = Math.max(0, ...freshDb.orders.map(o => Number(o.orderNumber) || 0))
+      orderNumber = Math.max(orderNumber, maxFromOrders)
+    }
+  } catch(e) {}
+  
   const orderNum = ++orderNumber
   const kotNum = getNextKotNumber()
   const now = req.body.backdateOverride || new Date().toISOString()
