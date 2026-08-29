@@ -14615,6 +14615,19 @@ app.post('/api/sync/push', (req, res) => {
  }
 })
 
+// Extract emergency order log
+app.get('/api/admin/raw-log', (req, res) => {
+  try {
+    if (existsSync(ORDER_LOG_PATH)) {
+      res.sendFile(ORDER_LOG_PATH)
+    } else {
+      res.status(404).json({error: 'No order log found at ' + ORDER_LOG_PATH})
+    }
+  } catch (e) {
+    res.status(500).json({error: e.message})
+  }
+})
+
 app.post('/api/admin/force-restore', (req, res) => {
   try {
     const { newOrders } = req.body;
