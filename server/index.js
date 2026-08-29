@@ -13135,12 +13135,9 @@ function resolveCampaignOffer(orderDateStr, customerPhone, flags) {
 app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
   let { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod, complimentary, complimentaryType, specialRemarks, status, paymentStatus, paidAt, settleDirectly } = req.body
 
-  // Security: Prevent unauthenticated users from tampering with order status/payments
+  // If not authenticated as staff, accept the order but force safe status values
+  // (POS is an internal system — do NOT reject, just sanitize)
   if (!req.staffId) {
-    if (source !== 'qr_self_order' && source !== 'captain' && source !== 'online') {
-      return res.status(403).json({ error: 'Unauthorized order source' })
-    }
-    // Force pending status and block direct settlement
     status = 'pending'
     paymentStatus = 'pending'
     paidAt = null
