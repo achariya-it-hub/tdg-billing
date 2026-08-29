@@ -8,6 +8,7 @@ import { v4 as uuid } from 'uuid'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { readFileSync, writeFileSync, appendFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync, renameSync } from 'fs'
+import { execSync } from 'child_process'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import XLSX from 'xlsx'
@@ -16663,6 +16664,28 @@ if (process.env.PORT) {
 } else {
  httpServer.listen(3001, '0.0.0.0', onListen)
 }
+
+// ============ SELF-DEPLOY ENDPOINT ============
+// Allows the server to pull latest code from GitHub and restart itself
+app.post('/api/admin/redeploy', (req, res) => {
+  const token = req.headers['x-sync-token'] || req.headers['x-redeploy-token']
+  if (token !== 'TDG_POS_SYNC_2026_SECRET') {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+  try {
+    const gitOutput = execSync('git pull origin master 2>&1', { cwd: __dirname, timeout: 30000 }).toString()
+    console.log('[REDEPLOY] git pull result:', gitOutput)
+    res.json({ success: true, message: 'Git pull completed. Restarting server now...', output: gitOutput })
+    // Save state then exit — PM2/Hostinger will restart automatically
+    setTimeout(() => {
+      try { saveState() } catch(e) {}
+      process.exit(0)
+    }, 1000)
+  } catch (e) {
+    console.error('[REDEPLOY] Error:', e.message)
+    res.status(500).json({ error: e.message })
+  }
+})
 
 // Graceful shutdown — save state before process exits (prevents data loss on deploy/restart)
 let isShuttingDown = false
