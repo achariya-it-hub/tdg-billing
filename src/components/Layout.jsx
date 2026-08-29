@@ -138,35 +138,73 @@ export default function Layout({ user, onLogout }) {
     }
   }, [])
 
-  // Auto-recover orders stuck in Zustand local storage due to 403 errors
+  // Auto-recover orders stuck in Zustand local storage OR Service Worker IndexedDB
   useEffect(() => {
     const recoverStuckOrders = async () => {
       try {
         const token = localStorage.getItem('token')
         if (!token) return
+        
+        // 1. Recover Zustand localStorage stuck orders (ORD-...)
         const storage = JSON.parse(localStorage.getItem('tdg-orders-storage') || '{}')
         const orders = storage?.state?.orders || []
-        const stuck = orders.filter(o => String(o.id).startsWith('ORD-'))
+        const stuck = orders.filter(o => String(o.id).startsWith('ORD-') && Object.keys(o).length > 2)
+        let didRecover = false
+        
         if (stuck.length > 0) {
-          console.log('Found stuck offline orders:', stuck.length)
           for (const order of stuck) {
             try {
-              await fetch(`${API_BASE}/api/pos/orders`, {
+              const res = await fetch(`${API_BASE}/api/pos/orders`, {
                 method: 'POST',
-                headers: { 
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`
-                },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(order)
               })
-            } catch (err) {
-              console.error('Failed to sync stuck order', err)
+              if (res.ok) didRecover = true
+            } catch (err) {}
+          }
+          if (didRecover) {
+            storage.state.orders = orders.filter(o => !String(o.id).startsWith('ORD-'))
+            localStorage.setItem('tdg-orders-storage', JSON.stringify(storage))
+          }
+        }
+
+        // 2. Recover Service Worker IndexedDB stuck requests (missing Auth header)
+        if (window.indexedDB) {
+          const req = indexedDB.open('tdg-offline-mutations', 1)
+          req.onsuccess = (e) => {
+            const db = e.target.result
+            if (!db.objectStoreNames.contains('tdg-offline-queue')) return
+            const tx = db.transaction('tdg-offline-queue', 'readwrite')
+            const store = tx.objectStore('tdg-offline-queue')
+            const allReq = store.getAll()
+            allReq.onsuccess = async () => {
+              const items = allReq.result || []
+              let didReplayIndexedDB = false
+              for (const item of items) {
+                try {
+                  // Replay the fetch with the token added
+                  const headers = Object.fromEntries(item.headers || [])
+                  headers['Authorization'] = `Bearer ${token}`
+                  
+                  const res = await fetch(item.url, {
+                    method: item.method,
+                    headers,
+                    body: item.body || undefined
+                  })
+                  
+                  if (res.ok) {
+                    didReplayIndexedDB = true
+                    // Delete from IndexedDB now that it succeeded
+                    const delTx = db.transaction('tdg-offline-queue', 'readwrite')
+                    delTx.objectStore('tdg-offline-queue').delete(item.id)
+                  }
+                } catch (err) {}
+              }
+              if (didRecover || didReplayIndexedDB) {
+                window.location.reload()
+              }
             }
           }
-          // Remove them from local storage after syncing
-          storage.state.orders = orders.filter(o => !String(o.id).startsWith('ORD-'))
-          localStorage.setItem('tdg-orders-storage', JSON.stringify(storage))
-          window.location.reload()
         }
       } catch (e) {
         console.error('Auto-recovery error:', e)
