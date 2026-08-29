@@ -13327,13 +13327,17 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  }
  
  // Double-check: verify order is in db.json
+ let diskCount = 0
  try {
  const verifyDb = readDb()
+ diskCount = verifyDb?.orders?.length || 0
  if (!verifyDb.orders || !verifyDb.orders.find(o => o.id === order.id)) {
  console.error('[ORDER PERSIST] Order not in db.json, forcing write...')
  const forceDb = readDb() || {}
  forceDb.orders = [order, ...(forceDb.orders || [])]
  writeDb(forceDb)
+ const verifyDb2 = readDb()
+ diskCount = verifyDb2?.orders?.length || 0
  }
  } catch (e) {
  console.error('[ORDER PERSIST] Verify/force write failed:', e.message)
