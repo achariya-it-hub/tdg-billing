@@ -414,9 +414,13 @@ export const useOrderStore = create(
           ? 'http://localhost:3001'
           : window.location.origin
         
+        const token = localStorage.getItem('token');
         const res = await fetch(`${apiUrl}/api/pos/orders`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
           body: JSON.stringify({
             ...order,
             items,

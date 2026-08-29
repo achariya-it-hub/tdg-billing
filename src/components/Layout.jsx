@@ -138,6 +138,43 @@ export default function Layout({ user, onLogout }) {
     }
   }, [])
 
+  // Auto-recover orders stuck in Zustand local storage due to 403 errors
+  useEffect(() => {
+    const recoverStuckOrders = async () => {
+      try {
+        const token = localStorage.getItem('token')
+        if (!token) return
+        const storage = JSON.parse(localStorage.getItem('tdg-orders-storage') || '{}')
+        const orders = storage?.state?.orders || []
+        const stuck = orders.filter(o => String(o.id).startsWith('ORD-'))
+        if (stuck.length > 0) {
+          console.log('Found stuck offline orders:', stuck.length)
+          for (const order of stuck) {
+            try {
+              await fetch(`${API_BASE}/api/pos/orders`, {
+                method: 'POST',
+                headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(order)
+              })
+            } catch (err) {
+              console.error('Failed to sync stuck order', err)
+            }
+          }
+          // Remove them from local storage after syncing
+          storage.state.orders = orders.filter(o => !String(o.id).startsWith('ORD-'))
+          localStorage.setItem('tdg-orders-storage', JSON.stringify(storage))
+          window.location.reload()
+        }
+      } catch (e) {
+        console.error('Auto-recovery error:', e)
+      }
+    }
+    setTimeout(recoverStuckOrders, 2000)
+  }, [])
+
   const getCurrentTitle = () => {
     if (location.pathname === '/online-orders') return 'Online Orders'
     if (location.pathname === '/accounts') return 'Accounts'
