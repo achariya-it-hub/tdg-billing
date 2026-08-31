@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { saveToLocalBackup } from '../utils/localBackup'
 
 const IST_DATE_STR = () => {
   try {
@@ -456,6 +457,8 @@ export const useOrderStore = create(
         if (res.ok) {
           newOrder = await res.json()
           console.log('Order saved to server:', newOrder)
+          // AUTO LOCAL BACKUP: silently save every bill to IndexedDB on this billing PC
+          saveToLocalBackup(newOrder).catch(() => {})
         } else {
           throw new Error('Server error')
         }

@@ -1,10 +1,11 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { 
   Monitor, ChefHat, Tablet, ShoppingCart, LayoutDashboard, 
-  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, FileText, Receipt, Gem, Shield, KeyRound, X, DollarSign, Settings, Landmark, QrCode
+  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, FileText, Receipt, Gem, Shield, KeyRound, X, DollarSign, Settings, Landmark, QrCode, Download
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import API_BASE from '../lib/apiConfig'
+import { downloadBillsAsCSV, getTodayLocalBackupCount } from '../utils/localBackup'
 
 const navItems = [
   { path: '/pos', icon: Monitor, label: 'POS', module: 'pos' },
@@ -41,6 +42,28 @@ export default function Layout({ user, onLogout }) {
   const [pinError, setPinError] = useState('')
   const [pinSuccess, setPinSuccess] = useState('')
   const [pinSaving, setPinSaving] = useState(false)
+  const [localBackupCount, setLocalBackupCount] = useState(0)
+  const [downloadingBackup, setDownloadingBackup] = useState(false)
+
+  // Refresh local backup count every 30 seconds
+  useEffect(() => {
+    const refresh = async () => setLocalBackupCount(await getTodayLocalBackupCount())
+    refresh()
+    const interval = setInterval(refresh, 30000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const handleDownloadBackup = async () => {
+    setDownloadingBackup(true)
+    try {
+      const count = await downloadBillsAsCSV()
+      setLocalBackupCount(await getTodayLocalBackupCount())
+      if (count > 0) alert(`✅ Downloaded ${count} bills as CSV backup!`)
+    } catch (e) {
+      alert('Failed to download backup: ' + e.message)
+    }
+    setDownloadingBackup(false)
+  }
 
   useEffect(() => {
     const handler = () => setShowInstallBtn(true)
@@ -265,6 +288,22 @@ export default function Layout({ user, onLogout }) {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {/* Local Backup Download Button - Mobile */}
+            <button
+              onClick={handleDownloadBackup}
+              disabled={downloadingBackup}
+              title={`Download local backup (${localBackupCount} bills saved today)`}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '4px',
+                padding: '6px 10px', borderRadius: '10px', border: 'none',
+                background: localBackupCount > 0 ? 'rgba(22,163,74,0.12)' : 'rgba(0,0,0,0.04)',
+                color: localBackupCount > 0 ? '#16a34a' : '#6b7280',
+                cursor: 'pointer', fontSize: '11px', fontWeight: 700
+              }}
+            >
+              <Download size={14} />
+              {localBackupCount > 0 && <span>{localBackupCount}</span>}
+            </button>
             {hasView('onlineOrders') && (
             <NavLink
               to="/online-orders"
@@ -734,6 +773,40 @@ export default function Layout({ user, onLogout }) {
         )}
 
         <button
+          onClick={handleDownloadBackup}
+          disabled={downloadingBackup}
+          title={`Download Local Backup (${localBackupCount} bills saved today)`}
+          style={{
+            width: '52px',
+            height: '52px',
+            borderRadius: '14px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '2px',
+            background: localBackupCount > 0 ? 'rgba(22,163,74,0.12)' : 'transparent',
+            color: localBackupCount > 0 ? '#16a34a' : '#9ca3af',
+            transition: 'all 0.2s',
+            border: localBackupCount > 0 ? '1px solid rgba(22,163,74,0.25)' : 'none',
+            cursor: 'pointer',
+            marginTop: '4px',
+            position: 'relative'
+          }}
+        >
+          <Download size={20} />
+          <span style={{ fontSize: '9px', fontWeight: 600 }}>Backup</span>
+          {localBackupCount > 0 && (
+            <span style={{
+              position: 'absolute', top: '4px', right: '4px',
+              width: '16px', height: '16px', background: '#16a34a',
+              borderRadius: '50%', fontSize: '9px', fontWeight: 700,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
+            }}>{localBackupCount > 99 ? '99+' : localBackupCount}</span>
+          )}
+        </button>
+
+        <button
           onClick={onLogout}
           title="Logout"
           style={{
@@ -795,6 +868,24 @@ export default function Layout({ user, onLogout }) {
                 </span>
               </div>
             )}
+
+            {/* Local Backup Button - Desktop Header */}
+            <button
+              onClick={handleDownloadBackup}
+              disabled={downloadingBackup}
+              title={`Download local backup (${localBackupCount} bills saved today)`}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                padding: '8px 14px', borderRadius: '10px', border: 'none',
+                background: localBackupCount > 0 ? 'rgba(22,163,74,0.10)' : 'rgba(0,0,0,0.04)',
+                color: localBackupCount > 0 ? '#16a34a' : '#9ca3af',
+                cursor: 'pointer', fontSize: '12px', fontWeight: 700,
+                transition: 'all 0.2s'
+              }}
+            >
+              <Download size={15} />
+              {downloadingBackup ? 'Downloading...' : `Backup${localBackupCount > 0 ? ` (${localBackupCount})` : ''}`}
+            </button>
 
             <div style={{ position: 'relative' }}>
               <div
