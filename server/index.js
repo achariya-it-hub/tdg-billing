@@ -14630,11 +14630,26 @@ app.get('/api/admin/raw-log', (req, res) => {
 
 app.post('/api/admin/force-restore', (req, res) => {
   try {
-    const { newOrders } = req.body;
-    if (!Array.isArray(newOrders) || newOrders.length === 0) {
+    const { newOrders, replace } = req.body;
+    if (!Array.isArray(newOrders)) {
       return res.status(400).json({ error: 'No orders provided' });
     }
     
+    if (replace === true) {
+      orders.length = 0;
+      orders.push(...newOrders);
+      try {
+        const vaultPath = join(DATA_DIR, 'sales_vault_LOCK.json');
+        if (existsSync(vaultPath)) rmSync(vaultPath);
+      } catch(e) {}
+      saveState();
+      return res.json({ success: true, replaced: true, totalOrders: orders.length });
+    }
+    
+    if (newOrders.length === 0) {
+      return res.status(400).json({ error: 'No orders provided' });
+    }
+
     let added = 0;
     const orderMap = new Map();
     orders.forEach(o => orderMap.set(String(o.orderNumber || o.id), o));
@@ -14662,6 +14677,35 @@ app.post('/api/admin/force-restore', (req, res) => {
     } catch(e) {}
     
     res.json({ success: true, added, totalOrders: orders.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+})
+
+app.post('/api/admin/delete-order', (req, res) => {
+  try {
+    const { orderId, orderNumber } = req.body;
+    const beforeCount = orders.length;
+    
+    const remaining = orders.filter(o => {
+      if (!o) return false;
+      if (orderId && String(o.id) === String(orderId)) return false;
+      if (orderNumber && (Number(o.orderNumber) === Number(orderNumber) || String(o.orderNumber) === String(orderNumber))) return false;
+      const items = o.items || [];
+      if (items.some(i => i && i.menuItemName === 'DEPLOY_VERIFY_TEST')) return false;
+      return true;
+    });
+    
+    orders.length = 0;
+    orders.push(...remaining);
+    
+    try {
+      const vaultPath = join(DATA_DIR, 'sales_vault_LOCK.json');
+      if (existsSync(vaultPath)) rmSync(vaultPath);
+    } catch(e) {}
+    
+    saveState();
+    res.json({ success: true, deletedCount: beforeCount - orders.length, totalOrders: orders.length });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
