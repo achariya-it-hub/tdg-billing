@@ -178,6 +178,7 @@ export default function POS() {
   const [customizingItem, setCustomizingItem] = useState(null)
   const [selectedBread, setSelectedBread] = useState('Baked')
   const [selectedProtein, setSelectedProtein] = useState('Chicken')
+  const [selectedGyroFlavor, setSelectedGyroFlavor] = useState('Spicy')
   const [selectedSeasoning, setSelectedSeasoning] = useState('Salted')
   const [selectedIceTeaFlavor, setSelectedIceTeaFlavor] = useState('Peach')
   const [selectedDrink, setSelectedDrink] = useState('Coca-Cola')
@@ -453,12 +454,14 @@ export default function POS() {
       itemName.includes('feast') || itemName.includes('bucket') ||
       itemName.includes('rice') || itemName.includes('salad') ||
       catName.includes('fries') || itemName.includes('fries') ||
-      itemName.includes('ice tea') || itemName.includes('iced tea')
+      itemName.includes('ice tea') || itemName.includes('iced tea') ||
+      itemName.includes('wednesday') || itemName.includes('combo')
     )
   }
 
   const getMealDrinkCount = (itemName) => {
     const name = (itemName || '').toLowerCase()
+    if (name.includes('wednesday') || name.includes('wednesday combo')) return 0
     if (name.includes('den\'s party') || name.includes('party meal')) return 3
     if (name.includes('super 5')) return 5
     if (name.includes('double crunch') || name.includes('duo gyro') || name.includes('mega feast')) return 2
@@ -489,6 +492,7 @@ export default function POS() {
       setCustomizingItem(item)
       setSelectedBread('Baked')
       setSelectedProtein('Chicken')
+      setSelectedGyroFlavor('Spicy')
       setSelectedSeasoning('Salted')
       const itemNameLower = (item.name || '').toLowerCase()
       if (itemNameLower.includes('lime')) {
@@ -549,7 +553,7 @@ export default function POS() {
     const isPlainFries = itemName.includes('fries') && !itemName.includes('loaded')
     const isLoadedFries = itemName.includes('loaded')
     const isIceTea = itemName.includes('ice tea') || itemName.includes('iced tea')
-    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSaladItem && !isSuper5 && !isPlainFries && !isLoadedFries && !isIceTea
+    const hasGyro = (catName.includes('gyro') || catName.includes('combo') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal') || itemName.includes('combo') || itemName.includes('wednesday')) && !isRiceItem && !isSaladItem && !isSuper5 && !isPlainFries && !isLoadedFries && !isIceTea
 
     let formattedName = customizingItem.name
     if (isPlainFries) {
@@ -595,7 +599,7 @@ export default function POS() {
       customization = {
         ...(isPlainFries ? { seasoning: selectedSeasoning } : {}),
         ...((hasGyro || isRiceItem || isSaladItem || isLoadedFries) ? { protein: selectedProtein } : {}),
-        ...(hasGyro ? { bread: selectedBread, spread: selectedSpread, sauces: selectedSauces, veggies: selectedVeggies } : {}),
+        ...(hasGyro ? { flavor: selectedGyroFlavor, bread: selectedBread, spread: selectedSpread, sauces: selectedSauces, veggies: selectedVeggies } : {}),
         ...((isSaladItem || isRiceItem) ? { sauces: selectedSauces, veggies: selectedVeggies } : {}),
         ...(drinkSummary ? { drink: drinkSummary } : {}),
         ...(dipSummary ? { dips: dipSummary } : {}),
@@ -2033,7 +2037,7 @@ export default function POS() {
               {(() => {
                 const cItemName = (customizingItem?.name || '').toLowerCase()
                 const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
-                const hasProteinChoice = cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cItemName.includes('loaded') || cItemName.includes('salad') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein') || cCatName.includes('salad')
+                const hasProteinChoice = cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cItemName.includes('loaded') || cItemName.includes('salad') || cItemName.includes('combo') || cItemName.includes('wednesday') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein') || cCatName.includes('salad') || cCatName.includes('combo')
                 if (!hasProteinChoice) return null
                 return (
                   <div>
@@ -2155,10 +2159,30 @@ export default function POS() {
                 const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
                 const isRiceItem = cItemName.includes('rice')
                 const isSuper5 = cItemName.includes('super 5')
-                const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cCatName.includes('gyro')) && !isRiceItem && !isSuper5
+                const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('combo') || cItemName.includes('wednesday') || cCatName.includes('gyro') || cCatName.includes('combo')) && !isRiceItem && !isSuper5
                 if (!hasGyroChoice) return null
                 return (
                   <>
+                    {/* Flavor / Style Section */}
+                    <div>
+                      <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        🌯 Gyro Flavor / Style
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                        {['Spicy', 'Creamy', 'BBQ', 'Signature'].map(f => (
+                          <button key={f} type="button" onClick={() => setSelectedGyroFlavor(f)} style={{
+                            padding: '10px 6px', borderRadius: '10px',
+                            border: selectedGyroFlavor === f ? '2px solid #e63946' : '1px solid #e5e7eb',
+                            background: selectedGyroFlavor === f ? '#e63946' : '#f9fafb',
+                            color: selectedGyroFlavor === f ? 'white' : '#374151',
+                            fontWeight: 700, fontSize: '12.5px', cursor: 'pointer', textAlign: 'center', transition: 'all 0.15s'
+                          }}>
+                            {selectedGyroFlavor === f ? '✓ ' : ''}{f}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
                     <div>
                       <div style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                         🥙 Pita Bread Type

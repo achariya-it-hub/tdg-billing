@@ -95,6 +95,7 @@ export default function Kiosk() {
 
   const getMealDrinkCount = (itemName) => {
     const name = (itemName || '').toLowerCase()
+    if (name.includes('wednesday') || name.includes('wednesday combo')) return 0
     if (name.includes('den\'s party') || name.includes('party meal')) return 3
     if (name.includes('super 5')) return 5
     if (name.includes('double crunch') || name.includes('duo gyro') || name.includes('mega feast')) return 2
@@ -120,7 +121,8 @@ export default function Kiosk() {
       itemName.includes('feast') || itemName.includes('bucket') ||
       itemName.includes('rice') || itemName.includes('salad') ||
       catName.includes('fries') || itemName.includes('fries') || itemName.includes('loaded') ||
-      itemName.includes('ice tea') || itemName.includes('iced tea')
+      itemName.includes('ice tea') || itemName.includes('iced tea') ||
+      itemName.includes('wednesday') || itemName.includes('combo')
     )
   }
 
@@ -208,7 +210,7 @@ export default function Kiosk() {
     const isSuper5 = itemName.includes('super 5')
     const isLoadedFries = itemName.includes('loaded')
     const isIceTea = itemName.includes('ice tea') || itemName.includes('iced tea')
-    const hasGyro = (catName.includes('gyro') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal')) && !isRiceItem && !isSuper5 && !isLoadedFries && !isIceTea
+    const hasGyro = (catName.includes('gyro') || catName.includes('combo') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal') || itemName.includes('combo') || itemName.includes('wednesday')) && !isRiceItem && !isSuper5 && !isLoadedFries && !isIceTea
 
     let formattedName = customizingItem.name
     if (isLoadedFries) {
@@ -1115,8 +1117,8 @@ export default function Kiosk() {
                   const isRiceItem = cItemName.includes('rice')
                   const isSuper5 = cItemName.includes('super 5')
                   const isIceTea = cItemName.includes('ice tea') || cItemName.includes('iced tea')
-                  const hasProteinChoice = (cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cItemName.includes('loaded') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein')) && !isIceTea
-                  const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cCatName.includes('gyro')) && !isRiceItem && !isSuper5 && !isIceTea
+                  const hasProteinChoice = (cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cItemName.includes('loaded') || cItemName.includes('combo') || cItemName.includes('wednesday') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein') || cCatName.includes('combo')) && !isIceTea
+                  const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('combo') || cItemName.includes('wednesday') || cCatName.includes('gyro') || cCatName.includes('combo')) && !isRiceItem && !isSuper5 && !isIceTea
                   const dCount = getMealDrinkCount(customizingItem?.name)
 
                   return (

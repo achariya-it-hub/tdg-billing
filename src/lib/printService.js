@@ -72,6 +72,20 @@ const getComboItemsBreakdown = (item) => {
     itemsList.push(`10x Crispy Chicken Wings`)
     itemsList.push(`10x Crispy Chicken Strips`)
     itemsList.push(`5x Regular Drinks${drink ? ` (${drink})` : ''}`)
+  } else if (name.includes('wednesday combo - 1') || name.includes('wednesday combo 1')) {
+    const gyroDesc = protein ? `${protein} Gyro` : 'Gyro Wrap'
+    const gyroOpts = [flavor, spread ? `${spread} Spread` : '', bread ? `${bread} Pita` : ''].filter(Boolean).join(', ')
+    itemsList.push(`1x ${gyroDesc}${gyroOpts ? ` (${gyroOpts})` : ''}`)
+    itemsList.push(`1x Crispy Leg & Thigh`)
+    itemsList.push(`2x Crispy Chicken Wings`)
+    itemsList.push(`2x Crispy Chicken Strips`)
+  } else if (name.includes('wednesday combo - 2') || name.includes('wednesday combo 2') || name.includes('wednesday combo')) {
+    const gyroDesc = protein ? `${protein} Gyro` : 'Gyro Wrap'
+    const gyroOpts = [flavor, spread ? `${spread} Spread` : '', bread ? `${bread} Pita` : ''].filter(Boolean).join(', ')
+    itemsList.push(`1x ${gyroDesc}${gyroOpts ? ` (${gyroOpts})` : ''}`)
+    itemsList.push(`2x Crispy Leg & Thighs`)
+    itemsList.push(`2x Crispy Chicken Wings`)
+    itemsList.push(`2x Crispy Chicken Strips`)
   } else if (gyro1 || gyro2 || (drink && (name.includes('meal') || name.includes('combo') || name.includes('box') || name.includes('feast') || name.includes('bucket')))) {
     if (gyro1) itemsList.push(`1x ${gyro1}`)
     if (gyro2) itemsList.push(`1x ${gyro2}`)
