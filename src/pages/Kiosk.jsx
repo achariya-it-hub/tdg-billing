@@ -8,6 +8,7 @@ import API_BASE from '../lib/apiConfig'
 const getItemImage = (item) => {
   if (item.image) return item.image
   const name = (item.name || '').toLowerCase()
+  if (name.includes('wednesday')) return '/images/menu/wednesday_combo.png'
   if (name.includes('combo') || name.includes('feast') || name.includes('party') || name.includes('double crunch') || name.includes('super 5')) {
     return 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80'
   }

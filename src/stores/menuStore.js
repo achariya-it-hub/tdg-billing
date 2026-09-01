@@ -371,6 +371,24 @@ const sampleMenuItems = [
     "image": "/images/menu/lebanese rice box.png"
   },
   {
+    "id": "m_wednesday_combo_1",
+    "categoryId": "c2",
+    "name": "Wednesday Combo - 1",
+    "price": 349,
+    "description": "3 Leg and Thigh, 8 strips, 4 wings.",
+    "isAvailable": true,
+    "image": "/images/menu/wednesday_combo.png"
+  },
+  {
+    "id": "m_wednesday_combo_2",
+    "categoryId": "c2",
+    "name": "Wednesday Combo - 2",
+    "price": 379,
+    "description": "1 Gyro, 2 Leg and Thigh, 2 Wings, 2 Strips",
+    "isAvailable": true,
+    "image": "/images/menu/wednesday_combo.png"
+  },
+  {
     "id": "m_classic_gyro_meal",
     "categoryId": "c2",
     "name": "Classic Gyro Meal",
