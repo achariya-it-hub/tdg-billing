@@ -903,16 +903,16 @@ try {
   console.error('[HOSTINGER MIGRATION ERROR]', e.message)
 }
 
-// Ensure menu items on server startup only if completely missing
-if (!menuItems || menuItems.length === 0) {
+// Ensure exact 60 official menu items on server startup
+if (!menuItems || menuItems.length !== 60) {
   try {
     const seedPath = join(__dirname, 'seed-db.json')
     if (existsSync(seedPath)) {
       const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
-      if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length > 0) {
+      if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length === 60) {
         menuItems = seedData.menuItems
         categories = seedData.categories || categories
-        console.log('[MENU RESTORE] Loaded menu items from seed-db.json')
+        console.log('[MENU RESTORE] ✅ Restored exact 60 official menu items!')
       }
     }
   } catch (e) {
