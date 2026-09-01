@@ -447,6 +447,12 @@ export default function POS() {
     const cat = categories.find(c => c.id === item.categoryId)
     const catName = (cat?.name || '').toLowerCase()
     const itemName = (item?.name || '').toLowerCase()
+
+    // Wednesday Combo - 1 has nothing to customize
+    if (itemName.includes('wednesday combo - 1') || itemName.includes('wednesday combo 1')) {
+      return false
+    }
+
     return (
       catName.includes('gyro') || itemName.includes('gyro') ||
       catName.includes('meal') || catName.includes('combo') ||
@@ -455,7 +461,7 @@ export default function POS() {
       itemName.includes('rice') || itemName.includes('salad') ||
       catName.includes('fries') || itemName.includes('fries') ||
       itemName.includes('ice tea') || itemName.includes('iced tea') ||
-      itemName.includes('wednesday') || itemName.includes('combo')
+      itemName.includes('wednesday combo - 2') || itemName.includes('wednesday combo 2')
     )
   }
 
@@ -553,7 +559,7 @@ export default function POS() {
     const isPlainFries = itemName.includes('fries') && !itemName.includes('loaded')
     const isLoadedFries = itemName.includes('loaded')
     const isIceTea = itemName.includes('ice tea') || itemName.includes('iced tea')
-    const hasGyro = (catName.includes('gyro') || catName.includes('combo') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal') || itemName.includes('combo') || itemName.includes('wednesday')) && !isRiceItem && !isSaladItem && !isSuper5 && !isPlainFries && !isLoadedFries && !isIceTea
+    const hasGyro = (catName.includes('gyro') || catName.includes('combo') || itemName.includes('gyro') || itemName.includes('feast') || itemName.includes('meal') || itemName.includes('combo') || itemName.includes('wednesday combo - 2') || itemName.includes('wednesday combo 2')) && !isRiceItem && !isSaladItem && !isSuper5 && !isPlainFries && !isLoadedFries && !isIceTea && !itemName.includes('wednesday combo - 1') && !itemName.includes('wednesday combo 1')
 
     let formattedName = customizingItem.name
     if (isPlainFries) {
@@ -2037,7 +2043,7 @@ export default function POS() {
               {(() => {
                 const cItemName = (customizingItem?.name || '').toLowerCase()
                 const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
-                const hasProteinChoice = cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cItemName.includes('loaded') || cItemName.includes('salad') || cItemName.includes('combo') || cItemName.includes('wednesday') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein') || cCatName.includes('salad') || cCatName.includes('combo')
+                const hasProteinChoice = (cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cItemName.includes('loaded') || cItemName.includes('salad') || cItemName.includes('combo') || cItemName.includes('wednesday combo - 2') || cItemName.includes('wednesday combo 2') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein') || cCatName.includes('salad') || cCatName.includes('combo')) && !cItemName.includes('wednesday combo - 1') && !cItemName.includes('wednesday combo 1')
                 if (!hasProteinChoice) return null
                 return (
                   <div>
@@ -2159,7 +2165,7 @@ export default function POS() {
                 const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
                 const isRiceItem = cItemName.includes('rice')
                 const isSuper5 = cItemName.includes('super 5')
-                const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('combo') || cItemName.includes('wednesday') || cCatName.includes('gyro') || cCatName.includes('combo')) && !isRiceItem && !isSuper5
+                const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('combo') || cItemName.includes('wednesday combo - 2') || cItemName.includes('wednesday combo 2') || cCatName.includes('gyro') || cCatName.includes('combo')) && !isRiceItem && !isSuper5 && !cItemName.includes('wednesday combo - 1') && !cItemName.includes('wednesday combo 1')
                 if (!hasGyroChoice) return null
                 return (
                   <>
