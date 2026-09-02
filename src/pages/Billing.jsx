@@ -24,6 +24,7 @@ export default function Billing() {
   const [showPayment, setShowPayment] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState('cash')
   const [processing, setProcessing] = useState(false)
+  const [cashTendered, setCashTendered] = useState('')
   const [dateFilter, setDateFilter] = useState('today') // 'today' (Today's Shift) | 'yesterday' | 'all' | 'custom'
   const [customDate, setCustomDate] = useState(() => {
     const today = new Date()

@@ -84,13 +84,7 @@ class ErrorBoundary extends Component {
           )}
           <button
             onClick={() => {
-              try {
-                localStorage.clear()
-                sessionStorage.clear()
-              } catch (e) {
-                console.error(e)
-              }
-              window.location.href = '/staff-login'
+              window.location.reload()
             }}
             style={{
               padding: '14px 28px',
@@ -104,7 +98,7 @@ class ErrorBoundary extends Component {
               boxShadow: '0 4px 16px rgba(230,57,70,0.4)'
             }}
           >
-            Reset Session & Login
+            Reload Page & Continue
           </button>
         </div>
       )
