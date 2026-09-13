@@ -384,7 +384,7 @@ let settings = {
  },
  whatsapp: {
  isEnabled: true,
- serviceUrl: 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>'
+ serviceUrl: 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>'
  },
  offers: [
  { id: '1', title: 'Golden Gyro Feast (50% OFF)', desc: '1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink', tag: '50% OFF', price: '₹199', origPrice: '₹398', image: '/uploads/menu/m1.jpg' },
@@ -577,7 +577,7 @@ function syncSettingsVault(currentSettings) {
     }
 
     const mergedWhatsApp = {
-      serviceUrl: 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>',
+      serviceUrl: 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>',
       isEnabled: true,
       ...(vaultSettings.whatsapp || {}),
       ...(currentSettings?.whatsapp || {})
@@ -8709,7 +8709,7 @@ async function sendWhatsAppOTP(phone, otp, type = 'auth', customMessage = null) 
 
   const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
 
-  const defaultUrl = 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>'
+  const defaultUrl = 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>'
   const serviceUrlTemplate = whatsappCfg.serviceUrl || defaultUrl
 
   let targetUrl = serviceUrlTemplate
@@ -8717,7 +8717,7 @@ async function sendWhatsAppOTP(phone, otp, type = 'auth', customMessage = null) 
     .replace('<message>', encodedMsg)
 
   if (targetUrl === serviceUrlTemplate) {
-    targetUrl = `http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/${formattedPhone}/${encodedMsg}`
+    targetUrl = `https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/${formattedPhone}/${encodedMsg}`
   }
 
   console.log(`[WhatsApp OTP] Sending OTP ${otp} to ${formattedPhone} via service: ${targetUrl}`)
@@ -8883,7 +8883,7 @@ app.get('/api/whatsapp/config', (req, res) => {
   const wa = settings.whatsapp || {}
   res.json({
     enabled: wa.isEnabled !== false,
-    serviceUrl: wa.serviceUrl || 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>'
+    serviceUrl: wa.serviceUrl || 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>'
   })
 })
 

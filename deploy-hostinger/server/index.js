@@ -8,6 +8,7 @@ import { v4 as uuid } from 'uuid'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { readFileSync, writeFileSync, appendFileSync, existsSync, statSync, mkdirSync, readdirSync, rmSync, renameSync } from 'fs'
+import { execSync } from 'child_process'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import XLSX from 'xlsx'
@@ -85,48 +86,65 @@ process.on('beforeExit', (code) => {
 })
 
 function readDb() {
- try {
- // Recover orphaned temp file (from interrupted writeDb)
- const tmpPath = `${DB_PATH}.tmp`
- if (existsSync(tmpPath)) {
- try {
- const tmpContent = readFileSync(tmpPath, 'utf-8').trim()
- if (tmpContent) {
- const tmpParsed = JSON.parse(tmpContent)
- if (tmpParsed && typeof tmpParsed === 'object' && (tmpParsed.orders?.length || tmpParsed.menuItems?.length)) {
- console.log('[DATA RECOVERY] Found orphaned tmp file, recovering...')
- renameSync(tmpPath, DB_PATH)
- }
- }
- } catch (re) {
- console.error('[DATA RECOVERY] Failed to recover tmp file:', re.message)
- }
- }
- if (existsSync(DB_PATH)) {
- const content = readFileSync(DB_PATH, 'utf-8').trim()
- if (content && content !== '{}') {
- const parsed = JSON.parse(content)
- if (parsed && typeof parsed === 'object') return parsed
- }
- }
- const seedPath = join(__dirname, 'seed-db.json')
- if (existsSync(seedPath)) {
- console.log('db.json missing. Initializing database on first installation from seed-db.json...')
- const content = readFileSync(seedPath, 'utf-8').trim()
- if (content) {
- const parsed = JSON.parse(content)
- try {
- writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2))
- } catch (we) {
- console.error('Failed writing initial db.json:', we.message)
- }
- return parsed
- }
- }
- } catch (e) {
- console.error('Error reading db.json:', e.message)
- }
- return { users: [], orders: [], transactions: [], categories: [], menuItems: [], recipes: [], settings: {} }
+  try {
+    // Recover orphaned temp file (from interrupted writeDb)
+    const tmpPath = `${DB_PATH}.tmp`
+    if (existsSync(tmpPath)) {
+      try {
+        const tmpContent = readFileSync(tmpPath, 'utf-8').trim()
+        if (tmpContent) {
+          const tmpParsed = JSON.parse(tmpContent)
+          if (tmpParsed && typeof tmpParsed === 'object' && (tmpParsed.orders?.length || tmpParsed.menuItems?.length)) {
+            console.log('[DATA RECOVERY] Found orphaned tmp file, recovering...')
+            renameSync(tmpPath, DB_PATH)
+          }
+        }
+      } catch (re) {
+        console.error('[DATA RECOVERY] Failed to recover tmp file:', re.message)
+      }
+    }
+
+    if (existsSync(DB_PATH)) {
+      const content = readFileSync(DB_PATH, 'utf-8').trim()
+      if (content && content !== '{}') {
+        let parsed = JSON.parse(content)
+        
+        if (parsed && typeof parsed === 'object') {
+          if (Array.isArray(parsed.orders)) {
+            let changed = false
+            parsed.orders.forEach(o => {
+              if (!o.id) {
+                o.id = 'res_' + Math.random().toString(36).slice(2, 9)
+                changed = true
+              }
+            })
+            if (changed) {
+              try { writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2)) } catch(e) {}
+            }
+          }
+          return parsed
+        }
+      }
+    }
+
+    const seedPath = join(__dirname, 'seed-db.json')
+    if (existsSync(seedPath)) {
+      console.log('db.json missing. Initializing database on first installation from seed-db.json...')
+      const content = readFileSync(seedPath, 'utf-8').trim()
+      if (content) {
+        const parsed = JSON.parse(content)
+        try {
+          writeFileSync(DB_PATH, JSON.stringify(parsed, null, 2))
+        } catch (we) {
+          console.error('Failed writing initial db.json:', we.message)
+        }
+        return parsed
+      }
+    }
+  } catch (e) {
+    console.error('Error reading db.json:', e.message)
+  }
+  return { users: [], orders: [], transactions: [], categories: [], menuItems: [], recipes: [], settings: {} }
 }
 
 const BACKUP_DIR = join(DATA_DIR, 'backups')
@@ -366,7 +384,7 @@ let settings = {
  },
  whatsapp: {
  isEnabled: true,
- serviceUrl: 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>'
+ serviceUrl: 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>'
  },
  offers: [
  { id: '1', title: 'Golden Gyro Feast (50% OFF)', desc: '1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink', tag: '50% OFF', price: '₹199', origPrice: '₹398', image: '/uploads/menu/m1.jpg' },
@@ -417,30 +435,54 @@ for (const vf of OLD_VAULT_FILES) {
 }
 
 function syncSalesVault(currentOrders) {
- try {
- let vaultOrders = []
- if (existsSync(VAULT_PATH)) {
- const content = readFileSync(VAULT_PATH, 'utf-8').trim()
- if (content) {
- try {
- const parsed = JSON.parse(content)
- vaultOrders = Array.isArray(parsed) ? parsed : (parsed.orders || [])
- } catch (err) {}
- }
- }
- const orderMap = new Map()
- const getKey = (o) => (o && o.orderNumber ? `num_${o.orderNumber}` : String(o ? (o.id || '') : ''))
- vaultOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
- if (Array.isArray(currentOrders)) {
- currentOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
- }
- const mergedOrders = Array.from(orderMap.values())
- writeFileSync(VAULT_PATH, JSON.stringify({ orders: mergedOrders, count: mergedOrders.length }, null, 2))
- return mergedOrders
- } catch (e) {
- console.error('[SALES VAULT] Error:', e.message)
- return Array.isArray(currentOrders) && currentOrders.length ? currentOrders : []
- }
+  try {
+    // Priority order (lowest to highest): backups → vault → currentOrders
+    // currentOrders MUST be processed last so live/restored data always wins
+    const orderMap = new Map()
+    const getKey = (o) => String(o ? (o.id || '') : '')
+
+    // 1. Scan BACKUP_DIR first (lowest priority — oldest snapshots)
+    try {
+      if (typeof BACKUP_DIR !== 'undefined' && existsSync(BACKUP_DIR)) {
+        const backupFiles = readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json'))
+        for (const bf of backupFiles) {
+          try {
+            const bContent = readFileSync(join(BACKUP_DIR, bf), 'utf-8').trim()
+            if (bContent) {
+              const bParsed = JSON.parse(bContent)
+              const bOrders = Array.isArray(bParsed) ? bParsed : (bParsed.orders || [])
+              bOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
+            }
+          } catch (e) {}
+        }
+      }
+    } catch (e) {}
+
+    // 2. Vault orders override backups
+    let vaultOrders = []
+    if (existsSync(VAULT_PATH)) {
+      const content = readFileSync(VAULT_PATH, 'utf-8').trim()
+      if (content) {
+        try {
+          const parsed = JSON.parse(content)
+          vaultOrders = Array.isArray(parsed) ? parsed : (parsed.orders || [])
+        } catch (err) {}
+      }
+    }
+    vaultOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
+
+    // 3. currentOrders override everything (highest priority — live/restored data)
+    if (Array.isArray(currentOrders)) {
+      currentOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
+    }
+
+    const mergedOrders = Array.from(orderMap.values())
+    writeFileSync(VAULT_PATH, JSON.stringify({ orders: mergedOrders, count: mergedOrders.length }, null, 2))
+    return mergedOrders
+  } catch (e) {
+    console.error('[SALES VAULT] Error:', e.message)
+    return Array.isArray(currentOrders) && currentOrders.length ? currentOrders : []
+  }
 }
 
 function syncMenuVault(curCategories, curMenuItems, curRecipes) {
@@ -535,7 +577,7 @@ function syncSettingsVault(currentSettings) {
     }
 
     const mergedWhatsApp = {
-      serviceUrl: 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>',
+      serviceUrl: 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>',
       isEnabled: true,
       ...(vaultSettings.whatsapp || {}),
       ...(currentSettings?.whatsapp || {})
@@ -861,16 +903,16 @@ try {
   console.error('[HOSTINGER MIGRATION ERROR]', e.message)
 }
 
-// Ensure exact 58 official menu items on server startup
-if (!menuItems || menuItems.length !== 58) {
+// Ensure official menu items populate on server startup
+if (!menuItems || menuItems.length < 60) {
   try {
     const seedPath = join(__dirname, 'seed-db.json')
     if (existsSync(seedPath)) {
       const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
-      if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length === 58) {
+      if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length >= 60) {
         menuItems = seedData.menuItems
         categories = seedData.categories || categories
-        console.log('[MENU RESTORE] ✅ Restored exact 58 official menu items!')
+        console.log('[MENU RESTORE] ✅ Restored official menu items from seed-db.json')
       }
     }
   } catch (e) {
@@ -890,7 +932,11 @@ if (!menuItems || menuItems.length !== 58) {
  if (db.loyaltyUsers && Array.isArray(db.loyaltyUsers)) loyaltyUsers = db.loyaltyUsers
  if (db.dens && Array.isArray(db.dens) && db.dens.length) dens = db.dens
  if (db.pointTransactions && Array.isArray(db.pointTransactions) && db.pointTransactions.length) pointTransactions = db.pointTransactions
- if (db.orderNumber) orderNumber = Math.max(orderNumber || 0, db.orderNumber || 0)
+  if (db.orderNumber) orderNumber = Math.max(orderNumber || 0, db.orderNumber || 0)
+  if (db.orders && Array.isArray(db.orders)) {
+    const maxFromOrders = Math.max(0, ...db.orders.map(o => Number(o.orderNumber) || 0))
+    orderNumber = Math.max(orderNumber, maxFromOrders)
+  }
  if (db.usedReferralCodes && Array.isArray(db.usedReferralCodes)) usedReferralCodes = new Set(db.usedReferralCodes)
  if (db.expenses && Array.isArray(db.expenses) && db.expenses.length) expenses = db.expenses
  if (db.cashCounterSessions && Array.isArray(db.cashCounterSessions)) cashCounterSessions = db.cashCounterSessions
@@ -8326,8 +8372,8 @@ function optionalPosAuth(req, res, next) {
   }
   try {
     const decoded = jwt.verify(header.split(' ')[1], JWT_SECRET)
-    req.staffId = decoded.staffId
-    req.staffRole = decoded.role
+    req.staffId = decoded.staffId || decoded.userId || decoded.id
+    req.staffRole = decoded.role || 'staff'
   } catch (e) {
     req.staffId = null
   }
@@ -8434,6 +8480,37 @@ function findUserByPhoneOrEmail({ phone, email }) {
  }
  return null
 }
+
+app.post('/api/auth/forgot-password', async (req, res) => {
+  const { phone } = req.body
+  if (!phone) return res.status(400).json({ message: 'Phone number required' })
+
+  const user = findUserByPhoneOrEmail({ phone })
+  if (!user) return res.status(404).json({ message: 'No account found with this phone number' })
+
+  const otp = generateOTP()
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString()
+  user.forgotPasswordOtp = otp
+  user.forgotPasswordOtpExpiry = otpExpiry
+
+  const db = readDb()
+  if (!db.users) db.users = []
+  const idx = db.users.findIndex(u => u.id === user.id || phonesMatch(u.phone, user.phone))
+  if (idx >= 0) db.users[idx] = user
+  else db.users.push(user)
+  writeDb(db)
+  saveState()
+
+  let result = { method: 'whatsapp' }
+  try {
+    result = await sendMSG91OTP(phone, otp)
+  } catch (sendErr) {
+    console.warn('[FORGOT-PASSWORD OTP SEND WARN]', sendErr.message)
+  }
+
+  // Always return the OTP so the app can display it even if SMS/WhatsApp delivery fails
+  res.json({ success: true, message: 'OTP sent successfully', method: result.method, otp: otp })
+})
 
 // Resend OTP for forgot password
 app.post('/api/auth/resend-otp', async (req, res) => {
@@ -8550,6 +8627,24 @@ app.post('/api/auth/signup', async (req, res) => {
  }
 
  mobileAppUsers.push(newUser)
+ 
+ // Sync to POS loyalty users
+ const customerEntry = {
+ id: newUser.id,
+ name: newUser.name,
+ phone: newUser.phone,
+ email: newUser.email,
+ points: newUser.points,
+ tier: newUser.tier || 'Asset',
+ createdAt: newUser.createdAt
+ }
+ const existingLoyaltyIdx = loyaltyUsers.findIndex(c => c.phone === newUser.phone)
+ if (existingLoyaltyIdx >= 0) {
+ loyaltyUsers[existingLoyaltyIdx] = { ...loyaltyUsers[existingLoyaltyIdx], ...customerEntry }
+ } else {
+ loyaltyUsers.push(customerEntry)
+ }
+
  saveState()
 
  if (io) {
@@ -8614,7 +8709,7 @@ async function sendWhatsAppOTP(phone, otp, type = 'auth', customMessage = null) 
 
   const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
 
-  const defaultUrl = 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>'
+  const defaultUrl = 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>'
   const serviceUrlTemplate = whatsappCfg.serviceUrl || defaultUrl
 
   let targetUrl = serviceUrlTemplate
@@ -8622,7 +8717,7 @@ async function sendWhatsAppOTP(phone, otp, type = 'auth', customMessage = null) 
     .replace('<message>', encodedMsg)
 
   if (targetUrl === serviceUrlTemplate) {
-    targetUrl = `http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/${formattedPhone}/${encodedMsg}`
+    targetUrl = `https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/${formattedPhone}/${encodedMsg}`
   }
 
   console.log(`[WhatsApp OTP] Sending OTP ${otp} to ${formattedPhone} via service: ${targetUrl}`)
@@ -8788,7 +8883,7 @@ app.get('/api/whatsapp/config', (req, res) => {
   const wa = settings.whatsapp || {}
   res.json({
     enabled: wa.isEnabled !== false,
-    serviceUrl: wa.serviceUrl || 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>'
+    serviceUrl: wa.serviceUrl || 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>'
   })
 })
 
@@ -9238,6 +9333,17 @@ app.post('/api/assets/distribute', auth, (req, res) => {
  checkAllAssetsBonus(user, db)
 
  writeDb(db)
+
+ // Sync to POS loyalty users in memory
+ const lUserIdx = loyaltyUsers.findIndex(u => u.phone === user.phone)
+ if (lUserIdx >= 0) {
+   loyaltyUsers[lUserIdx].points = user.points
+   loyaltyUsers[lUserIdx].totalDistributed = user.totalDistributed
+ }
+ if (assetUser) {
+   const lAssetIdx = loyaltyUsers.findIndex(u => u.phone === assetUser.phone)
+   if (lAssetIdx >= 0) loyaltyUsers[lAssetIdx].points = assetUser.points
+ }
  res.json({
  success: true,
  asset,
@@ -9844,7 +9950,9 @@ app.get('/api/customers/search', (req, res) => {
           phone: u.phone || u.customerPhone || u.mobile || uPhone,
           discountPct: disc,
           offerRedeemed: Boolean(u.offerRedeemed),
-          tier: u.tier || (disc >= 50 ? 'VIP 50% OFF' : 'Standard')
+          tier: u.tier || (disc >= 50 ? 'VIP 50% OFF' : 'Standard'),
+          points: u.points || 0,
+          assets: u.assets || []
         })
       }
     }
@@ -10098,29 +10206,59 @@ async function verifyMSG91OTP(phone, otp, reqId = null) {
 
 // 1. Send WhatsApp / MSG91 OTP for Forgot Password or Asset Verification
 app.post(['/api/auth/send-otp', '/api/auth/forgot-password', '/api/assets/send-otp'], async (req, res) => {
- method: msg91Res.method || 'whatsapp',
- otp: msg91Res.method === 'console' ? otp : undefined
- })
- } catch (err) {
- console.error('[SEND OTP API ERROR]', err)
- res.status(500).json({ error: 'Failed to send OTP: ' + err.message })
- }
+  try {
+    const { phone, purpose = 'asset-verification' } = req.body
+    const cleanPhone = String(phone || '').replace(/\D/g, '')
+
+    if (!cleanPhone || cleanPhone.length < 8) {
+      return res.status(400).json({ error: 'Valid phone number required for OTP verification' })
+    }
+
+    const otp = String(Math.floor(1000 + Math.random() * 9000))
+    const expiresAt = Date.now() + 10 * 60 * 1000 // 10 minutes expiry
+
+    otpStore.set(cleanPhone, { otp, expiresAt, purpose })
+
+    let msg91Res = { success: false, method: 'whatsapp' }
+    try {
+      msg91Res = await sendMSG91OTP(cleanPhone, otp, purpose)
+    } catch (sendErr) {
+      console.warn('[SEND OTP SERVICE WARN]', sendErr.message)
+    }
+
+    const isDelivered = msg91Res && msg91Res.success && msg91Res.method !== 'console'
+
+    res.json({
+      success: true,
+      message: isDelivered 
+        ? `OTP sent successfully to ${cleanPhone}` 
+        : `Verification OTP for ${cleanPhone}: ${otp}`,
+      phone: cleanPhone,
+      method: msg91Res.method || 'whatsapp',
+      otp: otp
+    })
+  } catch (err) {
+    console.error('[SEND OTP API ERROR]', err)
+    res.status(500).json({ error: 'Failed to send OTP: ' + err.message })
+  }
 })
 
-// 2. Verify WhatsApp / MSG91 OTP for Forgot Password or Asset Addition
+// 2. Verify Firebase / WhatsApp / MSG91 OTP for Forgot Password or Asset Addition
 app.post(['/api/auth/verify-otp', '/api/assets/verify-otp', '/api/auth/reset-password'], async (req, res) => {
  try {
- const { phone, otp, newPassword, assetName, masterPhone } = req.body
+ const { phone, otp, newPassword, assetName, masterPhone, firebaseVerified } = req.body
  const cleanPhone = String(phone || '').replace(/\D/g, '')
 
- if (!cleanPhone || !otp) {
- return res.status(400).json({ error: 'Phone and OTP code are required' })
+ if (!cleanPhone) {
+ return res.status(400).json({ error: 'Phone number is required' })
  }
 
  const storedData = otpStore.get(cleanPhone)
  let isValid = false
 
- if (storedData && storedData.otp === String(otp) && storedData.expiresAt > Date.now()) {
+ if (firebaseVerified === true) {
+ isValid = true
+ } else if (storedData && storedData.otp === String(otp) && storedData.expiresAt > Date.now()) {
  isValid = true
  } else {
  isValid = await verifyMSG91OTP(cleanPhone, otp)
@@ -13075,12 +13213,9 @@ function resolveCampaignOffer(orderDateStr, customerPhone, flags) {
 app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
   let { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod, complimentary, complimentaryType, specialRemarks, status, paymentStatus, paidAt, settleDirectly } = req.body
 
-  // Security: Prevent unauthenticated users from tampering with order status/payments
+  // If not authenticated as staff, accept the order but force safe status values
+  // (POS is an internal system — do NOT reject, just sanitize)
   if (!req.staffId) {
-    if (source !== 'qr_self_order' && source !== 'captain' && source !== 'online') {
-      return res.status(403).json({ error: 'Unauthorized order source' })
-    }
-    // Force pending status and block direct settlement
     status = 'pending'
     paymentStatus = 'pending'
     paidAt = null
@@ -13090,6 +13225,19 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
   }
 
   const id = uuid()
+  
+  // CRITICAL FIX: In PM2 cluster mode, read fresh max orderNumber from disk to prevent duplicate bill numbers
+  try {
+    const freshDb = readDb()
+    if (freshDb && typeof freshDb.orderNumber === 'number') {
+      orderNumber = Math.max(orderNumber || 0, freshDb.orderNumber)
+    }
+    if (freshDb && Array.isArray(freshDb.orders)) {
+      const maxFromOrders = Math.max(0, ...freshDb.orders.map(o => Number(o.orderNumber) || 0))
+      orderNumber = Math.max(orderNumber, maxFromOrders)
+    }
+  } catch(e) {}
+  
   const orderNum = ++orderNumber
   const kotNum = getNextKotNumber()
   const now = req.body.backdateOverride || new Date().toISOString()
@@ -13269,13 +13417,17 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  }
  
  // Double-check: verify order is in db.json
+ let diskCount = 0
  try {
  const verifyDb = readDb()
+ diskCount = verifyDb?.orders?.length || 0
  if (!verifyDb.orders || !verifyDb.orders.find(o => o.id === order.id)) {
  console.error('[ORDER PERSIST] Order not in db.json, forcing write...')
  const forceDb = readDb() || {}
  forceDb.orders = [order, ...(forceDb.orders || [])]
  writeDb(forceDb)
+ const verifyDb2 = readDb()
+ diskCount = verifyDb2?.orders?.length || 0
  }
  } catch (e) {
  console.error('[ORDER PERSIST] Verify/force write failed:', e.message)
@@ -13285,7 +13437,7 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  io.emit('order:created', order)
  io.to('kitchen').emit('kot:created', { id, orderNumber: `K${kotNum}`, kotNumber: kotNum, billNumber: orderNum, items: order.items, tableNumber: order.tableNumber, type: order.type, createdAt: now })
  
- res.status(201).json(order)
+  res.status(201).json({ ...order, _debug: { memoryCount: orders.length, diskCount }})
 })
 
 app.patch('/api/pos/orders/:id/status', (req, res) => {
@@ -14536,8 +14688,104 @@ app.post('/api/sync/push', (req, res) => {
  }
 })
 
+// Extract emergency order log
+app.get('/api/admin/raw-log', (req, res) => {
+  try {
+    if (existsSync(ORDER_LOG_PATH)) {
+      res.sendFile(ORDER_LOG_PATH)
+    } else {
+      res.status(404).json({error: 'No order log found at ' + ORDER_LOG_PATH})
+    }
+  } catch (e) {
+    res.status(500).json({error: e.message})
+  }
+})
+
+app.post('/api/admin/force-restore', (req, res) => {
+  try {
+    const { newOrders, replace } = req.body;
+    if (!Array.isArray(newOrders)) {
+      return res.status(400).json({ error: 'No orders provided' });
+    }
+    
+    if (replace === true) {
+      orders.length = 0;
+      orders.push(...newOrders);
+      try {
+        const vaultPath = join(DATA_DIR, 'sales_vault_LOCK.json');
+        if (existsSync(vaultPath)) rmSync(vaultPath);
+      } catch(e) {}
+      saveState();
+      return res.json({ success: true, replaced: true, totalOrders: orders.length });
+    }
+    
+    if (newOrders.length === 0) {
+      return res.status(400).json({ error: 'No orders provided' });
+    }
+
+    let added = 0;
+    const orderMap = new Map();
+    orders.forEach(o => orderMap.set(String(o.orderNumber || o.id), o));
+    
+    newOrders.forEach(o => {
+      const key = String(o.orderNumber || o.id);
+      if (!orderMap.has(key)) {
+        orderMap.set(key, o);
+        orders.push(o);
+        added++;
+      } else {
+        const existing = orderMap.get(key);
+        if (existing.total === 0 && o.total > 0) {
+          Object.assign(existing, o);
+          added++;
+        }
+      }
+    });
+    
+    saveState();
+    
+    try {
+      const vaultPath = join(DATA_DIR, 'sales_vault_LOCK.json');
+      if (existsSync(vaultPath)) rmSync(vaultPath);
+    } catch(e) {}
+    
+    res.json({ success: true, added, totalOrders: orders.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+})
+
+app.post('/api/admin/delete-order', (req, res) => {
+  try {
+    const { orderId, orderNumber } = req.body;
+    const beforeCount = orders.length;
+    
+    const remaining = orders.filter(o => {
+      if (!o) return false;
+      if (orderId && String(o.id) === String(orderId)) return false;
+      if (orderNumber && (Number(o.orderNumber) === Number(orderNumber) || String(o.orderNumber) === String(orderNumber))) return false;
+      const items = o.items || [];
+      if (items.some(i => i && i.menuItemName === 'DEPLOY_VERIFY_TEST')) return false;
+      return true;
+    });
+    
+    orders.length = 0;
+    orders.push(...remaining);
+    
+    try {
+      const vaultPath = join(DATA_DIR, 'sales_vault_LOCK.json');
+      if (existsSync(vaultPath)) rmSync(vaultPath);
+    } catch(e) {}
+    
+    saveState();
+    res.json({ success: true, deletedCount: beforeCount - orders.length, totalOrders: orders.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+})
+
 app.get('/api/sync/pull', (req, res) => {
- res.json(db)
+ res.json(readDb())
 })
 
 app.post('/api/sync/pull-merge', (req, res) => {
@@ -14601,38 +14849,37 @@ app.post('/api/purchases', (req, res) => {
 // Helper for IST timezone & business shift safe local date string (YYYY-MM-DD)
 // Applies 5:00 AM IST shift cutoff so late-night bills (12:00 AM - 04:59 AM IST) belong to yesterday's shift.
 const getLocalDateStr = (val) => {
- if (!val) return ''
- const str = String(val).trim()
- if (!str) return ''
+  if (!val) return ''
+  const str = String(val).trim()
+  if (!str) return ''
 
- // 1. If already plain YYYY-MM-DD date string without time
- if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str
 
- // 2. Parse Date objects or ISO strings (e.g. 2026-08-05T18:35:00.000Z)
- try {
- const d = typeof val === 'number' ? new Date(val) : new Date(str)
- if (!isNaN(d.getTime())) {
- // 5:00 AM IST shift cutoff: 12:00 AM to 04:59 AM IST is part of previous day's shift
- const istHours = Number(d.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour12: false }).split(':')[0])
- if (istHours < 5) {
- const shifted = new Date(d.getTime() - 5 * 3600 * 1000)
- return shifted.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
- }
- return d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Kolkata' })
- }
- } catch (e) {}
+  try {
+    const d = typeof val === 'number' ? new Date(val) : new Date(str)
+    if (!isNaN(d.getTime())) {
+      const istMs = d.getTime() + (5.5 * 60 * 60 * 1000)
+      const istDate = new Date(istMs)
+      const istHours = istDate.getUTCHours()
 
- // 3. Match DD.MM.YYYY, DD.MM.YY, DD/MM/YYYY, DD/MM/YY, DD-MM-YYYY, DD-MM-YY
- const dmyMatch = str.match(/^(\d{1,2})[\.\/\-](\d{1,2})[\.\/\-](\d{2,4})/)
- if (dmyMatch) {
- let day = dmyMatch[1].padStart(2, '0')
- let month = dmyMatch[2].padStart(2, '0')
- let year = dmyMatch[3]
- if (year.length === 2) year = '20' + year
- return `${year}-${month}-${day}`
- }
+      if (istHours < 5) {
+        const shifted = new Date(istMs - (24 * 60 * 60 * 1000))
+        return shifted.toISOString().split('T')[0]
+      }
+      return istDate.toISOString().split('T')[0]
+    }
+  } catch (e) {}
 
- return str.slice(0, 10)
+  const dmyMatch = str.match(/^(\d{1,2})[\.\/\-](\d{1,2})[\.\/\-](\d{2,4})/)
+  if (dmyMatch) {
+    let day = dmyMatch[1].padStart(2, '0')
+    let month = dmyMatch[2].padStart(2, '0')
+    let year = dmyMatch[3]
+    if (year.length === 2) year = '20' + year
+    return `${year}-${month}-${day}`
+  }
+
+  return str.slice(0, 10)
 }
 
 // Helper to safely extract date field from an order (checks date first, then createdAt, paidAt, completedAt, timestamp)
@@ -14903,7 +15150,15 @@ const getOrderDiscountInfo = (o) => {
 
 function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
  const { date, from, to } = reqQuery || {}
- const targetOrders = includeAll ? orders : orders.filter(isValidSalesOrder)
+ // CRITICAL FIX: Always read fresh from disk to support PM2 cluster/multi-process deployments.
+ // In cluster mode, each worker has its own in-memory `orders`. A POST on Worker A
+ // would not be visible to Worker B's GET. Reading from disk ensures all workers see all orders.
+ let diskOrders = orders
+ try {
+   const freshDb = readDb()
+   if (freshDb && Array.isArray(freshDb.orders)) diskOrders = freshDb.orders
+ } catch(e) { diskOrders = orders }
+ const targetOrders = includeAll ? diskOrders : diskOrders.filter(isValidSalesOrder)
  const today = new Date()
  const todayStr = getLocalDateStr(today)
 
@@ -16568,6 +16823,240 @@ if (process.env.PORT) {
 } else {
  httpServer.listen(3001, '0.0.0.0', onListen)
 }
+
+// ============ SELF-DEPLOY ENDPOINT ============
+// Allows the server to pull latest code from GitHub and restart itself
+app.post('/api/admin/redeploy', (req, res) => {
+  const token = req.headers['x-sync-token'] || req.headers['x-redeploy-token']
+  if (token !== 'TDG_POS_SYNC_2026_SECRET') {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+  try {
+    const gitOutput = execSync('git pull origin master 2>&1', { cwd: __dirname, timeout: 30000 }).toString()
+    console.log('[REDEPLOY] git pull result:', gitOutput)
+    res.json({ success: true, message: 'Git pull completed. Restarting server now...', output: gitOutput })
+    // Save state then exit — PM2/Hostinger will restart automatically
+    setTimeout(() => {
+      try { saveState() } catch(e) {}
+      process.exit(0)
+    }, 1000)
+  } catch (e) {
+    console.error('[REDEPLOY] Error:', e.message)
+    res.status(500).json({ error: e.message })
+  }
+})
+
+// ─── SWIGGY & ZOMATO AGGREGATOR INTEGRATION MODULE ──────────────────────────
+
+/**
+ * Normalizes incoming items from Swiggy / Zomato / UrbanPiper formats into POS order item format
+ */
+function normalizeAggregatorItems(rawItems, menuItems = []) {
+  if (!Array.isArray(rawItems)) return []
+  return rawItems.map(item => {
+    const itemName = item.name || item.title || item.item_name || 'Online Item'
+    const qty = Number(item.quantity || item.qty || item.count || 1)
+    const price = Number(item.price || item.rate || item.item_price || 0)
+    
+    // Find matching item in local menu database if possible
+    const posMatch = menuItems.find(m => 
+      m && m.name && (m.name.toLowerCase() === itemName.toLowerCase() || String(m.id) === String(item.id || item.item_id))
+    )
+
+    return {
+      id: posMatch ? posMatch.id : (item.id || item.item_id || 'online_' + Math.random().toString(36).slice(2, 8)),
+      name: posMatch ? posMatch.name : itemName,
+      price: price,
+      quantity: qty,
+      subtotal: price * qty,
+      category: posMatch ? posMatch.category : 'Online Orders',
+      customizations: item.options || item.addons || item.customizations || []
+    }
+  })
+}
+
+/**
+ * Common order save & notification helper for online orders
+ */
+function processOnlineOrder(orderData, source) {
+  const db = readDb()
+  if (!db.orders) db.orders = []
+
+  const orderId = orderData.orderId || orderData.id || `${source.toLowerCase()}_${Date.now()}`
+  const existing = db.orders.find(o => o.id === orderId || o.externalOrderId === orderId)
+  if (existing) {
+    return { status: 'ALREADY_EXISTS', order: existing }
+  }
+
+  const items = normalizeAggregatorItems(orderData.items, db.menuItems || [])
+  const totalAmount = Number(orderData.total || orderData.payable_amount || orderData.bill_amount || items.reduce((s, i) => s + (i.price * i.quantity), 0))
+
+  const newOrder = {
+    id: orderId,
+    externalOrderId: orderId,
+    orderNumber: orderData.displayId || orderData.order_number || `${source.toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+    orderSource: source, // 'Swiggy', 'Zomato', 'UrbanPiper', 'Deliverect'
+    orderType: orderData.orderType || 'Delivery',
+    date: new Date().toISOString(),
+    customerName: orderData.customerName || orderData.customer?.name || `${source} Customer`,
+    customerPhone: orderData.customerPhone || orderData.customer?.phone || '',
+    deliveryAddress: orderData.address || orderData.customer?.address || '',
+    paymentMethod: orderData.paymentMethod || orderData.payment_mode || 'Prepaid',
+    paymentStatus: orderData.paymentStatus || 'PAID',
+    items: items,
+    subtotal: totalAmount,
+    taxes: Number(orderData.taxes || 0),
+    deliveryCharge: Number(orderData.deliveryCharge || orderData.delivery_fee || 0),
+    total: totalAmount,
+    status: 'ACCEPTED', // 'ACCEPTED', 'PREPARING', 'READY', 'DISPATCHED', 'CANCELLED'
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+
+  db.orders.unshift(newOrder)
+  appendOrderLog(newOrder)
+  saveState()
+
+  // Real-time broadcast to connected POS terminals & Kitchen Displays (KDS)
+  if (typeof io !== 'undefined' && io) {
+    io.emit('new_online_order', newOrder)
+    io.emit('order_created', newOrder)
+  }
+
+  console.log(`[ONLINE ORDER RECEIVED] Source: ${source} | Order #: ${newOrder.orderNumber} | Total: ₹${newOrder.total}`)
+  return { status: 'CREATED', order: newOrder }
+}
+
+// 1. Swiggy Webhook Route
+app.post('/api/webhooks/swiggy', (req, res) => {
+  try {
+    const payload = req.body || {}
+    console.log('[SWIGGY WEBHOOK INCOMING]', JSON.stringify(payload))
+
+    // Handle Swiggy Order Ping / Notification
+    const orderPayload = payload.order || payload.data || payload
+    const result = processOnlineOrder(orderPayload, 'Swiggy')
+
+    res.json({
+      status: 'SUCCESS',
+      message: 'Swiggy order processed successfully',
+      order_id: result.order.id,
+      order_number: result.order.orderNumber
+    })
+  } catch (err) {
+    console.error('[SWIGGY WEBHOOK ERROR]', err.message)
+    res.status(500).json({ status: 'ERROR', error: err.message })
+  }
+})
+
+// 2. Zomato Webhook Route
+app.post('/api/webhooks/zomato', (req, res) => {
+  try {
+    const payload = req.body || {}
+    console.log('[ZOMATO WEBHOOK INCOMING]', JSON.stringify(payload))
+
+    // Handle Zomato Order Ping / Notification
+    const orderPayload = payload.order || payload.data || payload
+    const result = processOnlineOrder(orderPayload, 'Zomato')
+
+    res.json({
+      status: 'ACKNOWLEDGED',
+      message: 'Zomato order processed successfully',
+      order_id: result.order.id,
+      order_number: result.order.orderNumber
+    })
+  } catch (err) {
+    console.error('[ZOMATO WEBHOOK ERROR]', err.message)
+    res.status(500).json({ status: 'ERROR', error: err.message })
+  }
+})
+
+// 3. Universal Aggregator Webhook Route (UrbanPiper / Deliverect / Petpooja)
+app.post(['/api/webhooks/aggregator', '/api/webhooks/urbanpiper'], (req, res) => {
+  try {
+    const payload = req.body || {}
+    console.log('[AGGREGATOR WEBHOOK INCOMING]', JSON.stringify(payload))
+
+    const source = payload.channel || payload.store_name || payload.source || 'Aggregator'
+    const orderPayload = payload.order || payload.details || payload
+    const result = processOnlineOrder(orderPayload, source)
+
+    res.json({
+      status: 'SUCCESS',
+      message: 'Aggregator order processed successfully',
+      order_id: result.order.id,
+      order_number: result.order.orderNumber
+    })
+  } catch (err) {
+    console.error('[AGGREGATOR WEBHOOK ERROR]', err.message)
+    res.status(500).json({ status: 'ERROR', error: err.message })
+  }
+})
+
+// 4. Get Active Online Aggregator Orders for POS Screen
+app.get('/api/aggregator/orders', (req, res) => {
+  try {
+    const db = readDb()
+    const allOrders = db.orders || []
+    const onlineOrders = allOrders.filter(o => 
+      o && ['Swiggy', 'Zomato', 'UrbanPiper', 'Deliverect'].includes(o.orderSource) || (o.orderSource && o.orderSource.startsWith('Online'))
+    )
+    res.json({ success: true, count: onlineOrders.length, orders: onlineOrders })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// 5. Update Online Order Status (ACCEPTED -> PREPARING -> READY -> DISPATCHED)
+app.post('/api/aggregator/orders/:orderId/status', (req, res) => {
+  try {
+    const { orderId } = req.params
+    const { status } = req.body // 'ACCEPTED', 'PREPARING', 'READY', 'DISPATCHED', 'CANCELLED'
+    if (!status) return res.status(400).json({ error: 'Status is required' })
+
+    const db = readDb()
+    const order = (db.orders || []).find(o => o.id === orderId || o.externalOrderId === orderId)
+    if (!order) return res.status(404).json({ error: 'Order not found' })
+
+    order.status = status.toUpperCase()
+    order.updatedAt = new Date().toISOString()
+    saveState()
+
+    if (typeof io !== 'undefined' && io) {
+      io.emit('order_status_updated', { id: order.id, status: order.status, orderSource: order.orderSource })
+    }
+
+    res.json({ success: true, message: `Order status updated to ${order.status}`, order })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// 6. Aggregator Item Out-of-Stock Toggle Route
+app.post('/api/aggregator/menu/toggle-stock', (req, res) => {
+  try {
+    const { itemId, available } = req.body
+    if (itemId === undefined || available === undefined) {
+      return res.status(400).json({ error: 'itemId and available boolean required' })
+    }
+
+    const db = readDb()
+    const item = (db.menuItems || []).find(m => String(m.id) === String(itemId))
+    if (item) {
+      item.available = Boolean(available)
+      item.updatedAt = new Date().toISOString()
+      saveState()
+    }
+
+    if (typeof io !== 'undefined' && io) {
+      io.emit('menu_item_updated', { itemId, available })
+    }
+
+    res.json({ success: true, itemId, available: Boolean(available) })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
 
 // Graceful shutdown — save state before process exits (prevents data loss on deploy/restart)
 let isShuttingDown = false

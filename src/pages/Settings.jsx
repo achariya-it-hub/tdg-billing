@@ -340,7 +340,7 @@ function PaymentGatewaysTab({ pin, settings, onSaved }) {
 
   const whatsappConfig = settings?.whatsapp || {}
   const [whatsappForm, setWhatsappForm] = useState({
-    serviceUrl: whatsappConfig.serviceUrl || 'http://gypsy.sundarrajan.org/tdg/953c64c6495bf1e0/sendmsg/<contact_number>/<message>',
+    serviceUrl: whatsappConfig.serviceUrl || 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>',
     isEnabled: whatsappConfig.isEnabled !== false
   })
   const [waTestPhone, setWaTestPhone] = useState('')
