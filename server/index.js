@@ -8481,6 +8481,37 @@ function findUserByPhoneOrEmail({ phone, email }) {
  return null
 }
 
+app.post('/api/auth/forgot-password', async (req, res) => {
+  const { phone } = req.body
+  if (!phone) return res.status(400).json({ message: 'Phone number required' })
+
+  const user = findUserByPhoneOrEmail({ phone })
+  if (!user) return res.status(404).json({ message: 'No account found with this phone number' })
+
+  const otp = generateOTP()
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000).toISOString()
+  user.forgotPasswordOtp = otp
+  user.forgotPasswordOtpExpiry = otpExpiry
+
+  const db = readDb()
+  if (!db.users) db.users = []
+  const idx = db.users.findIndex(u => u.id === user.id || phonesMatch(u.phone, user.phone))
+  if (idx >= 0) db.users[idx] = user
+  else db.users.push(user)
+  writeDb(db)
+  saveState()
+
+  let result = { method: 'whatsapp' }
+  try {
+    result = await sendMSG91OTP(phone, otp)
+  } catch (sendErr) {
+    console.warn('[FORGOT-PASSWORD OTP SEND WARN]', sendErr.message)
+  }
+
+  // Always return the OTP so the app can display it even if SMS/WhatsApp delivery fails
+  res.json({ success: true, message: 'OTP sent successfully', method: result.method, otp: otp })
+})
+
 // Resend OTP for forgot password
 app.post('/api/auth/resend-otp', async (req, res) => {
  const { phone } = req.body
