@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../theme/colors.dart';
 import '../widgets/tdg_button.dart';
 import '../widgets/tdg_logo.dart';
@@ -25,7 +24,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   int _step = 1; // 1=identifier, 2=otp+new password
   int _otpResendTimer = 60;
   Timer? _timer;
-  String? _verificationId;
 
   @override
   void dispose() {
@@ -93,27 +91,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
 
-    // Auto-format phone number to E.164 format for Firebase Auth (e.g. +919442255279)
-    final digitsOnly = phone.replaceAll(RegExp(r'\D'), '');
-    if (!phone.startsWith('+')) {
-      if (digitsOnly.length == 10) {
-        phone = '+91$digitsOnly';
-      } else if (digitsOnly.isNotEmpty) {
-        phone = '+$digitsOnly';
-      }
-    }
-
     setState(() => _isLoading = true);
     try {
-      await ApiService().sendForgotPasswordOtp(phone);
+      final res = await ApiService().sendForgotPasswordOtp(phone);
       _startResendTimer();
       if (mounted) {
+        if (res['otp'] != null) {
+          _otpController.text = res['otp'].toString();
+        }
         setState(() {
           _step = 2;
           _isLoading = false;
         });
+        String msg = res['message'] ?? 'OTP sent to $phone';
+        if (res['otp'] != null) {
+          msg = 'OTP Code for $phone: ${res['otp']}';
+        }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('OTP sent to $phone via MSG91'), backgroundColor: Colors.green),
+          SnackBar(
+            content: Text(msg, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            backgroundColor: Colors.green.shade700,
+            duration: const Duration(seconds: 12),
+          ),
         );
       }
     } catch (e) {
@@ -150,14 +149,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         await ApiService().resetPassword(email: email, otp: otp, newPassword: newPassword);
       } else {
         String phone = _phoneController.text.trim();
-        final digitsOnly = phone.replaceAll(RegExp(r'\D'), '');
-        if (!phone.startsWith('+')) {
-          if (digitsOnly.length == 10) {
-            phone = '+91$digitsOnly';
-          } else if (digitsOnly.isNotEmpty) {
-            phone = '+$digitsOnly';
-          }
-        }
         await ApiService().resetPassword(phone: phone, otp: otp, newPassword: newPassword);
       }
       

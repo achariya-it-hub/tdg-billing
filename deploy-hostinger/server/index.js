@@ -10098,25 +10098,6 @@ async function verifyMSG91OTP(phone, otp, reqId = null) {
 
 // 1. Send WhatsApp / MSG91 OTP for Forgot Password or Asset Verification
 app.post(['/api/auth/send-otp', '/api/auth/forgot-password', '/api/assets/send-otp'], async (req, res) => {
- try {
- const { phone, purpose = 'asset-verification' } = req.body
- const cleanPhone = String(phone || '').replace(/\D/g, '')
-
- if (!cleanPhone || cleanPhone.length < 8) {
- return res.status(400).json({ error: 'Valid phone number required for WhatsApp OTP' })
- }
-
- const otp = String(Math.floor(1000 + Math.random() * 9000))
- const expiresAt = Date.now() + 10 * 60 * 1000 // 10 minutes expiry
-
- otpStore.set(cleanPhone, { otp, expiresAt, purpose })
-
- const msg91Res = await sendMSG91OTP(cleanPhone, otp, purpose)
-
- res.json({
- success: true,
- message: `WhatsApp OTP sent successfully to ${cleanPhone}`,
- phone: cleanPhone,
  method: msg91Res.method || 'whatsapp',
  otp: msg91Res.method === 'console' ? otp : undefined
  })

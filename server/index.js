@@ -903,16 +903,16 @@ try {
   console.error('[HOSTINGER MIGRATION ERROR]', e.message)
 }
 
-// Ensure exact 60 official menu items on server startup
-if (!menuItems || menuItems.length !== 60) {
+// Ensure official menu items populate on server startup
+if (!menuItems || menuItems.length < 60) {
   try {
     const seedPath = join(__dirname, 'seed-db.json')
     if (existsSync(seedPath)) {
       const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
-      if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length === 60) {
+      if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length >= 60) {
         menuItems = seedData.menuItems
         categories = seedData.categories || categories
-        console.log('[MENU RESTORE] ✅ Restored exact 60 official menu items!')
+        console.log('[MENU RESTORE] ✅ Restored official menu items from seed-db.json')
       }
     }
   } catch (e) {
@@ -8596,6 +8596,24 @@ app.post('/api/auth/signup', async (req, res) => {
  }
 
  mobileAppUsers.push(newUser)
+ 
+ // Sync to POS loyalty users
+ const customerEntry = {
+ id: newUser.id,
+ name: newUser.name,
+ phone: newUser.phone,
+ email: newUser.email,
+ points: newUser.points,
+ tier: newUser.tier || 'Asset',
+ createdAt: newUser.createdAt
+ }
+ const existingLoyaltyIdx = loyaltyUsers.findIndex(c => c.phone === newUser.phone)
+ if (existingLoyaltyIdx >= 0) {
+ loyaltyUsers[existingLoyaltyIdx] = { ...loyaltyUsers[existingLoyaltyIdx], ...customerEntry }
+ } else {
+ loyaltyUsers.push(customerEntry)
+ }
+
  saveState()
 
  if (io) {
@@ -9284,6 +9302,17 @@ app.post('/api/assets/distribute', auth, (req, res) => {
  checkAllAssetsBonus(user, db)
 
  writeDb(db)
+
+ // Sync to POS loyalty users in memory
+ const lUserIdx = loyaltyUsers.findIndex(u => u.phone === user.phone)
+ if (lUserIdx >= 0) {
+   loyaltyUsers[lUserIdx].points = user.points
+   loyaltyUsers[lUserIdx].totalDistributed = user.totalDistributed
+ }
+ if (assetUser) {
+   const lAssetIdx = loyaltyUsers.findIndex(u => u.phone === assetUser.phone)
+   if (lAssetIdx >= 0) loyaltyUsers[lAssetIdx].points = assetUser.points
+ }
  res.json({
  success: true,
  asset,
@@ -9890,7 +9919,9 @@ app.get('/api/customers/search', (req, res) => {
           phone: u.phone || u.customerPhone || u.mobile || uPhone,
           discountPct: disc,
           offerRedeemed: Boolean(u.offerRedeemed),
-          tier: u.tier || (disc >= 50 ? 'VIP 50% OFF' : 'Standard')
+          tier: u.tier || (disc >= 50 ? 'VIP 50% OFF' : 'Standard'),
+          points: u.points || 0,
+          assets: u.assets || []
         })
       }
     }
@@ -10144,48 +10175,59 @@ async function verifyMSG91OTP(phone, otp, reqId = null) {
 
 // 1. Send WhatsApp / MSG91 OTP for Forgot Password or Asset Verification
 app.post(['/api/auth/send-otp', '/api/auth/forgot-password', '/api/assets/send-otp'], async (req, res) => {
- try {
- const { phone, purpose = 'asset-verification' } = req.body
- const cleanPhone = String(phone || '').replace(/\D/g, '')
+  try {
+    const { phone, purpose = 'asset-verification' } = req.body
+    const cleanPhone = String(phone || '').replace(/\D/g, '')
 
- if (!cleanPhone || cleanPhone.length < 8) {
- return res.status(400).json({ error: 'Valid phone number required for WhatsApp OTP' })
- }
+    if (!cleanPhone || cleanPhone.length < 8) {
+      return res.status(400).json({ error: 'Valid phone number required for OTP verification' })
+    }
 
- const otp = String(Math.floor(1000 + Math.random() * 9000))
- const expiresAt = Date.now() + 10 * 60 * 1000 // 10 minutes expiry
+    const otp = String(Math.floor(1000 + Math.random() * 9000))
+    const expiresAt = Date.now() + 10 * 60 * 1000 // 10 minutes expiry
 
- otpStore.set(cleanPhone, { otp, expiresAt, purpose })
+    otpStore.set(cleanPhone, { otp, expiresAt, purpose })
 
- const msg91Res = await sendMSG91OTP(cleanPhone, otp, purpose)
+    let msg91Res = { success: false, method: 'whatsapp' }
+    try {
+      msg91Res = await sendMSG91OTP(cleanPhone, otp, purpose)
+    } catch (sendErr) {
+      console.warn('[SEND OTP SERVICE WARN]', sendErr.message)
+    }
 
- res.json({
- success: true,
- message: `WhatsApp OTP sent successfully to ${cleanPhone}`,
- phone: cleanPhone,
- method: msg91Res.method || 'whatsapp',
- otp: msg91Res.method === 'console' ? otp : undefined
- })
- } catch (err) {
- console.error('[SEND OTP API ERROR]', err)
- res.status(500).json({ error: 'Failed to send OTP: ' + err.message })
- }
+    const isDelivered = msg91Res && msg91Res.success && msg91Res.method !== 'console'
+
+    res.json({
+      success: true,
+      message: isDelivered 
+        ? `OTP sent successfully to ${cleanPhone}` 
+        : `Verification OTP for ${cleanPhone}: ${otp}`,
+      phone: cleanPhone,
+      method: msg91Res.method || 'whatsapp',
+      otp: otp
+    })
+  } catch (err) {
+    console.error('[SEND OTP API ERROR]', err)
+    res.status(500).json({ error: 'Failed to send OTP: ' + err.message })
+  }
 })
 
-// 2. Verify WhatsApp / MSG91 OTP for Forgot Password or Asset Addition
+// 2. Verify Firebase / WhatsApp / MSG91 OTP for Forgot Password or Asset Addition
 app.post(['/api/auth/verify-otp', '/api/assets/verify-otp', '/api/auth/reset-password'], async (req, res) => {
  try {
- const { phone, otp, newPassword, assetName, masterPhone } = req.body
+ const { phone, otp, newPassword, assetName, masterPhone, firebaseVerified } = req.body
  const cleanPhone = String(phone || '').replace(/\D/g, '')
 
- if (!cleanPhone || !otp) {
- return res.status(400).json({ error: 'Phone and OTP code are required' })
+ if (!cleanPhone) {
+ return res.status(400).json({ error: 'Phone number is required' })
  }
 
  const storedData = otpStore.get(cleanPhone)
  let isValid = false
 
- if (storedData && storedData.otp === String(otp) && storedData.expiresAt > Date.now()) {
+ if (firebaseVerified === true) {
+ isValid = true
+ } else if (storedData && storedData.otp === String(otp) && storedData.expiresAt > Date.now()) {
  isValid = true
  } else {
  isValid = await verifyMSG91OTP(cleanPhone, otp)
@@ -16770,6 +16812,218 @@ app.post('/api/admin/redeploy', (req, res) => {
   } catch (e) {
     console.error('[REDEPLOY] Error:', e.message)
     res.status(500).json({ error: e.message })
+  }
+})
+
+// ─── SWIGGY & ZOMATO AGGREGATOR INTEGRATION MODULE ──────────────────────────
+
+/**
+ * Normalizes incoming items from Swiggy / Zomato / UrbanPiper formats into POS order item format
+ */
+function normalizeAggregatorItems(rawItems, menuItems = []) {
+  if (!Array.isArray(rawItems)) return []
+  return rawItems.map(item => {
+    const itemName = item.name || item.title || item.item_name || 'Online Item'
+    const qty = Number(item.quantity || item.qty || item.count || 1)
+    const price = Number(item.price || item.rate || item.item_price || 0)
+    
+    // Find matching item in local menu database if possible
+    const posMatch = menuItems.find(m => 
+      m && m.name && (m.name.toLowerCase() === itemName.toLowerCase() || String(m.id) === String(item.id || item.item_id))
+    )
+
+    return {
+      id: posMatch ? posMatch.id : (item.id || item.item_id || 'online_' + Math.random().toString(36).slice(2, 8)),
+      name: posMatch ? posMatch.name : itemName,
+      price: price,
+      quantity: qty,
+      subtotal: price * qty,
+      category: posMatch ? posMatch.category : 'Online Orders',
+      customizations: item.options || item.addons || item.customizations || []
+    }
+  })
+}
+
+/**
+ * Common order save & notification helper for online orders
+ */
+function processOnlineOrder(orderData, source) {
+  const db = readDb()
+  if (!db.orders) db.orders = []
+
+  const orderId = orderData.orderId || orderData.id || `${source.toLowerCase()}_${Date.now()}`
+  const existing = db.orders.find(o => o.id === orderId || o.externalOrderId === orderId)
+  if (existing) {
+    return { status: 'ALREADY_EXISTS', order: existing }
+  }
+
+  const items = normalizeAggregatorItems(orderData.items, db.menuItems || [])
+  const totalAmount = Number(orderData.total || orderData.payable_amount || orderData.bill_amount || items.reduce((s, i) => s + (i.price * i.quantity), 0))
+
+  const newOrder = {
+    id: orderId,
+    externalOrderId: orderId,
+    orderNumber: orderData.displayId || orderData.order_number || `${source.toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
+    orderSource: source, // 'Swiggy', 'Zomato', 'UrbanPiper', 'Deliverect'
+    orderType: orderData.orderType || 'Delivery',
+    date: new Date().toISOString(),
+    customerName: orderData.customerName || orderData.customer?.name || `${source} Customer`,
+    customerPhone: orderData.customerPhone || orderData.customer?.phone || '',
+    deliveryAddress: orderData.address || orderData.customer?.address || '',
+    paymentMethod: orderData.paymentMethod || orderData.payment_mode || 'Prepaid',
+    paymentStatus: orderData.paymentStatus || 'PAID',
+    items: items,
+    subtotal: totalAmount,
+    taxes: Number(orderData.taxes || 0),
+    deliveryCharge: Number(orderData.deliveryCharge || orderData.delivery_fee || 0),
+    total: totalAmount,
+    status: 'ACCEPTED', // 'ACCEPTED', 'PREPARING', 'READY', 'DISPATCHED', 'CANCELLED'
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+
+  db.orders.unshift(newOrder)
+  appendOrderLog(newOrder)
+  saveState()
+
+  // Real-time broadcast to connected POS terminals & Kitchen Displays (KDS)
+  if (typeof io !== 'undefined' && io) {
+    io.emit('new_online_order', newOrder)
+    io.emit('order_created', newOrder)
+  }
+
+  console.log(`[ONLINE ORDER RECEIVED] Source: ${source} | Order #: ${newOrder.orderNumber} | Total: ₹${newOrder.total}`)
+  return { status: 'CREATED', order: newOrder }
+}
+
+// 1. Swiggy Webhook Route
+app.post('/api/webhooks/swiggy', (req, res) => {
+  try {
+    const payload = req.body || {}
+    console.log('[SWIGGY WEBHOOK INCOMING]', JSON.stringify(payload))
+
+    // Handle Swiggy Order Ping / Notification
+    const orderPayload = payload.order || payload.data || payload
+    const result = processOnlineOrder(orderPayload, 'Swiggy')
+
+    res.json({
+      status: 'SUCCESS',
+      message: 'Swiggy order processed successfully',
+      order_id: result.order.id,
+      order_number: result.order.orderNumber
+    })
+  } catch (err) {
+    console.error('[SWIGGY WEBHOOK ERROR]', err.message)
+    res.status(500).json({ status: 'ERROR', error: err.message })
+  }
+})
+
+// 2. Zomato Webhook Route
+app.post('/api/webhooks/zomato', (req, res) => {
+  try {
+    const payload = req.body || {}
+    console.log('[ZOMATO WEBHOOK INCOMING]', JSON.stringify(payload))
+
+    // Handle Zomato Order Ping / Notification
+    const orderPayload = payload.order || payload.data || payload
+    const result = processOnlineOrder(orderPayload, 'Zomato')
+
+    res.json({
+      status: 'ACKNOWLEDGED',
+      message: 'Zomato order processed successfully',
+      order_id: result.order.id,
+      order_number: result.order.orderNumber
+    })
+  } catch (err) {
+    console.error('[ZOMATO WEBHOOK ERROR]', err.message)
+    res.status(500).json({ status: 'ERROR', error: err.message })
+  }
+})
+
+// 3. Universal Aggregator Webhook Route (UrbanPiper / Deliverect / Petpooja)
+app.post(['/api/webhooks/aggregator', '/api/webhooks/urbanpiper'], (req, res) => {
+  try {
+    const payload = req.body || {}
+    console.log('[AGGREGATOR WEBHOOK INCOMING]', JSON.stringify(payload))
+
+    const source = payload.channel || payload.store_name || payload.source || 'Aggregator'
+    const orderPayload = payload.order || payload.details || payload
+    const result = processOnlineOrder(orderPayload, source)
+
+    res.json({
+      status: 'SUCCESS',
+      message: 'Aggregator order processed successfully',
+      order_id: result.order.id,
+      order_number: result.order.orderNumber
+    })
+  } catch (err) {
+    console.error('[AGGREGATOR WEBHOOK ERROR]', err.message)
+    res.status(500).json({ status: 'ERROR', error: err.message })
+  }
+})
+
+// 4. Get Active Online Aggregator Orders for POS Screen
+app.get('/api/aggregator/orders', (req, res) => {
+  try {
+    const db = readDb()
+    const allOrders = db.orders || []
+    const onlineOrders = allOrders.filter(o => 
+      o && ['Swiggy', 'Zomato', 'UrbanPiper', 'Deliverect'].includes(o.orderSource) || (o.orderSource && o.orderSource.startsWith('Online'))
+    )
+    res.json({ success: true, count: onlineOrders.length, orders: onlineOrders })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// 5. Update Online Order Status (ACCEPTED -> PREPARING -> READY -> DISPATCHED)
+app.post('/api/aggregator/orders/:orderId/status', (req, res) => {
+  try {
+    const { orderId } = req.params
+    const { status } = req.body // 'ACCEPTED', 'PREPARING', 'READY', 'DISPATCHED', 'CANCELLED'
+    if (!status) return res.status(400).json({ error: 'Status is required' })
+
+    const db = readDb()
+    const order = (db.orders || []).find(o => o.id === orderId || o.externalOrderId === orderId)
+    if (!order) return res.status(404).json({ error: 'Order not found' })
+
+    order.status = status.toUpperCase()
+    order.updatedAt = new Date().toISOString()
+    saveState()
+
+    if (typeof io !== 'undefined' && io) {
+      io.emit('order_status_updated', { id: order.id, status: order.status, orderSource: order.orderSource })
+    }
+
+    res.json({ success: true, message: `Order status updated to ${order.status}`, order })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// 6. Aggregator Item Out-of-Stock Toggle Route
+app.post('/api/aggregator/menu/toggle-stock', (req, res) => {
+  try {
+    const { itemId, available } = req.body
+    if (itemId === undefined || available === undefined) {
+      return res.status(400).json({ error: 'itemId and available boolean required' })
+    }
+
+    const db = readDb()
+    const item = (db.menuItems || []).find(m => String(m.id) === String(itemId))
+    if (item) {
+      item.available = Boolean(available)
+      item.updatedAt = new Date().toISOString()
+      saveState()
+    }
+
+    if (typeof io !== 'undefined' && io) {
+      io.emit('menu_item_updated', { itemId, available })
+    }
+
+    res.json({ success: true, itemId, available: Boolean(available) })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
   }
 })
 

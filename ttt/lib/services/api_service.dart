@@ -366,7 +366,7 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> verifyAssetOtp(String phone, String otp, String assetName) async {
+  Future<Map<String, dynamic>> verifyAssetOtp(String phone, String otp, String assetName, {bool firebaseVerified = false}) async {
     final url = Uri.parse('${AppConfig.baseUrl}/assets/verify-otp');
     final masterPhone = currentUser?['phone'] ?? '';
     try {
@@ -378,6 +378,7 @@ class ApiService {
           'otp': otp,
           'assetName': assetName,
           'masterPhone': masterPhone,
+          'firebaseVerified': firebaseVerified,
         }),
       );
       final data = jsonDecode(response.body);
@@ -528,12 +529,13 @@ class ApiService {
     }
   }
 
-  Future<void> sendForgotPasswordOtp(String phone) async {
+  Future<Map<String, dynamic>> sendForgotPasswordOtp(String phone) async {
     final url = Uri.parse('${AppConfig.baseUrl}/auth/forgot-password');
     try {
       final response = await http.post(url, headers: {'Content-Type': 'application/json'}, body: jsonEncode({'phone': phone}));
       final data = jsonDecode(response.body);
-      if (response.statusCode != 200) throw Exception(data['message'] ?? 'Failed to send OTP');
+      if (response.statusCode == 200) return data;
+      throw Exception(data['error'] ?? data['message'] ?? 'Failed to send OTP');
     } catch (e) {
       _handleError(e);
     }
@@ -550,11 +552,12 @@ class ApiService {
     }
   }
 
-  Future<void> resetPassword({String? phone, String? email, required String otp, required String newPassword}) async {
+  Future<void> resetPassword({String? phone, String? email, required String otp, required String newPassword, bool firebaseVerified = false}) async {
     final url = Uri.parse('${AppConfig.baseUrl}/auth/reset-password');
-    final body = {
+    final body = <String, dynamic>{
       'otp': otp,
       'newPassword': newPassword,
+      'firebaseVerified': firebaseVerified,
     };
     if (phone != null) body['phone'] = phone;
     if (email != null) body['email'] = email;

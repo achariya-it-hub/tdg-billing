@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
+import '../services/firebase_auth_service.dart';
 import '../utils/responsive.dart';
 
 class AssetScreen extends StatefulWidget {
@@ -27,76 +27,68 @@ class _AssetScreenState extends State<AssetScreen> {
   void initState() {
     super.initState();
     _fetchAssets();
+    if (widget.triggerDistribute) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showDistributeOptionsModal();
+      });
+    }
   }
 
   Future<void> _fetchAssets() async {
-    if (mounted) setState(() => _isLoading = true);
+    setState(() => _isLoading = true);
     try {
-      final data = await ApiService().getAssets();
-      if (mounted) {
+      final res = await ApiService().getAssets();
+      if (res != null) {
         setState(() {
-          _points = data['points'] ?? 0;
-          _totalDistributed = data['totalDistributed'] ?? 0;
-          _availablePoints = data['availablePoints'] ?? 0;
-          _assetsDinedCount = data['assetsDinedCount'] ?? 0;
-          _allAssetsActive = data['allAssetsActive'] ?? false;
-          _bonusClaimed = data['bonusClaimed'] ?? false;
-          _assets = data['assets'] ?? [];
-          _referredByName = data['referredByName'];
+          _points = res['userPoints'] ?? 0;
+          _totalDistributed = res['totalDistributed'] ?? 0;
+          _availablePoints = res['availablePoints'] ?? 0;
+          _assetsDinedCount = res['assetsDinedCount'] ?? 0;
+          _allAssetsActive = res['allAssetsActive'] ?? false;
+          _bonusClaimed = res['bonusClaimed'] ?? false;
+          _assets = res['assets'] ?? [];
+          _referredByName = res['referredByName'];
         });
-
-        // If triggered from wallet/home distribute points action button, auto open asset selection modal
-        if (widget.triggerDistribute && _assets.isNotEmpty) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _showSelectAssetForDistribution();
-          });
-        }
       }
     } catch (e) {
-      debugPrint("Error fetching assets: $e");
+      print('Fetch assets error: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  void _showSelectAssetForDistribution() {
+  void _showDistributeOptionsModal() {
     showModalBottomSheet(
       context: context,
       backgroundColor: TDGColors.cardMid,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (ctx) => Container(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'SELECT ASSET TO DISTRIBUTE POINTS',
-              style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold, fontSize: 13, letterSpacing: 1),
-            ),
-            const SizedBox(height: 12),
+            Text('DISTRIBUTE REWARD POINTS', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold, fontSize: 16)),
+            SizedBox(height: 8),
+            Text('Select an asset to transfer points directly into their account.', style: TextStyle(color: TDGColors.greyLight, fontSize: 12)),
+            SizedBox(height: 16),
             if (_assets.isEmpty)
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Text('No active den assets found. Add assets first!', style: TextStyle(color: TDGColors.greyLight)),
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Center(child: Text('No assets added yet. Please add an asset first.', style: TextStyle(color: Colors.white70))),
               )
             else
-              ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
-                child: ListView.builder(
+              Flexible(
+                child: ListView.separated(
                   shrinkWrap: true,
                   itemCount: _assets.length,
-                  itemBuilder: (context, idx) {
+                  separatorBuilder: (_, __) => Divider(color: Colors.white10),
+                  itemBuilder: (ctx, idx) {
                     final asset = _assets[idx];
-                    final name = asset['name'] ?? '';
+                    final name = asset['name'] ?? 'Asset ${idx + 1}';
                     final phone = asset['phone'] ?? '';
-                    final isDined = asset['hasDined'] ?? false;
                     return ListTile(
                       contentPadding: EdgeInsets.zero,
-                      leading: CircleAvatar(
-                        backgroundColor: isDined ? TDGColors.gold.withOpacity(0.2) : Colors.black26,
-                        child: Icon(Icons.person_outline, color: isDined ? TDGColors.gold : Colors.white54),
-                      ),
                       title: Text(name, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                       subtitle: Text(phone, style: TextStyle(color: TDGColors.greyLight, fontSize: 12)),
                       trailing: Icon(Icons.send_rounded, color: TDGColors.gold, size: 18),
@@ -125,7 +117,7 @@ class _AssetScreenState extends State<AssetScreen> {
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: TDGColors.gold),
         ),
-        title: Text('ADD ASSET (WHATSAPP OTP VERIFICATION)', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+        title: Text('ADD ASSET (WHATSAPP / SMS OTP)', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 14)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -155,7 +147,7 @@ class _AssetScreenState extends State<AssetScreen> {
             ),
             SizedBox(height: 8),
             Text(
-              'A 4-digit WhatsApp OTP verification code will be sent to this phone number.',
+              'A 4-digit OTP code will be sent to this phone number.',
               style: TextStyle(color: TDGColors.greyLight, fontSize: 11),
             ),
           ],
@@ -168,34 +160,37 @@ class _AssetScreenState extends State<AssetScreen> {
               final name = nameCtrl.text.trim();
               final phone = phoneCtrl.text.trim();
               Navigator.pop(ctx);
+
               try {
-                final result = await ApiService().sendAssetOtp(phone);
+                final res = await ApiService().sendAssetOtp(phone);
                 if (mounted) {
+                  final code = res['otp']?.toString();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(result['message'] ?? 'WhatsApp OTP sent to $phone'),
-                      backgroundColor: Colors.blue.shade700,
+                      content: Text(code != null ? 'OTP Code for $phone: $code' : (res['message'] ?? 'OTP sent to $phone')),
+                      backgroundColor: Colors.green.shade700,
+                      duration: const Duration(seconds: 12),
                     ),
                   );
-                  _showVerifyAssetOtpDialog(name, phone);
+                  _showVerifyAssetOtpDialog(name, phone, defaultOtp: code);
                 }
               } catch (e) {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+                    SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
                   );
                 }
               }
             },
-            child: Text('Send WhatsApp OTP', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold)),
+            child: Text('Send OTP', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
     );
   }
 
-  void _showVerifyAssetOtpDialog(String name, String phone) {
-    final otpCtrl = TextEditingController();
+  void _showVerifyAssetOtpDialog(String name, String phone, {String? defaultOtp}) {
+    final otpCtrl = TextEditingController(text: defaultOtp ?? '');
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -204,11 +199,20 @@ class _AssetScreenState extends State<AssetScreen> {
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: TDGColors.gold),
         ),
-        title: Text('ENTER WHATSAPP OTP', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+        title: Text('ENTER OTP', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 14)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Enter the 4-digit WhatsApp OTP sent to $phone to verify and add $name.', style: TextStyle(color: Colors.white70, fontSize: 12)),
+            Text(
+              defaultOtp != null && defaultOtp.isNotEmpty
+                  ? 'Verification Code for $phone: $defaultOtp'
+                  : 'Enter the 4-digit OTP sent to $phone to verify and add $name.',
+              style: TextStyle(
+                color: defaultOtp != null && defaultOtp.isNotEmpty ? Colors.greenAccent : Colors.white70,
+                fontSize: 13,
+                fontWeight: defaultOtp != null && defaultOtp.isNotEmpty ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
             SizedBox(height: 14),
             TextField(
               controller: otpCtrl,
@@ -247,7 +251,7 @@ class _AssetScreenState extends State<AssetScreen> {
               } catch (e) {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+                    SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
                   );
                 }
               }
@@ -258,10 +262,6 @@ class _AssetScreenState extends State<AssetScreen> {
       ),
     );
   }
-
-  // OTP methods removed — assets now use accept/reject flow on login
-
-
   void _showDistributeDialog(String assetId, String assetName) {
     final ctrl = TextEditingController();
     showDialog(
@@ -447,35 +447,42 @@ class _AssetScreenState extends State<AssetScreen> {
                 children: [
                   // Points Card
                   Container(
-                    padding: const EdgeInsets.all(24),
+                    margin: const EdgeInsets.only(bottom: 24),
+                    padding: const EdgeInsets.all(28),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF2A1E00), Color(0xFF1A1200), Color(0xFF2A1800)],
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF3A2A00), Color(0xFF1A1200), Color(0xFF2A1800)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: TDGColors.gold.withOpacity(0.5), width: 1.5),
-                      boxShadow: [BoxShadow(color: TDGColors.gold.withOpacity(0.2), blurRadius: 20, offset: Offset(0, 6))],
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: TDGColors.gold.withOpacity(0.4), width: 1.2),
+                      boxShadow: [
+                        BoxShadow(color: TDGColors.gold.withOpacity(0.15), blurRadius: 30, offset: const Offset(0, 10)),
+                        BoxShadow(color: Colors.black.withOpacity(0.4), blurRadius: 10, offset: const Offset(0, 5)),
+                      ],
                     ),
                     child: Column(
                       children: [
-                        Text('YOUR POINTS', style: TextStyle(color: TDGColors.greyLight, fontSize: 13, fontWeight: FontWeight.bold, letterSpacing: 2)),
-                        SizedBox(height: 10),
+                        Text('YOUR POINTS', style: TextStyle(color: TDGColors.gold.withOpacity(0.8), fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 3)),
+                        const SizedBox(height: 12),
                         ShaderMask(
                           shaderCallback: (b) => TDGColors.goldGradient.createShader(b),
                           child: Text(
                             '$_points',
-                            style: TextStyle(color: TDGColors.white, fontSize: 48, fontWeight: FontWeight.w900),
+                            style: const TextStyle(color: Colors.white, fontSize: 56, fontWeight: FontWeight.w900, height: 1.0),
                           ),
                         ),
-                        Text('1 Point = ₹1', style: TextStyle(color: TDGColors.greyLight, fontSize: 14, fontWeight: FontWeight.w600)),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 4),
+                        Text('1 Point = ₹1', style: TextStyle(color: TDGColors.greyLight, fontSize: 13, fontWeight: FontWeight.w500)),
+                        const SizedBox(height: 24),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             _statItem('Distributed', '$_totalDistributed'),
+                            Container(width: 1, height: 40, color: Colors.white12),
                             _statItem('Available', '$_availablePoints'),
+                            Container(width: 1, height: 40, color: Colors.white12),
                             _statItem('Assets Dined', '$_assetsDinedCount/10'),
                           ],
                         ),
@@ -484,47 +491,54 @@ class _AssetScreenState extends State<AssetScreen> {
                   ),
                   // Referral Code & Invite Sharing Card
                   Container(
-                    padding: const EdgeInsets.all(20),
+                    margin: const EdgeInsets.only(bottom: 24),
+                    padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: TDGColors.cardDark,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: TDGColors.border),
+                      color: TDGColors.cardDark.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.white10),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'INVITE FRIENDS TO YOUR DEN',
-                          style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.bold, fontSize: 14, letterSpacing: 1),
+                        Row(
+                          children: [
+                            Icon(Icons.diversity_3_rounded, color: TDGColors.gold, size: 22),
+                            const SizedBox(width: 10),
+                            Text(
+                              'INVITE FRIENDS TO YOUR DEN',
+                              style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: 1.2),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         Text(
                           'Share your phone or email to invite friends. When they sign up using your info as their referral, they get added to your den assets list and you both get points!',
-                          style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
+                          style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.6),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 20),
                         Row(
                           children: [
                             Expanded(
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                                 decoration: BoxDecoration(
-                                  color: Colors.black38,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: TDGColors.border),
+                                  color: Colors.black45,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.white10),
                                 ),
                                 child: Text(
                                   ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? 'No referral details',
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16, letterSpacing: 1),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 10),
-                            ElevatedButton(
-                              onPressed: () {
+                            const SizedBox(width: 12),
+                            InkWell(
+                              onTap: () {
                                 final inviteInfo = ApiService().currentUser?['referCode'] ?? ApiService().currentUser?['phone'] ?? ApiService().currentUser?['email'] ?? '';
                                 if (inviteInfo.isNotEmpty) {
-                                  // Mock copy to clipboard message
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text('Referral code copied: $inviteInfo. Send via text, WhatsApp, or mail!'),
@@ -533,28 +547,31 @@ class _AssetScreenState extends State<AssetScreen> {
                                   );
                                 }
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: TDGColors.gold,
-                                foregroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                                decoration: BoxDecoration(
+                                  gradient: TDGColors.goldGradient,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [BoxShadow(color: TDGColors.gold.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))],
+                                ),
+                                child: const Text('Share', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w800, fontSize: 15)),
                               ),
-                              child: Text('Share', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                             ),
                           ],
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
 
                   // Catchy Den Squad Goal & Level Unlock Progress Bar
                   Container(
-                    padding: EdgeInsets.all(18),
+                    margin: const EdgeInsets.only(bottom: 24),
+                    padding: const EdgeInsets.all(22),
                     decoration: BoxDecoration(
-                      color: TDGColors.cardDark,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: TDGColors.gold.withOpacity(0.3)),
+                      color: TDGColors.cardDark.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: TDGColors.gold.withOpacity(0.2)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -562,67 +579,81 @@ class _AssetScreenState extends State<AssetScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              child: Text(
-                                '🔥 DEN SQUAD GOAL',
-                                style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w800, fontSize: 15, letterSpacing: 0.5),
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            Row(
+                              children: [
+                                const Text('🔥', style: TextStyle(fontSize: 18)),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'DEN SQUAD GOAL',
+                                  style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.w800, fontSize: 14, letterSpacing: 1),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '${_assets.length}/10 Friends',
-                              style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w800, fontSize: 15),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: TDGColors.gold.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                '${_assets.length}/10 Friends',
+                                style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w800, fontSize: 13),
+                              ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 16),
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(8),
                           child: LinearProgressIndicator(
                             value: (_assets.length / 10).clamp(0.0, 1.0),
-                            backgroundColor: TDGColors.cardMid,
+                            backgroundColor: Colors.black38,
                             valueColor: AlwaysStoppedAnimation(_assets.length >= 10 ? Colors.greenAccent : TDGColors.gold),
-                            minHeight: 10,
+                            minHeight: 12,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 12),
                         Text(
                           _assets.length >= 10
                               ? '⭐ Active Referrer Qualified! Network threshold reached.'
                               : 'Add ${10 - _assets.length} more friend${10 - _assets.length == 1 ? '' : 's'} to qualify as an active Referrer Asset.',
-                          style: TextStyle(color: _assets.length >= 10 ? Colors.greenAccent : TDGColors.greyLight, fontSize: 13, fontWeight: FontWeight.w500),
+                          style: TextStyle(color: _assets.length >= 10 ? Colors.greenAccent : Colors.white60, fontSize: 12, fontWeight: FontWeight.w500),
                         ),
-                        const SizedBox(height: 16),
-                        Divider(color: Colors.white10),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 20),
+                        const Divider(color: Colors.white10, height: 1),
+                        const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('🚀 Level Status', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                            Row(
+                              children: [
+                                const Text('🚀', style: TextStyle(fontSize: 18)),
+                                const SizedBox(width: 8),
+                                const Text('Level Status', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                              ],
+                            ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                               decoration: BoxDecoration(
-                                color: TDGColors.gold.withOpacity(0.2),
+                                color: TDGColors.gold.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: TDGColors.gold, width: 1),
+                                border: Border.all(color: TDGColors.gold.withOpacity(0.5), width: 1),
                               ),
                               child: Text(
                                 ApiService().currentUser?['tier'] ?? 'Asset',
-                                style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w900, fontSize: 13),
+                                style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: 0.5),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 10),
                         Text(
                           'Reach ₹5,000 cumulative spend to auto-upgrade from Asset to Partner level!',
-                          style: TextStyle(color: TDGColors.greyLight, fontSize: 12),
+                          style: TextStyle(color: Colors.white54, fontSize: 12, height: 1.4),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
 
                   // Added By Referral info
                   if (_referredByName != null && _referredByName!.isNotEmpty) ...[
@@ -662,23 +693,23 @@ class _AssetScreenState extends State<AssetScreen> {
                     GestureDetector(
                       onTap: _showAddAssetDialog,
                       child: Container(
-                        padding: EdgeInsets.all(18),
+                        margin: const EdgeInsets.only(bottom: 24),
+                        padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: TDGColors.cardDark,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: TDGColors.gold.withOpacity(0.3), width: 1.5),
+                          color: TDGColors.gold.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: TDGColors.gold.withOpacity(0.4), width: 1.5),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.add_circle_outline, color: TDGColors.gold, size: 24),
-                            SizedBox(width: 8),
-                            Text('Add Asset', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w700, fontSize: 17)),
+                            Icon(Icons.add_circle_outline, color: TDGColors.gold, size: 26),
+                            const SizedBox(width: 10),
+                            Text('Add Asset', style: TextStyle(color: TDGColors.gold, fontWeight: FontWeight.w800, fontSize: 16, letterSpacing: 0.5)),
                           ],
                         ),
                       ),
                     ),
-                  SizedBox(height: 16),
 
                   // Asset List
                   ..._assets.map((asset) => _buildAssetCard(asset)),
@@ -767,12 +798,54 @@ class _AssetScreenState extends State<AssetScreen> {
                   ],
                 ),
               ),
-              if (!isDined && status == 'pending')
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Text(
-                    'Awaiting acceptance',
-                    style: TextStyle(color: Colors.orange.shade400, fontSize: 11, fontStyle: FontStyle.italic),
+              if (status == 'pending')
+                GestureDetector(
+                  onTap: () async {
+                    final phone = asset['phone'] ?? '';
+                    final name = asset['name'] ?? 'Asset';
+                    if (phone.isEmpty) return;
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Resending OTP to $phone...'), backgroundColor: Colors.blue.shade700),
+                    );
+
+                    try {
+                      final res = await ApiService().sendAssetOtp(phone);
+                      if (mounted) {
+                        final code = res['otp']?.toString();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(code != null ? 'OTP Code for $phone: $code' : (res['message'] ?? 'Fresh OTP sent to $phone')),
+                            backgroundColor: Colors.green.shade700,
+                            duration: const Duration(seconds: 12),
+                          ),
+                        );
+                        _showVerifyAssetOtpDialog(name, phone, defaultOtp: code);
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
+                        );
+                      }
+                    }
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.blue.withOpacity(0.4)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.refresh_rounded, color: Colors.blueAccent, size: 14),
+                        SizedBox(width: 4),
+                        Text('Resend OTP', style: TextStyle(color: Colors.blueAccent, fontSize: 11, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
                   ),
                 ),
               PopupMenuButton(
@@ -787,6 +860,15 @@ class _AssetScreenState extends State<AssetScreen> {
                   Text('Distribute Points', style: TextStyle(color: TDGColors.white)),
                 ]),
               ),
+              if (status == 'pending')
+                PopupMenuItem(
+                  value: 'resend_otp',
+                  child: Row(children: [
+                    Icon(Icons.mark_email_read_rounded, color: Colors.blueAccent, size: 18),
+                    SizedBox(width: 8),
+                    Text('Resend OTP', style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold)),
+                  ]),
+                ),
               if (!isDined)
                 PopupMenuItem(
                   value: 'replace',
@@ -805,9 +887,38 @@ class _AssetScreenState extends State<AssetScreen> {
                 ]),
               ),
             ],
-            onSelected: (value) {
+            onSelected: (value) async {
               if (value == 'distribute') {
                 _showDistributeDialog(asset['id'], asset['name']);
+              } else if (value == 'resend_otp') {
+                final phone = asset['phone'] ?? '';
+                final name = asset['name'] ?? 'Asset';
+                if (phone.isEmpty) return;
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Resending OTP to $phone...'), backgroundColor: Colors.blue.shade700),
+                );
+
+                try {
+                  final res = await ApiService().sendAssetOtp(phone);
+                  if (mounted) {
+                    final code = res['otp']?.toString();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(code != null ? 'OTP Code for $phone: $code' : (res['message'] ?? 'Fresh OTP sent to $phone')),
+                        backgroundColor: Colors.green.shade700,
+                        duration: const Duration(seconds: 12),
+                      ),
+                    );
+                    _showVerifyAssetOtpDialog(name, phone, defaultOtp: code);
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString().replaceAll('Exception: ', '')), backgroundColor: Colors.red),
+                    );
+                  }
+                }
               } else if (value == 'replace') {
                 _showReplaceDialog(asset['id'], asset['name']);
               } else if (value == 'remove') {
