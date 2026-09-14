@@ -8710,7 +8710,11 @@ async function sendWhatsAppOTP(phone, otp, type = 'auth', customMessage = null) 
   const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
 
   const defaultUrl = 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>'
-  const serviceUrlTemplate = whatsappCfg.serviceUrl || defaultUrl
+  let serviceUrlTemplate = whatsappCfg.serviceUrl || defaultUrl
+  if (!serviceUrlTemplate || serviceUrlTemplate.includes('gypsy.sundarrajan.org')) {
+    serviceUrlTemplate = defaultUrl
+    if (settings.whatsapp) settings.whatsapp.serviceUrl = defaultUrl
+  }
 
   let targetUrl = serviceUrlTemplate
     .replace('<contact_number>', formattedPhone)
@@ -8881,9 +8885,14 @@ app.get('/api/msg91/logs', (req, res) => {
 
 app.get('/api/whatsapp/config', (req, res) => {
   const wa = settings.whatsapp || {}
+  let url = wa.serviceUrl || 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>'
+  if (!url || url.includes('gypsy.sundarrajan.org')) {
+    url = 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>'
+    if (settings.whatsapp) settings.whatsapp.serviceUrl = url
+  }
   res.json({
     enabled: wa.isEnabled !== false,
-    serviceUrl: wa.serviceUrl || 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>'
+    serviceUrl: url
   })
 })
 
