@@ -84809,6 +84809,13 @@
       "name": "Kombucha",
       "icon": "🍹",
       "color": "#0284c7"
+    },
+    {
+      "id": "c_new_combo",
+      "name": "New Combo",
+      "icon": "📦",
+      "color": "#e63946",
+      "displayOrder": 7
     }
   ],
   "menuItems": [
@@ -85354,6 +85361,105 @@
       "isAvailable": true,
       "image": "/images/menu/kombucha.png",
       "taxInclusive": true
+    },
+    {
+      "id": "m_nc_gyro_fries",
+      "categoryId": "c_new_combo",
+      "category": "New Combo",
+      "name": "Gyro & Fries",
+      "price": 249,
+      "description": "1 Gyro + Fries",
+      "isAvailable": true,
+      "available": true,
+      "image": "/images/menu/express meal.png"
+    },
+    {
+      "id": "m_nc_rice_meal",
+      "categoryId": "c_new_combo",
+      "category": "New Combo",
+      "name": "Lebanese Rice Bowl Meal",
+      "price": 299,
+      "description": "1 Lebanese Rice Bowl + 2 Wings + 1 Beverage",
+      "isAvailable": true,
+      "available": true,
+      "image": "/images/menu/lebanese rice box.png"
+    },
+    {
+      "id": "m_nc_gyro_meal",
+      "categoryId": "c_new_combo",
+      "category": "New Combo",
+      "name": "Gyro Meal",
+      "price": 329,
+      "description": "1 Gyro + 2 Strips + Fries + 1 Pepsi",
+      "isAvailable": true,
+      "available": true,
+      "image": "/images/menu/classic gyro meal.png"
+    },
+    {
+      "id": "m_nc_13pc_bucket",
+      "categoryId": "c_new_combo",
+      "category": "New Combo",
+      "name": "13 Pc Mixed Chicken Bucket",
+      "price": 379,
+      "description": "8 Wings + 5 Strips + 4 Dips",
+      "isAvailable": true,
+      "available": true,
+      "image": "/images/menu/wings.png"
+    },
+    {
+      "id": "m_nc_strips_bucket",
+      "categoryId": "c_new_combo",
+      "category": "New Combo",
+      "name": "Chicken Strips Bucket",
+      "price": 399,
+      "description": "12 Strips + 3 Dips",
+      "isAvailable": true,
+      "available": true,
+      "image": "/images/menu/strips.png"
+    },
+    {
+      "id": "m_nc_peri_leg_bucket",
+      "categoryId": "c_new_combo",
+      "category": "New Combo",
+      "name": "Peri Peri Leg Bucket",
+      "price": 549,
+      "description": "8 Pc Peri Peri Leg + 3 Dips",
+      "isAvailable": true,
+      "available": true,
+      "image": "/images/menu/leg_thigh.png"
+    },
+    {
+      "id": "m_nc_double_gyro_feast",
+      "categoryId": "c_new_combo",
+      "category": "New Combo",
+      "name": "Double Gyro Feast",
+      "price": 649,
+      "description": "2 Gyros + 6 Wings + Fries + 2 Drinks + 2 Dips",
+      "isAvailable": true,
+      "available": true,
+      "image": "/images/menu/double crunch box.png"
+    },
+    {
+      "id": "m_nc_ultimate_savings",
+      "categoryId": "c_new_combo",
+      "category": "New Combo",
+      "name": "Ultimate Savings Bucket",
+      "price": 599,
+      "description": "4 Leg + 6 Wings + 4 Strips + 4 Dips + 500 ml Coke/Sprite",
+      "isAvailable": true,
+      "available": true,
+      "image": "/images/menu/super 5 bucket.png"
+    },
+    {
+      "id": "m_nc_mixed_feast",
+      "categoryId": "c_new_combo",
+      "category": "New Combo",
+      "name": "Mixed Feast",
+      "price": 749,
+      "description": "2 Gyros + 2 Leg + 2 Strips + 4 Wings + Fries + 500 ml Coke/Sprite + 3 Dips",
+      "isAvailable": true,
+      "available": true,
+      "image": "/images/menu/den's party meal.png"
     }
   ],
   "recipes": [
