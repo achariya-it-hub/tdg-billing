@@ -177,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 _buildTextField(
                                   label: 'PHONE NUMBER / EMAIL',
                                   controller: _phoneController,
-                                  hint: 'Enter your credentials',
+                                  hint: 'Enter Phone / Email',
                                   icon: Icons.person_outline,
                                 ),
                                 

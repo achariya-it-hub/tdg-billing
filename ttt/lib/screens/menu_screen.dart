@@ -20,6 +20,39 @@ class _MenuScreenState extends State<MenuScreen> {
   Map<String, List<Map<String, dynamic>>> _menuItems = {};
   bool _isLoading = false;
 
+  bool _isSearching = false;
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<Map<String, dynamic>> get _filteredItems {
+    final query = _searchQuery.trim().toLowerCase();
+    if (query.isEmpty) {
+      return _menuItems[_selectedCategory] ?? [];
+    }
+
+    final List<Map<String, dynamic>> results = [];
+    _menuItems.forEach((cat, items) {
+      for (var item in items) {
+        final name = (item['name'] ?? '').toString().toLowerCase();
+        final desc = (item['desc'] ?? '').toString().toLowerCase();
+        final catName = cat.toLowerCase();
+        if (name.contains(query) || desc.contains(query) || catName.contains(query)) {
+          results.add({
+            ...item,
+            'categoryLabel': cat,
+          });
+        }
+      }
+    });
+    return results;
+  }
+
   static const Map<String, List<Map<String, dynamic>>> _fallbackMenu = {
     'Gyros': [
       {'name': 'Spicy Gyro', 'desc': 'Spicy gyro with fresh veggies & spread (Chicken or Paneer)', 'price': '₹199'},
@@ -238,18 +271,46 @@ class _MenuScreenState extends State<MenuScreen> {
           },
         ),
         centerTitle: true,
-        title: Text(
-          'MENU',
-          style: TextStyle(color: TDGColors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 3,
-          ),
-        ),
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                autofocus: true,
+                style: TextStyle(color: TDGColors.white, fontSize: 15, fontWeight: FontWeight.bold),
+                cursorColor: TDGColors.gold,
+                decoration: InputDecoration(
+                  hintText: 'Search Gyros, Shakes, Combos...',
+                  hintStyle: TextStyle(color: TDGColors.grey, fontSize: 13),
+                  border: InputBorder.none,
+                ),
+                onChanged: (val) {
+                  setState(() {
+                    _searchQuery = val;
+                  });
+                },
+              )
+            : Text(
+                'MENU',
+                style: TextStyle(
+                  color: TDGColors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 3,
+                ),
+              ),
         actions: [
           IconButton(
-            icon: Icon(Icons.search, color: TDGColors.white),
-            onPressed: () {},
+            icon: Icon(_isSearching ? Icons.close : Icons.search, color: TDGColors.white),
+            onPressed: () {
+              setState(() {
+                if (_isSearching) {
+                  _isSearching = false;
+                  _searchQuery = '';
+                  _searchController.clear();
+                } else {
+                  _isSearching = true;
+                }
+              });
+            },
           ),
           Stack(
             children: [
@@ -294,77 +355,139 @@ class _MenuScreenState extends State<MenuScreen> {
           : Column(
         children: [
           // Category tabs
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+          if (!_isSearching || _searchQuery.isEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: _categories.map((cat) {
+                    final isSelected = _selectedCategory == cat;
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedCategory = cat),
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+                        decoration: BoxDecoration(
+                          gradient: isSelected ? TDGColors.embossedRedGradient : null,
+                          color: isSelected ? null : TDGColors.cardDark,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: isSelected ? TDGColors.primaryRed.withOpacity(0.5) : TDGColors.border,
+                          ),
+                          boxShadow: isSelected ? [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              offset: const Offset(0, 2),
+                              blurRadius: 4,
+                            )
+                          ] : null,
+                        ),
+                        child: Text(
+                          cat,
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : TDGColors.greyLight,
+                            fontSize: 13,
+                            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            )
+          else
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              color: TDGColors.cardDark,
               child: Row(
-                children: _categories.map((cat) {
-                  final isSelected = _selectedCategory == cat;
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedCategory = cat),
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
-                      decoration: BoxDecoration(
-                        gradient: isSelected ? TDGColors.embossedRedGradient : null,
-                        color: isSelected ? null : TDGColors.cardDark,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isSelected ? TDGColors.primaryRed.withOpacity(0.5) : TDGColors.border,
-                        ),
-                        boxShadow: isSelected ? [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            offset: const Offset(0, 2),
-                            blurRadius: 4,
-                          )
-                        ] : null,
-                      ),
-                      child: Text(
-                        cat,
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : TDGColors.greyLight,
-                          fontSize: 13,
-                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
+                children: [
+                  Icon(Icons.search_rounded, color: TDGColors.gold, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Search results for "${_searchQuery.trim()}"',
+                    style: TextStyle(color: TDGColors.white, fontSize: 13, fontWeight: FontWeight.bold),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${_filteredItems.length} found',
+                    style: TextStyle(color: TDGColors.greyLight, fontSize: 12),
+                  ),
+                ],
               ),
             ),
-          ),
 
           const SizedBox(height: 12),
           // Menu list
           Expanded(
-            child: ResponsiveWrapper(
-              maxWidth: 1200,
-              child: Responsive.isMobile(context)
-                  ? ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: (_menuItems[_selectedCategory] ?? []).length,
-                      itemBuilder: (context, index) {
-                        final item = (_menuItems[_selectedCategory] ?? [])[index];
-                        return _buildMenuItem(item);
-                      },
-                    )
-                  : GridView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: Responsive.gridColumns(context, mobile: 1, tablet: 2, desktop: 3),
-                        childAspectRatio: 2.8,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 12,
+            child: _filteredItems.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.search_off_rounded, color: TDGColors.gold, size: 54),
+                          const SizedBox(height: 14),
+                          Text(
+                            'No items found matching "${_searchQuery.trim()}"',
+                            style: TextStyle(color: TDGColors.white, fontSize: 15, fontWeight: FontWeight.w600),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Try searching for another dish, flavor, or category',
+                            style: TextStyle(color: TDGColors.grey, fontSize: 12),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                _searchQuery = '';
+                                _searchController.clear();
+                              });
+                            },
+                            icon: const Icon(Icons.clear, size: 16),
+                            label: const Text('Clear Search'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: TDGColors.gold,
+                              foregroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                          ),
+                        ],
                       ),
-                      itemCount: (_menuItems[_selectedCategory] ?? []).length,
-                      itemBuilder: (context, index) {
-                        final item = (_menuItems[_selectedCategory] ?? [])[index];
-                        return _buildMenuItem(item);
-                      },
                     ),
-            ),
+                  )
+                : ResponsiveWrapper(
+                    maxWidth: 1200,
+                    child: Responsive.isMobile(context)
+                        ? ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: _filteredItems.length,
+                            itemBuilder: (context, index) {
+                              final item = _filteredItems[index];
+                              return _buildMenuItem(item);
+                            },
+                          )
+                        : GridView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: Responsive.gridColumns(context, mobile: 1, tablet: 2, desktop: 3),
+                              childAspectRatio: 2.8,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 12,
+                            ),
+                            itemCount: _filteredItems.length,
+                            itemBuilder: (context, index) {
+                              final item = _filteredItems[index];
+                              return _buildMenuItem(item);
+                            },
+                          ),
+                  ),
           ),
         ],
       ),
