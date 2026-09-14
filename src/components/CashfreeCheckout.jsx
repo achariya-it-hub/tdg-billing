@@ -1,7 +1,18 @@
 import { useState } from 'react'
 import API_BASE from '../lib/apiConfig'
 
-export default function CashfreeCheckout({ orderId, amount, customerName, customerPhone, onError }) {
+const loadCashfreeScript = () => {
+  return new Promise((resolve) => {
+    if (window.Cashfree) return resolve(true)
+    const script = document.createElement('script')
+    script.src = 'https://sdk.cashfree.com/js/v3/cashfree.js'
+    script.onload = () => resolve(true)
+    script.onerror = () => resolve(false)
+    document.body.appendChild(script)
+  })
+}
+
+export default function CashfreeCheckout({ orderId, amount, customerName, customerPhone, onSuccess, onError }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -24,7 +35,33 @@ export default function CashfreeCheckout({ orderId, amount, customerName, custom
       if (!res.ok) throw new Error(data.error || 'Failed to create order')
 
       if (data.paymentSessionId) {
-        window.location.href = `https://checkout.cashfree.com/pg?payment_session_id=${data.paymentSessionId}&mode=TEST`
+        const isScriptLoaded = await loadCashfreeScript()
+        if (isScriptLoaded && window.Cashfree) {
+          const cashfree = window.Cashfree({
+            mode: data.environment === 'PRODUCTION' ? 'production' : 'sandbox'
+          })
+          cashfree.checkout({
+            paymentSessionId: data.paymentSessionId,
+            redirectTarget: '_modal'
+          }).then((result) => {
+            if (result.error) {
+              setError(result.error.message || 'Payment cancelled or failed')
+              setLoading(false)
+              onError?.(result.error.message)
+            } else if (result.paymentDetails) {
+              setLoading(false)
+              onSuccess?.(result.paymentDetails)
+            } else {
+              setLoading(false)
+            }
+          })
+        } else {
+          // Fallback if SDK load fails
+          const envUrl = data.environment === 'PRODUCTION'
+            ? 'https://payments.cashfree.com/order/#'
+            : 'https://sandbox.cashfree.com/pg/orders/'
+          window.location.href = `${envUrl}${data.paymentSessionId}`
+        }
       } else {
         throw new Error('No payment session received')
       }
@@ -47,7 +84,7 @@ export default function CashfreeCheckout({ orderId, amount, customerName, custom
           color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
         }}
       >
-        {loading ? 'Redirecting to Cashfree...' : `Pay ₹${amount} via Cashfree`}
+        {loading ? 'Opening Cashfree Gateway...' : `Pay ₹${amount} via Cashfree`}
       </button>
       {error && (
         <div style={{ marginTop: '8px', padding: '10px', background: '#fef2f2', borderRadius: '8px', color: '#dc2626', fontSize: '13px' }}>

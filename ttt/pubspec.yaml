@@ -19,6 +19,7 @@ dependencies:
   firebase_app_check: ^0.2.1+17
   share_plus: ^10.0.0
   sendotp_flutter_sdk: ^0.0.2
+  webview_flutter: ^4.14.1
 
 dev_dependencies:
   flutter_test:

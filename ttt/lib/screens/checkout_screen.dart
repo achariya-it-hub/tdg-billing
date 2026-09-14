@@ -5,6 +5,7 @@ import 'main_nav_screen.dart';
 import '../widgets/tdg_button.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
+import 'in_app_payment_screen.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -100,7 +101,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       // Handle online gateway payments
       if (_selectedPayment == 'cashfree' || _selectedPayment == 'ccavenue') {
-        bool gatewayLaunched = false;
+        bool paymentCompleted = false;
+        String gatewayOrderId = '';
+
         if (_selectedPayment == 'cashfree') {
           final cfResponse = await ApiService().initiateCashfreePayment(
             amount: _finalTotal.toDouble(),
@@ -112,12 +115,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           if (cfResponse['success'] == true) {
             final String sessionId = cfResponse['paymentSessionId'] ?? '';
             final String env = (cfResponse['environment'] ?? 'PRODUCTION').toString().toUpperCase();
+            gatewayOrderId = cfResponse['orderId'] ?? '';
             if (sessionId.isNotEmpty) {
               final String cashfreeBaseUrl = env == 'PRODUCTION'
                   ? 'https://payments.cashfree.com/order/#'
                   : 'https://sandbox.cashfree.com/pg/orders/';
-              final checkoutUrl = Uri.parse('$cashfreeBaseUrl$sessionId');
-              gatewayLaunched = await _launchInAppPaymentGateway(checkoutUrl);
+              final checkoutUrl = '$cashfreeBaseUrl$sessionId';
+              
+              if (mounted) {
+                final result = await Navigator.of(context).push<bool>(
+                  MaterialPageRoute(
+                    builder: (ctx) => InAppPaymentScreen(
+                      url: checkoutUrl,
+                      title: 'Cashfree Secure Checkout',
+                    ),
+                  ),
+                );
+                paymentCompleted = result == true;
+              }
             }
           } else {
             throw Exception(cfResponse['message'] ?? cfResponse['error'] ?? 'Failed to initiate Cashfree payment gateway');
@@ -136,63 +151,48 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             final String encRequest = ccResponse['encRequest'] ?? '';
             final String accessCode = ccResponse['accessCode'] ?? '';
 
-            Uri targetUri;
+            String targetUrl = '';
             if (payUrl.isNotEmpty) {
-              targetUri = Uri.parse(payUrl);
+              targetUrl = payUrl;
             } else if (ccUrl.isNotEmpty) {
-              targetUri = Uri.parse('$ccUrl&encRequest=${Uri.encodeComponent(encRequest)}&access_code=${Uri.encodeComponent(accessCode)}');
+              targetUrl = '$ccUrl&encRequest=${Uri.encodeComponent(encRequest)}&access_code=${Uri.encodeComponent(accessCode)}';
             } else {
               throw Exception('Invalid CCAvenue response');
             }
 
-            gatewayLaunched = await _launchInAppPaymentGateway(targetUri);
+            if (mounted) {
+              final result = await Navigator.of(context).push<bool>(
+                MaterialPageRoute(
+                  builder: (ctx) => InAppPaymentScreen(
+                    url: targetUrl,
+                    title: 'CCAvenue Secure Checkout',
+                  ),
+                ),
+              );
+              paymentCompleted = result == true;
+            }
           } else {
             throw Exception(ccResponse['message'] ?? ccResponse['error'] ?? 'Failed to initiate CCAvenue payment gateway');
           }
         }
 
-        if (gatewayLaunched && mounted) {
-          setState(() => _isPaying = false);
-          final confirmPaid = await showDialog<bool>(
-            context: context,
-            barrierDismissible: false,
-            builder: (ctx) => AlertDialog(
-              backgroundColor: const Color(0xFF1E1E24),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide(color: TDGColors.gold)),
-              title: Row(
-                children: [
-                  Icon(Icons.payment_rounded, color: TDGColors.gold),
-                  const SizedBox(width: 10),
-                  Text('Complete Payment', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                ],
-              ),
-              content: Text(
-                'In-App Payment Screen Opened.\n\nDid you successfully complete the payment transaction?',
-                style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, false),
-                  child: Text('Cancel', style: TextStyle(color: TDGColors.grey)),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  style: ElevatedButton.styleFrom(backgroundColor: TDGColors.gold, foregroundColor: Colors.black),
-                  child: const Text('I Have Paid', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-          );
-
-          if (confirmPaid != true) {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Payment not completed or cancelled.'), backgroundColor: Colors.orange),
-              );
-            }
-            return;
+        if (!paymentCompleted) {
+          if (mounted) {
+            setState(() => _isPaying = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Payment was cancelled or not completed.'), backgroundColor: Colors.orange),
+            );
           }
-          setState(() => _isPaying = true);
+          return;
+        }
+
+        // Verify Cashfree payment status if orderId exists
+        if (_selectedPayment == 'cashfree' && gatewayOrderId.isNotEmpty) {
+          try {
+            await ApiService().verifyCashfreePayment(gatewayOrderId);
+          } catch (e) {
+            debugPrint('Payment verification check error: $e');
+          }
         }
       }
 

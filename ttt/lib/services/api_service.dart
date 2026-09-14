@@ -274,6 +274,23 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> verifyCashfreePayment(String orderId) async {
+    final url = Uri.parse('${AppConfig.baseUrl}/cashfree/verify-payment');
+    try {
+      final response = await http.post(
+        url,
+        headers: _getHeaders(),
+        body: jsonEncode({'orderId': orderId}),
+      );
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) return data;
+      return {'success': false, 'error': data['error'] ?? 'Verification failed'};
+    } catch (e) {
+      return {'success': false, 'error': e.toString()};
+    }
+  }
+
+
   Future<List<dynamic>> getOrders() async {
     final url = Uri.parse('${AppConfig.baseUrl}/orders');
     try {
