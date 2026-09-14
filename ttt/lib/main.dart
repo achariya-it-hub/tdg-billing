@@ -10,6 +10,7 @@ import 'screens/main_nav_screen.dart';
 import 'theme/colors.dart';
 import 'screens/splash_screen.dart';
 import 'services/api_service.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   if (!kIsWeb) {
@@ -38,6 +39,7 @@ void main() async {
     systemNavigationBarIconBrightness: Brightness.light,
   ));
   await ApiService().init();
+  await NotificationService().init();
   runApp(const TDGApp());
 }
 

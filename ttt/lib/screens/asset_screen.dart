@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../services/api_service.dart';
 import '../services/firebase_auth_service.dart';
+import '../services/notification_service.dart';
 import '../utils/responsive.dart';
 
 class AssetScreen extends StatefulWidget {
@@ -165,6 +166,12 @@ class _AssetScreenState extends State<AssetScreen> {
                 final res = await ApiService().sendAssetOtp(phone);
                 if (mounted) {
                   final code = res['otp']?.toString();
+                  NotificationService().addAssetRequestNotification(
+                    assetName: name,
+                    phone: phone,
+                    status: 'pending',
+                    otp: code,
+                  );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(code != null ? 'OTP Code for $phone: $code' : (res['message'] ?? 'OTP sent to $phone')),
@@ -240,6 +247,11 @@ class _AssetScreenState extends State<AssetScreen> {
               try {
                 final result = await ApiService().verifyAssetOtp(phone, otp, name);
                 _fetchAssets();
+                NotificationService().addAssetRequestNotification(
+                  assetName: name,
+                  phone: phone,
+                  status: 'active',
+                );
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

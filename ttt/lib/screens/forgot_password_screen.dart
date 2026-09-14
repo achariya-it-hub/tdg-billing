@@ -5,6 +5,7 @@ import '../theme/colors.dart';
 import '../widgets/tdg_button.dart';
 import '../widgets/tdg_logo.dart';
 import '../services/api_service.dart';
+import '../services/notification_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -96,16 +97,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       final res = await ApiService().sendForgotPasswordOtp(phone);
       _startResendTimer();
       if (mounted) {
-        if (res['otp'] != null) {
-          _otpController.text = res['otp'].toString();
+        final otpVal = res['otp']?.toString() ?? '';
+        if (otpVal.isNotEmpty) {
+          _otpController.text = otpVal;
+          NotificationService().addOtpNotification(
+            phone: phone,
+            otp: otpVal,
+            purpose: 'Forgot Password',
+          );
         }
         setState(() {
           _step = 2;
           _isLoading = false;
         });
         String msg = res['message'] ?? 'OTP sent to $phone';
-        if (res['otp'] != null) {
-          msg = 'OTP Code for $phone: ${res['otp']}';
+        if (otpVal.isNotEmpty) {
+          msg = 'OTP Code for $phone: $otpVal';
         }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

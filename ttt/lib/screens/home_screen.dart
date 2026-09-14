@@ -14,6 +14,7 @@ import 'main_nav_screen.dart';
 import 'referral_screen.dart';
 import '../widgets/tdg_logo.dart';
 import '../services/api_service.dart';
+import '../services/notification_service.dart';
 import '../utils/responsive.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -266,31 +267,44 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     );
                   },
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: TDGColors.cardDark,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: TDGColors.border),
-                        ),
-                        child: Icon(Icons.notifications_outlined, color: TDGColors.white, size: 18),
-                      ),
-                      Positioned(
-                        top: 6,
-                        right: 6,
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: TDGColors.red,
-                            shape: BoxShape.circle,
+                  child: ValueListenableBuilder<int>(
+                    valueListenable: NotificationService().unreadCountNotifier,
+                    builder: (context, unreadCount, _) {
+                      return Stack(
+                        children: [
+                          Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: TDGColors.cardDark,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: unreadCount > 0 ? TDGColors.gold : TDGColors.border),
+                            ),
+                            child: Icon(
+                              unreadCount > 0 ? Icons.notifications_active_rounded : Icons.notifications_outlined,
+                              color: unreadCount > 0 ? TDGColors.gold : TDGColors.white,
+                              size: 18,
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
+                          if (unreadCount > 0)
+                            Positioned(
+                              top: 2,
+                              right: 2,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: TDGColors.red,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  '$unreadCount',
+                                  style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 8),
