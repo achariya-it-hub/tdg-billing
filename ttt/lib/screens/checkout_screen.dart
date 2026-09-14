@@ -60,6 +60,33 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
   }
 
+  Future<bool> _launchInAppPaymentGateway(Uri uri) async {
+    try {
+      bool launched = await launchUrl(
+        uri,
+        mode: LaunchMode.inAppBrowserView,
+      );
+      if (!launched) {
+        launched = await launchUrl(
+          uri,
+          mode: LaunchMode.inAppWebView,
+        );
+      }
+      if (!launched) {
+        launched = await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
+      }
+      return launched;
+    } catch (_) {
+      return await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+    }
+  }
+
   void _handlePayment() async {
     setState(() => _isPaying = true);
     try {
@@ -90,8 +117,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ? 'https://payments.cashfree.com/order/#'
                   : 'https://sandbox.cashfree.com/pg/orders/';
               final checkoutUrl = Uri.parse('$cashfreeBaseUrl$sessionId');
-              await launchUrl(checkoutUrl, mode: LaunchMode.externalApplication);
-              gatewayLaunched = true;
+              gatewayLaunched = await _launchInAppPaymentGateway(checkoutUrl);
             }
           } else {
             throw Exception(cfResponse['message'] ?? cfResponse['error'] ?? 'Failed to initiate Cashfree payment gateway');
@@ -119,8 +145,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               throw Exception('Invalid CCAvenue response');
             }
 
-            await launchUrl(targetUri, mode: LaunchMode.externalApplication);
-            gatewayLaunched = true;
+            gatewayLaunched = await _launchInAppPaymentGateway(targetUri);
           } else {
             throw Exception(ccResponse['message'] ?? ccResponse['error'] ?? 'Failed to initiate CCAvenue payment gateway');
           }
@@ -142,7 +167,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ],
               ),
               content: Text(
-                'Payment gateway opened in external window.\n\nDid you successfully complete the payment transaction?',
+                'In-App Payment Screen Opened.\n\nDid you successfully complete the payment transaction?',
                 style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
               ),
               actions: [

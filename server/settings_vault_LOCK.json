@@ -36,7 +36,8 @@
     "cashfree": {
       "appId": "",
       "secretKey": "",
-      "isProduction": false,
+      "environment": "PRODUCTION",
+      "isProduction": true,
       "isEnabled": true
     }
   },
@@ -100,5 +101,12 @@
       "pct": 50,
       "label": "VIP 50% OFF"
     }
+  },
+  "cashfree": {
+    "appId": "",
+    "secretKey": "",
+    "environment": "PRODUCTION",
+    "isProduction": true,
+    "isEnabled": true
   }
 }
