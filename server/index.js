@@ -899,7 +899,8 @@ try {
       }
     }
   }
-  }
+} catch (e) {
+  console.error('[HOSTINGER MIGRATION ERROR]', e.message)
 }
 
   // Ensure official menu items populate on server startup
