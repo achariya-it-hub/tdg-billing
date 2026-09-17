@@ -138,8 +138,17 @@ export default function Billing() {
   const visiblePaidBills = filterByDate(paidBills)
   // All chargeable (non-cancelled, non-complimentary) bills in the current period — same
   // definition the Daily Closing / reports use, so the counters always reconcile.
-  const visibleAllBills = [...visibleNewKOTs, ...visiblePendingKOTs, ...visiblePaidBills]
-  const visibleAllBillsTotal = visibleAllBills.reduce((s, b) => s + (b.total !== undefined && b.total !== null ? Number(b.total) : calculateTotal(b) + calculateTax(calculateTotal(b))), 0)
+  const visibleAllBills = [...visibleNewKOTs, ...visiblePendingKOTs, ...visibleComplimentary, ...visiblePaidBills]
+  const visibleAllBillsTotal = visibleAllBills.reduce((s, b) => {
+    const isComp = b.complimentary || b.isComplimentary || (b.paymentMethod || '').toLowerCase() === 'complimentary' || b.type === 'complimentary'
+    if (isComp) {
+      const itemSub = (b.items || []).reduce((sum, i) => sum + (i.totalPrice !== undefined ? Number(i.totalPrice) : (Number(i.unitPrice || i.price || 0) * Number(i.quantity || i.qty || 1))), 0)
+      const val = Number(b.rawSubtotal) || itemSub || Number(b.subtotal) || Number(b.total) || 0
+      return s + val
+    }
+    const val = b.total !== undefined && b.total !== null ? Number(b.total) : calculateTotal(b)
+    return s + val
+  }, 0)
 
   const getApiUrl = () => {
     return window.location.hostname === 'localhost'
