@@ -11,12 +11,23 @@ import PrintService from '../lib/printService'
 import API_BASE from '../lib/apiConfig'
 
 const categoryIcons = {
-  'Burgers': '🍔',
-  'Chicken': '🍗',
-  'Sides': '🍟',
+  'Gyros': '🥙',
+  'Leg & Thigh': '🍗',
+  'Wings': '🍗',
+  'Strips': '🍗',
+  'Fries': '🍟',
   'Beverages': '🥤',
+  'Beverages & Kombucha': '🍹',
+  'Rice & Salads': '🥗',
+  'Meals & Combos': '🍱',
+  'New Combo': '📦',
+  'Combos': '📦',
+  'Protein Max': '💪',
+  'Shakes': '🥤',
+  'Shakes & Softy': '🥤',
   'Desserts': '🍰',
-  'Combos': '📦'
+  'Softy & Add-Ons': '🍦',
+  'Kombucha': '🍹'
 }
 
 const glassCard = {
@@ -466,6 +477,7 @@ export default function POS() {
   const getMealDrinkCount = (itemName) => {
     const name = (itemName || '').toLowerCase()
     if (name.includes('wednesday') || name.includes('wednesday combo')) return 0
+    if (name.includes('double gyro feast')) return 2
     if (name.includes('den\'s party') || name.includes('party meal')) return 3
     if (name.includes('super 5')) return 5
     if (name.includes('double crunch') || name.includes('duo gyro') || name.includes('mega feast')) return 2
@@ -475,7 +487,9 @@ export default function POS() {
 
   const getMealDipCount = (itemName) => {
     const name = (itemName || '').toLowerCase()
-    if (name.includes('mega feast')) return 3
+    if (name.includes('13 pc mixed chicken bucket') || name.includes('ultimate savings bucket')) return 4
+    if (name.includes('chicken strips bucket') || name.includes('peri peri leg bucket') || name.includes('mixed feast') || name.includes('mega feast')) return 3
+    if (name.includes('double gyro feast')) return 2
     return 0
   }
 
@@ -486,7 +500,9 @@ export default function POS() {
       name.includes('duo') ||
       name.includes('double crunch') ||
       name.includes('party meal') ||
-      name.includes('mega feast')
+      name.includes('mega feast') ||
+      name.includes('double gyro feast') ||
+      name.includes('mixed feast')
     )
   }
 
@@ -1457,6 +1473,31 @@ export default function POS() {
                     <span style={{ color: '#64748b' }}>Standard Price</span>
                   )}
                 </div>
+                {(currentOrder.customerPoints > 0) && (
+                  <div style={{ fontSize: '11.5px', color: '#059669', fontWeight: 800, marginTop: '2px', background: '#ecfdf5', padding: '4px 8px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '4px', border: '1px solid #a7f3d0' }}>
+                    💰 Wallet Balance: {currentOrder.customerPoints} pts
+                  </div>
+                )}
+                {(currentOrder.customerAssets && currentOrder.customerAssets.length > 0) && (
+                  <div style={{ marginTop: '4px', fontSize: '11px', background: '#f1f5f9', padding: '6px 8px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontWeight: 800, color: '#334155', marginBottom: '4px' }}>🛡️ Den Members ({currentOrder.customerAssets.length})</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4px' }}>
+                      {currentOrder.customerAssets.map(asset => (
+                        <div key={asset.id} style={{ background: '#ffffff', padding: '4px 6px', borderRadius: '4px', border: '1px solid #cbd5e1', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                          <div style={{ color: '#1e293b', fontWeight: 700, fontSize: '10px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{asset.name}</div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ color: asset.status === 'active' ? '#10b981' : '#f59e0b', fontSize: '9px', fontWeight: 800 }}>
+                              {String(asset.status).toUpperCase()}
+                            </span>
+                            {asset.pointsDistributed > 0 && (
+                              <span style={{ fontSize: '9px', fontWeight: 800, color: '#2563eb' }}>{asset.pointsDistributed} pts</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
             {vipStatus === 'notvip' && !currentOrder.customerName && <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>No discount customer found for this entry</div>}

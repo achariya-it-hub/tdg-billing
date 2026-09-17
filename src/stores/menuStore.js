@@ -74,6 +74,12 @@ const sampleCategories = [
     "color": "#e63946"
   },
   {
+    "id": "c_new_combo",
+    "name": "New Combo",
+    "icon": "📦",
+    "color": "#e63946"
+  },
+  {
     "id": "c10_komb",
     "name": "Kombucha",
     "icon": "🍹",

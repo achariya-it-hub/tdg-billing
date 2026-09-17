@@ -36,6 +36,8 @@ export const useOrderStore = create(
     customerName: '',
     customerPhone: '',
     customerDiscountPct: 0,
+    customerPoints: 0,
+    customerAssets: [],
     notes: '',
     complimentary: false,
     complimentaryType: '',
@@ -163,7 +165,9 @@ export const useOrderStore = create(
           customerName: finalName,
           customerPhone: (customer && customer.phone) || state.currentOrder.customerPhone,
           customerDiscountPct: disc,
-          customerDiscountReason: customer ? (customer.discountReason || customer.tier || '') : ''
+          customerDiscountReason: customer ? (customer.discountReason || customer.tier || '') : '',
+          customerPoints: customer ? (customer.points || 0) : state.currentOrder.customerPoints,
+          customerAssets: customer ? (customer.assets || []) : state.currentOrder.customerAssets
         }
       }
     })
@@ -221,7 +225,9 @@ export const useOrderStore = create(
         ...state.currentOrder,
         customerName: '',
         customerPhone: '',
-        customerDiscountPct: 0
+        customerDiscountPct: 0,
+        customerPoints: 0,
+        customerAssets: []
       }
     }))
   },
@@ -265,6 +271,8 @@ export const useOrderStore = create(
         customerName: '',
         customerPhone: '',
         customerDiscountPct: 0,
+        customerPoints: 0,
+        customerAssets: [],
         notes: '',
         complimentary: false,
         complimentaryType: '',

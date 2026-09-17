@@ -17,7 +17,7 @@ class TDGLogo extends StatelessWidget {
           borderRadius: BorderRadius.circular(size * 0.18),
           child: Image.asset(
             'assets/images/logo.png',
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
           ),
         ),
       ),

@@ -137,7 +137,9 @@ export default function Kiosk() {
       name.includes('duo') ||
       name.includes('double crunch') ||
       name.includes('party meal') ||
-      name.includes('mega feast')
+      name.includes('mega feast') ||
+      name.includes('double gyro feast') ||
+      name.includes('mixed feast')
     )
   }
 
