@@ -14901,19 +14901,22 @@ const getOrderDiscountAmount = (o) => {
 
 // Helper to compute order total amount safely (returns 0 for cancelled or complimentary orders)
 const getOrderAmount = (o) => {
- if (!o) return 0
- const s = (o.status || '').toLowerCase()
- const m = (o.paymentMethod || '').toLowerCase()
- if (s === 'cancelled' || s === 'canceled' || s === 'void' || o.isCancelled || o.isVoid) return 0
- if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') return 0
+  if (!o) return 0
+  const s = (o.status || '').toLowerCase()
+  const m = (o.paymentMethod || '').toLowerCase()
+  if (s === 'cancelled' || s === 'canceled' || s === 'void' || o.isCancelled || o.isVoid) return 0
+  if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') {
+    const itemSub = (o.items || []).reduce((sum, i) => sum + (i.totalPrice !== undefined ? Number(i.totalPrice) : (Number(i.unitPrice || i.price || 0) * Number(i.quantity || i.qty || 1))), 0)
+    return Number(o.rawSubtotal) || itemSub || Number(o.subtotal) || Number(o.total) || 0
+  }
 
- if (o.total !== undefined && o.total !== null && Number(o.total) > 0) {
- return Number(o.total)
- }
- const items = o.items || []
- const subtotal = items.reduce((sum, i) => sum + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
- const tax = o.tax !== undefined ? o.tax : subtotal * 0.05
- return Math.round(subtotal + tax)
+  if (o.total !== undefined && o.total !== null && Number(o.total) > 0) {
+    return Number(o.total)
+  }
+  const items = o.items || []
+  const subtotal = items.reduce((sum, i) => sum + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
+  const tax = o.tax !== undefined ? o.tax : subtotal * 0.05
+  return Math.round(subtotal + tax)
 }
 
 function isDemoOrderBeforeOpening(o) {
