@@ -282,12 +282,21 @@ export default function Billing() {
   }
 
   const acceptKOT = async (kot) => {
+    // Optimistically move the KOT from New → Pending in local state so
+    // the UI stays responsive regardless of network latency.
+    setNewKOTs(prev => prev.filter(o => o.id !== kot.id))
+    setPendingKOTs(prev => prev.find(o => o.id === kot.id) ? prev : [{ ...kot, status: 'ready' }, ...prev])
     try {
-      await fetch(`${getApiUrl()}/api/pos/orders/${kot.id}/status`, {
+      const res = await fetch(`${getApiUrl()}/api/pos/orders/${kot.id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'ready' })
       })
+      if (res.status === 202) {
+        // SW queued this offline — the server-side guard will block any accidental replay
+        // from downgrading a completed order, so this is safe.
+        console.warn('[acceptKOT] PATCH queued offline by service worker')
+      }
     } catch (err) {
       console.error('Failed to accept KOT:', err)
     }
@@ -380,8 +389,17 @@ export default function Billing() {
           changeReturned: changeVal
         })
       })
+      // HTTP 202 = service worker queued the request (offline) — server never got it.
+      // DO NOT treat as success; warn the user so they know to verify later.
+      if (res.status === 202) {
+        alert('⚠️ No connection to server.\nPayment has been queued and will be sent automatically when connection is restored.\n\nPlease verify the bill status once back online before printing the receipt.')
+        setProcessing(false)
+        return
+      }
       if (res.ok) {
         setPaidBills(prev => [{ ...selectedKOT, status: 'completed', paymentStatus: 'paid', paymentMethod: selectedPayment, splitPayments: splitData, cashTendered: tenderVal, changeReturned: changeVal }, ...prev])
+        // Remove from BOTH newKOTs and pendingKOTs to cover all state paths
+        setNewKOTs(prev => prev.filter(o => o.id !== selectedKOT.id))
         setPendingKOTs(prev => prev.filter(o => o.id !== selectedKOT.id))
       }
       setShowPayment(false)

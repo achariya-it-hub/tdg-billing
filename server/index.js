@@ -1,4 +1,4 @@
-// TDG Server v1.0.7 - Customer Search & Auto-Fetch Update (2026-08-06)
+﻿// TDG Server v1.0.7 - Customer Search & Auto-Fetch Update (2026-08-06)
 import express from 'express'
 import whatsappRouter from './routes/whatsapp.js'
 import cors from 'cors'
@@ -19,9 +19,9 @@ const __dirname = dirname(__filename)
 
 const JWT_SECRET = process.env.JWT_SECRET || 'tdg_secret_key_123'
 
-// ─── Persistent Data Directory ──────────────────────────────────────────────
+// â”€â”€â”€ Persistent Data Directory â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // On Linux/Hostinger: use ~/tdg-data/ which is OUTSIDE public_html
-// → never touched by git pull / redeploy → data survives forever
+// â†’ never touched by git pull / redeploy â†’ data survives forever
 // On Windows (local dev): keep using server/ folder as before
 const DEFAULT_DATA_DIR = process.env.DATA_DIR
  ? process.env.DATA_DIR
@@ -40,16 +40,16 @@ if (!existsSync(DATA_DIR)) {
 const DB_PATH = join(DATA_DIR, 'db.json')
 const ORDER_LOG_PATH = join(DATA_DIR, 'order_log.jsonl')
 
-// ─── One-time migration: move db.json from old location to safe location ─────
+// â”€â”€â”€ One-time migration: move db.json from old location to safe location â”€â”€â”€â”€â”€
 const OLD_DB_PATH = join(__dirname, 'db.json')
 if (!existsSync(DB_PATH) && existsSync(OLD_DB_PATH)) {
  try {
  const oldData = readFileSync(OLD_DB_PATH)
  writeFileSync(DB_PATH, oldData)
- console.log('[DATA MIGRATION] ✅ Moved db.json from', OLD_DB_PATH, '→', DB_PATH)
+ console.log('[DATA MIGRATION] âœ… Moved db.json from', OLD_DB_PATH, 'â†’', DB_PATH)
  console.log('[DATA MIGRATION] Your data is now stored safely outside the Git folder.')
  } catch (me) {
- console.error('[DATA MIGRATION] ❌ Failed to migrate db.json:', me.message)
+ console.error('[DATA MIGRATION] âŒ Failed to migrate db.json:', me.message)
  }
 }
 function appendOrderLog(order) {
@@ -387,9 +387,9 @@ let settings = {
  serviceUrl: 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>'
  },
  offers: [
- { id: '1', title: 'Golden Gyro Feast (50% OFF)', desc: '1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink', tag: '50% OFF', price: '₹199', origPrice: '₹398', image: '/uploads/menu/m1.jpg' },
- { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2x Dip + Sauce', tag: 'Save ₹151', price: '₹299', origPrice: '₹450', image: '/uploads/menu/m2.jpg' },
- { id: '3', title: 'BOGO Thick Shake Delight', desc: 'Buy 1 Shake & get Vanilla Shake Free', tag: 'BUY 1 GET 1', price: '₹149', origPrice: '₹298', image: '/uploads/menu/m3.jpg' }
+ { id: '1', title: 'Golden Gyro Feast (50% OFF)', desc: '1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink', tag: '50% OFF', price: 'â‚¹199', origPrice: 'â‚¹398', image: '/uploads/menu/m1.jpg' },
+ { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2x Dip + Sauce', tag: 'Save â‚¹151', price: 'â‚¹299', origPrice: 'â‚¹450', image: '/uploads/menu/m2.jpg' },
+ { id: '3', title: 'BOGO Thick Shake Delight', desc: 'Buy 1 Shake & get Vanilla Shake Free', tag: 'BUY 1 GET 1', price: 'â‚¹149', origPrice: 'â‚¹298', image: '/uploads/menu/m3.jpg' }
  ],
  campaigns: {
  inauguration: { active: true, date: '2026-07-27', pct: 50, label: 'Inauguration Offer 50%' },
@@ -404,7 +404,7 @@ let aggregators = [
  { id: 'direct', name: 'Direct', displayName: 'Direct Order', isActive: true, defaultPrepTime: 20, color: '#4895ef' }
 ]
 
-// Vault files stored in DATA_DIR (~/tdg-data on Hostinger) — OUTSIDE Git folder
+// Vault files stored in DATA_DIR (~/tdg-data on Hostinger) â€” OUTSIDE Git folder
 // so they are NEVER overwritten by git pull / redeploy
 const VAULT_PATH = join(DATA_DIR, 'sales_vault_LOCK.json')
 const MENU_VAULT_PATH = join(DATA_DIR, 'menu_backup_LOCK.json')
@@ -427,7 +427,7 @@ for (const vf of OLD_VAULT_FILES) {
  if (!existsSync(vf.new) && existsSync(vf.old)) {
  try {
  writeFileSync(vf.new, readFileSync(vf.old))
- console.log('[VAULT MIGRATION] Moved', vf.old, '→', vf.new)
+ console.log('[VAULT MIGRATION] Moved', vf.old, 'â†’', vf.new)
  } catch (e) {
  console.error('[VAULT MIGRATION] Failed for', vf.old, ':', e.message)
  }
@@ -436,12 +436,12 @@ for (const vf of OLD_VAULT_FILES) {
 
 function syncSalesVault(currentOrders) {
   try {
-    // Priority order (lowest to highest): backups → vault → currentOrders
+    // Priority order (lowest to highest): backups â†’ vault â†’ currentOrders
     // currentOrders MUST be processed last so live/restored data always wins
     const orderMap = new Map()
     const getKey = (o) => String(o ? (o.id || '') : '')
 
-    // 1. Scan BACKUP_DIR first (lowest priority — oldest snapshots)
+    // 1. Scan BACKUP_DIR first (lowest priority â€” oldest snapshots)
     try {
       if (typeof BACKUP_DIR !== 'undefined' && existsSync(BACKUP_DIR)) {
         const backupFiles = readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json'))
@@ -471,7 +471,7 @@ function syncSalesVault(currentOrders) {
     }
     vaultOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
 
-    // 3. currentOrders override everything (highest priority — live/restored data)
+    // 3. currentOrders override everything (highest priority â€” live/restored data)
     if (Array.isArray(currentOrders)) {
       currentOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
     }
@@ -856,7 +856,7 @@ function restoreState() {
  }
 
  // Safety: only fall back to seed if BOTH menu items AND orders are missing
- // Do NOT treat 'no orders yet' as a broken database — that would wipe the user-saved menu
+ // Do NOT treat 'no orders yet' as a broken database â€” that would wipe the user-saved menu
  const hasMenuData = (db.menuItems && db.menuItems.length > 0) || (db.categories && db.categories.length > 0)
  const hasOrderData = db.orders && db.orders.length > 0
  const isDbMissing = !existsSync(DB_PATH) || !db || (!hasMenuData && !hasOrderData)
@@ -872,7 +872,7 @@ function restoreState() {
  foundBackup = findLatestValidBackup()
  }
  if (foundBackup) {
- console.log('[RESTORE] DB was empty — loaded from seed/backup.')
+ console.log('[RESTORE] DB was empty â€” loaded from seed/backup.')
  db = foundBackup
  }
  }
@@ -880,12 +880,12 @@ function restoreState() {
  // Sync with Vault Locks for absolute 100% data retention
  orders = syncSalesVault(db.orders || [])
 
-// ─── STARTUP MIGRATION: Auto-sanitize Hostinger 18-Aug-26 Orders ────────────
+// â”€â”€â”€ STARTUP MIGRATION: Auto-sanitize Hostinger 18-Aug-26 Orders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 try {
   const aug18List = (orders || []).filter(o => o && String(o.createdAt || o.date || '').startsWith('2026-08-18'))
   const totalAug18Val = aug18List.reduce((sum, o) => sum + Number(o.total || 0), 0)
   if (aug18List.length !== 36 || Math.round(totalAug18Val) !== 14247) {
-    console.log('[HOSTINGER MIGRATION] 🔄 Auto-sanitizing 18.08.26 orders to exact 36 screenshot bills...')
+    console.log('[HOSTINGER MIGRATION] ðŸ”„ Auto-sanitizing 18.08.26 orders to exact 36 screenshot bills...')
     const seedPath = join(__dirname, 'seed-db.json')
     if (existsSync(seedPath)) {
       const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
@@ -894,7 +894,7 @@ try {
         if (cleanAug18.length === 36) {
           orders = orders.filter(o => !String(o.createdAt || o.date || '').startsWith('2026-08-18')).concat(cleanAug18)
           writeDb({ orders })
-          console.log('[HOSTINGER MIGRATION] ✅ Successfully updated persistent Hostinger database to clean 36 bills (₹14,247)!')
+          console.log('[HOSTINGER MIGRATION] âœ… Successfully updated persistent Hostinger database to clean 36 bills (â‚¹14,247)!')
         }
       }
     }
@@ -915,7 +915,7 @@ try {
         if (items.length === 69) {
           menuItems = items
           categories = seedData.categories || categories
-          console.log(`[MENU RESTORE] ✅ Restored official 69 menu items from ${targetPath}`)
+          console.log(`[MENU RESTORE] âœ… Restored official 69 menu items from ${targetPath}`)
         }
       }
     } catch (e) {
@@ -1041,85 +1041,85 @@ let categories = [
   {
     "id": "c1",
     "name": "Gyros",
-    "icon": "🥙",
+    "icon": "ðŸ¥™",
     "color": "#d97706"
   },
   {
     "id": "c5_legthigh",
     "name": "Leg & Thigh",
-    "icon": "🍗",
+    "icon": "ðŸ—",
     "color": "#ea580c"
   },
   {
     "id": "c5_wings",
     "name": "Wings",
-    "icon": "🍗",
+    "icon": "ðŸ—",
     "color": "#b45309"
   },
   {
     "id": "c5_strips",
     "name": "Strips",
-    "icon": "🍗",
+    "icon": "ðŸ—",
     "color": "#ca8a04"
   },
   {
     "id": "c6",
     "name": "Fries",
-    "icon": "🍟",
+    "icon": "ðŸŸ",
     "color": "#f59e0b"
   },
   {
     "id": "c10_bev",
     "name": "Beverages",
-    "icon": "🥤",
+    "icon": "ðŸ¥¤",
     "color": "#0284c7"
   },
   {
     "id": "c3_rice_salad",
     "name": "Rice & Salads",
-    "icon": "🍚🥗",
+    "icon": "ðŸšðŸ¥—",
     "color": "#059669"
   },
   {
     "id": "c2",
     "name": "Meals & Combos",
-    "icon": "🍱",
+    "icon": "ðŸ±",
     "color": "#8b5cf6"
   },
   {
     "id": "c11",
     "name": "Protein Max",
-    "icon": "💪",
+    "icon": "ðŸ’ª",
     "color": "#10b981"
   },
   {
     "id": "c7_shakes",
     "name": "Shakes",
-    "icon": "🥤",
+    "icon": "ðŸ¥¤",
     "color": "#db2777"
   },
   {
     "id": "c9",
     "name": "Desserts",
-    "icon": "🍰",
+    "icon": "ðŸ°",
     "color": "#ec4899"
   },
   {
     "id": "c4",
     "name": "Softy & Add-Ons",
-    "icon": "🍦",
+    "icon": "ðŸ¦",
     "color": "#e63946"
   },
   {
     "id": "c10_komb",
     "name": "Kombucha",
-    "icon": "🍹",
+    "icon": "ðŸ¹",
     "color": "#0284c7"
   },
   {
     "id": "c_new_combo",
     "name": "New Combo",
-    "icon": "📦",
+    "icon": "ðŸ“¦",
     "color": "#e63946",
     "displayOrder": 7
   }
@@ -1644,7 +1644,7 @@ let menuItems = [
     "categoryId": "c10_komb",
     "name": "Mint Kombucha",
     "price": 114.29,
-    "description": "Mint Kombucha 250ml (₹120 Inclusive of Tax)",
+    "description": "Mint Kombucha 250ml (â‚¹120 Inclusive of Tax)",
     "isAvailable": true,
     "image": "/images/menu/mint-kombucha.png",
     "taxInclusive": true
@@ -1654,7 +1654,7 @@ let menuItems = [
     "categoryId": "c10_komb",
     "name": "Hibiscus Kombucha",
     "price": 114.29,
-    "description": "Hibiscus Kombucha 250ml (₹120 Inclusive of Tax)",
+    "description": "Hibiscus Kombucha 250ml (â‚¹120 Inclusive of Tax)",
     "isAvailable": true,
     "image": "/images/menu/kombucha-hibiscus.png",
     "taxInclusive": true
@@ -1664,7 +1664,7 @@ let menuItems = [
     "categoryId": "c10_komb",
     "name": "Classic Kombucha",
     "price": 114.29,
-    "description": "Classic Kombucha 250ml (₹120 Inclusive of Tax)",
+    "description": "Classic Kombucha 250ml (â‚¹120 Inclusive of Tax)",
     "isAvailable": true,
     "image": "/images/menu/kombucha.png",
     "taxInclusive": true
@@ -1776,7 +1776,7 @@ let recipes = [
  "menuItemId": "m53a",
  "menuItemName": "Coca-Cola (Regular)",
  "name": "COLA 330ML",
- "description": "Standard recipe for COLA 330ML (Price ₹59/-)",
+ "description": "Standard recipe for COLA 330ML (Price â‚¹59/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 24.36,
@@ -1837,7 +1837,7 @@ let recipes = [
  "menuItemId": "m54a",
  "menuItemName": "Sprite (Regular)",
  "name": "SPRITE 330ML",
- "description": "Standard recipe for SPRITE 330ML (Price ₹59/-)",
+ "description": "Standard recipe for SPRITE 330ML (Price â‚¹59/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 24.36,
@@ -1898,7 +1898,7 @@ let recipes = [
  "menuItemId": "m53b",
  "menuItemName": "Coca-Cola (Large)",
  "name": "COLA 650ML",
- "description": "Standard recipe for COLA 650ML (Price ₹99/-)",
+ "description": "Standard recipe for COLA 650ML (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 48.72,
@@ -1959,7 +1959,7 @@ let recipes = [
  "menuItemId": "m54b",
  "menuItemName": "Sprite (Large)",
  "name": "SPRITE 650ML",
- "description": "Standard recipe for SPRITE 650ML (Price ₹99/-)",
+ "description": "Standard recipe for SPRITE 650ML (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 48.72,
@@ -2020,7 +2020,7 @@ let recipes = [
  "menuItemId": "m56a",
  "menuItemName": "Lime Ice Tea (Regular)",
  "name": "Lime 330ml",
- "description": "Standard recipe for Lime Ice Tea 330ml (Price ₹59/-)",
+ "description": "Standard recipe for Lime Ice Tea 330ml (Price â‚¹59/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 17.4,
@@ -2081,7 +2081,7 @@ let recipes = [
  "menuItemId": "m55a",
  "menuItemName": "Peach Ice Tea (Regular)",
  "name": "Peach 330ml",
- "description": "Standard recipe for Peach Ice Tea 330ml (Price ₹59/-)",
+ "description": "Standard recipe for Peach Ice Tea 330ml (Price â‚¹59/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 17.4,
@@ -2142,7 +2142,7 @@ let recipes = [
  "menuItemId": "m56b",
  "menuItemName": "Lime Ice Tea (Large)",
  "name": "Lime 650ml",
- "description": "Standard recipe for Lime Ice Tea 650ml (Price ₹99/-)",
+ "description": "Standard recipe for Lime Ice Tea 650ml (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 34.8,
@@ -2203,7 +2203,7 @@ let recipes = [
  "menuItemId": "m55b",
  "menuItemName": "Peach Ice Tea (Large)",
  "name": "Peach 650ml",
- "description": "Standard recipe for Peach Ice Tea 650ml (Price ₹99/-)",
+ "description": "Standard recipe for Peach Ice Tea 650ml (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 34.8,
@@ -2264,7 +2264,7 @@ let recipes = [
  "menuItemId": "m60",
  "menuItemName": "Chocolate Brownie",
  "name": "CHOCOLATE BROWNIE",
- "description": "Standard recipe for Chocolate Brownie (Price ₹99/-)",
+ "description": "Standard recipe for Chocolate Brownie (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 29.82,
@@ -2397,7 +2397,7 @@ let recipes = [
  "menuItemId": "m61",
  "menuItemName": "Blondie Cake",
  "name": "BLONDIE CAKE",
- "description": "Standard recipe for Blondie Cake (Price ₹99/-)",
+ "description": "Standard recipe for Blondie Cake (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 28.62,
@@ -2922,7 +2922,7 @@ let recipes = [
  "menuItemId": "m13",
  "menuItemName": "4 Pc Leg & Thigh (2 Dips)",
  "name": "CRISPY CHICKEN 4 PCS",
- "description": "Standard recipe for 4 Pc Crispy Chicken Leg & Thigh (Price ₹280/-)",
+ "description": "Standard recipe for 4 Pc Crispy Chicken Leg & Thigh (Price â‚¹280/-)",
  "yieldQty": 1,
  "prepTime": 15,
  "rmCost": 120.8,
@@ -3019,7 +3019,7 @@ let recipes = [
  "menuItemId": "m14",
  "menuItemName": "8 Pc Leg & Thigh (4 Dips)",
  "name": "CRISPY CHICKEN 8 PCS",
- "description": "Standard recipe for 8 Pc Crispy Chicken Leg & Thigh (Price ₹560/-)",
+ "description": "Standard recipe for 8 Pc Crispy Chicken Leg & Thigh (Price â‚¹560/-)",
  "yieldQty": 1,
  "prepTime": 18,
  "rmCost": 241.6,
@@ -3116,7 +3116,7 @@ let recipes = [
  "menuItemId": "m15",
  "menuItemName": "12 Pc Leg & Thigh (6 Dips)",
  "name": "CRISPY CHICKEN 12 PCS",
- "description": "Standard recipe for 12 Pc Crispy Chicken Leg & Thigh (Price ₹840/-)",
+ "description": "Standard recipe for 12 Pc Crispy Chicken Leg & Thigh (Price â‚¹840/-)",
  "yieldQty": 1,
  "prepTime": 20,
  "rmCost": 362.4,
@@ -3213,7 +3213,7 @@ let recipes = [
  "menuItemId": "m16",
  "menuItemName": "3 Pc Wings (1 Dip)",
  "name": "CRISPY WINGS 3 PCS",
- "description": "Standard recipe for 3 Pc Crispy Chicken Wings (Price ₹90/-)",
+ "description": "Standard recipe for 3 Pc Crispy Chicken Wings (Price â‚¹90/-)",
  "yieldQty": 1,
  "prepTime": 10,
  "rmCost": 30.9,
@@ -3301,7 +3301,7 @@ let recipes = [
  "menuItemId": "m17",
  "menuItemName": "6 Pc Wings (2 Dips)",
  "name": "CRISPY WINGS 6 PCS",
- "description": "Standard recipe for 6 Pc Crispy Chicken Wings (Price ₹180/-)",
+ "description": "Standard recipe for 6 Pc Crispy Chicken Wings (Price â‚¹180/-)",
  "yieldQty": 1,
  "prepTime": 10,
  "rmCost": 61.8,
@@ -3389,7 +3389,7 @@ let recipes = [
  "menuItemId": "m18",
  "menuItemName": "9 Pc Wings (3 Dips)",
  "name": "CRISPY WINGS 9 PCS",
- "description": "Standard recipe for 9 Pc Crispy Chicken Wings (Price ₹270/-)",
+ "description": "Standard recipe for 9 Pc Crispy Chicken Wings (Price â‚¹270/-)",
  "yieldQty": 1,
  "prepTime": 12,
  "rmCost": 92.7,
@@ -3477,7 +3477,7 @@ let recipes = [
  "menuItemId": "m19",
  "menuItemName": "20 Pc Wings (6 Dips)",
  "name": "CRISPY WINGS 20 PCS",
- "description": "Standard recipe for 20 Pc Crispy Chicken Wings (Price ₹600/-)",
+ "description": "Standard recipe for 20 Pc Crispy Chicken Wings (Price â‚¹600/-)",
  "yieldQty": 1,
  "prepTime": 15,
  "rmCost": 206,
@@ -3565,7 +3565,7 @@ let recipes = [
  "menuItemId": "m20",
  "menuItemName": "60 Pc Wings (12 Dips)",
  "name": "CRISPY WINGS 60 PCS",
- "description": "Standard recipe for 60 Pc Crispy Chicken Wings (Price ₹1500/-)",
+ "description": "Standard recipe for 60 Pc Crispy Chicken Wings (Price â‚¹1500/-)",
  "yieldQty": 1,
  "prepTime": 25,
  "rmCost": 515,
@@ -3653,7 +3653,7 @@ let recipes = [
  "menuItemId": "m21",
  "menuItemName": "3 Pc Strips (1 Dip)",
  "name": "CRISPY STRIPS 3 PCS",
- "description": "Standard recipe for 3 Pc Crispy Chicken Strips (Price ₹120/-)",
+ "description": "Standard recipe for 3 Pc Crispy Chicken Strips (Price â‚¹120/-)",
  "yieldQty": 1,
  "prepTime": 10,
  "rmCost": 42.9,
@@ -3741,7 +3741,7 @@ let recipes = [
  "menuItemId": "m22",
  "menuItemName": "6 Pc Strips (2 Dips)",
  "name": "CRISPY STRIPS 6 PCS",
- "description": "Standard recipe for 6 Pc Crispy Chicken Strips (Price ₹240/-)",
+ "description": "Standard recipe for 6 Pc Crispy Chicken Strips (Price â‚¹240/-)",
  "yieldQty": 1,
  "prepTime": 10,
  "rmCost": 85.8,
@@ -3829,7 +3829,7 @@ let recipes = [
  "menuItemId": "m23",
  "menuItemName": "9 Pc Strips (3 Dips)",
  "name": "CRISPY STRIPS 9 PCS",
- "description": "Standard recipe for 9 Pc Crispy Chicken Strips (Price ₹360/-)",
+ "description": "Standard recipe for 9 Pc Crispy Chicken Strips (Price â‚¹360/-)",
  "yieldQty": 1,
  "prepTime": 12,
  "rmCost": 128.7,
@@ -3917,7 +3917,7 @@ let recipes = [
  "menuItemId": "m24",
  "menuItemName": "20 Pc Strips (6 Dips)",
  "name": "CRISPY STRIPS 20 PCS",
- "description": "Standard recipe for 20 Pc Crispy Chicken Strips (Price ₹800/-)",
+ "description": "Standard recipe for 20 Pc Crispy Chicken Strips (Price â‚¹800/-)",
  "yieldQty": 1,
  "prepTime": 15,
  "rmCost": 286,
@@ -4005,7 +4005,7 @@ let recipes = [
  "menuItemId": "m25",
  "menuItemName": "60 Pc Strips (12 Dips)",
  "name": "CRISPY STRIPS 60 PCS",
- "description": "Standard recipe for 60 Pc Crispy Chicken Strips (Price ₹2400/-)",
+ "description": "Standard recipe for 60 Pc Crispy Chicken Strips (Price â‚¹2400/-)",
  "yieldQty": 1,
  "prepTime": 25,
  "rmCost": 858,
@@ -5323,7 +5323,7 @@ let recipes = [
  "menuItemId": "m26a",
  "menuItemName": "Salted Fries",
  "name": "FRENCH FRIES",
- "description": "Standard recipe for Salted French Fries (Price ₹99/-)",
+ "description": "Standard recipe for Salted French Fries (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 15.37,
@@ -5411,7 +5411,7 @@ let recipes = [
  "menuItemId": "m26b",
  "menuItemName": "Peri Peri Fries",
  "name": "PERI PERI FRIES",
- "description": "Standard recipe for Peri Peri Fries (Price ₹99/-)",
+ "description": "Standard recipe for Peri Peri Fries (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 19.92,
@@ -5499,7 +5499,7 @@ let recipes = [
  "menuItemId": "m26c",
  "menuItemName": "Cajun Fries",
  "name": "KAJU FRIES",
- "description": "Standard recipe for Cajun Fries (Price ₹99/-)",
+ "description": "Standard recipe for Cajun Fries (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 20.02,
@@ -5587,7 +5587,7 @@ let recipes = [
  "menuItemId": "m42",
  "menuItemName": "Vanilla Shake (Regular)",
  "name": "VANILLA SHAKE REGULAR",
- "description": "Standard recipe for Vanilla Shake Regular (Price ₹120/-)",
+ "description": "Standard recipe for Vanilla Shake Regular (Price â‚¹120/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 24.5,
@@ -5648,7 +5648,7 @@ let recipes = [
  "menuItemId": "m43",
  "menuItemName": "Vanilla Shake (Large)",
  "name": "VANILLA SHAKE LARGE",
- "description": "Standard recipe for Vanilla Shake Large (Price ₹199/-)",
+ "description": "Standard recipe for Vanilla Shake Large (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 39.74,
@@ -5709,7 +5709,7 @@ let recipes = [
  "menuItemId": "m44",
  "menuItemName": "Strawberry Shake (Regular)",
  "name": "STRAWBERRY SHAKE REGULAR",
- "description": "Standard recipe for Strawberry Shake Regular (Price ₹120/-)",
+ "description": "Standard recipe for Strawberry Shake Regular (Price â‚¹120/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 24.8,
@@ -5770,7 +5770,7 @@ let recipes = [
  "menuItemId": "m45",
  "menuItemName": "Strawberry Shake (Large)",
  "name": "STRAWBERRY SHAKE LARGE",
- "description": "Standard recipe for Strawberry Shake Large (Price ₹199/-)",
+ "description": "Standard recipe for Strawberry Shake Large (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 40.24,
@@ -5831,7 +5831,7 @@ let recipes = [
  "menuItemId": "m46",
  "menuItemName": "Biscoff Shake (Regular)",
  "name": "BISCOFF SHAKE REGULAR",
- "description": "Standard recipe for Biscoff Shake Regular (Price ₹120/-)",
+ "description": "Standard recipe for Biscoff Shake Regular (Price â‚¹120/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 38.9,
@@ -5892,7 +5892,7 @@ let recipes = [
  "menuItemId": "m47",
  "menuItemName": "Biscoff Shake (Large)",
  "name": "BISCOFF SHAKE LARGE",
- "description": "Standard recipe for Biscoff Shake Large (Price ₹199/-)",
+ "description": "Standard recipe for Biscoff Shake Large (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 63.74,
@@ -5953,7 +5953,7 @@ let recipes = [
  "menuItemId": "m48",
  "menuItemName": "Chocolate Shake (Regular)",
  "name": "CHOCOLATE SHAKE REGULAR",
- "description": "Standard recipe for Chocolate Shake Regular (Price ₹120/-)",
+ "description": "Standard recipe for Chocolate Shake Regular (Price â‚¹120/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 26,
@@ -6014,7 +6014,7 @@ let recipes = [
  "menuItemId": "m49",
  "menuItemName": "Chocolate Shake (Large)",
  "name": "CHOCOLATE SHAKE LARGE",
- "description": "Standard recipe for Chocolate Shake Large (Price ₹199/-)",
+ "description": "Standard recipe for Chocolate Shake Large (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 42.24,
@@ -6075,7 +6075,7 @@ let recipes = [
  "menuItemId": "m50",
  "menuItemName": "Kunafa Pistachio Shake (Regular)",
  "name": "KUNAFA PISTACHIO SHAKE REGULAR",
- "description": "Standard recipe for Kunafa Pistachio Shake Regular (Price ₹120/-)",
+ "description": "Standard recipe for Kunafa Pistachio Shake Regular (Price â‚¹120/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 44.9,
@@ -6136,7 +6136,7 @@ let recipes = [
  "menuItemId": "m51",
  "menuItemName": "Kunafa Pistachio Shake (Large)",
  "name": "KUNAFA PISTACHIO SHAKE LARGE",
- "description": "Standard recipe for Kunafa Pistachio Shake Large (Price ₹199/-)",
+ "description": "Standard recipe for Kunafa Pistachio Shake Large (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 73.74,
@@ -6197,7 +6197,7 @@ let recipes = [
  "menuItemId": "m52",
  "menuItemName": "Vanilla Softy",
  "name": "VANILLA SOFTY",
- "description": "Standard recipe for Vanilla Softy Cone (Price ₹39/-)",
+ "description": "Standard recipe for Vanilla Softy Cone (Price â‚¹39/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 6.5,
@@ -6249,7 +6249,7 @@ let recipes = [
  "menuItemId": "m57",
  "menuItemName": "Hot Chocolate",
  "name": "HOT CHOCOLATE",
- "description": "Standard recipe for Hot Chocolate (Price ₹99/-)",
+ "description": "Standard recipe for Hot Chocolate (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 21.97,
@@ -6310,7 +6310,7 @@ let recipes = [
  "menuItemId": "m58",
  "menuItemName": "Signature Tea",
  "name": "SIGNATURE TEA",
- "description": "Standard recipe for Signature Tea (Price ₹99/-)",
+ "description": "Standard recipe for Signature Tea (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 15,
@@ -6371,7 +6371,7 @@ let recipes = [
  "menuItemId": "m59a",
  "menuItemName": "Mint Kombucha",
  "name": "MINT KOMBUCHA",
- "description": "Standard recipe for Mint Kombucha (Price ₹114.29/-)",
+ "description": "Standard recipe for Mint Kombucha (Price â‚¹114.29/-)",
  "yieldQty": 1,
  "prepTime": 3,
  "rmCost": 32.5,
@@ -6423,7 +6423,7 @@ let recipes = [
  "menuItemId": "m59b",
  "menuItemName": "Hibiscus Kombucha",
  "name": "HIBISCUS KOMBUCHA",
- "description": "Standard recipe for Hibiscus Kombucha (Price ₹114.29/-)",
+ "description": "Standard recipe for Hibiscus Kombucha (Price â‚¹114.29/-)",
  "yieldQty": 1,
  "prepTime": 3,
  "rmCost": 32.5,
@@ -6475,7 +6475,7 @@ let recipes = [
  "menuItemId": "m59c",
  "menuItemName": "Ginger Kombucha",
  "name": "GINGER KOMBUCHA",
- "description": "Standard recipe for Ginger Kombucha (Price ₹114.29/-)",
+ "description": "Standard recipe for Ginger Kombucha (Price â‚¹114.29/-)",
  "yieldQty": 1,
  "prepTime": 3,
  "rmCost": 32.5,
@@ -6527,7 +6527,7 @@ let recipes = [
  "menuItemId": "m59d",
  "menuItemName": "Butterfly Pea Kombucha",
  "name": "BUTTERFLY PEA KOMBUCHA",
- "description": "Standard recipe for Butterfly Pea Kombucha (Price ₹114.29/-)",
+ "description": "Standard recipe for Butterfly Pea Kombucha (Price â‚¹114.29/-)",
  "yieldQty": 1,
  "prepTime": 3,
  "rmCost": 32.5,
@@ -6823,7 +6823,7 @@ let recipes = [
  "menuItemId": "m27a",
  "menuItemName": "Loaded Chicken Fries",
  "name": "RECIPE - LOADED CHICKEN FRIES",
- "description": "Standard recipe for Loaded Chicken Fries (Price ₹199/-)",
+ "description": "Standard recipe for Loaded Chicken Fries (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 52.91,
@@ -6884,7 +6884,7 @@ let recipes = [
  "menuItemId": "m27b",
  "menuItemName": "Loaded Paneer Fries",
  "name": "RECIPE - LOADED PANEER FRIES",
- "description": "Standard recipe for Loaded Paneer Fries (Price ₹199/-)",
+ "description": "Standard recipe for Loaded Paneer Fries (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 52.91,
@@ -6945,7 +6945,7 @@ let recipes = [
  "menuItemId": "m28a",
  "menuItemName": "Lebanese Rice Bowl (Chicken)",
  "name": "RECIPE - LEBANESE RICE BOWL (CHICKEN)",
- "description": "Standard recipe for Lebanese Rice Bowl (Chicken) (Price ₹199/-)",
+ "description": "Standard recipe for Lebanese Rice Bowl (Chicken) (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7006,7 +7006,7 @@ let recipes = [
  "menuItemId": "m28b",
  "menuItemName": "Lebanese Rice Bowl (Paneer)",
  "name": "RECIPE - LEBANESE RICE BOWL (PANEER)",
- "description": "Standard recipe for Lebanese Rice Bowl (Paneer) (Price ₹199/-)",
+ "description": "Standard recipe for Lebanese Rice Bowl (Paneer) (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7067,7 +7067,7 @@ let recipes = [
  "menuItemId": "m29a",
  "menuItemName": "Signature Salad (Chicken)",
  "name": "RECIPE - SIGNATURE SALAD (CHICKEN)",
- "description": "Standard recipe for Signature Salad (Chicken) (Price ₹149/-)",
+ "description": "Standard recipe for Signature Salad (Chicken) (Price â‚¹149/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7128,7 +7128,7 @@ let recipes = [
  "menuItemId": "m29b",
  "menuItemName": "Signature Salad (Paneer)",
  "name": "RECIPE - SIGNATURE SALAD (PANEER)",
- "description": "Standard recipe for Signature Salad (Paneer) (Price ₹149/-)",
+ "description": "Standard recipe for Signature Salad (Paneer) (Price â‚¹149/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7189,7 +7189,7 @@ let recipes = [
  "menuItemId": "m30",
  "menuItemName": "Express Meal",
  "name": "RECIPE - EXPRESS MEAL",
- "description": "Standard recipe for Express Meal (Price ₹149/-)",
+ "description": "Standard recipe for Express Meal (Price â‚¹149/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 37.25,
@@ -7232,7 +7232,7 @@ let recipes = [
  "menuItemId": "m31",
  "menuItemName": "Classic Gyro Meal",
  "name": "RECIPE - CLASSIC GYRO MEAL",
- "description": "Standard recipe for Classic Gyro Meal (Price ₹249/-)",
+ "description": "Standard recipe for Classic Gyro Meal (Price â‚¹249/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 31.72,
@@ -7293,7 +7293,7 @@ let recipes = [
  "menuItemId": "m32",
  "menuItemName": "Signature Gyro Meal",
  "name": "RECIPE - SIGNATURE GYRO MEAL",
- "description": "Standard recipe for Signature Gyro Meal (Price ₹299/-)",
+ "description": "Standard recipe for Signature Gyro Meal (Price â‚¹299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 53.51,
@@ -7354,7 +7354,7 @@ let recipes = [
  "menuItemId": "m33",
  "menuItemName": "Lebanese Rice Box",
  "name": "RECIPE - LEBANESE RICE BOX",
- "description": "Standard recipe for Lebanese Rice Box (Price ₹299/-)",
+ "description": "Standard recipe for Lebanese Rice Box (Price â‚¹299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7415,7 +7415,7 @@ let recipes = [
  "menuItemId": "m34",
  "menuItemName": "Duo Gyro Feast",
  "name": "RECIPE - DUO GYRO FEAST",
- "description": "Standard recipe for Duo Gyro Feast (Price ₹349/-)",
+ "description": "Standard recipe for Duo Gyro Feast (Price â‚¹349/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 31.72,
@@ -7476,7 +7476,7 @@ let recipes = [
  "menuItemId": "m35",
  "menuItemName": "Double Crunch Box",
  "name": "RECIPE - DOUBLE CRUNCH BOX",
- "description": "Standard recipe for Double Crunch Box (Price ₹499/-)",
+ "description": "Standard recipe for Double Crunch Box (Price â‚¹499/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 124.75,
@@ -7519,7 +7519,7 @@ let recipes = [
  "menuItemId": "m36",
  "menuItemName": "Mega Feast Meal",
  "name": "RECIPE - MEGA FEAST MEAL",
- "description": "Standard recipe for Mega Feast Meal (Price ₹649/-)",
+ "description": "Standard recipe for Mega Feast Meal (Price â‚¹649/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 162.25,
@@ -7562,7 +7562,7 @@ let recipes = [
  "menuItemId": "m37",
  "menuItemName": "Den's Party Meal",
  "name": "RECIPE - DEN'S PARTY MEAL",
- "description": "Standard recipe for Den's Party Meal (Price ₹899/-)",
+ "description": "Standard recipe for Den's Party Meal (Price â‚¹899/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 224.75,
@@ -7605,7 +7605,7 @@ let recipes = [
  "menuItemId": "m38",
  "menuItemName": "Super 5 Bucket",
  "name": "RECIPE - SUPER 5 BUCKET",
- "description": "Standard recipe for Super 5 Bucket (Price ₹1299/-)",
+ "description": "Standard recipe for Super 5 Bucket (Price â‚¹1299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 324.75,
@@ -7709,7 +7709,7 @@ let recipes = [
  "menuItemId": "m40a",
  "menuItemName": "Lebanese Rice - Protein Max (Chicken)",
  "name": "RECIPE - LEBANESE RICE - PROTEIN MAX (CHICKEN)",
- "description": "Standard recipe for Lebanese Rice - Protein Max (Chicken) (Price ₹299/-)",
+ "description": "Standard recipe for Lebanese Rice - Protein Max (Chicken) (Price â‚¹299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7770,7 +7770,7 @@ let recipes = [
  "menuItemId": "m40b",
  "menuItemName": "Lebanese Rice - Protein Max (Paneer)",
  "name": "RECIPE - LEBANESE RICE - PROTEIN MAX (PANEER)",
- "description": "Standard recipe for Lebanese Rice - Protein Max (Paneer) (Price ₹299/-)",
+ "description": "Standard recipe for Lebanese Rice - Protein Max (Paneer) (Price â‚¹299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7831,7 +7831,7 @@ let recipes = [
  "menuItemId": "m41a",
  "menuItemName": "Salad - Protein Max (Chicken)",
  "name": "RECIPE - SALAD - PROTEIN MAX (CHICKEN)",
- "description": "Standard recipe for Salad - Protein Max (Chicken) (Price ₹299/-)",
+ "description": "Standard recipe for Salad - Protein Max (Chicken) (Price â‚¹299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7892,7 +7892,7 @@ let recipes = [
  "menuItemId": "m41b",
  "menuItemName": "Salad - Protein Max (Paneer)",
  "name": "RECIPE - SALAD - PROTEIN MAX (PANEER)",
- "description": "Standard recipe for Salad - Protein Max (Paneer) (Price ₹299/-)",
+ "description": "Standard recipe for Salad - Protein Max (Paneer) (Price â‚¹299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7953,7 +7953,7 @@ let recipes = [
  "menuItemId": "m62a",
  "menuItemName": "Turkish Chilli Dip",
  "name": "RECIPE - TURKISH CHILLI DIP",
- "description": "Standard recipe for Turkish Chilli Dip (Price ₹15/-)",
+ "description": "Standard recipe for Turkish Chilli Dip (Price â‚¹15/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 1.73,
@@ -7996,7 +7996,7 @@ let recipes = [
  "menuItemId": "m62b",
  "menuItemName": "Jalapeno Cheese Dip",
  "name": "RECIPE - JALAPENO CHEESE DIP",
- "description": "Standard recipe for Jalapeno Cheese Dip (Price ₹15/-)",
+ "description": "Standard recipe for Jalapeno Cheese Dip (Price â‚¹15/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 1.73,
@@ -8039,7 +8039,7 @@ let recipes = [
  "menuItemId": "m62c",
  "menuItemName": "Garlic Mayo Dip",
  "name": "RECIPE - GARLIC MAYO DIP",
- "description": "Standard recipe for Garlic Mayo Dip (Price ₹15/-)",
+ "description": "Standard recipe for Garlic Mayo Dip (Price â‚¹15/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 1.73,
@@ -8082,7 +8082,7 @@ let recipes = [
  "menuItemId": "m62d",
  "menuItemName": "Spicy Mayo Dip",
  "name": "RECIPE - SPICY MAYO DIP",
- "description": "Standard recipe for Spicy Mayo Dip (Price ₹15/-)",
+ "description": "Standard recipe for Spicy Mayo Dip (Price â‚¹15/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 1.73,
@@ -8125,7 +8125,7 @@ let recipes = [
  "menuItemId": "m62e",
  "menuItemName": "Peri Peri Dip",
  "name": "RECIPE - PERI PERI DIP",
- "description": "Standard recipe for Peri Peri Dip (Price ₹15/-)",
+ "description": "Standard recipe for Peri Peri Dip (Price â‚¹15/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 1.73,
@@ -8168,7 +8168,7 @@ let recipes = [
  "menuItemId": "m62f",
  "menuItemName": "Honey Mustard Dip",
  "name": "RECIPE - HONEY MUSTARD DIP",
- "description": "Standard recipe for Honey Mustard Dip (Price ₹15/-)",
+ "description": "Standard recipe for Honey Mustard Dip (Price â‚¹15/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 1.73,
@@ -8308,7 +8308,7 @@ function optionalPosAuth(req, res, next) {
 
 // ============ MOBILE APP API ROUTES ============
 
-// Verify asset OTP — called by the referred person during signup or after Firebase Phone Auth
+// Verify asset OTP â€” called by the referred person during signup or after Firebase Phone Auth
 app.post('/api/assets/verify-otp', (req, res) => {
  const { phone, otp } = req.body
  if (!phone || !otp) return res.status(400).json({ message: 'Phone and OTP required' })
@@ -8326,7 +8326,7 @@ app.post('/api/assets/verify-otp', (req, res) => {
  if (asset.otpExpiry && new Date(asset.otpExpiry) < new Date()) {
  return res.status(400).json({ message: 'OTP expired. Ask your referrer to add you again.' })
  }
- // OTP valid — activate asset
+ // OTP valid â€” activate asset
  asset.status = 'active'
  asset.activatedAt = new Date().toISOString()
  asset.otp = null
@@ -9054,7 +9054,7 @@ app.get('/api/assets', auth, (req, res) => {
  })
 })
 
-// Add an asset (friend) — always pending, asset user must accept/reject on login
+// Add an asset (friend) â€” always pending, asset user must accept/reject on login
 app.post('/api/assets', auth, (req, res) => {
  const { name, phone } = req.body
  if (!name || !phone) return res.status(400).json({ message: 'Name and phone required' })
@@ -9084,7 +9084,7 @@ app.post('/api/assets', auth, (req, res) => {
  assets.push(newAsset)
  user.assets = assets
  saveState()
- console.log(`[ASSET ADDED] ${user.name} added ${name} (${phone}) — pending their acceptance`)
+ console.log(`[ASSET ADDED] ${user.name} added ${name} (${phone}) â€” pending their acceptance`)
 
  res.json({
  success: true,
@@ -9159,7 +9159,7 @@ const handleRemoveAsset = (req, res) => {
 app.delete('/api/assets/:assetId', auth, handleRemoveAsset)
 app.post('/api/assets/:assetId/delete', auth, handleRemoveAsset)
 
-// Respond to an asset request (accept or reject) — called by the ASSET user on login
+// Respond to an asset request (accept or reject) â€” called by the ASSET user on login
 app.post('/api/assets/respond', auth, (req, res) => {
  const { masterId, assetId, action } = req.body
  if (!masterId || !assetId || !action) {
@@ -9304,10 +9304,10 @@ app.get('/api/assets/discount/:phone', (req, res) => {
  if (isAsset) {
  if (billAmount > 0 && billAmount < 500) {
  discount = 20
- message = '20% asset discount (bill under ₹500)'
+ message = '20% asset discount (bill under â‚¹500)'
  } else if (billAmount >= 500) {
  discount = 25
- message = '25% asset discount (bill ₹500+)'
+ message = '25% asset discount (bill â‚¹500+)'
  } else {
  discount = 20
  message = '20% asset discount'
@@ -9720,7 +9720,7 @@ app.get('/api/customers/check-discount', (req, res) => {
         customerName: custName,
         phone: user.phone || user.customerPhone || user.mobile || phone,
         tier: 'Offer Redeemed',
-        discountReason: '⚠️ 1-Time VIP Offer Already Redeemed for this phone number'
+        discountReason: 'âš ï¸ 1-Time VIP Offer Already Redeemed for this phone number'
       })
     }
 
@@ -10067,7 +10067,7 @@ app.post('/api/mobile/redeem-points', (req, res) => {
  phone: cleanP,
  points: -actualRedeemPoints,
  type: 'redemption',
- description: `Redeemed ${actualRedeemPoints} points on bill total ₹${billTotal}`,
+ description: `Redeemed ${actualRedeemPoints} points on bill total â‚¹${billTotal}`,
  createdAt: new Date().toISOString()
  })
 
@@ -10363,7 +10363,7 @@ app.post('/api/cashfree/create-order', async (req, res) => {
  }
  } else {
  // Dev Simulation / Sandbox Mode when live keys are pending
- console.log(`[CASHFREE DEV SIMULATION] OrderID: ${generatedOrderId}, Amount: ₹${amount}`)
+ console.log(`[CASHFREE DEV SIMULATION] OrderID: ${generatedOrderId}, Amount: â‚¹${amount}`)
  return res.json({
  success: true,
  paymentSessionId: `session_sim_${Date.now()}`,
@@ -10906,7 +10906,7 @@ app.post('/api/admin/double-backup/create', (req, res) => {
     saveState()
     res.json({
       success: true,
-      message: '✅ Synchronous Master Double-Backup Completed across all vaults!',
+      message: 'âœ… Synchronous Master Double-Backup Completed across all vaults!',
       backupMeta: backupResult ? backupResult._meta : null
     })
   } catch (e) {
@@ -11694,7 +11694,7 @@ app.post('/api/ccavenue/response', express.urlencoded({ extended: true }), (req,
  </head>
  <body>
  <div class="card">
- <div class="icon">${isSuccess ? '🎉' : '❌'}</div>
+ <div class="icon">${isSuccess ? 'ðŸŽ‰' : 'âŒ'}</div>
  <h2>Payment ${isSuccess ? 'Successful!' : 'Failed'}</h2>
  <p>${isSuccess ? `Order #${orderId} paid successfully.<br>Ref: ${trackingId}` : failureMessage || 'Payment could not be completed.'}</p>
  <button class="btn" onclick="finishPayment()">Return to App</button>
@@ -12410,9 +12410,9 @@ app.get('/api/admin/menu/export-excel', (req, res) => {
  'Item ID': item.id,
  'Item Name': item.name,
  'Category': cat ? cat.name : 'Uncategorized',
- 'Price (₹)': item.price,
- 'Cost (₹)': cost !== null ? Number(cost.toFixed(2)) : 'N/A',
- 'Profit (₹)': profit !== null ? Number(profit.toFixed(2)) : 'N/A',
+ 'Price (â‚¹)': item.price,
+ 'Cost (â‚¹)': cost !== null ? Number(cost.toFixed(2)) : 'N/A',
+ 'Profit (â‚¹)': profit !== null ? Number(profit.toFixed(2)) : 'N/A',
  'Margin (%)': margin !== null ? `${margin}%` : 'N/A',
  'Available': item.isAvailable !== false ? 'Yes' : 'No',
  'Recipe Mapped': recipe ? 'Yes' : 'No',
@@ -12443,8 +12443,8 @@ app.get('/api/admin/menu/export-excel', (req, res) => {
  'Ingredient Name': ing.inventoryName || (invItem ? invItem.name : 'Unknown'),
  'Quantity': ing.quantity,
  'Unit': ing.unit || '',
- 'Cost Per Unit (₹)': cpu,
- 'Ingredient Cost (₹)': Number(totalCost.toFixed(2))
+ 'Cost Per Unit (â‚¹)': cpu,
+ 'Ingredient Cost (â‚¹)': Number(totalCost.toFixed(2))
  })
  })
  })
@@ -12494,7 +12494,7 @@ app.post('/api/admin/menu/import-excel', (req, res) => {
  // 2. Process items
  items.forEach(row => {
  const itemName = row['Item Name'] || row.name || row['Name'] || row['Item']
- const priceVal = row['Price (₹)'] || row.price || row['Price']
+ const priceVal = row['Price (â‚¹)'] || row.price || row['Price']
  if (!itemName || priceVal === undefined || priceVal === null) return
 
  const categoryName = row['Category'] || row.category || row['Category Name']
@@ -13133,11 +13133,11 @@ function resolveCampaignOffer(orderDateStr, customerPhone, flags) {
  }
  }
 
- // 2. Inauguration 50% — only on its configured date
+ // 2. Inauguration 50% â€” only on its configured date
  const ina = c.inauguration
  if (ina && ina.active && ina.date && date === ina.date) return validOffer('inauguration', ina)
 
- // 3. Special 20% — within its from..to date window
+ // 3. Special 20% â€” within its from..to date window
  const s20 = c.special20
  if (s20 && s20.active && s20.from && s20.to && date >= s20.from && date <= s20.to) return validOffer('special20', s20)
 
@@ -13152,7 +13152,7 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
   let { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod, complimentary, complimentaryType, specialRemarks, status, paymentStatus, paidAt, settleDirectly } = req.body
 
   // If not authenticated as staff, accept the order but force safe status values
-  // (POS is an internal system — do NOT reject, just sanitize)
+  // (POS is an internal system â€” do NOT reject, just sanitize)
   if (!req.staffId) {
     status = 'pending'
     paymentStatus = 'pending'
@@ -13300,7 +13300,7 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  u.totalSpend = (u.totalSpend || 0) + totalVal
  u.lastVisit = now
 
- // Partner Gamification: Auto-upgrade to Partner level if spend >= ₹5,000
+ // Partner Gamification: Auto-upgrade to Partner level if spend >= â‚¹5,000
  if (u.totalSpend >= 5000) {
  u.tier = 'Partner'
  }
@@ -13321,10 +13321,10 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  customerName: referrer.name || 'Referrer',
  points: commission,
  type: 'earn_commission',
- description: `5% Commission (₹${commission}) from referred friend (${customerName || cleanP}) order #${orderNum}`,
+ description: `5% Commission (â‚¹${commission}) from referred friend (${customerName || cleanP}) order #${orderNum}`,
  createdAt: now
  })
- console.log(`[REFERRAL COMMISSION] Credited 5% (₹${commission}) to Referrer ${referrerPhone} from order #${orderNum}`)
+ console.log(`[REFERRAL COMMISSION] Credited 5% (â‚¹${commission}) to Referrer ${referrerPhone} from order #${orderNum}`)
  }
  }
  }
@@ -13384,6 +13384,16 @@ app.patch('/api/pos/orders/:id/status', (req, res) => {
  
  const order = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
  if (order) {
+  // GUARD: Block service-worker offline-queue replay from downgrading a completed/paid order.
+  // Scenario: acceptKOT PATCH (status:'ready') gets queued offline, then payment PATCH (status:'completed') succeeds.
+  // When SW replays the queued 'ready' PATCH later, without this guard it reverts the order back to 'ready'.
+  const orderAlreadyPaid = order.paymentStatus === 'paid' || !!order.paidAt
+  const orderAlreadyCompleted = order.status === 'completed' || order.status === 'served'
+  const statusIsDowngrade = ['pending', 'ready', 'preparing', 'in-progress'].includes(status)
+  if ((orderAlreadyPaid || orderAlreadyCompleted) && statusIsDowngrade) {
+   console.warn(`[PATCH STATUS GUARD] Blocked downgrade of order ${order.orderNumber || id} from '${order.status}' to '${status}' (already paid/completed)`)
+   return res.json({ success: true, order, skipped: true, reason: 'Order already completed/paid â€” status downgrade blocked' })
+  }
  order.status = status || order.status
  order.paymentStatus = paymentStatus || order.paymentStatus
  order.paymentMethod = req.body.paymentMethod || order.paymentMethod
@@ -13491,7 +13501,7 @@ app.post('/api/pos/orders/:id/cancel', posAuth, (req, res) => {
  res.json({ success: true, message: `Bill #${targetOrder.orderNumber || targetOrder.id} cancelled successfully`, order: targetOrder })
 })
 
-// ─── Online Orders (Zomato/Swiggy/Zepto) ───
+// â”€â”€â”€ Online Orders (Zomato/Swiggy/Zepto) â”€â”€â”€
 app.get('/api/online-orders', (req, res) => {
  res.json(onlineOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
 })
@@ -13538,7 +13548,7 @@ app.post('/api/online-orders/webhook', (req, res) => {
  res.status(201).json(onlineOrder)
 })
 
-// Accept online order → create internal POS order → push to kitchen
+// Accept online order â†’ create internal POS order â†’ push to kitchen
 app.post('/api/online-orders/:id/accept', (req, res) => {
  const { id } = req.params
  const onlineOrder = onlineOrders.find(o => o.id === id)
@@ -13764,7 +13774,7 @@ app.get('/api/loyalty/user/:phone', (req, res) => {
  loyaltyUsers.push(user)
  saveState()
  } else {
- // Unknown phone — return zero-balance user so frontend shows "Insufficient balance"
+ // Unknown phone â€” return zero-balance user so frontend shows "Insufficient balance"
  const id = 'loy_' + Date.now()
  user = {
  id, name: 'Customer', phone: req.params.phone, email: '', role: 'user',
@@ -14852,6 +14862,8 @@ const normalizeDateStr = (inputStr) => {
  return getLocalDateStr(str)
 }
 
+
+
 // Helper for daily KOT sequence resetting to 100 every calendar day
 let currentKotDateStr = ''
 let currentKotSeq = 99
@@ -14955,7 +14967,7 @@ function getCompletedSales(reqQuery, options = {}) {
  console.log(`[SALES COUNT AUDIT] Raw Orders Count: ${orders.length}`)
  console.log(`[SALES COUNT AUDIT] Filtered Orders Count (Period): ${candidateOrders.length}`)
  console.log(`[SALES COUNT AUDIT] Bill Count Returned: ${completedSales.length}`)
- console.log(`[SALES COUNT AUDIT] Total Sales Returned: ₹${Math.round(totalSales)}`)
+ console.log(`[SALES COUNT AUDIT] Total Sales Returned: â‚¹${Math.round(totalSales)}`)
 
  return completedSales
 }
@@ -15088,14 +15100,17 @@ const getOrderDiscountInfo = (o) => {
 
 function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
  const { date, from, to } = reqQuery || {}
- // CRITICAL FIX: Always read fresh from disk to support PM2 cluster/multi-process deployments.
- // In cluster mode, each worker has its own in-memory `orders`. A POST on Worker A
- // would not be visible to Worker B's GET. Reading from disk ensures all workers see all orders.
- let diskOrders = orders
- try {
-   const freshDb = readDb()
-   if (freshDb && Array.isArray(freshDb.orders)) diskOrders = freshDb.orders
- } catch(e) { diskOrders = orders }
+  // Use in-memory orders as the primary source â€” they are always the most up-to-date (updated by every
+  // PATCH/POST immediately). Only fall back to disk when in-memory is empty (server restart / PM2 cluster).
+  // Formerly we always read fresh from disk here, but that could return stale data if a disk write
+  // (e.g. from saveState()) hadn't fully completed before the GET arrived.
+  let diskOrders = orders
+  if (!Array.isArray(diskOrders) || diskOrders.length === 0) {
+    try {
+      const freshDb = readDb()
+      if (freshDb && Array.isArray(freshDb.orders)) diskOrders = freshDb.orders
+    } catch(e) { diskOrders = orders }
+  }
  const targetOrders = includeAll ? diskOrders : diskOrders.filter(isValidSalesOrder)
  const today = new Date()
  const todayStr = getLocalDateStr(today)
@@ -15141,20 +15156,32 @@ function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
  return targetOrders.filter(o => getOrderDate(o) >= pastMonthStr)
  }
 
+ // Unsettled orders (pending/ready/preparing/in-progress) must ALWAYS appear on the
+ // billing screen for 'today' regardless of which date they were created.
+ // This lets staff settle previous-shift KOTs without switching the date filter.
+ const isUnsettledOrder = (o) => {
+  const s = (o.status || '').toLowerCase()
+  const ps = (o.paymentStatus || '').toLowerCase()
+  return (s === 'pending' || s === 'ready' || s === 'in-progress' || s === 'preparing')
+   && ps !== 'paid' && !o.paidAt
+ }
+
  const normDate = normalizeDateStr(date)
  if (normDate === 'today' || normDate === todayStr) {
- return targetOrders.filter(o => getOrderDate(o) === todayStr)
+  // Today's orders + any unsettled KOTs from previous shifts
+  return targetOrders.filter(o => getOrderDate(o) === todayStr || isUnsettledOrder(o))
  }
 
  if (normDate === 'yesterday' || normDate === yesterdayStr) {
- return targetOrders.filter(o => getOrderDate(o) === yesterdayStr)
+  return targetOrders.filter(o => getOrderDate(o) === yesterdayStr)
  }
 
  if (normDate && normDate !== 'all' && normDate !== 'latest') {
- return targetOrders.filter(o => getOrderDate(o) === normDate)
+  return targetOrders.filter(o => getOrderDate(o) === normDate)
  }
 
- return targetOrders.filter(o => getOrderDate(o) === todayStr)
+ // Default (no date param): today + all unsettled from previous shifts
+ return targetOrders.filter(o => getOrderDate(o) === todayStr || isUnsettledOrder(o))
 }
 
 // ============ AUTOMATIC MIDNIGHT 12:00 AM IST DAY CLOSING ENGINE ============
@@ -15196,7 +15223,7 @@ function runMidnightDayClosingCheck() {
 
  writeFileSync(backupFile, JSON.stringify(closingSummary, null, 2))
  lastClosedDateIST = yesterdayISTStr
- console.log(`[12:00 AM IST MIDNIGHT AUTO DAY CLOSING] Successfully closed shift for ${yesterdayISTStr}: ${dayOrders.length} Bills, ₹${totalSales.toLocaleString('en-IN')}`)
+ console.log(`[12:00 AM IST MIDNIGHT AUTO DAY CLOSING] Successfully closed shift for ${yesterdayISTStr}: ${dayOrders.length} Bills, â‚¹${totalSales.toLocaleString('en-IN')}`)
  }
  }
  } catch (e) {
@@ -15344,7 +15371,7 @@ app.put('/api/pos/orders/:id/modify', (req, res) => {
 
     saveState()
     io.emit('order:updated', targetOrder)
-    console.log(`[BILL MODIFICATION] Order #${targetOrder.orderNumber || targetOrder.id} modified by ${targetOrder.modifiedBy}. Total: ₹${previousTotal} → ₹${newTotal}`)
+    console.log(`[BILL MODIFICATION] Order #${targetOrder.orderNumber || targetOrder.id} modified by ${targetOrder.modifiedBy}. Total: â‚¹${previousTotal} â†’ â‚¹${newTotal}`)
 
     res.json({
       success: true,
@@ -15360,12 +15387,12 @@ app.put('/api/pos/orders/:id/modify', (req, res) => {
 // Check every 60 seconds for 12:00 AM IST rollover
 setInterval(runMidnightDayClosingCheck, 60000)
 
-// Auto-save state every 10 seconds — tightened from 30s for maximum transaction safety
+// Auto-save state every 10 seconds â€” tightened from 30s for maximum transaction safety
 setInterval(() => {
  try { saveState() } catch (e) { console.error('[AUTO-SAVE] Error:', e.message) }
 }, 10000)
 
-// Diagnostic endpoint — check live database state (admin only)
+// Diagnostic endpoint â€” check live database state (admin only)
 
 // Admin route: Raw orders list by date for audit and diagnosis
 app.get('/api/admin/raw-orders', (req, res) => {
@@ -15504,10 +15531,10 @@ app.get(['/api/reports/reconcile', '/api/reports/reconciliation'], (req, res) =>
 
  const discrepancies = []
  if (dailyClosingNet !== paymentReportNet) {
- discrepancies.push(`Daily Closing Net (₹${dailyClosingNet}) does not match Payment Report Net (₹${paymentReportNet})`)
+ discrepancies.push(`Daily Closing Net (â‚¹${dailyClosingNet}) does not match Payment Report Net (â‚¹${paymentReportNet})`)
  }
  if (dailyClosingNet !== posOrdersNet) {
- discrepancies.push(`Daily Closing Net (₹${dailyClosingNet}) does not match POS Orders Net (₹${posOrdersNet})`)
+ discrepancies.push(`Daily Closing Net (â‚¹${dailyClosingNet}) does not match POS Orders Net (â‚¹${posOrdersNet})`)
  }
 
  const isReconciled = discrepancies.length === 0
@@ -16419,7 +16446,7 @@ app.post('/api/admin/parse-invoice-pdf', (req, res) => {
  if (extractedItems.length === 0) {
  lines.forEach(line => {
  const nums = line.match(/\d+(?:\.\d+)?/g)?.map(Number) || []
- const words = line.replace(/[\d\.,\(\)₹\$]/g, ' ').trim()
+ const words = line.replace(/[\d\.,\(\)â‚¹\$]/g, ' ').trim()
  if (words.length > 3 && nums.length >= 1) {
  const qty = nums[0]
  const rate = nums.length >= 2 ? nums[1] : 50
@@ -16458,7 +16485,7 @@ app.get('/health', (req, res) => {
  res.json({ status: 'UP', message: 'TDG Backend is running smoothly.' })
 })
 
-// Version/diagnostic endpoint — helps verify which deploy is running
+// Version/diagnostic endpoint â€” helps verify which deploy is running
 app.get('/api/deploy-version', (req, res) => {
  res.json({
  deployedAt: new Date().toISOString(),
@@ -16530,7 +16557,7 @@ app.post('/api/backups/daily/restore', (req, res) => {
  }
 })
 
-// Reset operational data (orders, billing, KOTs, POs, GRNs, expenses) — ADMIN ONLY
+// Reset operational data (orders, billing, KOTs, POs, GRNs, expenses) â€” ADMIN ONLY
 app.post('/api/reset', async (req, res) => {
  try {
  const { pin } = req.body
@@ -16739,7 +16766,7 @@ if (resolvedDistPath) {
  })
  console.log('Serving frontend from:', resolvedDistPath)
 } else {
- console.log('No dist folder found — registering root status handler')
+ console.log('No dist folder found â€” registering root status handler')
  app.get('/', (req, res) => {
  res.status(200).json({ status: 'active', message: 'TDG Billing POS Server Online', ordersCount: orders.length })
  })
@@ -16773,7 +16800,7 @@ app.post('/api/admin/redeploy', (req, res) => {
     const gitOutput = execSync('git pull origin master 2>&1', { cwd: __dirname, timeout: 30000 }).toString()
     console.log('[REDEPLOY] git pull result:', gitOutput)
     res.json({ success: true, message: 'Git pull completed. Restarting server now...', output: gitOutput })
-    // Save state then exit — PM2/Hostinger will restart automatically
+    // Save state then exit â€” PM2/Hostinger will restart automatically
     setTimeout(() => {
       try { saveState() } catch(e) {}
       process.exit(0)
@@ -16784,7 +16811,7 @@ app.post('/api/admin/redeploy', (req, res) => {
   }
 })
 
-// ─── SWIGGY & ZOMATO AGGREGATOR INTEGRATION MODULE ──────────────────────────
+// â”€â”€â”€ SWIGGY & ZOMATO AGGREGATOR INTEGRATION MODULE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Normalizes incoming items from Swiggy / Zomato / UrbanPiper formats into POS order item format
@@ -16861,7 +16888,7 @@ function processOnlineOrder(orderData, source) {
     io.emit('order_created', newOrder)
   }
 
-  console.log(`[ONLINE ORDER RECEIVED] Source: ${source} | Order #: ${newOrder.orderNumber} | Total: ₹${newOrder.total}`)
+  console.log(`[ONLINE ORDER RECEIVED] Source: ${source} | Order #: ${newOrder.orderNumber} | Total: â‚¹${newOrder.total}`)
   return { status: 'CREATED', order: newOrder }
 }
 
@@ -16996,7 +17023,7 @@ app.post('/api/aggregator/menu/toggle-stock', (req, res) => {
   }
 })
 
-// Graceful shutdown — save state before process exits (prevents data loss on deploy/restart)
+// Graceful shutdown â€” save state before process exits (prevents data loss on deploy/restart)
 let isShuttingDown = false
 function gracefulShutdown(signal) {
  if (isShuttingDown) return
