@@ -1,4 +1,4 @@
-﻿// TDG Server v1.0.7 - Customer Search & Auto-Fetch Update (2026-08-06)
+// TDG Server v1.0.7 - Customer Search & Auto-Fetch Update (2026-08-06)
 import express from 'express'
 import whatsappRouter from './routes/whatsapp.js'
 import cors from 'cors'
@@ -15004,7 +15004,7 @@ function calculateSalesMetrics(salesOrders = []) {
       complimentaryCount += 1
       const compVal = rawSub || Number(o.total) || netSub || 0
       complimentaryTotal += compVal
-      byPaymentMethod['complimentary'] = (byPaymentMethod['complimentary'] || 0) + 0
+      byPaymentMethod['complimentary'] = (byPaymentMethod['complimentary'] || 0) + compVal
       paymentCounts['complimentary'] = (paymentCounts['complimentary'] || 0) + 1
     }
 
