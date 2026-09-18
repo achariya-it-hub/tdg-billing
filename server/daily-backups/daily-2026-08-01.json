@@ -1,23 +1,90 @@
 {
-  "users": [
+  "date": "2026-08-01",
+  "closedAt": "2026-08-01T18:30:53.460Z",
+  "closedAtIST": "2/8/2026, 12:00:53 am",
+  "totalInvoices": 0,
+  "totalSales": 0,
+  "orders": [],
+  "categories": [
     {
-      "id": "u_admin",
-      "name": "Admin",
-      "email": "admin@tdg.com",
-      "phone": "0000000000",
-      "password": "$2b$10$9746KY1ceS.auP0zZi4QPeJl0uM9Edl/8cvpjBwJfUYePGGFOAypy",
-      "role": "admin",
-      "rubyBalance": 99999,
-      "denLevel": "Emerald",
-      "completedDens": 10,
-      "denProgress": 10,
-      "scratchCards": [],
-      "denId": null,
-      "createdAt": "2026-07-21T07:53:16.653Z"
+      "id": "c1",
+      "name": "Gyros",
+      "icon": "🥙",
+      "color": "#d97706"
+    },
+    {
+      "id": "c5_legthigh",
+      "name": "Leg & Thigh",
+      "icon": "🍗",
+      "color": "#ea580c"
+    },
+    {
+      "id": "c5_wings",
+      "name": "Wings",
+      "icon": "🍗",
+      "color": "#b45309"
+    },
+    {
+      "id": "c5_strips",
+      "name": "Strips",
+      "icon": "🍗",
+      "color": "#ca8a04"
+    },
+    {
+      "id": "c6",
+      "name": "Fries",
+      "icon": "🍟",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "c10_bev",
+      "name": "Beverages",
+      "icon": "🥤",
+      "color": "#0284c7"
+    },
+    {
+      "id": "c3_rice_salad",
+      "name": "Rice & Salads",
+      "icon": "🍚🥗",
+      "color": "#059669"
+    },
+    {
+      "id": "c2",
+      "name": "Meals & Combos",
+      "icon": "🍱",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "c11",
+      "name": "Protein Max",
+      "icon": "💪",
+      "color": "#10b981"
+    },
+    {
+      "id": "c7_shakes",
+      "name": "Shakes",
+      "icon": "🥤",
+      "color": "#db2777"
+    },
+    {
+      "id": "c9",
+      "name": "Desserts",
+      "icon": "🍰",
+      "color": "#ec4899"
+    },
+    {
+      "id": "c4",
+      "name": "Softy & Add-Ons",
+      "icon": "🍦",
+      "color": "#e63946"
+    },
+    {
+      "id": "c10_komb",
+      "name": "Kombucha",
+      "icon": "🍹",
+      "color": "#0284c7"
     }
   ],
-  "orders": [],
-  "transactions": [],
   "menuItems": [
     {
       "id": "m_spicy_gyro",
@@ -562,233 +629,5 @@
       "image": "/images/menu/kombucha.png",
       "taxInclusive": true
     }
-  ],
-  "categories": [
-    {
-      "id": "c1",
-      "name": "Gyros",
-      "icon": "🥙",
-      "color": "#d97706"
-    },
-    {
-      "id": "c5_legthigh",
-      "name": "Leg & Thigh",
-      "icon": "🍗",
-      "color": "#ea580c"
-    },
-    {
-      "id": "c5_wings",
-      "name": "Wings",
-      "icon": "🍗",
-      "color": "#b45309"
-    },
-    {
-      "id": "c5_strips",
-      "name": "Strips",
-      "icon": "🍗",
-      "color": "#ca8a04"
-    },
-    {
-      "id": "c6",
-      "name": "Fries",
-      "icon": "🍟",
-      "color": "#f59e0b"
-    },
-    {
-      "id": "c10_bev",
-      "name": "Beverages",
-      "icon": "🥤",
-      "color": "#0284c7"
-    },
-    {
-      "id": "c3_rice_salad",
-      "name": "Rice & Salads",
-      "icon": "🍚🥗",
-      "color": "#059669"
-    },
-    {
-      "id": "c2",
-      "name": "Meals & Combos",
-      "icon": "🍱",
-      "color": "#8b5cf6"
-    },
-    {
-      "id": "c11",
-      "name": "Protein Max",
-      "icon": "💪",
-      "color": "#10b981"
-    },
-    {
-      "id": "c7_shakes",
-      "name": "Shakes",
-      "icon": "🥤",
-      "color": "#db2777"
-    },
-    {
-      "id": "c9",
-      "name": "Desserts",
-      "icon": "🍰",
-      "color": "#ec4899"
-    },
-    {
-      "id": "c4",
-      "name": "Softy & Add-Ons",
-      "icon": "🍦",
-      "color": "#e63946"
-    },
-    {
-      "id": "c10_komb",
-      "name": "Kombucha",
-      "icon": "🍹",
-      "color": "#0284c7"
-    }
-  ],
-  "recipes": [],
-  "billingUsers": [
-    {
-      "id": "bu_superadmin",
-      "name": "Super Admin",
-      "pin": "$2b$10$f2oxOBM7db2LBhmgrkBgXeCIyjmcWfL5BoQfxg1n.9Za3Bj4L2RNG",
-      "role": "super-admin"
-    },
-    {
-      "id": "bu_admin",
-      "name": "Admin",
-      "pin": "$2b$10$.NZINaV9iZaMEJ0Sbbjg5eF52n5mfQYg9uGIgN.LFy.JYQvygd2le",
-      "role": "admin"
-    },
-    {
-      "id": "bu_manager",
-      "name": "Manager",
-      "pin": "$2b$10$GLXcFkAInbKEcOZ08tjo2ObSFmiPN3r.Sp0adxRpolinmPHzmeLNi",
-      "role": "manager"
-    },
-    {
-      "id": "bu_cashier",
-      "name": "Cashier",
-      "pin": "$2b$10$P4PpER9FqNUGWJyIKvfydOiyOLk2NmiGLRU0BPB.kHoBPAqFOZAm.",
-      "role": "cashier"
-    },
-    {
-      "id": "bu_kitchen",
-      "name": "Kitchen",
-      "pin": "$2b$10$5bwhYnx.A57T4ISTuaQkw.wWkQxzdb7yFGnOuZCu9bSS06XXDJ6Pq",
-      "role": "kitchen"
-    }
-  ],
-  "settings": {
-    "company": {
-      "name": "Tendens Gyros",
-      "address": "Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram",
-      "phone": "000000000",
-      "email": "",
-      "gst": "",
-      "logo": null,
-      "upiId": ""
-    },
-    "theme": {
-      "accentPrimary": "#e63946",
-      "accentPrimaryDark": "#c1121f",
-      "bgPrimary": "#f5f5f7"
-    },
-    "printers": [
-      {
-        "id": "default",
-        "name": "Default Printer",
-        "ip": "",
-        "type": "browser",
-        "isDefault": true
-      }
-    ],
-    "paymentGateways": {
-      "ccavenue": {
-        "merchantId": "",
-        "workingKey": "",
-        "accessCode": "",
-        "isProduction": false,
-        "isEnabled": true
-      }
-    }
-  },
-  "loyaltyUsers": [
-    {
-      "id": "u_admin",
-      "referralCode": "ADMIN01",
-      "name": "Admin",
-      "phone": "0000000000",
-      "email": "admin@tdg.com",
-      "role": "admin",
-      "rubyPoints": 99999,
-      "tier": "Emerald",
-      "referredBy": null,
-      "denId": null,
-      "createdAt": "2026-07-22T11:47:26.268Z"
-    }
-  ],
-  "dens": [],
-  "pointTransactions": [],
-  "inventory": [
-    {
-      "id": "1",
-      "name": "Chicken Breast",
-      "currentStock": 50,
-      "minimumStock": 20
-    },
-    {
-      "id": "2",
-      "name": "Burger Buns",
-      "currentStock": 200,
-      "minimumStock": 50
-    },
-    {
-      "id": "3",
-      "name": "Fries",
-      "currentStock": 30,
-      "minimumStock": 10
-    }
-  ],
-  "orderNumber": 1000,
-  "usedReferralCodes": [],
-  "expenses": [],
-  "purchases": [],
-  "onlineOrders": [],
-  "aggregators": [
-    {
-      "id": "swiggy",
-      "name": "Swiggy",
-      "displayName": "Swiggy",
-      "isActive": true,
-      "defaultPrepTime": 25,
-      "color": "#ff5200"
-    },
-    {
-      "id": "zomato",
-      "name": "Zomato",
-      "displayName": "Zomato",
-      "isActive": true,
-      "defaultPrepTime": 20,
-      "color": "#e23744"
-    },
-    {
-      "id": "zepto",
-      "name": "Zepto",
-      "displayName": "Zepto",
-      "isActive": true,
-      "defaultPrepTime": 15,
-      "color": "#9d2b6b"
-    },
-    {
-      "id": "direct",
-      "name": "Direct",
-      "displayName": "Direct Order",
-      "isActive": true,
-      "defaultPrepTime": 20,
-      "color": "#4895ef"
-    }
-  ],
-  "suppliers": [],
-  "purchaseOrders": [],
-  "poItems": [],
-  "grns": [],
-  "vendorPayments": []
+  ]
 }

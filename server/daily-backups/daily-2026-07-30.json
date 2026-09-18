@@ -1,0 +1,5556 @@
+{
+  "categories": [
+    {
+      "id": "c1",
+      "name": "Gyros",
+      "icon": "🥙",
+      "color": "#d97706"
+    },
+    {
+      "id": "c5_legthigh",
+      "name": "Leg & Thigh",
+      "icon": "🍗",
+      "color": "#ea580c"
+    },
+    {
+      "id": "c5_wings",
+      "name": "Wings",
+      "icon": "🍗",
+      "color": "#b45309"
+    },
+    {
+      "id": "c5_strips",
+      "name": "Strips",
+      "icon": "🍗",
+      "color": "#ca8a04"
+    },
+    {
+      "id": "c6",
+      "name": "Fries",
+      "icon": "🍟",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "c10_bev",
+      "name": "Beverages",
+      "icon": "🥤",
+      "color": "#0284c7"
+    },
+    {
+      "id": "c3_rice_salad",
+      "name": "Rice & Salads",
+      "icon": "🍚🥗",
+      "color": "#059669"
+    },
+    {
+      "id": "c2",
+      "name": "Meals & Combos",
+      "icon": "🍱",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "c11",
+      "name": "Protein Max",
+      "icon": "💪",
+      "color": "#10b981"
+    },
+    {
+      "id": "c7_shakes",
+      "name": "Shakes",
+      "icon": "🥤",
+      "color": "#db2777"
+    },
+    {
+      "id": "c9",
+      "name": "Desserts",
+      "icon": "🍰",
+      "color": "#ec4899"
+    },
+    {
+      "id": "c4",
+      "name": "Softy & Add-Ons",
+      "icon": "🍦",
+      "color": "#e63946"
+    },
+    {
+      "id": "c10_komb",
+      "name": "Kombucha",
+      "icon": "🍹",
+      "color": "#0284c7"
+    }
+  ],
+  "menuItems": [
+    {
+      "id": "m_spicy_gyro",
+      "categoryId": "c1",
+      "name": "Spicy Gyro",
+      "price": 199,
+      "description": "Spicy gyro wrap (Choose: Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m_creamy_gyro",
+      "categoryId": "c1",
+      "name": "Creamy Gyro",
+      "price": 199,
+      "description": "Creamy tzatziki gyro wrap (Choose: Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m_bbq_gyro",
+      "categoryId": "c1",
+      "name": "BBQ Gyro",
+      "price": 199,
+      "description": "Rich BBQ gyro wrap (Choose: Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m_signature_gyro",
+      "categoryId": "c1",
+      "name": "Signature Gyro",
+      "price": 199,
+      "description": "TDG signature gyro wrap with secret sauce (Choose: Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/gyro.png"
+    },
+    {
+      "id": "m_legthigh_1pc",
+      "categoryId": "c5_legthigh",
+      "name": "1 Pc Leg & Thigh (1 Dip)",
+      "price": 70,
+      "description": "1 Pc Crispy Leg & Thigh + 1 Choice Dip",
+      "isAvailable": true,
+      "image": "/images/menu/leg_thigh.png"
+    },
+    {
+      "id": "m_legthigh_2pc",
+      "categoryId": "c5_legthigh",
+      "name": "2 Pc Leg & Thigh (1 Dip)",
+      "price": 140,
+      "description": "2 Pc Crispy Leg & Thigh + 1 Choice Dip",
+      "isAvailable": true,
+      "image": "/images/menu/leg_thigh.png"
+    },
+    {
+      "id": "m_legthigh_4pc",
+      "categoryId": "c5_legthigh",
+      "name": "4 Pc Leg & Thigh (2 Dips)",
+      "price": 280,
+      "description": "4 Pc Crispy Leg & Thigh + 2 Choice Dips",
+      "isAvailable": true,
+      "image": "/images/menu/leg_thigh.png"
+    },
+    {
+      "id": "m_legthigh_8pc",
+      "categoryId": "c5_legthigh",
+      "name": "8 Pc Leg & Thigh (4 Dips)",
+      "price": 560,
+      "description": "8 Pc Crispy Leg & Thigh + 4 Choice Dips",
+      "isAvailable": true,
+      "image": "/images/menu/leg_thigh.png"
+    },
+    {
+      "id": "m_legthigh_12pc",
+      "categoryId": "c5_legthigh",
+      "name": "12 Pc Leg & Thigh (6 Dips)",
+      "price": 840,
+      "description": "12 Pc Crispy Leg & Thigh + 6 Choice Dips",
+      "isAvailable": true,
+      "image": "/images/menu/leg_thigh.png"
+    },
+    {
+      "id": "m_wings_3pc",
+      "categoryId": "c5_wings",
+      "name": "3 Pc Wings (1 Dip)",
+      "price": 90,
+      "description": "3 Pc Crispy Chicken Wings + 1 Choice Dip",
+      "isAvailable": true,
+      "image": "/images/menu/wings.png"
+    },
+    {
+      "id": "m_wings_6pc",
+      "categoryId": "c5_wings",
+      "name": "6 Pc Wings (2 Dips)",
+      "price": 180,
+      "description": "6 Pc Crispy Chicken Wings + 2 Choice Dips",
+      "isAvailable": true,
+      "image": "/images/menu/wings.png"
+    },
+    {
+      "id": "m_wings_9pc",
+      "categoryId": "c5_wings",
+      "name": "9 Pc Wings (3 Dips)",
+      "price": 270,
+      "description": "9 Pc Crispy Chicken Wings + 3 Choice Dips",
+      "isAvailable": true,
+      "image": "/images/menu/wings.png"
+    },
+    {
+      "id": "m_wings_20pc",
+      "categoryId": "c5_wings",
+      "name": "20 Pc Wings (6 Dips)",
+      "price": 600,
+      "description": "20 Pc Crispy Chicken Wings + 6 Choice Dips",
+      "isAvailable": true,
+      "image": "/images/menu/wings.png"
+    },
+    {
+      "id": "m_strips_3pc",
+      "categoryId": "c5_strips",
+      "name": "3 Pc Strips (1 Dip)",
+      "price": 120,
+      "description": "3 Pc Crispy Chicken Strips + 1 Choice Dip",
+      "isAvailable": true,
+      "image": "/images/menu/strips.png"
+    },
+    {
+      "id": "m_strips_6pc",
+      "categoryId": "c5_strips",
+      "name": "6 Pc Strips (2 Dips)",
+      "price": 240,
+      "description": "6 Pc Crispy Chicken Strips + 2 Choice Dips",
+      "isAvailable": true,
+      "image": "/images/menu/strips.png"
+    },
+    {
+      "id": "m_strips_9pc",
+      "categoryId": "c5_strips",
+      "name": "9 Pc Strips (3 Dips)",
+      "price": 360,
+      "description": "9 Pc Crispy Chicken Strips + 3 Choice Dips",
+      "isAvailable": true,
+      "image": "/images/menu/strips.png"
+    },
+    {
+      "id": "m_strips_20pc",
+      "categoryId": "c5_strips",
+      "name": "20 Pc Strips (6 Dips)",
+      "price": 800,
+      "description": "20 Pc Crispy Chicken Strips + 6 Choice Dips",
+      "isAvailable": true,
+      "image": "/images/menu/strips.png"
+    },
+    {
+      "id": "m_fries_std",
+      "categoryId": "c6",
+      "name": "Fries",
+      "price": 99,
+      "description": "Crispy golden French fries (Choose seasoning: Salted, Peri Peri, or Cajun)",
+      "isAvailable": true,
+      "image": "/images/menu/fries.png"
+    },
+    {
+      "id": "m_loaded_fries",
+      "categoryId": "c6",
+      "name": "Loaded Fries",
+      "price": 199,
+      "description": "Loaded Fries topped with melted cheese & sauces (Choose protein: Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/loaded fries.png"
+    },
+    {
+      "id": "m_sprite_reg",
+      "categoryId": "c10_bev",
+      "name": "Sprite (Regular)",
+      "price": 59,
+      "description": "Sprite 330ml Regular",
+      "isAvailable": true,
+      "image": "/images/menu/express meal.png"
+    },
+    {
+      "id": "m_sprite_lrg",
+      "categoryId": "c10_bev",
+      "name": "Sprite (Large)",
+      "price": 99,
+      "description": "Sprite 500ml Large",
+      "isAvailable": true,
+      "image": "/images/menu/express meal.png"
+    },
+    {
+      "id": "m_cocacola_reg",
+      "categoryId": "c10_bev",
+      "name": "Coca Cola (Regular)",
+      "price": 59,
+      "description": "Coca Cola 330ml Regular",
+      "isAvailable": true,
+      "image": "/images/menu/express meal.png"
+    },
+    {
+      "id": "m_cocacola_lrg",
+      "categoryId": "c10_bev",
+      "name": "Coca Cola (Large)",
+      "price": 99,
+      "description": "Coca Cola 500ml Large",
+      "isAvailable": true,
+      "image": "/images/menu/express meal.png"
+    },
+    {
+      "id": "m_icetea_reg",
+      "categoryId": "c10_bev",
+      "name": "Ice Tea (Regular)",
+      "price": 59,
+      "description": "Refreshing Ice Tea - Peach or Lime (Regular)",
+      "isAvailable": true,
+      "image": "/images/menu/ice tea - lime.png"
+    },
+    {
+      "id": "m_icetea_lrg",
+      "categoryId": "c10_bev",
+      "name": "Ice Tea (Large)",
+      "price": 99,
+      "description": "Refreshing Ice Tea - Peach or Lime (Large)",
+      "isAvailable": true,
+      "image": "/images/menu/ice tea - lime.png"
+    },
+    {
+      "id": "m_hot_chocolate",
+      "categoryId": "c10_bev",
+      "name": "Hot Chocolate",
+      "price": 99,
+      "description": "Rich Warm Hot Chocolate",
+      "isAvailable": true,
+      "image": "/images/menu/Hot Chocolate.png"
+    },
+    {
+      "id": "m_signature_tea",
+      "categoryId": "c10_bev",
+      "name": "Signature Tea",
+      "price": 99,
+      "description": "Special TDG Signature Brewed Tea",
+      "isAvailable": true,
+      "image": "/images/menu/Signature tea.png"
+    },
+    {
+      "id": "m_rice_bowl",
+      "categoryId": "c3_rice_salad",
+      "name": "Rice Bowl (Signature)",
+      "price": 199,
+      "description": "Signature Lebanese Rice Bowl with fresh herbs & toppings (Choose: Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/lebanese rice bowl.png"
+    },
+    {
+      "id": "m_signature_salad",
+      "categoryId": "c3_rice_salad",
+      "name": "Signature Salad",
+      "price": 149,
+      "description": "Fresh Mediterranean Signature Salad with dressing (Choose: Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/signature salad.png"
+    },
+    {
+      "id": "m_express_meal",
+      "categoryId": "c2",
+      "name": "Express Meal",
+      "price": 249,
+      "description": "Gyro & Regular Drink",
+      "isAvailable": true,
+      "image": "/images/menu/express meal.png"
+    },
+    {
+      "id": "m_sig_gyro_meal",
+      "categoryId": "c2",
+      "name": "Signature Gyro Meal",
+      "price": 279,
+      "description": "Gyro, Fries, Regular Drink",
+      "isAvailable": true,
+      "image": "/images/menu/signature gyro meal.png"
+    },
+    {
+      "id": "m_lebanese_rice_box",
+      "categoryId": "c2",
+      "name": "Lebanese Rice Box",
+      "price": 299,
+      "description": "Lebanese rice, Fries, Regular Drink",
+      "isAvailable": true,
+      "image": "/images/menu/lebanese rice box.png"
+    },
+    {
+      "id": "m_wednesday_combo_1",
+      "categoryId": "c2",
+      "name": "Wednesday Combo - 1",
+      "price": 349,
+      "description": "3 Leg and Thigh, 8 strips, 4 wings.",
+      "isAvailable": true,
+      "image": "/images/menu/wednesday_combo.png"
+    },
+    {
+      "id": "m_wednesday_combo_2",
+      "categoryId": "c2",
+      "name": "Wednesday Combo - 2",
+      "price": 379,
+      "description": "1 Gyro, 2 Leg and Thigh, 2 Wings, 2 Strips",
+      "isAvailable": true,
+      "image": "/images/menu/wednesday_combo.png"
+    },
+    {
+      "id": "m_classic_gyro_meal",
+      "categoryId": "c2",
+      "name": "Classic Gyro Meal",
+      "price": 349,
+      "description": "Gyro, 2 Wings, Fries, Regular Drink, 1 Dip",
+      "isAvailable": true,
+      "image": "/images/menu/classic gyro meal.png"
+    },
+    {
+      "id": "m_duo_gyro_feast",
+      "categoryId": "c2",
+      "name": "Duo Gyro Feast",
+      "price": 449,
+      "description": "2 Gyros, Fries, 2 Regular Drinks",
+      "isAvailable": true,
+      "image": "/images/menu/duo gyro feast.png"
+    },
+    {
+      "id": "m_double_crunch_box",
+      "categoryId": "c2",
+      "name": "Double Crunch Box",
+      "price": 699,
+      "description": "2 Gyros, 6 Wings, Fries, 2 Regular Drinks",
+      "isAvailable": true,
+      "image": "/images/menu/double crunch box.png"
+    },
+    {
+      "id": "m_mega_feast_meal",
+      "categoryId": "c2",
+      "name": "Mega Feast Meal",
+      "price": 799,
+      "description": "2 Gyros, 2 Leg & Thighs, 2 Wings, 2 Strips, Fries, 2 Regular Drinks, 3 Dips",
+      "isAvailable": true,
+      "image": "/images/menu/mega feast meal.png"
+    },
+    {
+      "id": "m_dens_party_meal",
+      "categoryId": "c2",
+      "name": "Den's Party Meal",
+      "price": 1049,
+      "description": "2 Gyros, 6 Wings, 4 Leg & Thighs, 2 Fries, 3 Regular Drinks",
+      "isAvailable": true,
+      "image": "/images/menu/den's party meal.png"
+    },
+    {
+      "id": "m_super5_bucket",
+      "categoryId": "c2",
+      "name": "Super 5 Bucket",
+      "price": 1299,
+      "description": "5 Leg & Thighs, 10 Wings, 10 Strips, 5 Regular Drinks",
+      "isAvailable": true,
+      "image": "/images/menu/super 5 bucket.png"
+    },
+    {
+      "id": "m_pmax_gyro",
+      "categoryId": "c11",
+      "name": "Protein Max Gyro",
+      "price": 299,
+      "description": "High Protein Gyro (Choose: Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/protein max.png"
+    },
+    {
+      "id": "m_pmax_rice",
+      "categoryId": "c11",
+      "name": "Protein Max Rice Bowl",
+      "price": 299,
+      "description": "High Protein Rice Bowl (Choose: Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/protein max.png"
+    },
+    {
+      "id": "m_pmax_salad",
+      "categoryId": "c11",
+      "name": "Protein Max Salad",
+      "price": 299,
+      "description": "High Protein Mediterranean Salad (Choose: Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/menu/protein max.png"
+    },
+    {
+      "id": "m_vanilla_shake_reg",
+      "categoryId": "c7_shakes",
+      "name": "Vanilla Shake (Regular)",
+      "price": 120,
+      "description": "Classic Vanilla Shake (Ask for White Chocolate)",
+      "isAvailable": true,
+      "image": "/images/menu/vanilla shake.png"
+    },
+    {
+      "id": "m_vanilla_shake_lrg",
+      "categoryId": "c7_shakes",
+      "name": "Vanilla Shake (Large)",
+      "price": 199,
+      "description": "Large Vanilla Shake (Ask for White Chocolate)",
+      "isAvailable": true,
+      "image": "/images/menu/vanilla shake.png"
+    },
+    {
+      "id": "m_strawberry_shake_reg",
+      "categoryId": "c7_shakes",
+      "name": "Strawberry Shake (Regular)",
+      "price": 120,
+      "description": "Fresh Strawberry Shake Regular",
+      "isAvailable": true,
+      "image": "/images/menu/strawberry shake.png"
+    },
+    {
+      "id": "m_strawberry_shake_lrg",
+      "categoryId": "c7_shakes",
+      "name": "Strawberry Shake (Large)",
+      "price": 199,
+      "description": "Fresh Strawberry Shake Large",
+      "isAvailable": true,
+      "image": "/images/menu/strawberry shake.png"
+    },
+    {
+      "id": "m_biscoff_shake_reg",
+      "categoryId": "c7_shakes",
+      "name": "Biscoff Shake (Regular)",
+      "price": 120,
+      "description": "Lotus Biscoff Shake Regular",
+      "isAvailable": true,
+      "image": "/images/menu/biscoff shake.png"
+    },
+    {
+      "id": "m_biscoff_shake_lrg",
+      "categoryId": "c7_shakes",
+      "name": "Biscoff Shake (Large)",
+      "price": 199,
+      "description": "Lotus Biscoff Shake Large",
+      "isAvailable": true,
+      "image": "/images/menu/biscoff shake.png"
+    },
+    {
+      "id": "m_chocolate_shake_reg",
+      "categoryId": "c7_shakes",
+      "name": "Chocolate Shake (Regular)",
+      "price": 120,
+      "description": "Rich Chocolate Shake Regular",
+      "isAvailable": true,
+      "image": "/images/menu/chocolate shake.png"
+    },
+    {
+      "id": "m_chocolate_shake_lrg",
+      "categoryId": "c7_shakes",
+      "name": "Chocolate Shake (Large)",
+      "price": 199,
+      "description": "Rich Chocolate Shake Large",
+      "isAvailable": true,
+      "image": "/images/menu/chocolate shake.png"
+    },
+    {
+      "id": "m_kunafa_shake_reg",
+      "categoryId": "c7_shakes",
+      "name": "Kunafa Pistachio Shake - Signature (Regular)",
+      "price": 120,
+      "description": "Signature Kunafa Pistachio Shake Regular",
+      "isAvailable": true,
+      "image": "/images/menu/kunafa pistachio shake.png"
+    },
+    {
+      "id": "m_kunafa_shake_lrg",
+      "categoryId": "c7_shakes",
+      "name": "Kunafa Pistachio Shake - Signature (Large)",
+      "price": 199,
+      "description": "Signature Kunafa Pistachio Shake Large",
+      "isAvailable": true,
+      "image": "/images/menu/kunafa pistachio shake.png"
+    },
+    {
+      "id": "m_brownie",
+      "categoryId": "c9",
+      "name": "Chocolate Brownie",
+      "price": 99,
+      "description": "Fudgy Chocolate Brownie",
+      "isAvailable": true,
+      "image": "/images/menu/chcolate brownie.png"
+    },
+    {
+      "id": "m_blondie",
+      "categoryId": "c9",
+      "name": "Blondie Cake (Signature)",
+      "price": 99,
+      "description": "TDG Signature White Chocolate Blondie Cake",
+      "isAvailable": true,
+      "image": "/images/menu/blondie cake.png"
+    },
+    {
+      "id": "m_vanilla_softy",
+      "categoryId": "c4",
+      "name": "Vanilla Softy",
+      "price": 39,
+      "description": "Creamy Vanilla Soft Serve Cone",
+      "isAvailable": true,
+      "image": "/images/menu/vanilla softy.png"
+    },
+    {
+      "id": "m_dip_choice",
+      "categoryId": "c4",
+      "name": "Choice of Dip",
+      "price": 15,
+      "description": "Choice of Dip (Garlic Mayo, Spicy Mayo, Honey Mustard, Tzatziki, Jalapeno Cheese, Turkish Chilli)",
+      "isAvailable": true,
+      "image": "/images/menu/garlic mayo.png"
+    },
+    {
+      "id": "m_kombucha_mint",
+      "categoryId": "c10_komb",
+      "name": "Mint Kombucha",
+      "price": 114.29,
+      "description": "Mint Kombucha 250ml (₹120 Inclusive of Tax)",
+      "isAvailable": true,
+      "image": "/images/menu/mint-kombucha.png",
+      "taxInclusive": true
+    },
+    {
+      "id": "m_kombucha_hibiscus",
+      "categoryId": "c10_komb",
+      "name": "Hibiscus Kombucha",
+      "price": 114.29,
+      "description": "Hibiscus Kombucha 250ml (₹120 Inclusive of Tax)",
+      "isAvailable": true,
+      "image": "/images/menu/kombucha-hibiscus.png",
+      "taxInclusive": true
+    },
+    {
+      "id": "m_kombucha_classic",
+      "categoryId": "c10_komb",
+      "name": "Classic Kombucha",
+      "price": 114.29,
+      "description": "Classic Kombucha 250ml (₹120 Inclusive of Tax)",
+      "isAvailable": true,
+      "image": "/images/menu/kombucha.png",
+      "taxInclusive": true
+    }
+  ],
+  "orders": [
+    {
+      "id": "ORD-1001",
+      "orderNumber": 1001,
+      "kotNumber": "KOT-1001",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m8b",
+          "name": "Peri Peri Gyro - Paneer (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 432
+        }
+      ],
+      "subtotal": 432,
+      "tax": 22,
+      "total": 454,
+      "createdAt": "2026-07-27T08:00:00.000Z",
+      "updatedAt": "2026-07-27T08:00:00.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1002",
+      "orderNumber": 1002,
+      "kotNumber": "KOT-1002",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m10a",
+          "name": "Signature Gyro - Chicken (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 290
+        }
+      ],
+      "subtotal": 290,
+      "tax": 14,
+      "total": 304,
+      "createdAt": "2026-07-27T08:07:13.000Z",
+      "updatedAt": "2026-07-27T08:07:13.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1003",
+      "orderNumber": 1003,
+      "kotNumber": "KOT-1003",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m29b",
+          "name": "Signature Salad (Paneer)",
+          "category": "Gyros",
+          "unitPrice": 149,
+          "quantity": 1,
+          "totalPrice": 413
+        }
+      ],
+      "subtotal": 413,
+      "tax": 21,
+      "total": 434,
+      "createdAt": "2026-07-27T08:14:26.000Z",
+      "updatedAt": "2026-07-27T08:14:26.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1004",
+      "orderNumber": 1004,
+      "kotNumber": "KOT-1004",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m8b",
+          "name": "Peri Peri Gyro - Paneer (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 337
+        }
+      ],
+      "subtotal": 337,
+      "tax": 17,
+      "total": 354,
+      "createdAt": "2026-07-27T08:21:39.000Z",
+      "updatedAt": "2026-07-27T08:21:39.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1005",
+      "orderNumber": 1005,
+      "kotNumber": "KOT-1005",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m33",
+          "name": "Lebanese Rice Box",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 385
+        }
+      ],
+      "subtotal": 385,
+      "tax": 19,
+      "total": 404,
+      "createdAt": "2026-07-27T08:28:52.000Z",
+      "updatedAt": "2026-07-27T08:28:52.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1006",
+      "orderNumber": 1006,
+      "kotNumber": "KOT-1006",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m2b",
+          "name": "Spicy Gyro - Paneer (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 194
+        }
+      ],
+      "subtotal": 194,
+      "tax": 10,
+      "total": 204,
+      "createdAt": "2026-07-27T08:35:05.000Z",
+      "updatedAt": "2026-07-27T08:35:05.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1007",
+      "orderNumber": 1007,
+      "kotNumber": "KOT-1007",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m41a",
+          "name": "Salad - Protein Max (Chicken)",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 480
+        }
+      ],
+      "subtotal": 480,
+      "tax": 24,
+      "total": 504,
+      "createdAt": "2026-07-27T08:42:18.000Z",
+      "updatedAt": "2026-07-27T08:42:18.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1008",
+      "orderNumber": 1008,
+      "kotNumber": "KOT-1008",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m61",
+          "name": "Blondie Cake",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 412
+        }
+      ],
+      "subtotal": 412,
+      "tax": 21,
+      "total": 433,
+      "createdAt": "2026-07-27T08:49:31.000Z",
+      "updatedAt": "2026-07-27T08:49:31.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1009",
+      "orderNumber": 1009,
+      "kotNumber": "KOT-1009",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m16",
+          "name": "3 Pc Wings (1 Dip)",
+          "category": "Gyros",
+          "unitPrice": 90,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-27T08:56:44.000Z",
+      "updatedAt": "2026-07-27T08:56:44.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1010",
+      "orderNumber": 1010,
+      "kotNumber": "KOT-1010",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m62a",
+          "name": "Turkish Chilli Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 431
+        }
+      ],
+      "subtotal": 431,
+      "tax": 22,
+      "total": 453,
+      "createdAt": "2026-07-27T08:03:57.000Z",
+      "updatedAt": "2026-07-27T08:03:57.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1011",
+      "orderNumber": 1011,
+      "kotNumber": "KOT-1011",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m61",
+          "name": "Blondie Cake",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-27T09:10:10.000Z",
+      "updatedAt": "2026-07-27T09:10:10.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1012",
+      "orderNumber": 1012,
+      "kotNumber": "KOT-1012",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m62b",
+          "name": "Jalapeno Cheese Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-27T09:17:23.000Z",
+      "updatedAt": "2026-07-27T09:17:23.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1013",
+      "orderNumber": 1013,
+      "kotNumber": "KOT-1013",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m32",
+          "name": "Signature Gyro Meal",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-27T09:24:36.000Z",
+      "updatedAt": "2026-07-27T09:24:36.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1014",
+      "orderNumber": 1014,
+      "kotNumber": "KOT-1014",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m48",
+          "name": "Chocolate Shake (Regular)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 527
+        }
+      ],
+      "subtotal": 527,
+      "tax": 26,
+      "total": 553,
+      "createdAt": "2026-07-27T09:31:49.000Z",
+      "updatedAt": "2026-07-27T09:31:49.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1015",
+      "orderNumber": 1015,
+      "kotNumber": "KOT-1015",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m60",
+          "name": "Chocolate Brownie",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-27T09:38:02.000Z",
+      "updatedAt": "2026-07-27T09:38:02.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1016",
+      "orderNumber": 1016,
+      "kotNumber": "KOT-1016",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m59c",
+          "name": "Ginger Kombucha",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-27T09:45:15.000Z",
+      "updatedAt": "2026-07-27T09:45:15.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1017",
+      "orderNumber": 1017,
+      "kotNumber": "KOT-1017",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m53a",
+          "name": "Coca-Cola (Regular)",
+          "category": "Gyros",
+          "unitPrice": 59,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-27T09:52:28.000Z",
+      "updatedAt": "2026-07-27T09:52:28.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1018",
+      "orderNumber": 1018,
+      "kotNumber": "KOT-1018",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m17",
+          "name": "6 Pc Wings (2 Dips)",
+          "category": "Gyros",
+          "unitPrice": 180,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-27T09:59:41.000Z",
+      "updatedAt": "2026-07-27T09:59:41.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1019",
+      "orderNumber": 1019,
+      "kotNumber": "KOT-1019",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m9a",
+          "name": "Signature Gyro - Chicken (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-27T09:06:54.000Z",
+      "updatedAt": "2026-07-27T09:06:54.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1020",
+      "orderNumber": 1020,
+      "kotNumber": "KOT-1020",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m41b",
+          "name": "Salad - Protein Max (Paneer)",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-27T09:13:07.000Z",
+      "updatedAt": "2026-07-27T09:13:07.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1021",
+      "orderNumber": 1021,
+      "kotNumber": "KOT-1021",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m52",
+          "name": "Vanilla Softy",
+          "category": "Gyros",
+          "unitPrice": 39,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-27T10:20:20.000Z",
+      "updatedAt": "2026-07-27T10:20:20.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1022",
+      "orderNumber": 1022,
+      "kotNumber": "KOT-1022",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m53b",
+          "name": "Coca-Cola (Large)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-27T10:27:33.000Z",
+      "updatedAt": "2026-07-27T10:27:33.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1023",
+      "orderNumber": 1023,
+      "kotNumber": "KOT-1023",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m28a",
+          "name": "Lebanese Rice Bowl (Chicken)",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-27T10:34:46.000Z",
+      "updatedAt": "2026-07-27T10:34:46.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1024",
+      "orderNumber": 1024,
+      "kotNumber": "KOT-1024",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m27a",
+          "name": "Loaded Chicken Fries",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 412
+        }
+      ],
+      "subtotal": 412,
+      "tax": 21,
+      "total": 433,
+      "createdAt": "2026-07-27T10:41:59.000Z",
+      "updatedAt": "2026-07-27T10:41:59.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1025",
+      "orderNumber": 1025,
+      "kotNumber": "KOT-1025",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m62a",
+          "name": "Turkish Chilli Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-27T10:48:12.000Z",
+      "updatedAt": "2026-07-27T10:48:12.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1026",
+      "orderNumber": 1026,
+      "kotNumber": "KOT-1026",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m27a",
+          "name": "Loaded Chicken Fries",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-27T10:55:25.000Z",
+      "updatedAt": "2026-07-27T10:55:25.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1027",
+      "orderNumber": 1027,
+      "kotNumber": "KOT-1027",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m23",
+          "name": "9 Pc Strips (3 Dips)",
+          "category": "Gyros",
+          "unitPrice": 360,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-27T10:02:38.000Z",
+      "updatedAt": "2026-07-27T10:02:38.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1028",
+      "orderNumber": 1028,
+      "kotNumber": "KOT-1028",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m21",
+          "name": "3 Pc Strips (1 Dip)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-27T10:09:51.000Z",
+      "updatedAt": "2026-07-27T10:09:51.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1029",
+      "orderNumber": 1029,
+      "kotNumber": "KOT-1029",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m40a",
+          "name": "Lebanese Rice - Protein Max (Chicken)",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-27T10:16:04.000Z",
+      "updatedAt": "2026-07-27T10:16:04.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1030",
+      "orderNumber": 1030,
+      "kotNumber": "KOT-1030",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m17",
+          "name": "6 Pc Wings (2 Dips)",
+          "category": "Gyros",
+          "unitPrice": 180,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-27T10:23:17.000Z",
+      "updatedAt": "2026-07-27T10:23:17.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1031",
+      "orderNumber": 1031,
+      "kotNumber": "KOT-1031",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m41b",
+          "name": "Salad - Protein Max (Paneer)",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-27T11:30:30.000Z",
+      "updatedAt": "2026-07-27T11:30:30.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1032",
+      "orderNumber": 1032,
+      "kotNumber": "KOT-1032",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m27a",
+          "name": "Loaded Chicken Fries",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-27T11:37:43.000Z",
+      "updatedAt": "2026-07-27T11:37:43.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1033",
+      "orderNumber": 1033,
+      "kotNumber": "KOT-1033",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m3b",
+          "name": "Creamy Gyro - Paneer (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-27T11:44:56.000Z",
+      "updatedAt": "2026-07-27T11:44:56.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1034",
+      "orderNumber": 1034,
+      "kotNumber": "KOT-1034",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m22",
+          "name": "6 Pc Strips (2 Dips)",
+          "category": "Gyros",
+          "unitPrice": 240,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-27T11:51:09.000Z",
+      "updatedAt": "2026-07-27T11:51:09.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1035",
+      "orderNumber": 1035,
+      "kotNumber": "KOT-1035",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m4a",
+          "name": "Creamy Gyro - Chicken (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-27T11:58:22.000Z",
+      "updatedAt": "2026-07-27T11:58:22.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1036",
+      "orderNumber": 1036,
+      "kotNumber": "KOT-1036",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m55a",
+          "name": "Peach Ice Tea (Regular)",
+          "category": "Gyros",
+          "unitPrice": 59,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-27T11:05:35.000Z",
+      "updatedAt": "2026-07-27T11:05:35.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1037",
+      "orderNumber": 1037,
+      "kotNumber": "KOT-1037",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m29b",
+          "name": "Signature Salad (Paneer)",
+          "category": "Gyros",
+          "unitPrice": 149,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-27T11:12:48.000Z",
+      "updatedAt": "2026-07-27T11:12:48.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1038",
+      "orderNumber": 1038,
+      "kotNumber": "KOT-1038",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m40b",
+          "name": "Lebanese Rice - Protein Max (Paneer)",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-27T11:19:01.000Z",
+      "updatedAt": "2026-07-27T11:19:01.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1039",
+      "orderNumber": 1039,
+      "kotNumber": "KOT-1039",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m40b",
+          "name": "Lebanese Rice - Protein Max (Paneer)",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-27T11:26:14.000Z",
+      "updatedAt": "2026-07-27T11:26:14.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1040",
+      "orderNumber": 1040,
+      "kotNumber": "KOT-1040",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m61",
+          "name": "Blondie Cake",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-27T11:33:27.000Z",
+      "updatedAt": "2026-07-27T11:33:27.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1041",
+      "orderNumber": 1041,
+      "kotNumber": "KOT-1041",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m4a",
+          "name": "Creamy Gyro - Chicken (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 431
+        }
+      ],
+      "subtotal": 431,
+      "tax": 22,
+      "total": 453,
+      "createdAt": "2026-07-27T12:40:40.000Z",
+      "updatedAt": "2026-07-27T12:40:40.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1042",
+      "orderNumber": 1042,
+      "kotNumber": "KOT-1042",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m25",
+          "name": "60 Pc Strips (12 Dips)",
+          "category": "Gyros",
+          "unitPrice": 2400,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-27T12:47:53.000Z",
+      "updatedAt": "2026-07-27T12:47:53.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1043",
+      "orderNumber": 1043,
+      "kotNumber": "KOT-1043",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m53a",
+          "name": "Coca-Cola (Regular)",
+          "category": "Gyros",
+          "unitPrice": 59,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-27T12:54:06.000Z",
+      "updatedAt": "2026-07-27T12:54:06.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1044",
+      "orderNumber": 1044,
+      "kotNumber": "KOT-1044",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m62e",
+          "name": "Peri Peri Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-27T12:01:19.000Z",
+      "updatedAt": "2026-07-27T12:01:19.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1045",
+      "orderNumber": 1045,
+      "kotNumber": "KOT-1045",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m17",
+          "name": "6 Pc Wings (2 Dips)",
+          "category": "Gyros",
+          "unitPrice": 180,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-27T12:08:32.000Z",
+      "updatedAt": "2026-07-27T12:08:32.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1046",
+      "orderNumber": 1046,
+      "kotNumber": "KOT-1046",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m3a",
+          "name": "Creamy Gyro - Chicken (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-27T12:15:45.000Z",
+      "updatedAt": "2026-07-27T12:15:45.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1047",
+      "orderNumber": 1047,
+      "kotNumber": "KOT-1047",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m42",
+          "name": "Vanilla Shake (Regular)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-27T12:22:58.000Z",
+      "updatedAt": "2026-07-27T12:22:58.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1048",
+      "orderNumber": 1048,
+      "kotNumber": "KOT-1048",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m59b",
+          "name": "Hibiscus Kombucha",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-27T12:29:11.000Z",
+      "updatedAt": "2026-07-27T12:29:11.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1049",
+      "orderNumber": 1049,
+      "kotNumber": "KOT-1049",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m4b",
+          "name": "Creamy Gyro - Paneer (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-27T12:36:24.000Z",
+      "updatedAt": "2026-07-27T12:36:24.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1050",
+      "orderNumber": 1050,
+      "kotNumber": "KOT-1050",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m1b",
+          "name": "Spicy Gyro - Paneer (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-27T12:43:37.000Z",
+      "updatedAt": "2026-07-27T12:43:37.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1051",
+      "orderNumber": 1051,
+      "kotNumber": "KOT-1051",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m38",
+          "name": "Super 5 Bucket",
+          "category": "Gyros",
+          "unitPrice": 1299,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-27T13:50:50.000Z",
+      "updatedAt": "2026-07-27T13:50:50.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1052",
+      "orderNumber": 1052,
+      "kotNumber": "KOT-1052",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m41a",
+          "name": "Salad - Protein Max (Chicken)",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 527
+        }
+      ],
+      "subtotal": 527,
+      "tax": 26,
+      "total": 553,
+      "createdAt": "2026-07-27T13:57:03.000Z",
+      "updatedAt": "2026-07-27T13:57:03.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1053",
+      "orderNumber": 1053,
+      "kotNumber": "KOT-1053",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m61",
+          "name": "Blondie Cake",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-27T13:04:16.000Z",
+      "updatedAt": "2026-07-27T13:04:16.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1054",
+      "orderNumber": 1054,
+      "kotNumber": "KOT-1054",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m26a",
+          "name": "Salted Fries",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-27T13:11:29.000Z",
+      "updatedAt": "2026-07-27T13:11:29.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1055",
+      "orderNumber": 1055,
+      "kotNumber": "KOT-1055",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m59a",
+          "name": "Mint Kombucha",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 193
+        }
+      ],
+      "subtotal": 193,
+      "tax": 10,
+      "total": 203,
+      "createdAt": "2026-07-27T13:18:42.000Z",
+      "updatedAt": "2026-07-27T13:18:42.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1056",
+      "orderNumber": 1056,
+      "kotNumber": "KOT-1056",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m10a",
+          "name": "Signature Gyro - Chicken (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-27T13:25:55.000Z",
+      "updatedAt": "2026-07-27T13:25:55.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1057",
+      "orderNumber": 1057,
+      "kotNumber": "KOT-1057",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m45",
+          "name": "Strawberry Shake (Large)",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-27T13:32:08.000Z",
+      "updatedAt": "2026-07-27T13:32:08.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1058",
+      "orderNumber": 1058,
+      "kotNumber": "KOT-1058",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m59d",
+          "name": "Butterfly Pea Kombucha",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 412
+        }
+      ],
+      "subtotal": 412,
+      "tax": 21,
+      "total": 433,
+      "createdAt": "2026-07-27T13:39:21.000Z",
+      "updatedAt": "2026-07-27T13:39:21.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1059",
+      "orderNumber": 1059,
+      "kotNumber": "KOT-1059",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m4b",
+          "name": "Creamy Gyro - Paneer (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-27T13:46:34.000Z",
+      "updatedAt": "2026-07-27T13:46:34.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1060",
+      "orderNumber": 1060,
+      "kotNumber": "KOT-1060",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m3a",
+          "name": "Creamy Gyro - Chicken (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-27T13:53:47.000Z",
+      "updatedAt": "2026-07-27T13:53:47.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1061",
+      "orderNumber": 1061,
+      "kotNumber": "KOT-1061",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m62c",
+          "name": "Garlic Mayo Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 193
+        }
+      ],
+      "subtotal": 193,
+      "tax": 10,
+      "total": 203,
+      "createdAt": "2026-07-27T14:00:00.000Z",
+      "updatedAt": "2026-07-27T14:00:00.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1062",
+      "orderNumber": 1062,
+      "kotNumber": "KOT-1062",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m25",
+          "name": "60 Pc Strips (12 Dips)",
+          "category": "Gyros",
+          "unitPrice": 2400,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-27T14:07:13.000Z",
+      "updatedAt": "2026-07-27T14:07:13.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1063",
+      "orderNumber": 1063,
+      "kotNumber": "KOT-1063",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m56b",
+          "name": "Lime Ice Tea (Large)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 527
+        }
+      ],
+      "subtotal": 527,
+      "tax": 26,
+      "total": 553,
+      "createdAt": "2026-07-27T14:14:26.000Z",
+      "updatedAt": "2026-07-27T14:14:26.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1064",
+      "orderNumber": 1064,
+      "kotNumber": "KOT-1064",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m59d",
+          "name": "Butterfly Pea Kombucha",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-27T14:21:39.000Z",
+      "updatedAt": "2026-07-27T14:21:39.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1065",
+      "orderNumber": 1065,
+      "kotNumber": "KOT-1065",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m8b",
+          "name": "Peri Peri Gyro - Paneer (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 193
+        }
+      ],
+      "subtotal": 193,
+      "tax": 10,
+      "total": 203,
+      "createdAt": "2026-07-27T14:28:52.000Z",
+      "updatedAt": "2026-07-27T14:28:52.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1066",
+      "orderNumber": 1066,
+      "kotNumber": "KOT-1066",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m62c",
+          "name": "Garlic Mayo Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-27T14:35:05.000Z",
+      "updatedAt": "2026-07-27T14:35:05.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1067",
+      "orderNumber": 1067,
+      "kotNumber": "KOT-1067",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m6b",
+          "name": "BBQ Gyro - Paneer (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 431
+        }
+      ],
+      "subtotal": 431,
+      "tax": 22,
+      "total": 453,
+      "createdAt": "2026-07-27T14:42:18.000Z",
+      "updatedAt": "2026-07-27T14:42:18.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1068",
+      "orderNumber": 1068,
+      "kotNumber": "KOT-1068",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m59b",
+          "name": "Hibiscus Kombucha",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-27T14:49:31.000Z",
+      "updatedAt": "2026-07-27T14:49:31.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1069",
+      "orderNumber": 1069,
+      "kotNumber": "KOT-1069",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m41a",
+          "name": "Salad - Protein Max (Chicken)",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 193
+        }
+      ],
+      "subtotal": 193,
+      "tax": 10,
+      "total": 203,
+      "createdAt": "2026-07-27T14:56:44.000Z",
+      "updatedAt": "2026-07-27T14:56:44.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1070",
+      "orderNumber": 1070,
+      "kotNumber": "KOT-1070",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m29b",
+          "name": "Signature Salad (Paneer)",
+          "category": "Gyros",
+          "unitPrice": 149,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-27T14:03:57.000Z",
+      "updatedAt": "2026-07-27T14:03:57.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1071",
+      "orderNumber": 1071,
+      "kotNumber": "KOT-1071",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m49",
+          "name": "Chocolate Shake (Large)",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-27T15:10:10.000Z",
+      "updatedAt": "2026-07-27T15:10:10.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1072",
+      "orderNumber": 1072,
+      "kotNumber": "KOT-1072",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m5b",
+          "name": "BBQ Gyro - Paneer (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-27T15:17:23.000Z",
+      "updatedAt": "2026-07-27T15:17:23.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1073",
+      "orderNumber": 1073,
+      "kotNumber": "KOT-1073",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m10a",
+          "name": "Signature Gyro - Chicken (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-27T15:24:36.000Z",
+      "updatedAt": "2026-07-27T15:24:36.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1074",
+      "orderNumber": 1074,
+      "kotNumber": "KOT-1074",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m43",
+          "name": "Vanilla Shake (Large)",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-27T15:31:49.000Z",
+      "updatedAt": "2026-07-27T15:31:49.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1075",
+      "orderNumber": 1075,
+      "kotNumber": "KOT-1075",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m62f",
+          "name": "Honey Mustard Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-27T15:38:02.000Z",
+      "updatedAt": "2026-07-27T15:38:02.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1076",
+      "orderNumber": 1076,
+      "kotNumber": "KOT-1076",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m39a",
+          "name": "Gyro - Protein Max (Chicken)",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-27T15:45:15.000Z",
+      "updatedAt": "2026-07-27T15:45:15.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1077",
+      "orderNumber": 1077,
+      "kotNumber": "KOT-1077",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m7b",
+          "name": "Peri Peri Gyro - Paneer (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 527
+        }
+      ],
+      "subtotal": 527,
+      "tax": 26,
+      "total": 553,
+      "createdAt": "2026-07-27T15:52:28.000Z",
+      "updatedAt": "2026-07-27T15:52:28.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1078",
+      "orderNumber": 1078,
+      "kotNumber": "KOT-1078",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m24",
+          "name": "20 Pc Strips (6 Dips)",
+          "category": "Gyros",
+          "unitPrice": 800,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-27T15:59:41.000Z",
+      "updatedAt": "2026-07-27T15:59:41.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1079",
+      "orderNumber": 1079,
+      "kotNumber": "KOT-1079",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m1a",
+          "name": "Spicy Gyro - Chicken (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-27T15:06:54.000Z",
+      "updatedAt": "2026-07-27T15:06:54.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1080",
+      "orderNumber": 1080,
+      "kotNumber": "KOT-1080",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m21",
+          "name": "3 Pc Strips (1 Dip)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 431
+        }
+      ],
+      "subtotal": 431,
+      "tax": 22,
+      "total": 453,
+      "createdAt": "2026-07-27T15:13:07.000Z",
+      "updatedAt": "2026-07-27T15:13:07.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1081",
+      "orderNumber": 1081,
+      "kotNumber": "KOT-1081",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m31",
+          "name": "Classic Gyro Meal",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-27T16:20:20.000Z",
+      "updatedAt": "2026-07-27T16:20:20.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1082",
+      "orderNumber": 1082,
+      "kotNumber": "KOT-1082",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m18",
+          "name": "9 Pc Wings (3 Dips)",
+          "category": "Gyros",
+          "unitPrice": 270,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-27T16:27:33.000Z",
+      "updatedAt": "2026-07-27T16:27:33.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1083",
+      "orderNumber": 1083,
+      "kotNumber": "KOT-1083",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m57",
+          "name": "Hot Chocolate",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-27T16:34:46.000Z",
+      "updatedAt": "2026-07-27T16:34:46.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1084",
+      "orderNumber": 1084,
+      "kotNumber": "KOT-1084",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m51",
+          "name": "Kunafa Pistachio Shake (Large)",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 412
+        }
+      ],
+      "subtotal": 412,
+      "tax": 21,
+      "total": 433,
+      "createdAt": "2026-07-27T16:41:59.000Z",
+      "updatedAt": "2026-07-27T16:41:59.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1085",
+      "orderNumber": 1085,
+      "kotNumber": "KOT-1085",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m7a",
+          "name": "Peri Peri Gyro - Chicken (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-27T16:48:12.000Z",
+      "updatedAt": "2026-07-27T16:48:12.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1086",
+      "orderNumber": 1086,
+      "kotNumber": "KOT-1086",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m20",
+          "name": "60 Pc Wings (12 Dips)",
+          "category": "Gyros",
+          "unitPrice": 1500,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-27T16:55:25.000Z",
+      "updatedAt": "2026-07-27T16:55:25.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1087",
+      "orderNumber": 1087,
+      "kotNumber": "KOT-1087",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m15",
+          "name": "12 Pc Leg & Thigh (6 Dips)",
+          "category": "Gyros",
+          "unitPrice": 840,
+          "quantity": 1,
+          "totalPrice": 527
+        }
+      ],
+      "subtotal": 527,
+      "tax": 26,
+      "total": 553,
+      "createdAt": "2026-07-27T16:02:38.000Z",
+      "updatedAt": "2026-07-27T16:02:38.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1088",
+      "orderNumber": 1088,
+      "kotNumber": "KOT-1088",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m58",
+          "name": "Signature Tea",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 412
+        }
+      ],
+      "subtotal": 412,
+      "tax": 21,
+      "total": 433,
+      "createdAt": "2026-07-27T16:09:51.000Z",
+      "updatedAt": "2026-07-27T16:09:51.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1089",
+      "orderNumber": 1089,
+      "kotNumber": "KOT-1089",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m11",
+          "name": "1 Pc Leg & Thigh (1 Dip)",
+          "category": "Gyros",
+          "unitPrice": 70,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-27T16:16:04.000Z",
+      "updatedAt": "2026-07-27T16:16:04.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1090",
+      "orderNumber": 1090,
+      "kotNumber": "KOT-1090",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m13",
+          "name": "4 Pc Leg & Thigh (2 Dips)",
+          "category": "Gyros",
+          "unitPrice": 280,
+          "quantity": 1,
+          "totalPrice": 193
+        }
+      ],
+      "subtotal": 193,
+      "tax": 10,
+      "total": 203,
+      "createdAt": "2026-07-27T16:23:17.000Z",
+      "updatedAt": "2026-07-27T16:23:17.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1091",
+      "orderNumber": 1091,
+      "kotNumber": "KOT-1091",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m55b",
+          "name": "Peach Ice Tea (Large)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-27T17:30:30.000Z",
+      "updatedAt": "2026-07-27T17:30:30.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1092",
+      "orderNumber": 1092,
+      "kotNumber": "KOT-1092",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m61",
+          "name": "Blondie Cake",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-27T17:37:43.000Z",
+      "updatedAt": "2026-07-27T17:37:43.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1093",
+      "orderNumber": 1093,
+      "kotNumber": "KOT-1093",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m15",
+          "name": "12 Pc Leg & Thigh (6 Dips)",
+          "category": "Gyros",
+          "unitPrice": 840,
+          "quantity": 1,
+          "totalPrice": 193
+        }
+      ],
+      "subtotal": 193,
+      "tax": 10,
+      "total": 203,
+      "createdAt": "2026-07-27T17:44:56.000Z",
+      "updatedAt": "2026-07-27T17:44:56.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1094",
+      "orderNumber": 1094,
+      "kotNumber": "KOT-1094",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m41a",
+          "name": "Salad - Protein Max (Chicken)",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 431
+        }
+      ],
+      "subtotal": 431,
+      "tax": 22,
+      "total": 453,
+      "createdAt": "2026-07-27T17:51:09.000Z",
+      "updatedAt": "2026-07-27T17:51:09.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1095",
+      "orderNumber": 1095,
+      "kotNumber": "KOT-1095",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m9b",
+          "name": "Signature Gyro - Paneer (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-27T17:58:22.000Z",
+      "updatedAt": "2026-07-27T17:58:22.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1096",
+      "orderNumber": 1096,
+      "kotNumber": "KOT-1096",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m3a",
+          "name": "Creamy Gyro - Chicken (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 412
+        }
+      ],
+      "subtotal": 412,
+      "tax": 21,
+      "total": 433,
+      "createdAt": "2026-07-27T17:05:35.000Z",
+      "updatedAt": "2026-07-27T17:05:35.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1097",
+      "orderNumber": 1097,
+      "kotNumber": "KOT-1097",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m15",
+          "name": "12 Pc Leg & Thigh (6 Dips)",
+          "category": "Gyros",
+          "unitPrice": 840,
+          "quantity": 1,
+          "totalPrice": 527
+        }
+      ],
+      "subtotal": 527,
+      "tax": 26,
+      "total": 553,
+      "createdAt": "2026-07-27T17:12:48.000Z",
+      "updatedAt": "2026-07-27T17:12:48.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1098",
+      "orderNumber": 1098,
+      "kotNumber": "KOT-1098",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m49",
+          "name": "Chocolate Shake (Large)",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-27T17:19:01.000Z",
+      "updatedAt": "2026-07-27T17:19:01.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1099",
+      "orderNumber": 1099,
+      "kotNumber": "KOT-1099",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m62f",
+          "name": "Honey Mustard Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-27T17:26:14.000Z",
+      "updatedAt": "2026-07-27T17:26:14.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1100",
+      "orderNumber": 1100,
+      "kotNumber": "KOT-1100",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m62b",
+          "name": "Jalapeno Cheese Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-27T17:33:27.000Z",
+      "updatedAt": "2026-07-27T17:33:27.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1101",
+      "orderNumber": 1101,
+      "kotNumber": "KOT-1101",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m48",
+          "name": "Chocolate Shake (Regular)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 527
+        }
+      ],
+      "subtotal": 527,
+      "tax": 26,
+      "total": 553,
+      "createdAt": "2026-07-27T18:40:40.000Z",
+      "updatedAt": "2026-07-27T18:40:40.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1102",
+      "orderNumber": 1102,
+      "kotNumber": "KOT-1102",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m20",
+          "name": "60 Pc Wings (12 Dips)",
+          "category": "Gyros",
+          "unitPrice": 1500,
+          "quantity": 1,
+          "totalPrice": 431
+        }
+      ],
+      "subtotal": 431,
+      "tax": 22,
+      "total": 453,
+      "createdAt": "2026-07-27T18:47:53.000Z",
+      "updatedAt": "2026-07-27T18:47:53.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1103",
+      "orderNumber": 1103,
+      "kotNumber": "KOT-1103",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m7b",
+          "name": "Peri Peri Gyro - Paneer (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 431
+        }
+      ],
+      "subtotal": 431,
+      "tax": 22,
+      "total": 453,
+      "createdAt": "2026-07-27T18:54:06.000Z",
+      "updatedAt": "2026-07-27T18:54:06.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1104",
+      "orderNumber": 1104,
+      "kotNumber": "KOT-1104",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m55b",
+          "name": "Peach Ice Tea (Large)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-27T18:01:19.000Z",
+      "updatedAt": "2026-07-27T18:01:19.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1105",
+      "orderNumber": 1105,
+      "kotNumber": "KOT-1105",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m50",
+          "name": "Kunafa Pistachio Shake (Regular)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-27T18:08:32.000Z",
+      "updatedAt": "2026-07-27T18:08:32.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1106",
+      "orderNumber": 1106,
+      "kotNumber": "KOT-1106",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m1b",
+          "name": "Spicy Gyro - Paneer (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-27T18:15:45.000Z",
+      "updatedAt": "2026-07-27T18:15:45.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1107",
+      "orderNumber": 1107,
+      "kotNumber": "KOT-1107",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m29a",
+          "name": "Signature Salad (Chicken)",
+          "category": "Gyros",
+          "unitPrice": 149,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-27T18:22:58.000Z",
+      "updatedAt": "2026-07-27T18:22:58.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1108",
+      "orderNumber": 1108,
+      "kotNumber": "KOT-1108",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m48",
+          "name": "Chocolate Shake (Regular)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-27T18:29:11.000Z",
+      "updatedAt": "2026-07-27T18:29:11.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1109",
+      "orderNumber": 1109,
+      "kotNumber": "KOT-1109",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m9a",
+          "name": "Signature Gyro - Chicken (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-27T18:36:24.000Z",
+      "updatedAt": "2026-07-27T18:36:24.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1110",
+      "orderNumber": 1110,
+      "kotNumber": "KOT-1110",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m54b",
+          "name": "Sprite (Large)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 527
+        }
+      ],
+      "subtotal": 527,
+      "tax": 26,
+      "total": 553,
+      "createdAt": "2026-07-27T18:43:37.000Z",
+      "updatedAt": "2026-07-27T18:43:37.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1111",
+      "orderNumber": 1111,
+      "kotNumber": "KOT-1111",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m60",
+          "name": "Chocolate Brownie",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 412
+        }
+      ],
+      "subtotal": 412,
+      "tax": 21,
+      "total": 433,
+      "createdAt": "2026-07-27T19:50:50.000Z",
+      "updatedAt": "2026-07-27T19:50:50.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1112",
+      "orderNumber": 1112,
+      "kotNumber": "KOT-1112",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m44",
+          "name": "Strawberry Shake (Regular)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-27T19:57:03.000Z",
+      "updatedAt": "2026-07-27T19:57:03.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1113",
+      "orderNumber": 1113,
+      "kotNumber": "KOT-1113",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m9a",
+          "name": "Signature Gyro - Chicken (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-27T19:04:16.000Z",
+      "updatedAt": "2026-07-27T19:04:16.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1114",
+      "orderNumber": 1114,
+      "kotNumber": "KOT-1114",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m8a",
+          "name": "Peri Peri Gyro - Chicken (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-27T19:11:29.000Z",
+      "updatedAt": "2026-07-27T19:11:29.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1115",
+      "orderNumber": 1115,
+      "kotNumber": "KOT-1115",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m8a",
+          "name": "Peri Peri Gyro - Chicken (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-27T19:18:42.000Z",
+      "updatedAt": "2026-07-27T19:18:42.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1116",
+      "orderNumber": 1116,
+      "kotNumber": "KOT-1116",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m3b",
+          "name": "Creamy Gyro - Paneer (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-27T19:25:55.000Z",
+      "updatedAt": "2026-07-27T19:25:55.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1117",
+      "orderNumber": 1117,
+      "kotNumber": "KOT-1117",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m41a",
+          "name": "Salad - Protein Max (Chicken)",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-27T19:32:08.000Z",
+      "updatedAt": "2026-07-27T19:32:08.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1118",
+      "orderNumber": 1118,
+      "kotNumber": "KOT-1118",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m59a",
+          "name": "Mint Kombucha",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-27T19:39:21.000Z",
+      "updatedAt": "2026-07-27T19:39:21.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1119",
+      "orderNumber": 1119,
+      "kotNumber": "KOT-1119",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m54b",
+          "name": "Sprite (Large)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-27T19:46:34.000Z",
+      "updatedAt": "2026-07-27T19:46:34.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1120",
+      "orderNumber": 1120,
+      "kotNumber": "KOT-1120",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m62f",
+          "name": "Honey Mustard Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 193
+        }
+      ],
+      "subtotal": 193,
+      "tax": 10,
+      "total": 203,
+      "createdAt": "2026-07-27T19:53:47.000Z",
+      "updatedAt": "2026-07-27T19:53:47.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1121",
+      "orderNumber": 1121,
+      "kotNumber": "KOT-1121",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m59a",
+          "name": "Mint Kombucha",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 412
+        }
+      ],
+      "subtotal": 412,
+      "tax": 21,
+      "total": 433,
+      "createdAt": "2026-07-27T20:00:00.000Z",
+      "updatedAt": "2026-07-27T20:00:00.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1122",
+      "orderNumber": 1122,
+      "kotNumber": "KOT-1122",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m56b",
+          "name": "Lime Ice Tea (Large)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 412
+        }
+      ],
+      "subtotal": 412,
+      "tax": 21,
+      "total": 433,
+      "createdAt": "2026-07-27T20:07:13.000Z",
+      "updatedAt": "2026-07-27T20:07:13.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1123",
+      "orderNumber": 1123,
+      "kotNumber": "KOT-1123",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m6b",
+          "name": "BBQ Gyro - Paneer (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 527
+        }
+      ],
+      "subtotal": 527,
+      "tax": 26,
+      "total": 553,
+      "createdAt": "2026-07-27T20:14:26.000Z",
+      "updatedAt": "2026-07-27T20:14:26.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1124",
+      "orderNumber": 1124,
+      "kotNumber": "KOT-1124",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m26a",
+          "name": "Salted Fries",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-27T20:21:39.000Z",
+      "updatedAt": "2026-07-27T20:21:39.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1125",
+      "orderNumber": 1125,
+      "kotNumber": "KOT-1125",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m37",
+          "name": "Den's Party Meal",
+          "category": "Gyros",
+          "unitPrice": 899,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-27T20:28:52.000Z",
+      "updatedAt": "2026-07-27T20:28:52.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1126",
+      "orderNumber": 1126,
+      "kotNumber": "KOT-1126",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m9b",
+          "name": "Signature Gyro - Paneer (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 193
+        }
+      ],
+      "subtotal": 193,
+      "tax": 10,
+      "total": 203,
+      "createdAt": "2026-07-27T20:35:05.000Z",
+      "updatedAt": "2026-07-27T20:35:05.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1127",
+      "orderNumber": 1127,
+      "kotNumber": "KOT-1127",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m62d",
+          "name": "Spicy Mayo Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-27T20:42:18.000Z",
+      "updatedAt": "2026-07-27T20:42:18.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1128",
+      "orderNumber": 1128,
+      "kotNumber": "KOT-1128",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m4b",
+          "name": "Creamy Gyro - Paneer (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-27T20:49:31.000Z",
+      "updatedAt": "2026-07-27T20:49:31.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1129",
+      "orderNumber": 1129,
+      "kotNumber": "KOT-1129",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m8a",
+          "name": "Peri Peri Gyro - Chicken (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-27T20:56:44.000Z",
+      "updatedAt": "2026-07-27T20:56:44.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1130",
+      "orderNumber": 1130,
+      "kotNumber": "KOT-1130",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m26b",
+          "name": "Peri Peri Fries",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-27T20:03:57.000Z",
+      "updatedAt": "2026-07-27T20:03:57.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1131",
+      "orderNumber": 1131,
+      "kotNumber": "KOT-1131",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m62b",
+          "name": "Jalapeno Cheese Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-27T21:10:10.000Z",
+      "updatedAt": "2026-07-27T21:10:10.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1132",
+      "orderNumber": 1132,
+      "kotNumber": "KOT-1132",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m50",
+          "name": "Kunafa Pistachio Shake (Regular)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-28T21:17:23.000Z",
+      "updatedAt": "2026-07-27T21:17:23.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1133",
+      "orderNumber": 1133,
+      "kotNumber": "KOT-1133",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m4b",
+          "name": "Creamy Gyro - Paneer (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-28T21:24:36.000Z",
+      "updatedAt": "2026-07-27T21:24:36.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1134",
+      "orderNumber": 1134,
+      "kotNumber": "KOT-1134",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m7a",
+          "name": "Peri Peri Gyro - Chicken (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-28T21:31:49.000Z",
+      "updatedAt": "2026-07-27T21:31:49.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1135",
+      "orderNumber": 1135,
+      "kotNumber": "KOT-1135",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m27a",
+          "name": "Loaded Chicken Fries",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-28T21:38:02.000Z",
+      "updatedAt": "2026-07-27T21:38:02.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1136",
+      "orderNumber": 1136,
+      "kotNumber": "KOT-1136",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m26b",
+          "name": "Peri Peri Fries",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-28T21:45:15.000Z",
+      "updatedAt": "2026-07-27T21:45:15.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1137",
+      "orderNumber": 1137,
+      "kotNumber": "KOT-1137",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m21",
+          "name": "3 Pc Strips (1 Dip)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-28T21:52:28.000Z",
+      "updatedAt": "2026-07-27T21:52:28.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1138",
+      "orderNumber": 1138,
+      "kotNumber": "KOT-1138",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m12",
+          "name": "2 Pc Leg & Thigh (1 Dip)",
+          "category": "Gyros",
+          "unitPrice": 140,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-28T21:59:41.000Z",
+      "updatedAt": "2026-07-27T21:59:41.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1139",
+      "orderNumber": 1139,
+      "kotNumber": "KOT-1139",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m35",
+          "name": "Double Crunch Box",
+          "category": "Gyros",
+          "unitPrice": 499,
+          "quantity": 1,
+          "totalPrice": 412
+        }
+      ],
+      "subtotal": 412,
+      "tax": 21,
+      "total": 433,
+      "createdAt": "2026-07-28T21:06:54.000Z",
+      "updatedAt": "2026-07-27T21:06:54.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1140",
+      "orderNumber": 1140,
+      "kotNumber": "KOT-1140",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m58",
+          "name": "Signature Tea",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-28T21:13:07.000Z",
+      "updatedAt": "2026-07-27T21:13:07.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1141",
+      "orderNumber": 1141,
+      "kotNumber": "KOT-1141",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m53b",
+          "name": "Coca-Cola (Large)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-28T22:20:20.000Z",
+      "updatedAt": "2026-07-27T22:20:20.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1142",
+      "orderNumber": 1142,
+      "kotNumber": "KOT-1142",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m34",
+          "name": "Duo Gyro Feast",
+          "category": "Gyros",
+          "unitPrice": 349,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-28T22:27:33.000Z",
+      "updatedAt": "2026-07-27T22:27:33.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1143",
+      "orderNumber": 1143,
+      "kotNumber": "KOT-1143",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m10b",
+          "name": "Signature Gyro - Paneer (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-28T22:34:46.000Z",
+      "updatedAt": "2026-07-27T22:34:46.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1144",
+      "orderNumber": 1144,
+      "kotNumber": "KOT-1144",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m62e",
+          "name": "Peri Peri Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-28T22:41:59.000Z",
+      "updatedAt": "2026-07-27T22:41:59.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1145",
+      "orderNumber": 1145,
+      "kotNumber": "KOT-1145",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m62e",
+          "name": "Peri Peri Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-28T22:48:12.000Z",
+      "updatedAt": "2026-07-27T22:48:12.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1146",
+      "orderNumber": 1146,
+      "kotNumber": "KOT-1146",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m59d",
+          "name": "Butterfly Pea Kombucha",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 193
+        }
+      ],
+      "subtotal": 193,
+      "tax": 10,
+      "total": 203,
+      "createdAt": "2026-07-28T22:55:25.000Z",
+      "updatedAt": "2026-07-27T22:55:25.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1147",
+      "orderNumber": 1147,
+      "kotNumber": "KOT-1147",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m29a",
+          "name": "Signature Salad (Chicken)",
+          "category": "Gyros",
+          "unitPrice": 149,
+          "quantity": 1,
+          "totalPrice": 193
+        }
+      ],
+      "subtotal": 193,
+      "tax": 10,
+      "total": 203,
+      "createdAt": "2026-07-28T22:02:38.000Z",
+      "updatedAt": "2026-07-27T22:02:38.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1148",
+      "orderNumber": 1148,
+      "kotNumber": "KOT-1148",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m62d",
+          "name": "Spicy Mayo Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-28T22:09:51.000Z",
+      "updatedAt": "2026-07-27T22:09:51.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1149",
+      "orderNumber": 1149,
+      "kotNumber": "KOT-1149",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m3a",
+          "name": "Creamy Gyro - Chicken (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-28T22:16:04.000Z",
+      "updatedAt": "2026-07-27T22:16:04.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1150",
+      "orderNumber": 1150,
+      "kotNumber": "KOT-1150",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m21",
+          "name": "3 Pc Strips (1 Dip)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 431
+        }
+      ],
+      "subtotal": 431,
+      "tax": 22,
+      "total": 453,
+      "createdAt": "2026-07-28T22:23:17.000Z",
+      "updatedAt": "2026-07-27T22:23:17.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1151",
+      "orderNumber": 1151,
+      "kotNumber": "KOT-1151",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m27b",
+          "name": "Loaded Paneer Fries",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-28T08:30:30.000Z",
+      "updatedAt": "2026-07-27T08:30:30.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1152",
+      "orderNumber": 1152,
+      "kotNumber": "KOT-1152",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m35",
+          "name": "Double Crunch Box",
+          "category": "Gyros",
+          "unitPrice": 499,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-28T08:37:43.000Z",
+      "updatedAt": "2026-07-27T08:37:43.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1153",
+      "orderNumber": 1153,
+      "kotNumber": "KOT-1153",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m21",
+          "name": "3 Pc Strips (1 Dip)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 431
+        }
+      ],
+      "subtotal": 431,
+      "tax": 22,
+      "total": 453,
+      "createdAt": "2026-07-28T08:44:56.000Z",
+      "updatedAt": "2026-07-27T08:44:56.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1154",
+      "orderNumber": 1154,
+      "kotNumber": "KOT-1154",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m43",
+          "name": "Vanilla Shake (Large)",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 193
+        }
+      ],
+      "subtotal": 193,
+      "tax": 10,
+      "total": 203,
+      "createdAt": "2026-07-28T08:51:09.000Z",
+      "updatedAt": "2026-07-27T08:51:09.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1155",
+      "orderNumber": 1155,
+      "kotNumber": "KOT-1155",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m22",
+          "name": "6 Pc Strips (2 Dips)",
+          "category": "Gyros",
+          "unitPrice": 240,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-28T08:58:22.000Z",
+      "updatedAt": "2026-07-27T08:58:22.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1156",
+      "orderNumber": 1156,
+      "kotNumber": "KOT-1156",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m16",
+          "name": "3 Pc Wings (1 Dip)",
+          "category": "Gyros",
+          "unitPrice": 90,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-28T08:05:35.000Z",
+      "updatedAt": "2026-07-27T08:05:35.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1157",
+      "orderNumber": 1157,
+      "kotNumber": "KOT-1157",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m38",
+          "name": "Super 5 Bucket",
+          "category": "Gyros",
+          "unitPrice": 1299,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-28T08:12:48.000Z",
+      "updatedAt": "2026-07-27T08:12:48.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1158",
+      "orderNumber": 1158,
+      "kotNumber": "KOT-1158",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m10b",
+          "name": "Signature Gyro - Paneer (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 384
+        }
+      ],
+      "subtotal": 384,
+      "tax": 19,
+      "total": 403,
+      "createdAt": "2026-07-28T08:19:01.000Z",
+      "updatedAt": "2026-07-27T08:19:01.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1159",
+      "orderNumber": 1159,
+      "kotNumber": "KOT-1159",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m56a",
+          "name": "Lime Ice Tea (Regular)",
+          "category": "Gyros",
+          "unitPrice": 59,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-28T08:26:14.000Z",
+      "updatedAt": "2026-07-27T08:26:14.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1160",
+      "orderNumber": 1160,
+      "kotNumber": "KOT-1160",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m12",
+          "name": "2 Pc Leg & Thigh (1 Dip)",
+          "category": "Gyros",
+          "unitPrice": 140,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-28T08:33:27.000Z",
+      "updatedAt": "2026-07-27T08:33:27.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1161",
+      "orderNumber": 1161,
+      "kotNumber": "KOT-1161",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m46",
+          "name": "Biscoff Shake (Regular)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 412
+        }
+      ],
+      "subtotal": 412,
+      "tax": 21,
+      "total": 433,
+      "createdAt": "2026-07-28T09:40:40.000Z",
+      "updatedAt": "2026-07-27T09:40:40.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1162",
+      "orderNumber": 1162,
+      "kotNumber": "KOT-1162",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m40b",
+          "name": "Lebanese Rice - Protein Max (Paneer)",
+          "category": "Gyros",
+          "unitPrice": 299,
+          "quantity": 1,
+          "totalPrice": 431
+        }
+      ],
+      "subtotal": 431,
+      "tax": 22,
+      "total": 453,
+      "createdAt": "2026-07-28T09:47:53.000Z",
+      "updatedAt": "2026-07-27T09:47:53.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1163",
+      "orderNumber": 1163,
+      "kotNumber": "KOT-1163",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m45",
+          "name": "Strawberry Shake (Large)",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 412
+        }
+      ],
+      "subtotal": 412,
+      "tax": 21,
+      "total": 433,
+      "createdAt": "2026-07-28T09:54:06.000Z",
+      "updatedAt": "2026-07-27T09:54:06.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1164",
+      "orderNumber": 1164,
+      "kotNumber": "KOT-1164",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m15",
+          "name": "12 Pc Leg & Thigh (6 Dips)",
+          "category": "Gyros",
+          "unitPrice": 840,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-28T09:01:19.000Z",
+      "updatedAt": "2026-07-27T09:01:19.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1165",
+      "orderNumber": 1165,
+      "kotNumber": "KOT-1165",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m26a",
+          "name": "Salted Fries",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-28T09:08:32.000Z",
+      "updatedAt": "2026-07-27T09:08:32.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1166",
+      "orderNumber": 1166,
+      "kotNumber": "KOT-1166",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m2b",
+          "name": "Spicy Gyro - Paneer (Signature)",
+          "category": "Gyros",
+          "unitPrice": 249,
+          "quantity": 1,
+          "totalPrice": 193
+        }
+      ],
+      "subtotal": 193,
+      "tax": 10,
+      "total": 203,
+      "createdAt": "2026-07-28T09:15:45.000Z",
+      "updatedAt": "2026-07-27T09:15:45.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1167",
+      "orderNumber": 1167,
+      "kotNumber": "KOT-1167",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m15",
+          "name": "12 Pc Leg & Thigh (6 Dips)",
+          "category": "Gyros",
+          "unitPrice": 840,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-28T09:22:58.000Z",
+      "updatedAt": "2026-07-27T09:22:58.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1168",
+      "orderNumber": 1168,
+      "kotNumber": "KOT-1168",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m29a",
+          "name": "Signature Salad (Chicken)",
+          "category": "Gyros",
+          "unitPrice": 149,
+          "quantity": 1,
+          "totalPrice": 317
+        }
+      ],
+      "subtotal": 317,
+      "tax": 16,
+      "total": 333,
+      "createdAt": "2026-07-28T09:29:11.000Z",
+      "updatedAt": "2026-07-27T09:29:11.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1169",
+      "orderNumber": 1169,
+      "kotNumber": "KOT-1169",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m3a",
+          "name": "Creamy Gyro - Chicken (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-28T09:36:24.000Z",
+      "updatedAt": "2026-07-27T09:36:24.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1170",
+      "orderNumber": 1170,
+      "kotNumber": "KOT-1170",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m19",
+          "name": "20 Pc Wings (6 Dips)",
+          "category": "Gyros",
+          "unitPrice": 600,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-28T09:43:37.000Z",
+      "updatedAt": "2026-07-27T09:43:37.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1171",
+      "orderNumber": 1171,
+      "kotNumber": "KOT-1171",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m27b",
+          "name": "Loaded Paneer Fries",
+          "category": "Gyros",
+          "unitPrice": 199,
+          "quantity": 1,
+          "totalPrice": 336
+        }
+      ],
+      "subtotal": 336,
+      "tax": 17,
+      "total": 353,
+      "createdAt": "2026-07-28T10:50:50.000Z",
+      "updatedAt": "2026-07-27T10:50:50.000Z",
+      "table": "Table 3",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1172",
+      "orderNumber": 1172,
+      "kotNumber": "KOT-1172",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m50",
+          "name": "Kunafa Pistachio Shake (Regular)",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-28T10:57:03.000Z",
+      "updatedAt": "2026-07-27T10:57:03.000Z",
+      "table": "Table 4",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1173",
+      "orderNumber": 1173,
+      "kotNumber": "KOT-1173",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m24",
+          "name": "20 Pc Strips (6 Dips)",
+          "category": "Gyros",
+          "unitPrice": 800,
+          "quantity": 1,
+          "totalPrice": 365
+        }
+      ],
+      "subtotal": 365,
+      "tax": 18,
+      "total": 383,
+      "createdAt": "2026-07-28T10:04:16.000Z",
+      "updatedAt": "2026-07-27T10:04:16.000Z",
+      "table": "Table 5",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1174",
+      "orderNumber": 1174,
+      "kotNumber": "KOT-1174",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m3a",
+          "name": "Creamy Gyro - Chicken (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-28T10:11:29.000Z",
+      "updatedAt": "2026-07-27T10:11:29.000Z",
+      "table": "Table 6",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1175",
+      "orderNumber": 1175,
+      "kotNumber": "KOT-1175",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m34",
+          "name": "Duo Gyro Feast",
+          "category": "Gyros",
+          "unitPrice": 349,
+          "quantity": 1,
+          "totalPrice": 193
+        }
+      ],
+      "subtotal": 193,
+      "tax": 10,
+      "total": 203,
+      "createdAt": "2026-07-28T10:18:42.000Z",
+      "updatedAt": "2026-07-27T10:18:42.000Z",
+      "table": "Table 7",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1176",
+      "orderNumber": 1176,
+      "kotNumber": "KOT-1176",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m9a",
+          "name": "Signature Gyro - Chicken (Mini)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 527
+        }
+      ],
+      "subtotal": 527,
+      "tax": 26,
+      "total": 553,
+      "createdAt": "2026-07-28T10:25:55.000Z",
+      "updatedAt": "2026-07-27T10:25:55.000Z",
+      "table": "Table 8",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1177",
+      "orderNumber": 1177,
+      "kotNumber": "KOT-1177",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m23",
+          "name": "9 Pc Strips (3 Dips)",
+          "category": "Gyros",
+          "unitPrice": 360,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-28T10:32:08.000Z",
+      "updatedAt": "2026-07-27T10:32:08.000Z",
+      "table": "Table 9",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1178",
+      "orderNumber": 1178,
+      "kotNumber": "KOT-1178",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m55b",
+          "name": "Peach Ice Tea (Large)",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 412
+        }
+      ],
+      "subtotal": 412,
+      "tax": 21,
+      "total": 433,
+      "createdAt": "2026-07-28T10:39:21.000Z",
+      "updatedAt": "2026-07-27T10:39:21.000Z",
+      "table": "Table 10",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1179",
+      "orderNumber": 1179,
+      "kotNumber": "KOT-1179",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "card",
+      "items": [
+        {
+          "id": "m60",
+          "name": "Chocolate Brownie",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 241
+        }
+      ],
+      "subtotal": 241,
+      "tax": 12,
+      "total": 253,
+      "createdAt": "2026-07-28T10:46:34.000Z",
+      "updatedAt": "2026-07-27T10:46:34.000Z",
+      "table": "Table 11",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1180",
+      "orderNumber": 1180,
+      "kotNumber": "KOT-1180",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "wallet",
+      "items": [
+        {
+          "id": "m57",
+          "name": "Hot Chocolate",
+          "category": "Gyros",
+          "unitPrice": 99,
+          "quantity": 1,
+          "totalPrice": 289
+        }
+      ],
+      "subtotal": 289,
+      "tax": 14,
+      "total": 303,
+      "createdAt": "2026-07-28T10:53:47.000Z",
+      "updatedAt": "2026-07-27T10:53:47.000Z",
+      "table": "Table 12",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1181",
+      "orderNumber": 1181,
+      "kotNumber": "KOT-1181",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "cash",
+      "items": [
+        {
+          "id": "m62b",
+          "name": "Jalapeno Cheese Dip",
+          "category": "Gyros",
+          "unitPrice": 15,
+          "quantity": 1,
+          "totalPrice": 270
+        }
+      ],
+      "subtotal": 270,
+      "tax": 13,
+      "total": 283,
+      "createdAt": "2026-07-28T11:00:00.000Z",
+      "updatedAt": "2026-07-27T11:00:00.000Z",
+      "table": "Table 1",
+      "source": "pos"
+    },
+    {
+      "id": "ORD-1182",
+      "orderNumber": 1182,
+      "kotNumber": "KOT-1182",
+      "type": "dine-in",
+      "status": "completed",
+      "paymentStatus": "paid",
+      "paymentMethod": "upi",
+      "items": [
+        {
+          "id": "m59a",
+          "name": "Mint Kombucha",
+          "category": "Gyros",
+          "unitPrice": 120,
+          "quantity": 1,
+          "totalPrice": 479
+        }
+      ],
+      "subtotal": 479,
+      "tax": 24,
+      "total": 503,
+      "createdAt": "2026-07-28T11:07:13.000Z",
+      "updatedAt": "2026-07-27T11:07:13.000Z",
+      "table": "Table 2",
+      "source": "pos"
+    }
+  ],
+  "users": [
+    {
+      "id": "demo_user",
+      "name": "Demo User",
+      "email": "demo",
+      "phone": "9999999999",
+      "password": "$2b$10$d2tSNpViNpdU46gLCHPDHOesHYxz71sZWGgOS3duOxSSQg4Dsu4OC",
+      "points": 500,
+      "referCode": "DEMO77",
+      "assets": []
+    }
+  ],
+  "settings": {
+    "company": {
+      "name": "Tendens Gyros",
+      "address": "Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram",
+      "phone": "8877661150",
+      "email": "info@tendengyros.com",
+      "gst": "33FJSPA2544H1Z9",
+      "logo": null,
+      "upiId": "",
+      "deliveryEnabled": true,
+      "gstNo": "33FJSPA2544H1Z9",
+      "gstin": "33FJSPA2544H1Z9"
+    },
+    "theme": {
+      "accentPrimary": "#e63946",
+      "accentPrimaryDark": "#c1121f",
+      "bgPrimary": "#f5f5f7"
+    },
+    "printers": [
+      {
+        "id": "default",
+        "name": "Default Printer",
+        "ip": "",
+        "type": "browser",
+        "isDefault": true
+      }
+    ],
+    "paymentGateways": {
+      "ccavenue": {
+        "merchantId": "",
+        "workingKey": "",
+        "accessCode": "",
+        "isProduction": false,
+        "isEnabled": true
+      }
+    },
+    "offers": [
+      {
+        "id": "1",
+        "title": "Golden Gyro Feast (50% OFF)",
+        "desc": "1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink",
+        "tag": "50% OFF",
+        "price": "₹199",
+        "origPrice": "₹398",
+        "image": "/uploads/menu/m1.jpg"
+      },
+      {
+        "id": "2",
+        "title": "Crispy Chicken & Dip Combo",
+        "desc": "4 Pcs Crispy Chicken + 2 Garlic Dips + Fries",
+        "tag": "SAVE ₹151",
+        "price": "₹299",
+        "origPrice": "₹450",
+        "image": "/uploads/menu/m3.jpg"
+      }
+    ]
+  },
+  "transactions": [],
+  "menu": null,
+  "loyaltyUsers": [
+    {
+      "id": "u_admin",
+      "referralCode": "ADMIN01",
+      "name": "Admin",
+      "phone": "0000000000",
+      "email": "admin@tdg.com",
+      "role": "admin",
+      "rubyPoints": 99999,
+      "tier": "Emerald",
+      "referredBy": null,
+      "denId": null,
+      "createdAt": "2026-07-22T11:47:26.268Z"
+    }
+  ],
+  "dens": [],
+  "pointTransactions": [],
+  "inventory": [
+    {
+      "id": "1",
+      "name": "Chicken Breast",
+      "currentStock": 50,
+      "minimumStock": 20
+    },
+    {
+      "id": "2",
+      "name": "Burger Buns",
+      "currentStock": 200,
+      "minimumStock": 50
+    },
+    {
+      "id": "3",
+      "name": "Fries",
+      "currentStock": 30,
+      "minimumStock": 10
+    }
+  ],
+  "orderNumber": 1182,
+  "usedReferralCodes": [],
+  "expenses": [],
+  "purchases": [],
+  "onlineOrders": [],
+  "aggregators": [
+    {
+      "id": "swiggy",
+      "name": "Swiggy",
+      "displayName": "Swiggy",
+      "isActive": true,
+      "defaultPrepTime": 25,
+      "color": "#ff5200"
+    },
+    {
+      "id": "zomato",
+      "name": "Zomato",
+      "displayName": "Zomato",
+      "isActive": true,
+      "defaultPrepTime": 20,
+      "color": "#e23744"
+    },
+    {
+      "id": "zepto",
+      "name": "Zepto",
+      "displayName": "Zepto",
+      "isActive": true,
+      "defaultPrepTime": 15,
+      "color": "#9d2b6b"
+    },
+    {
+      "id": "direct",
+      "name": "Direct",
+      "displayName": "Direct Order",
+      "isActive": true,
+      "defaultPrepTime": 20,
+      "color": "#4895ef"
+    }
+  ],
+  "billingUsers": [
+    {
+      "id": "bu_superadmin",
+      "name": "Super Admin",
+      "pin": "$2b$10$f2oxOBM7db2LBhmgrkBgXeCIyjmcWfL5BoQfxg1n.9Za3Bj4L2RNG",
+      "role": "super-admin"
+    },
+    {
+      "id": "bu_admin",
+      "name": "Admin",
+      "pin": "$2b$10$.NZINaV9iZaMEJ0Sbbjg5eF52n5mfQYg9uGIgN.LFy.JYQvygd2le",
+      "role": "admin"
+    },
+    {
+      "id": "bu_manager",
+      "name": "Manager",
+      "pin": "$2b$10$GLXcFkAInbKEcOZ08tjo2ObSFmiPN3r.Sp0adxRpolinmPHzmeLNi",
+      "role": "manager"
+    },
+    {
+      "id": "bu_cashier",
+      "name": "Cashier",
+      "pin": "$2b$10$P4PpER9FqNUGWJyIKvfydOiyOLk2NmiGLRU0BPB.kHoBPAqFOZAm.",
+      "role": "cashier"
+    },
+    {
+      "id": "bu_kitchen",
+      "name": "Kitchen",
+      "pin": "$2b$10$5bwhYnx.A57T4ISTuaQkw.wWkQxzdb7yFGnOuZCu9bSS06XXDJ6Pq",
+      "role": "kitchen"
+    }
+  ],
+  "suppliers": [],
+  "purchaseOrders": [],
+  "poItems": [],
+  "grns": [],
+  "vendorPayments": [],
+  "recipes": [],
+  "mrns": [],
+  "company": {
+    "name": "Tendens Gyros",
+    "phone": "8877661150",
+    "email": "info@tendengyros.com",
+    "gst": "33FJSPA2544H1Z9",
+    "gstNo": "33FJSPA2544H1Z9",
+    "gstin": "33FJSPA2544H1Z9",
+    "address": "Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram"
+  }
+}

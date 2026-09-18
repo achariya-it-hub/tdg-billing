@@ -1,0 +1,1994 @@
+{
+  "loyaltyUsers": [
+    {
+      "id": "u_admin",
+      "referralCode": "ADMIN01",
+      "name": "Admin",
+      "phone": "0000000000",
+      "email": "admin@tdg.com",
+      "role": "admin",
+      "rubyPoints": 99999,
+      "tier": "Emerald",
+      "referredBy": null,
+      "denId": null,
+      "createdAt": "2026-08-22T10:23:40.044Z"
+    },
+    {
+      "id": "lu_121_1_1787729764633",
+      "name": "Vignesh",
+      "phone": "6385585796",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_2_1787729764633",
+      "name": "Thiyagrajan",
+      "phone": "9600903367",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_3_1787729764633",
+      "name": "Jayakumar",
+      "phone": "6382302944",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_4_1787729764633",
+      "name": "Sakthi",
+      "phone": "9159206411",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_5_1787729764633",
+      "name": "Krishnavani",
+      "phone": "9488448583",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_6_1787729764633",
+      "name": "Barathi",
+      "phone": "9092372500",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_7_1787729764633",
+      "name": "Niviha",
+      "phone": "8124188702",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_8_1787729764633",
+      "name": "Mirabika",
+      "phone": "9345320180",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_9_1787729764633",
+      "name": "Baskar",
+      "phone": "9486432814",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_10_1787729764633",
+      "name": "Hussain",
+      "phone": "9677371023",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_11_1787729764633",
+      "name": "Aravind",
+      "phone": "8144938032",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_12_1787729764633",
+      "name": "mohammad irfan khan",
+      "phone": "8883423283",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0,
+      "visitCount": 1,
+      "totalSpend": 641,
+      "lastVisit": "2026-08-27T15:01:25.091Z"
+    },
+    {
+      "id": "lu_121_13_1787729764633",
+      "name": "Mahi",
+      "phone": "8098194037",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_14_1787729764633",
+      "name": "Ragath",
+      "phone": "7200939323",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_15_1787729764633",
+      "name": "Athiswari",
+      "phone": "9944967956",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_16_1787729764633",
+      "name": "Agilan",
+      "phone": "8190043364",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_17_1787729764633",
+      "name": "Sivaranjini",
+      "phone": "9791209402",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0,
+      "visitCount": 1,
+      "totalSpend": 427,
+      "lastVisit": "2026-08-27T15:14:18.935Z"
+    },
+    {
+      "id": "lu_121_18_1787729764633",
+      "name": "Rashid",
+      "phone": "9497360344",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_19_1787729764633",
+      "name": "Ravi",
+      "phone": "8870590019",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_20_1787729764633",
+      "name": "Alex",
+      "phone": "9715585436",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_21_1787729764633",
+      "name": "Arun",
+      "phone": "9566888778",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_22_1787729764633",
+      "name": "Sneha",
+      "phone": "9345829643",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_23_1787729764633",
+      "name": "Lokesh",
+      "phone": "8754193368",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_24_1787729764633",
+      "name": "Senthil",
+      "phone": "9345777578",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_25_1787729764633",
+      "name": "Santhosh",
+      "phone": "9884326866",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_26_1787729764633",
+      "name": "Govind raj",
+      "phone": "9345452830",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_27_1787729764633",
+      "name": "Birto",
+      "phone": "7548881336",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0,
+      "visitCount": 1,
+      "totalSpend": 607,
+      "lastVisit": "2026-08-28T14:43:11.273Z"
+    },
+    {
+      "id": "lu_121_28_1787729764633",
+      "name": "Gokul",
+      "phone": "9361766932",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_29_1787729764633",
+      "name": "Devaraj",
+      "phone": "9487469946",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_30_1787729764633",
+      "name": "Riaz",
+      "phone": "9677459527",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_31_1787729764633",
+      "name": "Prabu",
+      "phone": "9952143681",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_32_1787729764633",
+      "name": "Kirubkaran",
+      "phone": "8220547074",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_33_1787729764633",
+      "name": "Saran",
+      "phone": "9384123576",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_34_1787729764633",
+      "name": "Kamalkannan",
+      "phone": "9787223007",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_35_1787729764633",
+      "name": "Saravanan",
+      "phone": "9994180183",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0,
+      "visitCount": 1,
+      "totalSpend": 743,
+      "lastVisit": "2026-08-27T14:45:48.549Z"
+    },
+    {
+      "id": "lu_121_36_1787729764633",
+      "name": "Jerome",
+      "phone": "8122442587",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_37_1787729764633",
+      "name": "Vicky",
+      "phone": "8124602749",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_38_1787729764633",
+      "name": "Sarath",
+      "phone": "9952103992",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_39_1787729764633",
+      "name": "Vishva",
+      "phone": "7397086416",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_40_1787729764633",
+      "name": "Kartih ka",
+      "phone": "9944007678",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_41_1787729764633",
+      "name": "Dhanush",
+      "phone": "7339241712",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_42_1787729764633",
+      "name": "Keerthivasan",
+      "phone": "9500509700",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_43_1787729764633",
+      "name": "Jaffer",
+      "phone": "9944919401",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_44_1787729764633",
+      "name": "Ganesh",
+      "phone": "7842852019",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_45_1787729764633",
+      "name": "Prasanth",
+      "phone": "8308310901",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_46_1787729764633",
+      "name": "Balaji",
+      "phone": "7092540201",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_47_1787729764633",
+      "name": "Tharun",
+      "phone": "6383321562",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_48_1787729764633",
+      "name": "Mohanraj",
+      "phone": "8124207679",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_49_1787729764633",
+      "name": "Jeevan",
+      "phone": "9626060046",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_50_1787729764633",
+      "name": "Anbu",
+      "phone": "7502240708",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_51_1787729764633",
+      "name": "Saranya",
+      "phone": "8189887357",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_52_1787729764633",
+      "name": "Gopi",
+      "phone": "9361664258",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0,
+      "visitCount": 1,
+      "totalSpend": 418,
+      "lastVisit": "2026-08-27T15:22:53.751Z"
+    },
+    {
+      "id": "lu_121_53_1787729764633",
+      "name": "Gautham",
+      "phone": "7397588364",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_54_1787729764633",
+      "name": "Agnes",
+      "phone": "7339598137",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_55_1787729764633",
+      "name": "Afzal",
+      "phone": "7845486213",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_56_1787729764633",
+      "name": "Kamali",
+      "phone": "8825812676",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_57_1787729764633",
+      "name": "Saravanan",
+      "phone": "8531090888",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_58_1787729764633",
+      "name": "Abdul jamil",
+      "phone": "7200811979",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_59_1787729764633",
+      "name": "Thamiz",
+      "phone": "8608578769",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_60_1787729764633",
+      "name": "Siddhatth",
+      "phone": "9655408823",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_61_1787729764633",
+      "name": "Sachin",
+      "phone": "6380395027",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_62_1787729764633",
+      "name": "Rohit",
+      "phone": "8778306180",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_63_1787729764633",
+      "name": "Rakesh",
+      "phone": "8667826322",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_64_1787729764633",
+      "name": "Bala",
+      "phone": "8124624955",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0,
+      "visitCount": 1,
+      "totalSpend": 348,
+      "lastVisit": "2026-08-26T15:55:11.319Z"
+    },
+    {
+      "id": "lu_121_65_1787729764633",
+      "name": "Sham",
+      "phone": "9342783270",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_66_1787729764633",
+      "name": "Maduri",
+      "phone": "6380808046",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_67_1787729764633",
+      "name": "Asan",
+      "phone": "7845870685",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_68_1787729764633",
+      "name": "Praveen",
+      "phone": "9360942850",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_69_1787729764633",
+      "name": "Kishore",
+      "phone": "7448466118",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_70_1787729764633",
+      "name": "Gokul",
+      "phone": "8428079770",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0,
+      "visitCount": 1,
+      "totalSpend": 1470,
+      "lastVisit": "2026-08-28T08:52:36.763Z"
+    },
+    {
+      "id": "lu_121_71_1787729764633",
+      "name": "Vignesh",
+      "phone": "7548803405",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_72_1787729764633",
+      "name": "Velu",
+      "phone": "7010980324",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_73_1787729764633",
+      "name": "Sheeba",
+      "phone": "9606812032",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_74_1787729764633",
+      "name": "Sujthara",
+      "phone": "9003084275",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_75_1787729764633",
+      "name": "Gugan",
+      "phone": "6381741213",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_76_1787729764633",
+      "name": "Aravin",
+      "phone": "9345117344",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_77_1787729764633",
+      "name": "Arni",
+      "phone": "8945054946",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_78_1787729764633",
+      "name": "Shalini",
+      "phone": "9363354460",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_79_1787729764633",
+      "name": "Vignesh",
+      "phone": "7094404471",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0,
+      "visitCount": 1,
+      "totalSpend": 786,
+      "lastVisit": "2026-08-27T14:35:02.517Z"
+    },
+    {
+      "id": "lu_121_80_1787729764633",
+      "name": "Sriram",
+      "phone": "7871130057",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_81_1787729764633",
+      "name": "Benazin",
+      "phone": "7558113808",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_82_1787729764633",
+      "name": "Rahim basha",
+      "phone": "9655252497",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_83_1787729764633",
+      "name": "Fayeez",
+      "phone": "9944577261",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_84_1787729764633",
+      "name": "Mohit",
+      "phone": "9790995990",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_85_1787729764633",
+      "name": "Barath",
+      "phone": "8110051937",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0,
+      "visitCount": 1,
+      "totalSpend": 1069,
+      "lastVisit": "2026-08-27T16:35:29.451Z"
+    },
+    {
+      "id": "lu_121_86_1787729764633",
+      "name": "Preethi",
+      "phone": "6383736451",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_87_1787729764633",
+      "name": "Pradhyun",
+      "phone": "7338903460",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_88_1787729764633",
+      "name": "Vimal",
+      "phone": "7010208051",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_89_1787729764633",
+      "name": "Kalaimani",
+      "phone": "8056904736",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_90_1787729764633",
+      "name": "Anu",
+      "phone": "9500591245",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_91_1787729764633",
+      "name": "Lokesh",
+      "phone": "9629113073",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_92_1787729764633",
+      "name": "Thamizharsan",
+      "phone": "6383463375",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_93_1787729764633",
+      "name": "Ifran",
+      "phone": "8667094977",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_94_1787729764633",
+      "name": "Marish",
+      "phone": "9994549653",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_95_1787729764633",
+      "name": "Sulaiman",
+      "phone": "9585646262",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_96_1787729764633",
+      "name": "Ibrahim",
+      "phone": "9566515342",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_97_1787729764633",
+      "name": "Abdul",
+      "phone": "6385764117",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_98_1787729764633",
+      "name": "Kiran",
+      "phone": "7339119772",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_99_1787729764633",
+      "name": "Mathi",
+      "phone": "9629137985",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_100_1787729764633",
+      "name": "Asalam",
+      "phone": "9994726289",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_101_1787729764633",
+      "name": "Kovarthan",
+      "phone": "8825477528",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_102_1787729764633",
+      "name": "Sugapathi",
+      "phone": "6369735727",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0,
+      "visitCount": 1,
+      "totalSpend": 1373,
+      "lastVisit": "2026-08-28T14:31:43.091Z"
+    },
+    {
+      "id": "lu_121_103_1787729764633",
+      "name": "Akthar",
+      "phone": "8438623432",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_104_1787729764633",
+      "name": "Muguthan",
+      "phone": "9944697566",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_105_1787729764633",
+      "name": "Santhosh",
+      "phone": "9994560077",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_106_1787729764633",
+      "name": "Deva",
+      "phone": "9791737061",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_107_1787729764633",
+      "name": "Malavika",
+      "phone": "9061510211",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_108_1787729764633",
+      "name": "Suresh",
+      "phone": "9500970030",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_109_1787729764633",
+      "name": "Kishore",
+      "phone": "8754811572",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_110_1787729764633",
+      "name": "Ganesh",
+      "phone": "8807402413",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_111_1787729764633",
+      "name": "Dinesh",
+      "phone": "7548883392",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_112_1787729764633",
+      "name": "Ramesh",
+      "phone": "9597352393",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_113_1787729764633",
+      "name": "Finasha",
+      "phone": "8122536961",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_114_1787729764633",
+      "name": "Rishi",
+      "phone": "7395899200",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_115_1787729764633",
+      "name": "Safrin",
+      "phone": "9042807621",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_116_1787729764633",
+      "name": "Surya",
+      "phone": "8754809812",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_117_1787729764633",
+      "name": "Naser",
+      "phone": "7845118966",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_118_1787729764633",
+      "name": "Arun",
+      "phone": "9943971548",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_119_1787729764633",
+      "name": "Sathish",
+      "phone": "9363000646",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_120_1787729764633",
+      "name": "Rexon",
+      "phone": "9961688853",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    },
+    {
+      "id": "lu_121_121_1787729764633",
+      "name": "Koshal",
+      "phone": "8056482005",
+      "tier": "VIP 50% OFF",
+      "discountPct": 50,
+      "offerName": "Special 50% VIP Offer",
+      "createdAt": "2026-08-26T07:36:04.633Z",
+      "email": "",
+      "rubyPoints": 0
+    }
+  ],
+  "users": [
+    {
+      "id": "bu_1787394220095_crni",
+      "name": "Super Admin",
+      "pin": "$2b$10$LFU.9e1d/M9nZ3DQ0AZFH.5t.S2cAhrz.tXHh9LmoCO4g1dseNMgi",
+      "role": "super-admin",
+      "permissions": {
+        "pos": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "captain": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kitchen": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "billing": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kot": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "purchase": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "inventory": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "menu": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "hr": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "loyalty": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "customers": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "reports": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "dashboard": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "onlineOrders": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "users": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "expenses": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        }
+      },
+      "createdAt": "2026-08-22T10:23:40.209Z"
+    },
+    {
+      "id": "bu_1787394220209_gi5u",
+      "name": "Admin",
+      "pin": "$2b$10$WTM.fIwCkkMvqagfzGvw/eAkSupltkKPhCI96L.qQsbdFpZQbVdwy",
+      "role": "admin",
+      "permissions": {
+        "pos": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "captain": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kitchen": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "billing": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kot": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "purchase": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "inventory": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "menu": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "hr": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "loyalty": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "customers": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "reports": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "dashboard": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "onlineOrders": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "users": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "expenses": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        }
+      },
+      "createdAt": "2026-08-22T10:23:40.321Z"
+    },
+    {
+      "id": "bu_1787394220321_98ip",
+      "name": "Manager",
+      "pin": "$2b$10$N/WkNWcmfVrGnYPz1UF0oOIO.NFQZj.lY.DhW85TP.Ui0enH6.Jla",
+      "role": "manager",
+      "permissions": {
+        "pos": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "captain": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kitchen": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "billing": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kot": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "purchase": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "inventory": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "menu": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "hr": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "loyalty": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "customers": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "reports": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "dashboard": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "onlineOrders": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "users": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "expenses": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        }
+      },
+      "createdAt": "2026-08-22T10:23:40.430Z"
+    },
+    {
+      "id": "bu_1787394220430_e37y",
+      "name": "Cashier",
+      "pin": "$2b$10$BFMotYeCp.zNmxGsSaXmfOOniJKgY5b9cxTuHXvCFgqjALGrP7d46",
+      "role": "cashier",
+      "permissions": {
+        "pos": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "captain": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "kitchen": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "billing": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "kot": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "purchase": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "inventory": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "menu": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "hr": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "loyalty": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "customers": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "reports": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "dashboard": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "onlineOrders": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "users": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "expenses": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        }
+      },
+      "createdAt": "2026-08-22T10:23:40.548Z"
+    },
+    {
+      "id": "bu_1787394220548_bprn",
+      "name": "Kitchen",
+      "pin": "$2b$10$SW/xT16JQH2d/ClDs6rBVeiYADOoOF8iDV3riaxIhY/izEwxYxVyG",
+      "role": "kitchen",
+      "permissions": {
+        "pos": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "captain": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "kitchen": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "billing": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "kot": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "purchase": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "inventory": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "menu": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "hr": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "loyalty": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "customers": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "reports": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "dashboard": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "onlineOrders": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "users": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "expenses": {
+          "view": false,
+          "create": false,
+          "update": false,
+          "delete": false
+        }
+      },
+      "createdAt": "2026-08-22T10:23:40.663Z"
+    },
+    {
+      "id": "demo_user",
+      "name": "Demo User",
+      "email": "demo",
+      "phone": "9999999999",
+      "password": "$2b$10$YN9KJHIB6vpZrgIdvQE5mes7pQsgKFAbl7BZVyNcqiKEYXSiRwlBG",
+      "points": 500,
+      "referCode": "DEMO77",
+      "assets": []
+    }
+  ],
+  "employees": [
+    {
+      "id": "EMP001",
+      "name": "Dr. S. Achariya",
+      "department": "Management",
+      "designation": "Director",
+      "mobile": "9876543210",
+      "email": "director@achariya.org",
+      "status": "Active",
+      "joiningDate": "2020-01-01",
+      "qrCode": "EMP001",
+      "familyMembers": [
+        {
+          "id": "FAM001_1",
+          "employeeId": "EMP001",
+          "name": "Mrs. A. Achariya",
+          "relationship": "Spouse",
+          "mobile": "9876543211",
+          "status": "Active"
+        },
+        {
+          "id": "FAM001_2",
+          "employeeId": "EMP001",
+          "name": "Kavya Achariya",
+          "relationship": "Daughter",
+          "mobile": "9876543212",
+          "status": "Active"
+        }
+      ]
+    },
+    {
+      "id": "EMP002",
+      "name": "Rajesh Kumar",
+      "department": "Billing",
+      "designation": "Senior Cashier",
+      "mobile": "9876543220",
+      "email": "rajesh@achariya.org",
+      "status": "Active",
+      "joiningDate": "2022-03-15",
+      "qrCode": "EMP002",
+      "familyMembers": [
+        {
+          "id": "FAM002_1",
+          "employeeId": "EMP002",
+          "name": "Sunita Kumar",
+          "relationship": "Spouse",
+          "mobile": "9876543221",
+          "status": "Active"
+        }
+      ]
+    },
+    {
+      "id": "EMP003",
+      "name": "Priya Sharma",
+      "department": "Teaching",
+      "designation": "Assistant Professor",
+      "mobile": "9876543230",
+      "email": "priya@achariya.org",
+      "status": "Active",
+      "joiningDate": "2021-07-10",
+      "qrCode": "EMP003",
+      "familyMembers": [
+        {
+          "id": "FAM003_1",
+          "employeeId": "EMP003",
+          "name": "Ramesh Sharma",
+          "relationship": "Father",
+          "mobile": "9876543231",
+          "status": "Active"
+        }
+      ]
+    }
+  ],
+  "updatedAt": "2026-09-18T05:25:58.728Z",
+  "counts": {
+    "loyaltyUsers": 122,
+    "users": 6,
+    "employees": 3
+  }
+}

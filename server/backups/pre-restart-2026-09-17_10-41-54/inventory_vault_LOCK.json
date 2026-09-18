@@ -78,7 +78,7 @@
       "category": "Overhead",
       "unit": "unit",
       "costPerUnit": 3.2,
-      "currentStock": 10005,
+      "currentStock": 9999,
       "minimumStock": 0
     },
     {
@@ -159,7 +159,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 48.19,
-      "currentStock": 100.05,
+      "currentStock": 100,
       "minimumStock": 10
     },
     {
@@ -168,7 +168,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 46.85,
-      "currentStock": 134.2,
+      "currentStock": 134,
       "minimumStock": 10
     },
     {
@@ -204,7 +204,7 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 2.95,
-      "currentStock": 8842,
+      "currentStock": 8840,
       "minimumStock": 100
     },
     {
@@ -222,7 +222,7 @@
       "category": "Packing Material",
       "unit": "kg",
       "costPerUnit": 17.41,
-      "currentStock": 59,
+      "currentStock": 51,
       "minimumStock": 500
     },
     {
@@ -231,7 +231,7 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 6.65,
-      "currentStock": 1004,
+      "currentStock": 1000,
       "minimumStock": 100
     },
     {
@@ -240,7 +240,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 39.25,
-      "currentStock": 200.216,
+      "currentStock": 200,
       "minimumStock": 20
     },
     {
@@ -249,7 +249,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 560,
-      "currentStock": 50.072,
+      "currentStock": 50,
       "minimumStock": 5
     },
     {
@@ -258,7 +258,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 193.85,
-      "currentStock": 310.108,
+      "currentStock": 310,
       "minimumStock": 10
     },
     {
@@ -303,7 +303,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 185.71,
-      "currentStock": 100.21,
+      "currentStock": 100,
       "minimumStock": 10
     },
     {
@@ -312,7 +312,7 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 6.11,
-      "currentStock": 1001,
+      "currentStock": 1000,
       "minimumStock": 100
     },
     {
@@ -321,7 +321,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 350,
-      "currentStock": 100.36,
+      "currentStock": 100,
       "minimumStock": 10
     },
     {
@@ -330,7 +330,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 335.7,
-      "currentStock": 1.506,
+      "currentStock": 1.5,
       "minimumStock": 2
     },
     {
@@ -339,7 +339,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 256.37,
-      "currentStock": 20.03,
+      "currentStock": 20,
       "minimumStock": 2
     },
     {
@@ -348,7 +348,7 @@
       "category": "Vegetables",
       "unit": "kg",
       "costPerUnit": 248.15,
-      "currentStock": 6.09,
+      "currentStock": 6,
       "minimumStock": 1
     },
     {
@@ -357,7 +357,7 @@
       "category": "Vegetables",
       "unit": "kg",
       "costPerUnit": 39.75,
-      "currentStock": 6.01,
+      "currentStock": 6,
       "minimumStock": 10
     },
     {
@@ -366,7 +366,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 73.5,
-      "currentStock": 100.01,
+      "currentStock": 100,
       "minimumStock": 10
     },
     {
@@ -375,7 +375,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 84,
-      "currentStock": 50.01,
+      "currentStock": 50,
       "minimumStock": 5
     },
     {
@@ -384,7 +384,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 775,
-      "currentStock": 20.01,
+      "currentStock": 20,
       "minimumStock": 2
     },
     {
@@ -393,7 +393,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 118,
-      "currentStock": 17.01,
+      "currentStock": 17,
       "minimumStock": 2
     },
     {
@@ -402,7 +402,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 301.89,
-      "currentStock": 100.2,
+      "currentStock": 100,
       "minimumStock": 10
     },
     {
@@ -411,7 +411,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 28.96,
-      "currentStock": 50.01,
+      "currentStock": 50,
       "minimumStock": 5
     },
     {
@@ -420,7 +420,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 349.44,
-      "currentStock": 0.51,
+      "currentStock": 0.5,
       "minimumStock": 5
     },
     {
@@ -429,7 +429,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 43.65,
-      "currentStock": 50.01,
+      "currentStock": 50,
       "minimumStock": 5
     },
     {
@@ -438,7 +438,7 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 2.05,
-      "currentStock": 171,
+      "currentStock": 170,
       "minimumStock": 17
     },
     {
@@ -447,7 +447,7 @@
       "category": "Packing Material",
       "unit": "pc",
       "costPerUnit": 3.67,
-      "currentStock": 1003,
+      "currentStock": 1000,
       "minimumStock": 100
     },
     {
@@ -456,7 +456,7 @@
       "category": "Raw Material",
       "unit": "kg",
       "costPerUnit": 274,
-      "currentStock": 100.05,
+      "currentStock": 100,
       "minimumStock": 10
     },
     {
