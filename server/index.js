@@ -1625,51 +1625,46 @@ let menuItems = [
     "id": "m_vanilla_softy",
     "categoryId": "c4",
     "name": "Vanilla Softy",
-    "price": 37.14,
-    "description": "Creamy Vanilla Soft Serve Cone (₹39 Inclusive of Tax)",
+    "price": 39,
+    "description": "Creamy Vanilla Soft Serve Cone",
     "isAvailable": true,
-    "image": "/images/menu/vanilla softy.png",
-    "taxInclusive": true
+    "image": "/images/menu/vanilla softy.png"
   },
   {
     "id": "m_dip_choice",
     "categoryId": "c4",
     "name": "Choice of Dip",
-    "price": 14.29,
-    "description": "Choice of Dip (Garlic Mayo, Spicy Mayo, Honey Mustard, Tzatziki, Jalapeno Cheese, Turkish Chilli) (₹15 Inclusive of Tax)",
+    "price": 15,
+    "description": "Choice of Dip (Garlic Mayo, Spicy Mayo, Honey Mustard, Tzatziki, Jalapeno Cheese, Turkish Chilli)",
     "isAvailable": true,
-    "image": "/images/menu/garlic mayo.png",
-    "taxInclusive": true
+    "image": "/images/menu/garlic mayo.png"
   },
   {
     "id": "m_kombucha_mint",
     "categoryId": "c10_komb",
     "name": "Mint Kombucha",
-    "price": 114.29,
-    "description": "Mint Kombucha 250ml (â‚¹120 Inclusive of Tax)",
+    "price": 120,
+    "description": "Mint Kombucha 250ml",
     "isAvailable": true,
-    "image": "/images/menu/mint-kombucha.png",
-    "taxInclusive": true
+    "image": "/images/menu/mint-kombucha.png"
   },
   {
     "id": "m_kombucha_hibiscus",
     "categoryId": "c10_komb",
     "name": "Hibiscus Kombucha",
-    "price": 114.29,
-    "description": "Hibiscus Kombucha 250ml (â‚¹120 Inclusive of Tax)",
+    "price": 120,
+    "description": "Hibiscus Kombucha 250ml",
     "isAvailable": true,
-    "image": "/images/menu/kombucha-hibiscus.png",
-    "taxInclusive": true
+    "image": "/images/menu/kombucha-hibiscus.png"
   },
   {
     "id": "m_kombucha_classic",
     "categoryId": "c10_komb",
     "name": "Classic Kombucha",
-    "price": 114.29,
-    "description": "Classic Kombucha 250ml (â‚¹120 Inclusive of Tax)",
+    "price": 120,
+    "description": "Classic Kombucha 250ml",
     "isAvailable": true,
-    "image": "/images/menu/kombucha.png",
-    "taxInclusive": true
+    "image": "/images/menu/kombucha.png"
   },
   {
     "id": "m_nc_gyro_fries",
