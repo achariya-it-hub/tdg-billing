@@ -1,93 +1,4 @@
-import { create } from 'zustand'
-
-const sampleCategories = [
-  {
-    "id": "c1",
-    "name": "Gyros",
-    "icon": "🥙",
-    "color": "#d97706"
-  },
-  {
-    "id": "c5_legthigh",
-    "name": "Leg & Thigh",
-    "icon": "🍗",
-    "color": "#ea580c"
-  },
-  {
-    "id": "c5_wings",
-    "name": "Wings",
-    "icon": "🍗",
-    "color": "#b45309"
-  },
-  {
-    "id": "c5_strips",
-    "name": "Strips",
-    "icon": "🍗",
-    "color": "#ca8a04"
-  },
-  {
-    "id": "c6",
-    "name": "Fries",
-    "icon": "🍟",
-    "color": "#f59e0b"
-  },
-  {
-    "id": "c10_bev",
-    "name": "Beverages",
-    "icon": "🥤",
-    "color": "#0284c7"
-  },
-  {
-    "id": "c3_rice_salad",
-    "name": "Rice & Salads",
-    "icon": "🍚🥗",
-    "color": "#059669"
-  },
-  {
-    "id": "c2",
-    "name": "Meals & Combos",
-    "icon": "🍱",
-    "color": "#8b5cf6"
-  },
-  {
-    "id": "c11",
-    "name": "Protein Max",
-    "icon": "💪",
-    "color": "#10b981"
-  },
-  {
-    "id": "c7_shakes",
-    "name": "Shakes",
-    "icon": "🥤",
-    "color": "#db2777"
-  },
-  {
-    "id": "c9",
-    "name": "Desserts",
-    "icon": "🍰",
-    "color": "#ec4899"
-  },
-  {
-    "id": "c4",
-    "name": "Softy & Add-Ons",
-    "icon": "🍦",
-    "color": "#e63946"
-  },
-  {
-    "id": "c_new_combo",
-    "name": "New Combo",
-    "icon": "📦",
-    "color": "#e63946"
-  },
-  {
-    "id": "c10_komb",
-    "name": "Kombucha",
-    "icon": "🍹",
-    "color": "#0284c7"
-  }
-]
-
-const sampleMenuItems = [
+[
   {
     "id": "m_spicy_gyro",
     "categoryId": "c1",
@@ -431,24 +342,6 @@ const sampleMenuItems = [
     "image": "/images/menu/super 5 bucket.png"
   },
   {
-    "id": "m_wednesday_combo_1",
-    "categoryId": "c2",
-    "name": "Wednesday Combo - 1",
-    "price": 279,
-    "description": "1 Leg and Thigh, 2 Wings, 2 Strips",
-    "isAvailable": true,
-    "image": "/images/menu/wednesday_combo.png"
-  },
-  {
-    "id": "m_wednesday_combo_2",
-    "categoryId": "c2",
-    "name": "Wednesday Combo - 2",
-    "price": 379,
-    "description": "1 Gyro, 2 Leg and Thigh, 2 Wings, 2 Strips",
-    "isAvailable": true,
-    "image": "/images/menu/wednesday_combo.png"
-  },
-  {
     "id": "m_pmax_gyro",
     "categoryId": "c11",
     "name": "Protein Max Gyro",
@@ -605,88 +498,30 @@ const sampleMenuItems = [
     "id": "m_kombucha_mint",
     "categoryId": "c10_komb",
     "name": "Mint Kombucha",
-    "price": 120,
-    "description": "Mint Kombucha 250ml",
+    "price": 114.29,
+    "description": "Mint Kombucha 250ml (₹120 Inclusive of Tax)",
     "isAvailable": true,
-    "image": "/images/menu/mint-kombucha.png"
+    "image": "/images/menu/mint-kombucha.png",
+    "taxInclusive": true
   },
   {
     "id": "m_kombucha_hibiscus",
     "categoryId": "c10_komb",
     "name": "Hibiscus Kombucha",
-    "price": 120,
-    "description": "Hibiscus Kombucha 250ml",
+    "price": 114.29,
+    "description": "Hibiscus Kombucha 250ml (₹120 Inclusive of Tax)",
     "isAvailable": true,
-    "image": "/images/menu/kombucha-hibiscus.png"
+    "image": "/images/menu/kombucha-hibiscus.png",
+    "taxInclusive": true
   },
   {
     "id": "m_kombucha_classic",
     "categoryId": "c10_komb",
     "name": "Classic Kombucha",
-    "price": 120,
-    "description": "Classic Kombucha 250ml",
+    "price": 114.29,
+    "description": "Classic Kombucha 250ml (₹120 Inclusive of Tax)",
     "isAvailable": true,
-    "image": "/images/menu/kombucha.png"
+    "image": "/images/menu/kombucha.png",
+    "taxInclusive": true
   }
 ]
-
-export const useMenuStore = create((set, get) => ({
-  categories: sampleCategories,
-  menuItems: sampleMenuItems,
-  loading: false,
-  
-  fetchCategories: async () => {
-    try {
-      const apiUrl = window.location.hostname === 'localhost' 
-        ? 'http://localhost:3001' 
-        : window.location.origin
-      
-      const res = await fetch(`${apiUrl}/api/admin/menu/categories`)
-      if (res.ok) {
-        const data = await res.json()
-        if (Array.isArray(data) && data.length > 0) {
-          set({ categories: data })
-          return
-        }
-      }
-    } catch (e) {
-      console.log('Using local categories fallback')
-    }
-    set({ categories: sampleCategories })
-  },
-  
-  fetchMenuItems: async (categoryId) => {
-    set({ loading: true })
-    try {
-      const apiUrl = window.location.hostname === 'localhost' 
-        ? 'http://localhost:3001' 
-        : window.location.origin
-      
-      const url = categoryId ? `${apiUrl}/api/admin/menu/items?categoryId=${categoryId}` : `${apiUrl}/api/admin/menu/items`
-      const res = await fetch(url)
-      if (res.ok) {
-        const rawData = await res.json()
-        const data = Array.isArray(rawData) ? rawData : (rawData.items || rawData.menuItems || [])
-        if (Array.isArray(data) && data.length > 0) {
-          set({ menuItems: data, loading: false })
-          return
-        }
-      }
-    } catch (e) {
-      console.log('Using local menu items fallback')
-    }
-    if (categoryId) {
-      set({ menuItems: sampleMenuItems.filter(i => i.categoryId === categoryId), loading: false })
-    } else {
-      set({ menuItems: sampleMenuItems, loading: false })
-    }
-  },
-  
-  toggleAvailability: async (itemId, isAvailable) => {
-    set(state => ({
-      menuItems: state.menuItems.map(item =>
-        item.id === itemId ? { ...item, isAvailable } : item
-      )
-    }))
-  }
-}))

@@ -128,8 +128,8 @@ class _MenuScreenState extends State<MenuScreen> {
     'Desserts': [
       {'name': 'Chocolate Brownie', 'desc': 'Fudgy Chocolate Brownie', 'price': '₹99'},
       {'name': 'Blondie Cake (Signature)', 'desc': 'Signature White Chocolate Blondie Cake', 'price': '₹99'},
-      {'name': 'Vanilla Softy', 'desc': 'Creamy Vanilla Soft Serve Cone', 'price': '₹39'},
-      {'name': 'Choice of Dip', 'desc': 'Choice of Dip', 'price': '₹15'},
+      {'name': 'Vanilla Softy', 'desc': 'Creamy Vanilla Soft Serve Cone', 'price': '₹37.15'},
+      {'name': 'Choice of Dip', 'desc': 'Choice of Dip', 'price': '₹14.30'},
     ],
     'Kombucha': [
       {'name': 'Mint Kombucha', 'desc': 'Refreshing Brewed Mint Kombucha', 'price': '₹120'},

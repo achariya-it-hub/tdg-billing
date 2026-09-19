@@ -586,7 +586,7 @@
       "id": "m_vanilla_softy",
       "categoryId": "c4",
       "name": "Vanilla Softy",
-      "price": 39,
+      "price": 37.15,
       "description": "Creamy Vanilla Soft Serve Cone",
       "isAvailable": true,
       "image": "/images/menu/vanilla softy.png"
@@ -595,7 +595,7 @@
       "id": "m_dip_choice",
       "categoryId": "c4",
       "name": "Choice of Dip",
-      "price": 15,
+      "price": 14.30,
       "description": "Choice of Dip (Garlic Mayo, Spicy Mayo, Honey Mustard, Tzatziki, Jalapeno Cheese, Turkish Chilli)",
       "isAvailable": true,
       "image": "/images/menu/garlic mayo.png"
