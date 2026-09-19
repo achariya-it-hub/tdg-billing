@@ -361,30 +361,40 @@ const PrintService = {
   generateBillHTML: (bill) => {
     const company = getCompanyInfoSync()
     const items = bill.items || []
-    const rawSub = bill.rawSubtotal || items.reduce((sum, item) => sum + (item.totalPrice || (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
-    let discountAmt = Number(bill.discount || bill.discountGiven || bill.discountAmount || 0)
-    if (discountAmt === 0) {
+    const isComp = !!bill.complimentary || (bill.paymentMethod || '').toLowerCase() === 'complimentary' || !!bill.complimentaryType || bill.type === 'complimentary'
+    const compType = bill.complimentaryType || ((bill.paymentMethod || '').toLowerCase() === 'complimentary' ? 'Complimentary' : '')
+
+    const rawSub = bill.rawSubtotal || items.reduce((sum, item) => sum + (item.totalPrice !== undefined ? Number(item.totalPrice) : (item.unitPrice || item.price || 0) * (item.quantity || item.qty || 1)), 0)
+
+    let discountAmt = isComp ? rawSub : Number(bill.discount || bill.discountGiven || bill.discountAmount || 0)
+    if (!isComp && discountAmt === 0) {
       if (bill.inaugurationOffer) discountAmt = Math.round(rawSub * 0.5)
       else if (bill.specialOffer20) discountAmt = Math.round(rawSub * 0.2)
       else if (bill.vip50) discountAmt = Math.round(rawSub * 0.5)
       else if (bill.discountPct > 0) discountAmt = Math.round(rawSub * (bill.discountPct / 100))
     }
-    const netSub = Math.max(0, rawSub - discountAmt)
-    const tax = Math.round(netSub * 0.05)
-    const total = bill.total !== undefined ? bill.total : Math.round(netSub + tax)
+    const netSub = isComp ? 0 : Math.max(0, rawSub - discountAmt)
+    const tax = isComp ? 0 : Math.round(netSub * 0.05)
+    const total = isComp ? 0 : (bill.total !== undefined ? Number(bill.total) : Math.round(netSub + tax))
     const dateStr = bill.createdAt ? new Date(bill.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
     const timeStr = bill.createdAt ? new Date(bill.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
     const orderNum = bill.orderNumber || bill.id || '1001'
     const kotNum = bill.kotNumber || bill.orderNumber || bill.id
-    let paymentMethod = (bill.paymentMethod || 'cash').toUpperCase()
-    if ((bill.paymentMethod === 'split' || bill.splitPayments) && bill.splitPayments) {
+
+    let displayPayMethod = isComp
+      ? `NON-CHARGEABLE (${(compType || 'FREE').toUpperCase()})`
+      : (bill.paymentMethod || 'cash').toUpperCase()
+
+    if (!isComp && (bill.paymentMethod === 'split' || bill.splitPayments) && bill.splitPayments) {
       const parts = []
       if (bill.splitPayments.cash) parts.push(`Cash: ₹${bill.splitPayments.cash}`)
       if (bill.splitPayments.upi) parts.push(`UPI: ₹${bill.splitPayments.upi}`)
       if (bill.splitPayments.card) parts.push(`Card: ₹${bill.splitPayments.card}`)
-      if (parts.length > 0) paymentMethod = `SPLIT (${parts.join(', ')})`
+      if (parts.length > 0) displayPayMethod = `SPLIT (${parts.join(', ')})`
     }
-    const discountLabel = bill.discountName || (bill.inaugurationOffer ? 'Inauguration Offer 50%' : (bill.specialOffer20 ? 'Special Offer 20%' : 'Discount'))
+    const discountLabel = isComp
+      ? `Non-Chargeable ${compType ? `${compType}` : 'Complimentary'} (100% OFF)`
+      : (bill.discountName || (bill.inaugurationOffer ? 'Inauguration Offer 50%' : (bill.specialOffer20 ? 'Special Offer 20%' : 'Discount')))
 
     return `
       <!DOCTYPE html>
@@ -439,13 +449,18 @@ const PrintService = {
             GSTIN: <strong>${company.gstNo || company.gst || company.gstin || '33FJSPA2544H1Z9'}</strong><br/>
             Email: <strong>${company.email || company.mailId || 'info@tendengyros.com'}</strong>
           </div>
-          <div><span class="invoice-badge">Tax Invoice</span></div>
+          <div>
+            ${isComp 
+              ? `<span class="invoice-badge" style="background:#000; color:#fff;">NON-CHARGEABLE (${(compType || 'COMPLIMENTARY').toUpperCase()})</span>`
+              : `<span class="invoice-badge">Tax Invoice</span>`
+            }
+          </div>
         </div>
 
         <div class="meta-section">
           <div class="meta-row"><span>Bill No: <strong>#${String(orderNum).padStart(6, '0')}</strong></span><span>KOT No: <strong>${kotNum ? `KOT-${kotNum}` : `KOT-${orderNum}`}</strong></span></div>
           <div class="meta-row"><span>Date: ${dateStr}</span><span>Time: ${timeStr}</span></div>
-          <div class="meta-row"><span>Source: <strong>${bill.orderSource || ((bill.source === 'qr_self_order' || bill.source === 'self_order' || bill.source === 'kiosk') ? 'Kiosk' : ((bill.source === 'mobile' || bill.source === 'mobile_app' || bill.source === 'app') ? 'APP' : 'POS'))}</strong></span><span>Mode: <strong>${(bill.type || 'DINE-IN').toUpperCase()}</strong></span><span>Payment: <strong>${paymentMethod}</strong></span></div>
+          <div class="meta-row"><span>Source: <strong>${bill.orderSource || ((bill.source === 'qr_self_order' || bill.source === 'self_order' || bill.source === 'kiosk') ? 'Kiosk' : ((bill.source === 'mobile' || bill.source === 'mobile_app' || bill.source === 'app') ? 'APP' : 'POS'))}</strong></span><span>Mode: <strong>${(bill.type || 'DINE-IN').toUpperCase()}</strong></span><span>Payment: <strong>${displayPayMethod}</strong></span></div>
           ${(bill.customerName || bill.customerPhone) ? `<div class="meta-row">${bill.customerName ? `<span>Cust: <strong>${bill.customerName}</strong></span>` : ''}${bill.customerPhone ? `<span>Mob: <strong>${bill.customerPhone}</strong></span>` : ''}</div>` : ''}
         </div>
 
@@ -481,19 +496,24 @@ const PrintService = {
 
         <div class="totals-section">
           <div class="total-row-sub"><span>Subtotal:</span><span>₹${rawSub.toFixed(0)}</span></div>
-          ${discountAmt > 0 ? `
+          ${isComp ? `
+            <div class="total-row-sub" style="font-weight:900;">
+              <span>Discount (${discountLabel}):</span>
+              <span>-₹${rawSub.toFixed(0)}</span>
+            </div>
+          ` : (discountAmt > 0 ? `
             <div class="total-row-sub" style="font-weight:900;">
               <span>Discount (${discountLabel}):</span>
               <span>-₹${discountAmt.toFixed(0)}</span>
             </div>
-          ` : ''}
-          <div class="total-row-sub"><span>CGST (2.5%):</span><span>₹${(tax / 2).toFixed(0)}</span></div>
-          <div class="total-row-sub"><span>SGST (2.5%):</span><span>₹${(tax / 2).toFixed(0)}</span></div>
+          ` : '')}
+          <div class="total-row-sub"><span>CGST (${isComp ? '0%' : '2.5%'}):</span><span>₹${(tax / 2).toFixed(0)}</span></div>
+          <div class="total-row-sub"><span>SGST (${isComp ? '0%' : '2.5%'}):</span><span>₹${(tax / 2).toFixed(0)}</span></div>
         </div>
 
-        <div class="total-box">
-          <span>TOTAL COLLECTED:</span>
-          <span>₹${Math.round(total).toFixed(0)}</span>
+        <div class="total-box" style="${isComp ? 'background:#f8fafc;' : ''}">
+          <span>${isComp ? 'NET BILL VALUE:' : 'TOTAL COLLECTED:'}</span>
+          <span>₹${Math.round(total).toFixed(0)} ${isComp ? '(FREE)' : ''}</span>
         </div>
 
         ${(bill.cashTendered && Number(bill.cashTendered) > 0) ? `

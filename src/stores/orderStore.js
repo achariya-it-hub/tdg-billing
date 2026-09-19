@@ -379,6 +379,7 @@ export const useOrderStore = create(
       getDiscount: () => {
         const raw = get().getRawSubtotal()
         const order = get().currentOrder
+        if (order.complimentary || order.complimentaryType) return raw
         if (order.staffBenefitOffer) {
           const pct = (order.discountPct || 50) / 100
           return Math.round(raw * pct)
@@ -391,14 +392,20 @@ export const useOrderStore = create(
       },
 
       getSubtotal: () => {
+        const order = get().currentOrder
+        if (order.complimentary || order.complimentaryType) return 0
         return get().getRawSubtotal() - get().getDiscount()
       },
 
       getTax: () => {
+        const order = get().currentOrder
+        if (order.complimentary || order.complimentaryType) return 0
         return Math.round(get().getSubtotal() * 0.05)
       },
 
       getTotal: () => {
+        const order = get().currentOrder
+        if (order.complimentary || order.complimentaryType) return 0
         return get().getSubtotal() + get().getTax()
       },
 
@@ -411,11 +418,13 @@ export const useOrderStore = create(
             throw new Error('No items in order')
           }
 
+          const isComp = order.complimentary || !!order.complimentaryType
           const rawSubtotal = get().getRawSubtotal()
-          const discount = get().getDiscount()
-          const subtotal = get().getSubtotal()
-          const tax = get().getTax()
-          const total = get().getTotal()
+          const discount = isComp ? rawSubtotal : get().getDiscount()
+          const subtotal = isComp ? 0 : get().getSubtotal()
+          const tax = isComp ? 0 : get().getTax()
+          const total = isComp ? 0 : get().getTotal()
+          const finalPaymentMethod = isComp ? 'complimentary' : (paymentMethod || 'cash')
 
           let newOrder = null
           try {
@@ -453,7 +462,7 @@ export const useOrderStore = create(
                 vip50: order.vip50 || false,
                 customerDiscountPct: order.customerDiscountPct || 0,
                 date: IST_DATE_STR(),
-                paymentMethod: paymentMethod || 'cash',
+                paymentMethod: finalPaymentMethod,
                 settleDirectly: Boolean(settleDirectly),
                 splitPayments,
                 cashTendered: cashTendered !== undefined ? Number(cashTendered) : undefined,

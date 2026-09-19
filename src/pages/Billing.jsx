@@ -264,6 +264,8 @@ export default function Billing() {
   const getDiscountAmount = (kot) => {
     if (!kot) return 0
     const raw = calculateRawSubtotal(kot)
+    const isComp = kot.complimentary || kot.isComplimentary || (kot.paymentMethod || '').toLowerCase() === 'complimentary' || kot.type === 'complimentary' || !!kot.complimentaryType
+    if (isComp) return raw
     if (kot.discount !== undefined && kot.discount !== null && Number(kot.discount) > 0) return Number(kot.discount)
     if (kot.discountGiven !== undefined && kot.discountGiven !== null && Number(kot.discountGiven) > 0) return Number(kot.discountGiven)
     if (kot.inaugurationOffer) return Math.round(raw * 0.5)
@@ -275,18 +277,23 @@ export default function Billing() {
 
   const calculateNetSubtotal = (kot) => {
     if (!kot) return 0
+    const isComp = kot.complimentary || kot.isComplimentary || (kot.paymentMethod || '').toLowerCase() === 'complimentary' || kot.type === 'complimentary' || !!kot.complimentaryType
+    if (isComp) return 0
     return Math.max(0, calculateRawSubtotal(kot) - getDiscountAmount(kot))
   }
 
   const calculateTax = (kot) => {
     if (!kot) return 0
-    // Tax MUST ALWAYS be calculated on Net Subtotal AFTER discount
+    const isComp = kot.complimentary || kot.isComplimentary || (kot.paymentMethod || '').toLowerCase() === 'complimentary' || kot.type === 'complimentary' || !!kot.complimentaryType
+    if (isComp) return 0
     return Math.round(calculateNetSubtotal(kot) * 0.05)
   }
 
   const calculateTotal = (kot) => {
     if (!kot) return 0
-    if (kot.total !== undefined && kot.total !== null && Number(kot.total) > 0) return Number(kot.total)
+    const isComp = kot.complimentary || kot.isComplimentary || (kot.paymentMethod || '').toLowerCase() === 'complimentary' || kot.type === 'complimentary' || !!kot.complimentaryType
+    if (isComp) return 0
+    if (kot.total !== undefined && kot.total !== null && Number(kot.total) > 0 && !isComp) return Number(kot.total)
     return Math.round(calculateNetSubtotal(kot) + calculateTax(kot))
   }
 
