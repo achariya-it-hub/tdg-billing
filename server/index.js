@@ -10421,13 +10421,39 @@ app.post(['/api/cashfree/verify-payment', '/api/cashfree/verify', '/api/cashfree
 })
 
 // 4. Cashfree Callback Handler
-app.all('/api/cashfree/callback', (req, res) => {
+app.all('/api/cashfree/callback', async (req, res) => {
  const orderId = req.query.order_id || req.body?.order_id || ''
  console.log('[CASHFREE CALLBACK RECEIVED] OrderID:', orderId)
- if (req.query.source === 'app' || req.headers['user-agent']?.includes('MobileApp')) {
-   return res.send(`<html><head><title>Payment Complete</title></head><body style="background:#101619;color:white;font-family:sans-serif;text-align:center;padding:40px;"><h2>Payment Completed</h2><p>Returning to app...</p></body></html>`)
+
+ let isPaid = false
+ if (orderId) {
+  try {
+   const cfConfig = settings?.paymentGateways?.cashfree || settings?.cashfree || {}
+   const appId = cfConfig.appId || process.env.CASHFREE_APP_ID || DEFAULT_CASHFREE_APP_ID
+   const secretKey = cfConfig.secretKey || process.env.CASHFREE_SECRET_KEY || DEFAULT_CASHFREE_SECRET_KEY
+   const env = (cfConfig.environment || process.env.CASHFREE_ENV || DEFAULT_CASHFREE_ENV).toUpperCase()
+   const baseUrl = env === 'PRODUCTION' ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg'
+
+   if (appId && secretKey) {
+    const response = await fetch(`${baseUrl}/orders/${orderId}`, {
+     method: 'GET',
+     headers: {
+      'x-client-id': appId,
+      'x-client-secret': secretKey,
+      'x-api-version': '2023-08-01'
+     }
+    })
+    const data = await response.json()
+    console.log(`[CASHFREE CALLBACK VERIFY] OrderID: ${orderId}, Status:`, data.order_status)
+    isPaid = data.order_status === 'PAID'
+   }
+  } catch (err) {
+   console.error('[CASHFREE CALLBACK VERIFY ERROR]', err)
+  }
  }
- res.redirect(`https://pos.tendengyros.com/?payment=success&order_id=${orderId}`)
+
+ const statusParam = isPaid ? 'success' : 'failed'
+ res.redirect(`https://pos.tendengyros.com/?payment=${statusParam}&order_id=${orderId}`)
 })
 
 // ============ BILLING CUSTOMER / ASSET MANAGEMENT ============

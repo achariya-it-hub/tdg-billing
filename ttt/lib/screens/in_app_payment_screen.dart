@@ -72,26 +72,35 @@ class _InAppPaymentScreenState extends State<InAppPaymentScreen> {
   bool _checkCallback(String url) {
     if (_hasPopped) return true;
     final lowerUrl = url.toLowerCase();
-    if (lowerUrl.contains('/api/cashfree/callback') ||
-        lowerUrl.contains('payment=success') ||
-        lowerUrl.contains('payment_status=success') ||
-        lowerUrl.contains('txstatus=success')) {
-      _hasPopped = true;
-      if (mounted) {
-        Navigator.of(context).pop(true);
-      }
-      return true;
-    }
-    if (lowerUrl.contains('payment_status=failed') ||
-        lowerUrl.contains('payment=failed') ||
+
+    // 1. Check failure/cancel conditions first!
+    if (lowerUrl.contains('payment=failed') ||
+        lowerUrl.contains('payment_status=failed') ||
         lowerUrl.contains('txstatus=failed') ||
-        lowerUrl.contains('txstatus=cancelled')) {
+        lowerUrl.contains('txstatus=cancelled') ||
+        lowerUrl.contains('txstatus=user_cancelled') ||
+        lowerUrl.contains('reason=cancelled') ||
+        lowerUrl.contains('status=failed') ||
+        lowerUrl.contains('status=cancelled')) {
       _hasPopped = true;
       if (mounted) {
         Navigator.of(context).pop(false);
       }
       return true;
     }
+
+    // 2. Check explicit success conditions
+    if (lowerUrl.contains('payment=success') ||
+        lowerUrl.contains('payment_status=success') ||
+        lowerUrl.contains('txstatus=success') ||
+        lowerUrl.contains('order_status=paid')) {
+      _hasPopped = true;
+      if (mounted) {
+        Navigator.of(context).pop(true);
+      }
+      return true;
+    }
+
     return false;
   }
 

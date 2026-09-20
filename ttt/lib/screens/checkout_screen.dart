@@ -123,12 +123,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           return;
         }
 
-        // Verify Cashfree payment status if orderId exists
+        // Verify Cashfree payment status with strict server guard
         if (gatewayOrderId.isNotEmpty) {
           try {
-            await ApiService().verifyCashfreePayment(gatewayOrderId);
+            final verifyRes = await ApiService().verifyCashfreePayment(gatewayOrderId);
+            final bool isPaid = verifyRes['success'] == true &&
+                (verifyRes['orderStatus'] == 'PAID' || verifyRes['orderStatus'] == 'SUCCESS');
+            if (!isPaid) {
+              if (mounted) {
+                setState(() => _isPaying = false);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Payment not completed (${verifyRes['orderStatus'] ?? 'UNPAID'}). Order cancelled.'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+              return;
+            }
           } catch (e) {
-            debugPrint('Payment verification check error: $e');
+            if (mounted) {
+              setState(() => _isPaying = false);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Payment verification failed: $e'), backgroundColor: Colors.red),
+              );
+            }
+            return;
           }
         }
       }
