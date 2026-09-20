@@ -6,6 +6,7 @@ import '../widgets/tdg_button.dart';
 import '../services/api_service.dart';
 import '../utils/responsive.dart';
 import 'in_app_payment_screen.dart';
+import '../config.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -38,7 +39,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     super.initState();
     _fetchDiscount();
     _userPoints = ApiService().currentUser?['points'] ?? 0;
-    _selectedPayment = _userPoints > 0 ? 'wallet' : 'ccavenue';
+    _selectedPayment = _userPoints > 0 ? 'wallet' : 'cashfree';
   }
 
   Future<void> _fetchDiscount() async {
@@ -61,33 +62,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
   }
 
-  Future<bool> _launchInAppPaymentGateway(Uri uri) async {
-    try {
-      bool launched = await launchUrl(
-        uri,
-        mode: LaunchMode.inAppBrowserView,
-      );
-      if (!launched) {
-        launched = await launchUrl(
-          uri,
-          mode: LaunchMode.inAppWebView,
-        );
-      }
-      if (!launched) {
-        launched = await launchUrl(
-          uri,
-          mode: LaunchMode.externalApplication,
-        );
-      }
-      return launched;
-    } catch (_) {
-      return await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
-    }
-  }
-
   void _handlePayment() async {
     setState(() => _isPaying = true);
     try {
@@ -99,81 +73,44 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'notes': item['customization']?['notes'] ?? '',
       }).toList();
 
-      // Handle online gateway payments
-      if (_selectedPayment == 'cashfree' || _selectedPayment == 'ccavenue') {
+      // Handle Cashfree online gateway payment
+      if (_selectedPayment == 'cashfree') {
         bool paymentCompleted = false;
         String gatewayOrderId = '';
 
-        if (_selectedPayment == 'cashfree') {
-          final cfResponse = await ApiService().initiateCashfreePayment(
-            amount: _finalTotal.toDouble(),
-            customerName: ApiService().currentUser?['name'],
-            customerPhone: ApiService().currentUser?['phone'],
-            customerEmail: ApiService().currentUser?['email'],
-          );
+        final cfResponse = await ApiService().initiateCashfreePayment(
+          amount: _finalTotal.toDouble(),
+          customerName: ApiService().currentUser?['name'],
+          customerPhone: ApiService().currentUser?['phone'],
+          customerEmail: ApiService().currentUser?['email'],
+        );
 
-          if (cfResponse['success'] == true) {
-            final String sessionId = cfResponse['paymentSessionId'] ?? '';
-            final String env = (cfResponse['environment'] ?? 'PRODUCTION').toString().toUpperCase();
-            gatewayOrderId = cfResponse['orderId'] ?? '';
-            if (sessionId.isNotEmpty) {
-              final String cashfreeBaseUrl = env == 'PRODUCTION'
-                  ? 'https://payments.cashfree.com/order/#'
-                  : 'https://sandbox.cashfree.com/pg/orders/';
-              final checkoutUrl = '$cashfreeBaseUrl$sessionId';
-              
-              if (mounted) {
-                final result = await Navigator.of(context).push<bool>(
-                  MaterialPageRoute(
-                    builder: (ctx) => InAppPaymentScreen(
-                      url: checkoutUrl,
-                      title: 'Cashfree Secure Checkout',
-                    ),
-                  ),
-                );
-                paymentCompleted = result == true;
-              }
-            }
-          } else {
-            throw Exception(cfResponse['message'] ?? cfResponse['error'] ?? 'Failed to initiate Cashfree payment gateway');
+        if (cfResponse['success'] == true) {
+          final String paymentUrl = (cfResponse['paymentUrl'] ?? '').toString();
+          final String sessionId = cfResponse['paymentSessionId'] ?? '';
+          final String env = (cfResponse['environment'] ?? 'PRODUCTION').toString().toUpperCase();
+          gatewayOrderId = cfResponse['orderId'] ?? '';
+          
+          String checkoutUrl = paymentUrl;
+          if (checkoutUrl.isEmpty && sessionId.isNotEmpty) {
+            checkoutUrl = '${AppConfig.baseUrl}/cashfree/pay?session_id=$sessionId&env=$env';
           }
-        } else if (_selectedPayment == 'ccavenue') {
-          final ccResponse = await ApiService().initiateCCavenuePayment(
-            amount: _finalTotal.toDouble(),
-            customerName: ApiService().currentUser?['name'],
-            customerPhone: ApiService().currentUser?['phone'],
-            customerEmail: ApiService().currentUser?['email'],
-          );
-
-          if (ccResponse['success'] == true) {
-            final String payUrl = ccResponse['paymentUrl'] ?? '';
-            final String ccUrl = ccResponse['ccavenueUrl'] ?? '';
-            final String encRequest = ccResponse['encRequest'] ?? '';
-            final String accessCode = ccResponse['accessCode'] ?? '';
-
-            String targetUrl = '';
-            if (payUrl.isNotEmpty) {
-              targetUrl = payUrl;
-            } else if (ccUrl.isNotEmpty) {
-              targetUrl = '$ccUrl&encRequest=${Uri.encodeComponent(encRequest)}&access_code=${Uri.encodeComponent(accessCode)}';
-            } else {
-              throw Exception('Invalid CCAvenue response');
-            }
-
+          
+          if (checkoutUrl.isNotEmpty) {
             if (mounted) {
               final result = await Navigator.of(context).push<bool>(
                 MaterialPageRoute(
                   builder: (ctx) => InAppPaymentScreen(
-                    url: targetUrl,
-                    title: 'CCAvenue Secure Checkout',
+                    url: checkoutUrl,
+                    title: 'Cashfree Secure Checkout',
                   ),
                 ),
               );
               paymentCompleted = result == true;
             }
-          } else {
-            throw Exception(ccResponse['message'] ?? ccResponse['error'] ?? 'Failed to initiate CCAvenue payment gateway');
           }
+        } else {
+          throw Exception(cfResponse['message'] ?? cfResponse['error'] ?? 'Failed to initiate Cashfree payment gateway');
         }
 
         if (!paymentCompleted) {
@@ -187,7 +124,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         }
 
         // Verify Cashfree payment status if orderId exists
-        if (_selectedPayment == 'cashfree' && gatewayOrderId.isNotEmpty) {
+        if (gatewayOrderId.isNotEmpty) {
           try {
             await ApiService().verifyCashfreePayment(gatewayOrderId);
           } catch (e) {
@@ -198,8 +135,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       final String paymentMethodName = _selectedPayment == 'counter'
           ? 'Pay at Counter'
-          : (_selectedPayment == 'wallet' ? 'Points Wallet'
-          : (_selectedPayment == 'cashfree' ? 'Cashfree Gateway' : 'CCAvenue Gateway'));
+          : (_selectedPayment == 'wallet' ? 'Points Wallet' : 'Cashfree Gateway');
 
       await ApiService().createOrder(
         items: itemsForApi,
@@ -390,8 +326,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         _paymentOption('counter', Icons.storefront_rounded, 'Pay at Counter', 'Pay with Cash, Card, or UPI at the Billing Counter'),
         const SizedBox(height: 8),
         _paymentOption('cashfree', Icons.credit_card_rounded, 'Cashfree Gateway', 'UPI, Cards, NetBanking, Wallets'),
-        const SizedBox(height: 8),
-        _paymentOption('ccavenue', Icons.payment_rounded, 'CCAvenue Gateway', 'Credit/Debit Cards, NetBanking, UPI, Wallets'),
       ],
     );
   }

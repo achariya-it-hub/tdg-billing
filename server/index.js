@@ -191,6 +191,7 @@ function writeDb(data = {}) {
  inventory: typeof inventory !== 'undefined' ? inventory : (data.inventory || diskDb.inventory || []),
  orderNumber: Math.max(typeof orderNumber !== 'undefined' ? (orderNumber || 0) : 0, data.orderNumber || 0, diskDb.orderNumber || 0),
  usedReferralCodes: typeof usedReferralCodes !== 'undefined' ? [...usedReferralCodes] : (data.usedReferralCodes || diskDb.usedReferralCodes || []),
+ registrationCount: typeof registrationCount !== 'undefined' ? registrationCount : (data.registrationCount || diskDb.registrationCount || 0),
  expenses: typeof expenses !== 'undefined' ? expenses : (data.expenses || diskDb.expenses || []),
  purchases: typeof purchases !== 'undefined' ? purchases : (data.purchases || diskDb.purchases || []),
  onlineOrders: typeof onlineOrders !== 'undefined' ? onlineOrders : (data.onlineOrders || diskDb.onlineOrders || []),
@@ -941,6 +942,7 @@ try {
     orderNumber = Math.max(orderNumber, maxFromOrders)
   }
  if (db.usedReferralCodes && Array.isArray(db.usedReferralCodes)) usedReferralCodes = new Set(db.usedReferralCodes)
+ if (typeof db.registrationCount === 'number') registrationCount = db.registrationCount
  if (db.expenses && Array.isArray(db.expenses) && db.expenses.length) expenses = db.expenses
  if (db.cashCounterSessions && Array.isArray(db.cashCounterSessions)) cashCounterSessions = db.cashCounterSessions
  if (db.purchases && Array.isArray(db.purchases) && db.purchases.length) purchases = db.purchases
@@ -8509,6 +8511,12 @@ app.post('/api/auth/signup', async (req, res) => {
  u.phone.replace(/[^0-9]/g, '') === referredBy.replace(/[^0-9]/g, '')
  )
  if (master) {
+ // [FIX Flaw 1A] Prevent self-referral
+ if (master.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, '') ||
+  master.email.toLowerCase() === email.toLowerCase() ||
+  master.id === referredBy) {
+  return res.status(400).json({ message: 'You cannot use your own referral code.' })
+ }
  newUser.referredBy = master.id
  newUser.referredByName = master.name
  // Update master's asset list - verify OTP if provided
@@ -8698,101 +8706,16 @@ async function sendWhatsAppOTP(phone, otp, type = 'auth', customMessage = null) 
 }
 
 async function sendMSG91OTP(phone, otp, type = 'auth') {
-  // Primary: Custom WhatsApp OTP Service
+  // Exclusive Primary: Custom WhatsApp OTP Service
   const waResult = await sendWhatsAppOTP(phone, otp, type)
   if (waResult.success) {
     return { success: true, method: 'whatsapp', data: waResult.data, otp }
   }
 
-  console.warn(`[OTP Fallback] WhatsApp OTP failed, attempting MSG91 SMS...`)
-
-  const cfg = settings.msg91 || {}
-  const cleanPhone = (phone || '').replace(/[^0-9]/g, '')
-  const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
-  const widgetId = cfg.widgetId || 'SecureOTPWidgetRKEV'
-  const authKey = cfg.authKey || process.env.MSG91_AUTH_KEY || '507494Aat701nlyG786a7f01caP1'
-
-  const logEntry = {
-    timestamp: new Date().toISOString(),
-    phone: phone,
-    formattedPhone: formattedPhone,
-    otp: otp,
-    type: type,
-    provider: 'MSG91',
-    status: (cfg.isEnabled === false || !authKey) ? 'CONSOLE_FALLBACK' : 'SENT_MSG91'
-  }
-  recentOtpLogs.unshift(logEntry)
-  if (recentOtpLogs.length > 50) recentOtpLogs.pop()
-
-  if (cfg.isEnabled === false || !authKey) {
-    console.log(`[MSG91] OTP for ${phone}: ${otp} (MSG91 disabled or Auth Key missing, logged to console)`)
-    return { success: true, method: 'console', otp }
-  }
-
-  try {
-    const headers = {
-      'Content-Type': 'application/json',
-      'authkey': authKey
-    }
-
-    const widgetUrl = `https://api.msg91.com/api/v5/widget/sendOtp?authkey=${encodeURIComponent(authKey)}`
-    const widgetPayload = {
-      widgetId: widgetId,
-      widget_id: widgetId,
-      mobile: formattedPhone,
-      identifier: formattedPhone,
-      otp: otp
-    }
-    if (cfg.senderId) widgetPayload.sender = cfg.senderId
-    if (cfg.templateId) widgetPayload.template_id = cfg.templateId
-
-    const resp = await fetch(widgetUrl, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(widgetPayload)
-    })
-    const data = await resp.json()
-    console.log(`[MSG91 Widget] OTP API response for ${formattedPhone}: ${resp.status}`, JSON.stringify(data))
-
-    const isSuccess = resp.ok || data.type === 'success' || data.responseType === 'success' || (data.message && String(data.message).toLowerCase().includes('success'))
-    if (isSuccess) {
-      return { success: true, data, reqId: data.reqId || data.message, method: 'msg91' }
-    }
-
-    console.warn(`[MSG91 Widget Fallback] Widget API response: ${JSON.stringify(data)}, trying standard OTP endpoint...`)
-    const templateId = cfg.templateId || ''
-    const senderId = cfg.senderId || 'TDGBIL'
-
-    let fallbackUrl = `https://control.msg91.com/api/v5/otp?mobile=${formattedPhone}&authkey=${encodeURIComponent(authKey)}`
-    if (templateId) fallbackUrl += `&template_id=${encodeURIComponent(templateId)}`
-    if (senderId) fallbackUrl += `&sender=${encodeURIComponent(senderId)}`
-    if (otp) fallbackUrl += `&otp=${encodeURIComponent(otp)}`
-
-    const fallbackPayload = {
-      mobile: formattedPhone,
-      otp: otp,
-      sender: senderId,
-      otp_expiry: cfg.otpExpiry || 300
-    }
-    if (widgetId) fallbackPayload.widget_id = widgetId
-    if (templateId) fallbackPayload.template_id = templateId
-
-    const fallbackResp = await fetch(fallbackUrl, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(fallbackPayload)
-    })
-    const fallbackData = await fallbackResp.json()
-    console.log(`[MSG91 Fallback] OTP API response for ${formattedPhone}: ${fallbackResp.status}`, JSON.stringify(fallbackData))
-
-    const fallbackSuccess = fallbackResp.ok || fallbackData.type === 'success' || fallbackData.responseType === 'success' || (fallbackData.message && String(fallbackData.message).toLowerCase().includes('success'))
-    return { success: fallbackSuccess, data: fallbackData, method: 'msg91', otp: fallbackSuccess ? undefined : otp }
-  } catch (err) {
-    console.error(`[MSG91] Failed to send OTP to ${formattedPhone}:`, err.message)
-    console.log(`[MSG91 FALLBACK] Logging OTP to console for ${phone}: ${otp}`)
-    return { success: false, error: err.message, method: 'console', otp }
-  }
+  console.warn(`[WhatsApp OTP Fallback] WhatsApp delivery failed. Logging OTP to console for ${phone}: ${otp}`)
+  return { success: true, method: 'console', otp, error: waResult.error }
 }
+
 
 function generateOTP() {
  return String(Math.floor(1000 + Math.random() * 9000))
@@ -9984,14 +9907,17 @@ app.post('/api/mobile/register', (req, res) => {
  let existing = allUsers.find(u => u && String(u.phone || '').replace(/\D/g, '') === cleanPhone)
 
  if (existing) {
- return res.json({ success: true, message: 'User already exists', user: existing })
+ // [FIX Flaw 3] Return 409 — not success — on duplicate to prevent double-bonus
+ return res.status(409).json({ success: false, message: 'This phone number is already registered. Please log in.' })
  }
 
- // Find referrer by referral code or phone
+ // [FIX Flaw 2] Exact code match only (no phone-ending fallback)
  let referrer = null
  if (referralCode) {
  const codeClean = String(referralCode).trim().toUpperCase()
- referrer = allUsers.find(u => u && (String(u.referralCode || '').toUpperCase() === codeClean || String(u.phone || '').endsWith(codeClean.slice(-4))))
+ referrer = allUsers.find(u => u && String(u.referralCode || '').toUpperCase() === codeClean)
+ // [FIX Flaw 1B] Prevent self-referral in mobile register
+ if (referrer && String(referrer.phone || '').replace(/\D/g, '') === cleanPhone) referrer = null
  }
 
  const now = new Date().toISOString()
@@ -10004,7 +9930,7 @@ app.post('/api/mobile/register', (req, res) => {
  walletBalance: 500,
  visitCount: 0,
  totalSpend: 0,
- referralCode: `TDG${cleanPhone.slice(-4)}`,
+ referralCode: generateReferralCode(), // [FIX Flaw 8] Unified 8-char code tracked in usedReferralCodes Set
  isPrimaryUser: Boolean(isPrimary),
  isReferred: Boolean(referrer),
  referredBy: referrer ? referrer.phone : null,
@@ -10014,9 +9940,13 @@ app.post('/api/mobile/register', (req, res) => {
  }
 
  if (referrer) {
- if (!referrer.referredFriends) referrer.referredFriends = []
- referrer.referredFriends.push(newUser.phone)
- referrer.referredFriendsCount = (referrer.referredFriendsCount || 0) + 1
+ // [FIX Flaw 4] Mutate original arrays so saveState() persists the count
+ const _rPhone = String(referrer.phone || '').replace(/\D/g, '')
+ const _actualRef = loyaltyUsers.find(u => u && String(u.phone||'').replace(/\D/g,'') === _rPhone) ||
+  mobileAppUsers.find(u => u && String(u.phone||'').replace(/\D/g,'') === _rPhone) || referrer
+ if (!_actualRef.referredFriends) _actualRef.referredFriends = []
+ if (!_actualRef.referredFriends.includes(newUser.phone)) _actualRef.referredFriends.push(newUser.phone)
+ _actualRef.referredFriendsCount = _actualRef.referredFriends.length
  }
 
  loyaltyUsers.push(newUser)
@@ -10309,70 +10239,130 @@ app.post('/api/cashfree/create-order', async (req, res) => {
  const cfConfig = settings?.paymentGateways?.cashfree || settings?.cashfree || {}
  const appId = cfConfig.appId || process.env.CASHFREE_APP_ID || DEFAULT_CASHFREE_APP_ID
  const secretKey = cfConfig.secretKey || process.env.CASHFREE_SECRET_KEY || DEFAULT_CASHFREE_SECRET_KEY
- const env = (cfConfig.environment || process.env.CASHFREE_ENV || DEFAULT_CASHFREE_ENV).toUpperCase()
+ let env = (cfConfig.environment || process.env.CASHFREE_ENV || DEFAULT_CASHFREE_ENV).toUpperCase()
+ if (secretKey.startsWith('cfsk_ma_prod_')) {
+  env = 'PRODUCTION'
+ } else if (secretKey.startsWith('cfsk_ma_test_')) {
+  env = 'SANDBOX'
+ }
 
+ // Cashfree requires exactly 10-digit phone (no country code prefix)
  const cleanPhone = String(customerPhone || '9876543210').replace(/\D/g, '')
- const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
- const generatedOrderId = orderId || `order_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
+ const cfPhone = cleanPhone.length > 10 ? cleanPhone.slice(-10) : cleanPhone.padStart(10, '0')
+ const generatedOrderId = orderId || `tdg_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
  const baseUrl = env === 'PRODUCTION' ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg'
 
  if (appId && secretKey && cfConfig.isEnabled !== false) {
  const payload = {
- order_id: generatedOrderId,
- order_amount: Number(Number(amount).toFixed(2)),
- order_currency: 'INR',
- customer_details: {
- customer_id: `cust_${cleanPhone.slice(-6)}`,
- customer_name: customerName || 'TDG Guest',
- customer_email: customerEmail || 'guest@tendengyros.com',
- customer_phone: formattedPhone
- },
- order_meta: {
- return_url: `https://pos.tendengyros.com/api/cashfree/callback?order_id=${generatedOrderId}`
- }
+  order_id: generatedOrderId,
+  order_amount: Number(Number(amount).toFixed(2)),
+  order_currency: 'INR',
+  customer_details: {
+   customer_id: `cust_${cfPhone.slice(-6)}_${Date.now().toString().slice(-4)}`,
+   customer_name: (customerName || 'TDG Guest').substring(0, 50), // required by Cashfree
+   customer_email: customerEmail || 'guest@tendengyros.com',
+   customer_phone: cfPhone // must be 10 digits
+  },
+  order_meta: {
+   return_url: `https://pos.tendengyros.com/api/cashfree/callback?order_id=${generatedOrderId}`,
+   notify_url: `https://pos.tendengyros.com/api/cashfree/webhook`
+  },
+  order_note: 'TDG Order'
  }
 
  const response = await fetch(`${baseUrl}/orders`, {
- method: 'POST',
- headers: {
- 'x-client-id': appId,
- 'x-client-secret': secretKey,
- 'x-api-version': '2023-08-01',
- 'Content-Type': 'application/json'
- },
- body: JSON.stringify(payload)
+  method: 'POST',
+  headers: {
+   'x-client-id': appId,
+   'x-client-secret': secretKey,
+   'x-api-version': '2023-08-01',
+   'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(payload)
  })
 
  const data = await response.json()
  console.log(`[CASHFREE ORDER CREATED] OrderID: ${generatedOrderId}, Status: ${response.status}, Session:`, data.payment_session_id)
 
  if (response.ok && data.payment_session_id) {
- return res.json({
- success: true,
- paymentSessionId: data.payment_session_id,
- orderId: data.order_id,
- cfOrderId: data.cf_order_id,
- environment: env
- })
+  const host = req.get('host') || 'pos.tendengyros.com'
+  const protocol = req.protocol || 'https'
+  const paymentUrl = `${protocol}://${host}/api/cashfree/pay?session_id=${data.payment_session_id}&env=${env}`
+
+  return res.json({
+   success: true,
+   paymentSessionId: data.payment_session_id,
+   paymentUrl: paymentUrl,
+   orderId: data.order_id,
+   cfOrderId: data.cf_order_id,
+   environment: env
+  })
  } else {
- console.error('[CASHFREE API ERROR]', data)
- return res.status(400).json({ error: data.message || 'Cashfree payment session creation failed', details: data })
+  console.error('[CASHFREE API ERROR]', JSON.stringify(data))
+  return res.status(400).json({ error: data.message || 'Cashfree payment session creation failed', details: data })
  }
  } else {
- // Dev Simulation / Sandbox Mode when live keys are pending
- console.log(`[CASHFREE DEV SIMULATION] OrderID: ${generatedOrderId}, Amount: â‚¹${amount}`)
- return res.json({
- success: true,
- paymentSessionId: `session_sim_${Date.now()}`,
- orderId: generatedOrderId,
- environment: 'SIMULATION',
- message: 'Cashfree payment session created in simulation mode (Add Cashfree API credentials in Admin Settings to process real payments).'
- })
+ // No credentials configured
+ console.log(`[CASHFREE] No credentials configured. OrderID: ${generatedOrderId}, Amount: ₹${amount}`)
+ return res.status(400).json({ error: 'Cashfree credentials not configured. Please add App ID and Secret Key in Admin Settings.' })
  }
  } catch (err) {
  console.error('[CASHFREE CREATE ORDER ERROR]', err)
  res.status(500).json({ error: 'Cashfree payment initialization failed: ' + err.message })
  }
+})
+
+// 2b. Cashfree Web SDK v3 Checkout Hosted Runner Page
+app.get('/api/cashfree/pay', (req, res) => {
+ const sessionId = req.query.session_id || req.query.sessionId || ''
+ const env = (req.query.env || 'PRODUCTION').toUpperCase()
+ const mode = env === 'PRODUCTION' ? 'production' : 'sandbox'
+
+ if (!sessionId) {
+  return res.status(400).send('<h3>Error: Missing payment session ID</h3>')
+ }
+
+ const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TDG Gyros - Cashfree Payment</title>
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .card { text-align: center; background: #1e293b; border-radius: 16px; padding: 32px 24px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); width: 90%; max-width: 360px; }
+        .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #eab308; border-radius: 50%; width: 44px; height: 44px; animation: spin 0.8s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        h3 { margin: 0 0 8px; font-size: 18px; color: #f8fafc; font-weight: 600; }
+        p { margin: 0; font-size: 13px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="spinner"></div>
+        <h3>Securing Connection</h3>
+        <p>Connecting to Cashfree Payment Gateway...</p>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const cashfree = Cashfree({ mode: "${mode}" });
+                cashfree.checkout({
+                    paymentSessionId: "${sessionId}",
+                    redirectTarget: "_self"
+                });
+            } catch (err) {
+                console.error("Cashfree SDK Initialization Error:", err);
+            }
+        });
+    </script>
+</body>
+</html>`
+
+ res.setHeader('Content-Type', 'text/html')
+ res.send(html)
 })
 
 // 3. Verify Cashfree Payment Status
@@ -11691,7 +11681,7 @@ app.post('/api/ccavenue/response', express.urlencoded({ extended: true }), (req,
  </head>
  <body>
  <div class="card">
- <div class="icon">${isSuccess ? 'ðŸŽ‰' : 'âŒ'}</div>
+ <div class="icon">${isSuccess ? 'ðŸŽ‰' : 'â Œ'}</div>
  <h2>Payment ${isSuccess ? 'Successful!' : 'Failed'}</h2>
  <p>${isSuccess ? `Order #${orderId} paid successfully.<br>Ref: ${trackingId}` : failureMessage || 'Payment could not be completed.'}</p>
  <button class="btn" onclick="finishPayment()">Return to App</button>
@@ -13308,20 +13298,23 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  const referrer = (loyaltyUsers || []).find(x => String(x.phone || '').replace(/\D/g, '') === referrerPhone) ||
  (mobileAppUsers || []).find(x => String(x.phone || '').replace(/\D/g, '') === referrerPhone)
  if (referrer) {
- const commission = Math.round(totalVal * 0.05)
+ // [FIX Flaw 7] Cap per-order commission at Rs.100; wallet tracked separately from rubyPoints
+ const rawCommission = Math.round(totalVal * 0.05)
+ const commission = Math.min(rawCommission, 100)
  if (commission > 0) {
- referrer.walletBalance = (Number(referrer.walletBalance || referrer.rubyPoints) || 0) + commission
- referrer.rubyPoints = referrer.walletBalance
+ referrer.walletBalance = (Number(referrer.walletBalance) || 0) + commission
+ referrer.referralEarned = (Number(referrer.referralEarned) || 0) + commission
+ // rubyPoints remain as loyalty points — NOT equated to walletBalance
  pointTransactions.push({
  id: 'pt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
  phone: referrerPhone,
  customerName: referrer.name || 'Referrer',
  points: commission,
  type: 'earn_commission',
- description: `5% Commission (â‚¹${commission}) from referred friend (${customerName || cleanP}) order #${orderNum}`,
+ description: `5% Commission (₹${commission}) from referred friend (${customerName || cleanP}) order #${orderNum}`,
  createdAt: now
  })
- console.log(`[REFERRAL COMMISSION] Credited 5% (â‚¹${commission}) to Referrer ${referrerPhone} from order #${orderNum}`)
+ console.log(`[REFERRAL COMMISSION] Credited 5% (₹${commission}) to Referrer ${referrerPhone} from order #${orderNum}`)
  }
  }
  }
@@ -13682,6 +13675,10 @@ app.post('/api/loyalty/register', (req, res) => {
  referrer = loyaltyUsers.find(u => u.referralCode === referralCode)
  if (!referrer) {
  return res.status(400).json({ error: 'Invalid referral code' })
+ }
+ // [FIX Flaw 1C] Prevent self-referral in loyalty registration
+ if (referrer.phone === phone || referrer.email === email) {
+ return res.status(400).json({ error: 'You cannot refer yourself.' })
  }
  }
  

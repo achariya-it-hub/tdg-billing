@@ -118,7 +118,7 @@ class _AssetScreenState extends State<AssetScreen> {
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: TDGColors.gold),
         ),
-        title: Text('ADD ASSET (WHATSAPP / SMS OTP)', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+        title: Text('ADD ASSET (WHATSAPP OTP)', style: TextStyle(color: TDGColors.white, fontWeight: FontWeight.bold, fontSize: 14)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

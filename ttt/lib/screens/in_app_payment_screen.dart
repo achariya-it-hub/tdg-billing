@@ -138,33 +138,6 @@ class _InAppPaymentScreenState extends State<InAppPaymentScreen> {
             Expanded(
               child: WebViewWidget(controller: _controller),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              color: TDGColors.cardDark,
-              child: Row(
-                children: [
-                  Icon(Icons.lock_rounded, color: TDGColors.green, size: 16),
-                  const SizedBox(width: 8),
-                  Text(
-                    '256-Bit Encrypted Secure Checkout',
-                    style: TextStyle(color: TDGColors.greyLight, fontSize: 12),
-                  ),
-                  const Spacer(),
-                  TextButton(
-                    onPressed: () {
-                      if (!_hasPopped) {
-                        _hasPopped = true;
-                        Navigator.of(context).pop(true);
-                      }
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: TDGColors.gold,
-                    ),
-                    child: const Text('I Have Paid'),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
