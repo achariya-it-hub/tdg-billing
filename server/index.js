@@ -439,8 +439,12 @@ function syncSalesVault(currentOrders) {
   try {
     // Priority order (lowest to highest): backups â†’ vault â†’ currentOrders
     // currentOrders MUST be processed last so live/restored data always wins
-    const orderMap = new Map()
-    const getKey = (o) => String(o ? (o.id || '') : '')
+    const getKey = (o) => {
+      if (!o) return ''
+      const num = (o.orderNumber !== undefined && o.orderNumber !== null && String(o.orderNumber).trim() !== '') ? String(o.orderNumber).trim() : ''
+      const idStr = (o.id !== undefined && o.id !== null && String(o.id).trim() !== '') ? String(o.id).trim() : ''
+      return num ? `num_${num}` : idStr
+    }
 
     // 1. Scan BACKUP_DIR first (lowest priority â€” oldest snapshots)
     try {
@@ -13394,127 +13398,193 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
   res.status(201).json({ ...order, _debug: { memoryCount: orders.length, diskCount }})
 })
 
-app.patch('/api/pos/orders/:id/status', (req, res) => {
- const { id } = req.params
- const { status, paymentStatus, cancelReason } = req.body
- 
- const order = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
- if (order) {
-  // GUARD: Block service-worker offline-queue replay from downgrading a completed/paid order.
-  // Scenario: acceptKOT PATCH (status:'ready') gets queued offline, then payment PATCH (status:'completed') succeeds.
-  // When SW replays the queued 'ready' PATCH later, without this guard it reverts the order back to 'ready'.
-  const orderAlreadyPaid = order.paymentStatus === 'paid' || !!order.paidAt
-  const orderAlreadyCompleted = order.status === 'completed' || order.status === 'served'
-  const statusIsDowngrade = ['pending', 'ready', 'preparing', 'in-progress'].includes(status)
-  if ((orderAlreadyPaid || orderAlreadyCompleted) && statusIsDowngrade) {
-   console.warn(`[PATCH STATUS GUARD] Blocked downgrade of order ${order.orderNumber || id} from '${order.status}' to '${status}' (already paid/completed)`)
-   return res.json({ success: true, order, skipped: true, reason: 'Order already completed/paid â€” status downgrade blocked' })
+function syncCancelledOrderToBackups(targetOrder) {
+  if (!targetOrder) return
+  const idStr = String(targetOrder.id || '').trim()
+  const numStr = String(targetOrder.orderNumber || '').trim()
+
+  const updateList = (arr) => {
+    if (!Array.isArray(arr)) return arr
+    return arr.map(o => {
+      if (!o) return o
+      const matchId = idStr && String(o.id || '').trim() === idStr
+      const matchNum = numStr && String(o.orderNumber || '').trim() === numStr
+      if (matchId || matchNum) {
+        return {
+          ...o,
+          status: 'cancelled',
+          paymentStatus: 'cancelled',
+          isCancelled: true,
+          cancelReason: targetOrder.cancelReason || o.cancelReason || 'Cancelled by Staff',
+          cancelledBy: targetOrder.cancelledBy || o.cancelledBy || 'Staff',
+          updatedAt: new Date().toISOString()
+        }
+      }
+      return o
+    })
   }
- order.status = status || order.status
- order.paymentStatus = paymentStatus || order.paymentStatus
- order.paymentMethod = req.body.paymentMethod || order.paymentMethod
- if ((status === 'completed' || status === 'served') && paymentStatus === 'paid') {
- if (!order.paidAt) order.paidAt = new Date().toISOString()
- if (!order.completedAt) order.completedAt = new Date().toISOString()
- }
- if (req.body.splitPayments) order.splitPayments = req.body.splitPayments
- if (req.body.cashTendered !== undefined) order.cashTendered = Number(req.body.cashTendered)
- if (req.body.changeReturned !== undefined) order.changeReturned = Number(req.body.changeReturned)
- if (status === 'cancelled') {
- if (cancelReason) order.cancelReason = cancelReason
- if (req.body.cancelledBy) order.cancelledBy = req.body.cancelledBy
- restoreInventoryForOrder(order)
- } else if (status === 'completed' || status === 'served' || status === 'ready' || status === 'preparing') {
- deductInventoryForOrder(order)
- }
- order.updatedAt = new Date().toISOString()
- io.emit('order:updated', order)
- 
- // CRITICAL: Persist status change immediately
- try {
- saveState()
- } catch (e) {
- console.error('[ORDER STATUS PERSIST ERROR]:', e.message)
- }
 
- // ASSET SYSTEM: When order completed, handle cashback + asset dined tracking
- if ((status === 'completed' || status === 'served') && order.customerPhone) {
- const db = readDb()
- const billAmount = Math.floor(order.total || 0)
- if (billAmount > 0) {
- const customer = db.users.find(u => u.phone === order.customerPhone)
+  const updateFile = (filePath) => {
+    if (!existsSync(filePath)) return
+    try {
+      const content = readFileSync(filePath, 'utf-8').trim()
+      if (!content) return
+      const parsed = JSON.parse(content)
+      if (Array.isArray(parsed)) {
+        writeFileSync(filePath, JSON.stringify(updateList(parsed), null, 2))
+      } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.orders)) {
+        parsed.orders = updateList(parsed.orders)
+        writeFileSync(filePath, JSON.stringify(parsed, null, 2))
+      }
+    } catch (e) {}
+  }
 
- // 1. Mark asset as dined if customer is someone's asset
- if (customer && customer.referredBy) {
- const master = db.users.find(u => u.id === customer.referredBy)
- if (master) {
- const assets = master.assets || []
- const asset = assets.find(a => a.phone === order.customerPhone)
- if (asset && !asset.hasDined) {
- asset.hasDined = true
- asset.dinedAt = new Date().toISOString()
- master.assetsDinedCount = (master.assetsDinedCount || 0) + 1
- checkAllAssetsBonus(master, db)
- }
+  const updateDir = (dirPath) => {
+    if (!existsSync(dirPath)) return
+    try {
+      const files = readdirSync(dirPath).filter(f => f.endsWith('.json'))
+      for (const f of files) {
+        updateFile(join(dirPath, f))
+      }
+    } catch (e) {}
+  }
 
- // 2. 10% cashback to master (perpetual)
- const cashback = Math.floor(billAmount * 0.10)
- if (cashback > 0) {
- master.points = (master.points || 0) + cashback
- master.cashbackEarned = (master.cashbackEarned || 0) + cashback
- db.transactions.push({
- id: 't_' + Date.now() + '_cb',
- userId: master.id,
- type: 'credit',
- amount: cashback,
- description: '10% cashback from ' + (customer.name || order.customerPhone) + ' - Order #' + order.orderNumber,
- createdAt: new Date().toISOString()
- })
- }
- }
- }
+  if (typeof BACKUP_DIR !== 'undefined') updateDir(BACKUP_DIR)
+  if (typeof DAILY_BACKUP_DIR !== 'undefined') updateDir(DAILY_BACKUP_DIR)
+  if (typeof VAULT_PATH !== 'undefined') updateFile(VAULT_PATH)
+  if (typeof MASTER_DOUBLE_BACKUP_PATH !== 'undefined') updateFile(MASTER_DOUBLE_BACKUP_PATH)
+}
 
- // 3. Earn points for the customer (1 point = 1 rupee, earned on order)
- if (customer) {
- const earnedPoints = Math.floor(billAmount * 0.05) // 5% earning
- if (earnedPoints > 0) {
- customer.points = (customer.points || 0) + earnedPoints
- db.transactions.push({
- id: 't_' + Date.now() + '_ep',
- userId: customer.id,
- type: 'credit',
- amount: earnedPoints,
- description: 'Order #' + order.orderNumber + ' completed',
- createdAt: new Date().toISOString()
- })
- }
- }
+app.patch('/api/pos/orders/:id/status', (req, res) => {
+  const { id } = req.params
+  const { status, paymentStatus, cancelReason } = req.body
+  
+  const matchingOrders = orders.filter(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
+  if (matchingOrders.length > 0) {
+    const order = matchingOrders[0]
+    const orderAlreadyPaid = order.paymentStatus === 'paid' || !!order.paidAt
+    const orderAlreadyCompleted = order.status === 'completed' || order.status === 'served'
+    const statusIsDowngrade = ['pending', 'ready', 'preparing', 'in-progress'].includes(status)
+    if ((orderAlreadyPaid || orderAlreadyCompleted) && statusIsDowngrade) {
+      console.warn(`[PATCH STATUS GUARD] Blocked downgrade of order ${order.orderNumber || id} from '${order.status}' to '${status}' (already paid/completed)`)
+      return res.json({ success: true, order, skipped: true, reason: 'Order already completed/paid — status downgrade blocked' })
+    }
 
- writeDb(db)
- saveState()
- }
- }
- return res.json({ success: true, order })
- }
- 
- res.status(404).json({ error: 'Order not found' })
+    matchingOrders.forEach(o => {
+      o.status = status || o.status
+      if (status === 'cancelled') {
+        o.paymentStatus = 'cancelled'
+        o.isCancelled = true
+        if (cancelReason) o.cancelReason = cancelReason
+        if (req.body.cancelledBy) o.cancelledBy = req.body.cancelledBy
+        restoreInventoryForOrder(o)
+      } else {
+        o.paymentStatus = paymentStatus || o.paymentStatus
+        o.paymentMethod = req.body.paymentMethod || o.paymentMethod
+        if ((status === 'completed' || status === 'served') && paymentStatus === 'paid') {
+          if (!o.paidAt) o.paidAt = new Date().toISOString()
+          if (!o.completedAt) o.completedAt = new Date().toISOString()
+        }
+      }
+      if (req.body.splitPayments) o.splitPayments = req.body.splitPayments
+      if (req.body.cashTendered !== undefined) o.cashTendered = Number(req.body.cashTendered)
+      if (req.body.changeReturned !== undefined) o.changeReturned = Number(req.body.changeReturned)
+      if (status === 'completed' || status === 'served' || status === 'ready' || status === 'preparing') {
+        deductInventoryForOrder(o)
+      }
+      o.updatedAt = new Date().toISOString()
+    })
+
+    if (status === 'cancelled') {
+      syncCancelledOrderToBackups(order)
+    }
+
+    io.emit('order:updated', order)
+    
+    try {
+      saveState()
+    } catch (e) {
+      console.error('[ORDER STATUS PERSIST ERROR]:', e.message)
+    }
+
+    if ((status === 'completed' || status === 'served') && order.customerPhone) {
+      const db = readDb()
+      const billAmount = Math.floor(order.total || 0)
+      if (billAmount > 0) {
+        const customer = db.users.find(u => u.phone === order.customerPhone)
+        if (customer && customer.referredBy) {
+          const master = db.users.find(u => u.id === customer.referredBy)
+          if (master) {
+            const assets = master.assets || []
+            const asset = assets.find(a => a.phone === order.customerPhone)
+            if (asset && !asset.hasDined) {
+              asset.hasDined = true
+              asset.dinedAt = new Date().toISOString()
+              master.assetsDinedCount = (master.assetsDinedCount || 0) + 1
+              checkAllAssetsBonus(master, db)
+            }
+            const cashback = Math.floor(billAmount * 0.10)
+            if (cashback > 0) {
+              master.points = (master.points || 0) + cashback
+              master.cashbackEarned = (master.cashbackEarned || 0) + cashback
+              db.transactions.push({
+                id: 't_' + Date.now() + '_cb',
+                userId: master.id,
+                type: 'credit',
+                amount: cashback,
+                description: '10% cashback from ' + (customer.name || order.customerPhone) + ' - Order #' + order.orderNumber,
+                createdAt: new Date().toISOString()
+              })
+            }
+          }
+        }
+
+        if (customer) {
+          const earnedPoints = Math.floor(billAmount * 0.05)
+          if (earnedPoints > 0) {
+            customer.points = (customer.points || 0) + earnedPoints
+            db.transactions.push({
+              id: 't_' + Date.now() + '_ep',
+              userId: customer.id,
+              type: 'credit',
+              amount: earnedPoints,
+              description: 'Order #' + order.orderNumber + ' completed',
+              createdAt: new Date().toISOString()
+            })
+          }
+        }
+
+        writeDb(db)
+        saveState()
+      }
+    }
+    return res.json({ success: true, order })
+  }
+  
+  res.status(404).json({ error: 'Order not found' })
 })
 
 app.post('/api/pos/orders/:id/cancel', posAuth, (req, res) => {
- const { id } = req.params
- const { reason, cancelledBy } = req.body || {}
- const targetOrder = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
- if (!targetOrder) {
- return res.status(404).json({ error: 'Order / Bill not found' })
- }
- targetOrder.status = 'cancelled'
- targetOrder.cancelReason = reason || 'Cancelled by Staff'
- if (cancelledBy) targetOrder.cancelledBy = cancelledBy
- targetOrder.updatedAt = new Date().toISOString()
- restoreInventoryForOrder(targetOrder)
- saveState()
- io.emit('order:updated', targetOrder)
- res.json({ success: true, message: `Bill #${targetOrder.orderNumber || targetOrder.id} cancelled successfully`, order: targetOrder })
+  const { id } = req.params
+  const { reason, cancelledBy } = req.body || {}
+  const matchingOrders = orders.filter(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
+  if (matchingOrders.length === 0) {
+    return res.status(404).json({ error: 'Order / Bill not found' })
+  }
+  const targetOrder = matchingOrders[0]
+  matchingOrders.forEach(o => {
+    o.status = 'cancelled'
+    o.paymentStatus = 'cancelled'
+    o.isCancelled = true
+    o.cancelReason = reason || 'Cancelled by Staff'
+    if (cancelledBy) o.cancelledBy = cancelledBy
+    o.updatedAt = new Date().toISOString()
+    restoreInventoryForOrder(o)
+  })
+  syncCancelledOrderToBackups(targetOrder)
+  saveState()
+  io.emit('order:updated', targetOrder)
+  res.json({ success: true, message: `Bill #${targetOrder.orderNumber || targetOrder.id} cancelled successfully`, order: targetOrder })
 })
 
 // â”€â”€â”€ Online Orders (Zomato/Swiggy/Zepto) â”€â”€â”€
@@ -15676,8 +15746,8 @@ function computeThreeHourSales(orderList) {
  if (hour24 >= 0 && hour24 <= 23) {
  const slotIdx = THREE_HOUR_SLOTS.findIndex(s => hour24 >= s.start && hour24 < s.end)
  if (slotIdx >= 0) {
- buckets[slotIdx].totalBills += 1
  if (isValid) {
+ buckets[slotIdx].totalBills += 1
  buckets[slotIdx].revenue += amt
  buckets[slotIdx].settledBills += 1
  buckets[slotIdx].orderCount += 1
@@ -15736,8 +15806,8 @@ function computeHourlySales(orderList) {
  if (dtVal) {
  const hour24 = getLocalHourIST(dtVal)
  if (hour24 >= 0 && hour24 <= 23) {
- buckets[hour24].totalBills += 1
  if (isValid) {
+ buckets[hour24].totalBills += 1
  buckets[hour24].revenue += amt
  buckets[hour24].settledBills += 1
  buckets[hour24].orderCount += 1
