@@ -1,7 +1,7 @@
 name: tdg_app
 description: Tendens Gyros - Mobile App
 publish_to: 'none'
-version: 1.0.1+2
+version: 1.0.2+3
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -30,7 +30,9 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/logo.png"
+  image_path: "assets/images/app_icon_aesthetic.png"
+  adaptive_icon_background: "#414042"
+  adaptive_icon_foreground: "assets/images/app_icon_foreground.png"
   remove_alpha_ios: true
 
 flutter:

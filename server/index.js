@@ -14728,21 +14728,51 @@ app.post('/api/admin/delete-order', (req, res) => {
     const { orderId, orderNumber } = req.body;
     const beforeCount = orders.length;
     
-    const remaining = orders.filter(o => {
+    const isTarget = (o) => {
       if (!o) return false;
-      if (orderId && String(o.id) === String(orderId)) return false;
-      if (orderNumber && (Number(o.orderNumber) === Number(orderNumber) || String(o.orderNumber) === String(orderNumber))) return false;
+      if (orderId && String(o.id) === String(orderId)) return true;
+      if (orderNumber && (Number(o.orderNumber) === Number(orderNumber) || String(o.orderNumber) === String(orderNumber))) return true;
       const items = o.items || [];
-      if (items.some(i => i && i.menuItemName === 'DEPLOY_VERIFY_TEST')) return false;
-      return true;
-    });
+      if (items.some(i => i && i.menuItemName === 'DEPLOY_VERIFY_TEST')) return true;
+      return false;
+    }
+
+    const remaining = orders.filter(o => !isTarget(o));
     
     orders.length = 0;
     orders.push(...remaining);
     
+    // Purge target order from all backup files so syncSalesVault cannot resurrect it
+    const purgeDir = (dirPath) => {
+      if (!existsSync(dirPath)) return;
+      try {
+        const files = readdirSync(dirPath).filter(f => f.endsWith('.json'));
+        for (const f of files) {
+          try {
+            const p = join(dirPath, f);
+            const content = readFileSync(p, 'utf-8');
+            if ((orderNumber && content.includes(String(orderNumber))) || (orderId && content.includes(String(orderId)))) {
+              const parsed = JSON.parse(content);
+              let bOrders = Array.isArray(parsed) ? parsed : (parsed.orders || []);
+              const filtered = bOrders.filter(o => !isTarget(o));
+              if (Array.isArray(parsed)) {
+                writeFileSync(p, JSON.stringify(filtered, null, 2));
+              } else if (parsed && typeof parsed === 'object') {
+                parsed.orders = filtered;
+                writeFileSync(p, JSON.stringify(parsed, null, 2));
+              }
+            }
+          } catch(e) {}
+        }
+      } catch(e) {}
+    }
+
+    if (typeof BACKUP_DIR !== 'undefined') purgeDir(BACKUP_DIR);
+    if (typeof DAILY_BACKUP_DIR !== 'undefined') purgeDir(DAILY_BACKUP_DIR);
+
     try {
-      const vaultPath = join(DATA_DIR, 'sales_vault_LOCK.json');
-      if (existsSync(vaultPath)) rmSync(vaultPath);
+      if (existsSync(VAULT_PATH)) rmSync(VAULT_PATH);
+      if (existsSync(MASTER_DOUBLE_BACKUP_PATH)) rmSync(MASTER_DOUBLE_BACKUP_PATH);
     } catch(e) {}
     
     saveState();

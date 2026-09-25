@@ -506,8 +506,16 @@ export default function POS() {
     )
   }
 
+  const lastClickTimeRef = useRef(0)
+
   const handleItemClick = (item) => {
     if (!item || !item.isAvailable) return
+
+    // Throttle rapid clicks (300ms) to prevent accidental touchscreen quantity multiplication
+    const now = Date.now()
+    if (now - lastClickTimeRef.current < 300) return
+    lastClickTimeRef.current = now
+
     if (isCustomizable(item)) {
       setCustomizingItem(item)
       setSelectedBread('Baked')
