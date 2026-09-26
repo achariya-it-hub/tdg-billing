@@ -437,6 +437,7 @@ for (const vf of OLD_VAULT_FILES) {
 
 function syncSalesVault(currentOrders) {
   try {
+    const orderMap = new Map()
     // Priority order (lowest to highest): backups â†’ vault â†’ currentOrders
     // currentOrders MUST be processed last so live/restored data always wins
     const getKey = (o) => {
@@ -906,6 +907,49 @@ try {
   }
 } catch (e) {
   console.error('[HOSTINGER MIGRATION ERROR]', e.message)
+}
+
+// ─── STARTUP MIGRATION: Auto-restore Sept 25, 2026 Bills (#100919, #100917, #100916) ───
+try {
+  const targetNums = [100919, 100917, 100916]
+  const seedPath = join(__dirname, 'seed-db.json')
+  if (existsSync(seedPath)) {
+    const seedContent = readFileSync(seedPath, 'utf-8').trim()
+    if (seedContent) {
+      const seedData = JSON.parse(seedContent)
+      const seedOrders = Array.isArray(seedData) ? seedData : (seedData.orders || [])
+      const targetSeedOrders = seedOrders.filter(o => o && targetNums.includes(o.orderNumber))
+      
+      let updated = false
+      targetSeedOrders.forEach(seedOrder => {
+        const idx = orders.findIndex(o => o && (o.orderNumber === seedOrder.orderNumber || o.id === seedOrder.id))
+        if (idx >= 0) {
+          if (orders[idx].status !== 'completed' || orders[idx].paymentStatus !== 'paid' || orders[idx].isCancelled || orders[idx].isVoid) {
+            orders[idx] = { 
+              ...orders[idx], 
+              ...seedOrder, 
+              status: 'completed', 
+              paymentStatus: 'paid', 
+              isCancelled: false, 
+              isVoid: false, 
+              cancellationReason: null, 
+              cancelledBy: null 
+            }
+            updated = true
+          }
+        } else {
+          orders.push(seedOrder)
+          updated = true
+        }
+      })
+      if (updated) {
+        console.log('[HOSTINGER MIGRATION] ✅ Successfully synchronized Sept 25 restored bills (#100919, #100917, #100916) into live orders & vault!')
+        saveState()
+      }
+    }
+  }
+} catch (e) {
+  console.error('[SEPT 25 MIGRATION ERROR]', e.message)
 }
 
   // Ensure official menu items populate on server startup
