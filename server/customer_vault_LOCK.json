@@ -1373,6 +1373,24 @@
       "createdAt": "2026-08-26T07:36:04.633Z",
       "email": "",
       "rubyPoints": 0
+    },
+    {
+      "id": "u_1790329084142",
+      "name": "bharath",
+      "phone": "6374693483",
+      "email": "chefbharath98@gmail.com",
+      "points": 500,
+      "tier": "Asset",
+      "createdAt": "2026-09-25T09:38:04.142Z"
+    },
+    {
+      "id": "u_1790357429083",
+      "name": "Mohamed Niyaamath A H",
+      "phone": "8248418799",
+      "email": "mohamedniyamath1@gmail.com",
+      "points": 500,
+      "tier": "Asset",
+      "createdAt": "2026-09-25T17:30:29.083Z"
     }
   ],
   "users": [
@@ -1900,16 +1918,6 @@
         }
       },
       "createdAt": "2026-08-22T10:23:40.663Z"
-    },
-    {
-      "id": "demo_user",
-      "name": "Demo User",
-      "email": "demo",
-      "phone": "9999999999",
-      "password": "$2b$10$YN9KJHIB6vpZrgIdvQE5mes7pQsgKFAbl7BZVyNcqiKEYXSiRwlBG",
-      "points": 500,
-      "referCode": "DEMO77",
-      "assets": []
     }
   ],
   "employees": [
@@ -1985,10 +1993,5 @@
       ]
     }
   ],
-  "updatedAt": "2026-09-18T18:25:27.035Z",
-  "counts": {
-    "loyaltyUsers": 122,
-    "users": 6,
-    "employees": 3
-  }
+  "updatedAt": "2026-09-26T08:15:37.976Z"
 }
