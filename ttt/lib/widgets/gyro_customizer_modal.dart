@@ -28,7 +28,8 @@ bool isItemCustomizable(Map<String, dynamic> item) {
          nameLower.contains('box') || nameLower.contains('feast') ||
          nameLower.contains('bucket') || nameLower.contains('rice') ||
          nameLower.contains('salad') || catLower.contains('salad') ||
-         catLower.contains('protein');
+         catLower.contains('protein') || nameLower.contains('dip') ||
+         catLower.contains('dip');
 }
 
 class _GyroCustomizerContent extends StatefulWidget {
@@ -48,6 +49,7 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
   late bool _isDualCombo;
   late bool _isMealCombo;
   late bool _isRiceSalad;
+  late bool _isDipOnly;
   late int _drinkCount;
   late int _dipCount;
 
@@ -82,7 +84,10 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
   final List<String> _selectedDips = [
     'Garlic Mayo Dip',
     'Spicy Mayo Dip',
+    'Honey Mustard Dip',
     'Tzatziki Dip',
+    'Jalapeno Cheese Dip',
+    'Turkish Chilli Dip',
   ];
 
   final TextEditingController _notesController = TextEditingController();
@@ -103,10 +108,10 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
   final List<String> _availableDips = [
     'Garlic Mayo Dip',
     'Spicy Mayo Dip',
+    'Honey Mustard Dip',
     'Tzatziki Dip',
-    'Peri Peri Dip',
     'Jalapeno Cheese Dip',
-    'Turkish Chili Dip',
+    'Turkish Chilli Dip',
   ];
 
   final List<String> _sauces = [
@@ -154,6 +159,21 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
         nameLower.contains('salad') ||
         catLower.contains('salad');
 
+    _isDipOnly = (nameLower.contains('dip') || catLower.contains('dip')) &&
+        !nameLower.contains('gyro') &&
+        !catLower.contains('gyro') &&
+        !nameLower.contains('wrap') &&
+        !nameLower.contains('meal') &&
+        !nameLower.contains('combo') &&
+        !nameLower.contains('feast') &&
+        !nameLower.contains('box') &&
+        !nameLower.contains('bucket') &&
+        !nameLower.contains('rice') &&
+        !nameLower.contains('salad') &&
+        !nameLower.contains('wings') &&
+        !nameLower.contains('strips') &&
+        !nameLower.contains('thigh');
+
     if (nameLower.contains('party meal') || nameLower.contains("den's party")) {
       _drinkCount = 3;
     } else if (nameLower.contains('super 5')) {
@@ -166,7 +186,17 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
       _drinkCount = 0;
     }
 
-    _dipCount = nameLower.contains('mega feast') ? 3 : 0;
+    if (nameLower.contains('13 pc mixed chicken bucket') || nameLower.contains('ultimate savings bucket') || nameLower.contains('4 dips') || nameLower.contains('4 dip')) {
+      _dipCount = 4;
+    } else if (nameLower.contains('mega feast') || nameLower.contains('3 dips') || nameLower.contains('3 dip')) {
+      _dipCount = 3;
+    } else if (nameLower.contains('double gyro feast') || nameLower.contains('2 dips') || nameLower.contains('2 dip')) {
+      _dipCount = 2;
+    } else if (nameLower.contains('choice of dip') || nameLower.contains('1 dip') || nameLower.contains('dip') || catLower.contains('dip')) {
+      _dipCount = 1;
+    } else {
+      _dipCount = 0;
+    }
 
     // Auto-detect protein
     if (nameLower.contains('paneer') || nameLower.contains('veg')) {
@@ -223,7 +253,17 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
   void _handleAdd() {
     final Map<String, dynamic> customDetails = {};
 
-    if (_isDualCombo) {
+    String itemName = widget.item['name'] ?? 'Item';
+
+    if (_isDipOnly) {
+      if (_dipCount > 0) {
+        final dipSel = _selectedDips.sublist(0, _dipCount).join(', ');
+        customDetails['dips'] = dipSel;
+        if (itemName.toLowerCase().contains('choice of dip')) {
+          itemName = 'Choice of Dip ($dipSel)';
+        }
+      }
+    } else if (_isDualCombo) {
       customDetails['gyro1'] = 'Gyro 1: $_gyro1Protein ($_gyro1Flavor, $_gyro1Spread Spread, $_gyro1Bread)';
       customDetails['gyro2'] = 'Gyro 2: $_gyro2Protein ($_gyro2Flavor, $_gyro2Spread Spread, $_gyro2Bread)';
     } else if (!_isRiceSalad) {
@@ -238,11 +278,11 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
       customDetails['veggies'] = List<String>.from(_selectedVeggies);
     }
 
-    if (_drinkCount > 0) {
+    if (!_isDipOnly && _drinkCount > 0) {
       customDetails['drink'] = _selectedDrinks.sublist(0, _drinkCount).join(', ');
     }
 
-    if (_dipCount > 0) {
+    if (!_isDipOnly && _dipCount > 0) {
       customDetails['dips'] = _selectedDips.sublist(0, _dipCount).join(', ');
     }
 
@@ -251,7 +291,7 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
     }
 
     final customizedItem = {
-      'name': widget.item['name'],
+      'name': itemName,
       'price': widget.item['price'] ?? widget.item['rate'] ?? 199,
       'qty': 1,
       'icon': Icons.restaurant_menu,
@@ -670,7 +710,9 @@ class _GyroCustomizerContentState extends State<_GyroCustomizerContent> {
                   controller: scrollController,
                   padding: const EdgeInsets.all(20),
                   children: [
-                    if (_isDualCombo) ...[
+                    if (_isDipOnly) ...[
+                      _buildDipsSection(),
+                    ] else if (_isDualCombo) ...[
                       _buildDualGyroSection(),
                       _buildDrinksSection(),
                       _buildDipsSection(),

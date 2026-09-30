@@ -87,6 +87,9 @@ export default function Kiosk() {
   const [selectedDip1, setSelectedDip1] = useState('Garlic Mayo Dip')
   const [selectedDip2, setSelectedDip2] = useState('Spicy Mayo Dip')
   const [selectedDip3, setSelectedDip3] = useState('Tzatziki Dip')
+  const [selectedDip4, setSelectedDip4] = useState('Honey Mustard Dip')
+  const [selectedDip5, setSelectedDip5] = useState('Jalapeno Cheese Dip')
+  const [selectedDip6, setSelectedDip6] = useState('Turkish Chilli Dip')
 
   useEffect(() => {
     fetchCategories()
@@ -105,7 +108,12 @@ export default function Kiosk() {
 
   const getMealDipCount = (itemName) => {
     const name = (itemName || '').toLowerCase()
-    if (name.includes('mega feast')) return 3
+    if (name.includes('12 dip') || name.includes('12 dips')) return 12
+    if (name.includes('6 dip') || name.includes('6 dips')) return 6
+    if (name.includes('13 pc mixed chicken bucket') || name.includes('ultimate savings bucket') || name.includes('4 dips') || name.includes('4 dip')) return 4
+    if (name.includes('chicken strips bucket') || name.includes('peri peri leg bucket') || name.includes('mixed feast') || name.includes('mega feast') || name.includes('3 dips') || name.includes('3 dip')) return 3
+    if (name.includes('double gyro feast') || name.includes('2 dips') || name.includes('2 dip')) return 2
+    if (name.includes('choice of dip') || name.includes('1 dip') || name.includes('dip')) return 1
     return 0
   }
 
@@ -126,7 +134,8 @@ export default function Kiosk() {
       name.includes('rice') || name.includes('salad') ||
       catName.includes('fries') || name.includes('fries') || name.includes('loaded') ||
       name.includes('ice tea') || name.includes('iced tea') ||
-      name.includes('wednesday combo - 2') || name.includes('wednesday combo 2') || name.includes('wednesday - 2') || name.includes('wednesday 2')
+      name.includes('wednesday combo - 2') || name.includes('wednesday combo 2') || name.includes('wednesday - 2') || name.includes('wednesday 2') ||
+      name.includes('dip') || catName.includes('dip')
     )
   }
 
@@ -169,6 +178,9 @@ export default function Kiosk() {
       setSelectedDip1('Garlic Mayo Dip')
       setSelectedDip2('Spicy Mayo Dip')
       setSelectedDip3('Tzatziki Dip')
+      setSelectedDip4('Honey Mustard Dip')
+      setSelectedDip5('Jalapeno Cheese Dip')
+      setSelectedDip6('Turkish Chilli Dip')
 
       setSelectedGyro1Protein('Chicken')
       setSelectedGyro1Bread('Baked')
@@ -236,10 +248,24 @@ export default function Kiosk() {
     else if (drinkCount === 5) drinkSummary = `${selectedDrink1}, ${selectedDrink2}, ${selectedDrink3}, ${selectedDrink4}, ${selectedDrink5}`
 
     let dipSummary = ''
-    if (dipCount === 3) dipSummary = `${selectedDip1}, ${selectedDip2}, ${selectedDip3}`
+    if (dipCount === 1) dipSummary = selectedDip1
+    else if (dipCount === 2) dipSummary = `${selectedDip1}, ${selectedDip2}`
+    else if (dipCount === 3) dipSummary = `${selectedDip1}, ${selectedDip2}, ${selectedDip3}`
+    else if (dipCount === 4) dipSummary = `${selectedDip1}, ${selectedDip2}, ${selectedDip3}, ${selectedDip4}`
+    else if (dipCount >= 6) dipSummary = `${selectedDip1}, ${selectedDip2}, ${selectedDip3}, ${selectedDip4}, ${selectedDip5}, ${selectedDip6}`
+
+    const isDipOnly = (itemName.includes('dip') || catName.includes('dip')) && !hasGyro && !isRiceItem && !isSuper5 && !isLoadedFries && !isIceTea
 
     let customization
-    if (isDualCombo) {
+    if (isDipOnly) {
+      if (itemName.includes('choice of dip')) {
+        formattedName = `Choice of Dip (${dipSummary})`
+      }
+      customization = {
+        dips: dipSummary,
+        notes: gyroNotes
+      }
+    } else if (isDualCombo) {
       customization = {
         gyro1: `Gyro 1: ${selectedGyro1Protein} (${selectedGyro1Flavor}, ${selectedGyro1Spread} Spread, ${selectedGyro1Bread} Pita)`,
         gyro2: `Gyro 2: ${selectedGyro2Protein} (${selectedGyro2Flavor}, ${selectedGyro2Spread} Spread, ${selectedGyro2Bread} Pita)`,
@@ -1082,24 +1108,38 @@ export default function Kiosk() {
 
                 {/* Dips Selection */}
                 {(() => {
+                  const cItemName = (customizingItem?.name || '').toLowerCase()
+                  const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
+                  const isRiceItem = cItemName.includes('rice')
+                  const isSuper5 = cItemName.includes('super 5')
+                  const isLoadedFries = cItemName.includes('loaded')
+                  const isIceTea = cItemName.includes('ice tea') || cItemName.includes('iced tea')
+                  const isSaladItem = cItemName.includes('salad')
+                  const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('combo') || cItemName.includes('wednesday') || cCatName.includes('gyro') || cCatName.includes('combo')) && !isRiceItem && !isSuper5 && !isLoadedFries && !isIceTea && !isSaladItem
+
+                  const isDipOnly = (cItemName.includes('dip') || cCatName.includes('dip')) && !hasGyroChoice && !isRiceItem && !isSaladItem && !isSuper5 && !isLoadedFries && !isIceTea
+
                   const dipCount = getMealDipCount(customizingItem?.name)
                   if (dipCount <= 0) return null
                   const dipsArr = [
                     { label: '1st Dip', val: selectedDip1, set: setSelectedDip1 },
                     { label: '2nd Dip', val: selectedDip2, set: setSelectedDip2 },
-                    { label: '3rd Dip', val: selectedDip3, set: setSelectedDip3 }
+                    { label: '3rd Dip', val: selectedDip3, set: setSelectedDip3 },
+                    { label: '4th Dip', val: selectedDip4, set: setSelectedDip4 },
+                    { label: '5th Dip', val: selectedDip5, set: setSelectedDip5 },
+                    { label: '6th Dip', val: selectedDip6, set: setSelectedDip6 }
                   ].slice(0, dipCount)
 
                   return (
                     <div style={{ background: '#fff7ed', padding: '12px', borderRadius: '12px', border: '1.5px solid #fed7aa' }}>
                       <div style={{ fontSize: '12.5px', fontWeight: 900, color: '#c2410c', marginBottom: '8px' }}>
-                        🧄 CHOOSE YOUR {dipCount} DIPS
+                        🧄 CHOOSE YOUR {dipCount} DIP{dipCount > 1 ? 'S' : ''} {isDipOnly ? '' : `INCLUDED IN ${customizingItem?.name?.toUpperCase()}`}
                       </div>
                       {dipsArr.map((dItem, idx) => (
                         <div key={idx} style={{ marginBottom: idx === dipsArr.length - 1 ? 0 : '8px' }}>
                           <div style={{ fontSize: '11px', fontWeight: 700, color: '#9a3412', marginBottom: '4px' }}>{idx + 1}. {dItem.label}</div>
                           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-                            {['Garlic Mayo Dip', 'Spicy Mayo Dip', 'Tzatziki Dip', 'Peri Peri Dip', 'Jalapeno Cheese Dip', 'Turkish Chili Dip'].map(dp => (
+                            {['Garlic Mayo Dip', 'Spicy Mayo Dip', 'Honey Mustard Dip', 'Tzatziki Dip', 'Jalapeno Cheese Dip', 'Turkish Chilli Dip'].map(dp => (
                               <button key={dp} onClick={() => dItem.set(dp)} style={{
                                 padding: '6px', borderRadius: '6px',
                                 border: dItem.val === dp ? '2px solid #ea580c' : '1px solid #cbd5e1',
@@ -1122,9 +1162,50 @@ export default function Kiosk() {
                   const cCatName = (categories.find(c => c.id === customizingItem?.categoryId)?.name || '').toLowerCase()
                   const isRiceItem = cItemName.includes('rice')
                   const isSuper5 = cItemName.includes('super 5')
+                  const isLoadedFries = cItemName.includes('loaded')
                   const isIceTea = cItemName.includes('ice tea') || cItemName.includes('iced tea')
+                  const isSaladItem = cItemName.includes('salad')
                   const hasProteinChoice = (cItemName.includes('gyro') || cItemName.includes('rice') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('box') || cItemName.includes('loaded') || cItemName.includes('combo') || cItemName.includes('wednesday') || cCatName.includes('gyro') || cCatName.includes('rice') || cCatName.includes('protein') || cCatName.includes('combo')) && !isIceTea
                   const hasGyroChoice = (cItemName.includes('gyro') || cItemName.includes('meal') || cItemName.includes('feast') || cItemName.includes('combo') || cItemName.includes('wednesday') || cCatName.includes('gyro') || cCatName.includes('combo')) && !isRiceItem && !isSuper5 && !isIceTea
+
+                  const isDipOnly = (cItemName.includes('dip') || cCatName.includes('dip')) && !hasGyroChoice && !isRiceItem && !isSuper5 && !isLoadedFries && !isIceTea && !isSaladItem
+
+                  if (isDipOnly) {
+                    const dipCount = getMealDipCount(customizingItem?.name)
+                    if (dipCount <= 0) return null
+                    const dipsArr = [
+                      { label: '1st Dip', val: selectedDip1, set: setSelectedDip1 },
+                      { label: '2nd Dip', val: selectedDip2, set: setSelectedDip2 },
+                      { label: '3rd Dip', val: selectedDip3, set: setSelectedDip3 },
+                      { label: '4th Dip', val: selectedDip4, set: setSelectedDip4 },
+                      { label: '5th Dip', val: selectedDip5, set: setSelectedDip5 },
+                      { label: '6th Dip', val: selectedDip6, set: setSelectedDip6 }
+                    ].slice(0, dipCount)
+  
+                    return (
+                      <div style={{ background: '#fff7ed', padding: '12px', borderRadius: '12px', border: '1.5px solid #fed7aa' }}>
+                        <div style={{ fontSize: '12.5px', fontWeight: 900, color: '#c2410c', marginBottom: '8px' }}>
+                          🧄 CHOOSE YOUR {dipCount} DIP{dipCount > 1 ? 'S' : ''} {isDipOnly ? '' : `INCLUDED IN ${customizingItem?.name?.toUpperCase()}`}
+                        </div>
+                        {dipsArr.map((dItem, idx) => (
+                          <div key={idx} style={{ marginBottom: idx === dipsArr.length - 1 ? 0 : '8px' }}>
+                            <div style={{ fontSize: '11px', fontWeight: 700, color: '#9a3412', marginBottom: '4px' }}>{idx + 1}. {dItem.label}</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                              {['Garlic Mayo Dip', 'Spicy Mayo Dip', 'Honey Mustard Dip', 'Tzatziki Dip', 'Jalapeno Cheese Dip', 'Turkish Chilli Dip'].map(dp => (
+                                <button key={dp} onClick={() => dItem.set(dp)} style={{
+                                  padding: '6px', borderRadius: '6px',
+                                  border: dItem.val === dp ? '2px solid #ea580c' : '1px solid #cbd5e1',
+                                  background: dItem.val === dp ? '#ea580c' : '#ffffff',
+                                  color: dItem.val === dp ? '#ffffff' : '#334155', fontWeight: 800, fontSize: '10.5px', cursor: 'pointer'
+                                }}>{dItem.val === dp ? '✓ ' : ''}{dp}</button>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )
+                  }
+
                   const dCount = getMealDrinkCount(customizingItem?.name)
 
                   return (
