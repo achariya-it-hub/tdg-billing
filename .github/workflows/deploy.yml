@@ -18,8 +18,9 @@ jobs:
             cd ${{ secrets.APP_DIR || '~/tdg-billing' }}
             git pull
             cp server/db.json ~/tdg-data/db.json
-            npm install --omit=dev
+            npm install
             npx vite build
+            npm prune --omit=dev
             exit 0
 
       - name: Notify success
