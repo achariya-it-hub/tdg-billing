@@ -1693,7 +1693,7 @@ let menuItems = [
     "id": "m_kombucha_mint",
     "categoryId": "c10_komb",
     "name": "Mint Kombucha",
-    "price": 120,
+    "price": 114,
     "description": "Mint Kombucha 250ml",
     "isAvailable": true,
     "image": "/images/menu/mint-kombucha.png"
@@ -1702,7 +1702,7 @@ let menuItems = [
     "id": "m_kombucha_hibiscus",
     "categoryId": "c10_komb",
     "name": "Hibiscus Kombucha",
-    "price": 120,
+    "price": 114,
     "description": "Hibiscus Kombucha 250ml",
     "isAvailable": true,
     "image": "/images/menu/kombucha-hibiscus.png"
@@ -1711,7 +1711,7 @@ let menuItems = [
     "id": "m_kombucha_classic",
     "categoryId": "c10_komb",
     "name": "Classic Kombucha",
-    "price": 120,
+    "price": 114,
     "description": "Classic Kombucha 250ml",
     "isAvailable": true,
     "image": "/images/menu/kombucha.png"

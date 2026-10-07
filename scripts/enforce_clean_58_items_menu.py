@@ -113,9 +113,9 @@ clean_menu_items = [
     { "id": "m_dip_choice", "categoryId": "c4", "name": "Choice of Dip", "price": 15, "description": "Choice of Dip (Garlic Mayo, Spicy Mayo, Honey Mustard, Tzatziki, Jalapeno Cheese, Turkish Chilli)", "isAvailable": True, "image": "/images/menu/garlic mayo.png" },
 
     # Kombucha
-    { "id": "m_kombucha_mint", "categoryId": "c10_komb", "name": "Mint Kombucha", "price": 120, "description": "Refreshing Brewed Mint Kombucha 250ml", "isAvailable": True, "image": "/images/menu/mint-kombucha.png" },
-    { "id": "m_kombucha_hibiscus", "categoryId": "c10_komb", "name": "Hibiscus Kombucha", "price": 120, "description": "Refreshing Brewed Hibiscus Kombucha 250ml", "isAvailable": True, "image": "/images/menu/kombucha-hibiscus.png" },
-    { "id": "m_kombucha_classic", "categoryId": "c10_komb", "name": "Classic Kombucha", "price": 120, "description": "Refreshing Brewed Classic Kombucha 250ml", "isAvailable": True, "image": "/images/menu/kombucha.png" }
+    { "id": "m_kombucha_mint", "categoryId": "c10_komb", "name": "Mint Kombucha", "price": 114, "description": "Refreshing Brewed Mint Kombucha 250ml", "isAvailable": True, "image": "/images/menu/mint-kombucha.png" },
+    { "id": "m_kombucha_hibiscus", "categoryId": "c10_komb", "name": "Hibiscus Kombucha", "price": 114, "description": "Refreshing Brewed Hibiscus Kombucha 250ml", "isAvailable": True, "image": "/images/menu/kombucha-hibiscus.png" },
+    { "id": "m_kombucha_classic", "categoryId": "c10_komb", "name": "Classic Kombucha", "price": 114, "description": "Refreshing Brewed Classic Kombucha 250ml", "isAvailable": True, "image": "/images/menu/kombucha.png" }
 ]
 
 # 58 Clean Recipes

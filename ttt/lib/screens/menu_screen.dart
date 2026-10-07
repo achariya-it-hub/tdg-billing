@@ -132,9 +132,9 @@ class _MenuScreenState extends State<MenuScreen> {
       {'name': 'Choice of Dip', 'desc': 'Choice of Dip', 'price': '₹14.30'},
     ],
     'Kombucha': [
-      {'name': 'Mint Kombucha', 'desc': 'Refreshing Brewed Mint Kombucha', 'price': '₹120'},
-      {'name': 'Hibiscus Kombucha', 'desc': 'Refreshing Brewed Hibiscus Kombucha', 'price': '₹120'},
-      {'name': 'Classic Kombucha', 'desc': 'Refreshing Brewed Classic Kombucha', 'price': '₹120'},
+      {'name': 'Mint Kombucha', 'desc': 'Refreshing Brewed Mint Kombucha', 'price': '₹114'},
+      {'name': 'Hibiscus Kombucha', 'desc': 'Refreshing Brewed Hibiscus Kombucha', 'price': '₹114'},
+      {'name': 'Classic Kombucha', 'desc': 'Refreshing Brewed Classic Kombucha', 'price': '₹114'},
     ]
   };
 

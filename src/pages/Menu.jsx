@@ -593,7 +593,7 @@ const sampleMenuItems = [
     "id": "m_kombucha_mint",
     "categoryId": "c10_komb",
     "name": "Mint Kombucha",
-    "price": 120,
+    "price": 114,
     "description": "Refreshing Brewed Mint Kombucha 250ml",
     "isAvailable": true,
     "image": "/images/menu/mint-kombucha.png"
@@ -602,7 +602,7 @@ const sampleMenuItems = [
     "id": "m_kombucha_hibiscus",
     "categoryId": "c10_komb",
     "name": "Hibiscus Kombucha",
-    "price": 120,
+    "price": 114,
     "description": "Refreshing Brewed Hibiscus Kombucha 250ml",
     "isAvailable": true,
     "image": "/images/menu/kombucha-hibiscus.png"
@@ -611,7 +611,7 @@ const sampleMenuItems = [
     "id": "m_kombucha_classic",
     "categoryId": "c10_komb",
     "name": "Classic Kombucha",
-    "price": 120,
+    "price": 114,
     "description": "Refreshing Brewed Classic Kombucha 250ml",
     "isAvailable": true,
     "image": "/images/menu/kombucha.png"
@@ -3004,14 +3004,14 @@ const sampleRecipes = [
     "menuItemId": "m_kombucha_mint",
     "menuItemName": "Mint Kombucha",
     "name": "RECIPE - MINT KOMBUCHA",
-    "description": "Standard recipe for Mint Kombucha (Price RS 120/-)",
+    "description": "Standard recipe for Mint Kombucha (Price RS 114/-)",
     "yieldQty": 1,
     "prepTime": 5,
     "rmCost": 27.3,
     "pmCost": 8.4,
     "labourCost": 6.3,
     "calculatedCost": 42.0,
-    "sellingPrice": 120.0,
+    "sellingPrice": 114.0,
     "ingredients": [
       {
         "id": "ri_m_kombucha_mint_1",
@@ -3047,14 +3047,14 @@ const sampleRecipes = [
     "menuItemId": "m_kombucha_hibiscus",
     "menuItemName": "Hibiscus Kombucha",
     "name": "RECIPE - HIBISCUS KOMBUCHA",
-    "description": "Standard recipe for Hibiscus Kombucha (Price RS 120/-)",
+    "description": "Standard recipe for Hibiscus Kombucha (Price RS 114/-)",
     "yieldQty": 1,
     "prepTime": 5,
     "rmCost": 27.3,
     "pmCost": 8.4,
     "labourCost": 6.3,
     "calculatedCost": 42.0,
-    "sellingPrice": 120.0,
+    "sellingPrice": 114.0,
     "ingredients": [
       {
         "id": "ri_m_kombucha_hibiscus_1",
@@ -3090,14 +3090,14 @@ const sampleRecipes = [
     "menuItemId": "m_kombucha_classic",
     "menuItemName": "Classic Kombucha",
     "name": "RECIPE - CLASSIC KOMBUCHA",
-    "description": "Standard recipe for Classic Kombucha (Price RS 120/-)",
+    "description": "Standard recipe for Classic Kombucha (Price RS 114/-)",
     "yieldQty": 1,
     "prepTime": 5,
     "rmCost": 27.3,
     "pmCost": 8.4,
     "labourCost": 6.3,
     "calculatedCost": 42.0,
-    "sellingPrice": 120.0,
+    "sellingPrice": 114.0,
     "ingredients": [
       {
         "id": "ri_m_kombucha_classic_1",
