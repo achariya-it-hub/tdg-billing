@@ -46,6 +46,9 @@ export const useOrderStore = create(
         specialOffer20: false,
         vip50: false,
         staffBenefitOffer: false,
+        customDiscountType: null,
+        customDiscountValue: '',
+        customDiscountReason: '',
         employeeId: null,
         employeeName: null,
         employeeDept: null,
@@ -239,7 +242,36 @@ export const useOrderStore = create(
             vip50: !!enabled,
             inaugurationOffer: false,
             specialOffer20: false,
+            staffBenefitOffer: false,
+            customDiscountType: enabled ? null : state.currentOrder.customDiscountType,
+            customDiscountValue: enabled ? '' : state.currentOrder.customDiscountValue,
+            customDiscountReason: enabled ? '' : state.currentOrder.customDiscountReason
+          }
+        }))
+      },
+
+      setCustomDiscount: (type, value, reason) => {
+        set(state => ({
+          currentOrder: {
+            ...state.currentOrder,
+            customDiscountType: type,
+            customDiscountValue: value,
+            customDiscountReason: reason !== undefined ? reason : state.currentOrder.customDiscountReason,
+            inaugurationOffer: false,
+            specialOffer20: false,
+            vip50: false,
             staffBenefitOffer: false
+          }
+        }))
+      },
+
+      clearCustomDiscount: () => {
+        set(state => ({
+          currentOrder: {
+            ...state.currentOrder,
+            customDiscountType: null,
+            customDiscountValue: '',
+            customDiscountReason: ''
           }
         }))
       },
@@ -281,6 +313,9 @@ export const useOrderStore = create(
             specialOffer20: false,
             vip50: false,
             staffBenefitOffer: false,
+            customDiscountType: null,
+            customDiscountValue: '',
+            customDiscountReason: '',
             employeeId: null,
             employeeName: null,
             employeeDept: null,
@@ -317,7 +352,10 @@ export const useOrderStore = create(
             inaugurationOffer: !!enabled,
             specialOffer20: enabled ? false : state.currentOrder.specialOffer20,
             staffBenefitOffer: enabled ? false : state.currentOrder.staffBenefitOffer,
-            vip50: enabled ? false : state.currentOrder.vip50
+            vip50: enabled ? false : state.currentOrder.vip50,
+            customDiscountType: enabled ? null : state.currentOrder.customDiscountType,
+            customDiscountValue: enabled ? '' : state.currentOrder.customDiscountValue,
+            customDiscountReason: enabled ? '' : state.currentOrder.customDiscountReason
           }
         }))
       },
@@ -329,7 +367,10 @@ export const useOrderStore = create(
             specialOffer20: !!enabled,
             inaugurationOffer: enabled ? false : state.currentOrder.inaugurationOffer,
             staffBenefitOffer: enabled ? false : state.currentOrder.staffBenefitOffer,
-            vip50: enabled ? false : state.currentOrder.vip50
+            vip50: enabled ? false : state.currentOrder.vip50,
+            customDiscountType: enabled ? null : state.currentOrder.customDiscountType,
+            customDiscountValue: enabled ? '' : state.currentOrder.customDiscountValue,
+            customDiscountReason: enabled ? '' : state.currentOrder.customDiscountReason
           }
         }))
       },
@@ -359,6 +400,9 @@ export const useOrderStore = create(
             inaugurationOffer: false,
             specialOffer20: false,
             vip50: false,
+            customDiscountType: null,
+            customDiscountValue: '',
+            customDiscountReason: '',
             employeeId: data.employee?.id || null,
             employeeName: data.employee?.name || null,
             employeeDept: data.employee?.department || null,
@@ -380,6 +424,14 @@ export const useOrderStore = create(
         const raw = get().getRawSubtotal()
         const order = get().currentOrder
         if (order.complimentary || order.complimentaryType) return raw
+        if (order.customDiscountType === 'percentage' || order.customDiscountType === 'pct') {
+          const pct = Math.min(100, Math.max(0, Number(order.customDiscountValue) || 0)) / 100
+          return Math.round(raw * pct)
+        }
+        if (order.customDiscountType === 'amount') {
+          const amt = Math.min(raw, Math.max(0, Number(order.customDiscountValue) || 0))
+          return Math.round(amt)
+        }
         if (order.staffBenefitOffer) {
           const pct = (order.discountPct || 50) / 100
           return Math.round(raw * pct)
@@ -426,6 +478,15 @@ export const useOrderStore = create(
           const total = isComp ? 0 : get().getTotal()
           const finalPaymentMethod = isComp ? 'complimentary' : (paymentMethod || 'cash')
 
+          let computedDiscountName = order.discountName
+          if (!computedDiscountName) {
+            if (order.customDiscountType === 'percentage' || order.customDiscountType === 'pct') {
+              computedDiscountName = order.customDiscountReason ? `Custom (${order.customDiscountReason})` : `Custom Discount (${order.customDiscountValue}%)`
+            } else if (order.customDiscountType === 'amount') {
+              computedDiscountName = order.customDiscountReason ? `Custom (${order.customDiscountReason})` : `Custom Discount (₹${order.customDiscountValue})`
+            }
+          }
+
           let newOrder = null
           try {
             const apiUrl = window.location.hostname === 'localhost'
@@ -450,6 +511,9 @@ export const useOrderStore = create(
                 inaugurationOffer: order.inaugurationOffer || false,
                 specialOffer20: order.specialOffer20 || false,
                 staffBenefitOffer: order.staffBenefitOffer || false,
+                customDiscountType: order.customDiscountType || undefined,
+                customDiscountValue: order.customDiscountValue || undefined,
+                customDiscountReason: order.customDiscountReason || undefined,
                 employeeId: order.employeeId || null,
                 employeeName: order.employeeName || null,
                 employeeDept: order.employeeDept || null,
@@ -457,8 +521,8 @@ export const useOrderStore = create(
                 familyMemberName: order.familyMemberName || null,
                 offerName: order.offerName || null,
                 offerType: order.offerType || null,
-                discountPct: order.discountPct || 0,
-                discountName: order.discountName || undefined,
+                discountPct: (order.customDiscountType === 'percentage' || order.customDiscountType === 'pct') ? (Number(order.customDiscountValue) || 0) : (order.discountPct || 0),
+                discountName: computedDiscountName || undefined,
                 vip50: order.vip50 || false,
                 customerDiscountPct: order.customerDiscountPct || 0,
                 date: IST_DATE_STR(),

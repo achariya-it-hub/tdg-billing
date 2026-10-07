@@ -104,7 +104,7 @@ export default function POS() {
   const {
     currentOrder, addItem, updateItemQuantity, removeItem,
     setOrderType, setTableNumber, setCustomerName, setCustomerPhone, setCustomer, setCustomerDiscountPct, clearCustomer, setComplimentary, setSpecialRemarks, clearOrder,
-    setInaugurationOffer, setSpecialOffer20, setStaffBenefitOffer, setVip50, getDiscount,
+    setInaugurationOffer, setSpecialOffer20, setStaffBenefitOffer, setVip50, setCustomDiscount, clearCustomDiscount, getDiscount,
     holdOrder, recallOrder, heldOrders, getSubtotal, getTax, getTotal, placeOrder,
     loadCampaigns, campaigns
   } = useOrderStore()
@@ -115,6 +115,20 @@ export default function POS() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [showCart, setShowCart] = useState(false)
   const [soundOn, setSoundOn] = useState(() => getSoundEnabled())
+
+  // Custom Discount State
+  const [showCustomDiscountUI, setShowCustomDiscountUI] = useState(false)
+  const [customDiscountMode, setCustomDiscountMode] = useState('pct') // 'pct' | 'amount'
+  const [customDiscountInput, setCustomDiscountInput] = useState('')
+  const [customDiscountReasonInput, setCustomDiscountReasonInput] = useState('')
+
+  const handleRemoveCustomDiscount = () => {
+    clearCustomDiscount()
+    setCustomDiscountInput('')
+    setCustomDiscountReasonInput('')
+    setShowCustomDiscountUI(false)
+    toast.success('Removed custom discount')
+  }
 
   // Staff Benefit Promotion State
   const [showStaffModal, setShowStaffModal] = useState(false)
@@ -1612,6 +1626,12 @@ export default function POS() {
                 <span>-₹{getDiscount().toFixed(2)}</span>
               </div>
             )}
+            {currentOrder.customDiscountType && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#2563eb', fontWeight: 700 }}>
+                <span>🏷️ {currentOrder.customDiscountReason || 'Custom Discount'} ({currentOrder.customDiscountType === 'percentage' || currentOrder.customDiscountType === 'pct' ? `${currentOrder.customDiscountValue}%` : `₹${currentOrder.customDiscountValue}`}):</span>
+                <span>-₹{getDiscount().toFixed(2)}</span>
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>GST (5%):</span>
               <span>₹{getTax().toFixed(2)}</span>
@@ -1628,19 +1648,19 @@ export default function POS() {
             <span style={{ fontSize: '20px', fontWeight: 900, color: '#f87171' }}>₹{getTotal().toFixed(2)}</span>
           </div>
 
-          {/* Offers Row (20% OFF, 50% OFF & Staff Benefit 50%) */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.2fr', gap: '5px', marginBottom: '6px' }}>
+          {/* Offers Row (20% OFF, 50% OFF, Staff 50% & Custom Disc) */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '4px', marginBottom: '6px' }}>
             <button
               type="button"
               onClick={() => setSpecialOffer20(!currentOrder.specialOffer20)}
               style={{
-                padding: '7px 4px', borderRadius: '8px',
+                padding: '7px 2px', borderRadius: '8px',
                 border: currentOrder.specialOffer20 ? '2px solid #dc2626' : '1px dashed #dc2626',
                 background: currentOrder.specialOffer20 ? '#dc2626' : '#fef2f2',
                 color: currentOrder.specialOffer20 ? '#ffffff' : '#991b1b',
-                fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center',
+                fontWeight: 800, fontSize: '10.5px', cursor: 'pointer', textAlign: 'center',
                 boxShadow: currentOrder.specialOffer20 ? '0 2px 8px rgba(220,38,38,0.3)' : 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px',
                 transition: 'all 0.15s'
               }}
             >
@@ -1651,13 +1671,13 @@ export default function POS() {
               type="button"
               onClick={() => setVip50(!currentOrder.vip50)}
               style={{
-                padding: '7px 4px', borderRadius: '8px',
+                padding: '7px 2px', borderRadius: '8px',
                 border: currentOrder.vip50 ? '2px solid #16a34a' : '1px dashed #16a34a',
                 background: currentOrder.vip50 ? '#16a34a' : '#f0fdf4',
                 color: currentOrder.vip50 ? '#ffffff' : '#166534',
-                fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center',
+                fontWeight: 800, fontSize: '10.5px', cursor: 'pointer', textAlign: 'center',
                 boxShadow: currentOrder.vip50 ? '0 2px 8px rgba(22,163,74,0.3)' : 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px',
                 transition: 'all 0.15s'
               }}
             >
@@ -1674,19 +1694,173 @@ export default function POS() {
                 }
               }}
               style={{
-                padding: '7px 4px', borderRadius: '8px',
+                padding: '7px 2px', borderRadius: '8px',
                 border: currentOrder.staffBenefitOffer ? '2px solid #7c3aed' : '1px dashed #7c3aed',
                 background: currentOrder.staffBenefitOffer ? '#7c3aed' : '#f5f3ff',
                 color: currentOrder.staffBenefitOffer ? '#ffffff' : '#5b21b6',
-                fontWeight: 800, fontSize: '11px', cursor: 'pointer', textAlign: 'center',
+                fontWeight: 800, fontSize: '10.5px', cursor: 'pointer', textAlign: 'center',
                 boxShadow: currentOrder.staffBenefitOffer ? '0 2px 8px rgba(124,58,237,0.3)' : 'none',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px',
                 transition: 'all 0.15s'
               }}
             >
-              🎓 {currentOrder.staffBenefitOffer ? `STAFF 50%` : 'Staff 50%'}
+              🎓 {currentOrder.staffBenefitOffer ? `STAFF` : 'Staff 50%'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowCustomDiscountUI(!showCustomDiscountUI)}
+              style={{
+                padding: '7px 2px', borderRadius: '8px',
+                border: currentOrder.customDiscountType ? '2px solid #2563eb' : '1px dashed #2563eb',
+                background: currentOrder.customDiscountType ? '#2563eb' : '#eff6ff',
+                color: currentOrder.customDiscountType ? '#ffffff' : '#1d4ed8',
+                fontWeight: 800, fontSize: '10.5px', cursor: 'pointer', textAlign: 'center',
+                boxShadow: currentOrder.customDiscountType ? '0 2px 8px rgba(37,99,235,0.3)' : 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px',
+                transition: 'all 0.15s'
+              }}
+            >
+              🏷️ {currentOrder.customDiscountType ? (currentOrder.customDiscountType === 'pct' || currentOrder.customDiscountType === 'percentage' ? `${currentOrder.customDiscountValue}%` : `₹${currentOrder.customDiscountValue}`) : 'Custom'}
             </button>
           </div>
+
+          {/* Interactive Custom Discount Typing Panel */}
+          {(showCustomDiscountUI || currentOrder.customDiscountType) && (
+            <div style={{
+              background: '#f8fafc', padding: '8px 10px', borderRadius: '10px',
+              border: '1.5px solid #bfdbfe', marginBottom: '6px',
+              boxShadow: '0 2px 8px rgba(37,99,235,0.08)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#1e40af' }}>✏️ Custom Discount (Type % or ₹ Amount)</span>
+                {currentOrder.customDiscountType && (
+                  <button onClick={handleRemoveCustomDiscount} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 800, cursor: 'pointer' }}>
+                    ✕ Remove
+                  </button>
+                )}
+              </div>
+
+              {/* Mode Selector: % vs ₹ */}
+              <div style={{ display: 'flex', gap: '4px', marginBottom: '6px' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCustomDiscountMode('pct')
+                    if (customDiscountInput) {
+                      setCustomDiscount('pct', customDiscountInput, customDiscountReasonInput)
+                    }
+                  }}
+                  style={{
+                    flex: 1, padding: '4px', borderRadius: '6px', border: 'none',
+                    background: customDiscountMode === 'pct' ? '#2563eb' : '#cbd5e1',
+                    color: customDiscountMode === 'pct' ? 'white' : '#334155',
+                    fontSize: '11px', fontWeight: 800, cursor: 'pointer'
+                  }}
+                >
+                  % Percentage
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCustomDiscountMode('amount')
+                    if (customDiscountInput) {
+                      setCustomDiscount('amount', customDiscountInput, customDiscountReasonInput)
+                    }
+                  }}
+                  style={{
+                    flex: 1, padding: '4px', borderRadius: '6px', border: 'none',
+                    background: customDiscountMode === 'amount' ? '#2563eb' : '#cbd5e1',
+                    color: customDiscountMode === 'amount' ? 'white' : '#334155',
+                    fontSize: '11px', fontWeight: 800, cursor: 'pointer'
+                  }}
+                >
+                  ₹ Amount
+                </button>
+              </div>
+
+              {/* Input Fields */}
+              <div style={{ display: 'flex', gap: '4px', marginBottom: '6px' }}>
+                <input
+                  type="number"
+                  placeholder={customDiscountMode === 'pct' ? 'Type % (e.g. 15)' : 'Type ₹ (e.g. 50)'}
+                  value={customDiscountInput}
+                  onChange={e => {
+                    const val = e.target.value
+                    setCustomDiscountInput(val)
+                    if (val !== '' && !isNaN(Number(val)) && Number(val) >= 0) {
+                      setCustomDiscount(customDiscountMode, val, customDiscountReasonInput)
+                    } else if (val === '') {
+                      clearCustomDiscount()
+                    }
+                  }}
+                  style={{
+                    width: '110px', padding: '5px 8px', borderRadius: '6px', border: '1.5px solid #60a5fa',
+                    fontSize: '12px', fontWeight: 800, background: 'white', outline: 'none'
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Reason / Note (Optional)"
+                  value={customDiscountReasonInput}
+                  onChange={e => {
+                    const r = e.target.value
+                    setCustomDiscountReasonInput(r)
+                    if (customDiscountInput) {
+                      setCustomDiscount(customDiscountMode, customDiscountInput, r)
+                    }
+                  }}
+                  style={{
+                    flex: 1, padding: '5px 8px', borderRadius: '6px', border: '1px solid #cbd5e1',
+                    fontSize: '11px', background: 'white', outline: 'none'
+                  }}
+                />
+              </div>
+
+              {/* Quick Presets */}
+              <div style={{ display: 'flex', gap: '3px', flexWrap: 'wrap' }}>
+                {customDiscountMode === 'pct' ? (
+                  [5, 10, 15, 20, 25, 30, 50].map(p => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => {
+                        setCustomDiscountInput(String(p))
+                        setCustomDiscount('pct', String(p), customDiscountReasonInput)
+                      }}
+                      style={{
+                        padding: '2px 6px', borderRadius: '4px', border: '1px solid #93c5fd',
+                        background: Number(customDiscountInput) === p && (currentOrder.customDiscountType === 'pct' || currentOrder.customDiscountType === 'percentage') ? '#2563eb' : '#ffffff',
+                        color: Number(customDiscountInput) === p && (currentOrder.customDiscountType === 'pct' || currentOrder.customDiscountType === 'percentage') ? '#ffffff' : '#1d4ed8',
+                        fontSize: '9.5px', fontWeight: 800, cursor: 'pointer'
+                      }}
+                    >
+                      {p}%
+                    </button>
+                  ))
+                ) : (
+                  [10, 20, 50, 100, 200, 500].map(a => (
+                    <button
+                      key={a}
+                      type="button"
+                      onClick={() => {
+                        setCustomDiscountInput(String(a))
+                        setCustomDiscount('amount', String(a), customDiscountReasonInput)
+                      }}
+                      style={{
+                        padding: '2px 6px', borderRadius: '4px', border: '1px solid #93c5fd',
+                        background: Number(customDiscountInput) === a && currentOrder.customDiscountType === 'amount' ? '#2563eb' : '#ffffff',
+                        color: Number(customDiscountInput) === a && currentOrder.customDiscountType === 'amount' ? '#ffffff' : '#1d4ed8',
+                        fontSize: '9.5px', fontWeight: 800, cursor: 'pointer'
+                      }}
+                    >
+                      ₹{a}
+                    </button>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Remarks & Complimentary Compact */}
           <input placeholder="Special remarks for kitchen..." value={currentOrder.specialRemarks || ''} onChange={e => setSpecialRemarks(e.target.value)} style={{ ...inputStyle, fontSize: '11px', padding: '5px 8px', marginBottom: '6px' }} />

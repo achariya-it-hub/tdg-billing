@@ -13263,9 +13263,9 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  const taxVal = Math.round(netSub * 0.05)
  const totalVal = Math.round(netSub + taxVal)
  
- const discountLabel = req.body.discountName || (
+ const discountLabel = req.body.discountName || req.body.customDiscountReason || (
  isStaffBenefit ? (req.body.offerName || 'Achariya Family Week 2026') :
- (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'Discount' : '')))
+ (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'Custom Discount' : '')))
  )
 
  const isDirectSettle = Boolean(req.body.settleDirectly || req.body.status === 'completed' || req.body.paymentStatus === 'paid')
@@ -13285,6 +13285,9 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  rawSubtotal: rawSub,
  discount: discountVal,
  discountName: discountLabel,
+ customDiscountType: req.body.customDiscountType || undefined,
+ customDiscountValue: req.body.customDiscountValue || undefined,
+ customDiscountReason: req.body.customDiscountReason || undefined,
  offerName: req.body.offerName || (isStaffBenefit ? 'Achariya Family Week 2026' : undefined),
  offerType: req.body.offerType || (isStaffBenefit ? 'staff_family' : undefined),
  employeeId: req.body.employeeId || undefined,

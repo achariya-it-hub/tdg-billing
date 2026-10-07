@@ -56,6 +56,7 @@ export default function Billing() {
   // Bill Modification State
   const [modifyBillOrder, setModifyBillOrder] = useState(null)
   const [modifyItems, setModifyItems] = useState([])
+  const [modifyDiscountType, setModifyDiscountType] = useState('amount') // 'amount' | 'pct'
   const [modifyDiscount, setModifyDiscount] = useState('')
   const [modifyDiscountName, setModifyDiscountName] = useState('')
   const [modifyPaymentMethod, setModifyPaymentMethod] = useState('cash')
@@ -616,6 +617,15 @@ export default function Billing() {
     return modifyItems.reduce((sum, item) => sum + (Number(item.totalPrice) || (Number(item.unitPrice || 0) * Number(item.quantity || 1))), 0)
   }
 
+  const calculateModifyDiscountAmount = () => {
+    const raw = calculateModifyRawSubtotal()
+    const val = Number(modifyDiscount) || 0
+    if (modifyDiscountType === 'pct' || modifyDiscountType === 'percentage') {
+      return Math.round(raw * (val / 100))
+    }
+    return Math.min(raw, val)
+  }
+
   const handleConfirmModifyBill = async () => {
     if (!modifyBillOrder) return
     if (!modifyPin || modifyPin.length < 4) {
@@ -643,8 +653,8 @@ export default function Billing() {
         body: JSON.stringify({
           adminPin: modifyPin,
           items: modifyItems,
-          discount: Number(modifyDiscount) || 0,
-          discountName: modifyDiscountName,
+          discount: calculateModifyDiscountAmount(),
+          discountName: modifyDiscountName || (modifyDiscountType === 'pct' ? `Custom (${modifyDiscount}%)` : `Custom (₹${modifyDiscount})`),
           paymentMethod: modifyPaymentMethod,
           splitPayments: splitData,
           tableNumber: modifyTableNumber,
@@ -2082,14 +2092,47 @@ export default function Billing() {
 
             {/* Section 3: Financial Calculations & Discount */}
             <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '12px', marginBottom: '16px', border: '1px solid #e2e8f0' }}>
+              {/* Discount Mode Selector Buttons */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#334155' }}>🏷️ Custom Discount Type:</span>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setModifyDiscountType('amount')}
+                    style={{
+                      padding: '4px 10px', borderRadius: '6px', border: 'none',
+                      background: modifyDiscountType === 'amount' ? '#2563eb' : '#cbd5e1',
+                      color: modifyDiscountType === 'amount' ? 'white' : '#475569',
+                      fontSize: '11px', fontWeight: 800, cursor: 'pointer'
+                    }}
+                  >
+                    ₹ Fixed Amount
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModifyDiscountType('pct')}
+                    style={{
+                      padding: '4px 10px', borderRadius: '6px', border: 'none',
+                      background: modifyDiscountType === 'pct' ? '#2563eb' : '#cbd5e1',
+                      color: modifyDiscountType === 'pct' ? 'white' : '#475569',
+                      fontSize: '11px', fontWeight: 800, cursor: 'pointer'
+                    }}
+                  >
+                    % Percentage
+                  </button>
+                </div>
+              </div>
+
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '10px' }}>
                 <div>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569' }}>Discount Amount (₹)</label>
+                  <label style={{ fontSize: '11px', fontWeight: 700, color: '#475569' }}>
+                    {modifyDiscountType === 'pct' ? 'Discount Percentage (%)' : 'Discount Amount (₹)'}
+                  </label>
                   <input
                     type="number"
                     value={modifyDiscount}
                     onChange={e => setModifyDiscount(e.target.value)}
-                    placeholder="0"
+                    placeholder={modifyDiscountType === 'pct' ? 'e.g. 15' : 'e.g. 50'}
                     style={{ width: '100%', padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 700 }}
                   />
                 </div>
@@ -2108,7 +2151,7 @@ export default function Billing() {
               {/* Live Totals Summary */}
               {(() => {
                 const raw = calculateModifyRawSubtotal()
-                const disc = Number(modifyDiscount) || 0
+                const disc = calculateModifyDiscountAmount()
                 const net = Math.max(0, raw - disc)
                 const tax = Math.round(net * 0.05)
                 const grand = Math.round(net + tax)
@@ -2119,7 +2162,7 @@ export default function Billing() {
                     </div>
                     {disc > 0 && (
                       <div style={{ display: 'flex', justifyContent: 'space-between', color: '#dc2626', fontWeight: 700, marginBottom: '3px' }}>
-                        <span>Discount ({modifyDiscountName || 'Discount'}):</span><span>-₹{disc}</span>
+                        <span>Discount ({modifyDiscountName || (modifyDiscountType === 'pct' ? `${modifyDiscount}% OFF` : 'Custom Discount')}):</span><span>-₹{disc}</span>
                       </div>
                     )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
