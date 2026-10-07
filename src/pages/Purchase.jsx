@@ -30,9 +30,42 @@ export default function Purchase() {
   const [selectedSupplierOrders, setSelectedSupplierOrders] = useState(null)
   const [selectedPO, setSelectedPO] = useState(null)
   const [selectedGRN, setSelectedGRN] = useState(null)
-  const [supplierForm, setSupplierForm] = useState({ name: '', category: 'Proteins', contact: '', email: '', address: '' })
+  const [editSupplierId, setEditSupplierId] = useState(null)
+  const [supplierForm, setSupplierForm] = useState({ name: '', category: 'Proteins', contact: '', email: '', gstNo: '', paymentTerms: 'Net 15', address: '' })
   const [grnFormData, setGrnFormData] = useState({})
   const [searchTerm, setSearchTerm] = useState('')
+
+  const handleOpenAddSupplier = () => {
+    setEditSupplierId(null)
+    setSupplierForm({ name: '', category: 'Proteins', contact: '', email: '', gstNo: '', paymentTerms: 'Net 15', address: '' })
+    setShowSupplierModal(true)
+  }
+
+  const handleOpenEditSupplier = (supplier) => {
+    setEditSupplierId(supplier.id)
+    setSupplierForm({
+      name: supplier.name || '',
+      category: supplier.category || 'Proteins',
+      contact: supplier.contact || '',
+      email: supplier.email || '',
+      gstNo: supplier.gstNo || supplier.gstin || '',
+      paymentTerms: supplier.paymentTerms || 'Net 15',
+      address: supplier.address || ''
+    })
+    setShowSupplierModal(true)
+  }
+
+  const handleDeleteSupplier = async (supplierId, supplierName) => {
+    if (!confirm(`Are you sure you want to delete vendor "${supplierName}"?`)) return
+    try {
+      await fetch(`${API()}/api/admin/suppliers/${supplierId}`, { method: 'DELETE' })
+      setSuppliers(prev => prev.filter(s => s.id !== supplierId))
+      toast.success(`Vendor "${supplierName}" deleted`)
+    } catch {
+      setSuppliers(prev => prev.filter(s => s.id !== supplierId))
+      toast.success(`Vendor "${supplierName}" deleted`)
+    }
+  }
   const [isProcessingInvoice, setIsProcessingInvoice] = useState(false)
   const [invoiceItems, setInvoiceItems] = useState([])
   const [globalInventory, setGlobalInventory] = useState([])
@@ -614,7 +647,7 @@ export default function Purchase() {
         {[
           { id: 'orders', label: 'Purchase Orders', count: purchaseOrders.length },
           { id: 'grn', label: 'GRN/MRN', count: grns.length },
-          { id: 'suppliers', label: 'Suppliers', count: suppliers.length },
+          { id: 'suppliers', label: 'Vendors & Suppliers', count: suppliers.length },
         ].map(tab => (
           <button
             key={tab.id}
@@ -666,11 +699,11 @@ export default function Purchase() {
         </div>
         <Button onClick={() => {
           if (activeTab === 'orders') setShowPOModal(true)
-          else if (activeTab === 'suppliers') setShowSupplierModal(true)
+          else if (activeTab === 'suppliers') handleOpenAddSupplier()
           else if (activeTab === 'grn') toast.info('GRN is created from Purchase Orders using "Receive" button')
         }}>
           <Plus size={18} />
-          {activeTab === 'orders' ? 'New Order' : activeTab === 'suppliers' ? 'Add Supplier' : activeTab === 'grn' ? 'How to Create GRN' : ''}
+          {activeTab === 'orders' ? 'New Order' : activeTab === 'suppliers' ? 'Add Vendor' : activeTab === 'grn' ? 'How to Create GRN' : ''}
         </Button>
       </div>
 
@@ -860,10 +893,10 @@ export default function Purchase() {
                   </span>
                 </div>
                 <div style={{ display: 'flex', gap: '4px' }}>
-                  <button style={{ background: '#eff6ff', border: 'none', padding: '8px', borderRadius: '8px', cursor: 'pointer' }}>
+                  <button onClick={() => handleOpenEditSupplier(supplier)} style={{ background: '#eff6ff', border: 'none', padding: '8px', borderRadius: '8px', cursor: 'pointer' }} title="Edit Vendor">
                     <Edit size={16} color="#3b82f6" />
                   </button>
-                  <button style={{ background: '#fef2f2', border: 'none', padding: '8px', borderRadius: '8px', cursor: 'pointer' }}>
+                  <button onClick={() => handleDeleteSupplier(supplier.id, supplier.name)} style={{ background: '#fef2f2', border: 'none', padding: '8px', borderRadius: '8px', cursor: 'pointer' }} title="Delete Vendor">
                     <Trash2 size={16} color="#ef4444" />
                   </button>
                 </div>
@@ -871,21 +904,33 @@ export default function Purchase() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#6b7280', fontSize: '14px' }}>
                   <Phone size={16} />
-                  {supplier.contact}
+                  {supplier.contact || 'N/A'}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#6b7280', fontSize: '14px' }}>
                   <Mail size={16} />
-                  {supplier.email}
+                  {supplier.email || 'N/A'}
                 </div>
+                {(supplier.gstNo || supplier.gstin) && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#6b7280', fontSize: '13px' }}>
+                    <span style={{ fontWeight: 600, color: '#374151' }}>GSTIN:</span>
+                    <span style={{ fontFamily: 'monospace', background: '#f3f4f6', padding: '2px 6px', borderRadius: '4px' }}>{supplier.gstNo || supplier.gstin}</span>
+                  </div>
+                )}
+                {supplier.paymentTerms && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#6b7280', fontSize: '13px' }}>
+                    <span style={{ fontWeight: 600, color: '#374151' }}>Terms:</span>
+                    <span style={{ color: '#059669', background: '#ecfdf5', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>{supplier.paymentTerms}</span>
+                  </div>
+                )}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#6b7280', fontSize: '14px' }}>
                   <MapPin size={16} />
-                  {supplier.address}
+                  {supplier.address || 'N/A'}
                 </div>
               </div>
               <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <span style={{ color: '#f59e0b' }}>★</span>
-                  <span style={{ fontWeight: 600 }}>{supplier.rating}</span>
+                  <span style={{ fontWeight: 600 }}>{supplier.rating || 4.5}</span>
                   <span style={{ color: '#9ca3af', fontSize: '13px' }}>/ 5.0</span>
                 </div>
                 <Button variant="secondary" size="sm" onClick={() => {
@@ -899,48 +944,86 @@ export default function Purchase() {
         </div>
       )}
 
-      {/* Supplier Modal */}
-      <Modal isOpen={showSupplierModal} onClose={() => { setShowSupplierModal(false); setSupplierForm({ name: '', category: 'Proteins', contact: '', email: '', address: '' }) }} title="Add Supplier">
+      {/* Vendor Modal */}
+      <Modal isOpen={showSupplierModal} onClose={() => { setShowSupplierModal(false); setEditSupplierId(null) }} title={editSupplierId ? 'Edit Vendor' : 'Add Vendor'}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
-            <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Supplier Name</label>
-            <input type="text" value={supplierForm.name} onChange={e => setSupplierForm(p => ({ ...p, name: e.target.value }))} placeholder="Enter supplier name" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
+            <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Vendor Name</label>
+            <input type="text" value={supplierForm.name} onChange={e => setSupplierForm(p => ({ ...p, name: e.target.value }))} placeholder="Enter vendor name" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
           </div>
-          <div>
-            <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Category</label>
-            <select value={supplierForm.category} onChange={e => setSupplierForm(p => ({ ...p, category: e.target.value }))} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}>
-              <option value="Proteins">Proteins</option>
-              <option value="Bakery">Bakery</option>
-              <option value="Groceries">Groceries</option>
-              <option value="Beverages">Beverages</option>
-              <option value="Supplies">Supplies</option>
-            </select>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Category</label>
+              <select value={supplierForm.category} onChange={e => setSupplierForm(p => ({ ...p, category: e.target.value }))} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                <option value="Proteins">Proteins</option>
+                <option value="Bakery">Bakery</option>
+                <option value="Groceries">Groceries</option>
+                <option value="Beverages">Beverages</option>
+                <option value="Supplies">Supplies</option>
+                <option value="Packaging">Packaging</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Payment Terms</label>
+              <select value={supplierForm.paymentTerms} onChange={e => setSupplierForm(p => ({ ...p, paymentTerms: e.target.value }))} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                <option value="Net 15">Net 15 Days</option>
+                <option value="Net 30">Net 30 Days</option>
+                <option value="Cash">Immediate Cash</option>
+                <option value="Advance">Advance Payment</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Contact Number</label>
-            <input type="text" value={supplierForm.contact} onChange={e => setSupplierForm(p => ({ ...p, contact: e.target.value }))} placeholder="+91 XXXXX XXXXX" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Contact Number</label>
+              <input type="text" value={supplierForm.contact} onChange={e => setSupplierForm(p => ({ ...p, contact: e.target.value }))} placeholder="+91 XXXXX XXXXX" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
+            </div>
+            <div>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>GST Number</label>
+              <input type="text" value={supplierForm.gstNo} onChange={e => setSupplierForm(p => ({ ...p, gstNo: e.target.value }))} placeholder="22AAAAA0000A1Z5" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
+            </div>
           </div>
           <div>
             <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Email</label>
-            <input type="email" value={supplierForm.email} onChange={e => setSupplierForm(p => ({ ...p, email: e.target.value }))} placeholder="supplier@email.com" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
+            <input type="email" value={supplierForm.email} onChange={e => setSupplierForm(p => ({ ...p, email: e.target.value }))} placeholder="vendor@email.com" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }} />
           </div>
           <div>
             <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Address</label>
-            <textarea value={supplierForm.address} onChange={e => setSupplierForm(p => ({ ...p, address: e.target.value }))} placeholder="Full address" rows={3} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)', resize: 'none' }} />
+            <textarea value={supplierForm.address} onChange={e => setSupplierForm(p => ({ ...p, address: e.target.value }))} placeholder="Full address" rows={2} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)', resize: 'none' }} />
           </div>
           <Button fullWidth onClick={async () => {
-            if (!supplierForm.name.trim()) { toast.error('Supplier name required'); return }
+            if (!supplierForm.name.trim()) { toast.error('Vendor name required'); return }
             try {
-              const r = await fetch(`${API()}/api/admin/suppliers`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: supplierForm.name.trim(), category: supplierForm.category, contact: supplierForm.contact, email: supplierForm.email, address: supplierForm.address }) })
-              if (!r.ok) throw Error()
-              const saved = await r.json()
-              setSuppliers(prev => [...prev, saved])
-              toast.success(`Supplier "${supplierForm.name}" added`)
-            } catch { toast.error('Failed to save supplier') }
+              const body = {
+                name: supplierForm.name.trim(),
+                category: supplierForm.category,
+                contact: supplierForm.contact,
+                email: supplierForm.email,
+                gstNo: supplierForm.gstNo,
+                paymentTerms: supplierForm.paymentTerms,
+                address: supplierForm.address
+              }
+              if (editSupplierId) {
+                const r = await fetch(`${API()}/api/admin/suppliers/${editSupplierId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+                if (!r.ok) throw Error()
+                const updated = await r.json()
+                setSuppliers(prev => prev.map(s => s.id === editSupplierId ? updated : s))
+                toast.success(`Vendor "${supplierForm.name}" updated`)
+              } else {
+                const r = await fetch(`${API()}/api/admin/suppliers`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+                if (!r.ok) throw Error()
+                const saved = await r.json()
+                setSuppliers(prev => [...prev, saved])
+                toast.success(`Vendor "${supplierForm.name}" created successfully`)
+              }
+            } catch {
+              toast.error('Failed to save vendor details')
+            }
             setShowSupplierModal(false)
-            setSupplierForm({ name: '', category: 'Proteins', contact: '', email: '', address: '' })
+            setEditSupplierId(null)
           }}>
-            Add Supplier
+            {editSupplierId ? 'Update Vendor' : 'Save Vendor'}
           </Button>
         </div>
       </Modal>

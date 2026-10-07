@@ -221,7 +221,7 @@ export default function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/loyalty" element={<Loyalty />} />
               <Route path="/users" element={<Users />} />
-              <Route path="/expenses" element={<Expenses />} />
+              <Route path="/expenses" element={<Accounts initialTab="expenses" />} />
               <Route path="/accounts" element={<Accounts />} />
               <Route path="/table-qr" element={<TableQRGenerator />} />
               <Route path="/settings" element={<Settings />} />
@@ -274,7 +274,7 @@ export default function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/loyalty" element={<Loyalty />} />
               <Route path="/users" element={<Users />} />
-              <Route path="/expenses" element={<Expenses />} />
+              <Route path="/expenses" element={<Accounts initialTab="expenses" />} />
               <Route path="/accounts" element={<Accounts />} />
               <Route path="/table-qr" element={<TableQRGenerator />} />
               <Route path="/settings" element={<Settings />} />

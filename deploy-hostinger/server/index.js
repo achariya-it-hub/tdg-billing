@@ -19,9 +19,9 @@ const __dirname = dirname(__filename)
 
 const JWT_SECRET = process.env.JWT_SECRET || 'tdg_secret_key_123'
 
-// ─── Persistent Data Directory ──────────────────────────────────────────────
+// â”€â”€â”€ Persistent Data Directory â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // On Linux/Hostinger: use ~/tdg-data/ which is OUTSIDE public_html
-// → never touched by git pull / redeploy → data survives forever
+// â†’ never touched by git pull / redeploy â†’ data survives forever
 // On Windows (local dev): keep using server/ folder as before
 const DEFAULT_DATA_DIR = process.env.DATA_DIR
  ? process.env.DATA_DIR
@@ -40,16 +40,16 @@ if (!existsSync(DATA_DIR)) {
 const DB_PATH = join(DATA_DIR, 'db.json')
 const ORDER_LOG_PATH = join(DATA_DIR, 'order_log.jsonl')
 
-// ─── One-time migration: move db.json from old location to safe location ─────
+// â”€â”€â”€ One-time migration: move db.json from old location to safe location â”€â”€â”€â”€â”€
 const OLD_DB_PATH = join(__dirname, 'db.json')
 if (!existsSync(DB_PATH) && existsSync(OLD_DB_PATH)) {
  try {
  const oldData = readFileSync(OLD_DB_PATH)
  writeFileSync(DB_PATH, oldData)
- console.log('[DATA MIGRATION] ✅ Moved db.json from', OLD_DB_PATH, '→', DB_PATH)
+ console.log('[DATA MIGRATION] âœ… Moved db.json from', OLD_DB_PATH, 'â†’', DB_PATH)
  console.log('[DATA MIGRATION] Your data is now stored safely outside the Git folder.')
  } catch (me) {
- console.error('[DATA MIGRATION] ❌ Failed to migrate db.json:', me.message)
+ console.error('[DATA MIGRATION] âŒ Failed to migrate db.json:', me.message)
  }
 }
 function appendOrderLog(order) {
@@ -191,6 +191,7 @@ function writeDb(data = {}) {
  inventory: typeof inventory !== 'undefined' ? inventory : (data.inventory || diskDb.inventory || []),
  orderNumber: Math.max(typeof orderNumber !== 'undefined' ? (orderNumber || 0) : 0, data.orderNumber || 0, diskDb.orderNumber || 0),
  usedReferralCodes: typeof usedReferralCodes !== 'undefined' ? [...usedReferralCodes] : (data.usedReferralCodes || diskDb.usedReferralCodes || []),
+ registrationCount: typeof registrationCount !== 'undefined' ? registrationCount : (data.registrationCount || diskDb.registrationCount || 0),
  expenses: typeof expenses !== 'undefined' ? expenses : (data.expenses || diskDb.expenses || []),
  purchases: typeof purchases !== 'undefined' ? purchases : (data.purchases || diskDb.purchases || []),
  onlineOrders: typeof onlineOrders !== 'undefined' ? onlineOrders : (data.onlineOrders || diskDb.onlineOrders || []),
@@ -355,6 +356,8 @@ let poItems = []
 let grns = []
 let vendorPayments = []
 let onlineOrders = []
+let todos = []
+let inventoryCategories = ['Proteins', 'Bakery', 'Sides', 'Supplies', 'Beverages', 'Sauces', 'Packaging', 'Dairy', 'General']
 let settings = {
  company: { name: 'Tendens Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '7548808877', email: 'info@tendengyros.com', gst: '33FJSPA2544H1Z9', gstNo: '33FJSPA2544H1Z9', gstin: '33FJSPA2544H1Z9', logo: null, upiId: '', deliveryEnabled: true },
  theme: { accentPrimary: '#e63946', accentPrimaryDark: '#c1121f', bgPrimary: '#f5f5f7' },
@@ -387,9 +390,9 @@ let settings = {
  serviceUrl: 'https://gotp.sundarrajan.org/gapi-key_9b015698c92147adbc4d44cafec9b073cef085d6d62ea450/tdg-otp/<contact_number>/<message>'
  },
  offers: [
- { id: '1', title: 'Golden Gyro Feast (50% OFF)', desc: '1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink', tag: '50% OFF', price: '₹199', origPrice: '₹398', image: '/uploads/menu/m1.jpg' },
- { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2x Dip + Sauce', tag: 'Save ₹151', price: '₹299', origPrice: '₹450', image: '/uploads/menu/m2.jpg' },
- { id: '3', title: 'BOGO Thick Shake Delight', desc: 'Buy 1 Shake & get Vanilla Shake Free', tag: 'BUY 1 GET 1', price: '₹149', origPrice: '₹298', image: '/uploads/menu/m3.jpg' }
+ { id: '1', title: 'Golden Gyro Feast (50% OFF)', desc: '1x Spicy Chicken Gyro + 1x Loaded Fries + Cold Drink', tag: '50% OFF', price: 'â‚¹199', origPrice: 'â‚¹398', image: '/uploads/menu/m1.jpg' },
+ { id: '2', title: 'Crispy Chicken & Dip Combo', desc: '4 Pcs Crispy Chicken + 2x Dip + Sauce', tag: 'Save â‚¹151', price: 'â‚¹299', origPrice: 'â‚¹450', image: '/uploads/menu/m2.jpg' },
+ { id: '3', title: 'BOGO Thick Shake Delight', desc: 'Buy 1 Shake & get Vanilla Shake Free', tag: 'BUY 1 GET 1', price: 'â‚¹149', origPrice: 'â‚¹298', image: '/uploads/menu/m3.jpg' }
  ],
  campaigns: {
  inauguration: { active: true, date: '2026-07-27', pct: 50, label: 'Inauguration Offer 50%' },
@@ -404,7 +407,7 @@ let aggregators = [
  { id: 'direct', name: 'Direct', displayName: 'Direct Order', isActive: true, defaultPrepTime: 20, color: '#4895ef' }
 ]
 
-// Vault files stored in DATA_DIR (~/tdg-data on Hostinger) — OUTSIDE Git folder
+// Vault files stored in DATA_DIR (~/tdg-data on Hostinger) â€” OUTSIDE Git folder
 // so they are NEVER overwritten by git pull / redeploy
 const VAULT_PATH = join(DATA_DIR, 'sales_vault_LOCK.json')
 const MENU_VAULT_PATH = join(DATA_DIR, 'menu_backup_LOCK.json')
@@ -427,7 +430,7 @@ for (const vf of OLD_VAULT_FILES) {
  if (!existsSync(vf.new) && existsSync(vf.old)) {
  try {
  writeFileSync(vf.new, readFileSync(vf.old))
- console.log('[VAULT MIGRATION] Moved', vf.old, '→', vf.new)
+ console.log('[VAULT MIGRATION] Moved', vf.old, 'â†’', vf.new)
  } catch (e) {
  console.error('[VAULT MIGRATION] Failed for', vf.old, ':', e.message)
  }
@@ -436,12 +439,17 @@ for (const vf of OLD_VAULT_FILES) {
 
 function syncSalesVault(currentOrders) {
   try {
-    // Priority order (lowest to highest): backups → vault → currentOrders
-    // currentOrders MUST be processed last so live/restored data always wins
     const orderMap = new Map()
-    const getKey = (o) => String(o ? (o.id || '') : '')
+    // Priority order (lowest to highest): backups â†’ vault â†’ currentOrders
+    // currentOrders MUST be processed last so live/restored data always wins
+    const getKey = (o) => {
+      if (!o) return ''
+      const num = (o.orderNumber !== undefined && o.orderNumber !== null && String(o.orderNumber).trim() !== '') ? String(o.orderNumber).trim() : ''
+      const idStr = (o.id !== undefined && o.id !== null && String(o.id).trim() !== '') ? String(o.id).trim() : ''
+      return num ? `num_${num}` : idStr
+    }
 
-    // 1. Scan BACKUP_DIR first (lowest priority — oldest snapshots)
+    // 1. Scan BACKUP_DIR first (lowest priority â€” oldest snapshots)
     try {
       if (typeof BACKUP_DIR !== 'undefined' && existsSync(BACKUP_DIR)) {
         const backupFiles = readdirSync(BACKUP_DIR).filter(f => f.endsWith('.json'))
@@ -471,7 +479,7 @@ function syncSalesVault(currentOrders) {
     }
     vaultOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
 
-    // 3. currentOrders override everything (highest priority — live/restored data)
+    // 3. currentOrders override everything (highest priority â€” live/restored data)
     if (Array.isArray(currentOrders)) {
       currentOrders.forEach(o => { if (o) orderMap.set(getKey(o), o) })
     }
@@ -787,7 +795,9 @@ function saveState() {
  purchaseOrders,
  poItems,
  grns,
- vendorPayments
+ vendorPayments,
+ todos,
+ inventoryCategories
  })
 }
 
@@ -856,7 +866,7 @@ function restoreState() {
  }
 
  // Safety: only fall back to seed if BOTH menu items AND orders are missing
- // Do NOT treat 'no orders yet' as a broken database — that would wipe the user-saved menu
+ // Do NOT treat 'no orders yet' as a broken database â€” that would wipe the user-saved menu
  const hasMenuData = (db.menuItems && db.menuItems.length > 0) || (db.categories && db.categories.length > 0)
  const hasOrderData = db.orders && db.orders.length > 0
  const isDbMissing = !existsSync(DB_PATH) || !db || (!hasMenuData && !hasOrderData)
@@ -872,7 +882,7 @@ function restoreState() {
  foundBackup = findLatestValidBackup()
  }
  if (foundBackup) {
- console.log('[RESTORE] DB was empty — loaded from seed/backup.')
+ console.log('[RESTORE] DB was empty â€” loaded from seed/backup.')
  db = foundBackup
  }
  }
@@ -880,12 +890,12 @@ function restoreState() {
  // Sync with Vault Locks for absolute 100% data retention
  orders = syncSalesVault(db.orders || [])
 
-// ─── STARTUP MIGRATION: Auto-sanitize Hostinger 18-Aug-26 Orders ────────────
+// â”€â”€â”€ STARTUP MIGRATION: Auto-sanitize Hostinger 18-Aug-26 Orders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 try {
   const aug18List = (orders || []).filter(o => o && String(o.createdAt || o.date || '').startsWith('2026-08-18'))
   const totalAug18Val = aug18List.reduce((sum, o) => sum + Number(o.total || 0), 0)
   if (aug18List.length !== 36 || Math.round(totalAug18Val) !== 14247) {
-    console.log('[HOSTINGER MIGRATION] 🔄 Auto-sanitizing 18.08.26 orders to exact 36 screenshot bills...')
+    console.log('[HOSTINGER MIGRATION] ðŸ”„ Auto-sanitizing 18.08.26 orders to exact 36 screenshot bills...')
     const seedPath = join(__dirname, 'seed-db.json')
     if (existsSync(seedPath)) {
       const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
@@ -894,7 +904,7 @@ try {
         if (cleanAug18.length === 36) {
           orders = orders.filter(o => !String(o.createdAt || o.date || '').startsWith('2026-08-18')).concat(cleanAug18)
           writeDb({ orders })
-          console.log('[HOSTINGER MIGRATION] ✅ Successfully updated persistent Hostinger database to clean 36 bills (₹14,247)!')
+          console.log('[HOSTINGER MIGRATION] âœ… Successfully updated persistent Hostinger database to clean 36 bills (â‚¹14,247)!')
         }
       }
     }
@@ -903,22 +913,68 @@ try {
   console.error('[HOSTINGER MIGRATION ERROR]', e.message)
 }
 
-// Ensure official menu items populate on server startup
-if (!menuItems || menuItems.length < 60) {
-  try {
-    const seedPath = join(__dirname, 'seed-db.json')
-    if (existsSync(seedPath)) {
-      const seedData = JSON.parse(readFileSync(seedPath, 'utf-8'))
-      if (seedData && Array.isArray(seedData.menuItems) && seedData.menuItems.length >= 60) {
-        menuItems = seedData.menuItems
-        categories = seedData.categories || categories
-        console.log('[MENU RESTORE] ✅ Restored official menu items from seed-db.json')
+// ─── STARTUP MIGRATION: Auto-restore Sept 25, 2026 Bills (#100919, #100917, #100916) ───
+try {
+  const targetNums = [100919, 100917, 100916]
+  const seedPath = join(__dirname, 'seed-db.json')
+  if (existsSync(seedPath)) {
+    const seedContent = readFileSync(seedPath, 'utf-8').trim()
+    if (seedContent) {
+      const seedData = JSON.parse(seedContent)
+      const seedOrders = Array.isArray(seedData) ? seedData : (seedData.orders || [])
+      const targetSeedOrders = seedOrders.filter(o => o && targetNums.includes(o.orderNumber))
+      
+      let updated = false
+      targetSeedOrders.forEach(seedOrder => {
+        const idx = orders.findIndex(o => o && (o.orderNumber === seedOrder.orderNumber || o.id === seedOrder.id))
+        if (idx >= 0) {
+          if (orders[idx].status !== 'completed' || orders[idx].paymentStatus !== 'paid' || orders[idx].isCancelled || orders[idx].isVoid) {
+            orders[idx] = { 
+              ...orders[idx], 
+              ...seedOrder, 
+              status: 'completed', 
+              paymentStatus: 'paid', 
+              isCancelled: false, 
+              isVoid: false, 
+              cancellationReason: null, 
+              cancelledBy: null 
+            }
+            updated = true
+          }
+        } else {
+          orders.push(seedOrder)
+          updated = true
+        }
+      })
+      if (updated) {
+        console.log('[HOSTINGER MIGRATION] ✅ Successfully synchronized Sept 25 restored bills (#100919, #100917, #100916) into live orders & vault!')
+        saveState()
       }
     }
-  } catch (e) {
-    console.error('[MENU RESTORE ERROR]', e.message)
   }
+} catch (e) {
+  console.error('[SEPT 25 MIGRATION ERROR]', e.message)
 }
+
+  // Ensure official menu items populate on server startup
+  if (!menuItems || menuItems.length !== 69) {
+    try {
+      const frozenPath = join(__dirname, 'frozen-menu.json')
+      const seedPath = join(__dirname, 'seed-db.json')
+      const targetPath = existsSync(frozenPath) ? frozenPath : seedPath
+      if (existsSync(targetPath)) {
+        const seedData = JSON.parse(readFileSync(targetPath, 'utf-8'))
+        const items = Array.isArray(seedData) ? seedData : (seedData.menuItems || [])
+        if (items.length === 69) {
+          menuItems = items
+          categories = seedData.categories || categories
+          console.log(`[MENU RESTORE] âœ… Restored official 69 menu items from ${targetPath}`)
+        }
+      }
+    } catch (e) {
+      console.error('[MENU RESTORE ERROR]', e.message)
+    }
+  }
 
   settings = syncSettingsVault(db.settings || settings)
 
@@ -938,6 +994,7 @@ if (!menuItems || menuItems.length < 60) {
     orderNumber = Math.max(orderNumber, maxFromOrders)
   }
  if (db.usedReferralCodes && Array.isArray(db.usedReferralCodes)) usedReferralCodes = new Set(db.usedReferralCodes)
+ if (typeof db.registrationCount === 'number') registrationCount = db.registrationCount
  if (db.expenses && Array.isArray(db.expenses) && db.expenses.length) expenses = db.expenses
  if (db.cashCounterSessions && Array.isArray(db.cashCounterSessions)) cashCounterSessions = db.cashCounterSessions
  if (db.purchases && Array.isArray(db.purchases) && db.purchases.length) purchases = db.purchases
@@ -953,6 +1010,8 @@ if (!menuItems || menuItems.length < 60) {
  else employees = defaultEmployees
  if (db.staffAuditLogs && Array.isArray(db.staffAuditLogs)) staffAuditLogs = db.staffAuditLogs
  if (db.staffPromotionSettings) staffPromotionSettings = { ...staffPromotionSettings, ...db.staffPromotionSettings }
+ if (db.todos && Array.isArray(db.todos)) todos = db.todos
+ if (db.inventoryCategories && Array.isArray(db.inventoryCategories)) inventoryCategories = db.inventoryCategories
 
  // Double-Backup Customer & Staff Vault Recovery
  const custVault = syncCustomerVault(loyaltyUsers, mobileAppUsers, employees)
@@ -1035,813 +1094,733 @@ let mobileAppUsers = []
 let orders = []
 let orderNumber = 1000
 let categories = [
- {
- "id": "c10",
- "name": "Beverages & Kombucha",
- "icon": "🍹",
- "color": "#0284c7"
- },
- {
- "id": "c9",
- "name": "Desserts",
- "icon": "🍰",
- "color": "#ec4899"
- },
- {
- "id": "c4",
- "name": "Dips & Add-Ons",
- "icon": "🥣",
- "color": "#e63946"
- },
- {
- "id": "c6",
- "name": "Fries",
- "icon": "🍟",
- "color": "#f59e0b"
- },
- {
- "id": "c1",
- "name": "Gyros",
- "icon": "🥙",
- "color": "#d97706"
- },
- {
- "id": "c2",
- "name": "Meals & Combos",
- "icon": "🍱",
- "color": "#8b5cf6"
- },
- {
- "id": "c11",
- "name": "Protein Max",
- "icon": "💪",
- "color": "#10b981"
- },
- {
- "id": "c3",
- "name": "Rice & Salads",
- "icon": "🥗",
- "color": "#059669"
- },
- {
- "id": "c7",
- "name": "Shakes & Softy",
- "icon": "🥤",
- "color": "#db2777"
- },
- {
- "id": "c5_strips",
- "name": "Strips",
- "icon": "🍗",
- "color": "#ca8a04"
- },
- {
- "id": "c5_legthigh",
- "name": "Leg & Thigh",
- "icon": "🍗",
- "color": "#ea580c"
- },
- {
- "id": "c5_wings",
- "name": "Wings",
- "icon": "🍗",
- "color": "#b45309"
- }
+  {
+    "id": "c1",
+    "name": "Gyros",
+    "icon": "ðŸ¥™",
+    "color": "#d97706"
+  },
+  {
+    "id": "c5_legthigh",
+    "name": "Leg & Thigh",
+    "icon": "ðŸ—",
+    "color": "#ea580c"
+  },
+  {
+    "id": "c5_wings",
+    "name": "Wings",
+    "icon": "ðŸ—",
+    "color": "#b45309"
+  },
+  {
+    "id": "c5_strips",
+    "name": "Strips",
+    "icon": "ðŸ—",
+    "color": "#ca8a04"
+  },
+  {
+    "id": "c6",
+    "name": "Fries",
+    "icon": "ðŸŸ",
+    "color": "#f59e0b"
+  },
+  {
+    "id": "c10_bev",
+    "name": "Beverages",
+    "icon": "ðŸ¥¤",
+    "color": "#0284c7"
+  },
+  {
+    "id": "c3_rice_salad",
+    "name": "Rice & Salads",
+    "icon": "ðŸšðŸ¥—",
+    "color": "#059669"
+  },
+  {
+    "id": "c2",
+    "name": "Meals & Combos",
+    "icon": "ðŸ±",
+    "color": "#8b5cf6"
+  },
+  {
+    "id": "c11",
+    "name": "Protein Max",
+    "icon": "ðŸ’ª",
+    "color": "#10b981"
+  },
+  {
+    "id": "c7_shakes",
+    "name": "Shakes",
+    "icon": "ðŸ¥¤",
+    "color": "#db2777"
+  },
+  {
+    "id": "c9",
+    "name": "Desserts",
+    "icon": "ðŸ°",
+    "color": "#ec4899"
+  },
+  {
+    "id": "c4",
+    "name": "Softy & Add-Ons",
+    "icon": "ðŸ¦",
+    "color": "#e63946"
+  },
+  {
+    "id": "c10_komb",
+    "name": "Kombucha",
+    "icon": "ðŸ¹",
+    "color": "#0284c7"
+  },
+  {
+    "id": "c_new_combo",
+    "name": "New Combo",
+    "icon": "ðŸ“¦",
+    "color": "#e63946",
+    "displayOrder": 7
+  }
 ]
 
 let menuItems = [
- {
- "id": "m11",
- "categoryId": "c1",
- "name": "Pesto Gyro",
- "price": 99,
- "description": "Herby pesto gyro wrap with fresh veggies (Chicken or Paneer)",
- "isAvailable": true,
- "image": "/images/menu/gyro.png"
- },
- {
- "id": "m12",
- "categoryId": "c1",
- "name": "Pesto Gyro (Signature)",
- "price": 249,
- "description": "Large signature herby pesto gyro wrap (Chicken or Paneer)",
- "isAvailable": true,
- "image": "/images/menu/gyro.png"
- },
- {
- "id": "m13",
- "categoryId": "c5_legthigh",
- "name": "4 Pc Leg & Thigh (2 Dips)",
- "price": 280,
- "description": "4 Pc Crispy Fried Chicken Leg & Thigh + 2 Dips",
- "isAvailable": true,
- "image": "/images/menu/Leg& Thigh.png",
- "category": "Leg & Thigh"
- },
- {
- "id": "m14",
- "categoryId": "c5_legthigh",
- "name": "8 Pc Leg & Thigh (4 Dips)",
- "price": 560,
- "description": "8 Pc Crispy Fried Chicken Leg & Thigh + 4 Dips",
- "isAvailable": true,
- "image": "/images/menu/Leg& Thigh.png",
- "category": "Leg & Thigh"
- },
- {
- "id": "m15",
- "categoryId": "c5_legthigh",
- "name": "12 Pc Leg & Thigh (6 Dips)",
- "price": 840,
- "description": "12 Pc Crispy Fried Chicken Leg & Thigh + 6 Dips",
- "isAvailable": true,
- "image": "/images/menu/Leg& Thigh.png",
- "category": "Leg & Thigh"
- },
- {
- "id": "m16",
- "categoryId": "c5_wings",
- "name": "3 Pc Wings (1 Dip)",
- "price": 90,
- "description": "3 Pcs Crispy Fried Wings + 1 Dip",
- "isAvailable": true,
- "image": "/images/menu/wings.png"
- },
- {
- "id": "m17",
- "categoryId": "c5_wings",
- "name": "6 Pc Wings (2 Dips)",
- "price": 180,
- "description": "6 Pcs Crispy Fried Wings + 2 Dips",
- "isAvailable": true,
- "image": "/images/menu/wings.png"
- },
- {
- "id": "m18",
- "categoryId": "c5_wings",
- "name": "9 Pc Wings (3 Dips)",
- "price": 270,
- "description": "9 Pcs Crispy Fried Wings + 3 Dips",
- "isAvailable": true,
- "image": "/images/menu/wings.png"
- },
- {
- "id": "m19",
- "categoryId": "c5_wings",
- "name": "20 Pc Wings (6 Dips)",
- "price": 600,
- "description": "20 Pcs Crispy Fried Wings + 6 Dips",
- "isAvailable": true,
- "image": "/images/menu/wings.png"
- },
- {
- "id": "m20",
- "categoryId": "c5_wings",
- "name": "60 Pc Wings (12 Dips)",
- "price": 1500,
- "description": "60 Pcs Party Bucket Crispy Wings + 12 Dips",
- "isAvailable": true,
- "image": "/images/menu/wings.png"
- },
- {
- "id": "m21",
- "categoryId": "c5_strips",
- "name": "3 Pc Strips (1 Dip)",
- "price": 120,
- "description": "3 Pcs Boneless Crispy Strips + 1 Dip",
- "isAvailable": true,
- "image": "/images/menu/strips.png"
- },
- {
- "id": "m22",
- "categoryId": "c5_strips",
- "name": "6 Pc Strips (2 Dips)",
- "price": 240,
- "description": "6 Pcs Boneless Crispy Strips + 2 Dips",
- "isAvailable": true,
- "image": "/images/menu/strips.png"
- },
- {
- "id": "m23",
- "categoryId": "c5_strips",
- "name": "9 Pc Strips (3 Dips)",
- "price": 360,
- "description": "9 Pcs Boneless Crispy Strips + 3 Dips",
- "isAvailable": true,
- "image": "/images/menu/strips.png"
- },
- {
- "id": "m24",
- "categoryId": "c5_strips",
- "name": "20 Pc Strips (6 Dips)",
- "price": 800,
- "description": "20 Pcs Boneless Crispy Strips + 6 Dips",
- "isAvailable": true,
- "image": "/images/menu/strips.png"
- },
- {
- "id": "m25",
- "categoryId": "c5_strips",
- "name": "60 Pc Strips (12 Dips)",
- "price": 2400,
- "description": "60 Pcs Party Bucket Boneless Strips + 12 Dips",
- "isAvailable": true,
- "image": "/images/menu/strips.png"
- },
- {
- "id": "m26a",
- "categoryId": "c6",
- "name": "Salted Fries",
- "price": 99,
- "description": "Crispy golden salted French fries",
- "isAvailable": true,
- "image": "/images/menu/fries.png"
- },
- {
- "id": "m26b",
- "categoryId": "c6",
- "name": "Peri Peri Fries",
- "price": 99,
- "description": "Crispy golden French fries tossed in peri peri seasoning",
- "isAvailable": true,
- "image": "/images/menu/fries.png"
- },
- {
- "id": "m26c",
- "categoryId": "c6",
- "name": "Cajun Fries",
- "price": 99,
- "description": "Crispy golden French fries tossed in cajun seasoning",
- "isAvailable": true,
- "image": "/images/menu/fries.png"
- },
- {
- "id": "m27a",
- "categoryId": "c6",
- "name": "Loaded Chicken Fries",
- "price": 199,
- "description": "Loaded fries topped with melted cheese & crispy chicken",
- "isAvailable": true,
- "image": "/images/menu/loaded fries.png"
- },
- {
- "id": "m27b",
- "categoryId": "c6",
- "name": "Loaded Paneer Fries",
- "price": 199,
- "description": "Loaded fries topped with melted cheese & grilled paneer",
- "isAvailable": true,
- "image": "/images/menu/loaded fries.png"
- },
- {
- "id": "m28a",
- "categoryId": "c3",
- "name": "Lebanese Rice Bowl (Chicken)",
- "price": 199,
- "description": "Flavored Mediterranean Lebanese rice topped with grilled chicken",
- "isAvailable": true,
- "image": "/images/menu/lebanese rice bowl.png"
- },
- {
- "id": "m28b",
- "categoryId": "c3",
- "name": "Lebanese Rice Bowl (Paneer)",
- "price": 199,
- "description": "Flavored Mediterranean Lebanese rice topped with grilled paneer",
- "isAvailable": true,
- "image": "/images/menu/lebanese rice bowl.png"
- },
- {
- "id": "m29a",
- "categoryId": "c3",
- "name": "Signature Salad (Chicken)",
- "price": 149,
- "description": "Fresh garden salad with olives, dressing & grilled chicken",
- "isAvailable": true,
- "image": "/images/menu/signature salad.png"
- },
- {
- "id": "m29b",
- "categoryId": "c3",
- "name": "Signature Salad (Paneer)",
- "price": 149,
- "description": "Fresh garden salad with olives, dressing & grilled paneer",
- "isAvailable": true,
- "image": "/images/menu/signature salad.png"
- },
- {
- "id": "m30",
- "categoryId": "c2",
- "name": "Express Meal",
- "price": 149,
- "description": "Gyro & Regular Drink",
- "isAvailable": true,
- "image": "/images/menu/express meal.png"
- },
- {
- "id": "m31",
- "categoryId": "c2",
- "name": "Classic Gyro Meal",
- "price": 249,
- "description": "Gyro, 2 Wings, Fries, Regular Drink, 1 Dip",
- "isAvailable": true,
- "image": "/images/menu/classic gyro meal.png"
- },
- {
- "id": "m32",
- "categoryId": "c2",
- "name": "Signature Gyro Meal",
- "price": 299,
- "description": "Signature Gyro, Fries, Regular Drink",
- "isAvailable": true,
- "image": "/images/menu/signature gyro meal.png"
- },
- {
- "id": "m33",
- "categoryId": "c2",
- "name": "Lebanese Rice Box",
- "price": 299,
- "description": "Lebanese rice, Fries, Regular Drink",
- "isAvailable": true,
- "image": "/images/menu/lebanese rice box.png"
- },
- {
- "id": "m34",
- "categoryId": "c2",
- "name": "Duo Gyro Feast",
- "price": 349,
- "description": "2 Gyros, Fries, 2 Regular Drinks",
- "isAvailable": true,
- "image": "/images/menu/duo gyro feast.png"
- },
- {
- "id": "m35",
- "categoryId": "c2",
- "name": "Double Crunch Box",
- "price": 499,
- "description": "2 Gyros, 6 Wings, Fries, 2 Regular Drinks",
- "isAvailable": true,
- "image": "/images/menu/double crunch box.png"
- },
- {
- "id": "m36",
- "categoryId": "c2",
- "name": "Mega Feast Meal",
- "price": 649,
- "description": "2 Gyros, 2 Leg & Thighs, 2 Wings, 2 Strips, Fries, 2 Regular Drinks, 3 Dips",
- "isAvailable": true,
- "image": "/images/menu/mega feast meal.png"
- },
- {
- "id": "m37",
- "categoryId": "c2",
- "name": "Den's Party Meal",
- "price": 899,
- "description": "2 Signature Gyros, 6 Wings, 4 Leg & Thighs, 2 Fries, 3 Regular Drinks",
- "isAvailable": true,
- "image": "/images/menu/den's party meal.png"
- },
- {
- "id": "m38",
- "categoryId": "c2",
- "name": "Super 5 Bucket",
- "price": 1299,
- "description": "5 Leg & Thighs, 10 Wings, 10 Strips, 5 Regular Drinks",
- "isAvailable": true,
- "image": "/images/menu/super 5 bucket.png"
- },
- {
- "id": "m40a",
- "categoryId": "c11",
- "name": "Lebanese Rice - Protein Max (Chicken)",
- "price": 299,
- "description": "Extra high protein Lebanese Rice bowl with grilled chicken",
- "isAvailable": true,
- "image": "/images/menu/protein max.png"
- },
- {
- "id": "m40b",
- "categoryId": "c11",
- "name": "Lebanese Rice - Protein Max (Paneer)",
- "price": 299,
- "description": "Extra high protein Lebanese Rice bowl with grilled paneer",
- "isAvailable": true,
- "image": "/images/menu/protein max.png"
- },
- {
- "id": "m41a",
- "categoryId": "c11",
- "name": "Salad - Protein Max (Chicken)",
- "price": 299,
- "description": "Extra high protein Salad bowl with grilled chicken",
- "isAvailable": true,
- "image": "/images/menu/protein max.png"
- },
- {
- "id": "m41b",
- "categoryId": "c11",
- "name": "Salad - Protein Max (Paneer)",
- "price": 299,
- "description": "Extra high protein Salad bowl with grilled paneer",
- "isAvailable": true,
- "image": "/images/menu/protein max.png"
- },
- {
- "id": "m42",
- "categoryId": "c7",
- "name": "Vanilla Shake (Regular)",
- "price": 120,
- "description": "Creamy thick vanilla shake",
- "isAvailable": true,
- "image": "/images/menu/vanilla shake.png"
- },
- {
- "id": "m43",
- "categoryId": "c7",
- "name": "Vanilla Shake (Large)",
- "price": 199,
- "description": "Large creamy thick vanilla shake",
- "isAvailable": true,
- "image": "/images/menu/vanilla shake.png"
- },
- {
- "id": "m44",
- "categoryId": "c7",
- "name": "Strawberry Shake (Regular)",
- "price": 120,
- "description": "Thick strawberry shake",
- "isAvailable": true,
- "image": "/images/menu/strawberry shake.png"
- },
- {
- "id": "m45",
- "categoryId": "c7",
- "name": "Strawberry Shake (Large)",
- "price": 199,
- "isAvailable": true,
- "image": "/images/menu/strawberry shake.png"
- },
- {
- "id": "m46",
- "categoryId": "c7",
- "name": "Biscoff Shake (Regular)",
- "price": 120,
- "description": "Lotus biscoff thick shake",
- "isAvailable": true,
- "image": "/images/menu/biscoff shake.png"
- },
- {
- "id": "m47",
- "categoryId": "c7",
- "name": "Biscoff Shake (Large)",
- "price": 199,
- "isAvailable": true,
- "image": "/images/menu/biscoff shake.png"
- },
- {
- "id": "m48",
- "categoryId": "c7",
- "name": "Chocolate Shake (Regular)",
- "price": 120,
- "description": "Rich Belgian chocolate thick shake",
- "isAvailable": true,
- "image": "/images/menu/chocolate shake.png"
- },
- {
- "id": "m49",
- "categoryId": "c7",
- "name": "Chocolate Shake (Large)",
- "price": 199,
- "isAvailable": true,
- "image": "/images/menu/chocolate shake.png"
- },
- {
- "id": "m50",
- "categoryId": "c7",
- "name": "Kunafa Pistachio Shake (Regular)",
- "price": 120,
- "description": "Special Kunafa Pistachio thick shake",
- "isAvailable": true,
- "image": "/images/menu/kunafa pistachio shake.png"
- },
- {
- "id": "m51",
- "categoryId": "c7",
- "name": "Kunafa Pistachio Shake (Large)",
- "price": 199,
- "isAvailable": true,
- "image": "/images/menu/kunafa pistachio shake.png"
- },
- {
- "id": "m52",
- "categoryId": "c7",
- "name": "Vanilla Softy",
- "price": 39,
- "description": "Classic soft serve ice cream cone",
- "isAvailable": true,
- "image": "/images/menu/vanilla softy.png"
- },
- {
- "id": "m53a",
- "categoryId": "c10",
- "name": "Coca-Cola (Regular)",
- "price": 59,
- "description": "Chilled 330ml Coca-Cola soda",
- "isAvailable": true,
- "image": "/images/menu/logo.png"
- },
- {
- "id": "m53b",
- "categoryId": "c10",
- "name": "Coca-Cola (Large)",
- "price": 99,
- "description": "Large chilled Coca-Cola soda",
- "isAvailable": true,
- "image": "/images/menu/logo.png"
- },
- {
- "id": "m54a",
- "categoryId": "c10",
- "name": "Sprite (Regular)",
- "price": 59,
- "description": "Chilled 330ml Sprite soda",
- "isAvailable": true,
- "image": "/images/menu/logo.png"
- },
- {
- "id": "m54b",
- "categoryId": "c10",
- "name": "Sprite (Large)",
- "price": 99,
- "description": "Large chilled Sprite soda",
- "isAvailable": true,
- "image": "/images/menu/logo.png"
- },
- {
- "id": "m55a",
- "categoryId": "c10",
- "name": "Peach Ice Tea (Regular)",
- "price": 59,
- "description": "Refreshing peach iced tea",
- "isAvailable": true,
- "image": "/images/menu/logo.png"
- },
- {
- "id": "m55b",
- "categoryId": "c10",
- "name": "Peach Ice Tea (Large)",
- "price": 99,
- "description": "Large refreshing peach iced tea",
- "isAvailable": true,
- "image": "/images/menu/logo.png"
- },
- {
- "id": "m56a",
- "categoryId": "c10",
- "name": "Lime Ice Tea (Regular)",
- "price": 59,
- "description": "Refreshing lime iced tea",
- "isAvailable": true,
- "image": "/images/menu/ice tea - lime.png"
- },
- {
- "id": "m56b",
- "categoryId": "c10",
- "name": "Lime Ice Tea (Large)",
- "price": 99,
- "description": "Large refreshing lime iced tea",
- "isAvailable": true,
- "image": "/images/menu/ice tea - lime.png"
- },
- {
- "id": "m59a",
- "categoryId": "c10",
- "name": "Mint Kombucha",
- "price": 114.29,
- "description": "Organic sparkling mint probiotic Kombucha drink",
- "isAvailable": true,
- "image": "/images/menu/mint-kombucha.png",
- "taxInclusive": true
- },
- {
- "id": "m59b",
- "categoryId": "c10",
- "name": "Hibiscus Kombucha",
- "price": 114.29,
- "description": "Organic sparkling hibiscus probiotic Kombucha drink",
- "isAvailable": true,
- "image": "/images/menu/kombucha-hibiscus.png",
- "taxInclusive": true
- },
- {
- "id": "m59c",
- "categoryId": "c10",
- "name": "Ginger Kombucha",
- "price": 114.29,
- "description": "Organic sparkling ginger probiotic Kombucha drink",
- "isAvailable": true,
- "image": "/images/menu/ginger - kombucha.png",
- "taxInclusive": true
- },
- {
- "id": "m59d",
- "categoryId": "c10",
- "name": "Butterfly Pea Kombucha",
- "price": 114.29,
- "description": "Organic sparkling butterfly pea probiotic Kombucha drink",
- "isAvailable": true,
- "image": "/images/menu/butterfly pea - kombucha.png",
- "taxInclusive": true
- },
- {
- "id": "m57",
- "categoryId": "c10",
- "name": "Hot Chocolate",
- "price": 99,
- "description": "Warm rich hot chocolate drink",
- "isAvailable": true,
- "image": "/images/menu/Hot Chocolate.png"
- },
- {
- "id": "m58",
- "categoryId": "c10",
- "name": "Signature Tea",
- "price": 99,
- "description": "TDG Special aromatic brewed tea",
- "isAvailable": true,
- "image": "/images/menu/Signature tea.png"
- },
- {
- "id": "m60",
- "categoryId": "c9",
- "name": "Chocolate Brownie",
- "price": 99,
- "description": "Warm fudgy chocolate brownie",
- "isAvailable": true,
- "image": "/images/menu/chcolate brownie.png"
- },
- {
- "id": "m61",
- "categoryId": "c9",
- "name": "Blondie Cake",
- "price": 99,
- "description": "Delicious vanilla butter blondie slice",
- "isAvailable": true,
- "image": "/images/menu/blondie cake.png"
- },
- {
- "id": "m62a",
- "categoryId": "c4",
- "name": "Turkish Chilli Dip",
- "price": 15,
- "description": "Spicy authentic Turkish chilli dip",
- "isAvailable": true,
- "image": "/images/menu/turkish chilli.png"
- },
- {
- "id": "m62b",
- "categoryId": "c4",
- "name": "Jalapeno Cheese Dip",
- "price": 15,
- "description": "Rich creamy jalapeno cheese dip",
- "isAvailable": true,
- "image": "/images/menu/jalapeno cheese.png"
- },
- {
- "id": "m62c",
- "categoryId": "c4",
- "name": "Garlic Mayo Dip",
- "price": 15,
- "description": "Classic creamy garlic mayonnaise dip",
- "isAvailable": true,
- "image": "/images/menu/garlic mayo.png"
- },
- {
- "id": "m62d",
- "categoryId": "c4",
- "name": "Spicy Mayo Dip",
- "price": 15,
- "description": "Zesty spicy mayonnaise dip",
- "isAvailable": true,
- "image": "/images/menu/spicy mayo.png"
- },
- {
- "id": "m62e",
- "categoryId": "c4",
- "name": "Peri Peri Dip",
- "price": 15,
- "description": "Fiery peri peri dipping sauce",
- "isAvailable": true,
- "image": "/images/menu/peri peri.png"
- },
- {
- "id": "m62f",
- "categoryId": "c4",
- "name": "Honey Mustard Dip",
- "price": 15,
- "description": "Sweet and tangy honey mustard dip",
- "isAvailable": true,
- "image": "/images/menu/honey mustard.png"
- },
- {
- "id": "m1",
- "categoryId": "c1",
- "name": "Spicy Gyro",
- "price": 99,
- "description": "Fresh pita wrap with spicy sauce & fresh veggies (Chicken or Paneer)",
- "isAvailable": true,
- "image": "/images/menu/gyro.png"
- },
- {
- "id": "m2",
- "categoryId": "c1",
- "name": "Spicy Gyro (Signature)",
- "price": 249,
- "description": "Large signature pita wrap with spicy sauce & fresh veggies (Chicken or Paneer)",
- "isAvailable": true,
- "image": "/images/menu/gyro.png"
- },
- {
- "id": "m3",
- "categoryId": "c1",
- "name": "Creamy Gyro",
- "price": 99,
- "description": "Fluffy pita wrap with creamy garlic sauce & fresh veggies (Chicken or Paneer)",
- "isAvailable": true,
- "image": "/images/menu/gyro.png"
- },
- {
- "id": "m4",
- "categoryId": "c1",
- "name": "Creamy Gyro (Signature)",
- "price": 249,
- "description": "Large signature pita wrap with creamy garlic sauce (Chicken or Paneer)",
- "isAvailable": true,
- "image": "/images/menu/gyro.png"
- },
- {
- "id": "m5",
- "categoryId": "c1",
- "name": "BBQ Gyro",
- "price": 99,
- "description": "Pita wrap with smoky BBQ sauce & fresh veggies (Chicken or Paneer)",
- "isAvailable": true,
- "image": "/images/menu/gyro.png"
- },
- {
- "id": "m6",
- "categoryId": "c1",
- "name": "BBQ Gyro (Signature)",
- "price": 249,
- "description": "Large signature pita wrap with smoky BBQ sauce (Chicken or Paneer)",
- "isAvailable": true,
- "image": "/images/menu/gyro.png"
- },
- {
- "id": "m7",
- "categoryId": "c1",
- "name": "Peri Peri Gyro",
- "price": 99,
- "description": "Zesty Peri Peri pita wrap with fresh veggies (Chicken or Paneer)",
- "isAvailable": true,
- "image": "/images/menu/gyro.png"
- },
- {
- "id": "m8",
- "categoryId": "c1",
- "name": "Peri Peri Gyro (Signature)",
- "price": 249,
- "description": "Large signature Peri Peri pita wrap (Chicken or Paneer)",
- "isAvailable": true,
- "image": "/images/menu/gyro.png"
- },
- {
- "id": "m9",
- "categoryId": "c1",
- "name": "Signature Gyro",
- "price": 99,
- "description": "Our house signature gyro wrap (Chicken or Paneer)",
- "isAvailable": true,
- "image": "/images/menu/gyro.png"
- },
- {
- "id": "m10",
- "categoryId": "c1",
- "name": "Signature Gyro (Signature)",
- "price": 249,
- "description": "Large house signature gyro wrap (Chicken or Paneer)",
- "isAvailable": true,
- "image": "/images/menu/gyro.png"
- },
- {
- "id": "m39",
- "categoryId": "c1",
- "name": "Gyro - Protein Max",
- "price": 299,
- "description": "High protein double wrap (Chicken or Paneer)",
- "isAvailable": true,
- "image": "/images/menu/gyro.png"
- }
+  {
+    "id": "m_spicy_gyro",
+    "categoryId": "c1",
+    "name": "Spicy Gyro",
+    "price": 199,
+    "description": "Spicy gyro wrap (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/gyro.png"
+  },
+  {
+    "id": "m_creamy_gyro",
+    "categoryId": "c1",
+    "name": "Creamy Gyro",
+    "price": 199,
+    "description": "Creamy tzatziki gyro wrap (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/gyro.png"
+  },
+  {
+    "id": "m_bbq_gyro",
+    "categoryId": "c1",
+    "name": "BBQ Gyro",
+    "price": 199,
+    "description": "Rich BBQ gyro wrap (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/gyro.png"
+  },
+  {
+    "id": "m_signature_gyro",
+    "categoryId": "c1",
+    "name": "Signature Gyro",
+    "price": 199,
+    "description": "TDG signature gyro wrap with secret sauce (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/gyro.png"
+  },
+  {
+    "id": "m_legthigh_1pc",
+    "categoryId": "c5_legthigh",
+    "name": "1 Pc Leg & Thigh (1 Dip)",
+    "price": 70,
+    "description": "1 Pc Crispy Leg & Thigh + 1 Choice Dip",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_legthigh_2pc",
+    "categoryId": "c5_legthigh",
+    "name": "2 Pc Leg & Thigh (1 Dip)",
+    "price": 140,
+    "description": "2 Pc Crispy Leg & Thigh + 1 Choice Dip",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_legthigh_4pc",
+    "categoryId": "c5_legthigh",
+    "name": "4 Pc Leg & Thigh (2 Dips)",
+    "price": 280,
+    "description": "4 Pc Crispy Leg & Thigh + 2 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_legthigh_8pc",
+    "categoryId": "c5_legthigh",
+    "name": "8 Pc Leg & Thigh (4 Dips)",
+    "price": 560,
+    "description": "8 Pc Crispy Leg & Thigh + 4 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_legthigh_12pc",
+    "categoryId": "c5_legthigh",
+    "name": "12 Pc Leg & Thigh (6 Dips)",
+    "price": 840,
+    "description": "12 Pc Crispy Leg & Thigh + 6 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_wings_3pc",
+    "categoryId": "c5_wings",
+    "name": "3 Pc Wings (1 Dip)",
+    "price": 90,
+    "description": "3 Pc Crispy Chicken Wings + 1 Choice Dip",
+    "isAvailable": true,
+    "image": "/images/menu/wings.png"
+  },
+  {
+    "id": "m_wings_6pc",
+    "categoryId": "c5_wings",
+    "name": "6 Pc Wings (2 Dips)",
+    "price": 180,
+    "description": "6 Pc Crispy Chicken Wings + 2 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/wings.png"
+  },
+  {
+    "id": "m_wings_9pc",
+    "categoryId": "c5_wings",
+    "name": "9 Pc Wings (3 Dips)",
+    "price": 270,
+    "description": "9 Pc Crispy Chicken Wings + 3 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/wings.png"
+  },
+  {
+    "id": "m_wings_20pc",
+    "categoryId": "c5_wings",
+    "name": "20 Pc Wings (6 Dips)",
+    "price": 600,
+    "description": "20 Pc Crispy Chicken Wings + 6 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/wings.png"
+  },
+  {
+    "id": "m_strips_3pc",
+    "categoryId": "c5_strips",
+    "name": "3 Pc Strips (1 Dip)",
+    "price": 120,
+    "description": "3 Pc Crispy Chicken Strips + 1 Choice Dip",
+    "isAvailable": true,
+    "image": "/images/menu/strips.png"
+  },
+  {
+    "id": "m_strips_6pc",
+    "categoryId": "c5_strips",
+    "name": "6 Pc Strips (2 Dips)",
+    "price": 240,
+    "description": "6 Pc Crispy Chicken Strips + 2 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/strips.png"
+  },
+  {
+    "id": "m_strips_9pc",
+    "categoryId": "c5_strips",
+    "name": "9 Pc Strips (3 Dips)",
+    "price": 360,
+    "description": "9 Pc Crispy Chicken Strips + 3 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/strips.png"
+  },
+  {
+    "id": "m_strips_20pc",
+    "categoryId": "c5_strips",
+    "name": "20 Pc Strips (6 Dips)",
+    "price": 800,
+    "description": "20 Pc Crispy Chicken Strips + 6 Choice Dips",
+    "isAvailable": true,
+    "image": "/images/menu/strips.png"
+  },
+  {
+    "id": "m_fries_std",
+    "categoryId": "c6",
+    "name": "Fries",
+    "price": 99,
+    "description": "Crispy golden French fries (Choose seasoning: Salted, Peri Peri, or Cajun)",
+    "isAvailable": true,
+    "image": "/images/menu/fries.png"
+  },
+  {
+    "id": "m_loaded_fries",
+    "categoryId": "c6",
+    "name": "Loaded Fries",
+    "price": 199,
+    "description": "Loaded Fries topped with melted cheese & sauces (Choose protein: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/loaded fries.png"
+  },
+  {
+    "id": "m_sprite_reg",
+    "categoryId": "c10_bev",
+    "name": "Sprite (Regular)",
+    "price": 59,
+    "description": "Sprite 330ml Regular",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_sprite_lrg",
+    "categoryId": "c10_bev",
+    "name": "Sprite (Large)",
+    "price": 99,
+    "description": "Sprite 500ml Large",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_cocacola_reg",
+    "categoryId": "c10_bev",
+    "name": "Coca Cola (Regular)",
+    "price": 59,
+    "description": "Coca Cola 330ml Regular",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_cocacola_lrg",
+    "categoryId": "c10_bev",
+    "name": "Coca Cola (Large)",
+    "price": 99,
+    "description": "Coca Cola 500ml Large",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_icetea_reg",
+    "categoryId": "c10_bev",
+    "name": "Ice Tea (Regular)",
+    "price": 59,
+    "description": "Refreshing Ice Tea - Peach or Lime (Regular)",
+    "isAvailable": true,
+    "image": "/images/menu/ice tea - lime.png"
+  },
+  {
+    "id": "m_icetea_lrg",
+    "categoryId": "c10_bev",
+    "name": "Ice Tea (Large)",
+    "price": 99,
+    "description": "Refreshing Ice Tea - Peach or Lime (Large)",
+    "isAvailable": true,
+    "image": "/images/menu/ice tea - lime.png"
+  },
+  {
+    "id": "m_hot_chocolate",
+    "categoryId": "c10_bev",
+    "name": "Hot Chocolate",
+    "price": 99,
+    "description": "Rich Warm Hot Chocolate",
+    "isAvailable": true,
+    "image": "/images/menu/Hot Chocolate.png"
+  },
+  {
+    "id": "m_signature_tea",
+    "categoryId": "c10_bev",
+    "name": "Signature Tea",
+    "price": 99,
+    "description": "Special TDG Signature Brewed Tea",
+    "isAvailable": true,
+    "image": "/images/menu/Signature tea.png"
+  },
+  {
+    "id": "m_rice_bowl",
+    "categoryId": "c3_rice_salad",
+    "name": "Rice Bowl (Signature)",
+    "price": 199,
+    "description": "Signature Lebanese Rice Bowl with fresh herbs & toppings (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/lebanese rice bowl.png"
+  },
+  {
+    "id": "m_signature_salad",
+    "categoryId": "c3_rice_salad",
+    "name": "Signature Salad",
+    "price": 149,
+    "description": "Fresh Mediterranean Signature Salad with dressing (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/signature salad.png"
+  },
+  {
+    "id": "m_express_meal",
+    "categoryId": "c2",
+    "name": "Express Meal",
+    "price": 249,
+    "description": "Gyro & Regular Drink",
+    "isAvailable": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_sig_gyro_meal",
+    "categoryId": "c2",
+    "name": "Signature Gyro Meal",
+    "price": 279,
+    "description": "Gyro, Fries, Regular Drink",
+    "isAvailable": true,
+    "image": "/images/menu/signature gyro meal.png"
+  },
+  {
+    "id": "m_lebanese_rice_box",
+    "categoryId": "c2",
+    "name": "Lebanese Rice Box",
+    "price": 299,
+    "description": "Lebanese rice, Fries, Regular Drink",
+    "isAvailable": true,
+    "image": "/images/menu/lebanese rice box.png"
+  },
+  {
+    "id": "m_wednesday_combo_1",
+    "categoryId": "c2",
+    "name": "Wednesday Combo - 1",
+    "price": 349,
+    "description": "3 Leg and Thigh, 8 strips, 4 wings.",
+    "isAvailable": true,
+    "image": "/images/menu/wednesday_combo.png"
+  },
+  {
+    "id": "m_wednesday_combo_2",
+    "categoryId": "c2",
+    "name": "Wednesday Combo - 2",
+    "price": 379,
+    "description": "1 Gyro, 2 Leg and Thigh, 2 Wings, 2 Strips",
+    "isAvailable": true,
+    "image": "/images/menu/wednesday_combo.png"
+  },
+  {
+    "id": "m_classic_gyro_meal",
+    "categoryId": "c2",
+    "name": "Classic Gyro Meal",
+    "price": 349,
+    "description": "Gyro, 2 Wings, Fries, Regular Drink, 1 Dip",
+    "isAvailable": true,
+    "image": "/images/menu/classic gyro meal.png"
+  },
+  {
+    "id": "m_duo_gyro_feast",
+    "categoryId": "c2",
+    "name": "Duo Gyro Feast",
+    "price": 449,
+    "description": "2 Gyros, Fries, 2 Regular Drinks",
+    "isAvailable": true,
+    "image": "/images/menu/duo gyro feast.png"
+  },
+  {
+    "id": "m_double_crunch_box",
+    "categoryId": "c2",
+    "name": "Double Crunch Box",
+    "price": 699,
+    "description": "2 Gyros, 6 Wings, Fries, 2 Regular Drinks",
+    "isAvailable": true,
+    "image": "/images/menu/double crunch box.png"
+  },
+  {
+    "id": "m_mega_feast_meal",
+    "categoryId": "c2",
+    "name": "Mega Feast Meal",
+    "price": 799,
+    "description": "2 Gyros, 2 Leg & Thighs, 2 Wings, 2 Strips, Fries, 2 Regular Drinks, 3 Dips",
+    "isAvailable": true,
+    "image": "/images/menu/mega feast meal.png"
+  },
+  {
+    "id": "m_dens_party_meal",
+    "categoryId": "c2",
+    "name": "Den's Party Meal",
+    "price": 1049,
+    "description": "2 Gyros, 6 Wings, 4 Leg & Thighs, 2 Fries, 3 Regular Drinks",
+    "isAvailable": true,
+    "image": "/images/menu/den's party meal.png"
+  },
+  {
+    "id": "m_super5_bucket",
+    "categoryId": "c2",
+    "name": "Super 5 Bucket",
+    "price": 1299,
+    "description": "5 Leg & Thighs, 10 Wings, 10 Strips, 5 Regular Drinks",
+    "isAvailable": true,
+    "image": "/images/menu/super 5 bucket.png"
+  },
+  {
+    "id": "m_pmax_gyro",
+    "categoryId": "c11",
+    "name": "Protein Max Gyro",
+    "price": 299,
+    "description": "High Protein Gyro (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/protein max.png"
+  },
+  {
+    "id": "m_pmax_rice",
+    "categoryId": "c11",
+    "name": "Protein Max Rice Bowl",
+    "price": 299,
+    "description": "High Protein Rice Bowl (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/protein max.png"
+  },
+  {
+    "id": "m_pmax_salad",
+    "categoryId": "c11",
+    "name": "Protein Max Salad",
+    "price": 299,
+    "description": "High Protein Mediterranean Salad (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/menu/protein max.png"
+  },
+  {
+    "id": "m_vanilla_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Vanilla Shake (Regular)",
+    "price": 120,
+    "description": "Classic Vanilla Shake (Ask for White Chocolate)",
+    "isAvailable": true,
+    "image": "/images/menu/vanilla shake.png"
+  },
+  {
+    "id": "m_vanilla_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Vanilla Shake (Large)",
+    "price": 199,
+    "description": "Large Vanilla Shake (Ask for White Chocolate)",
+    "isAvailable": true,
+    "image": "/images/menu/vanilla shake.png"
+  },
+  {
+    "id": "m_strawberry_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Strawberry Shake (Regular)",
+    "price": 120,
+    "description": "Fresh Strawberry Shake Regular",
+    "isAvailable": true,
+    "image": "/images/menu/strawberry shake.png"
+  },
+  {
+    "id": "m_strawberry_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Strawberry Shake (Large)",
+    "price": 199,
+    "description": "Fresh Strawberry Shake Large",
+    "isAvailable": true,
+    "image": "/images/menu/strawberry shake.png"
+  },
+  {
+    "id": "m_biscoff_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Biscoff Shake (Regular)",
+    "price": 120,
+    "description": "Lotus Biscoff Shake Regular",
+    "isAvailable": true,
+    "image": "/images/menu/biscoff shake.png"
+  },
+  {
+    "id": "m_biscoff_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Biscoff Shake (Large)",
+    "price": 199,
+    "description": "Lotus Biscoff Shake Large",
+    "isAvailable": true,
+    "image": "/images/menu/biscoff shake.png"
+  },
+  {
+    "id": "m_chocolate_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Chocolate Shake (Regular)",
+    "price": 120,
+    "description": "Rich Chocolate Shake Regular",
+    "isAvailable": true,
+    "image": "/images/menu/chocolate shake.png"
+  },
+  {
+    "id": "m_chocolate_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Chocolate Shake (Large)",
+    "price": 199,
+    "description": "Rich Chocolate Shake Large",
+    "isAvailable": true,
+    "image": "/images/menu/chocolate shake.png"
+  },
+  {
+    "id": "m_kunafa_shake_reg",
+    "categoryId": "c7_shakes",
+    "name": "Kunafa Pistachio Shake - Signature (Regular)",
+    "price": 120,
+    "description": "Signature Kunafa Pistachio Shake Regular",
+    "isAvailable": true,
+    "image": "/images/menu/kunafa pistachio shake.png"
+  },
+  {
+    "id": "m_kunafa_shake_lrg",
+    "categoryId": "c7_shakes",
+    "name": "Kunafa Pistachio Shake - Signature (Large)",
+    "price": 199,
+    "description": "Signature Kunafa Pistachio Shake Large",
+    "isAvailable": true,
+    "image": "/images/menu/kunafa pistachio shake.png"
+  },
+  {
+    "id": "m_brownie",
+    "categoryId": "c9",
+    "name": "Chocolate Brownie",
+    "price": 99,
+    "description": "Fudgy Chocolate Brownie",
+    "isAvailable": true,
+    "image": "/images/menu/chcolate brownie.png"
+  },
+  {
+    "id": "m_blondie",
+    "categoryId": "c9",
+    "name": "Blondie Cake (Signature)",
+    "price": 99,
+    "description": "TDG Signature White Chocolate Blondie Cake",
+    "isAvailable": true,
+    "image": "/images/menu/blondie cake.png"
+  },
+  {
+    "id": "m_vanilla_softy",
+    "categoryId": "c4",
+    "name": "Vanilla Softy",
+    "price": 37.15,
+    "description": "Creamy Vanilla Soft Serve Cone",
+    "isAvailable": true,
+    "image": "/images/menu/vanilla softy.png"
+  },
+  {
+    "id": "m_dip_choice",
+    "categoryId": "c4",
+    "name": "Choice of Dip",
+    "price": 14.30,
+    "description": "Choice of Dip (Garlic Mayo, Spicy Mayo, Honey Mustard, Tzatziki, Jalapeno Cheese, Turkish Chilli)",
+    "isAvailable": true,
+    "image": "/images/menu/garlic mayo.png"
+  },
+  {
+    "id": "m_kombucha_mint",
+    "categoryId": "c10_komb",
+    "name": "Mint Kombucha",
+    "price": 114,
+    "description": "Mint Kombucha 250ml",
+    "isAvailable": true,
+    "image": "/images/menu/mint-kombucha.png"
+  },
+  {
+    "id": "m_kombucha_hibiscus",
+    "categoryId": "c10_komb",
+    "name": "Hibiscus Kombucha",
+    "price": 114,
+    "description": "Hibiscus Kombucha 250ml",
+    "isAvailable": true,
+    "image": "/images/menu/kombucha-hibiscus.png"
+  },
+  {
+    "id": "m_kombucha_classic",
+    "categoryId": "c10_komb",
+    "name": "Classic Kombucha",
+    "price": 114,
+    "description": "Classic Kombucha 250ml",
+    "isAvailable": true,
+    "image": "/images/menu/kombucha.png"
+  },
+  {
+    "id": "m_nc_gyro_fries",
+    "categoryId": "c_new_combo",
+    "category": "New Combo",
+    "name": "Gyro & Fries",
+    "price": 249,
+    "description": "1 Gyro + Fries",
+    "isAvailable": true,
+    "available": true,
+    "image": "/images/menu/express meal.png"
+  },
+  {
+    "id": "m_nc_rice_meal",
+    "categoryId": "c_new_combo",
+    "category": "New Combo",
+    "name": "Lebanese Rice Bowl Meal",
+    "price": 299,
+    "description": "1 Lebanese Rice Bowl + 2 Wings + 1 Beverage",
+    "isAvailable": true,
+    "available": true,
+    "image": "/images/menu/lebanese rice box.png"
+  },
+  {
+    "id": "m_nc_gyro_meal",
+    "categoryId": "c_new_combo",
+    "category": "New Combo",
+    "name": "Gyro Meal",
+    "price": 329,
+    "description": "1 Gyro + 2 Strips + Fries + 1 Pepsi",
+    "isAvailable": true,
+    "available": true,
+    "image": "/images/menu/classic gyro meal.png"
+  },
+  {
+    "id": "m_nc_13pc_bucket",
+    "categoryId": "c_new_combo",
+    "category": "New Combo",
+    "name": "13 Pc Mixed Chicken Bucket",
+    "price": 379,
+    "description": "8 Wings + 5 Strips + 4 Dips",
+    "isAvailable": true,
+    "available": true,
+    "image": "/images/menu/wings.png"
+  },
+  {
+    "id": "m_nc_strips_bucket",
+    "categoryId": "c_new_combo",
+    "category": "New Combo",
+    "name": "Chicken Strips Bucket",
+    "price": 399,
+    "description": "12 Strips + 3 Dips",
+    "isAvailable": true,
+    "available": true,
+    "image": "/images/menu/strips.png"
+  },
+  {
+    "id": "m_nc_peri_leg_bucket",
+    "categoryId": "c_new_combo",
+    "category": "New Combo",
+    "name": "Peri Peri Leg Bucket",
+    "price": 549,
+    "description": "8 Pc Peri Peri Leg + 3 Dips",
+    "isAvailable": true,
+    "available": true,
+    "image": "/images/menu/leg_thigh.png"
+  },
+  {
+    "id": "m_nc_double_gyro_feast",
+    "categoryId": "c_new_combo",
+    "category": "New Combo",
+    "name": "Double Gyro Feast",
+    "price": 649,
+    "description": "2 Gyros + 6 Wings + Fries + 2 Drinks + 2 Dips",
+    "isAvailable": true,
+    "available": true,
+    "image": "/images/menu/double crunch box.png"
+  },
+  {
+    "id": "m_nc_ultimate_savings",
+    "categoryId": "c_new_combo",
+    "category": "New Combo",
+    "name": "Ultimate Savings Bucket",
+    "price": 599,
+    "description": "4 Leg + 6 Wings + 4 Strips + 4 Dips + 500 ml Coke/Sprite",
+    "isAvailable": true,
+    "available": true,
+    "image": "/images/menu/super 5 bucket.png"
+  },
+  {
+    "id": "m_nc_mixed_feast",
+    "categoryId": "c_new_combo",
+    "category": "New Combo",
+    "name": "Mixed Feast",
+    "price": 749,
+    "description": "2 Gyros + 2 Leg + 2 Strips + 4 Wings + Fries + 500 ml Coke/Sprite + 3 Dips",
+    "isAvailable": true,
+    "available": true,
+    "image": "/images/menu/den's party meal.png"
+  }
 ]
 
 let recipes = [
@@ -1850,7 +1829,7 @@ let recipes = [
  "menuItemId": "m53a",
  "menuItemName": "Coca-Cola (Regular)",
  "name": "COLA 330ML",
- "description": "Standard recipe for COLA 330ML (Price ₹59/-)",
+ "description": "Standard recipe for COLA 330ML (Price â‚¹59/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 24.36,
@@ -1911,7 +1890,7 @@ let recipes = [
  "menuItemId": "m54a",
  "menuItemName": "Sprite (Regular)",
  "name": "SPRITE 330ML",
- "description": "Standard recipe for SPRITE 330ML (Price ₹59/-)",
+ "description": "Standard recipe for SPRITE 330ML (Price â‚¹59/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 24.36,
@@ -1972,7 +1951,7 @@ let recipes = [
  "menuItemId": "m53b",
  "menuItemName": "Coca-Cola (Large)",
  "name": "COLA 650ML",
- "description": "Standard recipe for COLA 650ML (Price ₹99/-)",
+ "description": "Standard recipe for COLA 650ML (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 48.72,
@@ -2033,7 +2012,7 @@ let recipes = [
  "menuItemId": "m54b",
  "menuItemName": "Sprite (Large)",
  "name": "SPRITE 650ML",
- "description": "Standard recipe for SPRITE 650ML (Price ₹99/-)",
+ "description": "Standard recipe for SPRITE 650ML (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 48.72,
@@ -2094,7 +2073,7 @@ let recipes = [
  "menuItemId": "m56a",
  "menuItemName": "Lime Ice Tea (Regular)",
  "name": "Lime 330ml",
- "description": "Standard recipe for Lime Ice Tea 330ml (Price ₹59/-)",
+ "description": "Standard recipe for Lime Ice Tea 330ml (Price â‚¹59/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 17.4,
@@ -2155,7 +2134,7 @@ let recipes = [
  "menuItemId": "m55a",
  "menuItemName": "Peach Ice Tea (Regular)",
  "name": "Peach 330ml",
- "description": "Standard recipe for Peach Ice Tea 330ml (Price ₹59/-)",
+ "description": "Standard recipe for Peach Ice Tea 330ml (Price â‚¹59/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 17.4,
@@ -2216,7 +2195,7 @@ let recipes = [
  "menuItemId": "m56b",
  "menuItemName": "Lime Ice Tea (Large)",
  "name": "Lime 650ml",
- "description": "Standard recipe for Lime Ice Tea 650ml (Price ₹99/-)",
+ "description": "Standard recipe for Lime Ice Tea 650ml (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 34.8,
@@ -2277,7 +2256,7 @@ let recipes = [
  "menuItemId": "m55b",
  "menuItemName": "Peach Ice Tea (Large)",
  "name": "Peach 650ml",
- "description": "Standard recipe for Peach Ice Tea 650ml (Price ₹99/-)",
+ "description": "Standard recipe for Peach Ice Tea 650ml (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 34.8,
@@ -2338,7 +2317,7 @@ let recipes = [
  "menuItemId": "m60",
  "menuItemName": "Chocolate Brownie",
  "name": "CHOCOLATE BROWNIE",
- "description": "Standard recipe for Chocolate Brownie (Price ₹99/-)",
+ "description": "Standard recipe for Chocolate Brownie (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 29.82,
@@ -2471,7 +2450,7 @@ let recipes = [
  "menuItemId": "m61",
  "menuItemName": "Blondie Cake",
  "name": "BLONDIE CAKE",
- "description": "Standard recipe for Blondie Cake (Price ₹99/-)",
+ "description": "Standard recipe for Blondie Cake (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 28.62,
@@ -2996,7 +2975,7 @@ let recipes = [
  "menuItemId": "m13",
  "menuItemName": "4 Pc Leg & Thigh (2 Dips)",
  "name": "CRISPY CHICKEN 4 PCS",
- "description": "Standard recipe for 4 Pc Crispy Chicken Leg & Thigh (Price ₹280/-)",
+ "description": "Standard recipe for 4 Pc Crispy Chicken Leg & Thigh (Price â‚¹280/-)",
  "yieldQty": 1,
  "prepTime": 15,
  "rmCost": 120.8,
@@ -3093,7 +3072,7 @@ let recipes = [
  "menuItemId": "m14",
  "menuItemName": "8 Pc Leg & Thigh (4 Dips)",
  "name": "CRISPY CHICKEN 8 PCS",
- "description": "Standard recipe for 8 Pc Crispy Chicken Leg & Thigh (Price ₹560/-)",
+ "description": "Standard recipe for 8 Pc Crispy Chicken Leg & Thigh (Price â‚¹560/-)",
  "yieldQty": 1,
  "prepTime": 18,
  "rmCost": 241.6,
@@ -3190,7 +3169,7 @@ let recipes = [
  "menuItemId": "m15",
  "menuItemName": "12 Pc Leg & Thigh (6 Dips)",
  "name": "CRISPY CHICKEN 12 PCS",
- "description": "Standard recipe for 12 Pc Crispy Chicken Leg & Thigh (Price ₹840/-)",
+ "description": "Standard recipe for 12 Pc Crispy Chicken Leg & Thigh (Price â‚¹840/-)",
  "yieldQty": 1,
  "prepTime": 20,
  "rmCost": 362.4,
@@ -3287,7 +3266,7 @@ let recipes = [
  "menuItemId": "m16",
  "menuItemName": "3 Pc Wings (1 Dip)",
  "name": "CRISPY WINGS 3 PCS",
- "description": "Standard recipe for 3 Pc Crispy Chicken Wings (Price ₹90/-)",
+ "description": "Standard recipe for 3 Pc Crispy Chicken Wings (Price â‚¹90/-)",
  "yieldQty": 1,
  "prepTime": 10,
  "rmCost": 30.9,
@@ -3375,7 +3354,7 @@ let recipes = [
  "menuItemId": "m17",
  "menuItemName": "6 Pc Wings (2 Dips)",
  "name": "CRISPY WINGS 6 PCS",
- "description": "Standard recipe for 6 Pc Crispy Chicken Wings (Price ₹180/-)",
+ "description": "Standard recipe for 6 Pc Crispy Chicken Wings (Price â‚¹180/-)",
  "yieldQty": 1,
  "prepTime": 10,
  "rmCost": 61.8,
@@ -3463,7 +3442,7 @@ let recipes = [
  "menuItemId": "m18",
  "menuItemName": "9 Pc Wings (3 Dips)",
  "name": "CRISPY WINGS 9 PCS",
- "description": "Standard recipe for 9 Pc Crispy Chicken Wings (Price ₹270/-)",
+ "description": "Standard recipe for 9 Pc Crispy Chicken Wings (Price â‚¹270/-)",
  "yieldQty": 1,
  "prepTime": 12,
  "rmCost": 92.7,
@@ -3551,7 +3530,7 @@ let recipes = [
  "menuItemId": "m19",
  "menuItemName": "20 Pc Wings (6 Dips)",
  "name": "CRISPY WINGS 20 PCS",
- "description": "Standard recipe for 20 Pc Crispy Chicken Wings (Price ₹600/-)",
+ "description": "Standard recipe for 20 Pc Crispy Chicken Wings (Price â‚¹600/-)",
  "yieldQty": 1,
  "prepTime": 15,
  "rmCost": 206,
@@ -3639,7 +3618,7 @@ let recipes = [
  "menuItemId": "m20",
  "menuItemName": "60 Pc Wings (12 Dips)",
  "name": "CRISPY WINGS 60 PCS",
- "description": "Standard recipe for 60 Pc Crispy Chicken Wings (Price ₹1500/-)",
+ "description": "Standard recipe for 60 Pc Crispy Chicken Wings (Price â‚¹1500/-)",
  "yieldQty": 1,
  "prepTime": 25,
  "rmCost": 515,
@@ -3727,7 +3706,7 @@ let recipes = [
  "menuItemId": "m21",
  "menuItemName": "3 Pc Strips (1 Dip)",
  "name": "CRISPY STRIPS 3 PCS",
- "description": "Standard recipe for 3 Pc Crispy Chicken Strips (Price ₹120/-)",
+ "description": "Standard recipe for 3 Pc Crispy Chicken Strips (Price â‚¹120/-)",
  "yieldQty": 1,
  "prepTime": 10,
  "rmCost": 42.9,
@@ -3815,7 +3794,7 @@ let recipes = [
  "menuItemId": "m22",
  "menuItemName": "6 Pc Strips (2 Dips)",
  "name": "CRISPY STRIPS 6 PCS",
- "description": "Standard recipe for 6 Pc Crispy Chicken Strips (Price ₹240/-)",
+ "description": "Standard recipe for 6 Pc Crispy Chicken Strips (Price â‚¹240/-)",
  "yieldQty": 1,
  "prepTime": 10,
  "rmCost": 85.8,
@@ -3903,7 +3882,7 @@ let recipes = [
  "menuItemId": "m23",
  "menuItemName": "9 Pc Strips (3 Dips)",
  "name": "CRISPY STRIPS 9 PCS",
- "description": "Standard recipe for 9 Pc Crispy Chicken Strips (Price ₹360/-)",
+ "description": "Standard recipe for 9 Pc Crispy Chicken Strips (Price â‚¹360/-)",
  "yieldQty": 1,
  "prepTime": 12,
  "rmCost": 128.7,
@@ -3991,7 +3970,7 @@ let recipes = [
  "menuItemId": "m24",
  "menuItemName": "20 Pc Strips (6 Dips)",
  "name": "CRISPY STRIPS 20 PCS",
- "description": "Standard recipe for 20 Pc Crispy Chicken Strips (Price ₹800/-)",
+ "description": "Standard recipe for 20 Pc Crispy Chicken Strips (Price â‚¹800/-)",
  "yieldQty": 1,
  "prepTime": 15,
  "rmCost": 286,
@@ -4079,7 +4058,7 @@ let recipes = [
  "menuItemId": "m25",
  "menuItemName": "60 Pc Strips (12 Dips)",
  "name": "CRISPY STRIPS 60 PCS",
- "description": "Standard recipe for 60 Pc Crispy Chicken Strips (Price ₹2400/-)",
+ "description": "Standard recipe for 60 Pc Crispy Chicken Strips (Price â‚¹2400/-)",
  "yieldQty": 1,
  "prepTime": 25,
  "rmCost": 858,
@@ -5397,7 +5376,7 @@ let recipes = [
  "menuItemId": "m26a",
  "menuItemName": "Salted Fries",
  "name": "FRENCH FRIES",
- "description": "Standard recipe for Salted French Fries (Price ₹99/-)",
+ "description": "Standard recipe for Salted French Fries (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 15.37,
@@ -5485,7 +5464,7 @@ let recipes = [
  "menuItemId": "m26b",
  "menuItemName": "Peri Peri Fries",
  "name": "PERI PERI FRIES",
- "description": "Standard recipe for Peri Peri Fries (Price ₹99/-)",
+ "description": "Standard recipe for Peri Peri Fries (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 19.92,
@@ -5573,7 +5552,7 @@ let recipes = [
  "menuItemId": "m26c",
  "menuItemName": "Cajun Fries",
  "name": "KAJU FRIES",
- "description": "Standard recipe for Cajun Fries (Price ₹99/-)",
+ "description": "Standard recipe for Cajun Fries (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 20.02,
@@ -5661,7 +5640,7 @@ let recipes = [
  "menuItemId": "m42",
  "menuItemName": "Vanilla Shake (Regular)",
  "name": "VANILLA SHAKE REGULAR",
- "description": "Standard recipe for Vanilla Shake Regular (Price ₹120/-)",
+ "description": "Standard recipe for Vanilla Shake Regular (Price â‚¹120/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 24.5,
@@ -5722,7 +5701,7 @@ let recipes = [
  "menuItemId": "m43",
  "menuItemName": "Vanilla Shake (Large)",
  "name": "VANILLA SHAKE LARGE",
- "description": "Standard recipe for Vanilla Shake Large (Price ₹199/-)",
+ "description": "Standard recipe for Vanilla Shake Large (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 39.74,
@@ -5783,7 +5762,7 @@ let recipes = [
  "menuItemId": "m44",
  "menuItemName": "Strawberry Shake (Regular)",
  "name": "STRAWBERRY SHAKE REGULAR",
- "description": "Standard recipe for Strawberry Shake Regular (Price ₹120/-)",
+ "description": "Standard recipe for Strawberry Shake Regular (Price â‚¹120/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 24.8,
@@ -5844,7 +5823,7 @@ let recipes = [
  "menuItemId": "m45",
  "menuItemName": "Strawberry Shake (Large)",
  "name": "STRAWBERRY SHAKE LARGE",
- "description": "Standard recipe for Strawberry Shake Large (Price ₹199/-)",
+ "description": "Standard recipe for Strawberry Shake Large (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 40.24,
@@ -5905,7 +5884,7 @@ let recipes = [
  "menuItemId": "m46",
  "menuItemName": "Biscoff Shake (Regular)",
  "name": "BISCOFF SHAKE REGULAR",
- "description": "Standard recipe for Biscoff Shake Regular (Price ₹120/-)",
+ "description": "Standard recipe for Biscoff Shake Regular (Price â‚¹120/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 38.9,
@@ -5966,7 +5945,7 @@ let recipes = [
  "menuItemId": "m47",
  "menuItemName": "Biscoff Shake (Large)",
  "name": "BISCOFF SHAKE LARGE",
- "description": "Standard recipe for Biscoff Shake Large (Price ₹199/-)",
+ "description": "Standard recipe for Biscoff Shake Large (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 63.74,
@@ -6027,7 +6006,7 @@ let recipes = [
  "menuItemId": "m48",
  "menuItemName": "Chocolate Shake (Regular)",
  "name": "CHOCOLATE SHAKE REGULAR",
- "description": "Standard recipe for Chocolate Shake Regular (Price ₹120/-)",
+ "description": "Standard recipe for Chocolate Shake Regular (Price â‚¹120/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 26,
@@ -6088,7 +6067,7 @@ let recipes = [
  "menuItemId": "m49",
  "menuItemName": "Chocolate Shake (Large)",
  "name": "CHOCOLATE SHAKE LARGE",
- "description": "Standard recipe for Chocolate Shake Large (Price ₹199/-)",
+ "description": "Standard recipe for Chocolate Shake Large (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 42.24,
@@ -6149,7 +6128,7 @@ let recipes = [
  "menuItemId": "m50",
  "menuItemName": "Kunafa Pistachio Shake (Regular)",
  "name": "KUNAFA PISTACHIO SHAKE REGULAR",
- "description": "Standard recipe for Kunafa Pistachio Shake Regular (Price ₹120/-)",
+ "description": "Standard recipe for Kunafa Pistachio Shake Regular (Price â‚¹120/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 44.9,
@@ -6210,7 +6189,7 @@ let recipes = [
  "menuItemId": "m51",
  "menuItemName": "Kunafa Pistachio Shake (Large)",
  "name": "KUNAFA PISTACHIO SHAKE LARGE",
- "description": "Standard recipe for Kunafa Pistachio Shake Large (Price ₹199/-)",
+ "description": "Standard recipe for Kunafa Pistachio Shake Large (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 73.74,
@@ -6271,7 +6250,7 @@ let recipes = [
  "menuItemId": "m52",
  "menuItemName": "Vanilla Softy",
  "name": "VANILLA SOFTY",
- "description": "Standard recipe for Vanilla Softy Cone (Price ₹39/-)",
+ "description": "Standard recipe for Vanilla Softy Cone (Price â‚¹39/-)",
  "yieldQty": 1,
  "prepTime": 2,
  "rmCost": 6.5,
@@ -6323,7 +6302,7 @@ let recipes = [
  "menuItemId": "m57",
  "menuItemName": "Hot Chocolate",
  "name": "HOT CHOCOLATE",
- "description": "Standard recipe for Hot Chocolate (Price ₹99/-)",
+ "description": "Standard recipe for Hot Chocolate (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 21.97,
@@ -6384,7 +6363,7 @@ let recipes = [
  "menuItemId": "m58",
  "menuItemName": "Signature Tea",
  "name": "SIGNATURE TEA",
- "description": "Standard recipe for Signature Tea (Price ₹99/-)",
+ "description": "Standard recipe for Signature Tea (Price â‚¹99/-)",
  "yieldQty": 1,
  "prepTime": 5,
  "rmCost": 15,
@@ -6445,7 +6424,7 @@ let recipes = [
  "menuItemId": "m59a",
  "menuItemName": "Mint Kombucha",
  "name": "MINT KOMBUCHA",
- "description": "Standard recipe for Mint Kombucha (Price ₹114.29/-)",
+ "description": "Standard recipe for Mint Kombucha (Price â‚¹114.29/-)",
  "yieldQty": 1,
  "prepTime": 3,
  "rmCost": 32.5,
@@ -6497,7 +6476,7 @@ let recipes = [
  "menuItemId": "m59b",
  "menuItemName": "Hibiscus Kombucha",
  "name": "HIBISCUS KOMBUCHA",
- "description": "Standard recipe for Hibiscus Kombucha (Price ₹114.29/-)",
+ "description": "Standard recipe for Hibiscus Kombucha (Price â‚¹114.29/-)",
  "yieldQty": 1,
  "prepTime": 3,
  "rmCost": 32.5,
@@ -6549,7 +6528,7 @@ let recipes = [
  "menuItemId": "m59c",
  "menuItemName": "Ginger Kombucha",
  "name": "GINGER KOMBUCHA",
- "description": "Standard recipe for Ginger Kombucha (Price ₹114.29/-)",
+ "description": "Standard recipe for Ginger Kombucha (Price â‚¹114.29/-)",
  "yieldQty": 1,
  "prepTime": 3,
  "rmCost": 32.5,
@@ -6601,7 +6580,7 @@ let recipes = [
  "menuItemId": "m59d",
  "menuItemName": "Butterfly Pea Kombucha",
  "name": "BUTTERFLY PEA KOMBUCHA",
- "description": "Standard recipe for Butterfly Pea Kombucha (Price ₹114.29/-)",
+ "description": "Standard recipe for Butterfly Pea Kombucha (Price â‚¹114.29/-)",
  "yieldQty": 1,
  "prepTime": 3,
  "rmCost": 32.5,
@@ -6897,7 +6876,7 @@ let recipes = [
  "menuItemId": "m27a",
  "menuItemName": "Loaded Chicken Fries",
  "name": "RECIPE - LOADED CHICKEN FRIES",
- "description": "Standard recipe for Loaded Chicken Fries (Price ₹199/-)",
+ "description": "Standard recipe for Loaded Chicken Fries (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 52.91,
@@ -6958,7 +6937,7 @@ let recipes = [
  "menuItemId": "m27b",
  "menuItemName": "Loaded Paneer Fries",
  "name": "RECIPE - LOADED PANEER FRIES",
- "description": "Standard recipe for Loaded Paneer Fries (Price ₹199/-)",
+ "description": "Standard recipe for Loaded Paneer Fries (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 52.91,
@@ -7019,7 +6998,7 @@ let recipes = [
  "menuItemId": "m28a",
  "menuItemName": "Lebanese Rice Bowl (Chicken)",
  "name": "RECIPE - LEBANESE RICE BOWL (CHICKEN)",
- "description": "Standard recipe for Lebanese Rice Bowl (Chicken) (Price ₹199/-)",
+ "description": "Standard recipe for Lebanese Rice Bowl (Chicken) (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7080,7 +7059,7 @@ let recipes = [
  "menuItemId": "m28b",
  "menuItemName": "Lebanese Rice Bowl (Paneer)",
  "name": "RECIPE - LEBANESE RICE BOWL (PANEER)",
- "description": "Standard recipe for Lebanese Rice Bowl (Paneer) (Price ₹199/-)",
+ "description": "Standard recipe for Lebanese Rice Bowl (Paneer) (Price â‚¹199/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7141,7 +7120,7 @@ let recipes = [
  "menuItemId": "m29a",
  "menuItemName": "Signature Salad (Chicken)",
  "name": "RECIPE - SIGNATURE SALAD (CHICKEN)",
- "description": "Standard recipe for Signature Salad (Chicken) (Price ₹149/-)",
+ "description": "Standard recipe for Signature Salad (Chicken) (Price â‚¹149/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7202,7 +7181,7 @@ let recipes = [
  "menuItemId": "m29b",
  "menuItemName": "Signature Salad (Paneer)",
  "name": "RECIPE - SIGNATURE SALAD (PANEER)",
- "description": "Standard recipe for Signature Salad (Paneer) (Price ₹149/-)",
+ "description": "Standard recipe for Signature Salad (Paneer) (Price â‚¹149/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7263,7 +7242,7 @@ let recipes = [
  "menuItemId": "m30",
  "menuItemName": "Express Meal",
  "name": "RECIPE - EXPRESS MEAL",
- "description": "Standard recipe for Express Meal (Price ₹149/-)",
+ "description": "Standard recipe for Express Meal (Price â‚¹149/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 37.25,
@@ -7306,7 +7285,7 @@ let recipes = [
  "menuItemId": "m31",
  "menuItemName": "Classic Gyro Meal",
  "name": "RECIPE - CLASSIC GYRO MEAL",
- "description": "Standard recipe for Classic Gyro Meal (Price ₹249/-)",
+ "description": "Standard recipe for Classic Gyro Meal (Price â‚¹249/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 31.72,
@@ -7367,7 +7346,7 @@ let recipes = [
  "menuItemId": "m32",
  "menuItemName": "Signature Gyro Meal",
  "name": "RECIPE - SIGNATURE GYRO MEAL",
- "description": "Standard recipe for Signature Gyro Meal (Price ₹299/-)",
+ "description": "Standard recipe for Signature Gyro Meal (Price â‚¹299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 53.51,
@@ -7428,7 +7407,7 @@ let recipes = [
  "menuItemId": "m33",
  "menuItemName": "Lebanese Rice Box",
  "name": "RECIPE - LEBANESE RICE BOX",
- "description": "Standard recipe for Lebanese Rice Box (Price ₹299/-)",
+ "description": "Standard recipe for Lebanese Rice Box (Price â‚¹299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7489,7 +7468,7 @@ let recipes = [
  "menuItemId": "m34",
  "menuItemName": "Duo Gyro Feast",
  "name": "RECIPE - DUO GYRO FEAST",
- "description": "Standard recipe for Duo Gyro Feast (Price ₹349/-)",
+ "description": "Standard recipe for Duo Gyro Feast (Price â‚¹349/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 31.72,
@@ -7550,7 +7529,7 @@ let recipes = [
  "menuItemId": "m35",
  "menuItemName": "Double Crunch Box",
  "name": "RECIPE - DOUBLE CRUNCH BOX",
- "description": "Standard recipe for Double Crunch Box (Price ₹499/-)",
+ "description": "Standard recipe for Double Crunch Box (Price â‚¹499/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 124.75,
@@ -7593,7 +7572,7 @@ let recipes = [
  "menuItemId": "m36",
  "menuItemName": "Mega Feast Meal",
  "name": "RECIPE - MEGA FEAST MEAL",
- "description": "Standard recipe for Mega Feast Meal (Price ₹649/-)",
+ "description": "Standard recipe for Mega Feast Meal (Price â‚¹649/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 162.25,
@@ -7636,7 +7615,7 @@ let recipes = [
  "menuItemId": "m37",
  "menuItemName": "Den's Party Meal",
  "name": "RECIPE - DEN'S PARTY MEAL",
- "description": "Standard recipe for Den's Party Meal (Price ₹899/-)",
+ "description": "Standard recipe for Den's Party Meal (Price â‚¹899/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 224.75,
@@ -7679,7 +7658,7 @@ let recipes = [
  "menuItemId": "m38",
  "menuItemName": "Super 5 Bucket",
  "name": "RECIPE - SUPER 5 BUCKET",
- "description": "Standard recipe for Super 5 Bucket (Price ₹1299/-)",
+ "description": "Standard recipe for Super 5 Bucket (Price â‚¹1299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 324.75,
@@ -7783,7 +7762,7 @@ let recipes = [
  "menuItemId": "m40a",
  "menuItemName": "Lebanese Rice - Protein Max (Chicken)",
  "name": "RECIPE - LEBANESE RICE - PROTEIN MAX (CHICKEN)",
- "description": "Standard recipe for Lebanese Rice - Protein Max (Chicken) (Price ₹299/-)",
+ "description": "Standard recipe for Lebanese Rice - Protein Max (Chicken) (Price â‚¹299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7844,7 +7823,7 @@ let recipes = [
  "menuItemId": "m40b",
  "menuItemName": "Lebanese Rice - Protein Max (Paneer)",
  "name": "RECIPE - LEBANESE RICE - PROTEIN MAX (PANEER)",
- "description": "Standard recipe for Lebanese Rice - Protein Max (Paneer) (Price ₹299/-)",
+ "description": "Standard recipe for Lebanese Rice - Protein Max (Paneer) (Price â‚¹299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7905,7 +7884,7 @@ let recipes = [
  "menuItemId": "m41a",
  "menuItemName": "Salad - Protein Max (Chicken)",
  "name": "RECIPE - SALAD - PROTEIN MAX (CHICKEN)",
- "description": "Standard recipe for Salad - Protein Max (Chicken) (Price ₹299/-)",
+ "description": "Standard recipe for Salad - Protein Max (Chicken) (Price â‚¹299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -7966,7 +7945,7 @@ let recipes = [
  "menuItemId": "m41b",
  "menuItemName": "Salad - Protein Max (Paneer)",
  "name": "RECIPE - SALAD - PROTEIN MAX (PANEER)",
- "description": "Standard recipe for Salad - Protein Max (Paneer) (Price ₹299/-)",
+ "description": "Standard recipe for Salad - Protein Max (Paneer) (Price â‚¹299/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 47.05,
@@ -8027,7 +8006,7 @@ let recipes = [
  "menuItemId": "m62a",
  "menuItemName": "Turkish Chilli Dip",
  "name": "RECIPE - TURKISH CHILLI DIP",
- "description": "Standard recipe for Turkish Chilli Dip (Price ₹15/-)",
+ "description": "Standard recipe for Turkish Chilli Dip (Price â‚¹15/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 1.73,
@@ -8070,7 +8049,7 @@ let recipes = [
  "menuItemId": "m62b",
  "menuItemName": "Jalapeno Cheese Dip",
  "name": "RECIPE - JALAPENO CHEESE DIP",
- "description": "Standard recipe for Jalapeno Cheese Dip (Price ₹15/-)",
+ "description": "Standard recipe for Jalapeno Cheese Dip (Price â‚¹15/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 1.73,
@@ -8113,7 +8092,7 @@ let recipes = [
  "menuItemId": "m62c",
  "menuItemName": "Garlic Mayo Dip",
  "name": "RECIPE - GARLIC MAYO DIP",
- "description": "Standard recipe for Garlic Mayo Dip (Price ₹15/-)",
+ "description": "Standard recipe for Garlic Mayo Dip (Price â‚¹15/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 1.73,
@@ -8156,7 +8135,7 @@ let recipes = [
  "menuItemId": "m62d",
  "menuItemName": "Spicy Mayo Dip",
  "name": "RECIPE - SPICY MAYO DIP",
- "description": "Standard recipe for Spicy Mayo Dip (Price ₹15/-)",
+ "description": "Standard recipe for Spicy Mayo Dip (Price â‚¹15/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 1.73,
@@ -8199,7 +8178,7 @@ let recipes = [
  "menuItemId": "m62e",
  "menuItemName": "Peri Peri Dip",
  "name": "RECIPE - PERI PERI DIP",
- "description": "Standard recipe for Peri Peri Dip (Price ₹15/-)",
+ "description": "Standard recipe for Peri Peri Dip (Price â‚¹15/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 1.73,
@@ -8242,7 +8221,7 @@ let recipes = [
  "menuItemId": "m62f",
  "menuItemName": "Honey Mustard Dip",
  "name": "RECIPE - HONEY MUSTARD DIP",
- "description": "Standard recipe for Honey Mustard Dip (Price ₹15/-)",
+ "description": "Standard recipe for Honey Mustard Dip (Price â‚¹15/-)",
  "yieldQty": 1,
  "prepTime": 8,
  "rmCost": 1.73,
@@ -8382,7 +8361,7 @@ function optionalPosAuth(req, res, next) {
 
 // ============ MOBILE APP API ROUTES ============
 
-// Verify asset OTP — called by the referred person during signup or after Firebase Phone Auth
+// Verify asset OTP â€” called by the referred person during signup or after Firebase Phone Auth
 app.post('/api/assets/verify-otp', (req, res) => {
  const { phone, otp } = req.body
  if (!phone || !otp) return res.status(400).json({ message: 'Phone and OTP required' })
@@ -8400,7 +8379,7 @@ app.post('/api/assets/verify-otp', (req, res) => {
  if (asset.otpExpiry && new Date(asset.otpExpiry) < new Date()) {
  return res.status(400).json({ message: 'OTP expired. Ask your referrer to add you again.' })
  }
- // OTP valid — activate asset
+ // OTP valid â€” activate asset
  asset.status = 'active'
  asset.activatedAt = new Date().toISOString()
  asset.otp = null
@@ -8586,6 +8565,12 @@ app.post('/api/auth/signup', async (req, res) => {
  u.phone.replace(/[^0-9]/g, '') === referredBy.replace(/[^0-9]/g, '')
  )
  if (master) {
+ // [FIX Flaw 1A] Prevent self-referral
+ if (master.phone.replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, '') ||
+  master.email.toLowerCase() === email.toLowerCase() ||
+  master.id === referredBy) {
+  return res.status(400).json({ message: 'You cannot use your own referral code.' })
+ }
  newUser.referredBy = master.id
  newUser.referredByName = master.name
  // Update master's asset list - verify OTP if provided
@@ -8775,101 +8760,16 @@ async function sendWhatsAppOTP(phone, otp, type = 'auth', customMessage = null) 
 }
 
 async function sendMSG91OTP(phone, otp, type = 'auth') {
-  // Primary: Custom WhatsApp OTP Service
+  // Exclusive Primary: Custom WhatsApp OTP Service
   const waResult = await sendWhatsAppOTP(phone, otp, type)
   if (waResult.success) {
     return { success: true, method: 'whatsapp', data: waResult.data, otp }
   }
 
-  console.warn(`[OTP Fallback] WhatsApp OTP failed, attempting MSG91 SMS...`)
-
-  const cfg = settings.msg91 || {}
-  const cleanPhone = (phone || '').replace(/[^0-9]/g, '')
-  const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
-  const widgetId = cfg.widgetId || 'SecureOTPWidgetRKEV'
-  const authKey = cfg.authKey || process.env.MSG91_AUTH_KEY || '507494Aat701nlyG786a7f01caP1'
-
-  const logEntry = {
-    timestamp: new Date().toISOString(),
-    phone: phone,
-    formattedPhone: formattedPhone,
-    otp: otp,
-    type: type,
-    provider: 'MSG91',
-    status: (cfg.isEnabled === false || !authKey) ? 'CONSOLE_FALLBACK' : 'SENT_MSG91'
-  }
-  recentOtpLogs.unshift(logEntry)
-  if (recentOtpLogs.length > 50) recentOtpLogs.pop()
-
-  if (cfg.isEnabled === false || !authKey) {
-    console.log(`[MSG91] OTP for ${phone}: ${otp} (MSG91 disabled or Auth Key missing, logged to console)`)
-    return { success: true, method: 'console', otp }
-  }
-
-  try {
-    const headers = {
-      'Content-Type': 'application/json',
-      'authkey': authKey
-    }
-
-    const widgetUrl = `https://api.msg91.com/api/v5/widget/sendOtp?authkey=${encodeURIComponent(authKey)}`
-    const widgetPayload = {
-      widgetId: widgetId,
-      widget_id: widgetId,
-      mobile: formattedPhone,
-      identifier: formattedPhone,
-      otp: otp
-    }
-    if (cfg.senderId) widgetPayload.sender = cfg.senderId
-    if (cfg.templateId) widgetPayload.template_id = cfg.templateId
-
-    const resp = await fetch(widgetUrl, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(widgetPayload)
-    })
-    const data = await resp.json()
-    console.log(`[MSG91 Widget] OTP API response for ${formattedPhone}: ${resp.status}`, JSON.stringify(data))
-
-    const isSuccess = resp.ok || data.type === 'success' || data.responseType === 'success' || (data.message && String(data.message).toLowerCase().includes('success'))
-    if (isSuccess) {
-      return { success: true, data, reqId: data.reqId || data.message, method: 'msg91' }
-    }
-
-    console.warn(`[MSG91 Widget Fallback] Widget API response: ${JSON.stringify(data)}, trying standard OTP endpoint...`)
-    const templateId = cfg.templateId || ''
-    const senderId = cfg.senderId || 'TDGBIL'
-
-    let fallbackUrl = `https://control.msg91.com/api/v5/otp?mobile=${formattedPhone}&authkey=${encodeURIComponent(authKey)}`
-    if (templateId) fallbackUrl += `&template_id=${encodeURIComponent(templateId)}`
-    if (senderId) fallbackUrl += `&sender=${encodeURIComponent(senderId)}`
-    if (otp) fallbackUrl += `&otp=${encodeURIComponent(otp)}`
-
-    const fallbackPayload = {
-      mobile: formattedPhone,
-      otp: otp,
-      sender: senderId,
-      otp_expiry: cfg.otpExpiry || 300
-    }
-    if (widgetId) fallbackPayload.widget_id = widgetId
-    if (templateId) fallbackPayload.template_id = templateId
-
-    const fallbackResp = await fetch(fallbackUrl, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(fallbackPayload)
-    })
-    const fallbackData = await fallbackResp.json()
-    console.log(`[MSG91 Fallback] OTP API response for ${formattedPhone}: ${fallbackResp.status}`, JSON.stringify(fallbackData))
-
-    const fallbackSuccess = fallbackResp.ok || fallbackData.type === 'success' || fallbackData.responseType === 'success' || (fallbackData.message && String(fallbackData.message).toLowerCase().includes('success'))
-    return { success: fallbackSuccess, data: fallbackData, method: 'msg91', otp: fallbackSuccess ? undefined : otp }
-  } catch (err) {
-    console.error(`[MSG91] Failed to send OTP to ${formattedPhone}:`, err.message)
-    console.log(`[MSG91 FALLBACK] Logging OTP to console for ${phone}: ${otp}`)
-    return { success: false, error: err.message, method: 'console', otp }
-  }
+  console.warn(`[WhatsApp OTP Fallback] WhatsApp delivery failed. Logging OTP to console for ${phone}: ${otp}`)
+  return { success: true, method: 'console', otp, error: waResult.error }
 }
+
 
 function generateOTP() {
  return String(Math.floor(1000 + Math.random() * 9000))
@@ -9128,7 +9028,7 @@ app.get('/api/assets', auth, (req, res) => {
  })
 })
 
-// Add an asset (friend) — always pending, asset user must accept/reject on login
+// Add an asset (friend) â€” always pending, asset user must accept/reject on login
 app.post('/api/assets', auth, (req, res) => {
  const { name, phone } = req.body
  if (!name || !phone) return res.status(400).json({ message: 'Name and phone required' })
@@ -9158,7 +9058,7 @@ app.post('/api/assets', auth, (req, res) => {
  assets.push(newAsset)
  user.assets = assets
  saveState()
- console.log(`[ASSET ADDED] ${user.name} added ${name} (${phone}) — pending their acceptance`)
+ console.log(`[ASSET ADDED] ${user.name} added ${name} (${phone}) â€” pending their acceptance`)
 
  res.json({
  success: true,
@@ -9233,7 +9133,7 @@ const handleRemoveAsset = (req, res) => {
 app.delete('/api/assets/:assetId', auth, handleRemoveAsset)
 app.post('/api/assets/:assetId/delete', auth, handleRemoveAsset)
 
-// Respond to an asset request (accept or reject) — called by the ASSET user on login
+// Respond to an asset request (accept or reject) â€” called by the ASSET user on login
 app.post('/api/assets/respond', auth, (req, res) => {
  const { masterId, assetId, action } = req.body
  if (!masterId || !assetId || !action) {
@@ -9378,10 +9278,10 @@ app.get('/api/assets/discount/:phone', (req, res) => {
  if (isAsset) {
  if (billAmount > 0 && billAmount < 500) {
  discount = 20
- message = '20% asset discount (bill under ₹500)'
+ message = '20% asset discount (bill under â‚¹500)'
  } else if (billAmount >= 500) {
  discount = 25
- message = '25% asset discount (bill ₹500+)'
+ message = '25% asset discount (bill â‚¹500+)'
  } else {
  discount = 20
  message = '20% asset discount'
@@ -9794,7 +9694,7 @@ app.get('/api/customers/check-discount', (req, res) => {
         customerName: custName,
         phone: user.phone || user.customerPhone || user.mobile || phone,
         tier: 'Offer Redeemed',
-        discountReason: '⚠️ 1-Time VIP Offer Already Redeemed for this phone number'
+        discountReason: 'âš ï¸ 1-Time VIP Offer Already Redeemed for this phone number'
       })
     }
 
@@ -10061,14 +9961,17 @@ app.post('/api/mobile/register', (req, res) => {
  let existing = allUsers.find(u => u && String(u.phone || '').replace(/\D/g, '') === cleanPhone)
 
  if (existing) {
- return res.json({ success: true, message: 'User already exists', user: existing })
+ // [FIX Flaw 3] Return 409 — not success — on duplicate to prevent double-bonus
+ return res.status(409).json({ success: false, message: 'This phone number is already registered. Please log in.' })
  }
 
- // Find referrer by referral code or phone
+ // [FIX Flaw 2] Exact code match only (no phone-ending fallback)
  let referrer = null
  if (referralCode) {
  const codeClean = String(referralCode).trim().toUpperCase()
- referrer = allUsers.find(u => u && (String(u.referralCode || '').toUpperCase() === codeClean || String(u.phone || '').endsWith(codeClean.slice(-4))))
+ referrer = allUsers.find(u => u && String(u.referralCode || '').toUpperCase() === codeClean)
+ // [FIX Flaw 1B] Prevent self-referral in mobile register
+ if (referrer && String(referrer.phone || '').replace(/\D/g, '') === cleanPhone) referrer = null
  }
 
  const now = new Date().toISOString()
@@ -10081,7 +9984,7 @@ app.post('/api/mobile/register', (req, res) => {
  walletBalance: 500,
  visitCount: 0,
  totalSpend: 0,
- referralCode: `TDG${cleanPhone.slice(-4)}`,
+ referralCode: generateReferralCode(), // [FIX Flaw 8] Unified 8-char code tracked in usedReferralCodes Set
  isPrimaryUser: Boolean(isPrimary),
  isReferred: Boolean(referrer),
  referredBy: referrer ? referrer.phone : null,
@@ -10091,9 +9994,13 @@ app.post('/api/mobile/register', (req, res) => {
  }
 
  if (referrer) {
- if (!referrer.referredFriends) referrer.referredFriends = []
- referrer.referredFriends.push(newUser.phone)
- referrer.referredFriendsCount = (referrer.referredFriendsCount || 0) + 1
+ // [FIX Flaw 4] Mutate original arrays so saveState() persists the count
+ const _rPhone = String(referrer.phone || '').replace(/\D/g, '')
+ const _actualRef = loyaltyUsers.find(u => u && String(u.phone||'').replace(/\D/g,'') === _rPhone) ||
+  mobileAppUsers.find(u => u && String(u.phone||'').replace(/\D/g,'') === _rPhone) || referrer
+ if (!_actualRef.referredFriends) _actualRef.referredFriends = []
+ if (!_actualRef.referredFriends.includes(newUser.phone)) _actualRef.referredFriends.push(newUser.phone)
+ _actualRef.referredFriendsCount = _actualRef.referredFriends.length
  }
 
  loyaltyUsers.push(newUser)
@@ -10141,7 +10048,7 @@ app.post('/api/mobile/redeem-points', (req, res) => {
  phone: cleanP,
  points: -actualRedeemPoints,
  type: 'redemption',
- description: `Redeemed ${actualRedeemPoints} points on bill total ₹${billTotal}`,
+ description: `Redeemed ${actualRedeemPoints} points on bill total â‚¹${billTotal}`,
  createdAt: new Date().toISOString()
  })
 
@@ -10386,65 +10293,72 @@ app.post('/api/cashfree/create-order', async (req, res) => {
  const cfConfig = settings?.paymentGateways?.cashfree || settings?.cashfree || {}
  const appId = cfConfig.appId || process.env.CASHFREE_APP_ID || DEFAULT_CASHFREE_APP_ID
  const secretKey = cfConfig.secretKey || process.env.CASHFREE_SECRET_KEY || DEFAULT_CASHFREE_SECRET_KEY
- const env = (cfConfig.environment || process.env.CASHFREE_ENV || DEFAULT_CASHFREE_ENV).toUpperCase()
+ let env = (cfConfig.environment || process.env.CASHFREE_ENV || DEFAULT_CASHFREE_ENV).toUpperCase()
+ if (secretKey.startsWith('cfsk_ma_prod_')) {
+  env = 'PRODUCTION'
+ } else if (secretKey.startsWith('cfsk_ma_test_')) {
+  env = 'SANDBOX'
+ }
 
+ // Cashfree requires exactly 10-digit phone (no country code prefix)
  const cleanPhone = String(customerPhone || '9876543210').replace(/\D/g, '')
- const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone
- const generatedOrderId = orderId || `order_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
+ const cfPhone = cleanPhone.length > 10 ? cleanPhone.slice(-10) : cleanPhone.padStart(10, '0')
+ const generatedOrderId = orderId || `tdg_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
  const baseUrl = env === 'PRODUCTION' ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg'
 
  if (appId && secretKey && cfConfig.isEnabled !== false) {
  const payload = {
- order_id: generatedOrderId,
- order_amount: Number(Number(amount).toFixed(2)),
- order_currency: 'INR',
- customer_details: {
- customer_id: `cust_${cleanPhone.slice(-6)}`,
- customer_name: customerName || 'TDG Guest',
- customer_email: customerEmail || 'guest@tendengyros.com',
- customer_phone: formattedPhone
- },
- order_meta: {
- return_url: `https://pos.tendengyros.com/api/cashfree/callback?order_id=${generatedOrderId}`
- }
+  order_id: generatedOrderId,
+  order_amount: Number(Number(amount).toFixed(2)),
+  order_currency: 'INR',
+  customer_details: {
+   customer_id: `cust_${cfPhone.slice(-6)}_${Date.now().toString().slice(-4)}`,
+   customer_name: (customerName || 'TDG Guest').substring(0, 50), // required by Cashfree
+   customer_email: customerEmail || 'guest@tendengyros.com',
+   customer_phone: cfPhone // must be 10 digits
+  },
+  order_meta: {
+   return_url: `https://pos.tendengyros.com/api/cashfree/callback?order_id=${generatedOrderId}`,
+   notify_url: `https://pos.tendengyros.com/api/cashfree/webhook`
+  },
+  order_note: 'TDG Order'
  }
 
  const response = await fetch(`${baseUrl}/orders`, {
- method: 'POST',
- headers: {
- 'x-client-id': appId,
- 'x-client-secret': secretKey,
- 'x-api-version': '2023-08-01',
- 'Content-Type': 'application/json'
- },
- body: JSON.stringify(payload)
+  method: 'POST',
+  headers: {
+   'x-client-id': appId,
+   'x-client-secret': secretKey,
+   'x-api-version': '2023-08-01',
+   'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(payload)
  })
 
  const data = await response.json()
  console.log(`[CASHFREE ORDER CREATED] OrderID: ${generatedOrderId}, Status: ${response.status}, Session:`, data.payment_session_id)
 
  if (response.ok && data.payment_session_id) {
- return res.json({
- success: true,
- paymentSessionId: data.payment_session_id,
- orderId: data.order_id,
- cfOrderId: data.cf_order_id,
- environment: env
- })
+  const host = req.get('host') || 'pos.tendengyros.com'
+  const protocol = req.protocol || 'https'
+  const paymentUrl = `${protocol}://${host}/api/cashfree/pay?session_id=${data.payment_session_id}&env=${env}`
+
+  return res.json({
+   success: true,
+   paymentSessionId: data.payment_session_id,
+   paymentUrl: paymentUrl,
+   orderId: data.order_id,
+   cfOrderId: data.cf_order_id,
+   environment: env
+  })
  } else {
- console.error('[CASHFREE API ERROR]', data)
- return res.status(400).json({ error: data.message || 'Cashfree payment session creation failed', details: data })
+  console.error('[CASHFREE API ERROR]', JSON.stringify(data))
+  return res.status(400).json({ error: data.message || 'Cashfree payment session creation failed', details: data })
  }
  } else {
- // Dev Simulation / Sandbox Mode when live keys are pending
- console.log(`[CASHFREE DEV SIMULATION] OrderID: ${generatedOrderId}, Amount: ₹${amount}`)
- return res.json({
- success: true,
- paymentSessionId: `session_sim_${Date.now()}`,
- orderId: generatedOrderId,
- environment: 'SIMULATION',
- message: 'Cashfree payment session created in simulation mode (Add Cashfree API credentials in Admin Settings to process real payments).'
- })
+ // No credentials configured
+ console.log(`[CASHFREE] No credentials configured. OrderID: ${generatedOrderId}, Amount: ₹${amount}`)
+ return res.status(400).json({ error: 'Cashfree credentials not configured. Please add App ID and Secret Key in Admin Settings.' })
  }
  } catch (err) {
  console.error('[CASHFREE CREATE ORDER ERROR]', err)
@@ -10452,13 +10366,66 @@ app.post('/api/cashfree/create-order', async (req, res) => {
  }
 })
 
+// 2b. Cashfree Web SDK v3 Checkout Hosted Runner Page
+app.get('/api/cashfree/pay', (req, res) => {
+ const sessionId = req.query.session_id || req.query.sessionId || ''
+ const env = (req.query.env || 'PRODUCTION').toUpperCase()
+ const mode = env === 'PRODUCTION' ? 'production' : 'sandbox'
+
+ if (!sessionId) {
+  return res.status(400).send('<h3>Error: Missing payment session ID</h3>')
+ }
+
+ const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TDG Gyros - Cashfree Payment</title>
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .card { text-align: center; background: #1e293b; border-radius: 16px; padding: 32px 24px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); width: 90%; max-width: 360px; }
+        .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #eab308; border-radius: 50%; width: 44px; height: 44px; animation: spin 0.8s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        h3 { margin: 0 0 8px; font-size: 18px; color: #f8fafc; font-weight: 600; }
+        p { margin: 0; font-size: 13px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="spinner"></div>
+        <h3>Securing Connection</h3>
+        <p>Connecting to Cashfree Payment Gateway...</p>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const cashfree = Cashfree({ mode: "${mode}" });
+                cashfree.checkout({
+                    paymentSessionId: "${sessionId}",
+                    redirectTarget: "_self"
+                });
+            } catch (err) {
+                console.error("Cashfree SDK Initialization Error:", err);
+            }
+        });
+    </script>
+</body>
+</html>`
+
+ res.setHeader('Content-Type', 'text/html')
+ res.send(html)
+})
+
 // 3. Verify Cashfree Payment Status
-app.post(['/api/cashfree/verify-payment', '/api/cashfree/verify'], async (req, res) => {
+app.post(['/api/cashfree/verify-payment', '/api/cashfree/verify', '/api/cashfree/verify-order'], async (req, res) => {
  try {
  const { orderId } = req.body
  if (!orderId) return res.status(400).json({ error: 'orderId is required' })
 
- const cfConfig = settings?.cashfree || {}
+ const cfConfig = settings?.paymentGateways?.cashfree || settings?.cashfree || {}
  const appId = cfConfig.appId || process.env.CASHFREE_APP_ID || DEFAULT_CASHFREE_APP_ID
  const secretKey = cfConfig.secretKey || process.env.CASHFREE_SECRET_KEY || DEFAULT_CASHFREE_SECRET_KEY
  const env = (cfConfig.environment || process.env.CASHFREE_ENV || DEFAULT_CASHFREE_ENV).toUpperCase()
@@ -10508,10 +10475,39 @@ app.post(['/api/cashfree/verify-payment', '/api/cashfree/verify'], async (req, r
 })
 
 // 4. Cashfree Callback Handler
-app.all('/api/cashfree/callback', (req, res) => {
+app.all('/api/cashfree/callback', async (req, res) => {
  const orderId = req.query.order_id || req.body?.order_id || ''
  console.log('[CASHFREE CALLBACK RECEIVED] OrderID:', orderId)
- res.redirect(`https://pos.tendengyros.com/?payment=success&order_id=${orderId}`)
+
+ let isPaid = false
+ if (orderId) {
+  try {
+   const cfConfig = settings?.paymentGateways?.cashfree || settings?.cashfree || {}
+   const appId = cfConfig.appId || process.env.CASHFREE_APP_ID || DEFAULT_CASHFREE_APP_ID
+   const secretKey = cfConfig.secretKey || process.env.CASHFREE_SECRET_KEY || DEFAULT_CASHFREE_SECRET_KEY
+   const env = (cfConfig.environment || process.env.CASHFREE_ENV || DEFAULT_CASHFREE_ENV).toUpperCase()
+   const baseUrl = env === 'PRODUCTION' ? 'https://api.cashfree.com/pg' : 'https://sandbox.cashfree.com/pg'
+
+   if (appId && secretKey) {
+    const response = await fetch(`${baseUrl}/orders/${orderId}`, {
+     method: 'GET',
+     headers: {
+      'x-client-id': appId,
+      'x-client-secret': secretKey,
+      'x-api-version': '2023-08-01'
+     }
+    })
+    const data = await response.json()
+    console.log(`[CASHFREE CALLBACK VERIFY] OrderID: ${orderId}, Status:`, data.order_status)
+    isPaid = data.order_status === 'PAID'
+   }
+  } catch (err) {
+   console.error('[CASHFREE CALLBACK VERIFY ERROR]', err)
+  }
+ }
+
+ const statusParam = isPaid ? 'success' : 'failed'
+ res.redirect(`https://pos.tendengyros.com/?payment=${statusParam}&order_id=${orderId}`)
 })
 
 // ============ BILLING CUSTOMER / ASSET MANAGEMENT ============
@@ -10977,7 +10973,7 @@ app.post('/api/admin/double-backup/create', (req, res) => {
     saveState()
     res.json({
       success: true,
-      message: '✅ Synchronous Master Double-Backup Completed across all vaults!',
+      message: 'âœ… Synchronous Master Double-Backup Completed across all vaults!',
       backupMeta: backupResult ? backupResult._meta : null
     })
   } catch (e) {
@@ -11765,7 +11761,7 @@ app.post('/api/ccavenue/response', express.urlencoded({ extended: true }), (req,
  </head>
  <body>
  <div class="card">
- <div class="icon">${isSuccess ? '🎉' : '❌'}</div>
+ <div class="icon">${isSuccess ? 'ðŸŽ‰' : 'â Œ'}</div>
  <h2>Payment ${isSuccess ? 'Successful!' : 'Failed'}</h2>
  <p>${isSuccess ? `Order #${orderId} paid successfully.<br>Ref: ${trackingId}` : failureMessage || 'Payment could not be completed.'}</p>
  <button class="btn" onclick="finishPayment()">Return to App</button>
@@ -12481,9 +12477,9 @@ app.get('/api/admin/menu/export-excel', (req, res) => {
  'Item ID': item.id,
  'Item Name': item.name,
  'Category': cat ? cat.name : 'Uncategorized',
- 'Price (₹)': item.price,
- 'Cost (₹)': cost !== null ? Number(cost.toFixed(2)) : 'N/A',
- 'Profit (₹)': profit !== null ? Number(profit.toFixed(2)) : 'N/A',
+ 'Price (â‚¹)': item.price,
+ 'Cost (â‚¹)': cost !== null ? Number(cost.toFixed(2)) : 'N/A',
+ 'Profit (â‚¹)': profit !== null ? Number(profit.toFixed(2)) : 'N/A',
  'Margin (%)': margin !== null ? `${margin}%` : 'N/A',
  'Available': item.isAvailable !== false ? 'Yes' : 'No',
  'Recipe Mapped': recipe ? 'Yes' : 'No',
@@ -12514,8 +12510,8 @@ app.get('/api/admin/menu/export-excel', (req, res) => {
  'Ingredient Name': ing.inventoryName || (invItem ? invItem.name : 'Unknown'),
  'Quantity': ing.quantity,
  'Unit': ing.unit || '',
- 'Cost Per Unit (₹)': cpu,
- 'Ingredient Cost (₹)': Number(totalCost.toFixed(2))
+ 'Cost Per Unit (â‚¹)': cpu,
+ 'Ingredient Cost (â‚¹)': Number(totalCost.toFixed(2))
  })
  })
  })
@@ -12565,7 +12561,7 @@ app.post('/api/admin/menu/import-excel', (req, res) => {
  // 2. Process items
  items.forEach(row => {
  const itemName = row['Item Name'] || row.name || row['Name'] || row['Item']
- const priceVal = row['Price (₹)'] || row.price || row['Price']
+ const priceVal = row['Price (â‚¹)'] || row.price || row['Price']
  if (!itemName || priceVal === undefined || priceVal === null) return
 
  const categoryName = row['Category'] || row.category || row['Category Name']
@@ -12696,6 +12692,69 @@ app.delete('/api/inventory/:id', (req, res) => {
  inventory.splice(idx, 1)
  saveState()
  io.emit('inventory:updated', inventory)
+ res.json({ success: true })
+})
+
+app.delete('/api/inventory/clear', (req, res) => {
+ inventory.length = 0
+ saveState()
+ if (typeof io !== 'undefined' && io.emit) io.emit('inventory:updated', inventory)
+ res.json({ success: true, message: 'All inventory data cleared' })
+})
+
+app.get('/api/inventory/categories', (req, res) => {
+ const itemCats = Array.isArray(inventory) ? [...new Set(inventory.map(i => i.category).filter(Boolean))] : []
+ const merged = [...new Set([...(inventoryCategories || []), ...itemCats, 'Proteins', 'Bakery', 'Sides', 'Supplies', 'Beverages', 'Sauces', 'Packaging', 'Dairy', 'General'])]
+ res.json(merged)
+})
+
+app.post('/api/inventory/categories', (req, res) => {
+ const { name } = req.body
+ if (!name || !String(name).trim()) return res.status(400).json({ error: 'Category name required' })
+ const catName = String(name).trim()
+ if (!inventoryCategories.includes(catName)) {
+ inventoryCategories.push(catName)
+ saveState()
+ }
+ res.json({ success: true, category: catName, categories: inventoryCategories })
+})
+
+// ============ ACCOUNTS & TO-DO API ROUTES ============
+app.get('/api/accounts/todos', (req, res) => {
+ res.json(todos || [])
+})
+
+app.post('/api/accounts/todos', (req, res) => {
+ const { title, date, priority, category, notes, isCompleted } = req.body
+ if (!title || !String(title).trim()) return res.status(400).json({ error: 'Title required' })
+ const newTodo = {
+ id: 'todo_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+ title: String(title).trim(),
+ date: date || new Date().toISOString().split('T')[0],
+ priority: priority || 'Medium',
+ category: category || 'General',
+ notes: notes || '',
+ isCompleted: !!isCompleted,
+ createdAt: new Date().toISOString()
+ }
+ todos.unshift(newTodo)
+ saveState()
+ res.status(201).json(newTodo)
+})
+
+app.put('/api/accounts/todos/:id', (req, res) => {
+ const idx = todos.findIndex(t => String(t.id) === String(req.params.id))
+ if (idx === -1) return res.status(404).json({ error: 'Todo item not found' })
+ Object.assign(todos[idx], req.body, { updatedAt: new Date().toISOString() })
+ saveState()
+ res.json(todos[idx])
+})
+
+app.delete('/api/accounts/todos/:id', (req, res) => {
+ const idx = todos.findIndex(t => String(t.id) === String(req.params.id))
+ if (idx === -1) return res.status(404).json({ error: 'Todo item not found' })
+ todos.splice(idx, 1)
+ saveState()
  res.json({ success: true })
 })
 
@@ -13204,11 +13263,11 @@ function resolveCampaignOffer(orderDateStr, customerPhone, flags) {
  }
  }
 
- // 2. Inauguration 50% — only on its configured date
+ // 2. Inauguration 50% â€” only on its configured date
  const ina = c.inauguration
  if (ina && ina.active && ina.date && date === ina.date) return validOffer('inauguration', ina)
 
- // 3. Special 20% — within its from..to date window
+ // 3. Special 20% â€” within its from..to date window
  const s20 = c.special20
  if (s20 && s20.active && s20.from && s20.to && date >= s20.from && date <= s20.to) return validOffer('special20', s20)
 
@@ -13223,7 +13282,7 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
   let { type, source, items, subtotal, tax, total, tableNumber, customerName, customerPhone, notes, paymentMethod, complimentary, complimentaryType, specialRemarks, status, paymentStatus, paidAt, settleDirectly } = req.body
 
   // If not authenticated as staff, accept the order but force safe status values
-  // (POS is an internal system — do NOT reject, just sanitize)
+  // (POS is an internal system â€” do NOT reject, just sanitize)
   if (!req.staffId) {
     status = 'pending'
     paymentStatus = 'pending'
@@ -13273,9 +13332,9 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  const taxVal = Math.round(netSub * 0.05)
  const totalVal = Math.round(netSub + taxVal)
  
- const discountLabel = req.body.discountName || (
+ const discountLabel = req.body.discountName || req.body.customDiscountReason || (
  isStaffBenefit ? (req.body.offerName || 'Achariya Family Week 2026') :
- (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'Discount' : '')))
+ (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'Custom Discount' : '')))
  )
 
  const isDirectSettle = Boolean(req.body.settleDirectly || req.body.status === 'completed' || req.body.paymentStatus === 'paid')
@@ -13295,6 +13354,9 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  rawSubtotal: rawSub,
  discount: discountVal,
  discountName: discountLabel,
+ customDiscountType: req.body.customDiscountType || undefined,
+ customDiscountValue: req.body.customDiscountValue || undefined,
+ customDiscountReason: req.body.customDiscountReason || undefined,
  offerName: req.body.offerName || (isStaffBenefit ? 'Achariya Family Week 2026' : undefined),
  offerType: req.body.offerType || (isStaffBenefit ? 'staff_family' : undefined),
  employeeId: req.body.employeeId || undefined,
@@ -13371,7 +13433,7 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  u.totalSpend = (u.totalSpend || 0) + totalVal
  u.lastVisit = now
 
- // Partner Gamification: Auto-upgrade to Partner level if spend >= ₹5,000
+ // Partner Gamification: Auto-upgrade to Partner level if spend >= â‚¹5,000
  if (u.totalSpend >= 5000) {
  u.tier = 'Partner'
  }
@@ -13382,10 +13444,13 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  const referrer = (loyaltyUsers || []).find(x => String(x.phone || '').replace(/\D/g, '') === referrerPhone) ||
  (mobileAppUsers || []).find(x => String(x.phone || '').replace(/\D/g, '') === referrerPhone)
  if (referrer) {
- const commission = Math.round(totalVal * 0.05)
+ // [FIX Flaw 7] Cap per-order commission at Rs.100; wallet tracked separately from rubyPoints
+ const rawCommission = Math.round(totalVal * 0.05)
+ const commission = Math.min(rawCommission, 100)
  if (commission > 0) {
- referrer.walletBalance = (Number(referrer.walletBalance || referrer.rubyPoints) || 0) + commission
- referrer.rubyPoints = referrer.walletBalance
+ referrer.walletBalance = (Number(referrer.walletBalance) || 0) + commission
+ referrer.referralEarned = (Number(referrer.referralEarned) || 0) + commission
+ // rubyPoints remain as loyalty points — NOT equated to walletBalance
  pointTransactions.push({
  id: 'pt_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
  phone: referrerPhone,
@@ -13449,120 +13514,196 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
   res.status(201).json({ ...order, _debug: { memoryCount: orders.length, diskCount }})
 })
 
+function syncCancelledOrderToBackups(targetOrder) {
+  if (!targetOrder) return
+  const idStr = String(targetOrder.id || '').trim()
+  const numStr = String(targetOrder.orderNumber || '').trim()
+
+  const updateList = (arr) => {
+    if (!Array.isArray(arr)) return arr
+    return arr.map(o => {
+      if (!o) return o
+      const matchId = idStr && String(o.id || '').trim() === idStr
+      const matchNum = numStr && String(o.orderNumber || '').trim() === numStr
+      if (matchId || matchNum) {
+        return {
+          ...o,
+          status: 'cancelled',
+          paymentStatus: 'cancelled',
+          isCancelled: true,
+          cancelReason: targetOrder.cancelReason || o.cancelReason || 'Cancelled by Staff',
+          cancelledBy: targetOrder.cancelledBy || o.cancelledBy || 'Staff',
+          updatedAt: new Date().toISOString()
+        }
+      }
+      return o
+    })
+  }
+
+  const updateFile = (filePath) => {
+    if (!existsSync(filePath)) return
+    try {
+      const content = readFileSync(filePath, 'utf-8').trim()
+      if (!content) return
+      const parsed = JSON.parse(content)
+      if (Array.isArray(parsed)) {
+        writeFileSync(filePath, JSON.stringify(updateList(parsed), null, 2))
+      } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.orders)) {
+        parsed.orders = updateList(parsed.orders)
+        writeFileSync(filePath, JSON.stringify(parsed, null, 2))
+      }
+    } catch (e) {}
+  }
+
+  const updateDir = (dirPath) => {
+    if (!existsSync(dirPath)) return
+    try {
+      const files = readdirSync(dirPath).filter(f => f.endsWith('.json'))
+      for (const f of files) {
+        updateFile(join(dirPath, f))
+      }
+    } catch (e) {}
+  }
+
+  if (typeof BACKUP_DIR !== 'undefined') updateDir(BACKUP_DIR)
+  if (typeof DAILY_BACKUP_DIR !== 'undefined') updateDir(DAILY_BACKUP_DIR)
+  if (typeof VAULT_PATH !== 'undefined') updateFile(VAULT_PATH)
+  if (typeof MASTER_DOUBLE_BACKUP_PATH !== 'undefined') updateFile(MASTER_DOUBLE_BACKUP_PATH)
+}
+
 app.patch('/api/pos/orders/:id/status', (req, res) => {
- const { id } = req.params
- const { status, paymentStatus, cancelReason } = req.body
- 
- const order = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
- if (order) {
- order.status = status || order.status
- order.paymentStatus = paymentStatus || order.paymentStatus
- order.paymentMethod = req.body.paymentMethod || order.paymentMethod
- if ((status === 'completed' || status === 'served') && paymentStatus === 'paid') {
- if (!order.paidAt) order.paidAt = new Date().toISOString()
- if (!order.completedAt) order.completedAt = new Date().toISOString()
- }
- if (req.body.splitPayments) order.splitPayments = req.body.splitPayments
- if (req.body.cashTendered !== undefined) order.cashTendered = Number(req.body.cashTendered)
- if (req.body.changeReturned !== undefined) order.changeReturned = Number(req.body.changeReturned)
- if (status === 'cancelled') {
- if (cancelReason) order.cancelReason = cancelReason
- if (req.body.cancelledBy) order.cancelledBy = req.body.cancelledBy
- restoreInventoryForOrder(order)
- } else if (status === 'completed' || status === 'served' || status === 'ready' || status === 'preparing') {
- deductInventoryForOrder(order)
- }
- order.updatedAt = new Date().toISOString()
- io.emit('order:updated', order)
- 
- // CRITICAL: Persist status change immediately
- try {
- saveState()
- } catch (e) {
- console.error('[ORDER STATUS PERSIST ERROR]:', e.message)
- }
+  const { id } = req.params
+  const { status, paymentStatus, cancelReason } = req.body
+  
+  const matchingOrders = orders.filter(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
+  if (matchingOrders.length > 0) {
+    const order = matchingOrders[0]
+    const orderAlreadyPaid = order.paymentStatus === 'paid' || !!order.paidAt
+    const orderAlreadyCompleted = order.status === 'completed' || order.status === 'served'
+    const statusIsDowngrade = ['pending', 'ready', 'preparing', 'in-progress'].includes(status)
+    if ((orderAlreadyPaid || orderAlreadyCompleted) && statusIsDowngrade) {
+      console.warn(`[PATCH STATUS GUARD] Blocked downgrade of order ${order.orderNumber || id} from '${order.status}' to '${status}' (already paid/completed)`)
+      return res.json({ success: true, order, skipped: true, reason: 'Order already completed/paid — status downgrade blocked' })
+    }
 
- // ASSET SYSTEM: When order completed, handle cashback + asset dined tracking
- if ((status === 'completed' || status === 'served') && order.customerPhone) {
- const db = readDb()
- const billAmount = Math.floor(order.total || 0)
- if (billAmount > 0) {
- const customer = db.users.find(u => u.phone === order.customerPhone)
+    matchingOrders.forEach(o => {
+      o.status = status || o.status
+      if (status === 'cancelled') {
+        o.paymentStatus = 'cancelled'
+        o.isCancelled = true
+        if (cancelReason) o.cancelReason = cancelReason
+        if (req.body.cancelledBy) o.cancelledBy = req.body.cancelledBy
+        restoreInventoryForOrder(o)
+      } else {
+        o.paymentStatus = paymentStatus || o.paymentStatus
+        o.paymentMethod = req.body.paymentMethod || o.paymentMethod
+        if ((status === 'completed' || status === 'served') && paymentStatus === 'paid') {
+          if (!o.paidAt) o.paidAt = new Date().toISOString()
+          if (!o.completedAt) o.completedAt = new Date().toISOString()
+        }
+      }
+      if (req.body.splitPayments) o.splitPayments = req.body.splitPayments
+      if (req.body.cashTendered !== undefined) o.cashTendered = Number(req.body.cashTendered)
+      if (req.body.changeReturned !== undefined) o.changeReturned = Number(req.body.changeReturned)
+      if (status === 'completed' || status === 'served' || status === 'ready' || status === 'preparing') {
+        deductInventoryForOrder(o)
+      }
+      o.updatedAt = new Date().toISOString()
+    })
 
- // 1. Mark asset as dined if customer is someone's asset
- if (customer && customer.referredBy) {
- const master = db.users.find(u => u.id === customer.referredBy)
- if (master) {
- const assets = master.assets || []
- const asset = assets.find(a => a.phone === order.customerPhone)
- if (asset && !asset.hasDined) {
- asset.hasDined = true
- asset.dinedAt = new Date().toISOString()
- master.assetsDinedCount = (master.assetsDinedCount || 0) + 1
- checkAllAssetsBonus(master, db)
- }
+    if (status === 'cancelled') {
+      syncCancelledOrderToBackups(order)
+    }
 
- // 2. 10% cashback to master (perpetual)
- const cashback = Math.floor(billAmount * 0.10)
- if (cashback > 0) {
- master.points = (master.points || 0) + cashback
- master.cashbackEarned = (master.cashbackEarned || 0) + cashback
- db.transactions.push({
- id: 't_' + Date.now() + '_cb',
- userId: master.id,
- type: 'credit',
- amount: cashback,
- description: '10% cashback from ' + (customer.name || order.customerPhone) + ' - Order #' + order.orderNumber,
- createdAt: new Date().toISOString()
- })
- }
- }
- }
+    io.emit('order:updated', order)
+    
+    try {
+      saveState()
+    } catch (e) {
+      console.error('[ORDER STATUS PERSIST ERROR]:', e.message)
+    }
 
- // 3. Earn points for the customer (1 point = 1 rupee, earned on order)
- if (customer) {
- const earnedPoints = Math.floor(billAmount * 0.05) // 5% earning
- if (earnedPoints > 0) {
- customer.points = (customer.points || 0) + earnedPoints
- db.transactions.push({
- id: 't_' + Date.now() + '_ep',
- userId: customer.id,
- type: 'credit',
- amount: earnedPoints,
- description: 'Order #' + order.orderNumber + ' completed',
- createdAt: new Date().toISOString()
- })
- }
- }
+    if ((status === 'completed' || status === 'served') && order.customerPhone) {
+      const db = readDb()
+      const billAmount = Math.floor(order.total || 0)
+      if (billAmount > 0) {
+        const customer = db.users.find(u => u.phone === order.customerPhone)
+        if (customer && customer.referredBy) {
+          const master = db.users.find(u => u.id === customer.referredBy)
+          if (master) {
+            const assets = master.assets || []
+            const asset = assets.find(a => a.phone === order.customerPhone)
+            if (asset && !asset.hasDined) {
+              asset.hasDined = true
+              asset.dinedAt = new Date().toISOString()
+              master.assetsDinedCount = (master.assetsDinedCount || 0) + 1
+              checkAllAssetsBonus(master, db)
+            }
+            const cashback = Math.floor(billAmount * 0.10)
+            if (cashback > 0) {
+              master.points = (master.points || 0) + cashback
+              master.cashbackEarned = (master.cashbackEarned || 0) + cashback
+              db.transactions.push({
+                id: 't_' + Date.now() + '_cb',
+                userId: master.id,
+                type: 'credit',
+                amount: cashback,
+                description: '10% cashback from ' + (customer.name || order.customerPhone) + ' - Order #' + order.orderNumber,
+                createdAt: new Date().toISOString()
+              })
+            }
+          }
+        }
 
- writeDb(db)
- saveState()
- }
- }
- return res.json({ success: true, order })
- }
- 
- res.status(404).json({ error: 'Order not found' })
+        if (customer) {
+          const earnedPoints = Math.floor(billAmount * 0.05)
+          if (earnedPoints > 0) {
+            customer.points = (customer.points || 0) + earnedPoints
+            db.transactions.push({
+              id: 't_' + Date.now() + '_ep',
+              userId: customer.id,
+              type: 'credit',
+              amount: earnedPoints,
+              description: 'Order #' + order.orderNumber + ' completed',
+              createdAt: new Date().toISOString()
+            })
+          }
+        }
+
+        writeDb(db)
+        saveState()
+      }
+    }
+    return res.json({ success: true, order })
+  }
+  
+  res.status(404).json({ error: 'Order not found' })
 })
 
 app.post('/api/pos/orders/:id/cancel', posAuth, (req, res) => {
- const { id } = req.params
- const { reason, cancelledBy } = req.body || {}
- const targetOrder = orders.find(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
- if (!targetOrder) {
- return res.status(404).json({ error: 'Order / Bill not found' })
- }
- targetOrder.status = 'cancelled'
- targetOrder.cancelReason = reason || 'Cancelled by Staff'
- if (cancelledBy) targetOrder.cancelledBy = cancelledBy
- targetOrder.updatedAt = new Date().toISOString()
- restoreInventoryForOrder(targetOrder)
- saveState()
- io.emit('order:updated', targetOrder)
- res.json({ success: true, message: `Bill #${targetOrder.orderNumber || targetOrder.id} cancelled successfully`, order: targetOrder })
+  const { id } = req.params
+  const { reason, cancelledBy } = req.body || {}
+  const matchingOrders = orders.filter(o => String(o.id) === String(id) || String(o.orderNumber) === String(id))
+  if (matchingOrders.length === 0) {
+    return res.status(404).json({ error: 'Order / Bill not found' })
+  }
+  const targetOrder = matchingOrders[0]
+  matchingOrders.forEach(o => {
+    o.status = 'cancelled'
+    o.paymentStatus = 'cancelled'
+    o.isCancelled = true
+    o.cancelReason = reason || 'Cancelled by Staff'
+    if (cancelledBy) o.cancelledBy = cancelledBy
+    o.updatedAt = new Date().toISOString()
+    restoreInventoryForOrder(o)
+  })
+  syncCancelledOrderToBackups(targetOrder)
+  saveState()
+  io.emit('order:updated', targetOrder)
+  res.json({ success: true, message: `Bill #${targetOrder.orderNumber || targetOrder.id} cancelled successfully`, order: targetOrder })
 })
 
-// ─── Online Orders (Zomato/Swiggy/Zepto) ───
+// â”€â”€â”€ Online Orders (Zomato/Swiggy/Zepto) â”€â”€â”€
 app.get('/api/online-orders', (req, res) => {
  res.json(onlineOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
 })
@@ -13609,7 +13750,7 @@ app.post('/api/online-orders/webhook', (req, res) => {
  res.status(201).json(onlineOrder)
 })
 
-// Accept online order → create internal POS order → push to kitchen
+// Accept online order â†’ create internal POS order â†’ push to kitchen
 app.post('/api/online-orders/:id/accept', (req, res) => {
  const { id } = req.params
  const onlineOrder = onlineOrders.find(o => o.id === id)
@@ -13747,6 +13888,10 @@ app.post('/api/loyalty/register', (req, res) => {
  if (!referrer) {
  return res.status(400).json({ error: 'Invalid referral code' })
  }
+ // [FIX Flaw 1C] Prevent self-referral in loyalty registration
+ if (referrer.phone === phone || referrer.email === email) {
+ return res.status(400).json({ error: 'You cannot refer yourself.' })
+ }
  }
  
  const id = uuid()
@@ -13835,7 +13980,7 @@ app.get('/api/loyalty/user/:phone', (req, res) => {
  loyaltyUsers.push(user)
  saveState()
  } else {
- // Unknown phone — return zero-balance user so frontend shows "Insufficient balance"
+ // Unknown phone â€” return zero-balance user so frontend shows "Insufficient balance"
  const id = 'loy_' + Date.now()
  user = {
  id, name: 'Customer', phone: req.params.phone, email: '', role: 'user',
@@ -14769,21 +14914,51 @@ app.post('/api/admin/delete-order', (req, res) => {
     const { orderId, orderNumber } = req.body;
     const beforeCount = orders.length;
     
-    const remaining = orders.filter(o => {
+    const isTarget = (o) => {
       if (!o) return false;
-      if (orderId && String(o.id) === String(orderId)) return false;
-      if (orderNumber && (Number(o.orderNumber) === Number(orderNumber) || String(o.orderNumber) === String(orderNumber))) return false;
+      if (orderId && String(o.id) === String(orderId)) return true;
+      if (orderNumber && (Number(o.orderNumber) === Number(orderNumber) || String(o.orderNumber) === String(orderNumber))) return true;
       const items = o.items || [];
-      if (items.some(i => i && i.menuItemName === 'DEPLOY_VERIFY_TEST')) return false;
-      return true;
-    });
+      if (items.some(i => i && i.menuItemName === 'DEPLOY_VERIFY_TEST')) return true;
+      return false;
+    }
+
+    const remaining = orders.filter(o => !isTarget(o));
     
     orders.length = 0;
     orders.push(...remaining);
     
+    // Purge target order from all backup files so syncSalesVault cannot resurrect it
+    const purgeDir = (dirPath) => {
+      if (!existsSync(dirPath)) return;
+      try {
+        const files = readdirSync(dirPath).filter(f => f.endsWith('.json'));
+        for (const f of files) {
+          try {
+            const p = join(dirPath, f);
+            const content = readFileSync(p, 'utf-8');
+            if ((orderNumber && content.includes(String(orderNumber))) || (orderId && content.includes(String(orderId)))) {
+              const parsed = JSON.parse(content);
+              let bOrders = Array.isArray(parsed) ? parsed : (parsed.orders || []);
+              const filtered = bOrders.filter(o => !isTarget(o));
+              if (Array.isArray(parsed)) {
+                writeFileSync(p, JSON.stringify(filtered, null, 2));
+              } else if (parsed && typeof parsed === 'object') {
+                parsed.orders = filtered;
+                writeFileSync(p, JSON.stringify(parsed, null, 2));
+              }
+            }
+          } catch(e) {}
+        }
+      } catch(e) {}
+    }
+
+    if (typeof BACKUP_DIR !== 'undefined') purgeDir(BACKUP_DIR);
+    if (typeof DAILY_BACKUP_DIR !== 'undefined') purgeDir(DAILY_BACKUP_DIR);
+
     try {
-      const vaultPath = join(DATA_DIR, 'sales_vault_LOCK.json');
-      if (existsSync(vaultPath)) rmSync(vaultPath);
+      if (existsSync(VAULT_PATH)) rmSync(VAULT_PATH);
+      if (existsSync(MASTER_DOUBLE_BACKUP_PATH)) rmSync(MASTER_DOUBLE_BACKUP_PATH);
     } catch(e) {}
     
     saveState();
@@ -14923,6 +15098,8 @@ const normalizeDateStr = (inputStr) => {
  return getLocalDateStr(str)
 }
 
+
+
 // Helper for daily KOT sequence resetting to 100 every calendar day
 let currentKotDateStr = ''
 let currentKotSeq = 99
@@ -14960,19 +15137,22 @@ const getOrderDiscountAmount = (o) => {
 
 // Helper to compute order total amount safely (returns 0 for cancelled or complimentary orders)
 const getOrderAmount = (o) => {
- if (!o) return 0
- const s = (o.status || '').toLowerCase()
- const m = (o.paymentMethod || '').toLowerCase()
- if (s === 'cancelled' || s === 'canceled' || s === 'void' || o.isCancelled || o.isVoid) return 0
- if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') return 0
+  if (!o) return 0
+  const s = (o.status || '').toLowerCase()
+  const m = (o.paymentMethod || '').toLowerCase()
+  if (s === 'cancelled' || s === 'canceled' || s === 'void' || o.isCancelled || o.isVoid) return 0
+  if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') {
+    const itemSub = (o.items || []).reduce((sum, i) => sum + (i.totalPrice !== undefined ? Number(i.totalPrice) : (Number(i.unitPrice || i.price || 0) * Number(i.quantity || i.qty || 1))), 0)
+    return Number(o.rawSubtotal) || itemSub || Number(o.subtotal) || Number(o.total) || 0
+  }
 
- if (o.total !== undefined && o.total !== null && Number(o.total) > 0) {
- return Number(o.total)
- }
- const items = o.items || []
- const subtotal = items.reduce((sum, i) => sum + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
- const tax = o.tax !== undefined ? o.tax : subtotal * 0.05
- return Math.round(subtotal + tax)
+  if (o.total !== undefined && o.total !== null && Number(o.total) > 0) {
+    return Number(o.total)
+  }
+  const items = o.items || []
+  const subtotal = items.reduce((sum, i) => sum + (i.totalPrice || (i.unitPrice || i.price || 0) * (i.quantity || i.qty || 1)), 0)
+  const tax = o.tax !== undefined ? o.tax : subtotal * 0.05
+  return Math.round(subtotal + tax)
 }
 
 function isDemoOrderBeforeOpening(o) {
@@ -15026,7 +15206,7 @@ function getCompletedSales(reqQuery, options = {}) {
  console.log(`[SALES COUNT AUDIT] Raw Orders Count: ${orders.length}`)
  console.log(`[SALES COUNT AUDIT] Filtered Orders Count (Period): ${candidateOrders.length}`)
  console.log(`[SALES COUNT AUDIT] Bill Count Returned: ${completedSales.length}`)
- console.log(`[SALES COUNT AUDIT] Total Sales Returned: ₹${Math.round(totalSales)}`)
+ console.log(`[SALES COUNT AUDIT] Total Sales Returned: â‚¹${Math.round(totalSales)}`)
 
  return completedSales
 }
@@ -15063,7 +15243,7 @@ function calculateSalesMetrics(salesOrders = []) {
       complimentaryCount += 1
       const compVal = rawSub || Number(o.total) || netSub || 0
       complimentaryTotal += compVal
-      byPaymentMethod['complimentary'] = (byPaymentMethod['complimentary'] || 0) + 0
+      byPaymentMethod['complimentary'] = (byPaymentMethod['complimentary'] || 0) + compVal
       paymentCounts['complimentary'] = (paymentCounts['complimentary'] || 0) + 1
     }
 
@@ -15159,14 +15339,17 @@ const getOrderDiscountInfo = (o) => {
 
 function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
  const { date, from, to } = reqQuery || {}
- // CRITICAL FIX: Always read fresh from disk to support PM2 cluster/multi-process deployments.
- // In cluster mode, each worker has its own in-memory `orders`. A POST on Worker A
- // would not be visible to Worker B's GET. Reading from disk ensures all workers see all orders.
- let diskOrders = orders
- try {
-   const freshDb = readDb()
-   if (freshDb && Array.isArray(freshDb.orders)) diskOrders = freshDb.orders
- } catch(e) { diskOrders = orders }
+  // Use in-memory orders as the primary source â€” they are always the most up-to-date (updated by every
+  // PATCH/POST immediately). Only fall back to disk when in-memory is empty (server restart / PM2 cluster).
+  // Formerly we always read fresh from disk here, but that could return stale data if a disk write
+  // (e.g. from saveState()) hadn't fully completed before the GET arrived.
+  let diskOrders = orders
+  if (!Array.isArray(diskOrders) || diskOrders.length === 0) {
+    try {
+      const freshDb = readDb()
+      if (freshDb && Array.isArray(freshDb.orders)) diskOrders = freshDb.orders
+    } catch(e) { diskOrders = orders }
+  }
  const targetOrders = includeAll ? diskOrders : diskOrders.filter(isValidSalesOrder)
  const today = new Date()
  const todayStr = getLocalDateStr(today)
@@ -15212,20 +15395,32 @@ function getFilteredOrdersForPeriod(reqQuery, includeAll = false) {
  return targetOrders.filter(o => getOrderDate(o) >= pastMonthStr)
  }
 
+ // Unsettled orders (pending/ready/preparing/in-progress) must ALWAYS appear on the
+ // billing screen for 'today' regardless of which date they were created.
+ // This lets staff settle previous-shift KOTs without switching the date filter.
+ const isUnsettledOrder = (o) => {
+  const s = (o.status || '').toLowerCase()
+  const ps = (o.paymentStatus || '').toLowerCase()
+  return (s === 'pending' || s === 'ready' || s === 'in-progress' || s === 'preparing')
+   && ps !== 'paid' && !o.paidAt
+ }
+
  const normDate = normalizeDateStr(date)
  if (normDate === 'today' || normDate === todayStr) {
- return targetOrders.filter(o => getOrderDate(o) === todayStr)
+  // Today's orders + any unsettled KOTs from previous shifts
+  return targetOrders.filter(o => getOrderDate(o) === todayStr || isUnsettledOrder(o))
  }
 
  if (normDate === 'yesterday' || normDate === yesterdayStr) {
- return targetOrders.filter(o => getOrderDate(o) === yesterdayStr)
+  return targetOrders.filter(o => getOrderDate(o) === yesterdayStr)
  }
 
  if (normDate && normDate !== 'all' && normDate !== 'latest') {
- return targetOrders.filter(o => getOrderDate(o) === normDate)
+  return targetOrders.filter(o => getOrderDate(o) === normDate)
  }
 
- return targetOrders.filter(o => getOrderDate(o) === todayStr)
+ // Default (no date param): today + all unsettled from previous shifts
+ return targetOrders.filter(o => getOrderDate(o) === todayStr || isUnsettledOrder(o))
 }
 
 // ============ AUTOMATIC MIDNIGHT 12:00 AM IST DAY CLOSING ENGINE ============
@@ -15267,7 +15462,7 @@ function runMidnightDayClosingCheck() {
 
  writeFileSync(backupFile, JSON.stringify(closingSummary, null, 2))
  lastClosedDateIST = yesterdayISTStr
- console.log(`[12:00 AM IST MIDNIGHT AUTO DAY CLOSING] Successfully closed shift for ${yesterdayISTStr}: ${dayOrders.length} Bills, ₹${totalSales.toLocaleString('en-IN')}`)
+ console.log(`[12:00 AM IST MIDNIGHT AUTO DAY CLOSING] Successfully closed shift for ${yesterdayISTStr}: ${dayOrders.length} Bills, â‚¹${totalSales.toLocaleString('en-IN')}`)
  }
  }
  } catch (e) {
@@ -15415,7 +15610,7 @@ app.put('/api/pos/orders/:id/modify', (req, res) => {
 
     saveState()
     io.emit('order:updated', targetOrder)
-    console.log(`[BILL MODIFICATION] Order #${targetOrder.orderNumber || targetOrder.id} modified by ${targetOrder.modifiedBy}. Total: ₹${previousTotal} → ₹${newTotal}`)
+    console.log(`[BILL MODIFICATION] Order #${targetOrder.orderNumber || targetOrder.id} modified by ${targetOrder.modifiedBy}. Total: â‚¹${previousTotal} â†’ â‚¹${newTotal}`)
 
     res.json({
       success: true,
@@ -15431,12 +15626,12 @@ app.put('/api/pos/orders/:id/modify', (req, res) => {
 // Check every 60 seconds for 12:00 AM IST rollover
 setInterval(runMidnightDayClosingCheck, 60000)
 
-// Auto-save state every 10 seconds — tightened from 30s for maximum transaction safety
+// Auto-save state every 10 seconds â€” tightened from 30s for maximum transaction safety
 setInterval(() => {
  try { saveState() } catch (e) { console.error('[AUTO-SAVE] Error:', e.message) }
 }, 10000)
 
-// Diagnostic endpoint — check live database state (admin only)
+// Diagnostic endpoint â€” check live database state (admin only)
 
 // Admin route: Raw orders list by date for audit and diagnosis
 app.get('/api/admin/raw-orders', (req, res) => {
@@ -15575,10 +15770,10 @@ app.get(['/api/reports/reconcile', '/api/reports/reconciliation'], (req, res) =>
 
  const discrepancies = []
  if (dailyClosingNet !== paymentReportNet) {
- discrepancies.push(`Daily Closing Net (₹${dailyClosingNet}) does not match Payment Report Net (₹${paymentReportNet})`)
+ discrepancies.push(`Daily Closing Net (â‚¹${dailyClosingNet}) does not match Payment Report Net (â‚¹${paymentReportNet})`)
  }
  if (dailyClosingNet !== posOrdersNet) {
- discrepancies.push(`Daily Closing Net (₹${dailyClosingNet}) does not match POS Orders Net (₹${posOrdersNet})`)
+ discrepancies.push(`Daily Closing Net (â‚¹${dailyClosingNet}) does not match POS Orders Net (â‚¹${posOrdersNet})`)
  }
 
  const isReconciled = discrepancies.length === 0
@@ -15667,8 +15862,8 @@ function computeThreeHourSales(orderList) {
  if (hour24 >= 0 && hour24 <= 23) {
  const slotIdx = THREE_HOUR_SLOTS.findIndex(s => hour24 >= s.start && hour24 < s.end)
  if (slotIdx >= 0) {
- buckets[slotIdx].totalBills += 1
  if (isValid) {
+ buckets[slotIdx].totalBills += 1
  buckets[slotIdx].revenue += amt
  buckets[slotIdx].settledBills += 1
  buckets[slotIdx].orderCount += 1
@@ -15727,8 +15922,8 @@ function computeHourlySales(orderList) {
  if (dtVal) {
  const hour24 = getLocalHourIST(dtVal)
  if (hour24 >= 0 && hour24 <= 23) {
- buckets[hour24].totalBills += 1
  if (isValid) {
+ buckets[hour24].totalBills += 1
  buckets[hour24].revenue += amt
  buckets[hour24].settledBills += 1
  buckets[hour24].orderCount += 1
@@ -16490,7 +16685,7 @@ app.post('/api/admin/parse-invoice-pdf', (req, res) => {
  if (extractedItems.length === 0) {
  lines.forEach(line => {
  const nums = line.match(/\d+(?:\.\d+)?/g)?.map(Number) || []
- const words = line.replace(/[\d\.,\(\)₹\$]/g, ' ').trim()
+ const words = line.replace(/[\d\.,\(\)â‚¹\$]/g, ' ').trim()
  if (words.length > 3 && nums.length >= 1) {
  const qty = nums[0]
  const rate = nums.length >= 2 ? nums[1] : 50
@@ -16529,7 +16724,7 @@ app.get('/health', (req, res) => {
  res.json({ status: 'UP', message: 'TDG Backend is running smoothly.' })
 })
 
-// Version/diagnostic endpoint — helps verify which deploy is running
+// Version/diagnostic endpoint â€” helps verify which deploy is running
 app.get('/api/deploy-version', (req, res) => {
  res.json({
  deployedAt: new Date().toISOString(),
@@ -16601,7 +16796,7 @@ app.post('/api/backups/daily/restore', (req, res) => {
  }
 })
 
-// Reset operational data (orders, billing, KOTs, POs, GRNs, expenses) — ADMIN ONLY
+// Reset operational data (orders, billing, KOTs, POs, GRNs, expenses) â€” ADMIN ONLY
 app.post('/api/reset', async (req, res) => {
  try {
  const { pin } = req.body
@@ -16810,7 +17005,7 @@ if (resolvedDistPath) {
  })
  console.log('Serving frontend from:', resolvedDistPath)
 } else {
- console.log('No dist folder found — registering root status handler')
+ console.log('No dist folder found â€” registering root status handler')
  app.get('/', (req, res) => {
  res.status(200).json({ status: 'active', message: 'TDG Billing POS Server Online', ordersCount: orders.length })
  })
@@ -16844,7 +17039,7 @@ app.post('/api/admin/redeploy', (req, res) => {
     const gitOutput = execSync('git pull origin master 2>&1', { cwd: __dirname, timeout: 30000 }).toString()
     console.log('[REDEPLOY] git pull result:', gitOutput)
     res.json({ success: true, message: 'Git pull completed. Restarting server now...', output: gitOutput })
-    // Save state then exit — PM2/Hostinger will restart automatically
+    // Save state then exit â€” PM2/Hostinger will restart automatically
     setTimeout(() => {
       try { saveState() } catch(e) {}
       process.exit(0)
@@ -16855,7 +17050,7 @@ app.post('/api/admin/redeploy', (req, res) => {
   }
 })
 
-// ─── SWIGGY & ZOMATO AGGREGATOR INTEGRATION MODULE ──────────────────────────
+// â”€â”€â”€ SWIGGY & ZOMATO AGGREGATOR INTEGRATION MODULE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /**
  * Normalizes incoming items from Swiggy / Zomato / UrbanPiper formats into POS order item format
@@ -16932,7 +17127,7 @@ function processOnlineOrder(orderData, source) {
     io.emit('order_created', newOrder)
   }
 
-  console.log(`[ONLINE ORDER RECEIVED] Source: ${source} | Order #: ${newOrder.orderNumber} | Total: ₹${newOrder.total}`)
+  console.log(`[ONLINE ORDER RECEIVED] Source: ${source} | Order #: ${newOrder.orderNumber} | Total: â‚¹${newOrder.total}`)
   return { status: 'CREATED', order: newOrder }
 }
 
@@ -17067,7 +17262,7 @@ app.post('/api/aggregator/menu/toggle-stock', (req, res) => {
   }
 })
 
-// Graceful shutdown — save state before process exits (prevents data loss on deploy/restart)
+// Graceful shutdown â€” save state before process exits (prevents data loss on deploy/restart)
 let isShuttingDown = false
 function gracefulShutdown(signal) {
  if (isShuttingDown) return

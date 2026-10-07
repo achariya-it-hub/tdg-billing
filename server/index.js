@@ -356,6 +356,8 @@ let poItems = []
 let grns = []
 let vendorPayments = []
 let onlineOrders = []
+let todos = []
+let inventoryCategories = ['Proteins', 'Bakery', 'Sides', 'Supplies', 'Beverages', 'Sauces', 'Packaging', 'Dairy', 'General']
 let settings = {
  company: { name: 'Tendens Gyros', address: 'Shop 1 & 2, R.S.No.345/3 Kottakuppam, Viluppuram', phone: '7548808877', email: 'info@tendengyros.com', gst: '33FJSPA2544H1Z9', gstNo: '33FJSPA2544H1Z9', gstin: '33FJSPA2544H1Z9', logo: null, upiId: '', deliveryEnabled: true },
  theme: { accentPrimary: '#e63946', accentPrimaryDark: '#c1121f', bgPrimary: '#f5f5f7' },
@@ -793,7 +795,9 @@ function saveState() {
  purchaseOrders,
  poItems,
  grns,
- vendorPayments
+ vendorPayments,
+ todos,
+ inventoryCategories
  })
 }
 
@@ -1006,6 +1010,8 @@ try {
  else employees = defaultEmployees
  if (db.staffAuditLogs && Array.isArray(db.staffAuditLogs)) staffAuditLogs = db.staffAuditLogs
  if (db.staffPromotionSettings) staffPromotionSettings = { ...staffPromotionSettings, ...db.staffPromotionSettings }
+ if (db.todos && Array.isArray(db.todos)) todos = db.todos
+ if (db.inventoryCategories && Array.isArray(db.inventoryCategories)) inventoryCategories = db.inventoryCategories
 
  // Double-Backup Customer & Staff Vault Recovery
  const custVault = syncCustomerVault(loyaltyUsers, mobileAppUsers, employees)
@@ -12686,6 +12692,69 @@ app.delete('/api/inventory/:id', (req, res) => {
  inventory.splice(idx, 1)
  saveState()
  io.emit('inventory:updated', inventory)
+ res.json({ success: true })
+})
+
+app.delete('/api/inventory/clear', (req, res) => {
+ inventory.length = 0
+ saveState()
+ if (typeof io !== 'undefined' && io.emit) io.emit('inventory:updated', inventory)
+ res.json({ success: true, message: 'All inventory data cleared' })
+})
+
+app.get('/api/inventory/categories', (req, res) => {
+ const itemCats = Array.isArray(inventory) ? [...new Set(inventory.map(i => i.category).filter(Boolean))] : []
+ const merged = [...new Set([...(inventoryCategories || []), ...itemCats, 'Proteins', 'Bakery', 'Sides', 'Supplies', 'Beverages', 'Sauces', 'Packaging', 'Dairy', 'General'])]
+ res.json(merged)
+})
+
+app.post('/api/inventory/categories', (req, res) => {
+ const { name } = req.body
+ if (!name || !String(name).trim()) return res.status(400).json({ error: 'Category name required' })
+ const catName = String(name).trim()
+ if (!inventoryCategories.includes(catName)) {
+ inventoryCategories.push(catName)
+ saveState()
+ }
+ res.json({ success: true, category: catName, categories: inventoryCategories })
+})
+
+// ============ ACCOUNTS & TO-DO API ROUTES ============
+app.get('/api/accounts/todos', (req, res) => {
+ res.json(todos || [])
+})
+
+app.post('/api/accounts/todos', (req, res) => {
+ const { title, date, priority, category, notes, isCompleted } = req.body
+ if (!title || !String(title).trim()) return res.status(400).json({ error: 'Title required' })
+ const newTodo = {
+ id: 'todo_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+ title: String(title).trim(),
+ date: date || new Date().toISOString().split('T')[0],
+ priority: priority || 'Medium',
+ category: category || 'General',
+ notes: notes || '',
+ isCompleted: !!isCompleted,
+ createdAt: new Date().toISOString()
+ }
+ todos.unshift(newTodo)
+ saveState()
+ res.status(201).json(newTodo)
+})
+
+app.put('/api/accounts/todos/:id', (req, res) => {
+ const idx = todos.findIndex(t => String(t.id) === String(req.params.id))
+ if (idx === -1) return res.status(404).json({ error: 'Todo item not found' })
+ Object.assign(todos[idx], req.body, { updatedAt: new Date().toISOString() })
+ saveState()
+ res.json(todos[idx])
+})
+
+app.delete('/api/accounts/todos/:id', (req, res) => {
+ const idx = todos.findIndex(t => String(t.id) === String(req.params.id))
+ if (idx === -1) return res.status(404).json({ error: 'Todo item not found' })
+ todos.splice(idx, 1)
+ saveState()
  res.json({ success: true })
 })
 

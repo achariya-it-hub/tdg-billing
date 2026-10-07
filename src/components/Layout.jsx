@@ -20,7 +20,7 @@ const navItems = [
   { path: '/loyalty', icon: Gem, label: 'Loyalty', module: 'loyalty' },
   { path: '/customers', icon: UserPlus, label: 'Customers', module: 'customers' },
   { path: '/reports', icon: FileText, label: 'Reports', module: 'reports' },
-  { path: '/expenses', icon: DollarSign, label: 'Expenses', module: 'expenses' },
+  { path: '/accounts?tab=expenses', icon: DollarSign, label: 'Expenses', module: 'expenses' },
   { path: '/accounts', icon: Landmark, label: 'Accounts', module: 'purchase' },
   { path: '/dashboard', icon: BarChart3, label: 'Dashboard', module: 'dashboard' },
   { path: '/users', icon: Shield, label: 'Users', module: 'users' },

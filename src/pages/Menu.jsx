@@ -3144,6 +3144,7 @@ export default function MenuManagement() {
  const [selectedItem, setSelectedItem] = useState(null)
  const [selectedMenuItem, setSelectedMenuItem] = useState(null)
  const [recipeIngredients, setRecipeIngredients] = useState([])
+ const [recipeModifier, setRecipeModifier] = useState('All')
  const [searchTerm, setSearchTerm] = useState('')
  const [selectedCategory, setSelectedCategory] = useState('all')
  const [showItemModal, setShowItemModal] = useState(false)
@@ -3571,8 +3572,10 @@ export default function MenuManagement() {
  const existingRecipe = getRecipeForItem(menuItem.id)
  if (existingRecipe) {
  setRecipeIngredients([...existingRecipe.ingredients])
+ setRecipeModifier(existingRecipe.modifier || 'All')
  } else {
  setRecipeIngredients([])
+ setRecipeModifier('All')
  }
  setShowRecipeModal(true)
  }
@@ -3616,6 +3619,7 @@ export default function MenuManagement() {
  menuItemName: selectedMenuItem.name,
  name: `${selectedMenuItem.name} Recipe`,
  description: `Standard recipe for ${selectedMenuItem.name}`,
+ modifier: recipeModifier || 'All',
  yieldQty: 1,
  prepTime: selectedMenuItem.prepTime || 10,
  ingredients: recipeIngredients.map(i => ({
@@ -4046,7 +4050,19 @@ export default function MenuManagement() {
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
  <div>
  <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#1a1a2e' }}>{recipe.name}</h3>
+ <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
  <span style={{ fontSize: '13px', color: '#6b7280' }}>{menuItem?.name}</span>
+ <span style={{
+ background: recipe.modifier === 'Dine In' ? '#fef2f2' : recipe.modifier === 'Takeaway' ? '#fffbeb' : recipe.modifier === 'Delivery' ? '#f0fdf4' : '#eff6ff',
+ color: recipe.modifier === 'Dine In' ? '#dc2626' : recipe.modifier === 'Takeaway' ? '#d97706' : recipe.modifier === 'Delivery' ? '#10b981' : '#2563eb',
+ padding: '2px 8px',
+ borderRadius: '6px',
+ fontSize: '11px',
+ fontWeight: 700
+ }}>
+ {recipe.modifier ? (recipe.modifier === 'Dine In' ? '🍽️ Dine In' : recipe.modifier === 'Takeaway' ? '📦 Takeaway' : recipe.modifier === 'Delivery' ? '🛵 Delivery' : '🌐 All Orders') : '🌐 All Orders'}
+ </span>
+ </div>
  </div>
  <Button variant="ghost" size="sm" onClick={() => {
  setSelectedMenuItem(menuItem)
@@ -4173,6 +4189,45 @@ export default function MenuManagement() {
  <div style={{ fontSize: '20px', fontWeight: 700, color: '#8b5cf6' }}>
  {selectedMenuItem?.price ? (((selectedMenuItem.price - totalRecipeCost) / selectedMenuItem.price) * 100).toFixed(1) : 0}%
  </div>
+ </div>
+ </div>
+
+ {/* Order Type / Modifier Selection */}
+ <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+ <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '10px', display: 'block' }}>
+ Order Type / Recipe Modifier
+ </label>
+ <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+ {[
+ { id: 'All', label: 'All Orders', icon: '🌐' },
+ { id: 'Dine In', label: 'Dine In', icon: '🍽️' },
+ { id: 'Takeaway', label: 'Takeaway', icon: '📦' },
+ { id: 'Delivery', label: 'Delivery', icon: '🛵' }
+ ].map(m => (
+ <button
+ key={m.id}
+ type="button"
+ onClick={() => setRecipeModifier(m.id)}
+ style={{
+ padding: '10px',
+ borderRadius: '10px',
+ border: recipeModifier === m.id ? '2px solid #e63946' : '1px solid #e5e7eb',
+ background: recipeModifier === m.id ? '#fef2f2' : 'white',
+ color: recipeModifier === m.id ? '#e63946' : '#4b5563',
+ fontWeight: 700,
+ fontSize: '13px',
+ cursor: 'pointer',
+ display: 'flex',
+ alignItems: 'center',
+ justifyContent: 'center',
+ gap: '6px',
+ boxShadow: recipeModifier === m.id ? '0 2px 6px rgba(230,57,70,0.15)' : 'none'
+ }}
+ >
+ <span style={{ fontSize: '15px' }}>{m.icon}</span>
+ {m.label}
+ </button>
+ ))}
  </div>
  </div>
 

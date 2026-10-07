@@ -5,22 +5,19 @@ import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import { useToast } from '../components/ui/Toaster'
 
-const sampleInventory = [
-  { id: '1', name: 'Chicken Breast', category: 'Proteins', unit: 'kg', currentStock: 50, minimumStock: 20, costPerUnit: 180, supplier: 'Fresh Poultry Co.', lastRestocked: '2024-01-10' },
-  { id: '2', name: 'Burger Buns', category: 'Bakery', unit: 'pcs', currentStock: 200, minimumStock: 50, costPerUnit: 8, supplier: 'City Bakery', lastRestocked: '2024-01-12' },
-  { id: '3', name: 'Fries (Frozen)', category: 'Sides', unit: 'kg', currentStock: 30, minimumStock: 10, costPerUnit: 45, supplier: 'Food Supplies Inc.', lastRestocked: '2024-01-08' },
-  { id: '4', name: 'Cooking Oil', category: 'Supplies', unit: 'liters', currentStock: 40, minimumStock: 15, costPerUnit: 120, supplier: 'Oil Mart', lastRestocked: '2024-01-05' },
-  { id: '5', name: 'Pepsi Syrup', category: 'Beverages', unit: 'liters', currentStock: 5, minimumStock: 5, costPerUnit: 350, supplier: 'BevCo', lastRestocked: '2024-01-01' },
-  { id: '6', name: 'Packaging Boxes', category: 'Supplies', unit: 'pcs', currentStock: 80, minimumStock: 100, costPerUnit: 5, supplier: 'PackPro', lastRestocked: '2024-01-14' },
-  { id: '7', name: 'Napkins', category: 'Supplies', unit: 'pcs', currentStock: 1000, minimumStock: 200, costPerUnit: 0.5, supplier: 'CleanSupply', lastRestocked: '2024-01-11' },
-  { id: '8', name: 'Tomato Ketchup', category: 'Sauces', unit: 'kg', currentStock: 15, minimumStock: 5, costPerUnit: 80, supplier: 'Food Supplies Inc.', lastRestocked: '2024-01-09' },
-]
+const sampleInventory = []
+
+const defaultCategories = ['Proteins', 'Bakery', 'Sides', 'Supplies', 'Beverages', 'Sauces', 'Packaging', 'Dairy', 'General']
 
 const API = () => window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin
 
 export default function Inventory() {
   const toast = useToast()
   const [inventory, setInventory] = useState(sampleInventory)
+  const [categories, setCategories] = useState(defaultCategories)
+  const [showCategoryModal, setShowCategoryModal] = useState(false)
+  const [newCategoryName, setNewCategoryName] = useState('')
+  const [showClearConfirmModal, setShowClearConfirmModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('stock')
   const [showAddModal, setShowAddModal] = useState(false)
@@ -64,18 +61,73 @@ export default function Inventory() {
       const res = await fetch(`${API()}/api/inventory`)
       if (res.ok) {
         const data = await res.json()
-        if (Array.isArray(data) && data.length > 0) {
+        if (Array.isArray(data)) {
           setInventory(data)
-        } else {
-          setInventory(sampleInventory)
         }
       }
     } catch (err) {
       console.error('Failed to fetch live inventory:', err)
-      setInventory(sampleInventory)
     } finally {
       setLoading(false)
     }
+  }
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch(`${API()}/api/inventory/categories`)
+      if (res.ok) {
+        const data = await res.json()
+        if (Array.isArray(data) && data.length > 0) {
+          setCategories(data)
+        }
+      }
+    } catch {}
+  }
+
+  useEffect(() => {
+    fetchCategories()
+  }, [])
+
+  const handleClearAllInventory = async () => {
+    try {
+      const res = await fetch(`${API()}/api/inventory/clear`, { method: 'DELETE' })
+      if (res.ok) {
+        setInventory([])
+        toast.success('All test inventory data cleared successfully!')
+      } else {
+        setInventory([])
+        toast.success('Inventory cleared!')
+      }
+    } catch (err) {
+      setInventory([])
+      toast.success('Inventory cleared!')
+    } finally {
+      setShowClearConfirmModal(false)
+    }
+  }
+
+  const handleAddCategory = async () => {
+    if (!newCategoryName.trim()) {
+      toast.error('Category name is required')
+      return
+    }
+    const catName = newCategoryName.trim()
+    if (!categories.includes(catName)) {
+      const updated = [...categories, catName]
+      setCategories(updated)
+      try {
+        await fetch(`${API()}/api/inventory/categories`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: catName })
+        })
+      } catch {}
+      toast.success(`Category "${catName}" added!`)
+    } else {
+      toast.info(`Category "${catName}" already exists`)
+    }
+    setNewCategoryName('')
+    setShowCategoryModal(false)
   }
 
   const lowStockItems = inventory.filter(item => (Number(item.currentStock) || 0) <= (Number(item.minimumStock) || 0))
@@ -336,6 +388,16 @@ export default function Inventory() {
           <Plus size={18} />
           Add Item
         </Button>
+        <Button variant="secondary" onClick={() => setShowCategoryModal(true)}>
+          <Plus size={18} />
+          Add Category
+        </Button>
+        {inventory.length > 0 && (
+          <Button variant="danger" onClick={() => setShowClearConfirmModal(true)}>
+            <Trash2 size={18} />
+            Clear All Inventory
+          </Button>
+        )}
       </div>
 
       {/* Stock Levels */}
@@ -536,12 +598,7 @@ export default function Inventory() {
                 onChange={e => setAddForm({ ...addForm, category: e.target.value })}
                 style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
               >
-                <option>Proteins</option>
-                <option>Bakery</option>
-                <option>Sides</option>
-                <option>Beverages</option>
-                <option>Supplies</option>
-                <option>Sauces</option>
+                {categories.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div>
@@ -627,12 +684,7 @@ export default function Inventory() {
                 onChange={e => setEditForm({ ...editForm, category: e.target.value })}
                 style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
               >
-                <option>Proteins</option>
-                <option>Bakery</option>
-                <option>Sides</option>
-                <option>Beverages</option>
-                <option>Supplies</option>
-                <option>Sauces</option>
+                {categories.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div>
@@ -733,6 +785,47 @@ export default function Inventory() {
           <Button fullWidth onClick={handleSaveRestock}>
             Update Stock
           </Button>
+        </div>
+      </Modal>
+
+      {/* ADD CATEGORY MODAL */}
+      <Modal isOpen={showCategoryModal} onClose={() => setShowCategoryModal(false)} title="Add New Category" size="sm">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div>
+            <label style={{ fontSize: '14px', fontWeight: 600, color: '#4b5563', marginBottom: '8px', display: 'block' }}>Category Name</label>
+            <input
+              type="text"
+              placeholder="e.g. Spices, Dairy, Packaging..."
+              value={newCategoryName}
+              onChange={e => setNewCategoryName(e.target.value)}
+              style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid var(--border)' }}
+            />
+          </div>
+          <Button fullWidth onClick={handleAddCategory}>
+            <Plus size={18} />
+            Save Category
+          </Button>
+        </div>
+      </Modal>
+
+      {/* CLEAR ALL INVENTORY CONFIRM MODAL */}
+      <Modal isOpen={showClearConfirmModal} onClose={() => setShowClearConfirmModal(false)} title="Clear Test Inventory" size="sm">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ background: '#fef2f2', padding: '16px', borderRadius: '12px', border: '1px solid #fca5a5' }}>
+            <p style={{ color: '#991b1b', fontWeight: 600, marginBottom: '4px' }}>Warning: Delete All Test Items?</p>
+            <p style={{ color: '#7f1d1d', fontSize: '13px' }}>
+              This action will delete all existing test inventory stock items permanently.
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <Button variant="secondary" style={{ flex: 1 }} onClick={() => setShowClearConfirmModal(false)}>
+              Cancel
+            </Button>
+            <Button variant="danger" style={{ flex: 1 }} onClick={handleClearAllInventory}>
+              <Trash2 size={16} />
+              Delete All Data
+            </Button>
+          </div>
         </div>
       </Modal>
     </div>
