@@ -930,7 +930,7 @@ export default function POS() {
           boxShadow: selectedCategory === cat.id ? `0 2px 8px ${cat.color}40` : '0 1px 3px rgba(0,0,0,0.04)',
           transition: 'all 0.2s'
         }}>
-          <span>{categoryIcons[cat.name]?.[0] || '🍽️'}</span>
+          <span>{categoryIcons[cat.name] || (cat.icon && !cat.icon.includes('ð') ? cat.icon : '🍽️')}</span>
           {cat.name}
         </button>
       ))}

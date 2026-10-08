@@ -39,7 +39,7 @@
     {
       "id": "c3_rice_salad",
       "name": "Rice & Salads",
-      "icon": "🍚🥗",
+      "icon": "🥗",
       "color": "#059669"
     },
     {
@@ -595,7 +595,7 @@
       "id": "m_dip_choice",
       "categoryId": "c4",
       "name": "Choice of Dip",
-      "price": 14.30,
+      "price": 14.3,
       "description": "Choice of Dip (Garlic Mayo, Spicy Mayo, Honey Mustard, Tzatziki, Jalapeno Cheese, Turkish Chilli)",
       "isAvailable": true,
       "image": "/images/menu/garlic mayo.png"

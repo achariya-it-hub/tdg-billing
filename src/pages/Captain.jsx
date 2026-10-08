@@ -10,12 +10,24 @@ import { getSocket } from '../lib/socket'
 import API_BASE from '../lib/apiConfig'
 
 const categoryIcons = {
+  'Gyros': '🥙',
+  'Leg & Thigh': '🍗',
+  'Wings': '🍗',
+  'Strips': '🍗',
+  'Fries': '🍟',
+  'Beverages': '🥤',
+  'Rice & Salads': '🥗',
+  'Meals & Combos': '🍱',
+  'Protein Max': '💪',
+  'Shakes': '🥤',
+  'Desserts': '🍰',
+  'Softy & Add-Ons': '🍦',
+  'Kombucha': '🍹',
+  'New Combo': '📦',
+  'Combos': '📦',
   'Burgers': '🍔',
   'Chicken': '🍗',
-  'Sides': '🍟',
-  'Beverages': '🥤',
-  'Desserts': '🍰',
-  'Combos': '📦'
+  'Sides': '🍟'
 }
 
 const sampleTables = [
@@ -506,7 +518,7 @@ export default function Captain() {
                       gap: '4px'
                     }}
                   >
-                    <span>{categoryIcons[cat.name]?.[0]}</span>
+                    <span>{categoryIcons[cat.name] || (cat.icon && !cat.icon.includes('ð') ? cat.icon : '🍽️')}</span>
                     {cat.name}
                   </button>
                 ))}

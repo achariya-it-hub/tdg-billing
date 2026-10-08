@@ -6,6 +6,30 @@ import Modal from '../components/ui/Modal'
 import { useToast } from '../components/ui/Toaster'
 import { useMenuStore } from '../stores/menuStore'
 
+const ICON_CLEAN_MAP = {
+  'Gyros': '🥙',
+  'Leg & Thigh': '🍗',
+  'Wings': '🍗',
+  'Strips': '🍗',
+  'Fries': '🍟',
+  'Beverages': '🥤',
+  'Rice & Salads': '🥗',
+  'Meals & Combos': '🍱',
+  'Protein Max': '💪',
+  'Shakes': '🥤',
+  'Desserts': '🍰',
+  'Softy & Add-Ons': '🍦',
+  'Kombucha': '🍹',
+  'New Combo': '📦',
+  'Combos': '📦'
+};
+
+const getCleanCatIcon = (cat) => {
+  if (cat && ICON_CLEAN_MAP[cat.name]) return ICON_CLEAN_MAP[cat.name];
+  if (cat && cat.icon && !cat.icon.includes('ð') && !cat.icon.includes('â')) return cat.icon;
+  return '🍽️';
+};
+
 const sampleCategories = [
   {
     "id": "c1",
@@ -3846,7 +3870,7 @@ export default function MenuManagement() {
  transition: 'all 0.15s'
  }}
  >
- <span>{cat.icon || '📌'}</span>
+ <span>{getCleanCatIcon(cat)}</span>
  <span>{cat.name} ({count})</span>
  </button>
  )
@@ -3877,7 +3901,7 @@ export default function MenuManagement() {
  boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
  }}>
  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
- <span style={{ fontSize: '22px' }}>{cat.icon || '🍽️'}</span>
+ <span style={{ fontSize: '22px' }}>{getCleanCatIcon(cat)}</span>
  <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#1a1a2e', margin: 0 }}>
  {cat.name}
  </h3>

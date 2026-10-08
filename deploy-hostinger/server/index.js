@@ -1097,85 +1097,85 @@ let categories = [
   {
     "id": "c1",
     "name": "Gyros",
-    "icon": "ðŸ¥™",
+    "icon": "🥙",
     "color": "#d97706"
   },
   {
     "id": "c5_legthigh",
     "name": "Leg & Thigh",
-    "icon": "ðŸ—",
+    "icon": "🍗",
     "color": "#ea580c"
   },
   {
     "id": "c5_wings",
     "name": "Wings",
-    "icon": "ðŸ—",
+    "icon": "🍗",
     "color": "#b45309"
   },
   {
     "id": "c5_strips",
     "name": "Strips",
-    "icon": "ðŸ—",
+    "icon": "🍗",
     "color": "#ca8a04"
   },
   {
     "id": "c6",
     "name": "Fries",
-    "icon": "ðŸŸ",
+    "icon": "🍟",
     "color": "#f59e0b"
   },
   {
     "id": "c10_bev",
     "name": "Beverages",
-    "icon": "ðŸ¥¤",
+    "icon": "🥤",
     "color": "#0284c7"
   },
   {
     "id": "c3_rice_salad",
     "name": "Rice & Salads",
-    "icon": "ðŸšðŸ¥—",
+    "icon": "🥗",
     "color": "#059669"
   },
   {
     "id": "c2",
     "name": "Meals & Combos",
-    "icon": "ðŸ±",
+    "icon": "🍱",
     "color": "#8b5cf6"
   },
   {
     "id": "c11",
     "name": "Protein Max",
-    "icon": "ðŸ’ª",
+    "icon": "💪",
     "color": "#10b981"
   },
   {
     "id": "c7_shakes",
     "name": "Shakes",
-    "icon": "ðŸ¥¤",
+    "icon": "🥤",
     "color": "#db2777"
   },
   {
     "id": "c9",
     "name": "Desserts",
-    "icon": "ðŸ°",
+    "icon": "🍰",
     "color": "#ec4899"
   },
   {
     "id": "c4",
     "name": "Softy & Add-Ons",
-    "icon": "ðŸ¦",
+    "icon": "🍦",
     "color": "#e63946"
   },
   {
     "id": "c10_komb",
     "name": "Kombucha",
-    "icon": "ðŸ¹",
+    "icon": "🍹",
     "color": "#0284c7"
   },
   {
     "id": "c_new_combo",
     "name": "New Combo",
-    "icon": "ðŸ“¦",
+    "icon": "📦",
     "color": "#e63946",
     "displayOrder": 7
   }
