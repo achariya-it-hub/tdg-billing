@@ -20,8 +20,7 @@ const navItems = [
   { path: '/loyalty', icon: Gem, label: 'Loyalty', module: 'loyalty' },
   { path: '/customers', icon: UserPlus, label: 'Customers', module: 'customers' },
   { path: '/reports', icon: FileText, label: 'Reports', module: 'reports' },
-  { path: '/accounts?tab=expenses', icon: DollarSign, label: 'Expenses', module: 'expenses' },
-  { path: '/accounts', icon: Landmark, label: 'Accounts', module: 'purchase' },
+  { path: '/accounts', icon: Landmark, label: 'Accounts', module: ['accounts', 'purchase', 'expenses'] },
   { path: '/dashboard', icon: BarChart3, label: 'Dashboard', module: 'dashboard' },
   { path: '/users', icon: Shield, label: 'Users', module: 'users' },
 ]
@@ -109,6 +108,9 @@ export default function Layout({ user, onLogout }) {
     if (!user) return true
     if (user.role === 'admin' || user.role === 'super-admin') return true
     if (!user.permissions) return true
+    if (Array.isArray(module)) {
+      return module.some(m => user.permissions?.[m]?.view === true)
+    }
     return user.permissions?.[module]?.view === true
   }
 
