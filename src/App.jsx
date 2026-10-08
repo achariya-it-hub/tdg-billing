@@ -21,6 +21,7 @@ import Loyalty from './pages/Loyalty'
 import Users from './pages/Users'
 import Expenses from './pages/Expenses'
 import Accounts from './pages/Accounts'
+import Todo from './pages/Todo'
 import Settings from './pages/Settings'
 import Customizer from './pages/Customizer'
 import PrivacyPolicy from './pages/PrivacyPolicy'
@@ -223,6 +224,7 @@ export default function App() {
               <Route path="/users" element={<Users />} />
               <Route path="/expenses" element={<Accounts initialTab="expenses" />} />
               <Route path="/accounts" element={<Accounts />} />
+              <Route path="/todo" element={<Todo />} />
               <Route path="/table-qr" element={<TableQRGenerator />} />
               <Route path="/settings" element={<Settings />} />
             </Route>
@@ -276,6 +278,7 @@ export default function App() {
               <Route path="/users" element={<Users />} />
               <Route path="/expenses" element={<Accounts initialTab="expenses" />} />
               <Route path="/accounts" element={<Accounts />} />
+              <Route path="/todo" element={<Todo />} />
               <Route path="/table-qr" element={<TableQRGenerator />} />
               <Route path="/settings" element={<Settings />} />
             </Route>
