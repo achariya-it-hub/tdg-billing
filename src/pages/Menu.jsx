@@ -3284,17 +3284,27 @@ export default function MenuManagement() {
  return matchesSearch && matchesCategory
  })
 
- const getRecipeForItem = (menuItemId) => {
+ const getRecipesForItem = (menuItemId) => {
  const item = menuItems.find(m => m.id === menuItemId)
  const itemName = item?.name || ''
- return recipes.find(r => r && (
+ return recipes.filter(r => r && (
  r.menuItemId === menuItemId || 
  (itemName && (r.menuItemName === itemName || r.name === `${itemName} Recipe` || (r.name && r.name.startsWith(itemName))))
  ))
  }
 
- const getItemCost = (menuItemId) => {
- const recipe = getRecipeForItem(menuItemId)
+ const getRecipeForItem = (menuItemId, modifier = null) => {
+ const allFor = getRecipesForItem(menuItemId)
+ if (allFor.length === 0) return null
+ if (modifier) {
+ const exact = allFor.find(r => (r.modifier || 'All').toLowerCase() === modifier.toLowerCase())
+ if (exact) return exact
+ }
+ return allFor.find(r => !r.modifier || r.modifier === 'All') || allFor[0]
+ }
+
+ const getItemCost = (menuItemId, modifier = null) => {
+ const recipe = getRecipeForItem(menuItemId, modifier)
  if (!recipe) return null
  if (recipe.calculatedCost) return recipe.calculatedCost
  return recipe.ingredients.reduce((sum, ing) => {
@@ -3303,22 +3313,22 @@ export default function MenuManagement() {
  }, 0)
  }
 
- const getItemProfit = (menuItemId) => {
+ const getItemProfit = (menuItemId, modifier = null) => {
  const item = menuItems.find(m => m.id === menuItemId)
- const cost = getItemCost(menuItemId)
+ const cost = getItemCost(menuItemId, modifier)
  if (!item || cost === null) return null
  return item.price - cost
  }
 
- const getItemMargin = (menuItemId) => {
+ const getItemMargin = (menuItemId, modifier = null) => {
  const item = menuItems.find(m => m.id === menuItemId)
- const profit = getItemProfit(menuItemId)
+ const profit = getItemProfit(menuItemId, modifier)
  if (!item || profit === null) return null
  return ((profit / item.price) * 100).toFixed(1)
  }
 
- const canMakeItem = (menuItemId) => {
- const recipe = getRecipeForItem(menuItemId)
+ const canMakeItem = (menuItemId, modifier = null) => {
+ const recipe = getRecipeForItem(menuItemId, modifier)
  if (!recipe) return { canMake: null, reasons: [] }
  
  const reasons = []
@@ -3591,17 +3601,54 @@ export default function MenuManagement() {
  setShowCategoryModal(true)
  }
 
- const openRecipeModal = (menuItem) => {
+ const openRecipeModal = (menuItem, initialModifier = 'All') => {
  setSelectedMenuItem(menuItem)
- const existingRecipe = getRecipeForItem(menuItem.id)
+ setRecipeModifier(initialModifier)
+ const existingRecipe = getRecipeForItem(menuItem.id, initialModifier)
  if (existingRecipe) {
  setRecipeIngredients([...existingRecipe.ingredients])
- setRecipeModifier(existingRecipe.modifier || 'All')
+ } else {
+ const baseRecipe = getRecipeForItem(menuItem.id, 'All') || getRecipesForItem(menuItem.id)[0]
+ if (baseRecipe && initialModifier !== 'All') {
+ setRecipeIngredients(baseRecipe.ingredients.map(i => ({ ...i, id: 'temp_' + Math.random().toString(36).slice(2, 9) })))
+ toast.info(`Pre-loaded base food ingredients for ${initialModifier}. Add packaging items and click Save!`)
  } else {
  setRecipeIngredients([])
- setRecipeModifier('All')
+ }
  }
  setShowRecipeModal(true)
+ }
+
+ const handleRecipeModifierSelect = (mod) => {
+ setRecipeModifier(mod)
+ if (!selectedMenuItem) return
+ const existingRecipe = getRecipeForItem(selectedMenuItem.id, mod)
+ if (existingRecipe) {
+ setRecipeIngredients([...existingRecipe.ingredients])
+ } else {
+ const baseRecipe = getRecipeForItem(selectedMenuItem.id, 'All') || getRecipesForItem(selectedMenuItem.id)[0]
+ if (baseRecipe && mod !== 'All') {
+ setRecipeIngredients(baseRecipe.ingredients.map(i => ({ ...i, id: 'temp_' + Math.random().toString(36).slice(2, 9) })))
+ toast.info(`Pre-loaded base ingredients for ${mod}. Add packing items and save!`)
+ } else {
+ setRecipeIngredients([])
+ }
+ }
+ }
+
+ const copyBaseIngredientsToCurrentModifier = () => {
+ if (!selectedMenuItem) return
+ const baseRecipe = getRecipeForItem(selectedMenuItem.id, 'All') || getRecipesForItem(selectedMenuItem.id)[0]
+ if (baseRecipe && baseRecipe.ingredients.length > 0) {
+ const copied = baseRecipe.ingredients.map(i => ({
+ ...i,
+ id: 'temp_' + Math.random().toString(36).slice(2, 9)
+ }))
+ setRecipeIngredients(copied)
+ toast.success(`Copied ${copied.length} base ingredients for ${recipeModifier}. Add packing materials now!`)
+ } else {
+ toast.warning('No base recipe ingredients found to copy')
+ }
  }
 
  const addIngredient = (invItem) => {
@@ -3636,23 +3683,33 @@ export default function MenuManagement() {
  return
  }
  
- const existingIndex = recipes.findIndex(r => r.menuItemId === selectedMenuItem.id || r.menuItemName === selectedMenuItem.name)
+ const modLabel = recipeModifier || 'All'
+ const existingIndex = recipes.findIndex(r => 
+ (r.menuItemId === selectedMenuItem.id || r.menuItemName === selectedMenuItem.name) &&
+ ((r.modifier || 'All').toLowerCase() === modLabel.toLowerCase())
+ )
+ 
  const newRecipe = {
- id: existingIndex >= 0 ? recipes[existingIndex].id : 'r_' + Date.now(),
+ id: existingIndex >= 0 ? recipes[existingIndex].id : 'r_' + Date.now() + '_' + modLabel.toLowerCase().replace(/[^a-z0-9]/g, ''),
  menuItemId: selectedMenuItem.id,
  menuItemName: selectedMenuItem.name,
- name: `${selectedMenuItem.name} Recipe`,
- description: `Standard recipe for ${selectedMenuItem.name}`,
- modifier: recipeModifier || 'All',
+ name: `${selectedMenuItem.name} Recipe (${modLabel})`,
+ description: `Recipe for ${selectedMenuItem.name} (${modLabel})`,
+ modifier: modLabel,
  yieldQty: 1,
  prepTime: selectedMenuItem.prepTime || 10,
- ingredients: recipeIngredients.map(i => ({
+ ingredients: recipeIngredients.map(i => {
+ const inv = inventory.find(invItem => invItem.id === i.inventoryItemId)
+ const costPerUnit = i.costPerUnit || (inv ? inv.costPerUnit : 0)
+ return {
  inventoryItemId: i.inventoryItemId,
  inventoryName: i.inventoryName || i.name,
  quantity: i.quantity,
  unit: i.unit,
- cost: i.cost || i.costPerUnit || 0
- }))
+ costPerUnit: costPerUnit,
+ cost: i.quantity * costPerUnit
+ }
+ })
  }
 
  let updated = [...recipes]
@@ -3672,17 +3729,23 @@ export default function MenuManagement() {
  })
  } catch (e) { /* silent fallback */ }
 
- toast.success('Recipe saved successfully')
+ toast.success(`Recipe saved for ${modLabel} successfully`)
  setShowRecipeModal(false)
  }
 
- const deleteRecipe = async (menuItemId) => {
- const updated = recipes.filter(r => r.menuItemId !== menuItemId && r.id !== menuItemId)
+ const deleteRecipe = async (menuItemId, modifier = null) => {
+ let updated = []
+ if (modifier) {
+ updated = recipes.filter(r => !(r.menuItemId === menuItemId && (r.modifier || 'All').toLowerCase() === modifier.toLowerCase()))
+ } else {
+ updated = recipes.filter(r => r.menuItemId !== menuItemId && r.id !== menuItemId)
+ }
  setRecipes(updated)
  try { localStorage.setItem('tdg_recipes', JSON.stringify(updated)) } catch (e) {}
 
  try {
- await fetch(`${API()}/api/recipes/${menuItemId}`, { method: 'DELETE' })
+ const url = modifier ? `${API()}/api/recipes/${menuItemId}?modifier=${encodeURIComponent(modifier)}` : `${API()}/api/recipes/${menuItemId}`
+ await fetch(url, { method: 'DELETE' })
  } catch (e) { /* silent fallback */ }
 
  toast.success('Recipe deleted')
@@ -3972,12 +4035,48 @@ export default function MenuManagement() {
 
  <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px' }}>{item.description}</p>
 
+ {/* Order Type Specific Recipe Mappings */}
+ <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
+ {['Dine In', 'Takeaway', 'Delivery'].map(mod => {
+ const modRecipe = getRecipeForItem(item.id, mod)
+ const modCost = modRecipe ? getItemCost(item.id, mod) : null
+ const icon = mod === 'Dine In' ? '🍽️' : mod === 'Takeaway' ? '📦' : '🛵'
+ return modRecipe ? (
+ <span
+ key={mod}
+ onClick={() => openRecipeModal(item, mod)}
+ style={{
+ fontSize: '11px', fontWeight: 700, padding: '4px 8px', borderRadius: '6px',
+ background: mod === 'Dine In' ? '#fef2f2' : mod === 'Takeaway' ? '#fffbeb' : '#f0fdf4',
+ color: mod === 'Dine In' ? '#dc2626' : mod === 'Takeaway' ? '#d97706' : '#10b981',
+ border: '1px solid currentColor', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
+ }}
+ title={`Click to edit ${mod} recipe (incl. packing & food items)`}
+ >
+ <span>{icon} {mod}: ₹{modCost !== null ? modCost.toFixed(0) : '0'}</span>
+ </span>
+ ) : (
+ <span
+ key={mod}
+ onClick={() => openRecipeModal(item, mod)}
+ style={{
+ fontSize: '11px', fontWeight: 600, padding: '4px 8px', borderRadius: '6px',
+ background: '#f8fafc', color: '#64748b', border: '1px dashed #cbd5e1', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
+ }}
+ title={`Click to map ${mod} recipe (e.g. include packing costs)`}
+ >
+ + {icon} {mod}
+ </span>
+ )
+ })}
+ </div>
+
  {recipe ? (
  <div style={{ background: '#f0fdf4', borderRadius: '12px', padding: '12px', marginBottom: '16px' }}>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
  <Check size={16} color="#10b981" />
- <span style={{ fontWeight: 600, color: '#166534' }}>Recipe Mapped</span>
+ <span style={{ fontWeight: 600, color: '#166534' }}>Base Recipe Mapped</span>
  </div>
  <span style={{ fontSize: '12px', color: '#6b7280' }}>{recipe.ingredients.length} ingredients</span>
  </div>
@@ -4090,6 +4189,7 @@ export default function MenuManagement() {
  </div>
  <Button variant="ghost" size="sm" onClick={() => {
  setSelectedMenuItem(menuItem)
+ setRecipeModifier(recipe.modifier || 'All')
  setRecipeIngredients([...recipe.ingredients.map(i => ({
  ...i,
  inventoryName: inventory.find(inv => inv.id === i.inventoryItemId)?.name || 'Unknown',
@@ -4231,7 +4331,7 @@ export default function MenuManagement() {
  <button
  key={m.id}
  type="button"
- onClick={() => setRecipeModifier(m.id)}
+ onClick={() => handleRecipeModifierSelect(m.id)}
  style={{
  padding: '10px',
  borderRadius: '10px',
@@ -4258,11 +4358,19 @@ export default function MenuManagement() {
  {/* Current Ingredients */}
  <div>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
- <h4 style={{ fontSize: '14px', fontWeight: 600 }}>Ingredients</h4>
+ <h4 style={{ fontSize: '14px', fontWeight: 600 }}>Ingredients for {recipeModifier}</h4>
+ <div style={{ display: 'flex', gap: '8px' }}>
+ {recipeModifier !== 'All' && (
+ <Button size="sm" variant="ghost" onClick={copyBaseIngredientsToCurrentModifier} title="Copy base food ingredients to this order type recipe">
+ <Copy size={14} />
+ Copy Base Food Items
+ </Button>
+ )}
  <Button size="sm" variant="secondary" onClick={() => setShowIngredientModal(true)}>
  <Plus size={14} />
  Add Ingredient
  </Button>
+ </div>
  </div>
 
  {recipeIngredients.length === 0 ? (

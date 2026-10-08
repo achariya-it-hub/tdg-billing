@@ -12386,11 +12386,15 @@ app.get('/api/recipes', (req, res) => {
 app.post('/api/recipes', (req, res) => {
  const recipe = req.body
  if (!recipe || !recipe.menuItemId) return res.status(400).json({ error: 'menuItemId required' })
- const existingIdx = recipes.findIndex(r => r.menuItemId === recipe.menuItemId)
+ const mod = (recipe.modifier || 'All').toLowerCase()
+ const existingIdx = recipes.findIndex(r => 
+ (r.menuItemId === recipe.menuItemId || (r.id && r.id === recipe.id)) && 
+ ((r.modifier || 'All').toLowerCase() === mod)
+ )
  if (existingIdx >= 0) {
  recipes[existingIdx] = { ...recipes[existingIdx], ...recipe }
  } else {
- recipe.id = recipe.id || ('r_' + Date.now())
+ recipe.id = recipe.id || ('r_' + Date.now() + '_' + mod.replace(/[^a-z0-9]/g, ''))
  recipes.push(recipe)
  }
  saveState()
@@ -12399,7 +12403,12 @@ app.post('/api/recipes', (req, res) => {
 
 app.delete('/api/recipes/:menuItemId', (req, res) => {
  const mId = req.params.menuItemId
+ const modifier = req.query.modifier
+ if (modifier) {
+ recipes = recipes.filter(r => !(r.menuItemId === mId && (r.modifier || 'All').toLowerCase() === modifier.toLowerCase()))
+ } else {
  recipes = recipes.filter(r => r.menuItemId !== mId && r.id !== mId)
+ }
  saveState()
  res.json({ success: true })
 })
@@ -13164,15 +13173,37 @@ app.get('/api/pos/orders', optionalPosAuth, (req, res) => {
 function deductInventoryForOrder(order) {
  if (!order || !order.items || !Array.isArray(order.items) || order.inventoryDeducted) return
  
+ const orderType = order.orderType || order.type || ''
+ let targetModifier = 'All'
+ if (orderType) {
+ const oLower = String(orderType).toLowerCase()
+ if (oLower.includes('dine')) targetModifier = 'Dine In'
+ else if (oLower.includes('take') || oLower.includes('pick')) targetModifier = 'Takeaway'
+ else if (oLower.includes('deliv')) targetModifier = 'Delivery'
+ }
+
  let deductedAny = false
  order.items.forEach(item => {
  const mId = item.menuItemId || item.id
  const orderQty = Number(item.quantity) || 1
+ const itemName = item.name || item.menuItemName || ''
  
- // Find matching recipe
- const recipe = (typeof recipes !== 'undefined' && Array.isArray(recipes)) 
- ? recipes.find(r => r.menuItemId === mId || r.id === mId || (r.menuItemName && item.menuItemName && r.menuItemName.toLowerCase() === item.menuItemName.toLowerCase()))
- : null
+ // Find matching recipe (match targetModifier first, fallback to 'All' or generic)
+ let recipe = null
+ if (typeof recipes !== 'undefined' && Array.isArray(recipes)) {
+ if (targetModifier && targetModifier !== 'All') {
+ recipe = recipes.find(r => 
+ (r.menuItemId === mId || (r.menuItemName && itemName && r.menuItemName.toLowerCase() === itemName.toLowerCase())) &&
+ r.modifier && r.modifier.toLowerCase() === targetModifier.toLowerCase()
+ )
+ }
+ if (!recipe) {
+ recipe = recipes.find(r => 
+ r.menuItemId === mId || r.id === mId || 
+ (r.menuItemName && itemName && r.menuItemName.toLowerCase() === itemName.toLowerCase())
+ )
+ }
+ }
  
  if (recipe && recipe.ingredients && Array.isArray(recipe.ingredients)) {
  recipe.ingredients.forEach(ing => {
