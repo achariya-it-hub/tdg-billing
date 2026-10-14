@@ -12387,9 +12387,11 @@ app.post('/api/recipes', (req, res) => {
  const recipe = req.body
  if (!recipe || !recipe.menuItemId) return res.status(400).json({ error: 'menuItemId required' })
  const mod = (recipe.modifier || 'All').toLowerCase()
+ const prot = (recipe.protein || '').toLowerCase()
  const existingIdx = recipes.findIndex(r => 
  (r.menuItemId === recipe.menuItemId || (r.id && r.id === recipe.id)) && 
- ((r.modifier || 'All').toLowerCase() === mod)
+ ((r.modifier || 'All').toLowerCase() === mod) &&
+ ((r.protein || '').toLowerCase() === prot)
  )
  if (existingIdx >= 0) {
  recipes[existingIdx] = { ...recipes[existingIdx], ...recipe }
@@ -13191,18 +13193,19 @@ function deductInventoryForOrder(order) {
  // Find matching recipe (match targetModifier first, fallback to 'All' or generic)
  let recipe = null
  if (typeof recipes !== 'undefined' && Array.isArray(recipes)) {
+ const nameMatches = (r) => r.menuItemId === mId || r.id === mId || (r.menuItemName && itemName && r.menuItemName.toLowerCase() === itemName.toLowerCase())
+ // Ordered protein (Chicken / Paneer) from customization or item name
+ const cust = item.customization || {}
+ const custProtein = String(cust.protein || (cust.gyro1 && cust.gyro1.protein) || '').toLowerCase()
+ const nameLower = String(itemName).toLowerCase()
+ const orderedProtein = custProtein.includes('paneer') ? 'paneer' : custProtein.includes('chicken') ? 'chicken' : (nameLower.includes('paneer') ? 'paneer' : (nameLower.includes('chicken') ? 'chicken' : ''))
+ const candidates = recipes.filter(nameMatches)
+ const proteinCandidates = orderedProtein ? candidates.filter(r => String(r.protein || '').toLowerCase() === orderedProtein) : []
+ const pool = proteinCandidates.length > 0 ? proteinCandidates : candidates.filter(r => !r.protein).concat(candidates.filter(r => r.protein))
  if (targetModifier && targetModifier !== 'All') {
- recipe = recipes.find(r => 
- (r.menuItemId === mId || (r.menuItemName && itemName && r.menuItemName.toLowerCase() === itemName.toLowerCase())) &&
- r.modifier && r.modifier.toLowerCase() === targetModifier.toLowerCase()
- )
+ recipe = pool.find(r => r.modifier && r.modifier.toLowerCase() === targetModifier.toLowerCase())
  }
- if (!recipe) {
- recipe = recipes.find(r => 
- r.menuItemId === mId || r.id === mId || 
- (r.menuItemName && itemName && r.menuItemName.toLowerCase() === itemName.toLowerCase())
- )
- }
+ if (!recipe) recipe = pool.find(r => !r.modifier || r.modifier === 'All') || pool[0] || null
  }
  
  if (recipe && recipe.ingredients && Array.isArray(recipe.ingredients)) {
@@ -13365,7 +13368,7 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
  
  const discountLabel = req.body.discountName || req.body.customDiscountReason || (
  isStaffBenefit ? (req.body.offerName || 'Achariya Family Week 2026') :
- (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'Custom Discount' : '')))
+ (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'LMW Discount' : '')))
  )
 
  const isDirectSettle = Boolean(req.body.settleDirectly || req.body.status === 'completed' || req.body.paymentStatus === 'paid')

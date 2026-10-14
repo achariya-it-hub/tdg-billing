@@ -481,9 +481,9 @@ export const useOrderStore = create(
           let computedDiscountName = order.discountName
           if (!computedDiscountName) {
             if (order.customDiscountType === 'percentage' || order.customDiscountType === 'pct') {
-              computedDiscountName = order.customDiscountReason ? `Custom (${order.customDiscountReason})` : `Custom Discount (${order.customDiscountValue}%)`
+              computedDiscountName = order.customDiscountReason ? `LMW (${order.customDiscountReason})` : `LMW Discount (${order.customDiscountValue}%)`
             } else if (order.customDiscountType === 'amount') {
-              computedDiscountName = order.customDiscountReason ? `Custom (${order.customDiscountReason})` : `Custom Discount (₹${order.customDiscountValue})`
+              computedDiscountName = order.customDiscountReason ? `LMW (${order.customDiscountReason})` : `LMW Discount (₹${order.customDiscountValue})`
             }
           }
 

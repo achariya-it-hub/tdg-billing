@@ -1628,7 +1628,7 @@ export default function POS() {
             )}
             {currentOrder.customDiscountType && (
               <div style={{ display: 'flex', justifyContent: 'space-between', color: '#2563eb', fontWeight: 700 }}>
-                <span>🏷️ {currentOrder.customDiscountReason || 'Custom Discount'} ({currentOrder.customDiscountType === 'percentage' || currentOrder.customDiscountType === 'pct' ? `${currentOrder.customDiscountValue}%` : `₹${currentOrder.customDiscountValue}`}):</span>
+                <span>🏷️ {currentOrder.customDiscountReason || 'LMW Discount'} ({currentOrder.customDiscountType === 'percentage' || currentOrder.customDiscountType === 'pct' ? `${currentOrder.customDiscountValue}%` : `₹${currentOrder.customDiscountValue}`}):</span>
                 <span>-₹{getDiscount().toFixed(2)}</span>
               </div>
             )}
@@ -1721,7 +1721,7 @@ export default function POS() {
                 transition: 'all 0.15s'
               }}
             >
-              🏷️ {currentOrder.customDiscountType ? (currentOrder.customDiscountType === 'pct' || currentOrder.customDiscountType === 'percentage' ? `${currentOrder.customDiscountValue}%` : `₹${currentOrder.customDiscountValue}`) : 'Custom'}
+              🏷️ {currentOrder.customDiscountType ? (currentOrder.customDiscountType === 'pct' || currentOrder.customDiscountType === 'percentage' ? `${currentOrder.customDiscountValue}%` : `₹${currentOrder.customDiscountValue}`) : 'LMW'}
             </button>
           </div>
 
@@ -1733,7 +1733,7 @@ export default function POS() {
               boxShadow: '0 2px 8px rgba(37,99,235,0.08)'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
-                <span style={{ fontSize: '11px', fontWeight: 800, color: '#1e40af' }}>✏️ Custom Discount (Type % or ₹ Amount)</span>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#1e40af' }}>✏️ LMW Discount (Type % or ₹ Amount)</span>
                 {currentOrder.customDiscountType && (
                   <button onClick={handleRemoveCustomDiscount} style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '10.5px', fontWeight: 800, cursor: 'pointer' }}>
                     ✕ Remove

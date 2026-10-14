@@ -3293,14 +3293,38 @@ export default function MenuManagement() {
  ))
  }
 
- const getRecipeForItem = (menuItemId, modifier = null) => {
- const allFor = getRecipesForItem(menuItemId)
+ const getRecipeForItem = (menuItemId, modifier = null, protein = null) => {
+ let allFor = getRecipesForItem(menuItemId)
  if (allFor.length === 0) return null
+ if (protein) {
+ const pLower = protein.toLowerCase()
+ const sameProtein = allFor.filter(r => (r.protein || '').toLowerCase() === pLower)
+ if (modifier) {
+ const exactP = sameProtein.find(r => (r.modifier || 'All').toLowerCase() === modifier.toLowerCase())
+ return exactP || null
+ }
+ return sameProtein.find(r => !r.modifier || r.modifier === 'All') || sameProtein[0] || null
+ }
  if (modifier) {
  const exact = allFor.find(r => (r.modifier || 'All').toLowerCase() === modifier.toLowerCase())
  if (exact) return exact
  }
  return allFor.find(r => !r.modifier || r.modifier === 'All') || allFor[0]
+ }
+
+ // Items offering both Chicken and Paneer need a protein-specific recipe
+ const hasProteinOptions = (item) => {
+ if (!item) return false
+ const text = `${item.name || ''} ${item.description || ''}`.toLowerCase()
+ if (text.includes('chicken') && text.includes('paneer')) return true
+ const catName = String(categories.find(c => c.id === item.categoryId)?.name || '').toLowerCase()
+ // Rice & Salads and Protein Max: every item has a Chicken/Paneer choice
+ if (catName.includes('rice') || catName.includes('salad') || catName.includes('protein')) return true
+ // Meals & Combos: any combo containing a Gyro or Rice bowl/box has a Chicken/Paneer choice
+ if (catName.includes('combo') || catName.includes('meal')) {
+ return text.includes('gyro') || text.includes('rice')
+ }
+ return false
  }
 
  const getItemCost = (menuItemId, modifier = null) => {
@@ -3601,9 +3625,33 @@ export default function MenuManagement() {
  setShowCategoryModal(true)
  }
 
+ const [recipeProtein, setRecipeProtein] = useState('')
+
+ const loadRecipeIngredients = (menuItem, mod, protein) => {
+ if (!menuItem) return
+ const existingRecipe = getRecipeForItem(menuItem.id, mod, protein || null)
+ if (existingRecipe) {
+ setRecipeIngredients([...existingRecipe.ingredients])
+ return
+ }
+ const baseRecipe = (protein ? getRecipeForItem(menuItem.id, 'All', protein) : null) ||
+ getRecipeForItem(menuItem.id, 'All') || getRecipesForItem(menuItem.id)[0]
+ if (baseRecipe) {
+ setRecipeIngredients(baseRecipe.ingredients.map(i => ({ ...i, id: 'temp_' + Math.random().toString(36).slice(2, 9) })))
+ toast.info(`Pre-loaded base ingredients for ${protein ? protein + ' • ' : ''}${mod}. Adjust and save!`)
+ } else {
+ setRecipeIngredients([])
+ }
+ }
+
  const openRecipeModal = (menuItem, initialModifier = 'All') => {
  setSelectedMenuItem(menuItem)
  setRecipeModifier(initialModifier)
+ setRecipeProtein('')
+ if (hasProteinOptions(menuItem)) {
+ // Ask for Chicken / Paneer first before loading order-type recipe
+ setRecipeIngredients([])
+ } else {
  const existingRecipe = getRecipeForItem(menuItem.id, initialModifier)
  if (existingRecipe) {
  setRecipeIngredients([...existingRecipe.ingredients])
@@ -3616,12 +3664,26 @@ export default function MenuManagement() {
  setRecipeIngredients([])
  }
  }
+ }
  setShowRecipeModal(true)
  }
 
+ const handleRecipeProteinSelect = (protein) => {
+ setRecipeProtein(protein)
+ loadRecipeIngredients(selectedMenuItem, recipeModifier, protein)
+ }
+
  const handleRecipeModifierSelect = (mod) => {
+ if (hasProteinOptions(selectedMenuItem) && !recipeProtein) {
+ toast.warning('Please choose Chicken or Paneer first')
+ return
+ }
  setRecipeModifier(mod)
  if (!selectedMenuItem) return
+ if (recipeProtein) {
+ loadRecipeIngredients(selectedMenuItem, mod, recipeProtein)
+ return
+ }
  const existingRecipe = getRecipeForItem(selectedMenuItem.id, mod)
  if (existingRecipe) {
  setRecipeIngredients([...existingRecipe.ingredients])
@@ -3684,18 +3746,27 @@ export default function MenuManagement() {
  }
  
  const modLabel = recipeModifier || 'All'
+ const needsProtein = hasProteinOptions(selectedMenuItem)
+ if (needsProtein && !recipeProtein) {
+ toast.error('Please choose Chicken or Paneer first')
+ return
+ }
+ const proteinLabel = needsProtein ? recipeProtein : ''
+ const fullLabel = proteinLabel ? `${proteinLabel} - ${modLabel}` : modLabel
  const existingIndex = recipes.findIndex(r => 
  (r.menuItemId === selectedMenuItem.id || r.menuItemName === selectedMenuItem.name) &&
- ((r.modifier || 'All').toLowerCase() === modLabel.toLowerCase())
+ ((r.modifier || 'All').toLowerCase() === modLabel.toLowerCase()) &&
+ ((r.protein || '').toLowerCase() === proteinLabel.toLowerCase())
  )
  
  const newRecipe = {
- id: existingIndex >= 0 ? recipes[existingIndex].id : 'r_' + Date.now() + '_' + modLabel.toLowerCase().replace(/[^a-z0-9]/g, ''),
+ id: existingIndex >= 0 ? recipes[existingIndex].id : 'r_' + Date.now() + '_' + fullLabel.toLowerCase().replace(/[^a-z0-9]/g, ''),
  menuItemId: selectedMenuItem.id,
  menuItemName: selectedMenuItem.name,
- name: `${selectedMenuItem.name} Recipe (${modLabel})`,
- description: `Recipe for ${selectedMenuItem.name} (${modLabel})`,
+ name: `${selectedMenuItem.name} Recipe (${fullLabel})`,
+ description: `Recipe for ${selectedMenuItem.name} (${fullLabel})`,
  modifier: modLabel,
+ protein: proteinLabel || undefined,
  yieldQty: 1,
  prepTime: selectedMenuItem.prepTime || 10,
  ingredients: recipeIngredients.map(i => {
@@ -3729,7 +3800,7 @@ export default function MenuManagement() {
  })
  } catch (e) { /* silent fallback */ }
 
- toast.success(`Recipe saved for ${modLabel} successfully`)
+ toast.success(`Recipe saved for ${fullLabel} successfully`)
  setShowRecipeModal(false)
  }
 
@@ -4183,13 +4254,14 @@ export default function MenuManagement() {
  fontSize: '11px',
  fontWeight: 700
  }}>
- {recipe.modifier ? (recipe.modifier === 'Dine In' ? '🍽️ Dine In' : recipe.modifier === 'Takeaway' ? '📦 Takeaway' : recipe.modifier === 'Delivery' ? '🛵 Delivery' : '🌐 All Orders') : '🌐 All Orders'}
+ {recipe.protein ? (recipe.protein === 'Chicken' ? '🔴 Chicken • ' : '🟢 Paneer • ') : ''}{recipe.modifier ? (recipe.modifier === 'Dine In' ? '🍽️ Dine In' : recipe.modifier === 'Takeaway' ? '📦 Takeaway' : recipe.modifier === 'Delivery' ? '🛵 Delivery' : '🌐 All Orders') : '🌐 All Orders'}
  </span>
  </div>
  </div>
  <Button variant="ghost" size="sm" onClick={() => {
  setSelectedMenuItem(menuItem)
  setRecipeModifier(recipe.modifier || 'All')
+ setRecipeProtein(recipe.protein || '')
  setRecipeIngredients([...recipe.ingredients.map(i => ({
  ...i,
  inventoryName: inventory.find(inv => inv.id === i.inventoryItemId)?.name || 'Unknown',
@@ -4316,10 +4388,43 @@ export default function MenuManagement() {
  </div>
  </div>
 
- {/* Order Type / Modifier Selection */}
- <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+ {/* Protein Selection (asked first for items with both Chicken & Paneer) */}
+ {hasProteinOptions(selectedMenuItem) && (
+ <div style={{ background: recipeProtein ? '#f9fafb' : '#fff7ed', padding: '16px', borderRadius: '12px', border: recipeProtein ? '1px solid var(--border)' : '2px solid #fb923c' }}>
  <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '10px', display: 'block' }}>
- Order Type / Recipe Modifier
+ Step 1: Choose Protein {!recipeProtein && <span style={{ color: '#ea580c' }}>(required)</span>}
+ </label>
+ <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+ {[
+ { id: 'Chicken', label: 'Chicken', icon: '🔴', color: '#dc2626', bg: '#fef2f2' },
+ { id: 'Paneer', label: 'Paneer', icon: '🟢', color: '#16a34a', bg: '#f0fdf4' }
+ ].map(p => (
+ <button
+ key={p.id}
+ type="button"
+ onClick={() => handleRecipeProteinSelect(p.id)}
+ style={{
+ padding: '12px', borderRadius: '10px',
+ border: recipeProtein === p.id ? `2px solid ${p.color}` : '1px solid #e5e7eb',
+ background: recipeProtein === p.id ? p.bg : 'white',
+ color: recipeProtein === p.id ? p.color : '#4b5563',
+ fontWeight: 800, fontSize: '14px', cursor: 'pointer',
+ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+ boxShadow: recipeProtein === p.id ? `0 2px 6px ${p.color}26` : 'none',
+ transition: 'all 0.15s'
+ }}
+ >
+ <span>{p.icon}</span> {p.label}
+ </button>
+ ))}
+ </div>
+ </div>
+ )}
+
+ {/* Order Type / Modifier Selection */}
+ <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '12px', border: '1px solid var(--border)', opacity: hasProteinOptions(selectedMenuItem) && !recipeProtein ? 0.45 : 1, pointerEvents: hasProteinOptions(selectedMenuItem) && !recipeProtein ? 'none' : 'auto' }}>
+ <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '10px', display: 'block' }}>
+ {hasProteinOptions(selectedMenuItem) ? 'Step 2: ' : ''}Order Type / Recipe Modifier
  </label>
  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
  {[
@@ -4358,7 +4463,7 @@ export default function MenuManagement() {
  {/* Current Ingredients */}
  <div>
  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
- <h4 style={{ fontSize: '14px', fontWeight: 600 }}>Ingredients for {recipeModifier}</h4>
+ <h4 style={{ fontSize: '14px', fontWeight: 600 }}>Ingredients for {recipeProtein ? `${recipeProtein} • ` : ''}{recipeModifier}</h4>
  <div style={{ display: 'flex', gap: '8px' }}>
  {recipeModifier !== 'All' && (
  <Button size="sm" variant="ghost" onClick={copyBaseIngredientsToCurrentModifier} title="Copy base food ingredients to this order type recipe">
