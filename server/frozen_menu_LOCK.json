@@ -604,7 +604,7 @@
       "id": "m_kombucha_mint",
       "categoryId": "c10_komb",
       "name": "Mint Kombucha",
-      "price": 120,
+      "price": 114,
       "description": "Mint Kombucha 250ml",
       "isAvailable": true,
       "image": "/images/menu/mint-kombucha.png"
@@ -613,7 +613,7 @@
       "id": "m_kombucha_hibiscus",
       "categoryId": "c10_komb",
       "name": "Hibiscus Kombucha",
-      "price": 120,
+      "price": 114,
       "description": "Hibiscus Kombucha 250ml",
       "isAvailable": true,
       "image": "/images/menu/kombucha-hibiscus.png"
@@ -622,7 +622,7 @@
       "id": "m_kombucha_classic",
       "categoryId": "c10_komb",
       "name": "Classic Kombucha",
-      "price": 120,
+      "price": 114,
       "description": "Classic Kombucha 250ml",
       "isAvailable": true,
       "image": "/images/menu/kombucha.png"
@@ -7164,5 +7164,5 @@
       ]
     }
   ],
-  "updatedAt": "2026-09-26T08:04:59.261Z"
+  "updatedAt": "2026-10-17T05:08:33.283Z"
 }
