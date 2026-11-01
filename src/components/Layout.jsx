@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { 
   Monitor, ChefHat, Tablet, ShoppingCart, LayoutDashboard, 
-  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, FileText, Receipt, Gem, Shield, KeyRound, X, DollarSign, Settings, Landmark, QrCode, Download, CheckSquare
+  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, FileText, Receipt, Gem, Shield, KeyRound, X, DollarSign, Settings, Landmark, QrCode, Download, CheckSquare, ScrollText
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import API_BASE from '../lib/apiConfig'
@@ -118,6 +118,7 @@ export default function Layout({ user, onLogout }) {
   const visibleNavItems = navItems.filter(item => hasView(item.module))
   if (user?.role === 'super-admin') {
     visibleNavItems.push({ path: '/settings', icon: Settings, label: 'Settings', module: 'settings' })
+    visibleNavItems.push({ path: '/audit-log', icon: ScrollText, label: 'Audit', module: 'audit' })
   }
 
   useEffect(() => {

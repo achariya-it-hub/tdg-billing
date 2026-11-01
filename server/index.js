@@ -320,8 +320,16 @@ const CASHIER_MODULES = ['pos', 'billing', 'customers']
 const KITCHEN_MODULES = ['kitchen', 'kot']
 const MANAGER_RESTRICT = ['users']
 
+// Modules that hold sales data — Cafe Admin may view/create but never modify/delete
+const SALES_MODULES = ['billing']
+
 function getDefaultPermissions(role) {
  if (role === 'admin' || role === 'super-admin') return makePermissions(true)
+ if (role === 'cafe-admin') {
+ const p = makePermissions(true)
+ for (const mod of SALES_MODULES) p[mod] = { view: true, create: true, update: false, delete: false }
+ return p
+ }
  const perms = makePermissions(false)
  if (role === 'manager') {
  for (const mod of BILLING_MODULES) {
@@ -519,6 +527,12 @@ function syncMenuVault(curCategories, curMenuItems, curRecipes) {
 
 function syncInventoryVault(curInventory) {
  try {
+ // Live inventory is authoritative (so edits AND deletes persist).
+ // Only fall back to the vault when there is no live data (e.g. fresh/corrupted DB on startup).
+ if (Array.isArray(curInventory) && curInventory.length > 0) {
+ writeFileSync(INVENTORY_VAULT_PATH, JSON.stringify({ inventory: curInventory, count: curInventory.length }, null, 2))
+ return curInventory
+ }
  let vaultInv = []
  if (existsSync(INVENTORY_VAULT_PATH)) {
  const content = readFileSync(INVENTORY_VAULT_PATH, 'utf-8').trim()
@@ -529,12 +543,7 @@ function syncInventoryVault(curInventory) {
  } catch (e) {}
  }
  }
- const invMap = new Map()
- vaultInv.forEach(i => { if (i && (i.id || i.name)) invMap.set(i.id || i.name, i) })
- ;(curInventory || []).forEach(i => { if (i && (i.id || i.name)) invMap.set(i.id || i.name, i) })
- const mergedInv = Array.from(invMap.values())
- writeFileSync(INVENTORY_VAULT_PATH, JSON.stringify({ inventory: mergedInv, count: mergedInv.length }, null, 2))
- return mergedInv
+ return vaultInv.length > 0 ? vaultInv : (curInventory || [])
  } catch (e) {
  console.error('[INVENTORY VAULT] Error:', e.message)
  return curInventory || []
@@ -890,6 +899,14 @@ function restoreState() {
  // Sync with Vault Locks for absolute 100% data retention
  orders = syncSalesVault(db.orders || [])
 
+ // Load saved menu/inventory early so any saveState() in migrations below never writes defaults
+ if (Array.isArray(db.menuItems) && db.menuItems.length > 0) {
+ menuItems = db.menuItems
+ if (Array.isArray(db.categories) && db.categories.length > 0) categories = db.categories
+ if (Array.isArray(db.recipes)) recipes = db.recipes
+ }
+ if (Array.isArray(db.inventory) && db.inventory.length > 0) inventory = db.inventory
+
 // â”€â”€â”€ STARTUP MIGRATION: Auto-sanitize Hostinger 18-Aug-26 Orders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 try {
   const aug18List = (orders || []).filter(o => o && String(o.createdAt || o.date || '').startsWith('2026-08-18'))
@@ -956,8 +973,29 @@ try {
   console.error('[SEPT 25 MIGRATION ERROR]', e.message)
 }
 
-  // Ensure official menu items populate on server startup
-  if (!menuItems || menuItems.length !== 69) {
+  // Load the user-saved menu (edits to items, prices, categories, recipe mappings).
+  // Priority: db.json → menu vault → official frozen/seed menu (only if nothing saved).
+  let savedMenuLoaded = false
+  if (Array.isArray(db.menuItems) && db.menuItems.length > 0) {
+    menuItems = db.menuItems
+    if (Array.isArray(db.categories) && db.categories.length > 0) categories = db.categories
+    if (Array.isArray(db.recipes)) recipes = db.recipes
+    savedMenuLoaded = true
+  } else if (existsSync(MENU_VAULT_PATH)) {
+    try {
+      const v = JSON.parse(readFileSync(MENU_VAULT_PATH, 'utf-8'))
+      if (Array.isArray(v.menuItems) && v.menuItems.length > 0) {
+        menuItems = v.menuItems
+        if (Array.isArray(v.categories) && v.categories.length > 0) categories = v.categories
+        if (Array.isArray(v.recipes)) recipes = v.recipes
+        savedMenuLoaded = true
+        console.log('[MENU RESTORE] Loaded saved menu from vault')
+      }
+    } catch (e) { console.error('[MENU VAULT LOAD ERROR]', e.message) }
+  }
+
+  // Ensure official menu items populate on server startup (only when no saved menu exists)
+  if (!savedMenuLoaded && (!menuItems || menuItems.length !== 69)) {
     try {
       const frozenPath = join(__dirname, 'frozen-menu.json')
       const seedPath = join(__dirname, 'seed-db.json')
@@ -1062,6 +1100,129 @@ const io = new Server(httpServer, {
 
 app.use(cors())
 app.use(express.json({ limit: '10mb' }))
+
+// ============ CAFE ADMIN SALES PROTECTION ============
+// Cafe Admin can modify everything EXCEPT sales data (bills/orders already placed).
+const SALES_PROTECTED_ROUTES = [
+  { method: 'POST', re: /^\/api\/pos\/orders\/[^/]+\/cancel\/?$/ },
+  { method: 'PUT', re: /^\/api\/pos\/orders\/[^/]+\/(resettle|modify)\/?$/ },
+  { method: 'PUT', re: /^\/api\/pos\/orders\/[^/]+\/?$/ },
+  { method: 'PATCH', re: /^\/api\/pos\/orders\/[^/]+\/?$/ },
+  { method: 'DELETE', re: /^\/api\/(pos\/)?orders(\/.*)?$/ },
+  { method: 'POST', re: /^\/api\/admin\/(delete-order|force-restore)\/?$/ },
+  { method: 'POST', re: /^\/api\/settings\/restore-backup\/?$/ },
+  { method: 'POST', re: /^\/api\/backups\/daily\/restore\/?$/ },
+]
+const BULK_DESTRUCTIVE_ROUTES = [
+  { method: 'DELETE', re: /^\/api\/inventory\/clear\/?$/ },
+  { method: 'POST', re: /^\/api\/admin\/menu\/import-excel\/?$/ },
+  { method: 'POST', re: /^\/api\/admin\/(force-reset-menu|freeze-menu)\/?$/ },
+]
+app.use((req, res, next) => {
+  const header = req.headers.authorization
+  if (!header || !header.startsWith('Bearer ')) return next()
+  let decoded
+  try { decoded = jwt.verify(header.split(' ')[1], JWT_SECRET) } catch { return next() }
+  if (decoded?.role !== 'cafe-admin') return next()
+  const path = req.path
+  const blocked = SALES_PROTECTED_ROUTES.some(r => r.method === req.method && r.re.test(path)) ||
+    // Kitchen status updates are fine, but cancelling a bill via status is not
+    (req.method === 'PATCH' && /^\/api\/pos\/orders\/[^/]+\/status\/?$/.test(path) && String(req.body?.status || '').toLowerCase() === 'cancelled')
+  if (blocked) {
+    return res.status(403).json({ error: 'Cafe Admin cannot modify or delete sales data' })
+  }
+  // Mass-destructive operations are reserved for Admin / Super Admin
+  if (BULK_DESTRUCTIVE_ROUTES.some(r => r.method === req.method && r.re.test(path))) {
+    return res.status(403).json({ error: 'This bulk operation is restricted to Admin / Super Admin' })
+  }
+  // Prevent privilege escalation via user management
+  const userRoute = req.path.match(/^\/api\/billing\/users(?:\/([^/]+))?\/?$/)
+  if (userRoute && ['POST', 'PUT', 'DELETE'].includes(req.method)) {
+    const PRIVILEGED = ['admin', 'super-admin']
+    const reqRole = String(req.body?.role || '').toLowerCase()
+    const target = userRoute[1] ? billingUsers.find(u => u.id === userRoute[1]) : null
+    if (PRIVILEGED.includes(reqRole) || (target && PRIVILEGED.includes(target.role))) {
+      return res.status(403).json({ error: 'Cafe Admin cannot create or modify Admin / Super Admin accounts' })
+    }
+  }
+  next()
+})
+
+// ============ VERSIONED SNAPSHOTS + AUDIT LOG (menu / recipes / inventory) ============
+// Before every edit, a timestamped snapshot is saved (kept 30 days). Every edit is logged
+// with who did it, what was sent and whether it succeeded, so any bad edit can be traced and rolled back.
+const SNAPSHOT_DIR = join(DATA_DIR, 'snapshots')
+const AUDIT_LOG_PATH = join(DATA_DIR, 'audit_log.jsonl')
+const SNAPSHOT_KEEP_MS = 30 * 24 * 60 * 60 * 1000
+const AUDITED_ROUTE = /^\/api\/(admin\/menu|admin\/(force-reset-menu|freeze-menu)|recipes|inventory)(\/|$)/
+let lastSnapshotAt = 0
+
+function takeSnapshot(reason) {
+  try {
+    if (!existsSync(SNAPSHOT_DIR)) mkdirSync(SNAPSHOT_DIR, { recursive: true })
+    const now = Date.now()
+    // Throttle: rapid-fire edits share one snapshot taken before the first of them
+    if (now - lastSnapshotAt < 10000) return
+    lastSnapshotAt = now
+    const ts = new Date(now).toISOString().replace(/[:.]/g, '-')
+    writeFileSync(join(SNAPSHOT_DIR, `snap-${ts}.json`), JSON.stringify({
+      reason, savedAt: new Date(now).toISOString(), categories, menuItems, recipes, inventory
+    }))
+    for (const f of readdirSync(SNAPSHOT_DIR)) {
+      try {
+        const p = join(SNAPSHOT_DIR, f)
+        if (now - statSync(p).mtimeMs > SNAPSHOT_KEEP_MS) rmSync(p)
+      } catch {}
+    }
+  } catch (e) {
+    console.error('[SNAPSHOT ERROR]', e.message)
+  }
+}
+
+app.use((req, res, next) => {
+  if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) || !AUDITED_ROUTE.test(req.path)) return next()
+  let who = { id: null, name: 'unknown', role: 'unauthenticated' }
+  const header = req.headers.authorization
+  if (header && header.startsWith('Bearer ')) {
+    try {
+      const d = jwt.verify(header.split(' ')[1], JWT_SECRET)
+      const u = billingUsers.find(x => x.id === d.staffId)
+      who = { id: d.staffId || null, name: u?.name || 'unknown', role: d.role || 'unknown' }
+    } catch {}
+  }
+  takeSnapshot(`${req.method} ${req.path} by ${who.name}`)
+  res.on('finish', () => {
+    try {
+      const body = req.path.includes('/image') ? '[binary]' : JSON.stringify(req.body || {}).slice(0, 2000)
+      appendFileSync(AUDIT_LOG_PATH, JSON.stringify({
+        at: new Date().toISOString(),
+        user: who,
+        method: req.method,
+        path: req.path,
+        status: res.statusCode,
+        body
+      }) + '\n')
+    } catch (e) {
+      console.error('[AUDIT LOG ERROR]', e.message)
+    }
+  })
+  next()
+})
+
+// View recent audit entries (Admin / Super Admin / Cafe Admin only)
+app.get('/api/admin/audit-log', (req, res) => {
+  try {
+    const header = req.headers.authorization
+    if (!header || !header.startsWith('Bearer ')) return res.status(401).json({ error: 'Login required' })
+    const d = jwt.verify(header.split(' ')[1], JWT_SECRET)
+    if (d.role !== 'super-admin') return res.status(403).json({ error: 'Super Admin only' })
+    const limit = Math.min(Number(req.query.limit) || 100, 1000)
+    const lines = existsSync(AUDIT_LOG_PATH) ? readFileSync(AUDIT_LOG_PATH, 'utf-8').trim().split('\n').filter(Boolean) : []
+    res.json(lines.slice(-limit).reverse().map(l => { try { return JSON.parse(l) } catch { return null } }).filter(Boolean))
+  } catch (e) {
+    res.status(401).json({ error: 'Invalid or expired session' })
+  }
+})
 
 // Serve uploaded files & public images
 const UPLOADS_DIR = join(__dirname, 'uploads')
@@ -16971,6 +17132,24 @@ async function seedAdmin() {
  })
  saveState()
  console.log('Migrated: created super-admin user (PIN: 1010)')
+ }
+
+ // Ensure cafe-admin user exists (full access except sales data)
+ if (!billingUsers.find(u => u.role === 'cafe-admin')) {
+ if (!billingUsers.some(u => bcrypt.compareSync('2020', u.pin))) {
+ billingUsers.push({
+ id: 'bu_cafeadmin',
+ name: 'Cafe Admin',
+ pin: bcrypt.hashSync('2020', 10),
+ role: 'cafe-admin',
+ permissions: getDefaultPermissions('cafe-admin'),
+ createdAt: new Date().toISOString()
+ })
+ saveState()
+ console.log('Migrated: created cafe-admin user (PIN: 2020)')
+ } else {
+ console.warn('Cafe Admin not seeded: PIN 2020 already in use - create it from the Users page')
+ }
  }
 
  // Ensure settings exist in db.json

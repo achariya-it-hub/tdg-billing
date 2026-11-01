@@ -735,38 +735,47 @@
     {
       "id": "m_chicken_nuggets",
       "categoryId": "c_sides",
-      "name": "3 Pc Chicken Nuggets",
+      "name": "Chicken Nuggets",
       "price": 49,
-      "description": "3 pc crispy chicken nuggets",
+      "description": "Crispy chicken nuggets",
       "isAvailable": true,
       "image": "/images/menu/sides_chicken_nuggets.png"
     },
     {
       "id": "m_halloumi_nuggets",
       "categoryId": "c_sides",
-      "name": "4 Pc Halloumi Nuggets",
+      "name": "Halloumi Nuggets",
       "price": 99,
-      "description": "4 pc crispy halloumi cheese nuggets",
+      "description": "Crispy halloumi cheese nuggets",
       "isAvailable": true,
       "image": "/images/menu/sides_halloumi_nuggets.png"
     },
     {
       "id": "m_mozzarella_sticks",
       "categoryId": "c_sides",
-      "name": "3 Pc Mozzarella Sticks",
+      "name": "Mozarella Sticks",
       "price": 149,
-      "description": "3 pc golden mozzarella sticks",
+      "description": "Golden mozzarella sticks",
       "isAvailable": true,
       "image": "/images/menu/sides_mozzarella_sticks.png"
     },
     {
       "id": "m_falafel",
       "categoryId": "c_sides",
-      "name": "4 Pc Falafel",
+      "name": "Falafel",
       "price": 99,
-      "description": "4 pc crispy falafel",
+      "description": "Crispy falafel",
       "isAvailable": true,
       "image": "/images/menu/sides_falafel.png"
+    },
+    {
+      "id": "m_chicken_nuggets_99",
+      "categoryId": "c_sides",
+      "name": "@99 Chicken Nuggets",
+      "price": 99,
+      "description": "Special @99 crispy chicken nuggets portion",
+      "isAvailable": true,
+      "image": "/images/menu/sides_chicken_nuggets.png"
     }
   ],
   "recipes": [
@@ -7208,9 +7217,9 @@
     {
       "id": "r_m_chicken_nuggets",
       "menuItemId": "m_chicken_nuggets",
-      "menuItemName": "3 Pc Chicken Nuggets",
-      "name": "RECIPE - 3 PC CHICKEN NUGGETS",
-      "description": "Standard recipe for 3 Pc Chicken Nuggets (Price \u20b949/-)",
+      "menuItemName": "Chicken Nuggets",
+      "name": "RECIPE - CHICKEN NUGGETS",
+      "description": "Standard recipe for Chicken Nuggets (Price \u20b949/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 11.15,
@@ -7222,7 +7231,7 @@
         {
           "id": "ri_m_chicken_nuggets_1",
           "inventoryItemId": "inv_boneless_chicken",
-          "inventoryName": "3 Pc Chicken Nuggets Ingredients",
+          "inventoryName": "Chicken Nuggets Ingredients",
           "quantity": 1.0,
           "unit": "portion",
           "costPerUnit": 11.15,
@@ -7251,9 +7260,9 @@
     {
       "id": "r_m_halloumi_nuggets",
       "menuItemId": "m_halloumi_nuggets",
-      "menuItemName": "4 Pc Halloumi Nuggets",
-      "name": "RECIPE - 4 PC HALLOUMI NUGGETS",
-      "description": "Standard recipe for 4 Pc Halloumi Nuggets (Price \u20b999/-)",
+      "menuItemName": "Halloumi Nuggets",
+      "name": "RECIPE - HALLOUMI NUGGETS",
+      "description": "Standard recipe for Halloumi Nuggets (Price \u20b999/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 22.52,
@@ -7265,7 +7274,7 @@
         {
           "id": "ri_m_halloumi_nuggets_1",
           "inventoryItemId": "inv_boneless_chicken",
-          "inventoryName": "4 Pc Halloumi Nuggets Ingredients",
+          "inventoryName": "Halloumi Nuggets Ingredients",
           "quantity": 1.0,
           "unit": "portion",
           "costPerUnit": 22.52,
@@ -7294,9 +7303,9 @@
     {
       "id": "r_m_mozzarella_sticks",
       "menuItemId": "m_mozzarella_sticks",
-      "menuItemName": "3 Pc Mozzarella Sticks",
-      "name": "RECIPE - 3 PC MOZZARELLA STICKS",
-      "description": "Standard recipe for 3 Pc Mozzarella Sticks (Price \u20b9149/-)",
+      "menuItemName": "Mozarella Sticks",
+      "name": "RECIPE - MOZARELLA STICKS",
+      "description": "Standard recipe for Mozarella Sticks (Price \u20b9149/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 33.9,
@@ -7308,7 +7317,7 @@
         {
           "id": "ri_m_mozzarella_sticks_1",
           "inventoryItemId": "inv_boneless_chicken",
-          "inventoryName": "3 Pc Mozzarella Sticks Ingredients",
+          "inventoryName": "Mozarella Sticks Ingredients",
           "quantity": 1.0,
           "unit": "portion",
           "costPerUnit": 33.9,
@@ -7337,9 +7346,9 @@
     {
       "id": "r_m_falafel",
       "menuItemId": "m_falafel",
-      "menuItemName": "4 Pc Falafel",
-      "name": "RECIPE - 4 PC FALAFEL",
-      "description": "Standard recipe for 4 Pc Falafel (Price \u20b999/-)",
+      "menuItemName": "Falafel",
+      "name": "RECIPE - FALAFEL",
+      "description": "Standard recipe for Falafel (Price \u20b999/-)",
       "yieldQty": 1,
       "prepTime": 5,
       "rmCost": 22.52,
@@ -7351,7 +7360,7 @@
         {
           "id": "ri_m_falafel_1",
           "inventoryItemId": "inv_boneless_chicken",
-          "inventoryName": "4 Pc Falafel Ingredients",
+          "inventoryName": "Falafel Ingredients",
           "quantity": 1.0,
           "unit": "portion",
           "costPerUnit": 22.52,
@@ -7376,7 +7385,53 @@
           "cost": 5.2
         }
       ]
+    },
+    {
+      "id": "r_m_chicken_nuggets_99",
+      "menuItemId": "m_chicken_nuggets_99",
+      "menuItemName": "@99 Chicken Nuggets",
+      "name": "RECIPE - @99 CHICKEN NUGGETS",
+      "description": "Standard recipe for @99 Chicken Nuggets (Price \u20b999/-)",
+      "yieldQty": 1,
+      "prepTime": 5,
+      "rmCost": 22.52,
+      "pmCost": 6.93,
+      "labourCost": 5.2,
+      "calculatedCost": 34.65,
+      "sellingPrice": 99.0,
+      "ingredients": [
+        {
+          "id": "ri_m_chicken_nuggets_99_1",
+          "inventoryItemId": "inv_boneless_chicken",
+          "inventoryName": "@99 Chicken Nuggets Ingredients",
+          "quantity": 1.0,
+          "unit": "portion",
+          "costPerUnit": 22.52,
+          "cost": 22.52
+        },
+        {
+          "id": "ri_m_chicken_nuggets_99_2",
+          "inventoryItemId": "inv_paper_bag_large",
+          "inventoryName": "Packaging",
+          "quantity": 1.0,
+          "unit": "pc",
+          "costPerUnit": 6.93,
+          "cost": 6.93
+        },
+        {
+          "id": "ri_m_chicken_nuggets_99_3",
+          "inventoryItemId": "inv_labour",
+          "inventoryName": "Labour Cost",
+          "quantity": 1.0,
+          "unit": "unit",
+          "costPerUnit": 5.2,
+          "cost": 5.2
+        }
+      ]
     }
   ],
-  "updatedAt": "2026-09-12T18:44:43.620Z"
+  "updatedAt": "2026-11-01T05:12:46.158693+00:00",
+  "isFrozen": true,
+  "frozenAt": "2026-11-01T05:12:46.158693+00:00",
+  "frozenAtIST": "01/11/2026, 10:42:46 AM"
 }

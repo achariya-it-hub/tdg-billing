@@ -31,6 +31,16 @@ function EmptyPermissions() {
   return p
 }
 
+// Cafe Admin: full access to everything except modifying/deleting sales (billing) data
+function CafeAdminPermissions() {
+  const p = {}
+  for (const mod of BILLING_MODULES) {
+    p[mod.id] = { view: true, create: true, update: true, delete: true }
+  }
+  p.billing = { view: true, create: true, update: false, delete: false }
+  return p
+}
+
 export default function Users() {
   const [currentUser, setCurrentUser] = useState(null)
   const [users, setUsers] = useState([])
@@ -56,7 +66,7 @@ export default function Users() {
     }
   }
 
-  const canManage = currentUser?.permissions?.users?.delete || currentUser?.role === 'admin'
+  const canManage = currentUser?.permissions?.users?.delete || currentUser?.role === 'admin' || currentUser?.role === 'super-admin' || currentUser?.role === 'cafe-admin'
 
   const openCreate = () => {
     setEditing(null)
@@ -240,10 +250,11 @@ export default function Users() {
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#4b5563', marginBottom: '6px' }}>Role</label>
                 <select value={form.role} onChange={e => {
                   const role = e.target.value
-                  setForm({ ...form, role, permissions: editing ? form.permissions : EmptyPermissions() })
+                  setForm({ ...form, role, permissions: role === 'cafe-admin' ? CafeAdminPermissions() : (editing ? form.permissions : EmptyPermissions()) })
                 }} style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #e5e7eb', fontSize: '14px', background: 'white' }}>
-                  <option value="super-admin">Super Admin</option>
-                  <option value="admin">Admin</option>
+                  {currentUser?.role !== 'cafe-admin' && <option value="super-admin">Super Admin</option>}
+                  {currentUser?.role !== 'cafe-admin' && <option value="admin">Admin</option>}
+                  <option value="cafe-admin">Cafe Admin</option>
                   <option value="manager">Manager</option>
                   <option value="cashier">Cashier</option>
                   <option value="kitchen">Kitchen</option>
@@ -267,6 +278,7 @@ export default function Users() {
                         {PERM_ACTIONS.map(action => (
                           <label key={action} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#6b7280', cursor: 'pointer' }}>
                             <input type="checkbox" checked={perms[action] || false}
+                              disabled={form.role === 'cafe-admin' && mod.id === 'billing' && (action === 'update' || action === 'delete')}
                               onChange={() => togglePerm(mod.id, action)}
                               style={{ accentColor: '#e63946' }} />
                             {action.charAt(0).toUpperCase() + action.slice(1)}

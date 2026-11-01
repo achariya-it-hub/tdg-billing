@@ -26,10 +26,11 @@ for key, dest in images.items():
 category = {"id": "c_sides", "name": "Sides", "icon": "🍢", "color": "#f59e0b"}
 
 items = [
-    ("m_chicken_nuggets", "3 Pc Chicken Nuggets", 49, "3 pc crispy chicken nuggets", "sides_chicken_nuggets.png"),
-    ("m_halloumi_nuggets", "4 Pc Halloumi Nuggets", 99, "4 pc crispy halloumi cheese nuggets", "sides_halloumi_nuggets.png"),
-    ("m_mozzarella_sticks", "3 Pc Mozzarella Sticks", 149, "3 pc golden mozzarella sticks", "sides_mozzarella_sticks.png"),
-    ("m_falafel", "4 Pc Falafel", 99, "4 pc crispy falafel", "sides_falafel.png"),
+    ("m_chicken_nuggets", "Chicken Nuggets", 49, "Crispy chicken nuggets", "sides_chicken_nuggets.png"),
+    ("m_halloumi_nuggets", "Halloumi Nuggets", 99, "Crispy halloumi cheese nuggets", "sides_halloumi_nuggets.png"),
+    ("m_mozzarella_sticks", "Mozarella Sticks", 149, "Golden mozzarella sticks", "sides_mozzarella_sticks.png"),
+    ("m_falafel", "Falafel", 99, "Crispy falafel", "sides_falafel.png"),
+    ("m_chicken_nuggets_99", "@99 Chicken Nuggets", 99, "Special @99 crispy chicken nuggets portion", "sides_chicken_nuggets.png"),
 ]
 menu_items = [
     {"id": i, "categoryId": "c_sides", "name": n, "price": p, "description": d,
@@ -59,6 +60,11 @@ def make_recipe(item):
     }
 
 
+from datetime import datetime, timezone, timedelta
+ist = timezone(timedelta(hours=5, minutes=30))
+now_iso = datetime.now(timezone.utc).isoformat()
+now_ist = datetime.now(ist).strftime("%d/%m/%Y, %I:%M:%S %p")
+
 files = [
     r"d:\TDG-Billing\server\db.json",
     r"d:\TDG-Billing\server\seed-db.json",
@@ -66,6 +72,8 @@ files = [
     r"d:\TDG-Billing\server\menu_backup_LOCK.json",
     r"d:\TDG-Billing\server\frozen-menu.json",
     r"d:\TDG-Billing\server\frozen_menu_LOCK.json",
+    r"d:\TDG-Billing\server\menu_vault.json",
+    r"d:\TDG-Billing\server\master_double_backup_LOCK.json",
 ]
 
 for f in files:
@@ -79,18 +87,54 @@ for f in files:
         cats = data.setdefault("categories", [])
         its = data.setdefault("menuItems", [])
         recs = data.setdefault("recipes", [])
-        if not any(c.get("id") == "c_sides" for c in cats):
+        
+        # Ensure category
+        existing_cat = next((c for c in cats if c.get("id") == "c_sides"), None)
+        if not existing_cat:
             cats.append(category)
-        have = {m.get("id") for m in its}
+        else:
+            existing_cat.update(category)
+            
+        # Update or append menu items
         for m in menu_items:
-            if m["id"] not in have:
+            existing_item = next((it for it in its if it.get("id") == m["id"]), None)
+            if existing_item:
+                existing_item.update(m)
+            else:
                 its.append(m)
-        have_r = {r.get("menuItemId") for r in recs}
+                
+        # Update or append recipes
         for m in menu_items:
-            if m["id"] not in have_r:
-                recs.append(make_recipe(m))
+            rec = make_recipe(m)
+            existing_rec = next((r for r in recs if r.get("menuItemId") == m["id"]), None)
+            if existing_rec:
+                existing_rec.update(rec)
+            else:
+                recs.append(rec)
+                
+        # Freeze metadata
+        data["isFrozen"] = True
+        data["frozenAt"] = now_iso
+        data["frozenAtIST"] = now_ist
+        data["updatedAt"] = now_iso
+        
+        # If master backup, update _meta
+        if "_meta" in data and isinstance(data["_meta"], dict):
+            counts = data["_meta"].setdefault("counts", {})
+            counts["menuItems"] = len(its)
+            counts["categories"] = len(cats)
+            counts["recipes"] = len(recs)
+            data["_meta"]["savedAt"] = now_iso
+            data["_meta"]["savedAtIST"] = now_ist
+            
+        # If menu_vault, update count fields
+        if "menuItemsCount" in data:
+            data["menuItemsCount"] = len(its)
+        if "categoriesCount" in data:
+            data["categoriesCount"] = len(cats)
+
         with open(f, "w", encoding="utf-8") as fh:
             json.dump(data, fh, indent=2)
-        print("Updated", f)
+        print("Updated & Frozen", f, f"({len(its)} items, {len(cats)} categories, {len(recs)} recipes)")
     except Exception as e:
         print("Error", f, e)

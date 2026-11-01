@@ -23,6 +23,7 @@ import Expenses from './pages/Expenses'
 import Accounts from './pages/Accounts'
 import Todo from './pages/Todo'
 import Settings from './pages/Settings'
+import AuditLog from './pages/AuditLog'
 import Customizer from './pages/Customizer'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import MobilePreview from './pages/MobilePreview'
@@ -227,6 +228,7 @@ export default function App() {
               <Route path="/todo" element={<Todo />} />
               <Route path="/table-qr" element={<TableQRGenerator />} />
               <Route path="/settings" element={<Settings />} />
+<Route path="/audit-log" element={<AuditLog />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/staff-login" replace />} />
@@ -281,6 +283,7 @@ export default function App() {
               <Route path="/todo" element={<Todo />} />
               <Route path="/table-qr" element={<TableQRGenerator />} />
               <Route path="/settings" element={<Settings />} />
+<Route path="/audit-log" element={<AuditLog />} />
             </Route>
           </Route>
         </Routes>

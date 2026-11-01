@@ -20,6 +20,8 @@ seed-db.json
 **/backups/
 **/daily-backups/
 server/db.pre-deploy-backup.json
+server/audit_log.jsonl
+server/snapshots/
 *_LOCK.json
 *_vault_LOCK.json
 server/*_LOCK.json
