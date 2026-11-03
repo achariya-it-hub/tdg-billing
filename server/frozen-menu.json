@@ -86,10 +86,12 @@
       "displayOrder": 7
     },
     {
-      "id": "c_sides",
+      "id": "cat_1793693056697",
       "name": "Sides",
-      "icon": "🍢",
-      "color": "#f59e0b"
+      "color": "#f59e0b",
+      "displayOrder": 15,
+      "isDeleted": false,
+      "createdAt": "2026-11-03T08:04:16.697Z"
     }
   ],
   "menuItems": [
@@ -733,49 +735,59 @@
       "image": "/images/menu/den's party meal.png"
     },
     {
-      "id": "m_chicken_nuggets",
-      "categoryId": "c_sides",
+      "id": "m_1793693116375",
       "name": "Chicken Nuggets",
       "price": 49,
+      "categoryId": "cat_1793693056697",
       "description": "Crispy chicken nuggets",
       "isAvailable": true,
-      "image": "/images/menu/sides_chicken_nuggets.png"
+      "isDeleted": false,
+      "image": "/images/menu/sides_chicken_nuggets.png",
+      "createdAt": "2026-11-03T08:05:16.376Z"
     },
     {
-      "id": "m_halloumi_nuggets",
-      "categoryId": "c_sides",
+      "id": "m_1793693137494",
       "name": "Halloumi Nuggets",
       "price": 99,
+      "categoryId": "cat_1793693056697",
       "description": "Crispy halloumi cheese nuggets",
       "isAvailable": true,
-      "image": "/images/menu/sides_halloumi_nuggets.png"
+      "isDeleted": false,
+      "image": "/images/menu/sides_halloumi_nuggets.png",
+      "createdAt": "2026-11-03T08:05:37.494Z"
     },
     {
-      "id": "m_mozzarella_sticks",
-      "categoryId": "c_sides",
+      "id": "m_1793693137727",
       "name": "Mozarella Sticks",
       "price": 149,
+      "categoryId": "cat_1793693056697",
       "description": "Golden mozzarella sticks",
       "isAvailable": true,
-      "image": "/images/menu/sides_mozzarella_sticks.png"
+      "isDeleted": false,
+      "image": "/images/menu/sides_mozzarella_sticks.png",
+      "createdAt": "2026-11-03T08:05:37.727Z"
     },
     {
-      "id": "m_falafel",
-      "categoryId": "c_sides",
+      "id": "m_1793693137947",
       "name": "Falafel",
       "price": 99,
+      "categoryId": "cat_1793693056697",
       "description": "Crispy falafel",
       "isAvailable": true,
-      "image": "/images/menu/sides_falafel.png"
+      "isDeleted": false,
+      "image": "/images/menu/sides_falafel.png",
+      "createdAt": "2026-11-03T08:05:37.947Z"
     },
     {
-      "id": "m_chicken_nuggets_99",
-      "categoryId": "c_sides",
+      "id": "m_1793693138173",
       "name": "@99 Chicken Nuggets",
       "price": 99,
+      "categoryId": "cat_1793693056697",
       "description": "Special @99 crispy chicken nuggets portion",
       "isAvailable": true,
-      "image": "/images/menu/sides_chicken_nuggets.png"
+      "isDeleted": false,
+      "image": "/images/menu/sides_chicken_nuggets.png",
+      "createdAt": "2026-11-03T08:05:38.173Z"
     }
   ],
   "recipes": [
@@ -7215,8 +7227,8 @@
       ]
     },
     {
-      "id": "r_m_chicken_nuggets",
-      "menuItemId": "m_chicken_nuggets",
+      "id": "r_m_1793693116375",
+      "menuItemId": "m_1793693116375",
       "menuItemName": "Chicken Nuggets",
       "name": "RECIPE - CHICKEN NUGGETS",
       "description": "Standard recipe for Chicken Nuggets (Price ₹49/-)",
@@ -7258,8 +7270,8 @@
       ]
     },
     {
-      "id": "r_m_halloumi_nuggets",
-      "menuItemId": "m_halloumi_nuggets",
+      "id": "r_m_1793693137494",
+      "menuItemId": "m_1793693137494",
       "menuItemName": "Halloumi Nuggets",
       "name": "RECIPE - HALLOUMI NUGGETS",
       "description": "Standard recipe for Halloumi Nuggets (Price ₹99/-)",
@@ -7301,8 +7313,8 @@
       ]
     },
     {
-      "id": "r_m_mozzarella_sticks",
-      "menuItemId": "m_mozzarella_sticks",
+      "id": "r_m_1793693137727",
+      "menuItemId": "m_1793693137727",
       "menuItemName": "Mozarella Sticks",
       "name": "RECIPE - MOZARELLA STICKS",
       "description": "Standard recipe for Mozarella Sticks (Price ₹149/-)",
@@ -7344,8 +7356,8 @@
       ]
     },
     {
-      "id": "r_m_falafel",
-      "menuItemId": "m_falafel",
+      "id": "r_m_1793693137947",
+      "menuItemId": "m_1793693137947",
       "menuItemName": "Falafel",
       "name": "RECIPE - FALAFEL",
       "description": "Standard recipe for Falafel (Price ₹99/-)",
@@ -7387,8 +7399,8 @@
       ]
     },
     {
-      "id": "r_m_chicken_nuggets_99",
-      "menuItemId": "m_chicken_nuggets_99",
+      "id": "r_m_1793693138173",
+      "menuItemId": "m_1793693138173",
       "menuItemName": "@99 Chicken Nuggets",
       "name": "RECIPE - @99 CHICKEN NUGGETS",
       "description": "Standard recipe for @99 Chicken Nuggets (Price ₹99/-)",
@@ -7430,7 +7442,7 @@
       ]
     }
   ],
-  "updatedAt": "2026-11-03T05:28:01.560Z",
+  "updatedAt": "2026-11-03T08:07:31.603Z",
   "isFrozen": true,
   "frozenAt": "2026-11-03T05:28:01.560Z",
   "frozenAtIST": "3/11/2026, 10:58:01 am"
