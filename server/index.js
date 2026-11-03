@@ -12526,8 +12526,7 @@ app.put('/api/admin/menu/items/:id', (req, res) => {
  })
  }
 
- saveState()
- io.emit('menu:updated', menuItems[idx])
+ saveMenuFast()
  res.json(menuItems[idx])
 })
 
