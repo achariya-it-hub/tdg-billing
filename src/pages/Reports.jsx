@@ -1375,13 +1375,32 @@ export default function Reports() {
       }
 
       case 'complimentary-bills': {
-        const compList = (ordersReport || []).filter(o => {
+        const isOrderComplimentary = (o) => {
           if (!o) return false
           const s = (o.status || '').toLowerCase()
-          if (s === 'cancelled' || s === 'canceled') return false
-          return Boolean(o.complimentary || o.complimentaryType || (o.notes && String(o.notes).toLowerCase().includes('complimentary')) || (o.specialRemarks && String(o.specialRemarks).toLowerCase().includes('complimentary')))
-        })
-        const totalCompValue = compList.reduce((sum, o) => sum + (Number(o.total) || 0), 0)
+          if (s === 'cancelled' || s === 'canceled' || s === 'void' || o.isCancelled || o.isVoid) return false
+          const m = (o.paymentMethod || '').toLowerCase()
+          return Boolean(
+            o.complimentary ||
+            o.isComplimentary ||
+            o.complimentaryType ||
+            m === 'complimentary' ||
+            m === 'nc' ||
+            m === 'free' ||
+            o.type === 'complimentary' ||
+            (o.notes && String(o.notes).toLowerCase().includes('complimentary')) ||
+            (o.specialRemarks && String(o.specialRemarks).toLowerCase().includes('complimentary')) ||
+            (o.discountName && String(o.discountName).toLowerCase().includes('complimentary'))
+          )
+        }
+
+        const getCompValue = (o) => {
+          const itemSub = (o.items || []).reduce((sum, i) => sum + (Number(i.totalPrice) || (Number(i.unitPrice || i.price || 0) * Number(i.quantity || i.qty || 1))), 0)
+          return Number(o.rawSubtotal) || itemSub || Number(o.discount) || Number(o.subtotal) || Number(o.total) || 0
+        }
+
+        const compList = (ordersReport || []).filter(isOrderComplimentary)
+        const totalCompValue = compList.reduce((sum, o) => sum + getCompValue(o), 0)
 
         return (
           <div>
@@ -1436,7 +1455,7 @@ export default function Reports() {
                           {(item.items || []).map(i => `${i.menuItemName || i.name} x${i.quantity || 1}`).join(', ')}
                         </td>
                         <td style={{ padding: '16px', textAlign: 'right', fontWeight: 800, color: '#d97706', fontSize: '15px' }}>
-                          ₹{(Number(item.total) || 0).toLocaleString('en-IN')}
+                          ₹{getCompValue(item).toLocaleString('en-IN')}
                         </td>
                         <td style={{ padding: '16px', fontSize: '12.5px', color: '#6b7280', fontStyle: 'italic' }}>
                           {item.notes || item.specialRemarks || 'Approved by Management'}
@@ -2217,9 +2236,41 @@ export default function Reports() {
           (o.type || 'Dine-In').toUpperCase(),
           (o.paymentMethod || 'CASH').toUpperCase(),
           o.createdAt ? new Date(o.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : '-',
-          `₹${(Number(o.total) || 0).toLocaleString('en-IN')}`
+          `₹${(Number(o.amount || o.total) || 0).toLocaleString('en-IN')}`
         ])
       } : null
+      case 'complimentary-bills': {
+        const isOrderComplimentary = (o) => {
+          if (!o) return false
+          const s = (o.status || '').toLowerCase()
+          if (s === 'cancelled' || s === 'canceled' || s === 'void' || o.isCancelled || o.isVoid) return false
+          const m = (o.paymentMethod || '').toLowerCase()
+          return Boolean(
+            o.complimentary || o.isComplimentary || o.complimentaryType ||
+            m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary' ||
+            (o.notes && String(o.notes).toLowerCase().includes('complimentary')) ||
+            (o.specialRemarks && String(o.specialRemarks).toLowerCase().includes('complimentary')) ||
+            (o.discountName && String(o.discountName).toLowerCase().includes('complimentary'))
+          )
+        }
+        const getCompValue = (o) => {
+          const itemSub = (o.items || []).reduce((sum, i) => sum + (Number(i.totalPrice) || (Number(i.unitPrice || i.price || 0) * Number(i.quantity || i.qty || 1))), 0)
+          return Number(o.rawSubtotal) || itemSub || Number(o.discount) || Number(o.subtotal) || Number(o.total) || 0
+        }
+        const compList = (ordersReport || []).filter(isOrderComplimentary)
+        return {
+          title: 'Complimentary Bills Report',
+          headers: ['Bill #', 'Date & Time', 'Category / VIP Type', 'Items Served Free', 'Value Given (₹)', 'Remarks'],
+          rows: compList.map(item => [
+            `#${item.orderNumber || item.id}`,
+            item.createdAt ? new Date(item.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) : '-',
+            item.complimentaryType || item.vipType || 'Complimentary',
+            (item.items || []).map(i => `${i.menuItemName || i.name} x${i.quantity || 1}`).join(', '),
+            `₹${getCompValue(item).toLocaleString('en-IN')}`,
+            item.specialRemarks || item.notes || 'Approved by Management'
+          ])
+        }
+      }
       default: return null
     }
   }

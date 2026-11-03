@@ -510,7 +510,7 @@ export default function POS() {
   }
 
   const selectCustomer = (cust) => {
-    setCustomer({ ...cust, customerName: cust.customerName, phone: cust.phone, discountPct: cust.discountPct })
+    const cName = cust.customerName || cust.name || ""; setCustomer({ ...cust, customerName: cName, phone: cust.phone, discountPct: cust.discountPct })
     setCustomerSearch('')
     setCustomerResults([])
     setShowCustomerDropdown(false)
@@ -1215,7 +1215,42 @@ export default function POS() {
             })}
           </div>
           <div style={{ position: 'relative', marginBottom: '12px' }}>
-            <input type="text" placeholder="🔍 Search Customer by Phone or Name (auto discount)" value={customerSearch} onChange={e => setCustomerSearch(e.target.value)} style={inputStyle} />
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <input
+                type="text"
+                placeholder="🔍 Search Customer by Phone or Name"
+                value={customerSearch}
+                onChange={e => {
+                  setCustomerSearch(e.target.value)
+                  setShowCustomerDropdown(true)
+                }}
+                onFocus={() => setShowCustomerDropdown(true)}
+                style={{ ...inputStyle, flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={() => handleOpenCreateCustomerModal(customerSearch)}
+                title="Register New Customer"
+                style={{
+                  padding: '9px 12px',
+                  borderRadius: '10px',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  color: 'white',
+                  fontWeight: 700,
+                  fontSize: '12.5px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  whiteSpace: 'nowrap',
+                  boxShadow: '0 2px 8px rgba(37,99,235,0.25)'
+                }}
+              >
+                <UserPlus size={15} />
+                + New
+              </button>
+            </div>
             {showCustomerDropdown && (customerResults.length > 0 || customerSearch.replace(/\D/g, '').length >= 8) && (
               <div style={{ position: 'absolute', zIndex: 60, top: '100%', left: 0, right: 0, maxHeight: '220px', overflow: 'auto', borderRadius: '10px', background: 'white', border: '1px solid #cbd5e1', boxShadow: '0 4px 14px rgba(0,0,0,0.12)' }}>
                 {customerResults.map((c, idx) => (
@@ -1229,7 +1264,15 @@ export default function POS() {
                     </span>
                   </button>
                 ))}
-                {customerSearch.replace(/\D/g, '').length >= 8 && (
+                <button
+                  type="button"
+                  onClick={() => handleOpenCreateCustomerModal(customerSearch)}
+                  style={{ width: '100%', padding: '10px 12px', border: 'none', background: '#eff6ff', borderTop: '1px solid #bfdbfe', color: '#1d4ed8', fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <UserPlus size={14} color="#1d4ed8" />
+                  + Register {customerSearch ? `"${customerSearch}"` : ''} as New Customer
+                </button>
+                {customerSearch.replace(/D/g, '').length >= 8 && (
                   <button
                     onClick={() => {
                       const cleanP = customerSearch.replace(/\D/g, '')
@@ -1521,7 +1564,41 @@ export default function POS() {
 
         {(currentOrder.type === 'dine-in' || currentOrder.type === 'takeaway' || currentOrder.type === 'delivery') && (
           <div style={{ padding: '8px 12px', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
-            <input type="text" placeholder="🔍 Search Customer by Phone or Name (auto discount)" value={customerSearch} onChange={e => setCustomerSearch(e.target.value)} style={{ ...inputStyle, padding: '6px 10px', fontSize: '12px' }} />
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <input
+                type="text"
+                placeholder="🔍 Search Customer by Phone or Name"
+                value={customerSearch}
+                onChange={e => {
+                  setCustomerSearch(e.target.value)
+                  setShowCustomerDropdown(true)
+                }}
+                onFocus={() => setShowCustomerDropdown(true)}
+                style={{ ...inputStyle, padding: '6px 10px', fontSize: '12px', flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={() => handleOpenCreateCustomerModal(customerSearch)}
+                title="Register New Customer"
+                style={{
+                  padding: '7px 10px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  color: 'white',
+                  fontWeight: 700,
+                  fontSize: '11px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                <UserPlus size={13} />
+                + New
+              </button>
+            </div>
             {showCustomerDropdown && (customerResults.length > 0 || customerSearch.replace(/\D/g, '').length >= 8) && (
               <div style={{ marginTop: '4px', maxHeight: '200px', overflow: 'auto', borderRadius: '10px', background: 'white', border: '1px solid #cbd5e1', boxShadow: '0 4px 14px rgba(0,0,0,0.12)', zIndex: 50, position: 'relative' }}>
                 {customerResults.map((c, idx) => (

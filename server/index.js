@@ -11700,7 +11700,8 @@ app.get('/api/reports/payment-report', (req, res) => {
       const method = (o.paymentMethod || 'cash').toLowerCase()
 
       if (isComp) {
-        const compAmt = Number(o.total || o.grandTotal || 0)
+        const itemSum = (o.items || []).reduce((sum, item) => sum + (Number(item.totalPrice) || (Number(item.unitPrice || item.price || 0) * Number(item.quantity || item.qty || 1))), 0)
+        const compAmt = Number(o.rawSubtotal) || Number(o.discount) || itemSum || Number(o.total || o.grandTotal || 0)
         complimentaryTotal += compAmt
         complimentaryCount++
         orderList.push({
@@ -13633,7 +13634,24 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
 
   // If not authenticated as staff, accept the order but force safe status values
   // (POS is an internal system â€” do NOT reject, just sanitize)
-  if (!req.staffId) {
+  // Robust complimentary detection (from explicit flag, type, or settle method)
+  const isComp = Boolean(
+    complimentary ||
+    complimentaryType ||
+    (paymentMethod || '').toLowerCase() === 'complimentary' ||
+    req.body.isComplimentary ||
+    type === 'complimentary'
+  )
+
+  if (isComp) {
+    complimentary = true
+    complimentaryType = complimentaryType || req.body.complimentaryType || 'Complimentary'
+    paymentMethod = 'complimentary'
+    status = 'completed'
+    paymentStatus = 'paid'
+    paidAt = paidAt || req.body.backdateOverride || new Date().toISOString()
+    settleDirectly = true
+  } else if (!req.staffId) {
     status = 'pending'
     paymentStatus = 'pending'
     paidAt = null
@@ -13666,7 +13684,9 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
   const clientDiscount = Number(req.body.discount || req.body.discountAmount || 0)
 
   let discountVal = clientDiscount
-  if (!discountVal && isStaffBenefit) {
+  if (isComp) {
+    discountVal = rawSub
+  } else if (!discountVal && isStaffBenefit) {
     const pct = Number(req.body.discountPct || 50) / 100
     discountVal = Math.round(rawSub * pct)
   } else if (!discountVal && Number(req.body.customerDiscountPct) > 0) {
@@ -13678,14 +13698,16 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
     discountVal = Math.round(rawSub * 0.2)
   }
   discountVal = Math.max(0, Math.min(Math.round(discountVal), rawSub))
-  const netSub = Math.max(0, rawSub - discountVal)
-  const taxVal = Math.round(netSub * 0.05)
-  const totalVal = Math.round(netSub + taxVal)
+  const netSub = isComp ? 0 : Math.max(0, rawSub - discountVal)
+  const taxVal = isComp ? 0 : Math.round(netSub * 0.05)
+  const totalVal = isComp ? 0 : Math.round(netSub + taxVal)
 
-  const discountLabel = req.body.discountName || req.body.customDiscountReason || (
-    isStaffBenefit ? (req.body.offerName || 'Achariya Family Week 2026') :
-      (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'LMW Discount' : '')))
-  )
+  const discountLabel = isComp
+    ? (complimentaryType ? `Complimentary (${complimentaryType})` : 'Complimentary')
+    : (req.body.discountName || req.body.customDiscountReason || (
+        isStaffBenefit ? (req.body.offerName || 'Achariya Family Week 2026') :
+          (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'LMW Discount' : '')))
+      ))
 
   const isDirectSettle = Boolean(req.body.settleDirectly || req.body.status === 'completed' || req.body.paymentStatus === 'paid')
 
@@ -13694,7 +13716,7 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
     orderNumber: orderNum,
     kotNumber: kotNum,
     type: type || 'dine-in',
-    status: isDirectSettle ? 'completed' : 'pending',
+    status: isComp ? 'completed' : (isDirectSettle ? 'completed' : 'pending'),
     source: source || 'pos',
     orderSource: (source === 'qr_self_order' || source === 'self_order' || source === 'kiosk')
       ? 'Kiosk'
@@ -15491,9 +15513,9 @@ const getOrderAmount = (o) => {
   const s = (o.status || '').toLowerCase()
   const m = (o.paymentMethod || '').toLowerCase()
   if (s === 'cancelled' || s === 'canceled' || s === 'void' || o.isCancelled || o.isVoid) return 0
-  if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary') {
-    const itemSub = (o.items || []).reduce((sum, i) => sum + (i.totalPrice !== undefined ? Number(i.totalPrice) : (Number(i.unitPrice || i.price || 0) * Number(i.quantity || i.qty || 1))), 0)
-    return Number(o.rawSubtotal) || itemSub || Number(o.subtotal) || Number(o.total) || 0
+  // Complimentary bills collect ₹0 cash/UPI/card revenue from customer
+  if (o.complimentary || o.isComplimentary || m === 'complimentary' || m === 'nc' || m === 'free' || o.type === 'complimentary' || o.complimentaryType) {
+    return 0
   }
 
   if (o.total !== undefined && o.total !== null && Number(o.total) > 0) {
