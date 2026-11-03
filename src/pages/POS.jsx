@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Minus, Trash2, ShoppingBag, X, Volume2, VolumeX, Search, Banknote, Lock, Unlock } from 'lucide-react'
+import { Plus, Minus, Trash2, ShoppingBag, X, Volume2, VolumeX, Search, Banknote, Lock, Unlock, UserPlus } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import { useToast } from '../components/ui/Toaster'
@@ -220,6 +220,12 @@ export default function POS() {
   const [customerResults, setCustomerResults] = useState([])
   const [searchingCustomer, setSearchingCustomer] = useState(false)
   const [showCustomerDropdown, setShowCustomerDropdown] = useState(false)
+
+  // Quick Customer Creation during Order Generation
+  const [showNewCustomerModal, setShowNewCustomerModal] = useState(false)
+  const [newCustomerName, setNewCustomerName] = useState('')
+  const [newCustomerPhone, setNewCustomerPhone] = useState('')
+  const [savingCustomer, setSavingCustomer] = useState(false)
 
   // 2-Gyro Dual Customizer State for Combos (Mega Feast Meal, Duo Gyro Feast, Den's Party Meal, Double Crunch Box, Super 5 Bucket)
   const [selectedGyro1Protein, setSelectedGyro1Protein] = useState('Chicken')
@@ -451,6 +457,57 @@ export default function POS() {
     }, 350)
     return () => clearTimeout(t)
   }, [customerSearch])
+
+  const handleOpenCreateCustomerModal = (initialSearch = '') => {
+    const isDigits = /^\d+$/.test(String(initialSearch || '').replace(/[\s+-]/g, ''))
+    if (isDigits && String(initialSearch || '').replace(/\D/g, '').length >= 4) {
+      setNewCustomerPhone(String(initialSearch || '').replace(/\D/g, '').slice(0, 10))
+      setNewCustomerName('')
+    } else {
+      setNewCustomerName(String(initialSearch || '').trim())
+      setNewCustomerPhone('')
+    }
+    setShowCustomerDropdown(false)
+    setShowNewCustomerModal(true)
+  }
+
+  const handleCreateCustomerSubmit = async (e) => {
+    if (e) e.preventDefault()
+    const cleanP = String(newCustomerPhone || '').replace(/\D/g, '')
+    const cleanN = String(newCustomerName || '').trim()
+
+    if (!cleanN) {
+      toast.error('Please enter customer full name')
+      return
+    }
+    if (!cleanP || cleanP.length < 8) {
+      toast.error('Please enter a valid phone number (at least 8-10 digits)')
+      return
+    }
+
+    setSavingCustomer(true)
+    try {
+      const res = await fetch(`${API_BASE}/api/pos/customers/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: cleanN, phone: cleanP })
+      })
+      const data = await res.json()
+      if (res.ok && data.customer) {
+        selectCustomer(data.customer)
+        toast.success(`🎉 Customer ${data.customer.name} (${data.customer.phone}) registered & attached!`)
+        setShowNewCustomerModal(false)
+        setNewCustomerName('')
+        setNewCustomerPhone('')
+      } else {
+        toast.error(data.error || 'Failed to register customer')
+      }
+    } catch (err) {
+      toast.error('Network error creating customer')
+    } finally {
+      setSavingCustomer(false)
+    }
+  }
 
   const selectCustomer = (cust) => {
     setCustomer({ ...cust, customerName: cust.customerName, phone: cust.phone, discountPct: cust.discountPct })
