@@ -775,6 +775,7 @@ export default function POS() {
     }
 
     const handleMenuUpdated = () => {
+      fetchCategories()
       fetchMenuItems(selectedCategory || undefined)
     }
 

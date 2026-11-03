@@ -645,7 +645,7 @@ export const useMenuStore = create((set, get) => ({
       if (res.ok) {
         const data = await res.json()
         if (Array.isArray(data) && data.length > 0) {
-          set({ categories: data })
+          set({ categories: data.filter(c => !c.isDeleted) })
           return
         }
       }
@@ -668,7 +668,7 @@ export const useMenuStore = create((set, get) => ({
         const rawData = await res.json()
         const data = Array.isArray(rawData) ? rawData : (rawData.items || rawData.menuItems || [])
         if (Array.isArray(data) && data.length > 0) {
-          set({ menuItems: data, loading: false })
+          set({ menuItems: data.filter(i => !i.isDeleted), loading: false })
           return
         }
       }
