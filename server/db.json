@@ -174352,6 +174352,111 @@
         }
       },
       "createdAt": "2026-10-15T05:18:43.144Z"
+    },
+    {
+      "id": "bu_1793729064634",
+      "name": "Cafe Manager",
+      "pin": "$2b$10$vqz6bLIH93CHF9OjE92amuzfRRAhLy0n5vvwwdntef83.717kD00a",
+      "role": "cafe-admin",
+      "permissions": {
+        "pos": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "captain": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "kitchen": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "billing": {
+          "view": true,
+          "create": true,
+          "update": false,
+          "delete": false
+        },
+        "kot": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "purchase": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "inventory": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "menu": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "hr": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "loyalty": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "customers": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "reports": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "dashboard": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "onlineOrders": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "users": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "expenses": {
+          "view": true,
+          "create": true,
+          "update": true,
+          "delete": true
+        }
+      },
+      "createdAt": "2026-11-03T18:04:24.718Z"
     }
   ],
   "loyaltyUsers": [
