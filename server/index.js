@@ -405,7 +405,8 @@ let settings = {
   campaigns: {
     inauguration: { active: true, date: '2026-07-27', pct: 50, label: 'Inauguration Offer 50%' },
     special20: { active: true, from: '2026-07-29', to: '2026-08-02', pct: 20, label: 'Special Offer 20%' },
-    vip50: { active: true, pct: 50, label: 'VIP 50% OFF' }
+    vip50: { active: true, pct: 50, label: 'VIP 50% OFF' },
+    b2g1: { active: true, label: 'Buy 2 Get 1 Free Gyro' }
   }
 }
 let aggregators = [
@@ -13683,6 +13684,32 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
   const isStaffBenefit = Boolean(req.body.staffBenefitOffer || req.body.employeeId || req.body.offerType === 'staff_family')
   const clientDiscount = Number(req.body.discount || req.body.discountAmount || 0)
 
+  // Standalone Gyro Detection for B2G1 (excludes combos and meals)
+  const isStandaloneGyro = (item) => {
+    if (!item) return false
+    const name = String(item.name || item.menuItemName || '').toLowerCase()
+    const cat = String(item.categoryId || item.category || '').toLowerCase()
+    if (cat.includes('combo') || cat.includes('meal') || cat === 'c2' || cat === 'c_new_combo') return false
+    if (name.includes('combo') || name.includes('meal') || name.includes('feast') || name.includes('box')) return false
+    return cat === 'c1' || cat.includes('gyro') || (name.includes('gyro') && !name.includes('fries'))
+  }
+  const qualifyingGyros = itemList.filter(isStandaloneGyro)
+  const totalGyroCount = qualifyingGyros.reduce((sum, item) => sum + (Number(item.quantity || item.qty) || 1), 0)
+  const freeGyroCount = Math.floor(totalGyroCount / 3)
+  const isB2g1 = Boolean(req.body.b2g1Offer || freeGyroCount > 0)
+
+  let b2g1Discount = 0
+  if (freeGyroCount > 0) {
+    const unitPrices = []
+    qualifyingGyros.forEach(item => {
+      const qty = Number(item.quantity || item.qty) || 1
+      const price = Number(item.unitPrice || item.price) || 0
+      for (let i = 0; i < qty; i++) unitPrices.push(price)
+    })
+    unitPrices.sort((a, b) => a - b)
+    b2g1Discount = unitPrices.slice(0, freeGyroCount).reduce((s, p) => s + p, 0)
+  }
+
   let discountVal = clientDiscount
   if (isComp) {
     discountVal = rawSub
@@ -13696,6 +13723,8 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
     discountVal = Math.round(rawSub * 0.5)
   } else if (!discountVal && req.body.specialOffer20) {
     discountVal = Math.round(rawSub * 0.2)
+  } else if (!discountVal && isB2g1 && b2g1Discount > 0) {
+    discountVal = b2g1Discount
   }
   discountVal = Math.max(0, Math.min(Math.round(discountVal), rawSub))
   const netSub = isComp ? 0 : Math.max(0, rawSub - discountVal)
@@ -13706,7 +13735,7 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
     ? (complimentaryType ? `Complimentary (${complimentaryType})` : 'Complimentary')
     : (req.body.discountName || req.body.customDiscountReason || (
         isStaffBenefit ? (req.body.offerName || 'Achariya Family Week 2026') :
-          (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (discountVal > 0 ? 'LMW Discount' : '')))
+          (req.body.inaugurationOffer ? 'Inauguration Offer 50%' : (req.body.specialOffer20 ? 'Special Offer 20%' : (isB2g1 && freeGyroCount > 0 ? `Buy 2 Get 1 Free (${freeGyroCount} Free Gyro${freeGyroCount > 1 ? 's' : ''})` : (discountVal > 0 ? 'LMW Discount' : ''))))
       ))
 
   const isDirectSettle = Boolean(req.body.settleDirectly || req.body.status === 'completed' || req.body.paymentStatus === 'paid')
@@ -13739,6 +13768,7 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
     discountPct: req.body.discountPct || (isStaffBenefit ? 50 : undefined),
     approvedBy: req.body.approvedBy || req.body.cashier || 'Cashier',
     terminal: req.body.terminal || 'POS-1',
+    b2g1Offer: Boolean(isB2g1 && freeGyroCount > 0),
     inaugurationOffer: req.body.inaugurationOffer || false,
     specialOffer20: req.body.specialOffer20 || false,
     vip50: req.body.vip50 || false,
@@ -15690,6 +15720,9 @@ const getOrderDiscountInfo = (o) => {
     if (o.inaugurationOffer || dStr === '2026-07-27' || dStr === '2026-07-28') {
       disc = Math.round(rawSub * 0.5)
       name = 'Inauguration Offer 50% OFF'
+    } else if (o.b2g1Offer || (o.discountName && o.discountName.includes('Buy 2 Get 1'))) {
+      disc = Number(o.discount || o.discountAmount || 0)
+      name = o.discountName || 'Buy 2 Get 1 Free Gyro'
     } else if (o.specialOffer20 || (dStr >= '2026-07-29' && dStr <= '2026-08-02')) {
       disc = Math.round(rawSub * 0.2)
       name = 'Special Campaign 20% OFF'
@@ -16552,6 +16585,10 @@ app.get('/api/reports/offer-sales', (req, res) => {
       offerName = '50% VIP Exclusive Discount'
       discountGiven = Math.round(subtotal * 0.5)
       originalAmount = subtotal
+    } else if (o.b2g1Offer || (o.discountName && o.discountName.includes('Buy 2 Get 1'))) {
+      offerName = o.discountName || 'Buy 2 Get 1 Free Gyro'
+      discountGiven = Number(o.discount || o.discountAmount || 0)
+      originalAmount = subtotal + discountGiven
     } else if (isOffer20) {
       offerName = '20% Special Offer (29.07 - 02.08)'
       discountGiven = Math.round(subtotal * 0.2)

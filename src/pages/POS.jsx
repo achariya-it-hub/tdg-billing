@@ -104,7 +104,7 @@ export default function POS() {
   const {
     currentOrder, addItem, updateItemQuantity, removeItem,
     setOrderType, setTableNumber, setCustomerName, setCustomerPhone, setCustomer, setCustomerDiscountPct, clearCustomer, setComplimentary, setSpecialRemarks, clearOrder,
-    setInaugurationOffer, setSpecialOffer20, setStaffBenefitOffer, setVip50, setCustomDiscount, clearCustomDiscount, getDiscount,
+    setInaugurationOffer, setSpecialOffer20, setStaffBenefitOffer, setVip50, setCustomDiscount, clearCustomDiscount, getDiscount, setB2g1Offer, getB2g1Info,
     holdOrder, recallOrder, heldOrders, getSubtotal, getTax, getTotal, placeOrder,
     loadCampaigns, campaigns
   } = useOrderStore()
@@ -223,6 +223,37 @@ export default function POS() {
 
   // Quick Customer Creation during Order Generation
   const [showNewCustomerModal, setShowNewCustomerModal] = useState(false)
+
+  const b2g1Info = (typeof getB2g1Info === 'function')
+    ? getB2g1Info()
+    : { totalGyroQty: 0, freeCount: 0, eligibleForFree: false, discount: 0, active: false }
+
+  const handleAddFreeGyro = () => {
+    const sigGyro = menuItems.find(m => m.id === 'm_signature_gyro' || m.id === 'm_spicy_gyro') || {
+      id: 'm_signature_gyro',
+      name: 'Signature Gyro',
+      price: 199,
+      categoryId: 'c1'
+    }
+    addItem({
+      menuItemId: sigGyro.id,
+      menuItemName: sigGyro.name,
+      unitPrice: sigGyro.price,
+      totalPrice: sigGyro.price,
+      categoryId: sigGyro.categoryId || 'c1',
+      customization: {
+        protein: 'Chicken',
+        bread: 'Baked',
+        spread: 'Tzatziki',
+        flavor: 'Spicy',
+        sauces: ['Garlic Mayo'],
+        veggies: ['Lettuce', 'Onion'],
+        notes: 'Buy 2 Get 1 Free Gyro'
+      }
+    })
+    if (typeof setB2g1Offer === 'function') setB2g1Offer(true)
+    toast.success('🎁 Added 1 Free Gyro to cart (Buy 2 Get 1 Free applied)!')
+  }
   const [newCustomerName, setNewCustomerName] = useState('')
   const [newCustomerPhone, setNewCustomerPhone] = useState('')
   const [savingCustomer, setSavingCustomer] = useState(false)
@@ -734,6 +765,7 @@ export default function POS() {
       menuItemName: formattedName,
       unitPrice: customizingItem.price,
       totalPrice: customizingItem.price,
+      categoryId: customizingItem.categoryId,
       customization
     })
     setCustomizingItem(null)
@@ -759,6 +791,7 @@ export default function POS() {
       menuItemName: formattedName,
       unitPrice: customizingItem.price,
       totalPrice: customizingItem.price,
+      categoryId: customizingItem.categoryId,
       customization: (isSaladItem || isRiceItem) ? { protein: defaultProtein } : undefined
     })
     setCustomizingItem(null)
@@ -1729,6 +1762,68 @@ export default function POS() {
           </div>
         )}
 
+        {/* B2G1 Promo Banner */}
+        {b2g1Info.eligibleForFree && (
+          <div style={{
+            margin: '0 12px 8px 12px',
+            background: 'linear-gradient(135deg, #ecfdf5, #d1fae5)',
+            border: '1.5px dashed #059669',
+            borderRadius: '12px',
+            padding: '10px 12px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            boxShadow: '0 2px 8px rgba(5,150,105,0.12)'
+          }}>
+            <div>
+              <div style={{ fontSize: '12px', fontWeight: 800, color: '#065f46', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                🎁 BUY 2 GET 1 FREE UNLOCKED!
+              </div>
+              <div style={{ fontSize: '10.5px', color: '#047857', marginTop: '2px', fontWeight: 600 }}>
+                {b2g1Info.totalGyroQty} Gyros in cart — Customer gets 1 FREE Gyro!
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleAddFreeGyro}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '8px',
+                border: 'none',
+                background: 'linear-gradient(135deg, #059669, #047857)',
+                color: 'white',
+                fontWeight: 800,
+                fontSize: '11px',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                boxShadow: '0 2px 6px rgba(5,150,105,0.3)'
+              }}
+            >
+              + Add Free Gyro
+            </button>
+          </div>
+        )}
+
+        {b2g1Info.active && (
+          <div style={{
+            margin: '0 12px 8px 12px',
+            background: '#ecfdf5',
+            border: '1px solid #10b981',
+            borderRadius: '10px',
+            padding: '8px 12px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#047857' }}>
+              ✓ Buy 2 Get 1 Applied: {b2g1Info.freeCount} Gyro{b2g1Info.freeCount > 1 ? 's' : ''} FREE (-₹{b2g1Info.discount})
+            </span>
+            <span style={{ fontSize: '9.5px', fontWeight: 800, background: '#10b981', color: 'white', padding: '2px 8px', borderRadius: '12px' }}>
+              B2G1 ACTIVE
+            </span>
+          </div>
+        )}
+
         {/* Compact Totals & Offers Section */}
         <div style={{ padding: '10px 12px', borderTop: '2px solid #e2e8f0', background: '#ffffff' }}>
           {/* Subtotal & Tax */}
@@ -1737,6 +1832,12 @@ export default function POS() {
               <span>Subtotal:</span>
               <span style={{ fontWeight: 600 }}>₹{useOrderStore.getState().getRawSubtotal().toFixed(2)}</span>
             </div>
+            {currentOrder.b2g1Offer !== false && b2g1Info.discount > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#059669', fontWeight: 700 }}>
+                <span>🎁 Buy 2 Get 1 Free (${b2g1Info.freeCount} Free Gyro${b2g1Info.freeCount > 1 ? 's' : ''}):</span>
+                <span>-₹{b2g1Info.discount.toFixed(2)}</span>
+              </div>
+            )}
             {currentOrder.specialOffer20 && (
               <div style={{ display: 'flex', justifyContent: 'space-between', color: '#dc2626', fontWeight: 700 }}>
                 <span>🔥 Special Offer (20% OFF):</span>
@@ -1783,8 +1884,24 @@ export default function POS() {
             <span style={{ fontSize: '20px', fontWeight: 900, color: '#f87171' }}>₹{getTotal().toFixed(2)}</span>
           </div>
 
-          {/* Offers Row (20% OFF, 50% OFF, Staff 50% & Custom Disc) */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '4px', marginBottom: '6px' }}>
+          {/* Offers Row (B2G1, 20% OFF, 50% OFF, Staff 50% & Custom Disc) */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '4px', marginBottom: '6px' }}>
+            <button
+              type="button"
+              onClick={() => setB2g1Offer(!currentOrder.b2g1Offer)}
+              style={{
+                padding: '7px 2px', borderRadius: '8px',
+                border: (currentOrder.b2g1Offer !== false && (b2g1Info.totalGyroQty >= 2 || b2g1Info.active)) ? '2px solid #059669' : '1px dashed #059669',
+                background: (currentOrder.b2g1Offer !== false && (b2g1Info.totalGyroQty >= 2 || b2g1Info.active)) ? '#059669' : '#ecfdf5',
+                color: (currentOrder.b2g1Offer !== false && (b2g1Info.totalGyroQty >= 2 || b2g1Info.active)) ? '#ffffff' : '#047857',
+                fontWeight: 800, fontSize: '10px', cursor: 'pointer', textAlign: 'center',
+                boxShadow: (currentOrder.b2g1Offer !== false && (b2g1Info.totalGyroQty >= 2 || b2g1Info.active)) ? '0 2px 8px rgba(5,150,105,0.3)' : 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px',
+                transition: 'all 0.15s'
+              }}
+            >
+              🎁 {(currentOrder.b2g1Offer !== false && b2g1Info.active) ? 'B2G1 ON' : 'B2G1'}
+            </button>
             <button
               type="button"
               onClick={() => setSpecialOffer20(!currentOrder.specialOffer20)}

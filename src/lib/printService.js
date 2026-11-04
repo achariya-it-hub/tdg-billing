@@ -372,6 +372,27 @@ const PrintService = {
       else if (bill.specialOffer20) discountAmt = Math.round(rawSub * 0.2)
       else if (bill.vip50) discountAmt = Math.round(rawSub * 0.5)
       else if (bill.discountPct > 0) discountAmt = Math.round(rawSub * (bill.discountPct / 100))
+      else if (bill.b2g1Offer || bill.buy2get1Offer) {
+        const gyroItems = items.filter(i => {
+          const name = String(i.name || i.menuItemName || '').toLowerCase()
+          const cat = String(i.categoryId || i.category || '').toLowerCase()
+          if (cat.includes('combo') || cat.includes('meal') || cat === 'c2' || cat === 'c_new_combo') return false
+          if (name.includes('combo') || name.includes('meal') || name.includes('feast') || name.includes('box')) return false
+          return cat === 'c1' || cat.includes('gyro') || (name.includes('gyro') && !name.includes('fries'))
+        })
+        const totalGyroCount = gyroItems.reduce((sum, i) => sum + (Number(i.quantity || i.qty) || 1), 0)
+        const freeCount = Math.floor(totalGyroCount / 3)
+        if (freeCount > 0) {
+          const prices = []
+          gyroItems.forEach(i => {
+            const q = Number(i.quantity || i.qty) || 1
+            const p = Number(i.unitPrice || i.price) || 0
+            for (let k = 0; k < q; k++) prices.push(p)
+          })
+          prices.sort((a, b) => a - b)
+          discountAmt = prices.slice(0, freeCount).reduce((s, p) => s + p, 0)
+        }
+      }
     }
     const netSub = isComp ? 0 : Math.max(0, rawSub - discountAmt)
     const tax = isComp ? 0 : Math.round(netSub * 0.05)
@@ -394,7 +415,7 @@ const PrintService = {
     }
     const discountLabel = isComp
       ? `Non-Chargeable ${compType ? `${compType}` : 'Complimentary'} (100% OFF)`
-      : (bill.discountName || (bill.inaugurationOffer ? 'Inauguration Offer 50%' : (bill.specialOffer20 ? 'Special Offer 20%' : 'Discount')))
+      : (bill.discountName || (bill.inaugurationOffer ? 'Inauguration Offer 50%' : (bill.specialOffer20 ? 'Special Offer 20%' : (bill.b2g1Offer || bill.buy2get1Offer ? 'Buy 2 Get 1 Free' : 'Discount'))))
 
     return `
       <!DOCTYPE html>

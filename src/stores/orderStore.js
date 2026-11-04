@@ -15,7 +15,17 @@ const IST_DATE_STR = () => {
 const DEFAULT_CAMPAIGNS = {
   inauguration: { active: true, date: '2026-07-27', pct: 50, label: 'Inauguration Offer 50%' },
   special20: { active: true, pct: 20, label: 'Special Offer 20%' },
-  vip50: { active: true, pct: 50, label: 'VIP 50% OFF' }
+  vip50: { active: true, pct: 50, label: 'VIP 50% OFF' },
+  b2g1: { active: true, label: 'Buy 2 Get 1 Free Gyro' }
+}
+
+export function isStandaloneGyroItem(item) {
+  if (!item) return false
+  const name = String(item.name || item.menuItemName || '').toLowerCase()
+  const cat = String(item.categoryId || item.category || '').toLowerCase()
+  if (cat.includes('combo') || cat.includes('meal') || cat === 'c2' || cat === 'c_new_combo') return false
+  if (name.includes('combo') || name.includes('meal') || name.includes('feast') || name.includes('box')) return false
+  return cat === 'c1' || cat.includes('gyro') || (name.includes('gyro') && !name.includes('fries'))
 }
 
 function campaignWindowActive(cfg) {
@@ -46,6 +56,7 @@ export const useOrderStore = create(
         specialOffer20: false,
         vip50: false,
         staffBenefitOffer: false,
+        b2g1Offer: true,
         customDiscountType: null,
         customDiscountValue: '',
         customDiscountReason: '',
@@ -240,6 +251,7 @@ export const useOrderStore = create(
           currentOrder: {
             ...state.currentOrder,
             vip50: !!enabled,
+            b2g1Offer: enabled ? false : state.currentOrder.b2g1Offer,
             inaugurationOffer: false,
             specialOffer20: false,
             staffBenefitOffer: false,
@@ -313,6 +325,7 @@ export const useOrderStore = create(
             specialOffer20: false,
             vip50: false,
             staffBenefitOffer: false,
+            b2g1Offer: true,
             customDiscountType: null,
             customDiscountValue: '',
             customDiscountReason: '',
@@ -350,6 +363,7 @@ export const useOrderStore = create(
           currentOrder: {
             ...state.currentOrder,
             inaugurationOffer: !!enabled,
+            b2g1Offer: enabled ? false : state.currentOrder.b2g1Offer,
             specialOffer20: enabled ? false : state.currentOrder.specialOffer20,
             staffBenefitOffer: enabled ? false : state.currentOrder.staffBenefitOffer,
             vip50: enabled ? false : state.currentOrder.vip50,
@@ -365,6 +379,7 @@ export const useOrderStore = create(
           currentOrder: {
             ...state.currentOrder,
             specialOffer20: !!enabled,
+            b2g1Offer: enabled ? false : state.currentOrder.b2g1Offer,
             inaugurationOffer: enabled ? false : state.currentOrder.inaugurationOffer,
             staffBenefitOffer: enabled ? false : state.currentOrder.staffBenefitOffer,
             vip50: enabled ? false : state.currentOrder.vip50,
@@ -373,6 +388,51 @@ export const useOrderStore = create(
             customDiscountReason: enabled ? '' : state.currentOrder.customDiscountReason
           }
         }))
+      },
+
+      setB2g1Offer: (enabled) => {
+        set(state => ({
+          currentOrder: {
+            ...state.currentOrder,
+            b2g1Offer: !!enabled,
+            inaugurationOffer: enabled ? false : state.currentOrder.inaugurationOffer,
+            specialOffer20: enabled ? false : state.currentOrder.specialOffer20,
+            vip50: enabled ? false : state.currentOrder.vip50,
+            staffBenefitOffer: enabled ? false : state.currentOrder.staffBenefitOffer,
+            customDiscountType: enabled ? null : state.currentOrder.customDiscountType,
+            customDiscountValue: enabled ? '' : state.currentOrder.customDiscountValue,
+            customDiscountReason: enabled ? '' : state.currentOrder.customDiscountReason
+          }
+        }))
+      },
+
+      getB2g1Info: () => {
+        const order = get().currentOrder
+        const items = order.items || []
+        const gyroItems = items.filter(isStandaloneGyroItem)
+        const totalGyroQty = gyroItems.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0)
+        const freeCount = Math.floor(totalGyroQty / 3)
+        const eligibleForFree = totalGyroQty % 3 === 2
+
+        let discount = 0
+        if (freeCount > 0) {
+          const unitPrices = []
+          gyroItems.forEach(item => {
+            const qty = Number(item.quantity) || 1
+            const price = Number(item.unitPrice || item.price) || 0
+            for (let i = 0; i < qty; i++) unitPrices.push(price)
+          })
+          unitPrices.sort((a, b) => a - b)
+          discount = unitPrices.slice(0, freeCount).reduce((s, p) => s + p, 0)
+        }
+
+        return {
+          totalGyroQty,
+          freeCount,
+          eligibleForFree,
+          discount,
+          active: Boolean(order.b2g1Offer !== false && freeCount > 0)
+        }
       },
 
       setStaffBenefitOffer: (data) => {
@@ -440,6 +500,10 @@ export const useOrderStore = create(
         if (order.vip50) return Math.round(raw * 0.5)
         if (order.inaugurationOffer) return Math.round(raw * 0.5)
         if (order.specialOffer20) return Math.round(raw * 0.2)
+        if (order.b2g1Offer !== false) {
+          const b2g1 = get().getB2g1Info()
+          if (b2g1.freeCount > 0) return b2g1.discount
+        }
         return 0
       },
 
@@ -478,12 +542,15 @@ export const useOrderStore = create(
           const total = isComp ? 0 : get().getTotal()
           const finalPaymentMethod = isComp ? 'complimentary' : (paymentMethod || 'cash')
 
+          const b2g1Info = get().getB2g1Info()
           let computedDiscountName = order.discountName
           if (!computedDiscountName) {
             if (order.customDiscountType === 'percentage' || order.customDiscountType === 'pct') {
               computedDiscountName = order.customDiscountReason ? `LMW (${order.customDiscountReason})` : `LMW Discount (${order.customDiscountValue}%)`
             } else if (order.customDiscountType === 'amount') {
               computedDiscountName = order.customDiscountReason ? `LMW (${order.customDiscountReason})` : `LMW Discount (₹${order.customDiscountValue})`
+            } else if (order.b2g1Offer !== false && b2g1Info.freeCount > 0) {
+              computedDiscountName = `Buy 2 Get 1 Free (${b2g1Info.freeCount} Free Gyro${b2g1Info.freeCount > 1 ? 's' : ''})`
             }
           }
 
@@ -508,6 +575,7 @@ export const useOrderStore = create(
                 subtotal,
                 tax,
                 total,
+                b2g1Offer: Boolean(order.b2g1Offer !== false && b2g1Info.freeCount > 0),
                 inaugurationOffer: order.inaugurationOffer || false,
                 specialOffer20: order.specialOffer20 || false,
                 staffBenefitOffer: order.staffBenefitOffer || false,
