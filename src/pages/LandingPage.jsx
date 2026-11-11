@@ -256,20 +256,17 @@ export default function LandingPage() {
   ]
 
   const beveragesList = [
-    { name: 'Coca-Cola', sub: 'Chilled bottle / can', price: '₹49', badge: 'Chilled' },
-    { name: 'Sprite', sub: 'Crisp refreshing lemon-lime', price: '₹49', badge: 'Chilled' },
-    { name: 'Ice Tea (Peach)', sub: 'Brewed with peach extracts', price: 'Reg ₹59 / Lrg ₹99', badge: 'Refreshing', image: '/images/drive/Ice Tea.png' },
-    { name: 'Ice Tea (Lime)', sub: 'Tangy citrus crush iced tea', price: 'Reg ₹59 / Lrg ₹99', badge: 'Refreshing', image: '/images/menu/ice tea - lime.png' }
+    { name: 'Coca-Cola', sub: 'Chilled can / fountain', price: 'Reg ₹59 / Lrg ₹99', badge: 'Chilled' },
+    { name: 'Sprite', sub: 'Crisp refreshing lemon-lime', price: 'Reg ₹59 / Lrg ₹99', badge: 'Chilled' },
+    { name: 'Ice Tea (Peach or Lime)', sub: 'Brewed crisp refreshing iced tea', price: 'Reg ₹59 / Lrg ₹99', badge: 'Refreshing', image: '/images/drive/Ice Tea.png' },
+    { name: 'Hot Chocolate', sub: 'Rich warm gourmet chocolate', price: '₹99', badge: 'Warm Brew', image: '/images/drive/Hot Chocolate.png' },
+    { name: 'Signature Tea', sub: 'Fresh brewed specialty tea', price: '₹99', badge: 'Signature' }
   ]
 
   const kombuchaList = [
     { name: 'Mint Kombucha', sub: 'Probiotic crisp coolness', price: '₹120', image: '/images/drive/KOMBUCHA.png' },
     { name: 'Hibiscus Kombucha', sub: 'Ruby floral berry notes', price: '₹120', image: '/images/drive/KOMBUCHA.png' },
-    { name: 'Elixir Kombucha', sub: 'The original fermented brew', price: '₹120', image: '/images/drive/KOMBUCHA.png' },
-    { name: 'Ginger Kombucha', sub: 'Warm zingy digestive kick', price: '₹120', image: '/images/drive/KOMBUCHA.png' },
-    { name: 'Turmeric Kombucha', sub: 'Golden healing botanicals', price: '₹120', image: '/images/drive/KOMBUCHA.png' },
-    { name: 'Rose Kombucha', sub: 'Fragrant aromatic petals', price: '₹120', image: '/images/drive/KOMBUCHA.png' },
-    { name: 'Butterfly Pea Kombucha', sub: 'Natural indigo super-brew', price: '₹120', image: '/images/drive/KOMBUCHA.png' }
+    { name: 'Classic Kombucha', sub: 'The original fermented probiotic brew', price: '₹120', image: '/images/drive/KOMBUCHA.png' }
   ]
 
   return (

@@ -164951,7 +164951,7 @@
       "id": "m_vanilla_softy",
       "categoryId": "c4",
       "name": "Vanilla Softy",
-      "price": 37.15,
+      "price": 39,
       "description": "Creamy Vanilla Soft Serve Cone",
       "isAvailable": true,
       "image": "/images/menu/vanilla softy.png"
@@ -164960,7 +164960,7 @@
       "id": "m_dip_choice",
       "categoryId": "c4",
       "name": "Choice of Dip",
-      "price": 14.3,
+      "price": 15,
       "description": "Choice of Dip (Garlic Mayo, Spicy Mayo, Honey Mustard, Tzatziki, Jalapeno Cheese, Turkish Chilli)",
       "isAvailable": true,
       "image": "/images/menu/garlic mayo.png"
@@ -164969,7 +164969,7 @@
       "id": "m_kombucha_mint",
       "categoryId": "c10_komb",
       "name": "Mint Kombucha",
-      "price": 114,
+      "price": 120,
       "description": "Mint Kombucha 250ml",
       "isAvailable": true,
       "image": "/images/menu/mint-kombucha.png"
@@ -164978,7 +164978,7 @@
       "id": "m_kombucha_hibiscus",
       "categoryId": "c10_komb",
       "name": "Hibiscus Kombucha",
-      "price": 114,
+      "price": 120,
       "description": "Hibiscus Kombucha 250ml",
       "isAvailable": true,
       "image": "/images/menu/kombucha-hibiscus.png"
@@ -164987,7 +164987,7 @@
       "id": "m_kombucha_classic",
       "categoryId": "c10_komb",
       "name": "Classic Kombucha",
-      "price": 114,
+      "price": 120,
       "description": "Classic Kombucha 250ml",
       "isAvailable": true,
       "image": "/images/menu/kombucha.png"
@@ -165029,7 +165029,7 @@
       "id": "m_nc_13pc_bucket",
       "categoryId": "c_new_combo",
       "category": "New Combo",
-      "name": "13 Pc Mixed Chicken Bucket",
+      "name": "13 Pc Mixed Chicken",
       "price": 379,
       "description": "8 Wings + 5 Strips + 4 Dips",
       "isAvailable": true,
@@ -165040,7 +165040,7 @@
       "id": "m_nc_strips_bucket",
       "categoryId": "c_new_combo",
       "category": "New Combo",
-      "name": "Chicken Strips Bucket",
+      "name": "12 Pc Strips Bucket",
       "price": 399,
       "description": "12 Strips + 3 Dips",
       "isAvailable": true,
