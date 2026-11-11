@@ -38,7 +38,7 @@ try {
   cpSync(serverSrc, serverDst, { recursive: true })
   const removeFromServer = [
     'node_modules', 'billing.db', 'backups', 'daily-backups',
-    'db.pre-deploy-backup.json', 'sales_vault_LOCK.json'
+    'db.pre-deploy-backup.json', 'sales_vault_LOCK.json', 'db.json', 'customer_vault_LOCK.json', 'inventory_vault_LOCK.json', 'settings_vault_LOCK.json', 'master_double_backup_LOCK.json', 'menu_vault.json', 'menu_backup_LOCK.json'
   ]
   for (const f of readdirSync(serverDst)) {
     if (removeFromServer.includes(f)) {
