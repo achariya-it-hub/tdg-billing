@@ -86,7 +86,7 @@ export default function LandingPage() {
       badge: 'Must Try',
       price: '₹199',
       cardCopy: 'The one with our name on it. Start here.',
-      image: '/images/drive/GYROS.png',
+      image: '/images/drive/gyro_baked_chicken.png',
       popular: true
     },
     {
@@ -95,7 +95,7 @@ export default function LandingPage() {
       badge: 'Must Try',
       price: '₹199',
       cardCopy: 'Smooth, rich and easy to love.',
-      image: '/hero_greek_gyro.png',
+      image: '/images/drive/gyro_fried_paneer.png',
       popular: true
     },
     {
@@ -104,7 +104,7 @@ export default function LandingPage() {
       badge: 'Hot Pick',
       price: '₹199',
       cardCopy: 'For people who ask for more heat.',
-      image: '/hero_gyro_wrap.png'
+      image: '/images/drive/gyro_baked_chicken.png'
     },
     {
       id: 'bbq-gyro',
@@ -112,7 +112,7 @@ export default function LandingPage() {
       badge: 'Smoky',
       price: '₹199',
       cardCopy: 'Smoky-sweet BBQ in baked or fried bread.',
-      image: '/hero_gyro.png'
+      image: '/images/drive/gyro_fried_paneer.png'
     },
     {
       id: 'greek-gyro',
@@ -120,7 +120,7 @@ export default function LandingPage() {
       badge: 'Authentic',
       price: '₹299',
       cardCopy: 'The Greek-style gyro, built big.',
-      image: '/hero_greek_gyro.png'
+      image: '/images/drive/circular_gyro_duo.png'
     },
     {
       id: 'gyro-italiano',
@@ -128,15 +128,15 @@ export default function LandingPage() {
       badge: 'Fusion',
       price: '₹299',
       cardCopy: 'A gyro with an Italian accent.',
-      image: '/crispy_chicken.png'
+      image: '/images/drive/gyro_baked_chicken.png'
     },
     {
       id: 'nuggets-gyro',
       name: 'Chicken Nuggets Gyro',
       badge: 'Crispy',
       price: '₹79',
-      cardCopy: 'Crispy nuggets, wrapped up. A small order with a big appetite.',
-      image: '/images/menu/sides_chicken_nuggets.png'
+      cardCopy: 'Crispy nuggets in baked or fried bread. A small order with a big appetite.',
+      image: '/images/drive/gyro_fried_paneer.png'
     },
     {
       id: 'falafel-gyro',
@@ -144,7 +144,7 @@ export default function LandingPage() {
       badge: 'Vegetarian',
       price: '₹69',
       cardCopy: 'Falafel in a gyro. Simple and satisfying.',
-      image: '/images/menu/sides_falafel.png'
+      image: '/images/drive/gyro_baked_chicken.png'
     }
   ]
 
@@ -169,7 +169,7 @@ export default function LandingPage() {
       price: '₹329',
       desc: "1 Gyro + 2 Strips + Fries + 1 Pepsi",
       tag: 'Popular',
-      image: '/images/drive/GYROS.png'
+      image: '/images/drive/gyro_baked_chicken.png'
     },
     {
       name: '13 Pc Mixed Chicken',
@@ -204,14 +204,14 @@ export default function LandingPage() {
       price: '₹649',
       desc: "2 Gyros + 6 Wings + Fries + 2 Drinks + 2 Dips",
       tag: 'Duo Special',
-      image: '/images/menu/duo gyro feast.png'
+      image: '/images/drive/circular_gyro_duo.png'
     },
     {
       name: 'Mixed Feast',
       price: '₹749',
       desc: "2 Gyros + 2 Leg + 2 Strips + 4 Wings + Fries + 500 ml Coke/Sprite + 3 Dips",
       tag: 'Grand Table Feast',
-      image: '/images/menu/double crunch box.png'
+      image: '/images/drive/circular_gyro_duo.png'
     }
   ]
 
@@ -220,7 +220,7 @@ export default function LandingPage() {
     {
       title: 'Gyro Format',
       price: '₹299',
-      desc: 'Loaded high-protein gyro wrap with extra meat or cottage cheese.',
+      desc: 'Loaded high-protein circular gyro with extra meat or cottage cheese.',
       protein: 'Chicken or Paneer',
       image: '/images/drive/GYROS.png'
     },
@@ -628,11 +628,11 @@ export default function LandingPage() {
           </div>
 
           {/* Right Column: Hero Visual Showcase */}
-          <div style={{ flex: '0.9', position: 'relative', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ flex: '1.1', position: 'relative', display: 'flex', justifyContent: 'center' }}>
             <div style={{
               position: 'relative',
               width: '100%',
-              maxWidth: '440px'
+              maxWidth: '560px'
             }}>
               {/* Glow backdrop */}
               <div style={{
@@ -648,10 +648,10 @@ export default function LandingPage() {
                 zIndex: 0
               }} />
 
-              {/* Main Wrap Image */}
+              {/* Main Circular Gyro Duo Image (Baked Pita & Fried Sesame Bowl) */}
               <motion.img 
-                src="/images/drive/GYROS.png" 
-                alt="TDG Signature Gyro" 
+                src="/images/drive/circular_gyro_duo.png" 
+                alt="TDG Authentic Circular Gyros" 
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.8 }}
@@ -660,9 +660,9 @@ export default function LandingPage() {
                   height: 'auto',
                   position: 'relative',
                   zIndex: 1,
-                  filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.65))'
+                  filter: 'drop-shadow(0 20px 35px rgba(0,0,0,0.75))'
                 }}
-                onError={(e) => { e.target.src = '/hero_gyro_wrap.png' }}
+                onError={(e) => { e.target.src = '/images/drive/GYROS.png' }}
               />
 
               {/* Floating Badge 1: Baked or Fried */}
@@ -1672,7 +1672,7 @@ export default function LandingPage() {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'url(/hero_wide_gyro.png) center/cover no-repeat',
+            background: 'url(/images/drive/circular_gyro_duo.png) center/cover no-repeat',
             opacity: 0.12,
             mixBlendMode: 'overlay'
           }} />
