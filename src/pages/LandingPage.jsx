@@ -86,7 +86,7 @@ export default function LandingPage() {
       badge: 'Must Try',
       price: '₹199',
       cardCopy: 'The one with our name on it. Start here.',
-      image: '/images/menu/gyro.png',
+      image: '/images/drive/GYROS.png',
       popular: true
     },
     {
@@ -155,35 +155,35 @@ export default function LandingPage() {
       price: '₹249',
       desc: "1 Gyro + Fries",
       tag: 'Solo Deal',
-      image: '/images/menu/classic gyro meal.png'
+      image: '/images/drive/Fries.png'
     },
     {
       name: 'Lebanese Rice Bowl Meal',
       price: '₹299',
       desc: "1 Lebanese Rice Bowl + 2 Wings + 1 Beverage",
       tag: 'Flavor Rich',
-      image: '/images/menu/lebanese rice box.png'
+      image: '/images/drive/Rice Bowl.png'
     },
     {
       name: 'Gyro Meal',
       price: '₹329',
       desc: "1 Gyro + 2 Strips + Fries + 1 Pepsi",
       tag: 'Popular',
-      image: '/images/menu/signature gyro meal.png'
+      image: '/images/drive/GYROS.png'
     },
     {
       name: '13 Pc Mixed Chicken',
       price: '₹379',
       desc: "8 Wings + 5 Strips + 4 Dips",
       tag: 'Crispy Party',
-      image: "/images/menu/den's party meal.png"
+      image: '/images/drive/WINGS-01.jpg'
     },
     {
       name: '12 Pc Strips Bucket',
       price: '₹399',
       desc: "12 Strips + 3 Dips",
       tag: 'Tender Strips',
-      image: '/images/menu/super 5 bucket.png'
+      image: '/images/drive/STRIPS-01.jpg'
     },
     {
       name: 'Peri Peri Leg Bucket',
@@ -222,54 +222,54 @@ export default function LandingPage() {
       price: '₹299',
       desc: 'Loaded high-protein gyro wrap with extra meat or cottage cheese.',
       protein: 'Chicken or Paneer',
-      image: '/images/menu/protein max.png'
+      image: '/images/drive/GYROS.png'
     },
     {
       title: 'Rice Bowl Format',
       price: '₹299',
       desc: 'Herb-infused Mediterranean rice base piled with high protein cuts.',
       protein: 'Chicken or Paneer',
-      image: '/images/menu/lebanese rice bowl.png'
+      image: '/images/drive/Rice Bowl.png'
     },
     {
       title: 'Salad Format',
       price: '₹299',
       desc: 'Crisp hand-torn greens, kalamata olives, cucumber & clean protein.',
       protein: 'Chicken or Paneer',
-      image: '/images/menu/signature salad.png'
+      image: '/images/drive/Signature Salad.png'
     }
   ]
 
   // Section 10: Sweet and Refreshing
   const shakesList = [
-    { name: 'Vanilla Shake', sub: 'Ask for white chocolate', price: 'Reg ₹120 / Lrg ₹199', badge: '', image: '/images/menu/vanilla shake.png' },
-    { name: 'Strawberry Shake', sub: 'Real berries & cream', price: 'Reg ₹120 / Lrg ₹199', badge: 'Must Try', image: '/images/menu/strawberry shake.png' },
-    { name: 'Biscoff Shake', sub: 'Lotus crunch & caramel', price: 'Reg ₹120 / Lrg ₹199', badge: 'Bestseller', image: '/images/menu/biscoff shake.png' },
-    { name: 'Chocolate Shake', sub: 'Dark & Dutch cocoa blend', price: 'Reg ₹120 / Lrg ₹199', badge: '', image: '/images/menu/chocolate shake.png' },
-    { name: 'Kunafa Pistachio Shake', sub: 'Roasted kunafa & pistachio cream', price: 'Reg ₹120 / Lrg ₹199', badge: 'Signature', image: '/images/menu/kunafa pistachio shake.png' }
+    { name: 'Vanilla Shake', sub: 'Ask for white chocolate', price: 'Reg ₹120 / Lrg ₹199', badge: '', image: '/images/drive/Vanilla.png' },
+    { name: 'Strawberry Shake', sub: 'Real berries & cream', price: 'Reg ₹120 / Lrg ₹199', badge: 'Must Try', image: '/images/drive/Strawberry.png' },
+    { name: 'Biscoff Shake', sub: 'Lotus crunch & caramel', price: 'Reg ₹120 / Lrg ₹199', badge: 'Bestseller', image: '/images/drive/Biscoff.png' },
+    { name: 'Chocolate Shake', sub: 'Dark & Dutch cocoa blend', price: 'Reg ₹120 / Lrg ₹199', badge: '', image: '/images/drive/Chocolate.png' },
+    { name: 'Kunafa Pistachio Shake', sub: 'Roasted kunafa & pistachio cream', price: 'Reg ₹120 / Lrg ₹199', badge: 'Signature', image: '/images/drive/Kunafa Pistachio.png' }
   ]
 
   const dessertsList = [
-    { name: 'Chocolate Brownie', sub: 'Fudgy, warm & rich chocolate', price: '₹99', badge: 'Must Try', image: '/images/menu/chcolate brownie.png' },
-    { name: 'Blondie Cake', sub: 'Brown butter golden vanilla cake', price: '₹99', badge: 'Signature', image: '/images/menu/blondie cake.png' },
-    { name: 'Vanilla Softy', sub: 'Silky smooth whipped soft serve', price: '₹39', badge: 'Sweet Classic', image: '/images/menu/vanilla softy.png' }
+    { name: 'Chocolate Brownie', sub: 'Fudgy, warm & rich chocolate', price: '₹99', badge: 'Must Try', image: '/images/drive/Chocolate Brownie.png' },
+    { name: 'Blondie Cake', sub: 'Brown butter golden vanilla cake', price: '₹99', badge: 'Signature', image: '/images/drive/Blondie Cake.png' },
+    { name: 'Vanilla Softy', sub: 'Silky smooth whipped soft serve', price: '₹39', badge: 'Sweet Classic', image: '/images/drive/Vanilla Softy.png' }
   ]
 
   const beveragesList = [
     { name: 'Coca-Cola', sub: 'Chilled bottle / can', price: '₹49', badge: 'Chilled' },
     { name: 'Sprite', sub: 'Crisp refreshing lemon-lime', price: '₹49', badge: 'Chilled' },
-    { name: 'Ice Tea (Peach)', sub: 'Brewed with peach extracts', price: 'Reg ₹59 / Lrg ₹99', badge: 'Refreshing', image: '/images/menu/ice tea - lime.png' },
+    { name: 'Ice Tea (Peach)', sub: 'Brewed with peach extracts', price: 'Reg ₹59 / Lrg ₹99', badge: 'Refreshing', image: '/images/drive/Ice Tea.png' },
     { name: 'Ice Tea (Lime)', sub: 'Tangy citrus crush iced tea', price: 'Reg ₹59 / Lrg ₹99', badge: 'Refreshing', image: '/images/menu/ice tea - lime.png' }
   ]
 
   const kombuchaList = [
-    { name: 'Mint Kombucha', sub: 'Probiotic crisp coolness', price: '₹120', image: '/images/menu/mint-kombucha.png' },
-    { name: 'Hibiscus Kombucha', sub: 'Ruby floral berry notes', price: '₹120', image: '/images/menu/kombucha-hibiscus.png' },
-    { name: 'Elixir Kombucha', sub: 'The original fermented brew', price: '₹120', image: '/images/menu/kombucha.png' },
-    { name: 'Ginger Kombucha', sub: 'Warm zingy digestive kick', price: '₹120', image: '/images/menu/ginger - kombucha.png' },
-    { name: 'Turmeric Kombucha', sub: 'Golden healing botanicals', price: '₹120', image: '/images/menu/kombucha.png' },
-    { name: 'Rose Kombucha', sub: 'Fragrant aromatic petals', price: '₹120', image: '/images/menu/kombucha.png' },
-    { name: 'Butterfly Pea Kombucha', sub: 'Natural indigo super-brew', price: '₹120', image: '/images/menu/butterfly pea - kombucha.png' }
+    { name: 'Mint Kombucha', sub: 'Probiotic crisp coolness', price: '₹120', image: '/images/drive/KOMBUCHA.png' },
+    { name: 'Hibiscus Kombucha', sub: 'Ruby floral berry notes', price: '₹120', image: '/images/drive/KOMBUCHA.png' },
+    { name: 'Elixir Kombucha', sub: 'The original fermented brew', price: '₹120', image: '/images/drive/KOMBUCHA.png' },
+    { name: 'Ginger Kombucha', sub: 'Warm zingy digestive kick', price: '₹120', image: '/images/drive/KOMBUCHA.png' },
+    { name: 'Turmeric Kombucha', sub: 'Golden healing botanicals', price: '₹120', image: '/images/drive/KOMBUCHA.png' },
+    { name: 'Rose Kombucha', sub: 'Fragrant aromatic petals', price: '₹120', image: '/images/drive/KOMBUCHA.png' },
+    { name: 'Butterfly Pea Kombucha', sub: 'Natural indigo super-brew', price: '₹120', image: '/images/drive/KOMBUCHA.png' }
   ]
 
   return (
@@ -650,7 +650,7 @@ export default function LandingPage() {
 
               {/* Main Wrap Image */}
               <motion.img 
-                src="/hero_gyro.png" 
+                src="/images/drive/GYROS.png" 
                 alt="TDG Signature Gyro" 
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -891,7 +891,7 @@ export default function LandingPage() {
           {/* Pillar 1: Two Breads */}
           <div className="hover-lift" style={{ ...cardStyle, padding: '24px' }}>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '14px' }}>
-              <img src="/baked.png" alt="Bread" style={{ width: '48px', height: '48px', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none' }} />
+              <img src="/images/drive/Baked.png" alt="Bread" style={{ width: '48px', height: '48px', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none' }} />
               <div>
                 <span style={{ fontSize: '11px', fontWeight: 800, color: '#ffd700' }}>STEP 1</span>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>Two Breads</h3>
@@ -905,7 +905,7 @@ export default function LandingPage() {
           {/* Pillar 2: Two Spreads */}
           <div className="hover-lift" style={{ ...cardStyle, padding: '24px' }}>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '14px' }}>
-              <img src="/tzatziki.png" alt="Spread" style={{ width: '48px', height: '48px', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none' }} />
+              <img src="/images/drive/Tzatziki.png" alt="Spread" style={{ width: '48px', height: '48px', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none' }} />
               <div>
                 <span style={{ fontSize: '11px', fontWeight: 800, color: '#ffd700' }}>STEP 2</span>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>Two Spreads</h3>
@@ -919,7 +919,7 @@ export default function LandingPage() {
           {/* Pillar 3: Five Sauces */}
           <div className="hover-lift" style={{ ...cardStyle, padding: '24px' }}>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '14px' }}>
-              <img src="/images/menu/turkish chilli.png" alt="Sauces" style={{ width: '48px', height: '48px', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none' }} />
+              <img src="/images/drive/Turkish Chilli.png" alt="Sauces" style={{ width: '48px', height: '48px', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none' }} />
               <div>
                 <span style={{ fontSize: '11px', fontWeight: 800, color: '#ffd700' }}>STEP 3</span>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>Five Sauces</h3>
@@ -1122,7 +1122,7 @@ export default function LandingPage() {
           {/* Signature Rice Bowl */}
           <div className="hover-lift" style={{ ...cardStyle, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             <div style={{ height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.2)', padding: '16px' }}>
-              <img src="/images/menu/lebanese rice bowl.png" alt="Signature Rice Bowl" style={{ maxHeight: '150px', maxWidth: '100%', objectFit: 'contain' }} />
+              <img src="/images/drive/Rice Bowl.png" alt="Signature Rice Bowl" style={{ maxHeight: '150px', maxWidth: '100%', objectFit: 'contain' }} />
             </div>
             <div style={{ padding: '22px', flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
@@ -1138,7 +1138,7 @@ export default function LandingPage() {
           {/* Signature Salad */}
           <div className="hover-lift" style={{ ...cardStyle, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             <div style={{ height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.2)', padding: '16px' }}>
-              <img src="/images/menu/signature salad.png" alt="Signature Salad" style={{ maxHeight: '150px', maxWidth: '100%', objectFit: 'contain' }} />
+              <img src="/images/drive/Signature Salad.png" alt="Signature Salad" style={{ maxHeight: '150px', maxWidth: '100%', objectFit: 'contain' }} />
             </div>
             <div style={{ padding: '22px', flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
@@ -1154,7 +1154,7 @@ export default function LandingPage() {
           {/* Loaded Fries */}
           <div className="hover-lift" style={{ ...cardStyle, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             <div style={{ height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.2)', padding: '16px' }}>
-              <img src="/images/menu/loaded fries.png" alt="Loaded Fries" style={{ maxHeight: '150px', maxWidth: '100%', objectFit: 'contain' }} />
+              <img src="/images/drive/Loaded.png" alt="Loaded Fries" style={{ maxHeight: '150px', maxWidth: '100%', objectFit: 'contain' }} />
             </div>
             <div style={{ padding: '22px', flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
@@ -1172,7 +1172,7 @@ export default function LandingPage() {
         <div className="grid-2" style={{ marginTop: '24px' }}>
           {/* Fried Chicken Range */}
           <div className="hover-lift" style={{ ...cardStyle, padding: '24px', display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <img src="/images/menu/Leg& Thigh.png" alt="Fried Chicken" style={{ width: '100px', height: '100px', objectFit: 'contain' }} />
+            <img src="/images/drive/WINGS-01.jpg" alt="Fried Chicken" style={{ width: '100px', height: '100px', objectFit: 'contain' }} />
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>Fried Chicken</h3>
@@ -1186,7 +1186,7 @@ export default function LandingPage() {
 
           {/* Sides Range */}
           <div className="hover-lift" style={{ ...cardStyle, padding: '24px', display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <img src="/images/menu/sides_mozzarella_sticks.png" alt="Sides" style={{ width: '100px', height: '100px', objectFit: 'contain' }} />
+            <img src="/images/drive/Fries.png" alt="Sides" style={{ width: '100px', height: '100px', objectFit: 'contain' }} />
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>Sides</h3>
