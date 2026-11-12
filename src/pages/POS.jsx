@@ -259,6 +259,15 @@ export default function POS() {
   const [newCustomerDiscount, setNewCustomerDiscount] = useState(0)
   const [savingCustomer, setSavingCustomer] = useState(false)
 
+  // Customer Checkout Verification Modal State (Phone -> Check -> Name if not registered -> Settle)
+  const [showCustomerPromptModal, setShowCustomerPromptModal] = useState(false)
+  const [promptPhone, setPromptPhone] = useState('')
+  const [promptName, setPromptName] = useState('')
+  const [promptDiscountPct, setPromptDiscountPct] = useState(0)
+  const [promptStep, setPromptStep] = useState('phone') // 'phone' | 'register'
+  const [verifyingPhone, setVerifyingPhone] = useState(false)
+  const pendingCheckoutActionRef = useRef(null)
+
   // 2-Gyro Dual Customizer State for Combos (Mega Feast Meal, Duo Gyro Feast, Den's Party Meal, Double Crunch Box, Super 5 Bucket)
   const [selectedGyro1Protein, setSelectedGyro1Protein] = useState('Chicken')
   const [selectedGyro1Bread, setSelectedGyro1Bread] = useState('Baked')
@@ -915,35 +924,160 @@ export default function POS() {
   const [splitUpi, setSplitUpi] = useState('')
   const [splitCard, setSplitCard] = useState('')
 
-  const handlePlaceOrder = async () => {
+  // 1. Customer orders dish -> 2. Ask phone number -> 2.1 Not registered: ask name, save & attach -> 2.2 Already registered: open payment portal & attach -> 3. Payment
+  const triggerCustomerCheckOrAction = (actionCallback) => {
     if (!requireOpenCounter()) return
-    if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place order'); return }
-    setProcessing(true)
-    try {
-      const newOrder = await placeOrder()
-      toast.success('Order placed & Bill generated!')
-      setShowCart(false)
-      if (newOrder) {
-        setLastPlacedOrder(newOrder)
-        setShowSuccessModal(true)
-        if (newOrder.id) printedOrderIdsRef.current.add(String(newOrder.id))
-        if (newOrder.orderNumber) printedOrderIdsRef.current.add(String(newOrder.orderNumber))
-        PrintService.printKOTAndBill(newOrder, true)
-      }
+    if (!currentOrder.items || currentOrder.items.length === 0) {
+      toast.error('Add items to order before proceeding to payment')
+      return
     }
-    catch (err) { console.error('Order error:', err); toast.error('Failed: ' + err.message) }
-    setProcessing(false)
+
+    const cleanPhone = String(currentOrder.customerPhone || '').replace(/\D/g, '')
+    // 2.2: If a valid customer phone is already attached, proceed directly!
+    if (cleanPhone.length >= 8) {
+      actionCallback()
+      return
+    }
+
+    // 2: Ask for customer phone number
+    pendingCheckoutActionRef.current = actionCallback
+    setPromptPhone(String(customerSearch || '').replace(/\D/g, '').slice(0, 10))
+    setPromptName('')
+    setPromptDiscountPct(0)
+    setPromptStep('phone')
+    setShowCustomerPromptModal(true)
+  }
+
+  const handlePhoneVerifySubmit = async (e) => {
+    if (e) e.preventDefault()
+    const cleanP = String(promptPhone || '').replace(/\D/g, '')
+    if (!cleanP || cleanP.length < 8) {
+      toast.error('Please enter at least 8 to 10 digits of mobile number')
+      return
+    }
+
+    setVerifyingPhone(true)
+    try {
+      const res = await fetch(`${API_BASE}/api/pos/customers/lookup?phone=${encodeURIComponent(cleanP)}`)
+      const data = await res.json()
+
+      if (res.ok && data.registered && data.customer) {
+        // 2.2: ALREADY REGISTERED -> Attach directly & Open Payment Portal directly!
+        selectCustomer(data.customer)
+        toast.success(`🎉 Welcome back ${data.customer.customerName || data.customer.name}! Details attached.`)
+        setShowCustomerPromptModal(false)
+        if (pendingCheckoutActionRef.current) {
+          const action = pendingCheckoutActionRef.current
+          pendingCheckoutActionRef.current = null
+          action()
+        }
+      } else {
+        // 2.1: NOT REGISTERED -> Ask for Name and register it!
+        setPromptPhone(cleanP)
+        setPromptName('')
+        setPromptDiscountPct(0)
+        setPromptStep('register')
+      }
+    } catch (err) {
+      console.warn('Customer lookup error, opening name prompt', err)
+      setPromptStep('register')
+    } finally {
+      setVerifyingPhone(false)
+    }
+  }
+
+  const handleRegisterFromPromptSubmit = async (e) => {
+    if (e) e.preventDefault()
+    const cleanP = String(promptPhone || '').replace(/\D/g, '')
+    const cleanN = String(promptName || '').trim()
+
+    if (!cleanN) {
+      toast.error('Please enter customer full name')
+      return
+    }
+    if (!cleanP || cleanP.length < 8) {
+      toast.error('Please enter a valid phone number (at least 8-10 digits)')
+      return
+    }
+
+    setVerifyingPhone(true)
+    try {
+      const res = await fetch(`${API_BASE}/api/pos/customers/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: cleanN,
+          phone: cleanP,
+          discountPct: Number(promptDiscountPct || 0)
+        })
+      })
+      const data = await res.json()
+      if (res.ok && data.customer) {
+        selectCustomer(data.customer)
+        toast.success(`🎉 Customer ${data.customer.name} (${data.customer.phone}) registered & attached!`)
+        setShowCustomerPromptModal(false)
+        if (pendingCheckoutActionRef.current) {
+          const action = pendingCheckoutActionRef.current
+          pendingCheckoutActionRef.current = null
+          action()
+        }
+      } else {
+        toast.error(data.error || 'Failed to register customer')
+      }
+    } catch (err) {
+      toast.error('Network error creating customer')
+    } finally {
+      setVerifyingPhone(false)
+    }
+  }
+
+  const handleSkipCustomerPrompt = () => {
+    setCustomerName('Walk-in Customer')
+    setShowCustomerPromptModal(false)
+    if (pendingCheckoutActionRef.current) {
+      const action = pendingCheckoutActionRef.current
+      pendingCheckoutActionRef.current = null
+      action()
+    }
+  }
+
+  const handlePlaceOrder = async (skipCustomerCheck = false) => {
+    const doPlace = async () => {
+      if (!requireOpenCounter()) return
+      if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place order'); return }
+      setProcessing(true)
+      try {
+        const newOrder = await placeOrder()
+        toast.success('Order placed & Bill generated!')
+        setShowCart(false)
+        if (newOrder) {
+          setLastPlacedOrder(newOrder)
+          setShowSuccessModal(true)
+          if (newOrder.id) printedOrderIdsRef.current.add(String(newOrder.id))
+          if (newOrder.orderNumber) printedOrderIdsRef.current.add(String(newOrder.orderNumber))
+          PrintService.printKOTAndBill(newOrder, true)
+        }
+      }
+      catch (err) { console.error('Order error:', err); toast.error('Failed: ' + err.message) }
+      setProcessing(false)
+    }
+
+    if (skipCustomerCheck) {
+      await doPlace()
+    } else {
+      triggerCustomerCheckOrAction(doPlace)
+    }
   }
 
   const openPayModal = () => {
-    if (!requireOpenCounter()) return
-    if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place order'); return }
-    setPosPayMode('cash')
-    setPosCashTendered('')
-    setSplitCash('')
-    setSplitUpi('')
-    setSplitCard('')
-    setShowPayModal(true)
+    triggerCustomerCheckOrAction(() => {
+      setPosPayMode('cash')
+      setPosCashTendered('')
+      setSplitCash('')
+      setSplitUpi('')
+      setSplitCard('')
+      setShowPayModal(true)
+    })
   }
 
   const confirmPay = async (method) => {
@@ -998,23 +1132,23 @@ export default function POS() {
     setProcessing(false)
   }
   const handleDirectSettle = async (method) => {
-    if (!requireOpenCounter()) return
-    if (!currentOrder.items || currentOrder.items.length === 0) { toast.error('Add items to place and settle order'); return }
-    setProcessing(true)
-    try {
-      const newOrder = await placeOrder(method, true)
-      toast.success(`Order #${newOrder.orderNumber || newOrder.id} settled via ${method.toUpperCase()}!`)
-      setShowCart(false)
-      if (newOrder) {
-        setLastPlacedOrder(newOrder)
-        setShowSuccessModal(true)
-        if (newOrder.id) printedOrderIdsRef.current.add(String(newOrder.id))
-        if (newOrder.orderNumber) printedOrderIdsRef.current.add(String(newOrder.orderNumber))
-        PrintService.printKOTAndBill(newOrder, true)
+    triggerCustomerCheckOrAction(async () => {
+      setProcessing(true)
+      try {
+        const newOrder = await placeOrder(method, true)
+        toast.success(`Order #${newOrder.orderNumber || newOrder.id} settled via ${method.toUpperCase()}!`)
+        setShowCart(false)
+        if (newOrder) {
+          setLastPlacedOrder(newOrder)
+          setShowSuccessModal(true)
+          if (newOrder.id) printedOrderIdsRef.current.add(String(newOrder.id))
+          if (newOrder.orderNumber) printedOrderIdsRef.current.add(String(newOrder.orderNumber))
+          PrintService.printKOTAndBill(newOrder, true)
+        }
       }
-    }
-    catch (err) { console.error('Direct settle error:', err); toast.error('Failed: ' + err.message) }
-    setProcessing(false)
+      catch (err) { console.error('Direct settle error:', err); toast.error('Failed: ' + err.message) }
+      setProcessing(false)
+    })
   }
 
   const CategoryPills = ({ onSelect }) => (
@@ -3811,6 +3945,278 @@ export default function POS() {
             </button>
           </div>
         </form>
+      </Modal>
+
+      {/* Customer Verification & Auto-Registration on Checkout Modal (Order Dish -> Ask Number -> If not registered ask name & save -> If registered open payment direct -> Make Payment) */}
+      <Modal
+        isOpen={showCustomerPromptModal}
+        onClose={() => setShowCustomerPromptModal(false)}
+        title={promptStep === 'phone' ? '📱 Customer Mobile Number' : '👤 Register New Customer'}
+        size="md"
+      >
+        {promptStep === 'phone' ? (
+          <form onSubmit={handlePhoneVerifySubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Current Order Bill</span>
+                <div style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a' }}>₹{getTotal().toFixed(0)}</div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Items</span>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: '#2563eb' }}>{currentOrder.items.reduce((s, i) => s + i.quantity, 0)} Items</div>
+              </div>
+            </div>
+
+            <div style={{ background: '#eff6ff', padding: '12px 14px', borderRadius: '12px', border: '1px solid #bfdbfe', fontSize: '13px', color: '#1e40af', lineHeight: 1.4 }}>
+              💡 Please ask customer for their <strong>Mobile Number</strong> to attach the order, track repeat visits, and apply loyalty benefits.
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>
+                Customer Mobile Number (10 digits) <span style={{ color: '#ef4444' }}>*</span>
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="tel"
+                  autoFocus
+                  placeholder="Enter 10-digit mobile number"
+                  value={promptPhone}
+                  onChange={e => {
+                    const digits = e.target.value.replace(/\D/g, '').slice(0, 10)
+                    setPromptPhone(digits)
+                  }}
+                  maxLength={10}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    borderRadius: '12px',
+                    border: '2px solid #2563eb',
+                    fontSize: '18px',
+                    fontWeight: 800,
+                    color: '#0f172a',
+                    letterSpacing: '1px',
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}
+                />
+                <span style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', fontWeight: 700, color: promptPhone.length === 10 ? '#10b981' : '#94a3b8' }}>
+                  {promptPhone.length}/10
+                </span>
+              </div>
+            </div>
+
+            {/* Quick Touch Keypad for Fast Counter Entry */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 'Clear', 0, '⌫'].map(k => (
+                <button
+                  key={k}
+                  type="button"
+                  onClick={() => {
+                    if (k === 'Clear') setPromptPhone('')
+                    else if (k === '⌫') setPromptPhone(prev => prev.slice(0, -1))
+                    else if (promptPhone.length < 10) setPromptPhone(prev => prev + String(k))
+                  }}
+                  style={{
+                    padding: '10px',
+                    borderRadius: '8px',
+                    border: '1px solid #cbd5e1',
+                    background: '#f8fafc',
+                    color: '#1e293b',
+                    fontSize: '15px',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  {k}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', marginTop: '6px', paddingTop: '12px', borderTop: '1px solid #e2e8f0' }}>
+              <button
+                type="button"
+                onClick={handleSkipCustomerPrompt}
+                title="Proceed as Walk-in Customer without phone"
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  borderRadius: '10px',
+                  border: '1px solid #cbd5e1',
+                  background: 'white',
+                  color: '#64748b',
+                  fontWeight: 700,
+                  fontSize: '12.5px',
+                  cursor: 'pointer'
+                }}
+              >
+                Skip (Walk-in)
+              </button>
+              <button
+                type="submit"
+                disabled={verifyingPhone || promptPhone.length < 8}
+                style={{
+                  flex: 2,
+                  padding: '12px',
+                  borderRadius: '10px',
+                  border: 'none',
+                  background: verifyingPhone || promptPhone.length < 8 ? '#94a3b8' : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  color: 'white',
+                  fontWeight: 800,
+                  fontSize: '14px',
+                  cursor: verifyingPhone || promptPhone.length < 8 ? 'not-allowed' : 'pointer',
+                  boxShadow: verifyingPhone || promptPhone.length < 8 ? 'none' : '0 4px 14px rgba(37,99,235,0.35)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                {verifyingPhone ? 'Checking Number...' : '✓ Verify & Proceed'}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <form onSubmit={handleRegisterFromPromptSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ background: '#fef3c7', padding: '12px 14px', borderRadius: '12px', border: '1px solid #fde68a', fontSize: '13px', color: '#92400e', lineHeight: 1.4 }}>
+              👤 Customer with phone <strong>{promptPhone}</strong> is not yet registered. Enter customer name to register and store order details:
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '8px 12px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: '#334155' }}>📱 Phone: {promptPhone}</span>
+              <button
+                type="button"
+                onClick={() => setPromptStep('phone')}
+                style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 700, fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                Change Phone
+              </button>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>
+                Customer Full Name <span style={{ color: '#ef4444' }}>*</span>
+              </label>
+              <input
+                type="text"
+                autoFocus
+                placeholder="e.g. Rahul Sharma"
+                value={promptName}
+                onChange={e => setPromptName(e.target.value)}
+                required
+                style={{
+                  width: '100%',
+                  padding: '11px 14px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #cbd5e1',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  color: '#1e293b',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12.5px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>
+                Customer Tier / Discount
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => setPromptDiscountPct(0)}
+                  style={{
+                    padding: '9px 6px',
+                    borderRadius: '8px',
+                    border: promptDiscountPct === 0 ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                    background: promptDiscountPct === 0 ? '#eff6ff' : 'white',
+                    color: promptDiscountPct === 0 ? '#1d4ed8' : '#475569',
+                    fontWeight: 700,
+                    fontSize: '12px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Standard (0%)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPromptDiscountPct(50)}
+                  style={{
+                    padding: '9px 6px',
+                    borderRadius: '8px',
+                    border: promptDiscountPct === 50 ? '2px solid #7c3aed' : '1px solid #cbd5e1',
+                    background: promptDiscountPct === 50 ? '#f5f3ff' : 'white',
+                    color: promptDiscountPct === 50 ? '#6d28d9' : '#475569',
+                    fontWeight: 700,
+                    fontSize: '12px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  VIP (50% OFF)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPromptDiscountPct(10)}
+                  style={{
+                    padding: '9px 6px',
+                    borderRadius: '8px',
+                    border: (promptDiscountPct > 0 && promptDiscountPct !== 50) ? '2px solid #059669' : '1px solid #cbd5e1',
+                    background: (promptDiscountPct > 0 && promptDiscountPct !== 50) ? '#ecfdf5' : 'white',
+                    color: (promptDiscountPct > 0 && promptDiscountPct !== 50) ? '#047857' : '#475569',
+                    fontWeight: 700,
+                    fontSize: '12px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Special (10%)
+                </button>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', marginTop: '6px', paddingTop: '12px', borderTop: '1px solid #e2e8f0' }}>
+              <button
+                type="button"
+                onClick={() => setPromptStep('phone')}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  borderRadius: '10px',
+                  border: '1px solid #cbd5e1',
+                  background: 'white',
+                  color: '#64748b',
+                  fontWeight: 700,
+                  fontSize: '13px',
+                  cursor: 'pointer'
+                }}
+              >
+                ← Back
+              </button>
+              <button
+                type="submit"
+                disabled={verifyingPhone}
+                style={{
+                  flex: 2,
+                  padding: '12px',
+                  borderRadius: '10px',
+                  border: 'none',
+                  background: verifyingPhone ? '#94a3b8' : 'linear-gradient(135deg, #10b981, #059669)',
+                  color: 'white',
+                  fontWeight: 800,
+                  fontSize: '14px',
+                  cursor: verifyingPhone ? 'not-allowed' : 'pointer',
+                  boxShadow: verifyingPhone ? 'none' : '0 4px 14px rgba(16,185,129,0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                {verifyingPhone ? 'Registering...' : '✓ Register & Open Payment'}
+              </button>
+            </div>
+          </form>
+        )}
       </Modal>
 
     </div>

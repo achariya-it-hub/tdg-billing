@@ -10844,6 +10844,84 @@ app.post('/api/customers/quick-add', (req, res) => {
 })
 
 // Get a customer's den/assets from billing app
+// POS Quick Customer Phone Lookup (Checks if customer is registered by phone number)
+app.get('/api/pos/customers/lookup', (req, res) => {
+  try {
+    const rawPhone = String(req.query.phone || req.query.q || '').trim()
+    const cleanPhone = rawPhone.replace(/\D/g, '')
+    if (!cleanPhone || cleanPhone.length < 8) {
+      return res.json({ registered: false, phone: cleanPhone })
+    }
+
+    const last8 = cleanPhone.slice(-8)
+    const db = readDb() || {}
+    const allList = [
+      ...(db.users || []),
+      ...(loyaltyUsers || []),
+      ...(mobileAppUsers || []),
+      ...(db.customers || []),
+      ...(db.loyaltyUsers || [])
+    ]
+
+    const isGeneric = (str) => {
+      if (!str) return true
+      const s = String(str).trim().toLowerCase()
+      return !s || ['customer', 'vip customer', 'vip 50% customer', 'mobile app user', 'den member', 'new customer', 'guest', 'user', 'walk-in customer'].includes(s)
+    }
+
+    const match = allList.find(u => {
+      if (!u) return false
+      const p = String(u.phone || u.customerPhone || u.mobile || '').replace(/\D/g, '')
+      return p.endsWith(last8)
+    })
+
+    if (match) {
+      const name = match.name || match.customerName || match.fullName || match.userName || ''
+      const disc = Number(match.discountPct) || (match.tier && String(match.tier).includes('50%') ? 50 : 0)
+      const hasRealName = !isGeneric(name)
+      return res.json({
+        registered: hasRealName,
+        customer: {
+          id: match.id,
+          name: name || 'Customer',
+          customerName: name || 'Customer',
+          phone: match.phone || cleanPhone,
+          discountPct: disc,
+          tier: match.tier || (disc >= 50 ? 'VIP 50% OFF' : (disc > 0 ? `${disc}% Discount` : 'Standard')),
+          points: match.points || 0
+        }
+      })
+    }
+
+    // Also check past orders in case they placed orders before
+    const pastOrder = (orders || []).find(o => {
+      if (!o) return false
+      const p = String(o.customerPhone || '').replace(/\D/g, '')
+      return p.endsWith(last8) && !isGeneric(o.customerName)
+    })
+
+    if (pastOrder) {
+      return res.json({
+        registered: true,
+        customer: {
+          id: 'ord_c_' + cleanPhone,
+          name: pastOrder.customerName,
+          customerName: pastOrder.customerName,
+          phone: cleanPhone,
+          discountPct: pastOrder.customerDiscountPct || 0,
+          tier: 'Standard',
+          points: 0
+        }
+      })
+    }
+
+    return res.json({ registered: false, phone: cleanPhone })
+  } catch (err) {
+    console.error('Customer lookup error:', err)
+    return res.json({ registered: false, error: err.message })
+  }
+})
+
 // POS Quick Create Customer (Name + Phone) directly while generating orders
 app.post('/api/pos/customers/create', (req, res) => {
   try {
