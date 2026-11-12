@@ -256,6 +256,7 @@ export default function POS() {
   }
   const [newCustomerName, setNewCustomerName] = useState('')
   const [newCustomerPhone, setNewCustomerPhone] = useState('')
+  const [newCustomerDiscount, setNewCustomerDiscount] = useState(0)
   const [savingCustomer, setSavingCustomer] = useState(false)
 
   // 2-Gyro Dual Customizer State for Combos (Mega Feast Meal, Duo Gyro Feast, Den's Party Meal, Double Crunch Box, Super 5 Bucket)
@@ -490,14 +491,21 @@ export default function POS() {
   }, [customerSearch])
 
   const handleOpenCreateCustomerModal = (initialSearch = '') => {
-    const isDigits = /^\d+$/.test(String(initialSearch || '').replace(/[\s+-]/g, ''))
-    if (isDigits && String(initialSearch || '').replace(/\D/g, '').length >= 4) {
-      setNewCustomerPhone(String(initialSearch || '').replace(/\D/g, '').slice(0, 10))
+    const raw = String(initialSearch || '').trim()
+    const cleanDigits = raw.replace(/\D/g, '')
+    const isMostlyDigits = /^\+?[\d\s-]+$/.test(raw)
+
+    if (isMostlyDigits && cleanDigits.length >= 4) {
+      setNewCustomerPhone(cleanDigits.slice(-10))
       setNewCustomerName('')
+    } else if (raw) {
+      setNewCustomerName(raw)
+      setNewCustomerPhone('')
     } else {
-      setNewCustomerName(String(initialSearch || '').trim())
+      setNewCustomerName('')
       setNewCustomerPhone('')
     }
+    setNewCustomerDiscount(0)
     setShowCustomerDropdown(false)
     setShowNewCustomerModal(true)
   }
@@ -521,7 +529,11 @@ export default function POS() {
       const res = await fetch(`${API_BASE}/api/pos/customers/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: cleanN, phone: cleanP })
+        body: JSON.stringify({
+          name: cleanN,
+          phone: cleanP,
+          discountPct: Number(newCustomerDiscount || 0)
+        })
       })
       const data = await res.json()
       if (res.ok && data.customer) {
@@ -530,6 +542,7 @@ export default function POS() {
         setShowNewCustomerModal(false)
         setNewCustomerName('')
         setNewCustomerPhone('')
+        setNewCustomerDiscount(0)
       } else {
         toast.error(data.error || 'Failed to register customer')
       }
@@ -541,12 +554,15 @@ export default function POS() {
   }
 
   const selectCustomer = (cust) => {
-    const cName = cust.customerName || cust.name || ""; setCustomer({ ...cust, customerName: cName, phone: cust.phone, discountPct: cust.discountPct })
+    const cName = cust.customerName || cust.name || ""
+    const cPhone = cust.phone || cust.customerPhone || ""
+    const disc = Number(cust.discountPct) || 0
+    setCustomer({ ...cust, customerName: cName, phone: cPhone, discountPct: disc })
     setCustomerSearch('')
     setCustomerResults([])
     setShowCustomerDropdown(false)
-    if (cust.discountPct === 50) setVipStatus('vip')
-    else if (cust.discountPct > 0) setVipStatus('discount')
+    if (disc >= 50) setVipStatus('vip')
+    else if (disc > 0) setVipStatus('discount')
     else setVipStatus('notvip')
   }
 
@@ -1284,41 +1300,64 @@ export default function POS() {
                 + New
               </button>
             </div>
-            {showCustomerDropdown && (customerResults.length > 0 || customerSearch.replace(/\D/g, '').length >= 8) && (
-              <div style={{ position: 'absolute', zIndex: 60, top: '100%', left: 0, right: 0, maxHeight: '220px', overflow: 'auto', borderRadius: '10px', background: 'white', border: '1px solid #cbd5e1', boxShadow: '0 4px 14px rgba(0,0,0,0.12)' }}>
-                {customerResults.map((c, idx) => (
-                  <button key={idx} onClick={() => selectCustomer(c)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '10px', border: 'none', borderBottom: '1px solid #f1f5f9', background: 'white', cursor: 'pointer', textAlign: 'left' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#1e293b' }}>👤 {c.customerName}</span>
-                      {c.phone && <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>📱 {c.phone}</span>}
+            {showCustomerDropdown && customerSearch.trim().length >= 1 && (
+              <>
+                <div
+                  style={{ position: 'fixed', inset: 0, zIndex: 59 }}
+                  onClick={() => setShowCustomerDropdown(false)}
+                />
+                <div style={{ position: 'absolute', zIndex: 60, top: '100%', left: 0, right: 0, marginTop: '4px', maxHeight: '240px', overflowY: 'auto', borderRadius: '10px', background: 'white', border: '1px solid #cbd5e1', boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}>
+                  {searchingCustomer && (
+                    <div style={{ padding: '10px 12px', fontSize: '11.5px', color: '#64748b' }}>
+                      ⏳ Searching customers for "{customerSearch}"...
                     </div>
-                    <span style={{ fontSize: '11px', fontWeight: 800, color: c.discountPct >= 50 ? '#7c3aed' : (c.discountPct > 0 ? '#dc2626' : '#059669'), background: c.discountPct >= 50 ? '#f5f3ff' : (c.discountPct > 0 ? '#fef2f2' : '#f0fdf4'), padding: '2px 8px', borderRadius: '12px' }}>
-                      {c.discountPct > 0 ? `${c.discountPct}% OFF` : 'Standard'}
-                    </span>
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => handleOpenCreateCustomerModal(customerSearch)}
-                  style={{ width: '100%', padding: '10px 12px', border: 'none', background: '#eff6ff', borderTop: '1px solid #bfdbfe', color: '#1d4ed8', fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '6px' }}
-                >
-                  <UserPlus size={14} color="#1d4ed8" />
-                  + Register {customerSearch ? `"${customerSearch}"` : ''} as New Customer
-                </button>
-                {customerSearch.replace(/D/g, '').length >= 8 && (
+                  )}
+
+                  {!searchingCustomer && customerResults.length > 0 && (
+                    customerResults.map((c, idx) => (
+                      <button key={idx} onClick={() => selectCustomer(c)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '10px', border: 'none', borderBottom: '1px solid #f1f5f9', background: 'white', cursor: 'pointer', textAlign: 'left' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ fontSize: '12px', fontWeight: 700, color: '#1e293b' }}>👤 {c.customerName}</span>
+                          {c.phone && <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>📱 {c.phone}</span>}
+                        </div>
+                        <span style={{ fontSize: '11px', fontWeight: 800, color: c.discountPct >= 50 ? '#7c3aed' : (c.discountPct > 0 ? '#dc2626' : '#059669'), background: c.discountPct >= 50 ? '#f5f3ff' : (c.discountPct > 0 ? '#fef2f2' : '#f0fdf4'), padding: '2px 8px', borderRadius: '12px' }}>
+                          {c.discountPct > 0 ? `${c.discountPct}% OFF` : 'Standard'}
+                        </span>
+                      </button>
+                    ))
+                  )}
+
+                  {!searchingCustomer && customerResults.length === 0 && customerSearch.trim().length >= 2 && (
+                    <div style={{ padding: '10px 12px', textAlign: 'center', color: '#64748b', fontSize: '11.5px' }}>
+                      🔍 No registered customer found for "<strong>{customerSearch}</strong>"
+                    </div>
+                  )}
+
                   <button
-                    onClick={() => {
-                      const cleanP = customerSearch.replace(/\D/g, '')
-                      setCustomerPhone(cleanP)
-                      setCustomerSearch('')
-                      setShowCustomerDropdown(false)
-                    }}
-                    style={{ width: '100%', padding: '10px', border: 'none', background: '#f8fafc', borderTop: '1px solid #e2e8f0', color: '#2563eb', fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'left' }}
+                    type="button"
+                    onClick={() => handleOpenCreateCustomerModal(customerSearch)}
+                    style={{ width: '100%', padding: '10px 12px', border: 'none', background: '#eff6ff', borderTop: '1px solid #bfdbfe', color: '#1d4ed8', fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '6px' }}
                   >
-                    📱 Use Phone Number: {customerSearch.replace(/\D/g, '')}
+                    <UserPlus size={14} color="#1d4ed8" />
+                    + Register {customerSearch ? `"${customerSearch}"` : ''} as New Customer
                   </button>
-                )}
-              </div>
+
+                  {customerSearch.replace(/\D/g, '').length >= 8 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const cleanP = customerSearch.replace(/\D/g, '')
+                        setCustomerPhone(cleanP)
+                        setCustomerSearch('')
+                        setShowCustomerDropdown(false)
+                      }}
+                      style={{ width: '100%', padding: '10px', border: 'none', background: '#f8fafc', borderTop: '1px solid #e2e8f0', color: '#2563eb', fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'left' }}
+                    >
+                      📱 Quick Use Phone: {customerSearch.replace(/\D/g, '')}
+                    </button>
+                  )}
+                </div>
+              </>
             )}
           </div>
           {searchingCustomer && <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '8px' }}>Searching customers...</div>}
@@ -1596,7 +1635,7 @@ export default function POS() {
         </div>
 
         {(currentOrder.type === 'dine-in' || currentOrder.type === 'takeaway' || currentOrder.type === 'delivery') && (
-          <div style={{ padding: '8px 12px', borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
+          <div style={{ padding: '8px 12px', borderBottom: '1px solid rgba(0,0,0,0.04)', position: 'relative' }}>
             <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
               <input
                 type="text"
@@ -1607,58 +1646,154 @@ export default function POS() {
                   setShowCustomerDropdown(true)
                 }}
                 onFocus={() => setShowCustomerDropdown(true)}
-                style={{ ...inputStyle, padding: '6px 10px', fontSize: '12px', flex: 1 }}
+                style={{ ...inputStyle, padding: '7px 10px', fontSize: '12px', flex: 1 }}
               />
               <button
                 type="button"
                 onClick={() => handleOpenCreateCustomerModal(customerSearch)}
                 title="Register New Customer"
                 style={{
-                  padding: '7px 10px',
+                  padding: '7px 11px',
                   borderRadius: '8px',
                   border: 'none',
                   background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
                   color: 'white',
                   fontWeight: 700,
-                  fontSize: '11px',
+                  fontSize: '11.5px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  boxShadow: '0 2px 6px rgba(37,99,235,0.25)'
                 }}
               >
-                <UserPlus size={13} />
+                <UserPlus size={14} />
                 + New
               </button>
             </div>
-            {showCustomerDropdown && (customerResults.length > 0 || customerSearch.replace(/\D/g, '').length >= 8) && (
-              <div style={{ marginTop: '4px', maxHeight: '200px', overflow: 'auto', borderRadius: '10px', background: 'white', border: '1px solid #cbd5e1', boxShadow: '0 4px 14px rgba(0,0,0,0.12)', zIndex: 50, position: 'relative' }}>
-                {customerResults.map((c, idx) => (
-                  <button key={idx} onClick={() => selectCustomer(c)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: '9px 10px', border: 'none', borderBottom: '1px solid #f1f5f9', background: 'white', cursor: 'pointer', textAlign: 'left' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}>👤 {c.customerName}</span>
-                      {c.phone && <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: 600 }}>📱 {c.phone}</span>}
+            {showCustomerDropdown && customerSearch.trim().length >= 1 && (
+              <>
+                <div
+                  style={{ position: 'fixed', inset: 0, zIndex: 65 }}
+                  onClick={() => setShowCustomerDropdown(false)}
+                />
+                <div style={{
+                  position: 'absolute',
+                  zIndex: 70,
+                  top: '100%',
+                  left: '12px',
+                  right: '12px',
+                  marginTop: '4px',
+                  maxHeight: '250px',
+                  overflowY: 'auto',
+                  borderRadius: '10px',
+                  background: 'white',
+                  border: '1px solid #cbd5e1',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.16)'
+                }}>
+                  {searchingCustomer && (
+                    <div style={{ padding: '10px 12px', fontSize: '11px', color: '#64748b' }}>
+                      ⏳ Searching customers for "{customerSearch}"...
                     </div>
-                    <span style={{ fontSize: '10.5px', fontWeight: 800, color: c.offerRedeemed ? '#b45309' : (c.discountPct > 0 ? (c.discountPct >= 50 ? '#7c3aed' : '#be123c') : '#047857'), background: c.offerRedeemed ? '#fef3c7' : (c.discountPct > 0 ? (c.discountPct >= 50 ? '#f5f3ff' : '#ffe4e6') : '#ecfdf5'), padding: '3px 8px', borderRadius: '12px' }}>
-                      {c.offerRedeemed ? '⚠️ Offer Redeemed (Used)' : (c.discountPct > 0 ? `👑 ${c.discountPct}% OFF` : '✓ Customer')}
-                    </span>
-                  </button>
-                ))}
-                {customerSearch.replace(/\D/g, '').length >= 8 && (
+                  )}
+
+                  {!searchingCustomer && customerResults.length > 0 && (
+                    customerResults.map((c, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => selectCustomer(c)}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          width: '100%',
+                          padding: '9px 12px',
+                          border: 'none',
+                          borderBottom: '1px solid #f1f5f9',
+                          background: 'white',
+                          cursor: 'pointer',
+                          textAlign: 'left'
+                        }}
+                      >
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ fontSize: '12px', fontWeight: 700, color: '#0f172a' }}>👤 {c.customerName}</span>
+                          {c.phone && <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: 600 }}>📱 {c.phone}</span>}
+                        </div>
+                        <span style={{
+                          fontSize: '10.5px',
+                          fontWeight: 800,
+                          color: c.offerRedeemed ? '#b45309' : (c.discountPct > 0 ? (c.discountPct >= 50 ? '#7c3aed' : '#be123c') : '#047857'),
+                          background: c.offerRedeemed ? '#fef3c7' : (c.discountPct > 0 ? (c.discountPct >= 50 ? '#f5f3ff' : '#ffe4e6') : '#ecfdf5'),
+                          padding: '3px 8px',
+                          borderRadius: '12px'
+                        }}>
+                          {c.offerRedeemed ? '⚠️ Offer Used' : (c.discountPct > 0 ? `👑 ${c.discountPct}% OFF` : '✓ Customer')}
+                        </span>
+                      </button>
+                    ))
+                  )}
+
+                  {!searchingCustomer && customerResults.length === 0 && customerSearch.trim().length >= 2 && (
+                    <div style={{ padding: '10px 12px', textAlign: 'center', color: '#64748b', fontSize: '11.5px' }}>
+                      🔍 No registered customer found for "<strong>{customerSearch}</strong>"
+                    </div>
+                  )}
+
                   <button
-                    onClick={() => {
-                      const cleanP = customerSearch.replace(/\D/g, '')
-                      setCustomerPhone(cleanP)
-                      setCustomerSearch('')
-                      setShowCustomerDropdown(false)
+                    type="button"
+                    onClick={() => handleOpenCreateCustomerModal(customerSearch)}
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px',
+                      border: 'none',
+                      background: '#eff6ff',
+                      borderTop: '1px solid #bfdbfe',
+                      color: '#1d4ed8',
+                      fontWeight: 700,
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
                     }}
-                    style={{ width: '100%', padding: '10px', border: 'none', background: '#f8fafc', borderTop: '1px solid #e2e8f0', color: '#2563eb', fontWeight: 700, fontSize: '12px', cursor: 'pointer', textAlign: 'left' }}
                   >
-                    📱 Use Phone Number: {customerSearch.replace(/\D/g, '')}
+                    <UserPlus size={14} color="#1d4ed8" />
+                    + Register {customerSearch ? `"${customerSearch}"` : ''} as New Customer
                   </button>
-                )}
-              </div>
+
+                  {customerSearch.replace(/\D/g, '').length >= 8 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const cleanP = customerSearch.replace(/\D/g, '')
+                        setCustomerPhone(cleanP)
+                        setCustomerSearch('')
+                        setShowCustomerDropdown(false)
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        border: 'none',
+                        background: '#f8fafc',
+                        borderTop: '1px solid #e2e8f0',
+                        color: '#2563eb',
+                        fontWeight: 700,
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      📱 Quick Use Phone: {customerSearch.replace(/\D/g, '')}
+                    </button>
+                  )}
+                </div>
+              </>
             )}
             {searchingCustomer && <div style={{ fontSize: '10px', color: '#64748b', marginTop: '4px' }}>Searching customers...</div>}
             {(currentOrder.customerName || currentOrder.customerPhone) && (
@@ -3504,6 +3639,178 @@ export default function POS() {
         ) : (
           <div style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>No active cash counter session found.</div>
         )}
+      </Modal>
+
+      {/* Quick Customer Creation Modal */}
+      <Modal
+        isOpen={showNewCustomerModal}
+        onClose={() => setShowNewCustomerModal(false)}
+        title="👤 Register New Customer"
+        size="md"
+      >
+        <form onSubmit={handleCreateCustomerSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ background: '#eff6ff', padding: '12px 14px', borderRadius: '12px', border: '1px solid #bfdbfe', fontSize: '13px', color: '#1e40af', lineHeight: 1.4 }}>
+            💡 Enter customer's <strong>Full Name</strong> and <strong>Mobile Number</strong>. Once saved, they will be stored in the database and automatically attached to the current bill.
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>
+              Customer Full Name <span style={{ color: '#ef4444' }}>*</span>
+            </label>
+            <input
+              type="text"
+              autoFocus
+              placeholder="e.g. Rahul Sharma"
+              value={newCustomerName}
+              onChange={e => setNewCustomerName(e.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: '10px 14px',
+                borderRadius: '10px',
+                border: '1.5px solid #cbd5e1',
+                fontSize: '14px',
+                fontWeight: 600,
+                color: '#1e293b',
+                outline: 'none',
+                boxSizing: 'border-box'
+              }}
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>
+              Mobile Phone Number <span style={{ color: '#ef4444' }}>*</span>
+            </label>
+            <div style={{ position: 'relative' }}>
+              <input
+                type="tel"
+                placeholder="e.g. 9876543210 (10 digits)"
+                value={newCustomerPhone}
+                onChange={e => {
+                  const val = e.target.value.replace(/\D/g, '').slice(0, 10)
+                  setNewCustomerPhone(val)
+                }}
+                maxLength={10}
+                required
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  borderRadius: '10px',
+                  border: '1.5px solid #cbd5e1',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  color: '#1e293b',
+                  letterSpacing: '0.5px',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
+              <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', fontWeight: 700, color: newCustomerPhone.length === 10 ? '#10b981' : '#94a3b8' }}>
+                {newCustomerPhone.length}/10
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '6px' }}>
+              Customer Category / Benefits
+            </label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={() => setNewCustomerDiscount(0)}
+                style={{
+                  padding: '10px 8px',
+                  borderRadius: '10px',
+                  border: newCustomerDiscount === 0 ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                  background: newCustomerDiscount === 0 ? '#eff6ff' : 'white',
+                  color: newCustomerDiscount === 0 ? '#1d4ed8' : '#475569',
+                  fontWeight: 700,
+                  fontSize: '12px',
+                  cursor: 'pointer'
+                }}
+              >
+                Standard (0%)
+              </button>
+              <button
+                type="button"
+                onClick={() => setNewCustomerDiscount(50)}
+                style={{
+                  padding: '10px 8px',
+                  borderRadius: '10px',
+                  border: newCustomerDiscount === 50 ? '2px solid #7c3aed' : '1px solid #cbd5e1',
+                  background: newCustomerDiscount === 50 ? '#f5f3ff' : 'white',
+                  color: newCustomerDiscount === 50 ? '#6d28d9' : '#475569',
+                  fontWeight: 700,
+                  fontSize: '12px',
+                  cursor: 'pointer'
+                }}
+              >
+                VIP (50% OFF)
+              </button>
+              <button
+                type="button"
+                onClick={() => setNewCustomerDiscount(10)}
+                style={{
+                  padding: '10px 8px',
+                  borderRadius: '10px',
+                  border: (newCustomerDiscount > 0 && newCustomerDiscount !== 50) ? '2px solid #059669' : '1px solid #cbd5e1',
+                  background: (newCustomerDiscount > 0 && newCustomerDiscount !== 50) ? '#ecfdf5' : 'white',
+                  color: (newCustomerDiscount > 0 && newCustomerDiscount !== 50) ? '#047857' : '#475569',
+                  fontWeight: 700,
+                  fontSize: '12px',
+                  cursor: 'pointer'
+                }}
+              >
+                Special (10%)
+              </button>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px', marginTop: '8px', paddingTop: '14px', borderTop: '1px solid #e2e8f0' }}>
+            <button
+              type="button"
+              onClick={() => setShowNewCustomerModal(false)}
+              style={{
+                flex: 1,
+                padding: '12px',
+                borderRadius: '10px',
+                border: '1px solid #cbd5e1',
+                background: 'white',
+                color: '#64748b',
+                fontWeight: 700,
+                fontSize: '13px',
+                cursor: 'pointer'
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={savingCustomer}
+              style={{
+                flex: 2,
+                padding: '12px',
+                borderRadius: '10px',
+                border: 'none',
+                background: savingCustomer ? '#9ca3af' : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                color: 'white',
+                fontWeight: 800,
+                fontSize: '14px',
+                cursor: savingCustomer ? 'not-allowed' : 'pointer',
+                boxShadow: savingCustomer ? 'none' : '0 4px 14px rgba(37,99,235,0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px'
+              }}
+            >
+              <UserPlus size={16} />
+              {savingCustomer ? 'Registering...' : '✓ Save & Attach to Order'}
+            </button>
+          </div>
+        </form>
       </Modal>
 
     </div>

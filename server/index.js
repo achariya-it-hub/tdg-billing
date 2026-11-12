@@ -10862,6 +10862,8 @@ app.post('/api/pos/customers/create', (req, res) => {
     db.users = db.users || []
     loyaltyUsers = loyaltyUsers || []
 
+    const discPct = Number(req.body.discountPct) || 0
+
     let existing = (db.users || []).find(u => (u.phone || '').replace(/\D/g, '') === cleanPhone) ||
                    (loyaltyUsers || []).find(u => (u.phone || '').replace(/\D/g, '') === cleanPhone)
 
@@ -10869,6 +10871,10 @@ app.post('/api/pos/customers/create', (req, res) => {
       if (cleanName && cleanName !== 'Customer') {
         existing.name = cleanName
         existing.customerName = cleanName
+      }
+      if (req.body.discountPct !== undefined) {
+        existing.discountPct = discPct
+        existing.tier = discPct >= 50 ? 'VIP 50% OFF' : (discPct > 0 ? `${discPct}% Discount` : 'Standard')
       }
       writeDb(db)
       saveState()
@@ -10881,6 +10887,7 @@ app.post('/api/pos/customers/create', (req, res) => {
           customerName: existing.name || cleanName,
           phone: cleanPhone,
           discountPct: existing.discountPct || 0,
+          tier: existing.tier || (existing.discountPct >= 50 ? 'VIP 50% OFF' : 'Standard'),
           points: existing.points || 0
         }
       })
@@ -10896,7 +10903,8 @@ app.post('/api/pos/customers/create', (req, res) => {
       role: 'user',
       type: 'customer',
       source: 'POS Order Entry',
-      discountPct: 0,
+      discountPct: discPct,
+      tier: discPct >= 50 ? 'VIP 50% OFF' : (discPct > 0 ? `${discPct}% Discount` : 'Standard'),
       points: 0,
       assets: [],
       createdAt: now,
@@ -10905,6 +10913,7 @@ app.post('/api/pos/customers/create', (req, res) => {
 
     db.users.push(newCustomer)
     if (Array.isArray(mobileAppUsers)) mobileAppUsers.push(newCustomer)
+    if (Array.isArray(loyaltyUsers)) loyaltyUsers.push(newCustomer)
     writeDb(db)
     saveState()
 
@@ -10920,7 +10929,8 @@ app.post('/api/pos/customers/create', (req, res) => {
         name: newCustomer.name,
         customerName: newCustomer.name,
         phone: cleanPhone,
-        discountPct: 0,
+        discountPct: discPct,
+        tier: newCustomer.tier,
         points: 0,
         createdAt: now
       }
