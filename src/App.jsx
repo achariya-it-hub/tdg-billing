@@ -4,6 +4,7 @@ import OfflineIndicator from './components/OfflineIndicator'
 import Login from './pages/Login'
 import Kiosk from './pages/Kiosk'
 import LandingPage from './pages/LandingPage'
+import Cart from './pages/Cart'
 import CustomerAuth from './pages/CustomerAuth'
 import Reports from './pages/Reports'
 import Billing from './pages/Billing'
@@ -205,6 +206,7 @@ export default function App() {
           <Route path="/staff-login" element={<Login />} />
           <Route path="/login" element={<Navigate to="/staff-login" replace />} />
           <Route path="/order" element={<Kiosk />} />
+          <Route path="/cart" element={<Cart />} />
           <Route path="/table/:tableNum" element={<Kiosk />} />
           <Route path="/kiosk" element={<Kiosk />} />
           <Route path="/customizer" element={<Customizer />} />
@@ -253,6 +255,7 @@ export default function App() {
       return (
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/cart" element={<Cart />} />
           <Route path="/den" element={<DenWebApp />} />
           <Route path="/den-app" element={<DenWebApp />} />
           <Route path="/mobile" element={<MobilePreview />} />
@@ -260,6 +263,7 @@ export default function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/kiosk" element={<Kiosk />} />
           <Route path="/order" element={<Kiosk />} />
+          <Route path="/cart" element={<Cart />} />
           <Route path="/table/:tableNum" element={<Kiosk />} />
           <Route path="/customizer" element={<Customizer />} />
           <Route path="/login" element={<CustomerAuth />} />

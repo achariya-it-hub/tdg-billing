@@ -28,6 +28,7 @@ import {
   Plus
 } from 'lucide-react'
 import { useMenuStore } from '../stores/menuStore'
+import { useCartStore } from '../stores/cartStore'
 
 const WhatsAppIcon = ({ size = 20, color = 'currentColor' }) => (
   <svg
@@ -47,6 +48,20 @@ const WhatsAppIcon = ({ size = 20, color = 'currentColor' }) => (
 
 export default function LandingPage() {
   const { menuItems, fetchMenuItems } = useMenuStore()
+  const { items: cartItems, addItem, getTotalCount, getTotalAmount } = useCartStore()
+  const cartCount = getTotalCount()
+  const cartTotal = getTotalAmount()
+  const [addedToast, setAddedToast] = useState(null)
+
+  const handleAddToCart = (product, e) => {
+    if (e) e.preventDefault()
+    addItem(product)
+    setAddedToast(product.name)
+    setTimeout(() => {
+      setAddedToast(null)
+    }, 3500)
+  }
+
   const [customer, setCustomer] = useState(null)
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -371,10 +386,14 @@ export default function LandingPage() {
       }}>
         <Flame size={15} color="#ffd700" />
         <span>Baked or fried bread. Your sauce. Your gyro. Order now.</span>
-        <a 
-          href={orderLink}
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link 
+          to={cartCount > 0 ? '/cart' : '#gyros'}
+          onClick={(e) => {
+            if (cartCount === 0) {
+              e.preventDefault()
+              document.getElementById('gyros')?.scrollIntoView({ behavior: 'smooth' })
+            }
+          }}
           style={{
             marginLeft: '8px',
             color: '#ffd700',
@@ -385,8 +404,8 @@ export default function LandingPage() {
             gap: '4px'
           }}
         >
-          <WhatsAppIcon size={13} color="#ffd700" /> ORDER NOW <ArrowRight size={13} />
-        </a>
+          <ShoppingBag size={13} color="#ffd700" /> {cartCount > 0 ? `VIEW CART (${cartCount})` : 'ORDER NOW'} <ArrowRight size={13} />
+        </Link>
       </div>
 
       {/* =========================================================
@@ -484,10 +503,50 @@ export default function LandingPage() {
             <WhatsAppIcon size={16} /> WhatsApp
           </a>
 
-          <a
-            href={orderLink}
-            target="_blank"
-            rel="noopener noreferrer"
+          {/* Cart Pill */}
+          <Link
+            to="/cart"
+            style={{
+              backgroundColor: cartCount > 0 ? '#ffd700' : 'rgba(255, 255, 255, 0.08)',
+              color: cartCount > 0 ? '#000' : '#fff',
+              border: cartCount > 0 ? 'none' : '1px solid rgba(255, 255, 255, 0.15)',
+              padding: '9px 16px',
+              borderRadius: '8px',
+              fontSize: '12.5px',
+              fontWeight: 800,
+              textDecoration: 'none',
+              letterSpacing: '0.5px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '7px',
+              transition: 'all 0.2s',
+              boxShadow: cartCount > 0 ? '0 4px 14px rgba(255, 215, 0, 0.35)' : 'none'
+            }}
+          >
+            <ShoppingBag size={15} color={cartCount > 0 ? '#000' : '#ffd700'} />
+            <span>CART</span>
+            {cartCount > 0 && (
+              <span style={{
+                background: '#e63946',
+                color: '#fff',
+                padding: '2px 7px',
+                borderRadius: '10px',
+                fontSize: '11px',
+                fontWeight: 900
+              }}>
+                {cartCount}
+              </span>
+            )}
+          </Link>
+
+          <Link
+            to={cartCount > 0 ? '/cart' : '#gyros'}
+            onClick={(e) => {
+              if (cartCount === 0) {
+                e.preventDefault()
+                document.getElementById('gyros')?.scrollIntoView({ behavior: 'smooth' })
+              }
+            }}
             style={{
               backgroundColor: '#e63946',
               color: '#fff',
@@ -504,14 +563,12 @@ export default function LandingPage() {
               transition: 'all 0.2s'
             }}
           >
-            <WhatsAppIcon size={16} color="#fff" /> ORDER NOW <ArrowRight size={14} />
-          </a>
+            <ShoppingBag size={15} color="#fff" /> {cartCount > 0 ? `ORDER NOW (${cartCount})` : 'ORDER NOW'} <ArrowRight size={14} />
+          </Link>
           
           {customer && (
-            <a
-              href={orderLink}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/cart"
               style={{
                 color: '#ffd700',
                 textDecoration: 'none',
@@ -527,18 +584,41 @@ export default function LandingPage() {
               }}
             >
               <User size={13} /> MY DEN (🪙{customer.points || 0})
-            </a>
+            </Link>
           )}
         </div>
 
-        {/* Mobile Hamburger Button */}
-        <button 
-          className="mobile-menu-btn" 
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle Menu"
-        >
-          {isMobileMenuOpen ? <X size={26} /> : <MenuIcon size={26} />}
-        </button>
+        {/* Mobile Header Actions */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Link
+            to="/cart"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              background: cartCount > 0 ? '#ffd700' : 'rgba(255,255,255,0.08)',
+              color: cartCount > 0 ? '#000' : '#ffd700',
+              padding: '6px 12px',
+              borderRadius: '20px',
+              textDecoration: 'none',
+              fontWeight: 800,
+              fontSize: '12px',
+              border: cartCount > 0 ? 'none' : '1px solid rgba(255, 215, 0, 0.3)'
+            }}
+          >
+            <ShoppingBag size={14} color={cartCount > 0 ? '#000' : '#ffd700'} />
+            <span>{cartCount > 0 ? cartCount : 'Cart'}</span>
+          </Link>
+
+          {/* Mobile Hamburger Button */}
+          <button 
+            className="mobile-menu-btn" 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle Menu"
+          >
+            {isMobileMenuOpen ? <X size={26} /> : <MenuIcon size={26} />}
+          </button>
+        </div>
       </header>
 
       {/* Mobile Drawer Menu */}
@@ -564,14 +644,13 @@ export default function LandingPage() {
             <a href="#meal-deals" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '15px' }}>MEAL DEALS</a>
             <a href="#our-story" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '15px' }}>OUR STORY</a>
             <a href="#find-us" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '15px' }}>FIND US</a>
-            <a
-              href={orderLink}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/cart"
               onClick={() => setIsMobileMenuOpen(false)}
               style={{
-                background: '#e63946',
-                color: '#fff',
+                background: cartCount > 0 ? '#ffd700' : 'rgba(255, 215, 0, 0.1)',
+                color: cartCount > 0 ? '#000' : '#ffd700',
+                border: '1.5px solid #ffd700',
                 textAlign: 'center',
                 padding: '12px',
                 borderRadius: '8px',
@@ -584,8 +663,33 @@ export default function LandingPage() {
                 gap: '8px'
               }}
             >
-              <WhatsAppIcon size={18} color="#fff" /> ORDER NOW →
-            </a>
+              <ShoppingBag size={18} color={cartCount > 0 ? '#000' : '#ffd700'} /> VIEW CART ({cartCount} items) →
+            </Link>
+            <Link
+              to={cartCount > 0 ? '/cart' : '#gyros'}
+              onClick={(e) => {
+                setIsMobileMenuOpen(false)
+                if (cartCount === 0) {
+                  e.preventDefault()
+                  document.getElementById('gyros')?.scrollIntoView({ behavior: 'smooth' })
+                }
+              }}
+              style={{
+                background: '#e63946',
+                color: '#fff',
+                textAlign: 'center',
+                padding: '12px',
+                borderRadius: '8px',
+                fontWeight: 800,
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              <ShoppingBag size={18} color="#fff" /> ORDER NOW {cartCount > 0 ? `(${cartCount})` : ''} →
+            </Link>
             <a
               href="https://wa.me/919150031333?text=Hi%20Ten%20Dens%20Gyros!%20I%20would%20like%20to%20order."
               target="_blank"
@@ -681,10 +785,14 @@ export default function LandingPage() {
 
             {/* CTAs */}
             <div className="hero-actions" style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center' }}>
-              <a
-                href={orderLink}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to={cartCount > 0 ? '/cart' : '#gyros'}
+                onClick={(e) => {
+                  if (cartCount === 0) {
+                    e.preventDefault()
+                    document.getElementById('gyros')?.scrollIntoView({ behavior: 'smooth' })
+                  }
+                }}
                 style={{
                   backgroundColor: '#e63946',
                   color: '#ffffff',
@@ -701,8 +809,8 @@ export default function LandingPage() {
                   transition: 'all 0.2s'
                 }}
               >
-                <WhatsAppIcon size={18} color="#ffffff" /> Order Your Gyro <ArrowRight size={17} />
-              </a>
+                <ShoppingBag size={18} color="#ffffff" /> {cartCount > 0 ? `View Cart (${cartCount})` : 'Order Your Gyro'} <ArrowRight size={17} />
+              </Link>
 
               <a
                 href="https://wa.me/919150031333?text=Hi%20Ten%20Dens%20Gyros!%20I%20would%20like%20to%20order%20a%20Gyro."
@@ -952,10 +1060,15 @@ export default function LandingPage() {
                   {gyro.cardCopy}
                 </p>
 
-                <a 
-                  href={getWhatsAppOrderUrl(`${gyro.name} (${gyro.price})`)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button 
+                  onClick={() => handleAddToCart({
+                    id: gyro.id,
+                    name: gyro.name,
+                    price: gyro.price,
+                    image: gyro.image,
+                    variant: 'Chicken (Baked)',
+                    badge: gyro.badge
+                  })}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -969,12 +1082,20 @@ export default function LandingPage() {
                     borderRadius: '8px',
                     fontWeight: 800,
                     fontSize: '12px',
-                    textDecoration: 'none',
+                    cursor: 'pointer',
                     transition: 'all 0.2s'
                   }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#e63946'
+                    e.currentTarget.style.color = '#fff'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(230, 57, 70, 0.15)'
+                    e.currentTarget.style.color = '#f87171'
+                  }}
                 >
-                  <WhatsAppIcon size={14} color="#f87171" /> Order This Gyro <ArrowRight size={13} />
-                </a>
+                  <Plus size={14} /> Add to Cart · Order Now <ArrowRight size={13} />
+                </button>
               </div>
             </div>
           ))}
@@ -1444,10 +1565,14 @@ export default function LandingPage() {
                   {deal.desc}
                 </p>
 
-                <a 
-                  href={getWhatsAppOrderUrl(`${deal.name} (${deal.price})`)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button 
+                  onClick={() => handleAddToCart({
+                    id: deal.id,
+                    name: deal.name,
+                    price: deal.price,
+                    image: deal.image,
+                    badge: deal.tag
+                  })}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -1461,11 +1586,20 @@ export default function LandingPage() {
                     borderRadius: '8px',
                     fontWeight: 800,
                     fontSize: '12px',
-                    textDecoration: 'none'
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#ffd700'
+                    e.currentTarget.style.color = '#000'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 215, 0, 0.1)'
+                    e.currentTarget.style.color = '#ffd700'
                   }}
                 >
-                  <WhatsAppIcon size={14} color="#ffd700" /> Order This Meal <ArrowRight size={13} />
-                </a>
+                  <Plus size={14} /> Add to Cart · Order Now <ArrowRight size={13} />
+                </button>
               </div>
             </div>
           ))}
@@ -1549,10 +1683,14 @@ export default function LandingPage() {
                   {item.desc}
                 </p>
 
-                <a 
-                  href={getWhatsAppOrderUrl(`${item.title} (${item.price})`)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button 
+                  onClick={() => handleAddToCart({
+                    id: item.id,
+                    name: item.title,
+                    price: item.price,
+                    image: item.image,
+                    variant: item.protein
+                  })}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -1563,13 +1701,21 @@ export default function LandingPage() {
                     background: '#e63946',
                     color: '#ffffff',
                     borderRadius: '8px',
+                    border: 'none',
                     fontWeight: 800,
                     fontSize: '12px',
-                    textDecoration: 'none'
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#c1121f'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#e63946'
                   }}
                 >
-                  <WhatsAppIcon size={14} color="#ffffff" /> Order Protein Max <ArrowRight size={13} />
-                </a>
+                  <Plus size={14} color="#ffffff" /> Add to Cart · Order Now <ArrowRight size={13} />
+                </button>
               </div>
             </div>
           ))}
@@ -1633,7 +1779,7 @@ export default function LandingPage() {
         {selectedSweetTab === 'shakes' && (
           <div className="grid-5">
             {shakesList.map((shake, idx) => (
-              <div key={idx} className="hover-lift" style={{ ...cardStyle, padding: '18px', textAlign: 'center' }}>
+              <div key={idx} className="hover-lift" style={{ ...cardStyle, padding: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column' }}>
                 <img src={shake.image} alt={shake.name} style={{ height: '120px', width: 'auto', margin: '0 auto 12px auto', objectFit: 'contain' }} onError={(e) => { e.target.src = '/hero_wide_gyro.png' }} />
                 {shake.badge && (
                   <span style={{ fontSize: '9.5px', fontWeight: 800, background: '#ffd700', color: '#000', padding: '2px 8px', borderRadius: '10px', display: 'inline-block', marginBottom: '6px' }}>
@@ -1641,8 +1787,33 @@ export default function LandingPage() {
                   </span>
                 )}
                 <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#fff', marginBottom: '4px' }}>{shake.name}</h4>
-                <p style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '8px' }}>{shake.sub}</p>
-                <div style={{ fontSize: '13px', fontWeight: 900, color: '#ffd700' }}>{shake.price}</div>
+                <p style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '8px', flex: 1 }}>{shake.sub}</p>
+                <div style={{ fontSize: '14px', fontWeight: 900, color: '#ffd700', marginBottom: '8px' }}>{shake.price}</div>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: `shake_${idx}`,
+                    name: `${shake.name} Shake`,
+                    price: shake.price,
+                    image: shake.image,
+                    variant: 'Regular'
+                  })}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(255, 215, 0, 0.4)',
+                    background: 'rgba(255, 215, 0, 0.1)',
+                    color: '#ffd700',
+                    fontSize: '11px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <Plus size={12} /> Add to Cart
+                </button>
               </div>
             ))}
           </div>
@@ -1652,14 +1823,38 @@ export default function LandingPage() {
         {selectedSweetTab === 'desserts' && (
           <div className="grid-3">
             {dessertsList.map((d, idx) => (
-              <div key={idx} className="hover-lift" style={{ ...cardStyle, padding: '24px', textAlign: 'center' }}>
+              <div key={idx} className="hover-lift" style={{ ...cardStyle, padding: '24px', textAlign: 'center', display: 'flex', flexDirection: 'column' }}>
                 <img src={d.image} alt={d.name} style={{ height: '130px', width: 'auto', margin: '0 auto 14px auto', objectFit: 'contain' }} />
                 <span style={{ fontSize: '10px', fontWeight: 800, background: '#e63946', color: '#fff', padding: '2px 10px', borderRadius: '10px', display: 'inline-block', marginBottom: '8px' }}>
                   {d.badge}
                 </span>
                 <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#fff', marginBottom: '4px' }}>{d.name}</h4>
-                <p style={{ fontSize: '12px', color: '#cbd5e1', marginBottom: '10px' }}>{d.sub}</p>
-                <div style={{ fontSize: '19px', fontWeight: 900, color: '#ffd700' }}>{d.price}</div>
+                <p style={{ fontSize: '12px', color: '#cbd5e1', marginBottom: '10px', flex: 1 }}>{d.sub}</p>
+                <div style={{ fontSize: '19px', fontWeight: 900, color: '#ffd700', marginBottom: '10px' }}>{d.price}</div>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: `dessert_${idx}`,
+                    name: d.name,
+                    price: d.price,
+                    image: d.image
+                  })}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    border: 'none',
+                    background: '#e63946',
+                    color: '#fff',
+                    fontSize: '12px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <Plus size={13} /> Add to Cart
+                </button>
               </div>
             ))}
           </div>
@@ -1669,13 +1864,36 @@ export default function LandingPage() {
         {selectedSweetTab === 'beverages' && (
           <div className="grid-4">
             {beveragesList.map((bev, idx) => (
-              <div key={idx} className="hover-lift" style={{ ...cardStyle, padding: '22px', textAlign: 'center' }}>
+              <div key={idx} className="hover-lift" style={{ ...cardStyle, padding: '22px', textAlign: 'center', display: 'flex', flexDirection: 'column' }}>
                 <span style={{ fontSize: '10px', fontWeight: 800, background: 'rgba(255,255,255,0.1)', color: '#ffd700', padding: '2px 8px', borderRadius: '10px', display: 'inline-block', marginBottom: '8px' }}>
                   {bev.badge}
                 </span>
                 <h4 style={{ fontSize: '17px', fontWeight: 800, color: '#fff', marginBottom: '4px' }}>{bev.name}</h4>
-                <p style={{ fontSize: '12px', color: '#cbd5e1', marginBottom: '10px' }}>{bev.sub}</p>
-                <div style={{ fontSize: '18px', fontWeight: 900, color: '#ffd700' }}>{bev.price}</div>
+                <p style={{ fontSize: '12px', color: '#cbd5e1', marginBottom: '10px', flex: 1 }}>{bev.sub}</p>
+                <div style={{ fontSize: '18px', fontWeight: 900, color: '#ffd700', marginBottom: '10px' }}>{bev.price}</div>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: `bev_${idx}`,
+                    name: bev.name,
+                    price: bev.price
+                  })}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    color: '#fff',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <Plus size={12} /> Add to Cart
+                </button>
               </div>
             ))}
           </div>
@@ -1689,11 +1907,35 @@ export default function LandingPage() {
             </div>
             <div className="grid-4">
               {kombuchaList.map((k, idx) => (
-                <div key={idx} className="hover-lift" style={{ ...cardStyle, padding: '18px', textAlign: 'center' }}>
+                <div key={idx} className="hover-lift" style={{ ...cardStyle, padding: '18px', textAlign: 'center', display: 'flex', flexDirection: 'column' }}>
                   <img src={k.image} alt={k.name} style={{ height: '110px', width: 'auto', margin: '0 auto 10px auto', objectFit: 'contain' }} onError={(e) => { e.target.src = '/hero_wide_gyro.png' }} />
                   <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#fff', marginBottom: '4px' }}>{k.name}</h4>
-                  <p style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '6px' }}>{k.sub}</p>
-                  <div style={{ fontSize: '15px', fontWeight: 900, color: '#ffd700' }}>{k.price}</div>
+                  <p style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '6px', flex: 1 }}>{k.sub}</p>
+                  <div style={{ fontSize: '15px', fontWeight: 900, color: '#ffd700', marginBottom: '8px' }}>{k.price}</div>
+                  <button
+                    onClick={() => handleAddToCart({
+                      id: `kombucha_${idx}`,
+                      name: `${k.name} Kombucha`,
+                      price: k.price,
+                      image: k.image
+                    })}
+                    style={{
+                      padding: '5px 12px',
+                      borderRadius: '6px',
+                      border: '1px solid rgba(52, 211, 153, 0.4)',
+                      background: 'rgba(52, 211, 153, 0.1)',
+                      color: '#34d399',
+                      fontSize: '11px',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <Plus size={12} /> Add to Cart
+                  </button>
                 </div>
               ))}
             </div>
@@ -1701,10 +1943,8 @@ export default function LandingPage() {
         )}
 
         <div style={{ textAlign: 'center', marginTop: '36px' }}>
-          <a
-            href={getWhatsAppOrderUrl('Shakes & Desserts')}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/cart"
             style={{
               padding: '12px 28px',
               borderRadius: '8px',
@@ -1718,8 +1958,8 @@ export default function LandingPage() {
               gap: '8px'
             }}
           >
-            <WhatsAppIcon size={16} color="#ffffff" /> Add a Shake <ArrowRight size={15} />
-          </a>
+            <ShoppingBag size={16} color="#ffffff" /> {cartCount > 0 ? `View Cart (${cartCount} items)` : 'Go to Cart'} <ArrowRight size={15} />
+          </Link>
         </div>
       </section>
 
@@ -1851,10 +2091,14 @@ export default function LandingPage() {
             </p>
 
             <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <a 
-                href={orderLink}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link 
+                to={cartCount > 0 ? '/cart' : '#gyros'}
+                onClick={(e) => {
+                  if (cartCount === 0) {
+                    e.preventDefault()
+                    document.getElementById('gyros')?.scrollIntoView({ behavior: 'smooth' })
+                  }
+                }}
                 style={{
                   backgroundColor: '#ffffff',
                   color: '#b91c1c',
@@ -1869,8 +2113,8 @@ export default function LandingPage() {
                   boxShadow: '0 6px 20px rgba(0,0,0,0.25)'
                 }}
               >
-                <WhatsAppIcon size={18} color="#b91c1c" /> Order Your Gyro <ArrowRight size={16} />
-              </a>
+                <ShoppingBag size={18} color="#b91c1c" /> {cartCount > 0 ? `View Cart (${cartCount})` : 'Order Your Gyro'} <ArrowRight size={16} />
+              </Link>
 
               <button 
                 onClick={() => setShowMenuModal(true)}
@@ -1955,14 +2199,12 @@ export default function LandingPage() {
                 <li><a href="#find-us" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Find Us</a></li>
                 <li><a href="#contact" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Contact</a></li>
                 <li>
-                  <a
-                    href={orderLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: '#25D366', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                  <Link
+                    to="/cart"
+                    style={{ color: '#ffd700', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}
                   >
-                    <WhatsAppIcon size={13} color="#25D366" /> Order Now
-                  </a>
+                    <ShoppingBag size={13} color="#ffd700" /> Cart & Order {cartCount > 0 ? `(${cartCount})` : ''}
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -2157,10 +2399,8 @@ export default function LandingPage() {
                 <span style={{ fontSize: '12px', color: '#94a3b8' }}>
                   Showing Page {activeMenuPage} of 2
                 </span>
-                <a 
-                  href={getWhatsAppOrderUrl('Ten Dens Gyros Menu Item')}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link 
+                  to="/cart"
                   style={{
                     padding: '8px 18px',
                     borderRadius: '6px',
@@ -2174,8 +2414,8 @@ export default function LandingPage() {
                     gap: '6px'
                   }}
                 >
-                  <WhatsAppIcon size={14} color="#fff" /> Order via WhatsApp →
-                </a>
+                  <ShoppingBag size={14} color="#fff" /> View Cart & Order ({cartCount}) →
+                </Link>
               </div>
             </motion.div>
           </div>
@@ -2283,6 +2523,120 @@ export default function LandingPage() {
         <WhatsAppIcon size={24} color="#ffffff" />
         <span className="whatsapp-fab-text">WhatsApp Us</span>
       </a>
+
+      {/* Floating Cart Button (when items in cart) */}
+      {cartCount > 0 && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            left: '24px',
+            zIndex: 100
+          }}
+        >
+          <Link
+            to="/cart"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              background: 'linear-gradient(135deg, #e63946, #c1121f)',
+              color: '#ffffff',
+              padding: '12px 20px',
+              borderRadius: '50px',
+              boxShadow: '0 8px 24px rgba(230, 57, 70, 0.6), 0 2px 8px rgba(0,0,0,0.4)',
+              textDecoration: 'none',
+              fontWeight: 800,
+              fontSize: '13.5px',
+              letterSpacing: '0.4px',
+              border: '1.5px solid rgba(255, 215, 0, 0.5)',
+              transition: 'all 0.25s ease'
+            }}
+          >
+            <div style={{
+              background: '#ffd700',
+              color: '#000',
+              borderRadius: '50%',
+              width: '24px',
+              height: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              fontWeight: 900
+            }}>
+              {cartCount}
+            </div>
+            <span>View Cart (₹{cartTotal})</span>
+            <ArrowRight size={16} />
+          </Link>
+        </motion.div>
+      )}
+
+      {/* Added to Cart Notification Toast */}
+      <AnimatePresence>
+        {addedToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.9 }}
+            style={{
+              position: 'fixed',
+              bottom: '84px',
+              left: '24px',
+              zIndex: 1000,
+              background: 'linear-gradient(135deg, #1e2124, #121416)',
+              border: '1.5px solid #ffd700',
+              borderRadius: '12px',
+              padding: '12px 18px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.7)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}
+          >
+            <div style={{
+              background: 'rgba(255, 215, 0, 0.15)',
+              borderRadius: '50%',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Check size={18} color="#ffd700" />
+            </div>
+            <div>
+              <div style={{ color: '#fff', fontSize: '13px', fontWeight: 800 }}>
+                Added to Cart!
+              </div>
+              <div style={{ color: '#ffd700', fontSize: '11.5px', fontWeight: 600 }}>
+                {addedToast}
+              </div>
+            </div>
+            <Link
+              to="/cart"
+              style={{
+                background: '#e63946',
+                color: '#fff',
+                fontWeight: 800,
+                fontSize: '12px',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                marginLeft: '4px'
+              }}
+            >
+              Cart ({cartCount}) <ArrowRight size={12} />
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Scroll to Top Floating Button */}
       {showScrollTop && (
