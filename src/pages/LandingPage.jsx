@@ -82,7 +82,15 @@ export default function LandingPage() {
     ? ''
     : 'https://den.tendengyros.com'
 
-  const orderLink = denUrl ? `${denUrl}/` : '/order'
+  // WhatsApp Order Direct URLs for Cafe WhatsApp (+91 91500 31333)
+  const getWhatsAppOrderUrl = (itemDetails) => {
+    const text = itemDetails
+      ? `Hi Ten Dens Gyros! I would like to order: ${itemDetails}.`
+      : 'Hi Ten Dens Gyros! I would like to place an order.'
+    return `https://wa.me/919150031333?text=${encodeURIComponent(text)}`
+  }
+
+  const orderLink = getWhatsAppOrderUrl()
   const customizerLink = '/customizer'
 
   // Card styles
@@ -364,7 +372,9 @@ export default function LandingPage() {
         <Flame size={15} color="#ffd700" />
         <span>Baked or fried bread. Your sauce. Your gyro. Order now.</span>
         <a 
-          href={orderLink} 
+          href={orderLink}
+          target="_blank"
+          rel="noopener noreferrer"
           style={{
             marginLeft: '8px',
             color: '#ffd700',
@@ -372,10 +382,10 @@ export default function LandingPage() {
             fontWeight: 800,
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '3px'
+            gap: '4px'
           }}
         >
-          ORDER NOW <ArrowRight size={13} />
+          <WhatsAppIcon size={13} color="#ffd700" /> ORDER NOW <ArrowRight size={13} />
         </a>
       </div>
 
@@ -474,38 +484,48 @@ export default function LandingPage() {
             <WhatsAppIcon size={16} /> WhatsApp
           </a>
 
-          <a href={orderLink} style={{
-            backgroundColor: '#e63946',
-            color: '#fff',
-            padding: '10px 22px',
-            borderRadius: '8px',
-            fontSize: '12.5px',
-            fontWeight: 800,
-            textDecoration: 'none',
-            letterSpacing: '1px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: '0 4px 14px rgba(230, 57, 70, 0.4)',
-            transition: 'all 0.2s'
-          }}>
-            ORDER NOW <ArrowRight size={14} />
+          <a
+            href={orderLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              backgroundColor: '#e63946',
+              color: '#fff',
+              padding: '10px 22px',
+              borderRadius: '8px',
+              fontSize: '12.5px',
+              fontWeight: 800,
+              textDecoration: 'none',
+              letterSpacing: '1px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 14px rgba(230, 57, 70, 0.4)',
+              transition: 'all 0.2s'
+            }}
+          >
+            <WhatsAppIcon size={16} color="#fff" /> ORDER NOW <ArrowRight size={14} />
           </a>
           
           {customer && (
-            <a href={orderLink} style={{
-              color: '#ffd700',
-              textDecoration: 'none',
-              fontSize: '12px',
-              fontWeight: 800,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              border: '1px solid rgba(255, 215, 0, 0.3)',
-              padding: '7px 14px',
-              borderRadius: '20px',
-              background: 'rgba(255, 215, 0, 0.08)'
-            }}>
+            <a
+              href={orderLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                color: '#ffd700',
+                textDecoration: 'none',
+                fontSize: '12px',
+                fontWeight: 800,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                border: '1px solid rgba(255, 215, 0, 0.3)',
+                padding: '7px 14px',
+                borderRadius: '20px',
+                background: 'rgba(255, 215, 0, 0.08)'
+              }}
+            >
               <User size={13} /> MY DEN (🪙{customer.points || 0})
             </a>
           )}
@@ -544,8 +564,27 @@ export default function LandingPage() {
             <a href="#meal-deals" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '15px' }}>MEAL DEALS</a>
             <a href="#our-story" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '15px' }}>OUR STORY</a>
             <a href="#find-us" onClick={() => setIsMobileMenuOpen(false)} style={{ color: '#fff', textDecoration: 'none', fontWeight: 700, fontSize: '15px' }}>FIND US</a>
-            <a href={orderLink} onClick={() => setIsMobileMenuOpen(false)} style={{ background: '#e63946', color: '#fff', textAlign: 'center', padding: '12px', borderRadius: '8px', fontWeight: 800, textDecoration: 'none', marginTop: '8px' }}>
-              ORDER NOW →
+            <a
+              href={orderLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={{
+                background: '#e63946',
+                color: '#fff',
+                textAlign: 'center',
+                padding: '12px',
+                borderRadius: '8px',
+                fontWeight: 800,
+                textDecoration: 'none',
+                marginTop: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              <WhatsAppIcon size={18} color="#fff" /> ORDER NOW →
             </a>
             <a
               href="https://wa.me/919150031333?text=Hi%20Ten%20Dens%20Gyros!%20I%20would%20like%20to%20order."
@@ -642,22 +681,27 @@ export default function LandingPage() {
 
             {/* CTAs */}
             <div className="hero-actions" style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center' }}>
-              <a href={orderLink} style={{
-                backgroundColor: '#e63946',
-                color: '#ffffff',
-                padding: '15px 32px',
-                borderRadius: '10px',
-                fontSize: '15px',
-                fontWeight: 800,
-                textDecoration: 'none',
-                letterSpacing: '0.5px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                boxShadow: '0 8px 24px rgba(230, 57, 70, 0.45)',
-                transition: 'all 0.2s'
-              }}>
-                Order Your Gyro <ArrowRight size={17} />
+              <a
+                href={orderLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  backgroundColor: '#e63946',
+                  color: '#ffffff',
+                  padding: '15px 32px',
+                  borderRadius: '10px',
+                  fontSize: '15px',
+                  fontWeight: 800,
+                  textDecoration: 'none',
+                  letterSpacing: '0.5px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 8px 24px rgba(230, 57, 70, 0.45)',
+                  transition: 'all 0.2s'
+                }}
+              >
+                <WhatsAppIcon size={18} color="#ffffff" /> Order Your Gyro <ArrowRight size={17} />
               </a>
 
               <a
@@ -909,7 +953,9 @@ export default function LandingPage() {
                 </p>
 
                 <a 
-                  href={orderLink}
+                  href={getWhatsAppOrderUrl(`${gyro.name} (${gyro.price})`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -927,7 +973,7 @@ export default function LandingPage() {
                     transition: 'all 0.2s'
                   }}
                 >
-                  Order This Gyro <ArrowRight size={13} />
+                  <WhatsAppIcon size={14} color="#f87171" /> Order This Gyro <ArrowRight size={13} />
                 </a>
               </div>
             </div>
@@ -1399,7 +1445,9 @@ export default function LandingPage() {
                 </p>
 
                 <a 
-                  href={orderLink}
+                  href={getWhatsAppOrderUrl(`${deal.name} (${deal.price})`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -1416,7 +1464,7 @@ export default function LandingPage() {
                     textDecoration: 'none'
                   }}
                 >
-                  Order This Meal <ArrowRight size={13} />
+                  <WhatsAppIcon size={14} color="#ffd700" /> Order This Meal <ArrowRight size={13} />
                 </a>
               </div>
             </div>
@@ -1502,7 +1550,9 @@ export default function LandingPage() {
                 </p>
 
                 <a 
-                  href={orderLink}
+                  href={getWhatsAppOrderUrl(`${item.title} (${item.price})`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -1518,7 +1568,7 @@ export default function LandingPage() {
                     textDecoration: 'none'
                   }}
                 >
-                  Order Protein Max <ArrowRight size={13} />
+                  <WhatsAppIcon size={14} color="#ffffff" /> Order Protein Max <ArrowRight size={13} />
                 </a>
               </div>
             </div>
@@ -1652,7 +1702,9 @@ export default function LandingPage() {
 
         <div style={{ textAlign: 'center', marginTop: '36px' }}>
           <a
-            href={orderLink}
+            href={getWhatsAppOrderUrl('Shakes & Desserts')}
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               padding: '12px 28px',
               borderRadius: '8px',
@@ -1666,7 +1718,7 @@ export default function LandingPage() {
               gap: '8px'
             }}
           >
-            Add a Shake <ArrowRight size={15} />
+            <WhatsAppIcon size={16} color="#ffffff" /> Add a Shake <ArrowRight size={15} />
           </a>
         </div>
       </section>
@@ -1801,6 +1853,8 @@ export default function LandingPage() {
             <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <a 
                 href={orderLink}
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
                   backgroundColor: '#ffffff',
                   color: '#b91c1c',
@@ -1815,7 +1869,7 @@ export default function LandingPage() {
                   boxShadow: '0 6px 20px rgba(0,0,0,0.25)'
                 }}
               >
-                Order Your Gyro <ArrowRight size={16} />
+                <WhatsAppIcon size={18} color="#b91c1c" /> Order Your Gyro <ArrowRight size={16} />
               </a>
 
               <button 
@@ -1900,7 +1954,16 @@ export default function LandingPage() {
                 <li><a href="#our-story" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Our Story</a></li>
                 <li><a href="#find-us" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Find Us</a></li>
                 <li><a href="#contact" style={{ color: '#cbd5e1', textDecoration: 'none' }}>Contact</a></li>
-                <li><a href={orderLink} style={{ color: '#ffd700', textDecoration: 'none', fontWeight: 700 }}>Order Now</a></li>
+                <li>
+                  <a
+                    href={orderLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#25D366', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                  >
+                    <WhatsAppIcon size={13} color="#25D366" /> Order Now
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -2095,18 +2158,23 @@ export default function LandingPage() {
                   Showing Page {activeMenuPage} of 2
                 </span>
                 <a 
-                  href={orderLink}
+                  href={getWhatsAppOrderUrl('Ten Dens Gyros Menu Item')}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
                     padding: '8px 18px',
                     borderRadius: '6px',
-                    background: '#e63946',
+                    background: '#25D366',
                     color: '#fff',
                     textDecoration: 'none',
                     fontSize: '12px',
-                    fontWeight: 800
+                    fontWeight: 800,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px'
                   }}
                 >
-                  Order Online Now →
+                  <WhatsAppIcon size={14} color="#fff" /> Order via WhatsApp →
                 </a>
               </div>
             </motion.div>
