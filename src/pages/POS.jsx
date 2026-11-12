@@ -105,6 +105,7 @@ export default function POS() {
     currentOrder, addItem, updateItemQuantity, removeItem,
     setOrderType, setTableNumber, setCustomerName, setCustomerPhone, setCustomer, setCustomerDiscountPct, clearCustomer, setComplimentary, setSpecialRemarks, clearOrder,
     setInaugurationOffer, setSpecialOffer20, setStaffBenefitOffer, setVip50, setCustomDiscount, clearCustomDiscount, getDiscount, setB2g1Offer, getB2g1Info,
+    setAppliedOffer, clearAppliedOffer, getRawSubtotal,
     holdOrder, recallOrder, heldOrders, getSubtotal, getTax, getTotal, placeOrder,
     loadCampaigns, campaigns
   } = useOrderStore()
@@ -115,6 +116,11 @@ export default function POS() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [showCart, setShowCart] = useState(false)
   const [soundOn, setSoundOn] = useState(() => getSoundEnabled())
+
+  // Offer Zone State
+  const [posOffers, setPosOffers] = useState([])
+  const [showOfferZoneModal, setShowOfferZoneModal] = useState(false)
+  const [promoCodeInput, setPromoCodeInput] = useState('')
 
   // Custom Discount State
   const [showCustomDiscountUI, setShowCustomDiscountUI] = useState(false)
@@ -442,7 +448,41 @@ export default function POS() {
       })
       .catch(() => {})
     loadCampaigns()
+
+    // Fetch active offers created by cafe managers in Offer Zone
+    const loadPosOffers = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/pos-offers?active=true`)
+        if (res.ok) {
+          const data = await res.json()
+          setPosOffers(data.offers || [])
+        }
+      } catch (e) {}
+    }
+    loadPosOffers()
   }, [])
+
+  const handleApplyPromoCode = (code) => {
+    if (!code || !code.trim()) {
+      toast.error('Please enter a promo code')
+      return
+    }
+    const clean = code.trim().toUpperCase()
+    const found = posOffers.find(o => o.code === clean && o.isActive !== false)
+    if (!found) {
+      toast.error(`Invalid promo code "${clean}"`)
+      return
+    }
+    const rawSub = getRawSubtotal()
+    if (rawSub < (Number(found.minOrderValue) || 0)) {
+      toast.error(`Code "${clean}" requires minimum order of ₹${found.minOrderValue}`)
+      return
+    }
+    setAppliedOffer(found)
+    setShowOfferZoneModal(false)
+    setPromoCodeInput('')
+    toast.success(`🎉 Applied offer: "${found.title}" (${clean})!`)
+  }
 
   const handlePhoneChange = async (e) => {
     const phone = e.target.value
@@ -2137,6 +2177,12 @@ export default function POS() {
                 <span>-₹{getDiscount().toFixed(2)}</span>
               </div>
             )}
+            {currentOrder.appliedOffer && getDiscount() > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#059669', fontWeight: 800 }}>
+                <span>🏷️ {currentOrder.appliedOffer.title} ({currentOrder.appliedOffer.code}):</span>
+                <span>-₹{getDiscount().toFixed(2)}</span>
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>GST (5%):</span>
               <span>₹{getTax().toFixed(2)}</span>
@@ -2152,6 +2198,88 @@ export default function POS() {
             <span style={{ fontSize: '14px', fontWeight: 700 }}>NET TOTAL</span>
             <span style={{ fontSize: '20px', fontWeight: 900, color: '#f87171' }}>₹{getTotal().toFixed(2)}</span>
           </div>
+
+          {/* Active Applied Cafe Offer Banner */}
+          {currentOrder.appliedOffer && (
+            <div style={{
+              background: 'linear-gradient(135deg, #ecfdf5, #d1fae5)',
+              border: '1.5px solid #10b981',
+              borderRadius: '8px',
+              padding: '6px 10px',
+              marginBottom: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '13px' }}>🏷️</span>
+                <div>
+                  <div style={{ fontSize: '11px', fontWeight: 800, color: '#065f46' }}>
+                    {currentOrder.appliedOffer.title} ({currentOrder.appliedOffer.code})
+                  </div>
+                  <div style={{ fontSize: '9.5px', color: '#047857', fontWeight: 700 }}>
+                    Discount: -₹{getDiscount()} • {currentOrder.appliedOffer.tag || 'Offer Active'}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  clearAppliedOffer()
+                  toast.info('Removed applied offer')
+                }}
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #ef4444',
+                  color: '#dc2626',
+                  borderRadius: '5px',
+                  padding: '3px 8px',
+                  fontSize: '10px',
+                  fontWeight: 800,
+                  cursor: 'pointer'
+                }}
+              >
+                ✕ Remove
+              </button>
+            </div>
+          )}
+
+          {/* Offer Zone Browse Button */}
+          <button
+            type="button"
+            onClick={() => setShowOfferZoneModal(true)}
+            style={{
+              width: '100%',
+              padding: '7px 10px',
+              borderRadius: '8px',
+              border: currentOrder.appliedOffer ? '1.5px solid #10b981' : '1.5px dashed #f59e0b',
+              background: currentOrder.appliedOffer ? '#f0fdf4' : 'linear-gradient(135deg, #fffbeb, #fef3c7)',
+              color: currentOrder.appliedOffer ? '#047857' : '#b45309',
+              fontWeight: 800,
+              fontSize: '11px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '6px',
+              boxShadow: '0 1px 4px rgba(245, 158, 11, 0.12)'
+            }}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <span>🏷️</span>
+              <span>{currentOrder.appliedOffer ? 'Change Offer in Offer Zone' : 'Offer Zone — Browse Cafe Offers'}</span>
+            </span>
+            <span style={{
+              background: currentOrder.appliedOffer ? '#10b981' : '#d97706',
+              color: '#ffffff',
+              padding: '2px 7px',
+              borderRadius: '10px',
+              fontSize: '9.5px',
+              fontWeight: 900
+            }}>
+              {posOffers.length} Active Offers →
+            </span>
+          </button>
 
           {/* Offers Row (B2G1, 20% OFF, 50% OFF, Staff 50% & Custom Disc) */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '4px', marginBottom: '6px' }}>
@@ -4218,6 +4346,267 @@ export default function POS() {
           </form>
         )}
       </Modal>
+
+      {/* Offer Zone Quick Apply Modal */}
+      {showOfferZoneModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(15, 23, 42, 0.75)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000, padding: '16px'
+        }}>
+          <div style={{
+            background: '#ffffff',
+            borderRadius: '18px',
+            width: '100%',
+            maxWidth: '560px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            {/* Modal Header */}
+            <div style={{
+              padding: '16px 20px',
+              borderBottom: '1px solid #e2e8f0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              background: '#fafafa',
+              borderRadius: '18px 18px 0 0'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{
+                  width: '32px', height: '32px', borderRadius: '8px',
+                  background: 'linear-gradient(135deg, #e63946, #c1121f)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'
+                }}>
+                  <Tag size={16} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0, color: '#0f172a' }}>
+                    Offer Zone — Apply Cafe Offer
+                  </h3>
+                  <div style={{ fontSize: '11px', color: '#64748b' }}>
+                    Cart Subtotal: ₹{getRawSubtotal()} • Select an offer or enter promo code
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowOfferZoneModal(false)}
+                style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '4px' }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Promo Code Input Bar */}
+            <div style={{
+              padding: '14px 20px',
+              background: '#f8fafc',
+              borderBottom: '1px solid #e2e8f0',
+              display: 'flex',
+              gap: '8px'
+            }}>
+              <input
+                type="text"
+                placeholder="Enter Promo Code (e.g. B2G1, SAVE50)"
+                value={promoCodeInput}
+                onChange={e => setPromoCodeInput(e.target.value.toUpperCase().replace(/\s+/g, ''))}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    handleApplyPromoCode(promoCodeInput)
+                  }
+                }}
+                style={{
+                  flex: 1,
+                  padding: '9px 12px',
+                  borderRadius: '8px',
+                  border: '1.5px solid #cbd5e1',
+                  fontFamily: 'monospace',
+                  fontWeight: 800,
+                  fontSize: '13px',
+                  textTransform: 'uppercase'
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => handleApplyPromoCode(promoCodeInput)}
+                style={{
+                  padding: '9px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: '#e63946',
+                  color: '#fff',
+                  fontWeight: 800,
+                  fontSize: '12.5px',
+                  cursor: 'pointer'
+                }}
+              >
+                Apply Code
+              </button>
+            </div>
+
+            {/* Offers List */}
+            <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {posOffers.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '30px 10px', color: '#64748b' }}>
+                  <p style={{ margin: 0, fontWeight: 600 }}>No active cafe offers found.</p>
+                </div>
+              ) : (
+                posOffers.map(offer => {
+                  const rawSub = getRawSubtotal()
+                  const minReq = Number(offer.minOrderValue) || 0
+                  const qualifies = rawSub >= minReq
+                  const isSelected = currentOrder.appliedOffer?.id === offer.id
+
+                  return (
+                    <div
+                      key={offer.id}
+                      style={{
+                        border: isSelected ? '2px solid #10b981' : (qualifies ? '1.5px solid #cbd5e1' : '1px solid #e2e8f0'),
+                        borderRadius: '12px',
+                        padding: '12px 14px',
+                        background: isSelected ? '#f0fdf4' : (qualifies ? '#ffffff' : '#f8fafc'),
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '12px'
+                      }}
+                    >
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
+                          <span style={{
+                            background: isSelected ? '#10b981' : '#e63946',
+                            color: '#ffffff',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '10px',
+                            fontWeight: 800
+                          }}>
+                            {offer.tag || offer.code}
+                          </span>
+                          <span style={{ fontSize: '13px', fontWeight: 800, color: '#0f172a' }}>
+                            {offer.title}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '11.5px', color: '#64748b', marginBottom: '4px' }}>
+                          {offer.desc || 'Special cafe promotional offer'}
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px', fontSize: '10.5px' }}>
+                          {minReq > 0 ? (
+                            <span style={{ color: qualifies ? '#16a34a' : '#d97706', fontWeight: 700 }}>
+                              {qualifies ? `✓ Min ₹${minReq} met` : `Min order: ₹${minReq} (add ₹${minReq - rawSub} more)`}
+                            </span>
+                          ) : (
+                            <span style={{ color: '#059669', fontWeight: 700 }}>✓ No Min Order</span>
+                          )}
+                          {offer.type === 'percentage' && Number(offer.maxDiscount) > 0 && (
+                            <span style={{ color: '#64748b' }}>• Max Cap: ₹{offer.maxDiscount}</span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        {isSelected ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              clearAppliedOffer()
+                              toast.info('Removed offer')
+                            }}
+                            style={{
+                              padding: '6px 12px',
+                              borderRadius: '6px',
+                              border: '1px solid #ef4444',
+                              background: '#fff5f5',
+                              color: '#dc2626',
+                              fontWeight: 800,
+                              fontSize: '11px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            ✓ Applied (Remove)
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled={!qualifies}
+                            onClick={() => {
+                              setAppliedOffer(offer)
+                              setShowOfferZoneModal(false)
+                              toast.success(`Applied offer: "${offer.title}"!`)
+                            }}
+                            style={{
+                              padding: '7px 14px',
+                              borderRadius: '6px',
+                              border: 'none',
+                              background: qualifies ? '#10b981' : '#cbd5e1',
+                              color: '#ffffff',
+                              fontWeight: 800,
+                              fontSize: '11px',
+                              cursor: qualifies ? 'pointer' : 'not-allowed'
+                            }}
+                          >
+                            {qualifies ? 'Apply Offer' : 'Locked'}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+
+            {/* Modal Footer with link to Offer Zone Manager */}
+            <div style={{
+              padding: '12px 20px',
+              borderTop: '1px solid #e2e8f0',
+              background: '#f8fafc',
+              borderRadius: '0 0 18px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <Link
+                to="/offers"
+                onClick={() => setShowOfferZoneModal(false)}
+                style={{
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  color: '#b91c1c',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                ⚙️ Create / Edit Offers in Offer Zone →
+              </Link>
+              <button
+                type="button"
+                onClick={() => setShowOfferZoneModal(false)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '6px',
+                  border: '1px solid #cbd5e1',
+                  background: '#ffffff',
+                  fontSize: '11.5px',
+                  fontWeight: 700,
+                  color: '#475569',
+                  cursor: 'pointer'
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   )

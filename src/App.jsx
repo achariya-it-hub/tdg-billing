@@ -24,6 +24,7 @@ import Accounts from './pages/Accounts'
 import Todo from './pages/Todo'
 import Settings from './pages/Settings'
 import AuditLog from './pages/AuditLog'
+import OfferZone from './pages/OfferZone'
 import Customizer from './pages/Customizer'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import MobilePreview from './pages/MobilePreview'
@@ -227,6 +228,8 @@ export default function App() {
               <Route path="/accounts" element={<Accounts />} />
               <Route path="/todo" element={<Todo />} />
               <Route path="/table-qr" element={<TableQRGenerator />} />
+              <Route path="/offers" element={<OfferZone />} />
+              <Route path="/offer-zone" element={<OfferZone />} />
               <Route path="/settings" element={<Settings />} />
 <Route path="/audit-log" element={<AuditLog />} />
             </Route>
@@ -282,6 +285,8 @@ export default function App() {
               <Route path="/accounts" element={<Accounts />} />
               <Route path="/todo" element={<Todo />} />
               <Route path="/table-qr" element={<TableQRGenerator />} />
+              <Route path="/offers" element={<OfferZone />} />
+              <Route path="/offer-zone" element={<OfferZone />} />
               <Route path="/settings" element={<Settings />} />
 <Route path="/audit-log" element={<AuditLog />} />
             </Route>

@@ -66,7 +66,8 @@ export const useOrderStore = create(
         familyMemberId: null,
         familyMemberName: null,
         offerName: null,
-        offerType: null
+        offerType: null,
+        appliedOffer: null
       },
       orders: [],
       heldOrders: [],
@@ -288,6 +289,37 @@ export const useOrderStore = create(
         }))
       },
 
+      setAppliedOffer: (offer) => {
+        set(state => ({
+          currentOrder: {
+            ...state.currentOrder,
+            appliedOffer: offer,
+            inaugurationOffer: false,
+            specialOffer20: false,
+            vip50: false,
+            staffBenefitOffer: false,
+            customDiscountType: null,
+            customDiscountValue: '',
+            customDiscountReason: '',
+            b2g1Offer: (offer && (offer.type === 'bogo' || offer.code === 'B2G1')) ? true : false,
+            offerName: offer ? offer.title : null,
+            offerType: offer ? offer.type : null
+          }
+        }))
+      },
+
+      clearAppliedOffer: () => {
+        set(state => ({
+          currentOrder: {
+            ...state.currentOrder,
+            appliedOffer: null,
+            offerName: null,
+            offerType: null,
+            appliedOffer: null
+          }
+        }))
+      },
+
       setNotes: (notes) => {
         set(state => ({ currentOrder: { ...state.currentOrder, notes } }))
       },
@@ -335,7 +367,8 @@ export const useOrderStore = create(
             familyMemberId: null,
             familyMemberName: null,
             offerName: null,
-            offerType: null
+            offerType: null,
+            appliedOffer: null
           }
         })
       },
@@ -500,6 +533,72 @@ export const useOrderStore = create(
         if (order.vip50) return Math.round(raw * 0.5)
         if (order.inaugurationOffer) return Math.round(raw * 0.5)
         if (order.specialOffer20) return Math.round(raw * 0.2)
+
+        // Applied offer from Offer Zone
+        if (order.appliedOffer) {
+          const offer = order.appliedOffer
+          const minVal = Number(offer.minOrderValue) || 0
+          if (raw >= minVal) {
+            if (offer.type === 'percentage') {
+              let baseAmt = raw
+              if (offer.applicableCategory && offer.applicableCategory !== 'all') {
+                const catItems = (order.items || []).filter(it =>
+                  String(it.category || it.categoryName || '').toLowerCase() === String(offer.applicableCategory).toLowerCase()
+                )
+                if (catItems.length > 0) {
+                  baseAmt = catItems.reduce((s, it) => s + (Number(it.totalPrice) || 0), 0)
+                }
+              }
+              const pct = Math.min(100, Math.max(0, Number(offer.value) || 0)) / 100
+              let d = Math.round(baseAmt * pct)
+              if (offer.maxDiscount > 0) d = Math.min(d, Number(offer.maxDiscount))
+              return Math.min(raw, d)
+            }
+            if (offer.type === 'flat') {
+              return Math.min(raw, Math.max(0, Number(offer.value) || 0))
+            }
+            if (offer.type === 'bogo' || offer.type === 'b2g1') {
+              const buyQty = Number(offer.buyQty) || 2
+              const getQty = Number(offer.getQty) || 1
+              const groupSize = buyQty + getQty
+              const items = order.items || []
+              let qualItems = items
+              if (offer.applicableCategory && offer.applicableCategory.toLowerCase() === 'gyros') {
+                qualItems = items.filter(isStandaloneGyroItem)
+              } else if (offer.applicableCategory && offer.applicableCategory !== 'all') {
+                qualItems = items.filter(it =>
+                  String(it.category || it.categoryName || '').toLowerCase() === String(offer.applicableCategory).toLowerCase()
+                )
+              } else {
+                qualItems = items.filter(isStandaloneGyroItem)
+              }
+              const totalQty = qualItems.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0)
+              const freeGroups = Math.floor(totalQty / groupSize)
+              const totalFree = freeGroups * getQty
+              if (totalFree > 0) {
+                const unitPrices = []
+                qualItems.forEach(item => {
+                  const qty = Number(item.quantity) || 1
+                  const price = Number(item.unitPrice || item.price) || 0
+                  for (let i = 0; i < qty; i++) unitPrices.push(price)
+                })
+                unitPrices.sort((a, b) => a - b)
+                return unitPrices.slice(0, totalFree).reduce((s, p) => s + p, 0)
+              }
+              return 0
+            }
+            if (offer.type === 'free_item') {
+              if (offer.freeItemName) {
+                const freeItem = (order.items || []).find(it =>
+                  String(it.name || it.menuItemName || '').toLowerCase().includes(offer.freeItemName.toLowerCase())
+                )
+                if (freeItem) return Number(freeItem.unitPrice || freeItem.price) || 0
+              }
+              return Math.min(raw, Math.max(0, Number(offer.value) || 0))
+            }
+          }
+        }
+
         if (order.b2g1Offer !== false) {
           const b2g1 = get().getB2g1Info()
           if (b2g1.freeCount > 0) return b2g1.discount
@@ -545,7 +644,9 @@ export const useOrderStore = create(
           const b2g1Info = get().getB2g1Info()
           let computedDiscountName = order.discountName
           if (!computedDiscountName) {
-            if (order.customDiscountType === 'percentage' || order.customDiscountType === 'pct') {
+            if (order.appliedOffer) {
+              computedDiscountName = `${order.appliedOffer.title} (${order.appliedOffer.code || order.appliedOffer.tag || 'OFFER'})`
+            } else if (order.customDiscountType === 'percentage' || order.customDiscountType === 'pct') {
               computedDiscountName = order.customDiscountReason ? `LMW (${order.customDiscountReason})` : `LMW Discount (${order.customDiscountValue}%)`
             } else if (order.customDiscountType === 'amount') {
               computedDiscountName = order.customDiscountReason ? `LMW (${order.customDiscountReason})` : `LMW Discount (₹${order.customDiscountValue})`
@@ -587,8 +688,11 @@ export const useOrderStore = create(
                 employeeDept: order.employeeDept || null,
                 familyMemberId: order.familyMemberId || null,
                 familyMemberName: order.familyMemberName || null,
-                offerName: order.offerName || null,
-                offerType: order.offerType || null,
+                offerName: order.appliedOffer ? order.appliedOffer.title : (order.offerName || null),
+                offerType: order.appliedOffer ? order.appliedOffer.type : (order.offerType || null),
+                offerId: order.appliedOffer?.id || undefined,
+                offerCode: order.appliedOffer?.code || undefined,
+                appliedOffer: order.appliedOffer || undefined,
                 discountPct: (order.customDiscountType === 'percentage' || order.customDiscountType === 'pct') ? (Number(order.customDiscountValue) || 0) : (order.discountPct || 0),
                 discountName: computedDiscountName || undefined,
                 vip50: order.vip50 || false,

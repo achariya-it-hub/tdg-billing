@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { 
   Monitor, ChefHat, Tablet, ShoppingCart, LayoutDashboard, 
-  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, FileText, Receipt, Gem, Shield, KeyRound, X, DollarSign, Settings, Landmark, QrCode, Download, CheckSquare, ScrollText
+  UtensilsCrossed, Globe, BarChart3, LogOut, User, Package, Box, Users, UserPlus, BookOpen, FileText, Receipt, Gem, Shield, KeyRound, X, DollarSign, Settings, Landmark, QrCode, Download, CheckSquare, ScrollText, Tag
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import API_BASE from '../lib/apiConfig'
@@ -9,6 +9,7 @@ import { downloadBillsAsCSV, getTodayLocalBackupCount } from '../utils/localBack
 
 const navItems = [
   { path: '/pos', icon: Monitor, label: 'POS', module: 'pos' },
+  { path: '/offers', icon: Tag, label: 'Offer Zone', module: 'pos' },
   { path: '/kitchen', icon: ChefHat, label: 'Kitchen', module: 'kitchen' },
   { path: '/billing', icon: Receipt, label: 'Billing', module: 'billing' },
   { path: '/kot', icon: Tablet, label: 'KOT', module: 'kot' },

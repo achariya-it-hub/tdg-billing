@@ -416,6 +416,81 @@ let aggregators = [
   { id: 'direct', name: 'Direct', displayName: 'Direct Order', isActive: true, defaultPrepTime: 20, color: '#4895ef' }
 ]
 
+// Default POS Offer Zone templates created for Cafe Managers
+const DEFAULT_POS_OFFERS = [
+  {
+    id: 'offer-b2g1',
+    title: 'Buy 2 Get 1 Free Gyro',
+    code: 'B2G1',
+    type: 'bogo',
+    buyQty: 2,
+    getQty: 1,
+    applicableCategory: 'Gyros',
+    value: 0,
+    minOrderValue: 0,
+    maxDiscount: 0,
+    tag: 'B2G1 FREE',
+    desc: 'Buy any 2 Gyros and get 1 Gyro completely free! (Cheapest gyro is free)',
+    isActive: true,
+    targetChannels: ['pos', 'mobile', 'self_order'],
+    usageCount: 0,
+    totalSavings: 0,
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'offer-spec20',
+    title: 'Special 20% Discount',
+    code: 'SPECIAL20',
+    type: 'percentage',
+    value: 20,
+    minOrderValue: 299,
+    maxDiscount: 200,
+    applicableCategory: 'all',
+    tag: '20% OFF',
+    desc: 'Get 20% off on orders above ₹299 (Max discount ₹200)',
+    isActive: true,
+    targetChannels: ['pos', 'mobile', 'self_order'],
+    usageCount: 0,
+    totalSavings: 0,
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'offer-flat50',
+    title: 'Flat ₹50 OFF',
+    code: 'FLAT50',
+    type: 'flat',
+    value: 50,
+    minOrderValue: 350,
+    maxDiscount: 50,
+    applicableCategory: 'all',
+    tag: 'SAVE ₹50',
+    desc: 'Flat ₹50 instant discount on orders of ₹350 or more',
+    isActive: true,
+    targetChannels: ['pos', 'mobile', 'self_order'],
+    usageCount: 0,
+    totalSavings: 0,
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'offer-vip50',
+    title: 'VIP 50% Privilege',
+    code: 'VIP50',
+    type: 'percentage',
+    value: 50,
+    minOrderValue: 0,
+    maxDiscount: 0,
+    applicableCategory: 'all',
+    tag: 'VIP 50%',
+    desc: '50% discount for registered VIP guests & privileged members',
+    isActive: true,
+    targetChannels: ['pos'],
+    usageCount: 0,
+    totalSavings: 0,
+    createdAt: new Date().toISOString()
+  }
+]
+let posOffers = [...DEFAULT_POS_OFFERS]
+
 // Vault files stored in DATA_DIR (~/tdg-data on Hostinger) â€” OUTSIDE Git folder
 // so they are NEVER overwritten by git pull / redeploy
 const VAULT_PATH = join(DATA_DIR, 'sales_vault_LOCK.json')
@@ -848,6 +923,7 @@ function saveState() {
   writeDb({
     orders,
     settings,
+    posOffers,
     categories,
     menuItems,
     recipes,
@@ -1122,6 +1198,14 @@ function restoreState() {
   if (db.staffPromotionSettings) staffPromotionSettings = { ...staffPromotionSettings, ...db.staffPromotionSettings }
   if (db.todos && Array.isArray(db.todos)) todos = db.todos
   if (db.inventoryCategories && Array.isArray(db.inventoryCategories)) inventoryCategories = db.inventoryCategories
+  if (Array.isArray(db.posOffers) && db.posOffers.length > 0) {
+    posOffers = db.posOffers
+  } else if (settings.posOffers && Array.isArray(settings.posOffers) && settings.posOffers.length > 0) {
+    posOffers = settings.posOffers
+  } else {
+    posOffers = [...DEFAULT_POS_OFFERS]
+  }
+  settings.posOffers = posOffers
 
   // Double-Backup Customer & Staff Vault Recovery
   const custVault = syncCustomerVault(loyaltyUsers, mobileAppUsers, employees)
@@ -12566,6 +12650,179 @@ app.get('/api/offers', (req, res) => {
   res.json({ success: true, count: filtered.length, offers: filtered })
 })
 
+// ==========================================
+// POS OFFER ZONE (Cafe Manager Offers API)
+// ==========================================
+
+// 1. Get all POS offers (Manager Offer Zone & POS billing)
+app.get('/api/pos-offers', (req, res) => {
+  const activeOnly = req.query.active === 'true'
+  const list = activeOnly ? posOffers.filter(o => o.isActive !== false) : posOffers
+  res.json({
+    success: true,
+    count: list.length,
+    offers: list
+  })
+})
+
+// 2. Create new Offer by Cafe Manager
+app.post('/api/pos-offers', (req, res) => {
+  try {
+    const {
+      title,
+      code,
+      type = 'percentage',
+      value = 0,
+      minOrderValue = 0,
+      maxDiscount = 0,
+      buyQty = 2,
+      getQty = 1,
+      applicableCategory = 'all',
+      freeItemName = '',
+      desc = '',
+      tag = '',
+      startDate = '',
+      endDate = '',
+      isActive = true,
+      createdBy = 'Cafe Manager',
+      targetChannels = ['pos', 'mobile', 'self_order']
+    } = req.body
+
+    if (!title || !title.trim()) {
+      return res.status(400).json({ error: 'Offer title is required' })
+    }
+
+    const cleanCode = (code || title.substring(0, 8))
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9_]/g, '')
+
+    const newOffer = {
+      id: `offer_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+      title: title.trim(),
+      code: cleanCode || `OFFER${posOffers.length + 1}`,
+      type, // 'percentage' | 'flat' | 'bogo' | 'free_item'
+      value: Number(value) || 0,
+      minOrderValue: Number(minOrderValue) || 0,
+      maxDiscount: Number(maxDiscount) || 0,
+      buyQty: Number(buyQty) || 2,
+      getQty: Number(getQty) || 1,
+      applicableCategory: applicableCategory || 'all',
+      freeItemName: freeItemName || '',
+      desc: desc || '',
+      tag: tag || (type === 'percentage' ? `${value}% OFF` : (type === 'flat' ? `₹${value} OFF` : (type === 'bogo' ? 'BOGO' : 'FREE ITEM'))),
+      startDate: startDate || '',
+      endDate: endDate || '',
+      isActive: isActive !== false,
+      createdBy: createdBy || 'Cafe Manager',
+      targetChannels: Array.isArray(targetChannels) && targetChannels.length > 0 ? targetChannels : ['pos', 'mobile', 'self_order'],
+      usageCount: 0,
+      totalSavings: 0,
+      createdAt: new Date().toISOString()
+    }
+
+    posOffers.unshift(newOffer)
+    settings.posOffers = posOffers
+    saveState()
+
+    res.json({
+      success: true,
+      message: 'Offer created successfully in Offer Zone',
+      offer: newOffer
+    })
+  } catch (err) {
+    console.error('[POS OFFERS CREATE ERROR]', err)
+    res.status(500).json({ error: 'Failed to create offer: ' + err.message })
+  }
+})
+
+// 3. Update existing Offer
+app.put('/api/pos-offers/:id', (req, res) => {
+  try {
+    const { id } = req.params
+    const idx = posOffers.findIndex(o => o.id === id)
+    if (idx === -1) {
+      return res.status(404).json({ error: 'Offer not found' })
+    }
+
+    const current = posOffers[idx]
+    const updated = {
+      ...current,
+      ...req.body,
+      id: current.id,
+      usageCount: current.usageCount || 0,
+      totalSavings: current.totalSavings || 0,
+      updatedAt: new Date().toISOString()
+    }
+
+    if (updated.code) {
+      updated.code = updated.code.trim().toUpperCase().replace(/[^A-Z0-9_]/g, '')
+    }
+
+    posOffers[idx] = updated
+    settings.posOffers = posOffers
+    saveState()
+
+    res.json({
+      success: true,
+      message: 'Offer updated successfully',
+      offer: updated
+    })
+  } catch (err) {
+    console.error('[POS OFFERS UPDATE ERROR]', err)
+    res.status(500).json({ error: 'Failed to update offer: ' + err.message })
+  }
+})
+
+// 4. Toggle Offer Active Status
+app.patch('/api/pos-offers/:id/toggle', (req, res) => {
+  try {
+    const { id } = req.params
+    const offer = posOffers.find(o => o.id === id)
+    if (!offer) {
+      return res.status(404).json({ error: 'Offer not found' })
+    }
+
+    offer.isActive = !offer.isActive
+    offer.updatedAt = new Date().toISOString()
+    settings.posOffers = posOffers
+    saveState()
+
+    res.json({
+      success: true,
+      message: `Offer ${offer.isActive ? 'activated' : 'deactivated'} successfully`,
+      offer
+    })
+  } catch (err) {
+    console.error('[POS OFFERS TOGGLE ERROR]', err)
+    res.status(500).json({ error: 'Failed to toggle offer status' })
+  }
+})
+
+// 5. Delete an Offer
+app.delete('/api/pos-offers/:id', (req, res) => {
+  try {
+    const { id } = req.params
+    const idx = posOffers.findIndex(o => o.id === id)
+    if (idx === -1) {
+      return res.status(404).json({ error: 'Offer not found' })
+    }
+
+    const removed = posOffers.splice(idx, 1)[0]
+    settings.posOffers = posOffers
+    saveState()
+
+    res.json({
+      success: true,
+      message: 'Offer deleted successfully',
+      removed
+    })
+  } catch (err) {
+    console.error('[POS OFFERS DELETE ERROR]', err)
+    res.status(500).json({ error: 'Failed to delete offer' })
+  }
+})
+
 app.post('/api/orders', auth, (req, res) => {
   const { items, subtotal, tax, deliveryFee, total, paymentMethod, deliveryAddress } = req.body
   if (!items || !items.length || subtotal === undefined || total === undefined || !paymentMethod || !deliveryAddress) {
@@ -13846,8 +14103,11 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
     customDiscountType: req.body.customDiscountType || undefined,
     customDiscountValue: req.body.customDiscountValue || undefined,
     customDiscountReason: req.body.customDiscountReason || undefined,
-    offerName: req.body.offerName || (isStaffBenefit ? 'Achariya Family Week 2026' : undefined),
-    offerType: req.body.offerType || (isStaffBenefit ? 'staff_family' : undefined),
+    offerName: req.body.offerName || (req.body.appliedOffer?.title) || (isStaffBenefit ? 'Achariya Family Week 2026' : undefined),
+    offerType: req.body.offerType || (req.body.appliedOffer?.type) || (isStaffBenefit ? 'staff_family' : undefined),
+    offerId: req.body.offerId || req.body.appliedOffer?.id || undefined,
+    offerCode: req.body.offerCode || req.body.appliedOffer?.code || undefined,
+    appliedOffer: req.body.appliedOffer || undefined,
     employeeId: req.body.employeeId || undefined,
     employeeName: req.body.employeeName || undefined,
     employeeDept: req.body.employeeDept || undefined,
@@ -13910,6 +14170,18 @@ app.post('/api/pos/orders', optionalPosAuth, (req, res) => {
   }
 
   orders.unshift(order)
+
+  // Track Offer Zone offer redemptions
+  const usedOfferId = req.body.offerId || req.body.appliedOffer?.id
+  const usedOfferCode = req.body.offerCode || req.body.appliedOffer?.code
+  if (usedOfferId || usedOfferCode) {
+    const oMatch = posOffers.find(o => (usedOfferId && o.id === usedOfferId) || (usedOfferCode && o.code === usedOfferCode))
+    if (oMatch) {
+      oMatch.usageCount = (oMatch.usageCount || 0) + 1
+      oMatch.totalSavings = (oMatch.totalSavings || 0) + (discountVal || 0)
+      settings.posOffers = posOffers
+    }
+  }
 
   // Customer Visit Tracking & 5% Referral Commission Engine
   if (customerPhone) {
