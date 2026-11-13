@@ -27,7 +27,13 @@ const loadInitialCart = () => {
 const loadInitialDetails = () => {
   try {
     const raw = localStorage.getItem(DETAILS_KEY)
-    if (raw) return JSON.parse(raw)
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      return {
+        ...parsed,
+        orderType: parsed.orderType === 'delivery' ? 'takeaway' : (parsed.orderType || 'takeaway')
+      }
+    }
 
     const custRaw = localStorage.getItem('customer_user')
     if (custRaw) {
@@ -35,7 +41,7 @@ const loadInitialDetails = () => {
       return {
         name: cust.name || '',
         phone: cust.phone || '',
-        orderType: 'delivery',
+        orderType: 'takeaway',
         address: '',
         landmark: '',
         tableNo: '',
@@ -47,7 +53,7 @@ const loadInitialDetails = () => {
   return {
     name: '',
     phone: '',
-    orderType: 'delivery',
+    orderType: 'takeaway',
     address: '',
     landmark: '',
     tableNo: '',

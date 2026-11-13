@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
@@ -54,6 +54,12 @@ export default function Cart() {
   const [orderSent, setOrderSent] = useState(false)
   const [lastSentText, setLastSentText] = useState('')
 
+  useEffect(() => {
+    if (details.orderType === 'delivery') {
+      setDetails({ orderType: 'takeaway' })
+    }
+  }, [details.orderType, setDetails])
+
   const totalAmount = getTotalAmount()
   const totalCount = getTotalCount()
 
@@ -75,36 +81,21 @@ export default function Cart() {
       errs.phone = 'Please enter a valid 10-digit WhatsApp number'
     }
 
-    if (details.orderType === 'delivery') {
-      if (!details.address || !details.address.trim()) {
-        errs.address = 'Please enter your delivery address'
-      }
-    }
-
     setErrors(errs)
     return Object.keys(errs).length === 0
   }
 
   const buildWhatsAppMessage = () => {
     const typeLabel = 
-      details.orderType === 'takeaway'
-        ? '🥡 Takeaway / Self Pickup'
-        : details.orderType === 'dine_in'
-        ? `🍽️ Dine-in (Table: ${details.tableNo || 'Not specified'})`
-        : '🛵 Home Delivery'
+      details.orderType === 'dine_in'
+        ? `🍽️ Dine-in (Table: ${details.tableNo?.trim() || 'Not specified'})`
+        : '🥡 Takeaway / Self Pickup'
 
     let msg = `🥙 *TEN DENS GYROS - NEW ORDER* 🇬🇷\n`
     msg += `━━━━━━━━━━━━━━━━━━━━\n`
     msg += `👤 *Customer:* ${details.name.trim()}\n`
     msg += `📱 *Phone:* ${details.phone.trim()}\n`
     msg += `🏷️ *Order Type:* ${typeLabel}\n`
-
-    if (details.orderType === 'delivery') {
-      msg += `📍 *Delivery Address:* ${details.address.trim()}\n`
-      if (details.landmark && details.landmark.trim()) {
-        msg += `🚩 *Landmark:* ${details.landmark.trim()}\n`
-      }
-    }
 
     if (details.notes && details.notes.trim()) {
       msg += `📝 *Special Instructions:* ${details.notes.trim()}\n`
@@ -256,7 +247,7 @@ export default function Cart() {
             )}
           </h1>
           <p style={{ color: '#94a3b8', fontSize: '15px' }}>
-            Review your items, enter delivery details, and place your order directly via WhatsApp in one click.
+            Review your items, enter your name & phone, and place your order directly via WhatsApp in one click.
           </p>
         </div>
 
@@ -621,7 +612,7 @@ export default function Cart() {
                   gap: '8px'
                 }}>
                   <User size={18} color="#ffd700" />
-                  Customer & Delivery Details
+                  Customer & Order Details
                 </h3>
 
                 {/* Order Type Toggle */}
@@ -631,37 +622,45 @@ export default function Cart() {
                   </label>
                   <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
                     gap: '8px',
                     background: '#121416',
                     padding: '4px',
                     borderRadius: '10px'
                   }}>
                     {[
-                      { id: 'delivery', label: '🛵 Delivery' },
-                      { id: 'takeaway', label: '🥡 Takeaway' },
+                      { id: 'takeaway', label: '🥡 Takeaway / Pickup' },
                       { id: 'dine_in', label: '🍽️ Dine-in' }
-                    ].map((t) => (
-                      <button
-                        key={t.id}
-                        type="button"
-                        onClick={() => handleInputChange('orderType', t.id)}
-                        style={{
-                          padding: '10px 8px',
-                          borderRadius: '8px',
-                          border: 'none',
-                          cursor: 'pointer',
-                          fontWeight: details.orderType === t.id ? 800 : 600,
-                          fontSize: '12.5px',
-                          background: details.orderType === t.id ? '#e63946' : 'transparent',
-                          color: details.orderType === t.id ? '#fff' : '#94a3b8',
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        {t.label}
-                      </button>
-                    ))}
+                    ].map((t) => {
+                      const isSelected = details.orderType === t.id || (t.id === 'takeaway' && details.orderType === 'delivery')
+                      return (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => handleInputChange('orderType', t.id)}
+                          style={{
+                            padding: '10px 8px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontWeight: isSelected ? 800 : 600,
+                            fontSize: '13px',
+                            background: isSelected ? '#e63946' : 'transparent',
+                            color: isSelected ? '#fff' : '#94a3b8',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          {t.label}
+                        </button>
+                      )
+                    })}
                   </div>
+                  {details.orderType !== 'dine_in' && (
+                    <div style={{ marginTop: '8px', fontSize: '12px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <MapPin size={13} color="#10b981" />
+                      <span>Ready for pickup in 15–20 mins at TDG Pondicherry Outlet</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Customer Inputs */}
@@ -738,63 +737,6 @@ export default function Cart() {
                     )}
                   </div>
 
-                  {/* Delivery Specific Fields */}
-                  {details.orderType === 'delivery' && (
-                    <>
-                      <div>
-                        <label style={{ fontSize: '12px', fontWeight: 700, color: '#cbd5e1', display: 'block', marginBottom: '6px' }}>
-                          Delivery Address (Pondicherry) <span style={{ color: '#ef4444' }}>*</span>
-                        </label>
-                        <textarea
-                          rows={2}
-                          placeholder="Flat / Door No, Building, Street Name"
-                          value={details.address}
-                          onChange={(e) => handleInputChange('address', e.target.value)}
-                          style={{
-                            width: '100%',
-                            padding: '10px 14px',
-                            background: '#212427',
-                            border: `1.5px solid ${errors.address ? '#ef4444' : 'rgba(255,255,255,0.1)'}`,
-                            borderRadius: '8px',
-                            color: '#fff',
-                            fontSize: '13px',
-                            outline: 'none',
-                            resize: 'none',
-                            boxSizing: 'border-box'
-                          }}
-                        />
-                        {errors.address && (
-                          <span style={{ fontSize: '11px', color: '#ef4444', marginTop: '4px', display: 'block' }}>
-                            {errors.address}
-                          </span>
-                        )}
-                      </div>
-
-                      <div>
-                        <label style={{ fontSize: '12px', fontWeight: 700, color: '#cbd5e1', display: 'block', marginBottom: '6px' }}>
-                          Landmark (Optional)
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Near Church, White Town"
-                          value={details.landmark}
-                          onChange={(e) => handleInputChange('landmark', e.target.value)}
-                          style={{
-                            width: '100%',
-                            padding: '10px 14px',
-                            background: '#212427',
-                            border: '1.5px solid rgba(255,255,255,0.1)',
-                            borderRadius: '8px',
-                            color: '#fff',
-                            fontSize: '13px',
-                            outline: 'none',
-                            boxSizing: 'border-box'
-                          }}
-                        />
-                      </div>
-                    </>
-                  )}
-
                   {/* Dine-In Table No */}
                   {details.orderType === 'dine_in' && (
                     <div>
@@ -804,7 +746,7 @@ export default function Cart() {
                       <input
                         type="text"
                         placeholder="e.g. Table 4"
-                        value={details.tableNo}
+                        value={details.tableNo || ''}
                         onChange={(e) => handleInputChange('tableNo', e.target.value)}
                         style={{
                           width: '100%',

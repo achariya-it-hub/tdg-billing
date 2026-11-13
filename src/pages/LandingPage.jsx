@@ -308,6 +308,79 @@ export default function LandingPage() {
     { name: 'Classic Kombucha', sub: 'The original fermented probiotic brew', price: '₹120', image: '/images/drive/KOMBUCHA.png' }
   ]
 
+  // Continuous Marquee Food Showcase items from Drive
+  const foodMarqueeItems = [
+    { id: 'mq_sig', name: 'Signature Gyro', price: '₹199', image: '/images/drive/gyro_baked_chicken.png', variant: 'Chicken (Baked)' },
+    { id: 'mq_fried', name: 'Fried Sesame Gyro', price: '₹199', image: '/images/drive/gyro_fried_paneer.png', variant: 'Paneer (Fried)' },
+    { id: 'mq_rice', name: 'Signature Rice Bowl', price: '₹199', image: '/images/drive/Rice Bowl.png' },
+    { id: 'mq_loaded', name: 'Loaded Fries', price: '₹199', image: '/images/drive/Loaded.png' },
+    { id: 'mq_wings', name: 'Crispy Wings', price: '₹90', image: '/images/drive/WINGS-01.jpg' },
+    { id: 'mq_strips', name: 'Crispy Strips', price: '₹120', image: '/images/drive/STRIPS-01.jpg' },
+    { id: 'mq_biscoff', name: 'Biscoff Shake', price: '₹120', image: '/images/drive/Biscoff.png', variant: 'Regular' },
+    { id: 'mq_kunafa', name: 'Kunafa Pistachio Shake', price: '₹120', image: '/images/drive/Kunafa Pistachio.png', variant: 'Regular' },
+    { id: 'mq_brownie', name: 'Chocolate Brownie', price: '₹99', image: '/images/drive/Chocolate Brownie.png' },
+    { id: 'mq_blondie', name: 'Blondie Cake', price: '₹99', image: '/images/drive/Blondie Cake.png' },
+    { id: 'mq_salad', name: 'Signature Salad', price: '₹149', image: '/images/drive/Signature Salad.png' },
+    { id: 'mq_tzatziki', name: 'Greek Tzatziki Dip', price: '₹15', image: '/images/drive/Tzatziki.png' },
+    { id: 'mq_softy', name: 'Vanilla Softy', price: '₹39', image: '/images/drive/Vanilla Softy.png' }
+  ]
+
+  // Interactive Builder Data with Real Drive Images
+  const builderStepsData = [
+    {
+      step: 1,
+      title: 'Choose Your Bread',
+      sub: 'Baked or Fried. Both are circular pita pockets made fresh daily.',
+      items: [
+        { name: 'Oven Baked Pita', badge: 'Classic Greek', desc: 'Soft, pillowy oven-baked circular pocket with authentic toasted aroma.', image: '/images/drive/Baked.png' },
+        { name: 'Fried Sesame Bowl', badge: 'Crunchy Indulgence', desc: 'Golden fried sesame-crusted pita bowl with an irresistible crunchy exterior.', image: '/images/drive/Fried.png' }
+      ]
+    },
+    {
+      step: 2,
+      title: 'Choose Your Spread',
+      sub: 'Lined along the inside of your warm bread.',
+      items: [
+        { name: 'Authentic Greek Tzatziki', badge: 'Signature Greek', desc: 'Strained Greek yogurt whipped with grated cucumber, garlic, dill and extra virgin olive oil.', image: '/images/drive/Tzatziki.png' },
+        { name: 'Rich Cream Cheese Spread', badge: 'Melted & Rich', desc: 'Velvety smooth warm melted cheese spread for ultimate creaminess.', image: '/images/drive/Cheese-01.jpg' }
+      ]
+    },
+    {
+      step: 3,
+      title: 'Choose Your Craft Sauce',
+      sub: 'Made from scratch daily in our kitchen.',
+      items: [
+        { name: 'Turkish Chilli', badge: 'Smoky & Fiery', desc: 'Rich red pepper puree roasted with Mediterranean herbs.', image: '/images/drive/Turkish Chilli.png' },
+        { name: 'Jalapeno Cheese', badge: 'Spicy Cheddar', desc: 'Creamy cheddar cheese sauce studded with pickled jalapenos.', image: '/images/drive/Jalapeno Cheese.png' },
+        { name: 'Garlic Mayo', badge: 'Garlic Aioli', desc: 'Classic whipped aioli with slow-roasted golden garlic.', image: '/images/drive/Garlic Mayo.png' },
+        { name: 'Spicy Mayo', badge: 'Tangy Heat', desc: 'Creamy mayo infused with fiery peri peri and paprika blend.', image: '/images/drive/Spicy Mayo.png' },
+        { name: 'Honey Mustard', badge: 'Sweet & Zesty', desc: 'Wild honey churned with golden stone-ground mustard.', image: '/images/drive/Honey Mustard.png' }
+      ]
+    },
+    {
+      step: 4,
+      title: 'Choose Your 7 Veggies',
+      sub: 'Crisp and hand-chopped every morning.',
+      items: [
+        { name: 'Crisp Lettuce', badge: 'Fresh', desc: 'Hand-torn iceberg greens', image: '/lettuce.png' },
+        { name: 'Red Onions', badge: 'Crunch', desc: 'Sliced pungent red onions', image: '/onion.png' },
+        { name: 'Pickled Jalapenos', badge: 'Zesty', desc: 'Spicy pickled green rings', image: '/jalapenos.png' },
+        { name: 'Kalamata Olives', badge: 'Mediterranean', desc: 'Brined black Greek olives', image: '/olives.png' },
+        { name: 'Bell Peppers', badge: 'Sweet', desc: 'Diced sweet bell peppers', image: '/bell peppers.png' },
+        { name: 'Crisp Cucumbers', badge: 'Hydrating', desc: 'Cool fresh diced cucumber', image: '/cucumber.png' }
+      ]
+    },
+    {
+      step: 5,
+      title: 'Choose Your Protein',
+      sub: 'Hand-cut and seared hot on the grill.',
+      items: [
+        { name: 'Flame-Seared Chicken', badge: 'Juicy & Tender', desc: 'Hand-cut marinated chicken breast seared with Greek oregano and lemon garlic glaze.', image: '/images/drive/gyro_baked_chicken.png' },
+        { name: 'Spiced Grilled Paneer', badge: '100% Vegetarian', desc: 'Soft cottage cheese cubes dusted in Greek spices and grilled golden brown.', image: '/images/drive/gyro_fried_paneer.png' }
+      ]
+    }
+  ]
+
   return (
     <div style={{ 
       backgroundColor: '#292c30', 
@@ -354,14 +427,37 @@ export default function LandingPage() {
 
         /* Hover animations */
         .hover-lift:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 16px 32px rgba(0,0,0,0.5) !important;
-          border-color: rgba(255, 215, 0, 0.4) !important;
+          transform: translateY(-6px);
+          box-shadow: 0 18px 36px rgba(0,0,0,0.55) !important;
+          border-color: rgba(255, 215, 0, 0.45) !important;
         }
 
         .gold-glow:hover {
           text-shadow: 0 0 12px rgba(255, 215, 0, 0.85);
           color: #ffd700 !important;
+        }
+
+        @keyframes marquee {
+          0% { transform: translateX(0%); }
+          100% { transform: translateX(-50%); }
+        }
+
+        @keyframes floatSlow {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-14px) rotate(0.8deg); }
+        }
+
+        @keyframes pulseGlow {
+          0%, 100% { opacity: 0.35; transform: translate(-50%, -50%) scale(1); }
+          50% { opacity: 0.75; transform: translate(-50%, -50%) scale(1.18); }
+        }
+
+        .animated-float {
+          animation: floatSlow 4s ease-in-out infinite;
+        }
+
+        .animated-glow {
+          animation: pulseGlow 4s ease-in-out infinite;
         }
       `}</style>
 
@@ -885,25 +981,29 @@ export default function LandingPage() {
               width: '100%',
               maxWidth: '560px'
             }}>
-              {/* Glow backdrop */}
-              <div style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: '320px',
-                height: '320px',
-                borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(230, 57, 70, 0.28) 0%, rgba(255, 215, 0, 0.15) 50%, transparent 70%)',
-                filter: 'blur(30px)',
-                zIndex: 0
-              }} />
+              {/* Glow backdrop with breathing animation */}
+              <div 
+                className="animated-glow"
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: '340px',
+                  height: '340px',
+                  borderRadius: '50%',
+                  background: 'radial-gradient(circle, rgba(230, 57, 70, 0.35) 0%, rgba(255, 215, 0, 0.2) 50%, transparent 70%)',
+                  filter: 'blur(35px)',
+                  zIndex: 0
+                }} 
+              />
 
-              {/* Main Circular Gyro Duo Image (Baked Pita & Fried Sesame Bowl) */}
+              {/* Main Circular Gyro Duo Image with Continuous Smooth Floating Animation */}
               <motion.img 
                 src="/images/drive/circular_gyro_duo.png" 
                 alt="TDG Authentic Circular Gyros" 
-                initial={{ scale: 0.95, opacity: 0 }}
+                className="animated-float"
+                initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.8 }}
                 style={{
@@ -911,7 +1011,7 @@ export default function LandingPage() {
                   height: 'auto',
                   position: 'relative',
                   zIndex: 1,
-                  filter: 'drop-shadow(0 20px 35px rgba(0,0,0,0.75))'
+                  filter: 'drop-shadow(0 24px 40px rgba(0,0,0,0.8))'
                 }}
                 onError={(e) => { e.target.src = '/images/drive/GYROS.png' }}
               />
@@ -919,11 +1019,14 @@ export default function LandingPage() {
               {/* Floating Badge 1: Baked or Fried */}
               <motion.div 
                 initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
+                animate={{ y: [0, -6, 0], opacity: 1 }}
+                transition={{ 
+                  y: { repeat: Infinity, duration: 3.5, ease: "easeInOut" },
+                  opacity: { delay: 0.3 }
+                }}
                 style={{
                   position: 'absolute',
-                  top: '10%',
+                  top: '8%',
                   right: '-10px',
                   background: 'rgba(30, 33, 36, 0.95)',
                   border: '1.5px solid #ffd700',
@@ -946,11 +1049,14 @@ export default function LandingPage() {
               {/* Floating Badge 2: Starting at ₹199 */}
               <motion.div 
                 initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.5 }}
+                animate={{ y: [0, 6, 0], opacity: 1 }}
+                transition={{ 
+                  y: { repeat: Infinity, duration: 4, ease: "easeInOut", delay: 0.5 },
+                  opacity: { delay: 0.5 }
+                }}
                 style={{
                   position: 'absolute',
-                  bottom: '10%',
+                  bottom: '12%',
                   left: '-10px',
                   background: 'rgba(30, 33, 36, 0.95)',
                   border: '1.5px solid #10b981',
@@ -969,8 +1075,100 @@ export default function LandingPage() {
                   <div style={{ fontSize: '12.5px', color: '#ffffff', fontWeight: 800 }}>From ₹199</div>
                 </div>
               </motion.div>
+
+              {/* Floating Badge 3: Tzatziki & Dips */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ y: [0, -5, 0], opacity: 1 }}
+                transition={{ 
+                  y: { repeat: Infinity, duration: 4.2, ease: "easeInOut", delay: 0.8 },
+                  opacity: { delay: 0.7 }
+                }}
+                style={{
+                  position: 'absolute',
+                  bottom: '-8px',
+                  right: '25px',
+                  background: 'rgba(25, 27, 30, 0.95)',
+                  border: '1px solid rgba(255, 215, 0, 0.4)',
+                  borderRadius: '24px',
+                  padding: '6px 14px',
+                  boxShadow: '0 6px 16px rgba(0,0,0,0.6)',
+                  zIndex: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <img src="/images/drive/Tzatziki.png" alt="Dip" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+                <span style={{ fontSize: '11px', color: '#ffd700', fontWeight: 800 }}>Greek Tzatziki & Craft Dips</span>
+              </motion.div>
             </div>
           </div>
+        </div>
+      </section>
+
+
+      {/* =========================================================
+          CONTINUOUS ANIMATED FOOD REEL (Images from Drive)
+          ========================================================= */}
+      <section style={{
+        padding: '20px 0',
+        background: '#191b1e',
+        borderTop: '1px solid rgba(255, 215, 0, 0.15)',
+        borderBottom: '1px solid rgba(255, 215, 0, 0.15)',
+        overflow: 'hidden',
+        position: 'relative'
+      }}>
+        <div style={{
+          display: 'flex',
+          gap: '16px',
+          width: 'max-content',
+          animation: 'marquee 40s linear infinite'
+        }}
+        onMouseEnter={(e) => { e.currentTarget.style.animationPlayState = 'paused' }}
+        onMouseLeave={(e) => { e.currentTarget.style.animationPlayState = 'running' }}
+        >
+          {[...foodMarqueeItems, ...foodMarqueeItems].map((item, idx) => (
+            <div
+              key={idx}
+              onClick={() => handleAddToCart({ id: item.id, name: item.name, price: item.price, image: item.image, variant: item.variant })}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                background: '#24272b',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                padding: '8px 18px 8px 10px',
+                borderRadius: '50px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.35)',
+                whiteSpace: 'nowrap'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#ffd700'
+                e.currentTarget.style.transform = 'scale(1.05)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)'
+                e.currentTarget.style.transform = 'scale(1)'
+              }}
+              title="Click to add to cart"
+            >
+              <img
+                src={item.image}
+                alt={item.name}
+                style={{ width: '38px', height: '38px', objectFit: 'contain', borderRadius: '50%', background: 'rgba(0,0,0,0.3)' }}
+                onError={(e) => { e.target.src = '/hero_wide_gyro.png' }}
+              />
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 800, color: '#fff' }}>{item.name}</div>
+                <div style={{ fontSize: '11px', color: '#ffd700', fontWeight: 700 }}>
+                  {item.price} · <span style={{ color: '#f87171' }}>+ Add to Cart</span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -1266,74 +1464,211 @@ export default function LandingPage() {
           </p>
         </div>
 
-        {/* 5-Step Visual Progression */}
+        {/* 5-Step Visual Progression with Interactive Tab Selection */}
         <div style={{
           ...cardStyle,
-          padding: '32px',
+          padding: '32px 24px',
           background: 'linear-gradient(135deg, #2f3439, #24272b)',
           marginBottom: '32px'
         }}>
-          <div className="grid-5" style={{ textAlign: 'center' }}>
-            {/* Step 1 */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              borderRadius: '12px',
-              padding: '20px 14px',
-              border: '1px solid rgba(255, 255, 255, 0.08)'
-            }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#ffd700', color: '#000', fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px auto' }}>1</div>
-              <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#fff', marginBottom: '6px' }}>BREAD</h4>
-              <p style={{ fontSize: '12px', color: '#cbd5e1' }}>Baked or Fried</p>
-            </div>
-
-            {/* Step 2 */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              borderRadius: '12px',
-              padding: '20px 14px',
-              border: '1px solid rgba(255, 255, 255, 0.08)'
-            }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#ffd700', color: '#000', fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px auto' }}>2</div>
-              <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#fff', marginBottom: '6px' }}>SPREAD</h4>
-              <p style={{ fontSize: '12px', color: '#cbd5e1' }}>Cheese or Tzatziki</p>
-            </div>
-
-            {/* Step 3 */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              borderRadius: '12px',
-              padding: '20px 14px',
-              border: '1px solid rgba(255, 255, 255, 0.08)'
-            }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#ffd700', color: '#000', fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px auto' }}>3</div>
-              <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#fff', marginBottom: '6px' }}>SAUCE</h4>
-              <p style={{ fontSize: '11px', color: '#cbd5e1', lineHeight: 1.4 }}>Turkish Chilli · Jalapeno Cheese · Garlic Mayo · Spicy Mayo · Honey Mustard</p>
-            </div>
-
-            {/* Step 4 */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              borderRadius: '12px',
-              padding: '20px 14px',
-              border: '1px solid rgba(255, 255, 255, 0.08)'
-            }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#ffd700', color: '#000', fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px auto' }}>4</div>
-              <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#fff', marginBottom: '6px' }}>VEGGIES</h4>
-              <p style={{ fontSize: '11px', color: '#cbd5e1', lineHeight: 1.4 }}>Lettuce · Onions · Jalapenos · Olives · Bell Peppers · Tomatoes · Cucumbers</p>
-            </div>
-
-            {/* Step 5 */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.03)',
-              borderRadius: '12px',
-              padding: '20px 14px',
-              border: '1px solid rgba(255, 255, 255, 0.08)'
-            }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#ffd700', color: '#000', fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px auto' }}>5</div>
-              <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#fff', marginBottom: '6px' }}>PROTEIN</h4>
-              <p style={{ fontSize: '12px', color: '#cbd5e1' }}>Chicken or Paneer</p>
-            </div>
+          {/* Step Selector Buttons */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+            gap: '10px',
+            marginBottom: '28px'
+          }}>
+            {[
+              { num: 1, title: 'BREAD', subtitle: 'Baked / Fried' },
+              { num: 2, title: 'SPREAD', subtitle: 'Cheese / Tzatziki' },
+              { num: 3, title: 'SAUCE', subtitle: '5 Craft Sauces' },
+              { num: 4, title: 'VEGGIES', subtitle: '7 Farm Veggies' },
+              { num: 5, title: 'PROTEIN', subtitle: 'Chicken / Paneer' }
+            ].map((s) => {
+              const isActive = builderStep === s.num
+              return (
+                <button
+                  key={s.num}
+                  type="button"
+                  onClick={() => setBuilderStep(s.num)}
+                  style={{
+                    background: isActive ? 'linear-gradient(135deg, #e63946, #b91c1c)' : 'rgba(255, 255, 255, 0.04)',
+                    border: `1.5px solid ${isActive ? '#ffd700' : 'rgba(255, 255, 255, 0.08)'}`,
+                    borderRadius: '12px',
+                    padding: '14px 10px',
+                    cursor: 'pointer',
+                    textAlign: 'center',
+                    transition: 'all 0.25s',
+                    boxShadow: isActive ? '0 8px 20px rgba(230, 57, 70, 0.4)' : 'none'
+                  }}
+                >
+                  <div style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '50%',
+                    background: isActive ? '#ffd700' : 'rgba(255, 255, 255, 0.1)',
+                    color: isActive ? '#000' : '#fff',
+                    fontWeight: 900,
+                    fontSize: '13px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 8px auto'
+                  }}>
+                    {s.num}
+                  </div>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: '#fff', marginBottom: '2px' }}>{s.title}</div>
+                  <div style={{ fontSize: '11px', color: isActive ? '#fee2e2' : '#94a3b8' }}>{s.subtitle}</div>
+                </button>
+              )
+            })}
           </div>
+
+          {/* Active Step Content Showcase with Real Drive Images */}
+          {builderStepsData.find(b => b.step === builderStep) && (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={builderStep}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25 }}
+              >
+                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 800, color: '#ffd700', letterSpacing: '1px' }}>
+                    STEP {builderStep} OF 5
+                  </span>
+                  <h3 style={{ fontSize: '22px', fontWeight: 900, color: '#fff', margin: '4px 0 6px 0' }}>
+                    {builderStepsData[builderStep - 1].title}
+                  </h3>
+                  <p style={{ fontSize: '13.5px', color: '#cbd5e1', margin: 0 }}>
+                    {builderStepsData[builderStep - 1].sub}
+                  </p>
+                </div>
+
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: `repeat(auto-fit, minmax(${builderStep === 3 || builderStep === 4 ? '150px' : '220px'}, 1fr))`,
+                  gap: '16px',
+                  justifyContent: 'center'
+                }}>
+                  {builderStepsData[builderStep - 1].items.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="hover-lift"
+                      style={{
+                        background: '#212427',
+                        border: '1.5px solid rgba(255, 215, 0, 0.2)',
+                        borderRadius: '14px',
+                        padding: '18px 14px',
+                        textAlign: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        boxShadow: '0 6px 16px rgba(0,0,0,0.3)'
+                      }}
+                    >
+                      <div style={{
+                        height: builderStep === 3 || builderStep === 4 ? '70px' : '110px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: '10px'
+                      }}>
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          style={{
+                            maxHeight: '100%',
+                            maxWidth: '100%',
+                            objectFit: 'contain',
+                            filter: 'drop-shadow(0 6px 12px rgba(0,0,0,0.5))'
+                          }}
+                          onError={(e) => { e.target.src = '/hero_wide_gyro.png' }}
+                        />
+                      </div>
+                      <span style={{
+                        fontSize: '9.5px',
+                        fontWeight: 800,
+                        background: 'rgba(255, 215, 0, 0.15)',
+                        color: '#ffd700',
+                        padding: '2px 8px',
+                        borderRadius: '10px',
+                        marginBottom: '6px'
+                      }}>
+                        {item.badge}
+                      </span>
+                      <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#fff', margin: '0 0 4px 0' }}>
+                        {item.name}
+                      </h4>
+                      <p style={{ fontSize: '11.5px', color: '#94a3b8', lineHeight: 1.4, margin: 0 }}>
+                        {item.desc}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Quick Step Navigation */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '24px' }}>
+                  {builderStep > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => setBuilderStep(builderStep - 1)}
+                      style={{
+                        padding: '8px 18px',
+                        borderRadius: '8px',
+                        background: 'rgba(255,255,255,0.08)',
+                        border: '1px solid rgba(255,255,255,0.15)',
+                        color: '#fff',
+                        fontWeight: 700,
+                        fontSize: '12.5px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      ← Previous Step
+                    </button>
+                  )}
+                  {builderStep < 5 ? (
+                    <button
+                      type="button"
+                      onClick={() => setBuilderStep(builderStep + 1)}
+                      style={{
+                        padding: '8px 20px',
+                        borderRadius: '8px',
+                        background: '#ffd700',
+                        border: 'none',
+                        color: '#000',
+                        fontWeight: 800,
+                        fontSize: '12.5px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Next Step ({builderStep + 1} of 5) →
+                    </button>
+                  ) : (
+                    <Link
+                      to={customizerLink}
+                      style={{
+                        padding: '8px 20px',
+                        borderRadius: '8px',
+                        background: '#e63946',
+                        color: '#fff',
+                        fontWeight: 800,
+                        fontSize: '12.5px',
+                        textDecoration: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <Sparkles size={14} /> Open 3D Customizer →
+                    </Link>
+                  )}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          )}
         </div>
 
         <div style={{ textAlign: 'center' }}>
@@ -1398,6 +1733,32 @@ export default function LandingPage() {
               <p style={{ color: '#cbd5e1', fontSize: '13px', lineHeight: 1.5, flex: 1 }}>
                 Our Signature rice bowl, with a Chicken or Paneer choice.
               </p>
+              <button
+                onClick={() => handleAddToCart({
+                  id: 'rice_bowl_sig',
+                  name: 'Signature Rice Bowl',
+                  price: '₹199',
+                  image: '/images/drive/Rice Bowl.png',
+                  variant: 'Chicken'
+                })}
+                style={{
+                  marginTop: '12px',
+                  padding: '9px 16px',
+                  borderRadius: '8px',
+                  background: 'rgba(255, 215, 0, 0.12)',
+                  border: '1px solid rgba(255, 215, 0, 0.35)',
+                  color: '#ffd700',
+                  fontWeight: 800,
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <Plus size={13} /> Add to Cart · Order Now
+              </button>
             </div>
           </div>
 
@@ -1414,6 +1775,32 @@ export default function LandingPage() {
               <p style={{ color: '#cbd5e1', fontSize: '13px', lineHeight: 1.5, flex: 1 }}>
                 A bowl of greens with your choice of Chicken or Paneer.
               </p>
+              <button
+                onClick={() => handleAddToCart({
+                  id: 'sig_salad',
+                  name: 'Signature Salad',
+                  price: '₹149',
+                  image: '/images/drive/Signature Salad.png',
+                  variant: 'Chicken'
+                })}
+                style={{
+                  marginTop: '12px',
+                  padding: '9px 16px',
+                  borderRadius: '8px',
+                  background: 'rgba(255, 215, 0, 0.12)',
+                  border: '1px solid rgba(255, 215, 0, 0.35)',
+                  color: '#ffd700',
+                  fontWeight: 800,
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <Plus size={13} /> Add to Cart · Order Now
+              </button>
             </div>
           </div>
 
@@ -1430,6 +1817,32 @@ export default function LandingPage() {
               <p style={{ color: '#cbd5e1', fontSize: '13px', lineHeight: 1.5, flex: 1 }}>
                 Fries piled with Chicken or Paneer.
               </p>
+              <button
+                onClick={() => handleAddToCart({
+                  id: 'loaded_fries',
+                  name: 'Loaded Fries',
+                  price: '₹199',
+                  image: '/images/drive/Loaded.png',
+                  variant: 'Chicken'
+                })}
+                style={{
+                  marginTop: '12px',
+                  padding: '9px 16px',
+                  borderRadius: '8px',
+                  background: 'rgba(255, 215, 0, 0.12)',
+                  border: '1px solid rgba(255, 215, 0, 0.35)',
+                  color: '#ffd700',
+                  fontWeight: 800,
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <Plus size={13} /> Add to Cart · Order Now
+              </button>
             </div>
           </div>
         </div>
@@ -1438,29 +1851,113 @@ export default function LandingPage() {
         <div className="grid-2" style={{ marginTop: '24px' }}>
           {/* Fried Chicken Range */}
           <div className="hover-lift" style={{ ...cardStyle, padding: '24px', display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <img src="/images/drive/WINGS-01.jpg" alt="Fried Chicken" style={{ width: '100px', height: '100px', objectFit: 'contain' }} />
-            <div>
+            <img src="/images/drive/WINGS-01.jpg" alt="Fried Chicken" style={{ width: '100px', height: '100px', objectFit: 'contain', borderRadius: '10px' }} />
+            <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>Fried Chicken</h3>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>Fried Chicken (Wings & Strips)</h3>
                 <span style={{ fontSize: '15px', fontWeight: 800, color: '#ffd700' }}>From ₹70</span>
               </div>
-              <p style={{ color: '#cbd5e1', fontSize: '13.5px', lineHeight: 1.5 }}>
+              <p style={{ color: '#cbd5e1', fontSize: '13px', lineHeight: 1.5, marginBottom: '10px' }}>
                 Leg or thigh from ₹70, wings from ₹90, strips from ₹120. Golden crisp on the outside, tender & juicy inside.
               </p>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: 'wings_6pc',
+                    name: 'Crispy Wings (6 Pc)',
+                    price: '₹180',
+                    image: '/images/drive/WINGS-01.jpg'
+                  })}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: '#e63946',
+                    border: 'none',
+                    color: '#fff',
+                    fontWeight: 800,
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  + Wings 6pc (₹180)
+                </button>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: 'strips_6pc',
+                    name: 'Crispy Strips (6 Pc)',
+                    price: '₹240',
+                    image: '/images/drive/STRIPS-01.jpg'
+                  })}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#fff',
+                    fontWeight: 700,
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  + Strips 6pc (₹240)
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Sides Range */}
           <div className="hover-lift" style={{ ...cardStyle, padding: '24px', display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <img src="/images/drive/Fries.png" alt="Sides" style={{ width: '100px', height: '100px', objectFit: 'contain' }} />
-            <div>
+            <img src="/images/drive/Fries.png" alt="Sides" style={{ width: '100px', height: '100px', objectFit: 'contain', borderRadius: '10px' }} />
+            <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>Sides</h3>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>Sides & Dips</h3>
                 <span style={{ fontSize: '15px', fontWeight: 800, color: '#ffd700' }}>From ₹49</span>
               </div>
-              <p style={{ color: '#cbd5e1', fontSize: '13.5px', lineHeight: 1.5 }}>
-                Nuggets, halloumi nuggets, mozzarella sticks, falafel and hash browns, from ₹49.
+              <p style={{ color: '#cbd5e1', fontSize: '13px', lineHeight: 1.5, marginBottom: '10px' }}>
+                Golden salted fries, cajun fries, peri-peri nuggets, and fresh Greek tzatziki dip.
               </p>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: 'regular_fries',
+                    name: 'Crispy Fries (Salted/Peri)',
+                    price: '₹99',
+                    image: '/images/drive/Fries.png'
+                  })}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: '#e63946',
+                    border: 'none',
+                    color: '#fff',
+                    fontWeight: 800,
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  + Fries (₹99)
+                </button>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: 'tzatziki_dip_side',
+                    name: 'Greek Tzatziki Dip',
+                    price: '₹15',
+                    image: '/images/drive/Tzatziki.png'
+                  })}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#fff',
+                    fontWeight: 700,
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  + Tzatziki (₹15)
+                </button>
+              </div>
             </div>
           </div>
         </div>
