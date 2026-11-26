@@ -3195,7 +3195,7 @@ export default function POS() {
                       🌶️ Sauces (Select Multiple)
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                      {['Garlic Mayo', 'Turkish Chili', 'Jalapeno Cheese', 'Spicy Mayo', 'Peri Peri', 'Honey Mustard'].map(sauce => {
+                      {['Turkish Chilli', 'Jalapeno Cheese', 'Garlic Yoget', 'Southwest', 'BBQ', 'Honey Mustard', 'Garlic Mayo', 'Spicy Mayo'].map(sauce => {
                         const isSelected = selectedSauces.includes(sauce)
                         return (
                           <button key={sauce} type="button" onClick={() => {

@@ -295,8 +295,8 @@ export default function LandingPage() {
   ]
 
   const beveragesList = [
-    { name: 'Coca-Cola', sub: 'Chilled can / fountain', price: 'Reg ₹59 / Lrg ₹99', badge: 'Chilled' },
-    { name: 'Sprite', sub: 'Crisp refreshing lemon-lime', price: 'Reg ₹59 / Lrg ₹99', badge: 'Chilled' },
+    { name: 'Coca-Cola', sub: 'Chilled can / fountain', price: 'Reg ₹49 / Lrg ₹99', badge: 'Chilled' },
+    { name: 'Sprite', sub: 'Crisp refreshing lemon-lime', price: 'Reg ₹49 / Lrg ₹99', badge: 'Chilled' },
     { name: 'Ice Tea (Peach or Lime)', sub: 'Brewed crisp refreshing iced tea', price: 'Reg ₹59 / Lrg ₹99', badge: 'Refreshing', image: '/images/drive/Ice Tea.png' },
     { name: 'Hot Chocolate', sub: 'Rich warm gourmet chocolate', price: '₹99', badge: 'Warm Brew', image: '/images/drive/Hot Chocolate.png' },
     { name: 'Signature Tea', sub: 'Fresh brewed specialty tea', price: '₹99', badge: 'Signature' }
@@ -352,8 +352,9 @@ export default function LandingPage() {
       items: [
         { name: 'Turkish Chilli', badge: 'Smoky & Fiery', desc: 'Rich red pepper puree roasted with Mediterranean herbs.', image: '/images/drive/Turkish Chilli.png' },
         { name: 'Jalapeno Cheese', badge: 'Spicy Cheddar', desc: 'Creamy cheddar cheese sauce studded with pickled jalapenos.', image: '/images/drive/Jalapeno Cheese.png' },
-        { name: 'Garlic Mayo', badge: 'Garlic Aioli', desc: 'Classic whipped aioli with slow-roasted golden garlic.', image: '/images/drive/Garlic Mayo.png' },
-        { name: 'Spicy Mayo', badge: 'Tangy Heat', desc: 'Creamy mayo infused with fiery peri peri and paprika blend.', image: '/images/drive/Spicy Mayo.png' },
+        { name: 'Garlic Yoget', badge: 'Cool & Herbaceous', desc: 'Light whipped Greek yogurt infused with minced garlic and herbs.', image: '/images/drive/Garlic Mayo.png' },
+        { name: 'Southwest', badge: 'Smoky Chipotle', desc: 'Zesty southwestern spice blend with creamy roasted pepper undertones.', image: '/images/drive/Spicy Mayo.png' },
+        { name: 'BBQ', badge: 'Sweet & Smoky', desc: 'Rich classic slow-simmered smoky barbecue glaze.', image: '/images/drive/Turkish Chilli.png' },
         { name: 'Honey Mustard', badge: 'Sweet & Zesty', desc: 'Wild honey churned with golden stone-ground mustard.', image: '/images/drive/Honey Mustard.png' }
       ]
     },
@@ -1911,12 +1912,52 @@ export default function LandingPage() {
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>Sides & Dips</h3>
-                <span style={{ fontSize: '15px', fontWeight: 800, color: '#ffd700' }}>From ₹49</span>
+                <span style={{ fontSize: '15px', fontWeight: 800, color: '#ffd700' }}>From ₹15</span>
               </div>
               <p style={{ color: '#cbd5e1', fontSize: '13px', lineHeight: 1.5, marginBottom: '10px' }}>
-                Golden salted fries, cajun fries, peri-peri nuggets, and fresh Greek tzatziki dip.
+                3pc crispy nuggets, 4pc authentic falafel, golden fries, and craft dips.
               </p>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: 'nuggets_3pc',
+                    name: '3 Pc Chicken Nuggets',
+                    price: '₹49',
+                    image: '/images/menu/sides_chicken_nuggets.png'
+                  })}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: '#e63946',
+                    border: 'none',
+                    color: '#fff',
+                    fontWeight: 800,
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  + 3pc Nuggets (₹49)
+                </button>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: 'falafel_4pc',
+                    name: '4 Pc Falafel',
+                    price: '₹99',
+                    image: '/images/menu/sides_falafel.png'
+                  })}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#fff',
+                    fontWeight: 700,
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  + 4pc Falafel (₹99)
+                </button>
                 <button
                   onClick={() => handleAddToCart({
                     id: 'regular_fries',
@@ -1927,10 +1968,10 @@ export default function LandingPage() {
                   style={{
                     padding: '6px 12px',
                     borderRadius: '6px',
-                    background: '#e63946',
-                    border: 'none',
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
                     color: '#fff',
-                    fontWeight: 800,
+                    fontWeight: 700,
                     fontSize: '11px',
                     cursor: 'pointer'
                   }}
@@ -1956,6 +1997,161 @@ export default function LandingPage() {
                   }}
                 >
                   + Tzatziki (₹15)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Third Row: All-New Breakfast & Royale Range */}
+        <div className="grid-2" style={{ marginTop: '24px' }}>
+          {/* Breakfast Card */}
+          <div className="hover-lift" style={{ ...cardStyle, padding: '24px', display: 'flex', gap: '20px', alignItems: 'center' }}>
+            <img src="/images/drive/Baked.png" alt="Breakfast Range" style={{ width: '100px', height: '100px', objectFit: 'contain', borderRadius: '10px' }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>🍳 Breakfast Range</h3>
+                <span style={{ fontSize: '15px', fontWeight: 800, color: '#ffd700' }}>₹149 each</span>
+              </div>
+              <p style={{ color: '#cbd5e1', fontSize: '13px', lineHeight: 1.5, marginBottom: '10px' }}>
+                Breakfast Gyro, Breakfast Royale bowl, 3-egg Cheese Omelette, or fresh Vegan Gyro.
+              </p>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: 'breakfast_gyro',
+                    name: 'Breakfast Gyro',
+                    price: '₹149',
+                    image: '/images/drive/Baked.png'
+                  })}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: '#e63946',
+                    border: 'none',
+                    color: '#fff',
+                    fontWeight: 800,
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  + Breakfast Gyro (₹149)
+                </button>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: 'breakfast_royale',
+                    name: 'Breakfast Royale',
+                    price: '₹149',
+                    image: '/images/drive/Rice Bowl.png'
+                  })}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#fff',
+                    fontWeight: 700,
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  + Royale Bowl (₹149)
+                </button>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: 'cheese_omelette',
+                    name: 'Cheese Omelette',
+                    price: '₹149',
+                    image: '/images/drive/Cheese-01.jpg'
+                  })}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#fff',
+                    fontWeight: 700,
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  + Omelette (₹149)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Royale Card */}
+          <div className="hover-lift" style={{ ...cardStyle, padding: '24px', display: 'flex', gap: '20px', alignItems: 'center' }}>
+            <img src="/images/drive/gyro_baked_chicken.png" alt="Royale Grill" style={{ width: '100px', height: '100px', objectFit: 'contain', borderRadius: '10px' }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>👑 Royale Specialties</h3>
+                <span style={{ fontSize: '15px', fontWeight: 800, color: '#ffd700' }}>₹249 each</span>
+              </div>
+              <p style={{ color: '#cbd5e1', fontSize: '13px', lineHeight: 1.5, marginBottom: '10px' }}>
+                Grilled Fish fillet, golden Grilled Halloumi, Grilled Chicken, and Mediterranean Vegan Salad.
+              </p>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: 'grilled_fish',
+                    name: 'Grilled Fish',
+                    price: '₹249',
+                    image: '/images/drive/gyro_baked_chicken.png'
+                  })}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: '#e63946',
+                    border: 'none',
+                    color: '#fff',
+                    fontWeight: 800,
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  + Grilled Fish (₹249)
+                </button>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: 'grilled_halloumi',
+                    name: 'Grilled Halloumi',
+                    price: '₹249',
+                    image: '/images/drive/gyro_fried_paneer.png'
+                  })}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#fff',
+                    fontWeight: 700,
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  + Halloumi (₹249)
+                </button>
+                <button
+                  onClick={() => handleAddToCart({
+                    id: 'grilled_chicken',
+                    name: 'Grilled Chicken',
+                    price: '₹249',
+                    image: '/images/drive/gyro_baked_chicken.png'
+                  })}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    color: '#fff',
+                    fontWeight: 700,
+                    fontSize: '11px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  + Chicken (₹249)
                 </button>
               </div>
             </div>
@@ -2848,27 +3044,35 @@ export default function LandingPage() {
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <FileText size={18} color="#ffd700" />
-                  <span style={{ fontWeight: 800, fontSize: '15px' }}>Official TDG Menu Card</span>
+                  <span style={{ fontWeight: 800, fontSize: '15px' }}>Official TDG Menu Cards</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <button
-                    onClick={() => setActiveMenuPage(activeMenuPage === 1 ? 2 : 1)}
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '6px',
-                      border: '1px solid rgba(255, 215, 0, 0.4)',
-                      background: 'rgba(255, 215, 0, 0.1)',
-                      color: '#ffd700',
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    View Page {activeMenuPage === 1 ? '2' : '1'}
-                  </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  {[
+                    { page: 1, label: 'Page 1 · Classic' },
+                    { page: 2, label: 'Page 2 · Feasts & Shakes' },
+                    { page: 3, label: 'Page 3 · Breakfast & Royale' }
+                  ].map(tab => (
+                    <button
+                      key={tab.page}
+                      onClick={() => setActiveMenuPage(tab.page)}
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: '6px',
+                        border: activeMenuPage === tab.page ? '1px solid #ffd700' : '1px solid rgba(255, 255, 255, 0.15)',
+                        background: activeMenuPage === tab.page ? 'rgba(255, 215, 0, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                        color: activeMenuPage === tab.page ? '#ffd700' : '#cbd5e1',
+                        fontSize: '11.5px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s'
+                      }}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
                   <button
                     onClick={() => setShowMenuModal(false)}
-                    style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '4px' }}
+                    style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '4px', marginLeft: '6px' }}
                   >
                     <X size={20} />
                   </button>
@@ -2878,7 +3082,7 @@ export default function LandingPage() {
               {/* Body: Menu Image Preview */}
               <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', justifyContent: 'center', background: '#121416' }}>
                 <img 
-                  src={activeMenuPage === 1 ? '/menu_card_page1.jpg' : '/menu_card_page2.jpg'} 
+                  src={activeMenuPage === 1 ? '/menu_card_page1.jpg' : activeMenuPage === 2 ? '/menu_card_page2.jpg' : '/menu_card_page3.jpg'} 
                   alt={`Menu Page ${activeMenuPage}`}
                   style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}
                 />
@@ -2894,7 +3098,7 @@ export default function LandingPage() {
                 background: '#25292e'
               }}>
                 <span style={{ fontSize: '12px', color: '#94a3b8' }}>
-                  Showing Page {activeMenuPage} of 2
+                  Showing Page {activeMenuPage} of 3 · All items available in-store & online
                 </span>
                 <Link 
                   to="/cart"

@@ -1495,6 +1495,27 @@ let categories = [
     "icon": "📦",
     "color": "#e63946",
     "displayOrder": 7
+  },
+  {
+    "id": "cat_1793693056697",
+    "name": "Sides",
+    "icon": "🍟",
+    "color": "#f59e0b",
+    "displayOrder": 15
+  },
+  {
+    "id": "c_breakfast",
+    "name": "Breakfast",
+    "icon": "🍳",
+    "color": "#f59e0b",
+    "displayOrder": 16
+  },
+  {
+    "id": "c_royale",
+    "name": "Royale",
+    "icon": "👑",
+    "color": "#e11d48",
+    "displayOrder": 17
   }
 ]
 
@@ -1534,6 +1555,42 @@ let menuItems = [
     "description": "TDG signature gyro wrap with secret sauce (Choose: Chicken or Paneer)",
     "isAvailable": true,
     "image": "/images/menu/gyro.png"
+  },
+  {
+    "id": "m_greek_gyro",
+    "categoryId": "c1",
+    "name": "Greek Gyro",
+    "price": 299,
+    "description": "Authentic large Greek gyro loaded with juicy meat or paneer, tzatziki & fresh toppings (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/drive/circular_gyro_duo.png"
+  },
+  {
+    "id": "m_gyro_italiano",
+    "categoryId": "c1",
+    "name": "Gyro Italiano",
+    "price": 299,
+    "description": "Italian fusion gyro with rich herbs, roasted peppers, melted cheese & sauces (Choose: Chicken or Paneer)",
+    "isAvailable": true,
+    "image": "/images/drive/gyro_baked_chicken.png"
+  },
+  {
+    "id": "m_nuggets_gyro",
+    "categoryId": "c1",
+    "name": "Chicken Nuggets Gyro",
+    "price": 79,
+    "description": "Crispy golden chicken nuggets nestled in a fresh gyro pocket with signature spread & veggies",
+    "isAvailable": true,
+    "image": "/images/drive/gyro_fried_paneer.png"
+  },
+  {
+    "id": "m_falafel_gyro",
+    "categoryId": "c1",
+    "name": "Falafel Gyro",
+    "price": 69,
+    "description": "Golden spiced Mediterranean falafel in a fresh warm gyro pocket with creamy spread & fresh greens",
+    "isAvailable": true,
+    "image": "/images/drive/gyro_baked_chicken.png"
   },
   {
     "id": "m_legthigh_1pc",
@@ -2137,6 +2194,96 @@ let menuItems = [
     "isAvailable": true,
     "available": true,
     "image": "/images/menu/den's party meal.png"
+  },
+  {
+    "id": "m_sides_nuggets_3pc",
+    "categoryId": "cat_1793693056697",
+    "name": "3 Pc Chicken Nuggets",
+    "price": 49,
+    "description": "3 pieces of golden crispy tender chicken nuggets",
+    "isAvailable": true,
+    "image": "/images/menu/sides_chicken_nuggets.png"
+  },
+  {
+    "id": "m_sides_falafel_4pc",
+    "categoryId": "cat_1793693056697",
+    "name": "4 Pc Falafel",
+    "price": 99,
+    "description": "4 pieces of freshly fried herb-infused authentic Mediterranean falafel",
+    "isAvailable": true,
+    "image": "/images/menu/sides_falafel.png"
+  },
+  {
+    "id": "m_breakfast_gyro",
+    "categoryId": "c_breakfast",
+    "name": "Breakfast Gyro",
+    "price": 149,
+    "description": "Fresh morning pita pocket with scrambled eggs, melted cheese & breakfast seasonings",
+    "isAvailable": true,
+    "image": "/images/drive/Baked.png"
+  },
+  {
+    "id": "m_breakfast_royale",
+    "categoryId": "c_breakfast",
+    "name": "Breakfast Royale",
+    "price": 149,
+    "description": "Deluxe morning breakfast bowl with eggs, sautéed greens, roasted tomatoes & warm pita",
+    "isAvailable": true,
+    "image": "/images/drive/Rice Bowl.png"
+  },
+  {
+    "id": "m_cheese_omelette",
+    "categoryId": "c_breakfast",
+    "name": "Cheese Omelette",
+    "price": 149,
+    "description": "Fluffy 3-egg French omelette folded with rich molten cheddar & Mediterranean herbs",
+    "isAvailable": true,
+    "image": "/images/drive/Cheese-01.jpg"
+  },
+  {
+    "id": "m_vegan_gyro",
+    "categoryId": "c_breakfast",
+    "name": "Vegan Gyro",
+    "price": 149,
+    "description": "100% plant-based breakfast gyro with grilled mushrooms, spinach, roasted peppers & vegan garlic spread",
+    "isAvailable": true,
+    "image": "/images/drive/Baked.png"
+  },
+  {
+    "id": "m_royale_vegan_salad",
+    "categoryId": "c_royale",
+    "name": "Vegan Salad",
+    "price": 249,
+    "description": "Mediterranean crisp greens, roasted chickpeas, olives, cherry tomatoes & extra virgin olive oil vinaigrette",
+    "isAvailable": true,
+    "image": "/images/drive/Signature Salad.png"
+  },
+  {
+    "id": "m_royale_grilled_fish",
+    "categoryId": "c_royale",
+    "name": "Grilled Fish",
+    "price": 249,
+    "description": "Fresh fish fillet seared on the grill with garlic lemon butter glaze and Greek herbs",
+    "isAvailable": true,
+    "image": "/images/drive/gyro_baked_chicken.png"
+  },
+  {
+    "id": "m_royale_grilled_halloumi",
+    "categoryId": "c_royale",
+    "name": "Grilled Halloumi",
+    "price": 249,
+    "description": "Golden seared Cypriot halloumi cheese drizzled with wild honey, za'atar and olive oil",
+    "isAvailable": true,
+    "image": "/images/drive/gyro_fried_paneer.png"
+  },
+  {
+    "id": "m_royale_grilled_chicken",
+    "categoryId": "c_royale",
+    "name": "Grilled Chicken",
+    "price": 249,
+    "description": "Juicy flame-grilled chicken breast glazed with herb lemon marinade and served with grilled veggies",
+    "isAvailable": true,
+    "image": "/images/drive/gyro_baked_chicken.png"
   }
 ]
 
