@@ -1109,24 +1109,53 @@ function restoreState() {
   }
 
   // Load the user-saved menu (edits to items, prices, categories, recipe mappings).
-  // Priority: db.json → menu vault → official frozen/seed menu (only if nothing saved).
   let savedMenuLoaded = false
+  let candidateMenuItems = []
+  let candidateCategories = []
+  let candidateRecipes = []
+
   if (existsSync(MENU_FILE_PATH)) {
     try {
       const v = JSON.parse(readFileSync(MENU_FILE_PATH, 'utf-8'))
       if (Array.isArray(v.menuItems) && v.menuItems.length > 0) {
-        menuItems = v.menuItems
-        if (Array.isArray(v.categories) && v.categories.length > 0) categories = v.categories
-        if (Array.isArray(v.recipes)) recipes = v.recipes
+        candidateMenuItems = v.menuItems
+        if (Array.isArray(v.categories) && v.categories.length > 0) candidateCategories = v.categories
+        if (Array.isArray(v.recipes)) candidateRecipes = v.recipes
         savedMenuLoaded = true
-        console.log(`[MENU RESTORE] Loaded ${menuItems.length} items from dedicated menu.json`)
+        console.log(`[MENU RESTORE] Loaded ${candidateMenuItems.length} items from dedicated menu.json`)
       }
     } catch (me) { console.error('[MENU.JSON LOAD ERROR]', me.message) }
   }
+
   if (Array.isArray(db.menuItems) && db.menuItems.length > 0) {
+    // If db has items, merge candidateMenuItems (from menu.json) into db.menuItems so newly shipped items are NEVER omitted
+    const dbItemIds = new Set(db.menuItems.map(i => String(i.id)))
+    const dbItemNames = new Set(db.menuItems.map(i => String(i.name).toLowerCase().trim()))
+    candidateMenuItems.forEach(item => {
+      if (!dbItemIds.has(String(item.id)) && !dbItemNames.has(String(item.name).toLowerCase().trim())) {
+        db.menuItems.push(item)
+        console.log(`[MENU MERGE] Added missing new menu item to db: ${item.name} (${item.id})`)
+      }
+    })
+
+    const dbCatIds = new Set((db.categories || []).map(c => String(c.id)))
+    const dbCatNames = new Set((db.categories || []).map(c => String(c.name).toLowerCase().trim()))
+    candidateCategories.forEach(cat => {
+      if (!dbCatIds.has(String(cat.id)) && !dbCatNames.has(String(cat.name).toLowerCase().trim())) {
+        db.categories = db.categories || []
+        db.categories.push(cat)
+        console.log(`[MENU MERGE] Added missing category to db: ${cat.name} (${cat.id})`)
+      }
+    })
+
     menuItems = db.menuItems
     if (Array.isArray(db.categories) && db.categories.length > 0) categories = db.categories
     if (Array.isArray(db.recipes)) recipes = db.recipes
+    savedMenuLoaded = true
+  } else if (candidateMenuItems.length > 0) {
+    menuItems = candidateMenuItems
+    if (candidateCategories.length > 0) categories = candidateCategories
+    if (candidateRecipes.length > 0) recipes = candidateRecipes
     savedMenuLoaded = true
   } else if (existsSync(MENU_VAULT_PATH)) {
     try {
@@ -13257,11 +13286,53 @@ app.delete('/api/admin/menu/categories/:id', (req, res) => {
   res.json({ success: true, message: 'Category safely deleted (archived)' })
 })
 
+// Helper: auto-heal menu items and categories from menu.json if any are missing
+function autoHealMenuFromDisk() {
+  if (existsSync(MENU_FILE_PATH)) {
+    try {
+      const v = JSON.parse(readFileSync(MENU_FILE_PATH, 'utf-8'))
+      let touched = false
+      if (Array.isArray(v.menuItems) && v.menuItems.length > 0) {
+        const curIds = new Set(menuItems.map(i => String(i.id)))
+        const curNames = new Set(menuItems.map(i => String(i.name).toLowerCase().trim()))
+        v.menuItems.forEach(item => {
+          if (!curIds.has(String(item.id)) && !curNames.has(String(item.name).toLowerCase().trim())) {
+            menuItems.push(item)
+            touched = true
+          }
+        })
+      }
+      if (Array.isArray(v.categories) && v.categories.length > 0) {
+        const curCatIds = new Set(categories.map(c => String(c.id)))
+        const curCatNames = new Set(categories.map(c => String(c.name).toLowerCase().trim()))
+        v.categories.forEach(cat => {
+          if (!curCatIds.has(String(cat.id)) && !curCatNames.has(String(cat.name).toLowerCase().trim())) {
+            categories.push(cat)
+            touched = true
+          }
+        })
+      }
+      if (touched) {
+        saveMenuFast()
+        if (db) {
+          db.menuItems = menuItems
+          db.categories = categories
+          saveState()
+        }
+        console.log(`[MENU AUTO-HEAL] Merged new items. Total items now: ${menuItems.length}, categories: ${categories.length}`)
+      }
+    } catch (e) {
+      console.error('[MENU AUTO-HEAL ERROR]', e.message)
+    }
+  }
+}
+
 // Menu Items Admin list (full data)
 app.get('/api/admin/menu/items', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
   res.setHeader('Pragma', 'no-cache')
   res.setHeader('Expires', '0')
+  autoHealMenuFromDisk()
   const { categoryId } = req.query
   if (categoryId && categoryId !== 'all') {
     const filtered = menuItems.filter(i => i && String(i.categoryId) === String(categoryId))
@@ -13274,7 +13345,14 @@ app.get('/api/admin/menu/categories', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
   res.setHeader('Pragma', 'no-cache')
   res.setHeader('Expires', '0')
+  autoHealMenuFromDisk()
   res.json(categories.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)))
+})
+
+// Force manual sync of official menu items
+app.all('/api/admin/menu/sync-official', (req, res) => {
+  autoHealMenuFromDisk()
+  res.json({ success: true, count: menuItems.length, categoriesCount: categories.length, menuItems })
 })
 
 // Export Menu to Excel

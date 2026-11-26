@@ -3521,14 +3521,34 @@ export default function MenuManagement() {
  }
 
  useEffect(() => {
- fetch(`${API()}/api/admin/menu/categories`)
- .then(r => r.json())
- .then(d => { if (Array.isArray(d)) setCategories(d) })
- .catch(() => setCategories(sampleCategories))
- fetch(`${API()}/api/admin/menu/items`)
- .then(r => r.json())
- .then(d => { if (Array.isArray(d)) setMenuItems(d) })
- .catch(() => setMenuItems(sampleMenuItems))
+  fetch(`${API()}/api/admin/menu/categories`)
+    .then(r => r.json())
+    .then(d => {
+      if (Array.isArray(d)) {
+        const serverCatIds = new Set(d.map(c => String(c.id)))
+        const serverCatNames = new Set(d.map(c => String(c.name).toLowerCase().trim()))
+        const missingCats = sampleCategories.filter(c => !serverCatIds.has(String(c.id)) && !serverCatNames.has(String(c.name).toLowerCase().trim()))
+        setCategories(missingCats.length > 0 ? [...d, ...missingCats] : d)
+      }
+    })
+    .catch(() => setCategories(sampleCategories))
+
+  fetch(`${API()}/api/admin/menu/items`)
+    .then(r => r.json())
+    .then(d => {
+      if (Array.isArray(d)) {
+        const serverIds = new Set(d.map(i => String(i.id)))
+        const serverNames = new Set(d.map(i => String(i.name).toLowerCase().trim()))
+        const missingItems = sampleMenuItems.filter(i => !serverIds.has(String(i.id)) && !serverNames.has(String(i.name).toLowerCase().trim()))
+        if (missingItems.length > 0) {
+          setMenuItems([...d, ...missingItems])
+          fetch(`${API()}/api/admin/menu/sync-official`, { method: 'POST' }).catch(() => {})
+        } else {
+          setMenuItems(d)
+        }
+      }
+    })
+    .catch(() => setMenuItems(sampleMenuItems))
  fetch(`${API()}/api/inventory`)
  .then(r => r.json())
  .then(d => { if (Array.isArray(d)) setInventory(d) })

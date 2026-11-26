@@ -164445,10 +164445,27 @@
       "displayOrder": 7
     },
     {
-      "id": "c_sides",
+      "id": "cat_1793693056697",
       "name": "Sides",
-      "icon": "🍢",
-      "color": "#f59e0b"
+      "color": "#f59e0b",
+      "displayOrder": 15,
+      "isDeleted": false,
+      "createdAt": "2026-11-03T08:04:16.697Z",
+      "icon": "🍟"
+    },
+    {
+      "id": "c_breakfast",
+      "name": "Breakfast",
+      "icon": "🍳",
+      "color": "#f59e0b",
+      "displayOrder": 16
+    },
+    {
+      "id": "c_royale",
+      "name": "Royale",
+      "icon": "👑",
+      "color": "#e11d48",
+      "displayOrder": 17
     }
   ],
   "menuItems": [
@@ -164627,7 +164644,7 @@
       "id": "m_sprite_reg",
       "categoryId": "c10_bev",
       "name": "Sprite (Regular)",
-      "price": 59,
+      "price": 49,
       "description": "Sprite 330ml Regular",
       "isAvailable": true,
       "image": "/images/menu/express meal.png"
@@ -164645,7 +164662,7 @@
       "id": "m_cocacola_reg",
       "categoryId": "c10_bev",
       "name": "Coca Cola (Regular)",
-      "price": 59,
+      "price": 49,
       "description": "Coca Cola 330ml Regular",
       "isAvailable": true,
       "image": "/images/menu/express meal.png"
@@ -164698,7 +164715,7 @@
     {
       "id": "m_rice_bowl",
       "categoryId": "c3_rice_salad",
-      "name": "Rice Bowl (Signature)",
+      "name": "Signature Rice",
       "price": 199,
       "description": "Signature Lebanese Rice Bowl with fresh herbs & toppings (Choose: Chicken or Paneer)",
       "isAvailable": true,
@@ -164951,7 +164968,7 @@
       "id": "m_vanilla_softy",
       "categoryId": "c4",
       "name": "Vanilla Softy",
-      "price": 37.15,
+      "price": 39,
       "description": "Creamy Vanilla Soft Serve Cone",
       "isAvailable": true,
       "image": "/images/menu/vanilla softy.png"
@@ -164960,7 +164977,7 @@
       "id": "m_dip_choice",
       "categoryId": "c4",
       "name": "Choice of Dip",
-      "price": 14.3,
+      "price": 15,
       "description": "Choice of Dip (Garlic Mayo, Spicy Mayo, Honey Mustard, Tzatziki, Jalapeno Cheese, Turkish Chilli)",
       "isAvailable": true,
       "image": "/images/menu/garlic mayo.png"
@@ -164969,7 +164986,7 @@
       "id": "m_kombucha_mint",
       "categoryId": "c10_komb",
       "name": "Mint Kombucha",
-      "price": 114,
+      "price": 120,
       "description": "Mint Kombucha 250ml",
       "isAvailable": true,
       "image": "/images/menu/mint-kombucha.png"
@@ -164978,7 +164995,7 @@
       "id": "m_kombucha_hibiscus",
       "categoryId": "c10_komb",
       "name": "Hibiscus Kombucha",
-      "price": 114,
+      "price": 120,
       "description": "Hibiscus Kombucha 250ml",
       "isAvailable": true,
       "image": "/images/menu/kombucha-hibiscus.png"
@@ -164987,7 +165004,7 @@
       "id": "m_kombucha_classic",
       "categoryId": "c10_komb",
       "name": "Classic Kombucha",
-      "price": 114,
+      "price": 120,
       "description": "Classic Kombucha 250ml",
       "isAvailable": true,
       "image": "/images/menu/kombucha.png"
@@ -165029,7 +165046,7 @@
       "id": "m_nc_13pc_bucket",
       "categoryId": "c_new_combo",
       "category": "New Combo",
-      "name": "13 Pc Mixed Chicken Bucket",
+      "name": "13 Pc Mixed Chicken",
       "price": 379,
       "description": "8 Wings + 5 Strips + 4 Dips",
       "isAvailable": true,
@@ -165040,7 +165057,7 @@
       "id": "m_nc_strips_bucket",
       "categoryId": "c_new_combo",
       "category": "New Combo",
-      "name": "Chicken Strips Bucket",
+      "name": "12 Pc Strips Bucket",
       "price": 399,
       "description": "12 Strips + 3 Dips",
       "isAvailable": true,
@@ -165092,49 +165109,185 @@
       "image": "/images/menu/den's party meal.png"
     },
     {
-      "id": "m_chicken_nuggets",
-      "categoryId": "c_sides",
+      "id": "m_1793693116375",
       "name": "Chicken Nuggets",
       "price": 49,
+      "categoryId": "cat_1793693056697",
       "description": "Crispy chicken nuggets",
+      "isAvailable": true,
+      "isDeleted": false,
+      "image": "/images/menu/sides_chicken_nuggets.png",
+      "createdAt": "2026-11-03T08:05:16.376Z"
+    },
+    {
+      "id": "m_1793693137494",
+      "name": "Halloumi Nuggets",
+      "price": 99,
+      "categoryId": "cat_1793693056697",
+      "description": "Crispy halloumi cheese nuggets",
+      "isAvailable": true,
+      "isDeleted": false,
+      "image": "/images/menu/sides_halloumi_nuggets.png",
+      "createdAt": "2026-11-03T08:05:37.494Z"
+    },
+    {
+      "id": "m_1793693137727",
+      "name": "Mozarella Sticks",
+      "price": 149,
+      "categoryId": "cat_1793693056697",
+      "description": "Golden mozzarella sticks",
+      "isAvailable": true,
+      "isDeleted": false,
+      "image": "/images/menu/sides_mozzarella_sticks.png",
+      "createdAt": "2026-11-03T08:05:37.727Z"
+    },
+    {
+      "id": "m_1793693137947",
+      "name": "Falafel",
+      "price": 99,
+      "categoryId": "cat_1793693056697",
+      "description": "Crispy falafel",
+      "isAvailable": true,
+      "isDeleted": false,
+      "image": "/images/menu/sides_falafel.png",
+      "createdAt": "2026-11-03T08:05:37.947Z"
+    },
+    {
+      "id": "m_1793693138173",
+      "name": "@99 Chicken Nuggets",
+      "price": 99,
+      "categoryId": "cat_1793693056697",
+      "description": "Special @99 crispy chicken nuggets portion",
+      "isAvailable": true,
+      "isDeleted": false,
+      "image": "/images/menu/sides_chicken_nuggets.png",
+      "createdAt": "2026-11-03T08:05:38.173Z"
+    },
+    {
+      "id": "m_greek_gyro",
+      "categoryId": "c1",
+      "name": "Greek Gyro",
+      "price": 299,
+      "description": "Authentic large Greek gyro loaded with juicy meat or paneer, tzatziki & fresh toppings (Choose: Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/drive/circular_gyro_duo.png"
+    },
+    {
+      "id": "m_gyro_italiano",
+      "categoryId": "c1",
+      "name": "Gyro Italiano",
+      "price": 299,
+      "description": "Italian fusion gyro with rich herbs, roasted peppers, melted cheese & sauces (Choose: Chicken or Paneer)",
+      "isAvailable": true,
+      "image": "/images/drive/gyro_baked_chicken.png"
+    },
+    {
+      "id": "m_nuggets_gyro",
+      "categoryId": "c1",
+      "name": "Chicken Nuggets Gyro",
+      "price": 79,
+      "description": "Crispy golden chicken nuggets nestled in a fresh gyro pocket with signature spread & veggies",
+      "isAvailable": true,
+      "image": "/images/drive/gyro_fried_paneer.png"
+    },
+    {
+      "id": "m_falafel_gyro",
+      "categoryId": "c1",
+      "name": "Falafel Gyro",
+      "price": 69,
+      "description": "Golden spiced Mediterranean falafel in a fresh warm gyro pocket with creamy spread & fresh greens",
+      "isAvailable": true,
+      "image": "/images/drive/gyro_baked_chicken.png"
+    },
+    {
+      "id": "m_sides_nuggets_3pc",
+      "categoryId": "cat_1793693056697",
+      "name": "3 Pc Chicken Nuggets",
+      "price": 49,
+      "description": "3 pieces of golden crispy tender chicken nuggets",
       "isAvailable": true,
       "image": "/images/menu/sides_chicken_nuggets.png"
     },
     {
-      "id": "m_halloumi_nuggets",
-      "categoryId": "c_sides",
-      "name": "Halloumi Nuggets",
+      "id": "m_sides_falafel_4pc",
+      "categoryId": "cat_1793693056697",
+      "name": "4 Pc Falafel",
       "price": 99,
-      "description": "Crispy halloumi cheese nuggets",
-      "isAvailable": true,
-      "image": "/images/menu/sides_halloumi_nuggets.png"
-    },
-    {
-      "id": "m_mozzarella_sticks",
-      "categoryId": "c_sides",
-      "name": "Mozarella Sticks",
-      "price": 149,
-      "description": "Golden mozzarella sticks",
-      "isAvailable": true,
-      "image": "/images/menu/sides_mozzarella_sticks.png"
-    },
-    {
-      "id": "m_falafel",
-      "categoryId": "c_sides",
-      "name": "Falafel",
-      "price": 99,
-      "description": "Crispy falafel",
+      "description": "4 pieces of freshly fried herb-infused authentic Mediterranean falafel",
       "isAvailable": true,
       "image": "/images/menu/sides_falafel.png"
     },
     {
-      "id": "m_chicken_nuggets_99",
-      "categoryId": "c_sides",
-      "name": "@99 Chicken Nuggets",
-      "price": 99,
-      "description": "Special @99 crispy chicken nuggets portion",
+      "id": "m_breakfast_gyro",
+      "categoryId": "c_breakfast",
+      "name": "Breakfast Gyro",
+      "price": 149,
+      "description": "Fresh morning pita pocket with scrambled eggs, melted cheese & breakfast seasonings",
       "isAvailable": true,
-      "image": "/images/menu/sides_chicken_nuggets.png"
+      "image": "/images/drive/Baked.png"
+    },
+    {
+      "id": "m_breakfast_royale",
+      "categoryId": "c_breakfast",
+      "name": "Breakfast Royale",
+      "price": 149,
+      "description": "Deluxe morning breakfast bowl with eggs, sautéed greens, roasted tomatoes & warm pita",
+      "isAvailable": true,
+      "image": "/images/drive/Rice Bowl.png"
+    },
+    {
+      "id": "m_cheese_omelette",
+      "categoryId": "c_breakfast",
+      "name": "Cheese Omelette",
+      "price": 149,
+      "description": "Fluffy 3-egg French omelette folded with rich molten cheddar & Mediterranean herbs",
+      "isAvailable": true,
+      "image": "/images/drive/Cheese-01.jpg"
+    },
+    {
+      "id": "m_vegan_gyro",
+      "categoryId": "c_breakfast",
+      "name": "Vegan Gyro",
+      "price": 149,
+      "description": "100% plant-based breakfast gyro with grilled mushrooms, spinach, roasted peppers & vegan garlic spread",
+      "isAvailable": true,
+      "image": "/images/drive/Baked.png"
+    },
+    {
+      "id": "m_royale_vegan_salad",
+      "categoryId": "c_royale",
+      "name": "Vegan Salad",
+      "price": 249,
+      "description": "Mediterranean crisp greens, roasted chickpeas, olives, cherry tomatoes & extra virgin olive oil vinaigrette",
+      "isAvailable": true,
+      "image": "/images/drive/Signature Salad.png"
+    },
+    {
+      "id": "m_royale_grilled_fish",
+      "categoryId": "c_royale",
+      "name": "Grilled Fish",
+      "price": 249,
+      "description": "Fresh fish fillet seared on the grill with garlic lemon butter glaze and Greek herbs",
+      "isAvailable": true,
+      "image": "/images/drive/gyro_baked_chicken.png"
+    },
+    {
+      "id": "m_royale_grilled_halloumi",
+      "categoryId": "c_royale",
+      "name": "Grilled Halloumi",
+      "price": 249,
+      "description": "Golden seared Cypriot halloumi cheese drizzled with wild honey, za'atar and olive oil",
+      "isAvailable": true,
+      "image": "/images/drive/gyro_fried_paneer.png"
+    },
+    {
+      "id": "m_royale_grilled_chicken",
+      "categoryId": "c_royale",
+      "name": "Grilled Chicken",
+      "price": 249,
+      "description": "Juicy flame-grilled chicken breast glazed with herb lemon marinade and served with grilled veggies",
+      "isAvailable": true,
+      "image": "/images/drive/gyro_baked_chicken.png"
     }
   ],
   "recipes": [

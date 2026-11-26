@@ -778,18 +778,21 @@ export const useMenuStore = create((set, get) => ({
   categories: sampleCategories,
   menuItems: sampleMenuItems,
   loading: false,
-  
+
   fetchCategories: async () => {
     try {
-      const apiUrl = window.location.hostname === 'localhost' 
-        ? 'http://localhost:3001' 
+      const apiUrl = window.location.hostname === 'localhost'
+        ? 'http://localhost:3001'
         : window.location.origin
-      
+
       const res = await fetch(`${apiUrl}/api/admin/menu/categories`)
       if (res.ok) {
         const data = await res.json()
         if (Array.isArray(data) && data.length > 0) {
-          set({ categories: data.filter(c => !c.isDeleted) })
+          const serverCatIds = new Set(data.map(c => String(c.id)))
+          const serverCatNames = new Set(data.map(c => String(c.name).toLowerCase().trim()))
+          const missingCats = sampleCategories.filter(c => !serverCatIds.has(String(c.id)) && !serverCatNames.has(String(c.name).toLowerCase().trim()))
+          set({ categories: [...data.filter(c => !c.isDeleted), ...missingCats] })
           return
         }
       }
@@ -798,21 +801,26 @@ export const useMenuStore = create((set, get) => ({
     }
     set({ categories: sampleCategories })
   },
-  
+
   fetchMenuItems: async (categoryId) => {
     set({ loading: true })
     try {
-      const apiUrl = window.location.hostname === 'localhost' 
-        ? 'http://localhost:3001' 
+      const apiUrl = window.location.hostname === 'localhost'
+        ? 'http://localhost:3001'
         : window.location.origin
-      
+
       const url = categoryId ? `${apiUrl}/api/admin/menu/items?categoryId=${categoryId}` : `${apiUrl}/api/admin/menu/items`
       const res = await fetch(url)
       if (res.ok) {
         const rawData = await res.json()
         const data = Array.isArray(rawData) ? rawData : (rawData.items || rawData.menuItems || [])
         if (Array.isArray(data) && data.length > 0) {
-          set({ menuItems: data.filter(i => !i.isDeleted), loading: false })
+          const serverIds = new Set(data.map(i => String(i.id)))
+          const serverNames = new Set(data.map(i => String(i.name).toLowerCase().trim()))
+          const missingItems = sampleMenuItems.filter(i => !serverIds.has(String(i.id)) && !serverNames.has(String(i.name).toLowerCase().trim()))
+          const allItems = missingItems.length > 0 ? [...data.filter(i => !i.isDeleted), ...missingItems] : data.filter(i => !i.isDeleted)
+          const resultItems = categoryId ? allItems.filter(i => i.categoryId === categoryId) : allItems
+          set({ menuItems: resultItems, loading: false })
           return
         }
       }
@@ -825,7 +833,7 @@ export const useMenuStore = create((set, get) => ({
       set({ menuItems: sampleMenuItems, loading: false })
     }
   },
-  
+
   toggleAvailability: async (itemId, isAvailable) => {
     set(state => ({
       menuItems: state.menuItems.map(item =>
